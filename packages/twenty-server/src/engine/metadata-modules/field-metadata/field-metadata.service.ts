@@ -4,7 +4,9 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { i18n } from '@lingui/core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import isEmpty from 'lodash.isempty';
-import { APP_LOCALES, FieldMetadataType, isDefined } from 'twenty-shared';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { DataSource, FindOneOptions, In, Repository } from 'typeorm';
 import { v4 as uuidV4, v4 } from 'uuid';
 
@@ -16,6 +18,7 @@ import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-meta
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import {
   RelationDefinitionDTO,
   RelationDefinitionType,
@@ -27,6 +30,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
 import { assertDoesNotNullifyDefaultValueForNonNullableField } from 'src/engine/metadata-modules/field-metadata/utils/assert-does-not-nullify-default-value-for-non-nullable-field.util';
+import { checkCanDeactivateFieldOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/check-can-deactivate-field-or-throw';
 import {
   computeColumnName,
   computeCompositeColumnName,
@@ -36,17 +40,15 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { isSelectFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
-import { NameNotAvailableException } from 'src/engine/metadata-modules/utils/exceptions/name-not-available.exception';
-import { NameTooLongException } from 'src/engine/metadata-modules/utils/exceptions/name-too-long.exception';
+import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata-name.exception';
 import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
-import { validateMetadataNameValidityOrThrow as validateFieldNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
+import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
@@ -153,6 +155,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
+      if (!objectMetadata.labelIdentifierFieldMetadataId) {
+        throw new FieldMetadataException(
+          'Label identifier field metadata id does not exist',
+          FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND,
+        );
+      }
       assertMutationNotOnRemoteObject(objectMetadata);
 
       assertDoesNotNullifyDefaultValueForNonNullableField({
@@ -160,18 +168,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         defaultValueFromUpdate: fieldMetadataInput.defaultValue,
       });
 
-      if (
-        objectMetadata.labelIdentifierFieldMetadataId ===
-          existingFieldMetadata.id &&
-        fieldMetadataInput.isActive === false
-      ) {
-        throw new FieldMetadataException(
-          'Cannot deactivate label identifier field',
-          FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
-        );
-      }
-
       if (fieldMetadataInput.isActive === false) {
+        checkCanDeactivateFieldOrThrow({
+          labelIdentifierFieldMetadataId:
+            objectMetadata.labelIdentifierFieldMetadataId,
+          existingFieldMetadata,
+        });
+
         const viewsRepository =
           await this.twentyORMGlobalManager.getRepositoryForWorkspace(
             fieldMetadataInput.workspaceId,
@@ -457,13 +460,22 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     fieldMetadataInput: UpdateFieldInput,
     existingFieldMetadata: FieldMetadataEntity,
   ) {
-    const updatableStandardFieldInput: UpdateFieldInput = {
+    const updatableStandardFieldInput: UpdateFieldInput & {
+      standardOverrides?: FieldStandardOverridesDTO;
+    } = {
       id: fieldMetadataInput.id,
       isActive: fieldMetadataInput.isActive,
       workspaceId: fieldMetadataInput.workspaceId,
       defaultValue: fieldMetadataInput.defaultValue,
       settings: fieldMetadataInput.settings,
+      isLabelSyncedWithName: fieldMetadataInput.isLabelSyncedWithName,
     };
+
+    if ('standardOverrides' in fieldMetadataInput) {
+      updatableStandardFieldInput.standardOverrides = (
+        fieldMetadataInput as any
+      ).standardOverrides;
+    }
 
     if (
       existingFieldMetadata.type === FieldMetadataType.SELECT ||
@@ -540,30 +552,32 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   ): T {
     if (fieldMetadataInput.name) {
       try {
-        validateFieldNameValidityOrThrow(fieldMetadataInput.name);
+        validateMetadataNameOrThrow(fieldMetadataInput.name);
+      } catch (error) {
+        if (error instanceof InvalidMetadataNameException) {
+          throw new FieldMetadataException(
+            error.message,
+            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          );
+        }
+
+        throw error;
+      }
+
+      try {
         validateFieldNameAvailabilityOrThrow(
           fieldMetadataInput.name,
           objectMetadata,
         );
       } catch (error) {
-        if (error instanceof InvalidStringException) {
-          throw new FieldMetadataException(
-            `Characters used in name "${fieldMetadataInput.name}" are not supported`,
-            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          );
-        } else if (error instanceof NameTooLongException) {
-          throw new FieldMetadataException(
-            `Name "${fieldMetadataInput.name}" exceeds 63 characters`,
-            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          );
-        } else if (error instanceof NameNotAvailableException) {
+        if (error instanceof InvalidMetadataNameException) {
           throw new FieldMetadataException(
             `Name "${fieldMetadataInput.name}" is not available, check that it is not duplicating another field's name.`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           );
-        } else {
-          throw error;
         }
+
+        throw error;
       }
     }
 
@@ -597,17 +611,31 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     return fieldMetadataInput;
   }
 
-  async resolveTranslatableString(
+  async resolveOverridableString(
     fieldMetadata: FieldMetadataDTO,
-    labelKey: 'label' | 'description',
+    labelKey: 'label' | 'description' | 'icon',
     locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<string> {
     if (fieldMetadata.isCustom) {
       return fieldMetadata[labelKey] ?? '';
     }
 
-    if (!locale) {
+    if (!locale || locale === SOURCE_LOCALE) {
+      if (
+        fieldMetadata.standardOverrides &&
+        isDefined(fieldMetadata.standardOverrides[labelKey])
+      ) {
+        return fieldMetadata.standardOverrides[labelKey] as string;
+      }
+
       return fieldMetadata[labelKey] ?? '';
+    }
+
+    const translationValue =
+      fieldMetadata.standardOverrides?.translations?.[locale]?.[labelKey];
+
+    if (isDefined(translationValue)) {
+      return translationValue;
     }
 
     const messageId = generateMessageId(fieldMetadata[labelKey] ?? '');

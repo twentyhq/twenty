@@ -9,15 +9,15 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { WorkflowBuilderWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-builder.workspace-service';
-import { OutputSchema } from 'src/modules/workflow/workflow-builder/types/output-schema.type';
+import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
+import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 
 @Resolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
 @UseFilters(WorkflowTriggerGraphqlApiExceptionFilter)
 export class WorkflowBuilderResolver {
   constructor(
-    private readonly workflowBuilderWorkspaceService: WorkflowBuilderWorkspaceService,
+    private readonly workflowSchemaWorkspaceService: WorkflowSchemaWorkspaceService,
   ) {}
 
   @Mutation(() => graphqlTypeJson)
@@ -25,7 +25,7 @@ export class WorkflowBuilderResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('input') { step }: ComputeStepOutputSchemaInput,
   ): Promise<OutputSchema> {
-    return this.workflowBuilderWorkspaceService.computeStepOutputSchema({
+    return this.workflowSchemaWorkspaceService.computeStepOutputSchema({
       step,
       workspaceId,
     });

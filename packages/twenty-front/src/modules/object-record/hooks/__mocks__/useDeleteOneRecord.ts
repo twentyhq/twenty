@@ -9,13 +9,3 @@ export const query = gql`
     }
   }
 `;
-
-export const variables = {
-  idToDelete: 'a7286b9a-c039-4a89-9567-2dfa7953cda9',
-};
-
-export const responseData = {
-  __typename: 'Person',
-  deletedAt: '2024-02-14T09:45:00Z',
-  id: 'a7286b9a-c039-4a89-9567-2dfa7953cda9',
-};

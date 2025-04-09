@@ -1,10 +1,9 @@
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useHandleContainerMouseEnter } from '@/object-record/record-table/hooks/internal/useHandleContainerMouseEnter';
-import { useUpsertTableRecordNoGroup } from '@/object-record/record-table/hooks/internal/useUpsertTableRecordNoGroup';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { useCloseRecordTableCellNoGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellNoGroup';
-import { useMoveSoftFocusToCellOnHoverV2 } from '@/object-record/record-table/record-table-cell/hooks/useMoveSoftFocusToCellOnHoverV2';
+import { useMoveSoftFocusToCurrentCellOnHover } from '@/object-record/record-table/record-table-cell/hooks/useMoveSoftFocusToCurrentCellOnHover';
 import {
   OpenTableCellArgs,
   useOpenRecordTableCellV2,
@@ -22,20 +21,6 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
   children,
 }: RecordTableNoRecordGroupBodyContextProviderProps) => {
   const { recordTableId } = useRecordTableContextOrThrow();
-
-  const { upsertTableRecordNoGroup } = useUpsertTableRecordNoGroup();
-
-  const handleUpsertTableRecordNoRecordGroup = ({
-    persistField,
-    recordId,
-    fieldName,
-  }: {
-    persistField: () => void;
-    recordId: string;
-    fieldName: string;
-  }) => {
-    upsertTableRecordNoGroup(persistField, recordId, fieldName);
-  };
 
   const { openTableCell } = useOpenRecordTableCellV2(recordTableId);
 
@@ -55,11 +40,13 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
     closeTableCellNoGroup();
   };
 
-  const { moveSoftFocusToCell } =
-    useMoveSoftFocusToCellOnHoverV2(recordTableId);
+  const { moveSoftFocusToCurrentCell } =
+    useMoveSoftFocusToCurrentCellOnHover(recordTableId);
 
-  const handleMoveSoftFocusToCell = (cellPosition: TableCellPosition) => {
-    moveSoftFocusToCell(cellPosition);
+  const handleMoveSoftFocusToCurrentCell = (
+    cellPosition: TableCellPosition,
+  ) => {
+    moveSoftFocusToCurrentCell(cellPosition);
   };
 
   const { triggerActionMenuDropdown } = useTriggerActionMenuDropdown({
@@ -80,11 +67,10 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
   return (
     <RecordTableBodyContextProvider
       value={{
-        onUpsertRecord: handleUpsertTableRecordNoRecordGroup,
         onOpenTableCell: handleOpenTableCell,
         onMoveFocus: handleMoveFocus,
         onCloseTableCell: handleCloseTableCell,
-        onMoveSoftFocusToCell: handleMoveSoftFocusToCell,
+        onMoveSoftFocusToCurrentCell: handleMoveSoftFocusToCurrentCell,
         onActionMenuDropdownOpened: handleActionMenuDropdown,
         onCellMouseEnter: handleContainerMouseEnter,
       }}

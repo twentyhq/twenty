@@ -42,7 +42,9 @@ export const useClearField = () => {
 
         const fieldName = fieldDefinition.metadata.fieldName;
 
-        const emptyFieldValue = generateEmptyFieldValue(foundFieldMetadataItem);
+        const emptyFieldValue = generateEmptyFieldValue({
+          fieldMetadataItem: foundFieldMetadataItem,
+        });
 
         set(
           recordStoreFamilySelector({ recordId, fieldName }),

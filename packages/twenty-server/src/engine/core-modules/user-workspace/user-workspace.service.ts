@@ -2,7 +2,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { isDefined, SOURCE_LOCALE } from 'twenty-shared';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
@@ -21,10 +22,17 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
@@ -40,6 +48,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly domainManagerService: DomainManagerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly userRoleService: UserRoleService,
   ) {
     super(userWorkspaceRepository);
   }
@@ -112,24 +121,40 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     });
   }
 
-  async addUserToWorkspace(user: User, workspace: Workspace) {
-    const userWorkspaceExists = await this.checkUserWorkspaceExists(
+  async addUserToWorkspaceIfUserNotInWorkspace(
+    user: User,
+    workspace: Workspace,
+  ) {
+    let userWorkspace = await this.checkUserWorkspaceExists(
       user.id,
       workspace.id,
     );
 
-    if (!userWorkspaceExists) {
-      await this.create(user.id, workspace.id);
+    if (!userWorkspace) {
+      userWorkspace = await this.create(user.id, workspace.id);
 
       await this.createWorkspaceMember(workspace.id, user);
+
+      const defaultRoleId = workspace.defaultRoleId;
+
+      if (!isDefined(defaultRoleId)) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
+          PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
+        );
+      }
+
+      await this.userRoleService.assignRoleToUserWorkspace({
+        workspaceId: workspace.id,
+        userWorkspaceId: userWorkspace.id,
+        roleId: defaultRoleId,
+      });
+
+      await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+        workspace.id,
+        user.email,
+      );
     }
-
-    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
-      workspace.id,
-      user.email,
-    );
-
-    return user;
   }
 
   public async getUserCount(workspaceId: string): Promise<number | undefined> {
@@ -160,6 +185,34 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
         user: true,
       },
     });
+  }
+
+  async findFirstWorkspaceByUserId(userId: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+      relations: ['workspaces', 'workspaces.workspace'],
+      order: {
+        workspaces: {
+          workspace: {
+            createdAt: 'ASC',
+          },
+        },
+      },
+    });
+
+    const workspace = user?.workspaces?.[0]?.workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(
+      workspace,
+      new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
+    );
+
+    return workspace;
   }
 
   async findAvailableWorkspacesByEmail(email: string) {

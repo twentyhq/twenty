@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { Request, Response } from 'express';
-import { ExtractJwt } from 'passport-jwt';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { INTERNAL_SERVER_ERROR } from 'src/engine/middlewares/constants/default-error-message.constant';
@@ -29,12 +29,13 @@ export class MiddlewareService {
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly dataSourceService: DataSourceService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly jwtWrapperService: JwtWrapperService,
   ) {}
 
   private excludedOperations = EXCLUDED_MIDDLEWARE_OPERATIONS;
 
   public isTokenPresent(request: Request): boolean {
-    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
+    const token = this.jwtWrapperService.extractJwtFromRequest()(request);
 
     return !!token;
   }

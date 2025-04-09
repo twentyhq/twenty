@@ -11,25 +11,15 @@ export const useUpsertRecordFilter = () => {
 
   const upsertRecordFilter = useRecoilCallback(
     ({ set, snapshot }) =>
-      (filter: RecordFilter) => {
+      (recordFilterToSet: RecordFilter) => {
         const currentRecordFilters = getSnapshotValue(
           snapshot,
           currentRecordFiltersCallbackState,
         );
 
-        // TODO: This is a temporary solution to ensure that the record filter is compatible with filter definitions
-        // Label and type will be set without definition
-        const recordFilterToSet: RecordFilter = {
-          ...filter,
-          label: filter.definition.label,
-          type: filter.definition.type,
-        };
-
         const foundRecordFilterInCurrentRecordFilters =
           currentRecordFilters.some(
-            (existingFilter) =>
-              existingFilter.fieldMetadataId ===
-              recordFilterToSet.fieldMetadataId,
+            (existingFilter) => existingFilter.id === recordFilterToSet.id,
           );
 
         if (!foundRecordFilterInCurrentRecordFilters) {
@@ -42,9 +32,7 @@ export const useUpsertRecordFilter = () => {
             const newCurrentRecordFilters = [...currentRecordFilters];
 
             const indexOfFilterToUpdate = newCurrentRecordFilters.findIndex(
-              (existingFilter) =>
-                existingFilter.fieldMetadataId ===
-                recordFilterToSet.fieldMetadataId,
+              (existingFilter) => existingFilter.id === recordFilterToSet.id,
             );
 
             newCurrentRecordFilters[indexOfFilterToUpdate] = {

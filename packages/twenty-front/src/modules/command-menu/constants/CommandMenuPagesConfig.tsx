@@ -1,33 +1,33 @@
-import { RightDrawerCalendarEvent } from '@/activities/calendar/right-drawer/components/RightDrawerCalendarEvent';
-import { RightDrawerAIChat } from '@/activities/copilot/right-drawer/components/RightDrawerAIChat';
-import { RightDrawerEmailThread } from '@/activities/emails/right-drawer/components/RightDrawerEmailThread';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
-import { CommandMenuSearchRecordsPage } from '@/command-menu/pages/components/CommandMenuSearchRecordsPage';
+import { CommandMenuCalendarEventPage } from '@/command-menu/pages/calendar-event/components/CommandMenuCalendarEventPage';
+import { CommandMenuMessageThreadPage } from '@/command-menu/pages/message-thread/components/CommandMenuMessageThreadPage';
+import { CommandMenuRecordPage } from '@/command-menu/pages/record-page/components/CommandMenuRecordPage';
+import { CommandMenuSearchRecordsPage } from '@/command-menu/pages/search/components/CommandMenuSearchRecordsPage';
+import { CommandMenuWorkflowSelectAction } from '@/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction';
+import { CommandMenuWorkflowEditStep } from '@/command-menu/pages/workflow/step/edit/components/CommandMenuWorkflowEditStep';
+import { CommandMenuWorkflowRunViewStep } from '@/command-menu/pages/workflow/step/view-run/components/CommandMenuWorkflowRunViewStep';
+import { CommandMenuWorkflowViewStep } from '@/command-menu/pages/workflow/step/view/components/CommandMenuWorkflowViewStep';
+import { CommandMenuWorkflowSelectTriggerType } from '@/command-menu/pages/workflow/trigger-type/components/CommandMenuWorkflowSelectTriggerType';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { RightDrawerRecord } from '@/object-record/record-right-drawer/components/RightDrawerRecord';
-import { RightDrawerWorkflowEditStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowEditStep';
-import { RightDrawerWorkflowViewStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowViewStep';
-import { RightDrawerWorkflowSelectAction } from '@/workflow/workflow-steps/workflow-actions/components/RightDrawerWorkflowSelectAction';
-import { RightDrawerWorkflowSelectTriggerType } from '@/workflow/workflow-trigger/components/RightDrawerWorkflowSelectTriggerType';
 
 export const COMMAND_MENU_PAGES_CONFIG = new Map<
   CommandMenuPages,
   React.ReactNode
 >([
   [CommandMenuPages.Root, <CommandMenu />],
-  [CommandMenuPages.ViewRecord, <RightDrawerRecord />],
-  [CommandMenuPages.ViewEmailThread, <RightDrawerEmailThread />],
-  [CommandMenuPages.ViewCalendarEvent, <RightDrawerCalendarEvent />],
-  [CommandMenuPages.Copilot, <RightDrawerAIChat />],
+  [CommandMenuPages.ViewRecord, <CommandMenuRecordPage />],
+  [CommandMenuPages.ViewEmailThread, <CommandMenuMessageThreadPage />],
+  [CommandMenuPages.ViewCalendarEvent, <CommandMenuCalendarEventPage />],
   [
     CommandMenuPages.WorkflowStepSelectTriggerType,
-    <RightDrawerWorkflowSelectTriggerType />,
+    <CommandMenuWorkflowSelectTriggerType />,
   ],
   [
     CommandMenuPages.WorkflowStepSelectAction,
-    <RightDrawerWorkflowSelectAction />,
+    <CommandMenuWorkflowSelectAction />,
   ],
-  [CommandMenuPages.WorkflowStepEdit, <RightDrawerWorkflowEditStep />],
-  [CommandMenuPages.WorkflowStepView, <RightDrawerWorkflowViewStep />],
+  [CommandMenuPages.WorkflowStepEdit, <CommandMenuWorkflowEditStep />],
+  [CommandMenuPages.WorkflowStepView, <CommandMenuWorkflowViewStep />],
+  [CommandMenuPages.WorkflowRunStepView, <CommandMenuWorkflowRunViewStep />],
   [CommandMenuPages.SearchRecords, <CommandMenuSearchRecordsPage />],
 ]);

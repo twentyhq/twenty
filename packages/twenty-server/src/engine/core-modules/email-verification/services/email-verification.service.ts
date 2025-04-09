@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { i18n } from '@lingui/core';
+import { t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
-import { APP_LOCALES } from 'twenty-shared';
+import { APP_LOCALES } from 'twenty-shared/translations';
 import { Repository } from 'typeorm';
 
 import {
@@ -13,6 +15,7 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
+import { WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import {
   EmailVerificationException,
@@ -21,7 +24,6 @@ import {
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -39,7 +41,10 @@ export class EmailVerificationService {
   async sendVerificationEmail(
     userId: string,
     email: string,
-    workspace: Pick<Workspace, 'subdomain' | 'customDomain'>,
+    workspace:
+      | WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType
+      | undefined,
+    locale: keyof typeof APP_LOCALES,
   ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       return { success: false };
@@ -48,32 +53,37 @@ export class EmailVerificationService {
     const { token: emailVerificationToken } =
       await this.emailVerificationTokenService.generateToken(userId, email);
 
-    const verificationLink =
-      this.domainManagerService.buildEmailVerificationURL({
-        emailVerificationToken,
-        email,
-        workspace,
-      });
+    const linkPathnameAndSearchParams = {
+      pathname: 'verify-email',
+      searchParams: { emailVerificationToken, email },
+    };
+    const verificationLink = workspace
+      ? this.domainManagerService.buildWorkspaceURL({
+          workspace,
+          ...linkPathnameAndSearchParams,
+        })
+      : this.domainManagerService.buildBaseUrl(linkPathnameAndSearchParams);
 
     const emailData = {
       link: verificationLink.toString(),
-      locale: 'en' as keyof typeof APP_LOCALES,
+      locale,
     };
 
     const emailTemplate = SendEmailVerificationLinkEmail(emailData);
 
-    const html = render(emailTemplate);
-
-    const text = render(emailTemplate, {
+    const html = await render(emailTemplate);
+    const text = await render(emailTemplate, {
       plainText: true,
     });
+
+    i18n.activate(locale);
 
     await this.emailService.send({
       from: `${this.environmentService.get(
         'EMAIL_FROM_NAME',
       )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
       to: email,
-      subject: 'Welcome to Twenty: Please Confirm Your Email',
+      subject: t`Welcome to Twenty: Please Confirm Your Email`,
       text,
       html,
     });
@@ -83,7 +93,10 @@ export class EmailVerificationService {
 
   async resendEmailVerificationToken(
     email: string,
-    workspace: Pick<Workspace, 'subdomain' | 'customDomain'>,
+    workspace:
+      | WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType
+      | undefined,
+    locale: keyof typeof APP_LOCALES,
   ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       throw new EmailVerificationException(
@@ -125,7 +138,7 @@ export class EmailVerificationService {
       await this.appTokenRepository.delete(existingToken.id);
     }
 
-    await this.sendVerificationEmail(user.id, email, workspace);
+    await this.sendVerificationEmail(user.id, email, workspace, locale);
 
     return { success: true };
   }

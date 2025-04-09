@@ -1,31 +1,70 @@
-import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+
+import {
+  fieldNumberMock,
+  objectMetadataItemMock,
+} from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { checkFields } from 'src/engine/api/rest/core/query-builder/utils/check-fields.utils';
 import { checkArrayFields } from 'src/engine/api/rest/core/query-builder/utils/check-order-by.utils';
+import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
 describe('checkFields', () => {
+  const completeFieldNumberMock: FieldMetadataInterface = {
+    id: 'field-number-id',
+    type: fieldNumberMock.type,
+    name: fieldNumberMock.name,
+    label: 'Field Number',
+    objectMetadataId: 'object-metadata-id',
+    isNullable: fieldNumberMock.isNullable,
+    defaultValue: fieldNumberMock.defaultValue,
+  };
+
+  const fieldsById: FieldMetadataMap = {
+    'field-number-id': completeFieldNumberMock,
+  };
+
+  const fieldsByName: FieldMetadataMap = {
+    [completeFieldNumberMock.name]: completeFieldNumberMock,
+  };
+
+  const mockObjectMetadataWithFieldMaps = {
+    ...objectMetadataItemMock,
+    fieldsById,
+    fieldsByName,
+  };
+
   it('should check field types', () => {
     expect(() =>
-      checkFields(objectMetadataItemMock, ['fieldNumber']),
+      checkFields(mockObjectMetadataWithFieldMaps, ['fieldNumber']),
     ).not.toThrow();
 
-    expect(() => checkFields(objectMetadataItemMock, ['wrongField'])).toThrow();
+    expect(() =>
+      checkFields(mockObjectMetadataWithFieldMaps, ['wrongField']),
+    ).toThrow();
 
     expect(() =>
-      checkFields(objectMetadataItemMock, ['fieldNumber', 'wrongField']),
+      checkFields(mockObjectMetadataWithFieldMaps, [
+        'fieldNumber',
+        'wrongField',
+      ]),
     ).toThrow();
   });
 
   it('should check field types from array of fields', () => {
     expect(() =>
-      checkArrayFields(objectMetadataItemMock, [{ fieldNumber: undefined }]),
+      checkArrayFields(mockObjectMetadataWithFieldMaps, [
+        { fieldNumber: undefined },
+      ]),
     ).not.toThrow();
 
     expect(() =>
-      checkArrayFields(objectMetadataItemMock, [{ wrongField: undefined }]),
+      checkArrayFields(mockObjectMetadataWithFieldMaps, [
+        { wrongField: undefined },
+      ]),
     ).toThrow();
 
     expect(() =>
-      checkArrayFields(objectMetadataItemMock, [
+      checkArrayFields(mockObjectMetadataWithFieldMaps, [
         { fieldNumber: undefined },
         { wrongField: undefined },
       ]),

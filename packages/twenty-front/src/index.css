@@ -13,6 +13,10 @@ button {
   font-size: 13px;
 }
 
+form {
+  display: contents;
+}
+
 /* https://stackoverflow.com/questions/44543157/how-to-hide-the-google-invisible-recaptcha-badge */
 .grecaptcha-badge {
   visibility: hidden !important;

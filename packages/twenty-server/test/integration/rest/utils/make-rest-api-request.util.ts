@@ -20,7 +20,7 @@ export const makeRestAPIRequest = ({
   const client = request(`http://localhost:${APP_PORT}`);
 
   return client[method](`/rest${path}`)
-    .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+    .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
     .set(headers)
     .send(body ? JSON.stringify(body) : undefined);
 };

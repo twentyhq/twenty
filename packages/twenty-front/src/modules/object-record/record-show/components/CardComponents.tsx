@@ -8,8 +8,9 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
-import { WorkflowRunOutputVisualizer } from '@/workflow/components/WorkflowRunOutputVisualizer';
-import { WorkflowRunVersionVisualizer } from '@/workflow/components/WorkflowRunVersionVisualizer';
+import { WorkflowRunOutputVisualizer } from '@/workflow/workflow-diagram/components/WorkflowRunOutputVisualizer';
+import { WorkflowRunVisualizer } from '@/workflow/workflow-diagram/components/WorkflowRunVisualizer';
+import { WorkflowRunVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowRunVisualizerEffect';
 import { WorkflowVersionVisualizer } from '@/workflow/workflow-diagram/components/WorkflowVersionVisualizer';
 import { WorkflowVersionVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVersionVisualizerEffect';
 import { WorkflowVisualizer } from '@/workflow/workflow-diagram/components/WorkflowVisualizer';
@@ -40,8 +41,11 @@ type CardComponentProps = {
 type CardComponentType = (props: CardComponentProps) => JSX.Element | null;
 
 export const CardComponents: Record<CardType, CardComponentType> = {
-  [CardType.TimelineCard]: ({ targetableObject }) => (
-    <TimelineActivities targetableObject={targetableObject} />
+  [CardType.TimelineCard]: ({ targetableObject, isInRightDrawer }) => (
+    <TimelineActivities
+      targetableObject={targetableObject}
+      isInRightDrawer={isInRightDrawer}
+    />
   ),
 
   [CardType.FieldCard]: ({ targetableObject, isInRightDrawer }) => (
@@ -94,9 +98,12 @@ export const CardComponents: Record<CardType, CardComponentType> = {
   ),
 
   [CardType.WorkflowRunCard]: ({ targetableObject }) => (
-    <WorkflowRunVersionVisualizer workflowRunId={targetableObject.id} />
-  ),
+    <>
+      <WorkflowRunVisualizerEffect workflowRunId={targetableObject.id} />
 
+      <WorkflowRunVisualizer workflowRunId={targetableObject.id} />
+    </>
+  ),
   [CardType.WorkflowRunOutputCard]: ({ targetableObject }) => (
     <WorkflowRunOutputVisualizer workflowRunId={targetableObject.id} />
   ),

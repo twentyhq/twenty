@@ -1,49 +1,6 @@
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-
-export const getCompaniesMock = () => {
-  return companiesQueryResult.companies.edges.map((edge) => edge.node);
-};
-
-export const getCompanyObjectMetadataItem = () => {
-  const companyObjectMetadataItem = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === 'company',
-  );
-
-  if (!companyObjectMetadataItem) {
-    throw new Error('Company object metadata item not found');
-  }
-
-  return companyObjectMetadataItem;
-};
-export const getCompanyDuplicateMock = () => {
-  return {
-    ...companiesQueryResult.companies.edges[0].node,
-    id: '8b40856a-2ec9-4c03-8bc0-c032c89e1824',
-  };
-};
-
-export const getEmptyCompanyMock = () => {
-  return {
-    id: '9231e6ee-4cc2-4c7b-8c55-dff16f4d968a',
-    name: '',
-    domainName: {
-      __typename: 'Links',
-      primaryLinkUrl: '',
-      primaryLinkLabel: '',
-      secondaryLinks: [],
-    },
-    address: {},
-    accountOwner: null,
-    createdAt: null,
-    updatedAt: null,
-    employees: null,
-    idealCustomerProfile: null,
-    linkedinLink: null,
-    xLink: null,
-    _activityCount: null,
-    __typename: 'Company',
-  };
-};
+import { isDefined } from 'twenty-shared/utils';
 
 export const companiesQueryResult = {
   companies: {
@@ -773,4 +730,76 @@ export const companiesQueryResult = {
       },
     ],
   },
+};
+
+const allMockedCompanyRecords = companiesQueryResult.companies.edges.map(
+  (edge) => edge.node,
+);
+export const getCompaniesMock = () => {
+  return [...allMockedCompanyRecords];
+};
+
+export const getMockCompanyObjectMetadataItem = () => {
+  const companyObjectMetadataItem = generatedMockObjectMetadataItems.find(
+    (item) => item.nameSingular === 'company',
+  );
+
+  if (!companyObjectMetadataItem) {
+    throw new Error('Company object metadata item not found');
+  }
+
+  return companyObjectMetadataItem;
+};
+export const getCompanyDuplicateMock = () => {
+  return {
+    ...companiesQueryResult.companies.edges[0].node,
+    id: '8b40856a-2ec9-4c03-8bc0-c032c89e1824',
+  };
+};
+
+export const getMockCompanyRecord = (
+  overrides?: Partial<ObjectRecord>,
+  index = 0,
+) => {
+  return {
+    ...allMockedCompanyRecords[index],
+    ...overrides,
+  };
+};
+
+export const findMockCompanyRecord = ({
+  id: queriedCompanyId,
+}: Pick<ObjectRecord, 'id'>) => {
+  const company = allMockedCompanyRecords.find(
+    ({ id: currentCompanyId }) => currentCompanyId === queriedCompanyId,
+  );
+
+  if (!isDefined(company)) {
+    throw new Error(`Could not find company with id, ${queriedCompanyId}`);
+  }
+
+  return company;
+};
+
+export const getEmptyCompanyMock = () => {
+  return {
+    id: '9231e6ee-4cc2-4c7b-8c55-dff16f4d968a',
+    name: '',
+    domainName: {
+      __typename: 'Links',
+      primaryLinkUrl: '',
+      primaryLinkLabel: '',
+      secondaryLinks: [],
+    },
+    address: {},
+    accountOwner: null,
+    createdAt: null,
+    updatedAt: null,
+    employees: null,
+    idealCustomerProfile: null,
+    linkedinLink: null,
+    xLink: null,
+    _activityCount: null,
+    __typename: 'Company',
+  };
 };

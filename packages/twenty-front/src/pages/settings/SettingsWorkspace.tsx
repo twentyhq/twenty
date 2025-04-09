@@ -1,29 +1,24 @@
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import {
-  GithubVersionLink,
-  H2Title,
-  IconWorld,
-  Section,
-  UndecoratedLink,
-} from 'twenty-ui';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { NameField } from '@/settings/workspace/components/NameField';
-import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import packageJson from '../../../package.json';
+import { H2Title, IconWorld, Status } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 
 export const SettingsWorkspace = () => {
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
   const { t } = useLingui();
-
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   return (
     <SubMenuTopBarContainer
       title={t`General`}
@@ -55,23 +50,21 @@ export const SettingsWorkspace = () => {
                 <SettingsCard
                   title={t`Customize Domain`}
                   Icon={<IconWorld />}
+                  Status={
+                    currentWorkspace?.customDomain &&
+                    currentWorkspace?.isCustomDomainEnabled ? (
+                      <Status text={'Active'} color={'turquoise'} />
+                    ) : currentWorkspace?.customDomain ? (
+                      <Status text={'Inactive'} color={'orange'} />
+                    ) : undefined
+                  }
                 />
               </UndecoratedLink>
-            </Section>
-            <Section>
-              <H2Title
-                title={t`Support`}
-                adornment={<ToggleImpersonate />}
-                description={t`Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time.`}
-              />
             </Section>
           </>
         )}
         <Section>
           <DeleteWorkspace />
-        </Section>
-        <Section>
-          <GithubVersionLink version={packageJson.version} />
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

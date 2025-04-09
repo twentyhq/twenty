@@ -9,13 +9,15 @@ export class SettingsPage {
   private readonly calendarsLink: Locator;
   private readonly generalLink: Locator;
   private readonly membersLink: Locator;
+  private readonly rolesLink: Locator;
   private readonly dataModelLink: Locator;
-  private readonly developersLink: Locator;
-  private readonly functionsLink: Locator;
-  private readonly securityLink: Locator;
   private readonly integrationsLink: Locator;
+  private readonly securityLink: Locator;
+  private readonly apisLink: Locator;
+  private readonly webhooksLink: Locator;
+  private readonly adminPanelLink: Locator;
+  private readonly labLink: Locator;
   private readonly releasesLink: Locator;
-  private readonly logoutLink: Locator;
   private readonly advancedToggle: Locator;
 
   constructor(public readonly page: Page) {
@@ -28,13 +30,15 @@ export class SettingsPage {
     this.calendarsLink = page.getByRole('link', { name: 'Calendars' });
     this.generalLink = page.getByRole('link', { name: 'General' });
     this.membersLink = page.getByRole('link', { name: 'Members' });
+    this.rolesLink = page.getByRole('link', { name: 'Roles' });
     this.dataModelLink = page.getByRole('link', { name: 'Data model' });
-    this.developersLink = page.getByRole('link', { name: 'Developers' });
-    this.functionsLink = page.getByRole('link', { name: 'Functions' });
     this.integrationsLink = page.getByRole('link', { name: 'Integrations' });
     this.securityLink = page.getByRole('link', { name: 'Security' });
+    this.apisLink = page.getByRole('link', { name: 'APIs' });
+    this.webhooksLink = page.getByRole('link', { name: 'Webhooks' });
+    this.adminPanelLink = page.getByRole('link', { name: 'Admin Panel' });
+    this.labLink = page.getByRole('link', { name: 'Lab' });
     this.releasesLink = page.getByRole('link', { name: 'Releases' });
-    this.logoutLink = page.getByText('Logout');
     this.advancedToggle = page.locator('input[type="checkbox"]').first();
   }
 
@@ -70,32 +74,40 @@ export class SettingsPage {
     await this.membersLink.click();
   }
 
+  async goToRolesSection() {
+    await this.rolesLink.click();
+  }
+
   async goToDataModelSection() {
     await this.dataModelLink.click();
-  }
-
-  async goToDevelopersSection() {
-    await this.developersLink.click();
-  }
-
-  async goToFunctionsSection() {
-    await this.functionsLink.click();
-  }
-
-  async goToSecuritySection() {
-    await this.securityLink.click();
   }
 
   async goToIntegrationsSection() {
     await this.integrationsLink.click();
   }
 
-  async goToReleasesIntegration() {
-    await this.releasesLink.click();
+  async goToSecuritySection() {
+    await this.securityLink.click();
   }
 
-  async logout() {
-    await this.logoutLink.click();
+  async goToAPIsSection() {
+    await this.apisLink.click();
+  }
+
+  async goToWebhooksSection() {
+    await this.webhooksLink.click();
+  }
+
+  async goToAdminPanelSection() {
+    await this.adminPanelLink.click();
+  }
+
+  async goToLabSection() {
+    await this.labLink.click();
+  }
+
+  async goToReleasesIntegration() {
+    await this.releasesLink.click();
   }
 
   async toggleAdvancedSettings() {

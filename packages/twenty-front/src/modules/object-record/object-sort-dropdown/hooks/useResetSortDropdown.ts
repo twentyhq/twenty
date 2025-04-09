@@ -1,19 +1,20 @@
-import { isSortDirectionMenuUnfoldedComponentState } from '@/object-record/object-sort-dropdown/states/isSortDirectionMenuUnfoldedState';
-import { selectedSortDirectionComponentState } from '@/object-record/object-sort-dropdown/states/selectedSortDirectionState';
+import { isRecordSortDirectionDropdownMenuUnfoldedComponentState } from '@/object-record/object-sort-dropdown/states/isRecordSortDirectionDropdownMenuUnfoldedComponentState';
+import { selectedRecordSortDirectionComponentState } from '@/object-record/object-sort-dropdown/states/selectedRecordSortDirectionComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
 export const useResetSortDropdown = () => {
-  const setIsSortDirectionMenuUnfolded = useSetRecoilComponentStateV2(
-    isSortDirectionMenuUnfoldedComponentState,
-  );
+  const setIsRecordSortDirectionDropdownMenuUnfolded =
+    useSetRecoilComponentStateV2(
+      isRecordSortDirectionDropdownMenuUnfoldedComponentState,
+    );
 
-  const setSelectedSortDirection = useSetRecoilComponentStateV2(
-    selectedSortDirectionComponentState,
+  const setSelectedRecordSortDirection = useSetRecoilComponentStateV2(
+    selectedRecordSortDirectionComponentState,
   );
 
   const resetSortDropdown = () => {
-    setIsSortDirectionMenuUnfolded(false);
-    setSelectedSortDirection('asc');
+    setIsRecordSortDirectionDropdownMenuUnfolded(false);
+    setSelectedRecordSortDirection('asc');
   };
 
   return {

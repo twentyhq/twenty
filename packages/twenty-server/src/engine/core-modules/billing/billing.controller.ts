@@ -22,7 +22,9 @@ import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billi
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeWebhookService } from 'src/engine/core-modules/billing/stripe/services/stripe-webhook.service';
+import { BillingWebhookAlertService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-alert.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-entitlement.service';
+import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-invoice.service';
 import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-price.service';
 import { BillingWebhookProductService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-subscription.service';
@@ -38,6 +40,8 @@ export class BillingController {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingWebhookProductService: BillingWebhookProductService,
     private readonly billingWebhookPriceService: BillingWebhookPriceService,
+    private readonly billingWebhookAlertService: BillingWebhookAlertService,
+    private readonly billingWebhookInvoiceService: BillingWebhookInvoiceService,
   ) {}
 
   @Post('/webhooks')
@@ -47,23 +51,34 @@ export class BillingController {
     @Res() res: Response,
   ) {
     if (!req.rawBody) {
-      res.status(400).end();
-
-      return;
+      throw new BillingException(
+        'Missing request body',
+        BillingExceptionCode.BILLING_MISSING_REQUEST_BODY,
+      );
     }
-    const event = this.stripeWebhookService.constructEventFromPayload(
-      signature,
-      req.rawBody,
-    );
 
     try {
+      const event = this.stripeWebhookService.constructEventFromPayload(
+        signature,
+        req.rawBody,
+      );
       const result = await this.handleStripeEvent(event);
 
       res.status(200).send(result).end();
     } catch (error) {
-      if (error instanceof BillingException) {
-        res.status(404).end();
+      if (
+        error instanceof BillingException ||
+        error instanceof Stripe.errors.StripeError
+      ) {
+        throw error;
       }
+      const errorMessage =
+        error instanceof Error ? error.message : JSON.stringify(error);
+
+      throw new BillingException(
+        errorMessage,
+        BillingExceptionCode.BILLING_UNHANDLED_ERROR,
+      );
     }
   }
 
@@ -89,6 +104,16 @@ export class BillingController {
           event.data,
         );
 
+      case BillingWebhookEvent.ALERT_TRIGGERED:
+        return await this.billingWebhookAlertService.processStripeEvent(
+          event.data,
+        );
+
+      case BillingWebhookEvent.INVOICE_FINALIZED:
+        return await this.billingWebhookInvoiceService.processStripeEvent(
+          event.data,
+        );
+
       case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED:
       case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED:
       case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED: {
@@ -103,7 +128,7 @@ export class BillingController {
 
         return await this.billingWebhookSubscriptionService.processStripeEvent(
           workspaceId,
-          event.data,
+          event,
         );
       }
       default:

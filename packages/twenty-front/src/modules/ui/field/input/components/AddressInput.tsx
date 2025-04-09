@@ -12,8 +12,8 @@ import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDr
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledAddressContainer = styled.div`
   padding: 4px 8px;
@@ -210,7 +210,7 @@ export const AddressInput = ({
         autoFocus
         value={internalValue.addressStreet1 ?? ''}
         ref={inputRefs['addressStreet1']}
-        label="ADDRESS 1"
+        label="Address 1"
         fullWidth
         onChange={getChangeHandler('addressStreet1')}
         onFocus={getFocusHandler('addressStreet1')}
@@ -218,7 +218,7 @@ export const AddressInput = ({
       <TextInputV2
         value={internalValue.addressStreet2 ?? ''}
         ref={inputRefs['addressStreet2']}
-        label="ADDRESS 2"
+        label="Address 2"
         fullWidth
         onChange={getChangeHandler('addressStreet2')}
         onFocus={getFocusHandler('addressStreet2')}
@@ -227,7 +227,7 @@ export const AddressInput = ({
         <TextInputV2
           value={internalValue.addressCity ?? ''}
           ref={inputRefs['addressCity']}
-          label="CITY"
+          label="City"
           fullWidth
           onChange={getChangeHandler('addressCity')}
           onFocus={getFocusHandler('addressCity')}
@@ -235,7 +235,7 @@ export const AddressInput = ({
         <TextInputV2
           value={internalValue.addressState ?? ''}
           ref={inputRefs['addressState']}
-          label="STATE"
+          label="State"
           fullWidth
           onChange={getChangeHandler('addressState')}
           onFocus={getFocusHandler('addressState')}
@@ -245,13 +245,13 @@ export const AddressInput = ({
         <TextInputV2
           value={internalValue.addressPostcode ?? ''}
           ref={inputRefs['addressPostcode']}
-          label="POST CODE"
+          label="Post Code"
           fullWidth
           onChange={getChangeHandler('addressPostcode')}
           onFocus={getFocusHandler('addressPostcode')}
         />
         <CountrySelect
-          label="COUNTRY"
+          label="Country"
           onChange={getChangeHandler('addressCountry')}
           selectedCountryName={internalValue.addressCountry ?? ''}
         />

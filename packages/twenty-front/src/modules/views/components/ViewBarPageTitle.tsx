@@ -1,18 +1,13 @@
 import { useParams } from 'react-router-dom';
 
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { capitalize } from 'twenty-shared';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { capitalize } from 'twenty-shared/utils';
 
-export type ViewBarPageTitleProps = {
-  viewBarId: string;
-};
-
-export const ViewBarPageTitle = ({ viewBarId }: ViewBarPageTitleProps) => {
+export const ViewBarPageTitle = () => {
   const { objectNamePlural } = useParams();
 
-  const { currentViewWithCombinedFiltersAndSorts: currentView } =
-    useGetCurrentView(viewBarId);
+  const { currentView } = useGetCurrentViewOnly();
 
   if (!objectNamePlural) {
     return;

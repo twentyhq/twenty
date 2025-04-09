@@ -19,6 +19,7 @@ import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/micros
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -29,6 +30,7 @@ export class MicrosoftAuthController {
     private readonly guardRedirectService: GuardRedirectService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    private readonly domainManagerService: DomainManagerService,
   ) {}
 
   @Get()
@@ -119,7 +121,7 @@ export class MicrosoftAuthController {
       return res.redirect(
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
           err,
-          this.guardRedirectService.getSubdomainAndCustomDomainFromWorkspace(
+          this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
             currentWorkspace,
           ),
         ),

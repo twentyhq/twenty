@@ -1,28 +1,21 @@
-import React from 'react';
 import styled from '@emotion/styled';
+import React from 'react';
 
 const StyledInputErrorHelper = styled.div`
   color: ${({ theme }) => theme.color.red};
   font-size: ${({ theme }) => theme.font.size.xs};
-  position: absolute;
-`;
-
-const StyledErrorContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const InputErrorHelper = ({
   children,
-  isVisible = true,
 }: {
   children?: React.ReactNode;
-  isVisible?: boolean;
 }) => (
-  <StyledErrorContainer>
-    {children && isVisible && (
+  <div>
+    {children && (
       <StyledInputErrorHelper aria-live="polite">
         {children}
       </StyledInputErrorHelper>
     )}
-  </StyledErrorContainer>
+  </div>
 );

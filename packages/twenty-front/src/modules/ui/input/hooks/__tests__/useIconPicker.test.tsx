@@ -1,9 +1,9 @@
 import { act } from 'react-dom/test-utils';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
-import { Icon123, IconApps } from 'twenty-ui';
 
 import { useIconPicker } from '@/ui/input/hooks/useIconPicker';
+import { Icon123, IconApps } from 'twenty-ui/display';
 
 describe('useIconPicker', () => {
   it('should return correct iconPickerState', async () => {

@@ -1,15 +1,18 @@
-import { IconChevronLeft, IconEyeOff, MenuItemNavigate } from 'twenty-ui';
-
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useObjectOptionsForTable } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForTable';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { ViewType } from '@/views/types/ViewType';
+import { useLingui } from '@lingui/react/macro';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { IconChevronLeft, IconEyeOff } from 'twenty-ui/display';
+import { MenuItemNavigate } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownFieldsContent = () => {
+  const { t } = useLingui();
   const {
     viewType,
     recordIndexId,
@@ -49,11 +52,18 @@ export const ObjectOptionsDropdownFieldsContent = () => {
 
   return (
     <>
-      <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
-        Fields
+      <DropdownMenuHeader
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={resetContent}
+            Icon={IconChevronLeft}
+          />
+        }
+      >
+        {t`Fields`}
       </DropdownMenuHeader>
       <ViewFieldsVisibilityDropdownSection
-        title="Visible"
+        title={t`Visible`}
         fields={visibleRecordFields}
         isDraggable
         onDragEnd={handleReorderFields}
@@ -66,7 +76,7 @@ export const ObjectOptionsDropdownFieldsContent = () => {
         <MenuItemNavigate
           onClick={() => onContentChange('hiddenFields')}
           LeftIcon={IconEyeOff}
-          text="Hidden Fields"
+          text={t`Hidden Fields`}
         />
       </DropdownMenuItemsContainer>
     </>

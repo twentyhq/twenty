@@ -6,12 +6,13 @@ import { useSetRecoilState } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
 import { useHandleFavoriteDragAndDrop } from '@/favorites/hooks/useHandleFavoriteDragAndDrop';
+import { Favorite } from '@/favorites/types/Favorite';
 import { createFolderDroppableId } from '@/favorites/utils/createFolderDroppableId';
 import { createFolderHeaderDroppableId } from '@/favorites/utils/createFolderHeaderDroppableId';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-
 import {
   initialFavorites,
   mockWorkspaceMember,
@@ -34,6 +35,9 @@ describe('useHandleFavoriteDragAndDrop', () => {
   const setupHook = () => {
     return renderHook(
       () => {
+        const setPrefetchFavorites = useSetRecoilState(prefetchFavoritesState);
+        setPrefetchFavorites(initialFavorites as Favorite[]);
+
         const setCurrentWorkspaceMember = useSetRecoilState(
           currentWorkspaceMemberState,
         );

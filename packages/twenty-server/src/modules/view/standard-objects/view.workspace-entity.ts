@@ -1,5 +1,7 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -24,6 +26,15 @@ import { ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-object
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
+
+export enum ViewOpenRecordInType {
+  SIDE_PANEL = 'SIDE_PANEL',
+  RECORD_PAGE = 'RECORD_PAGE',
+}
+
+registerEnumType(ViewOpenRecordInType, {
+  name: 'ViewOpenRecordInType',
+});
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.view,
@@ -110,6 +121,29 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: false,
   })
   isCompact: boolean;
+
+  @WorkspaceField({
+    standardId: VIEW_STANDARD_FIELD_IDS.openRecordIn,
+    type: FieldMetadataType.SELECT,
+    label: msg`Open Record In`,
+    description: msg`Display the records in a side panel or in a record page`,
+    defaultValue: `'${ViewOpenRecordInType.SIDE_PANEL}'`,
+    options: [
+      {
+        value: ViewOpenRecordInType.SIDE_PANEL,
+        label: 'Side Panel',
+        position: 0,
+        color: 'green',
+      },
+      {
+        value: ViewOpenRecordInType.RECORD_PAGE,
+        label: 'Record Page',
+        position: 1,
+        color: 'blue',
+      },
+    ],
+  })
+  openRecordIn: ViewOpenRecordInType;
 
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewFields,
@@ -249,6 +283,18 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
         label: 'Percent not empty',
         position: 9,
         color: 'yellow',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.countTrue,
+        label: 'Count true',
+        position: 10,
+        color: 'red',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.countFalse,
+        label: 'Count false',
+        position: 11,
+        color: 'purple',
       },
     ],
     defaultValue: `'${AGGREGATE_OPERATIONS.count}'`,

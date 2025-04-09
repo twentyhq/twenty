@@ -1,3 +1,4 @@
+import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 
@@ -30,6 +31,10 @@ export const Default: Story = {
 
     await sleep(1000);
 
-    await canvas.getByRole('button', { name: 'Copy link' });
+    const buttons = await canvas.getAllByRole('button');
+
+    expect(
+      buttons.findIndex((button) => button.outerHTML.includes('Copy link')),
+    ).toBeGreaterThan(-1);
   },
 };

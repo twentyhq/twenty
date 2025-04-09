@@ -1,34 +1,38 @@
-import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/states/scrollWrapperInstanceComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/states/contexts/ScrollWrapperComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 
-export const useToggleScrollWrapper = () => {
-  const instanceOverlay = useRecoilComponentValueV2(
-    scrollWrapperInstanceComponentState,
+export const useToggleScrollWrapper = (targetComponentInstanceId?: string) => {
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    ScrollWrapperComponentInstanceContext,
+    targetComponentInstanceId,
   );
 
   const toggleScrollXWrapper = (isEnabled: boolean) => {
-    if (!instanceOverlay) {
-      return;
+    if (isEnabled) {
+      document
+        .getElementById(`scroll-wrapper-${instanceId}`)
+        ?.classList.add('scroll-wrapper-x-enabled');
+    } else {
+      document
+        .getElementById(`scroll-wrapper-${instanceId}`)
+        ?.classList.remove('scroll-wrapper-x-enabled');
     }
-
-    instanceOverlay.options({
-      overflow: {
-        x: isEnabled ? 'scroll' : 'hidden',
-      },
-    });
   };
 
   const toggleScrollYWrapper = (isEnabled: boolean) => {
-    if (!instanceOverlay) {
-      return;
+    if (isEnabled) {
+      document
+        .getElementById(`scroll-wrapper-${instanceId}`)
+        ?.classList.add('scroll-wrapper-y-enabled');
+    } else {
+      document
+        .getElementById(`scroll-wrapper-${instanceId}`)
+        ?.classList.remove('scroll-wrapper-y-enabled');
     }
-
-    instanceOverlay.options({
-      overflow: {
-        y: isEnabled ? 'scroll' : 'hidden',
-      },
-    });
   };
 
-  return { toggleScrollXWrapper, toggleScrollYWrapper };
+  return {
+    toggleScrollXWrapper,
+    toggleScrollYWrapper,
+  };
 };

@@ -1,4 +1,7 @@
 const jestConfig = {
+  // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string
+  // Prettier v3 should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
+  prettierPath: null,
   // to enable logs, comment out the following line
   silent: true,
   clearMocks: true,
@@ -36,6 +39,7 @@ const jestConfig = {
   },
   moduleNameMapper: {
     '^src/(.*)': '<rootDir>/src/$1',
+    '^test/(.*)': '<rootDir>/test/$1',
   },
   moduleFileExtensions: ['js', 'json', 'ts'],
   modulePathIgnorePatterns: ['<rootDir>/dist'],

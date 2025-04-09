@@ -1,8 +1,10 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChevronRight, Pill, Card, CardContent } from 'twenty-ui';
 
 import { ReactNode } from 'react';
+import { Card, CardContent } from 'twenty-ui/layout';
+import { IconChevronRight } from 'twenty-ui/display';
+import { Pill } from 'twenty-ui/components';
 
 type SettingsCardProps = {
   description?: string;
@@ -12,6 +14,7 @@ type SettingsCardProps = {
   onClick?: () => void;
   title: string;
   className?: string;
+  Status?: ReactNode;
 };
 
 const StyledCard = styled(Card)<{
@@ -23,10 +26,6 @@ const StyledCard = styled(Card)<{
   cursor: ${({ disabled, onClick }) =>
     disabled ? 'not-allowed' : onClick ? 'pointer' : 'default'};
   width: 100%;
-  & :hover {
-    background-color: ${({ theme }) => theme.background.quaternary};
-    cursor: pointer;
-  }
 `;
 
 const StyledCardContent = styled(CardContent)<object>`
@@ -34,6 +33,11 @@ const StyledCardContent = styled(CardContent)<object>`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2, 2)};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.background.quaternary};
+    cursor: pointer;
+  }
 `;
 
 const StyledHeader = styled.div`
@@ -77,6 +81,7 @@ export const SettingsCard = ({
   onClick,
   title,
   className,
+  Status,
 }: SettingsCardProps) => {
   const theme = useTheme();
 
@@ -94,6 +99,7 @@ export const SettingsCard = ({
             {title}
             {soon && <Pill label="Soon" />}
           </StyledTitle>
+          {Status && Status}
           <StyledIconChevronRight size={theme.icon.size.sm} />
         </StyledHeader>
         {description && <StyledDescription>{description}</StyledDescription>}

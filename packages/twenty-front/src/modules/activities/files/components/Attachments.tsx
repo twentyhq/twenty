@@ -1,15 +1,5 @@
 import styled from '@emotion/styled';
 import { ChangeEvent, useRef, useState } from 'react';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  Button,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-  IconPlus,
-} from 'twenty-ui';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AttachmentList } from '@/activities/files/components/AttachmentList';
@@ -17,7 +7,18 @@ import { DropZone } from '@/activities/files/components/DropZone';
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { isDefined } from 'twenty-shared';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+} from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/input';
+import { IconPlus } from 'twenty-ui/display';
 
 const StyledAttachmentsContainer = styled.div`
   display: flex;
@@ -45,6 +46,8 @@ export const Attachments = ({
   const { uploadAttachmentFile } = useUploadAttachmentFile();
 
   const [isDraggingFile, setIsDraggingFile] = useState(false);
+
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) onUploadFile?.(e.target.files[0]);
@@ -91,12 +94,14 @@ export const Attachments = ({
               onChange={handleFileChange}
               type="file"
             />
-            <Button
-              Icon={IconPlus}
-              title="Add file"
-              variant="secondary"
-              onClick={handleUploadFileClick}
-            />
+            {!hasObjectReadOnlyPermission && (
+              <Button
+                Icon={IconPlus}
+                title="Add file"
+                variant="secondary"
+                onClick={handleUploadFileClick}
+              />
+            )}
           </AnimatedPlaceholderEmptyContainer>
         )}
       </StyledDropZoneContainer>
@@ -115,13 +120,15 @@ export const Attachments = ({
         title="All"
         attachments={attachments ?? []}
         button={
-          <Button
-            Icon={IconPlus}
-            size="small"
-            variant="secondary"
-            title="Add file"
-            onClick={handleUploadFileClick}
-          ></Button>
+          !hasObjectReadOnlyPermission && (
+            <Button
+              Icon={IconPlus}
+              size="small"
+              variant="secondary"
+              title="Add file"
+              onClick={handleUploadFileClick}
+            ></Button>
+          )
         }
       />
     </StyledAttachmentsContainer>

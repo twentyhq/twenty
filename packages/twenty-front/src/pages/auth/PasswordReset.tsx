@@ -10,7 +10,6 @@ import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,8 +20,9 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { AnimatedEaseIn, MainButton } from 'twenty-ui';
+import { useRecoilValue } from 'recoil';
+import { MainButton } from 'twenty-ui/input';
+import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { z } from 'zod';
 import {
   useUpdatePasswordViaResetTokenMutation,
@@ -88,9 +88,6 @@ export const PasswordReset = () => {
 
   const isLoggedIn = useIsLogged();
 
-  const setIsDefaultLayoutAuthModalVisibleState = useSetRecoilState(
-    isDefaultLayoutAuthModalVisibleState,
-  );
   const { control, handleSubmit } = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
@@ -104,7 +101,7 @@ export const PasswordReset = () => {
     variables: {
       token: passwordResetToken ?? '',
     },
-    skip: !passwordResetToken,
+    skip: !passwordResetToken || isTokenValid,
     onError: (error) => {
       enqueueSnackBar(error?.message ?? 'Token Invalid', {
         variant: SnackBarVariant.Error,
@@ -113,7 +110,6 @@ export const PasswordReset = () => {
     },
     onCompleted: (data) => {
       setIsTokenValid(true);
-      setIsDefaultLayoutAuthModalVisibleState(true);
       if (isNonEmptyString(data?.validatePasswordResetToken?.email)) {
         setEmail(data.validatePasswordResetToken.email);
       }

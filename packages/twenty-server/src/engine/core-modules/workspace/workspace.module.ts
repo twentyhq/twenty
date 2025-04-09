@@ -20,7 +20,9 @@ import { WorkspaceWorkspaceMemberListener } from 'src/engine/core-modules/worksp
 import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.resolver';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
@@ -51,6 +53,8 @@ import { WorkspaceService } from './services/workspace.service';
         OnboardingModule,
         TypeORMModule,
         PermissionsModule,
+        WorkspaceCacheStorageModule,
+        RoleModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,

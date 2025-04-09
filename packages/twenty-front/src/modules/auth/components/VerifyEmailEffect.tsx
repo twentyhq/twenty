@@ -3,10 +3,13 @@ import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
+import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { EmailVerificationSent } from '../sign-in-up/components/EmailVerificationSent';
 
 export const VerifyEmailEffect = () => {
@@ -20,35 +23,40 @@ export const VerifyEmailEffect = () => {
   const emailVerificationToken = searchParams.get('emailVerificationToken');
 
   const navigate = useNavigateApp();
-  const { readCaptchaToken } = useReadCaptchaToken();
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
+  const { verifyLoginToken } = useVerifyLogin();
 
+  const { t } = useLingui();
   useEffect(() => {
     const verifyEmailToken = async () => {
       if (!email || !emailVerificationToken) {
-        enqueueSnackBar(`Invalid email verification link.`, {
+        enqueueSnackBar(t`Invalid email verification link.`, {
           dedupeKey: 'email-verification-link-dedupe-key',
           variant: SnackBarVariant.Error,
         });
         return navigate(AppPath.SignInUp);
       }
 
-      const captchaToken = await readCaptchaToken();
-
       try {
-        const { loginToken } = await getLoginTokenFromEmailVerificationToken(
-          emailVerificationToken,
-          captchaToken,
-        );
+        const { loginToken, workspaceUrls } =
+          await getLoginTokenFromEmailVerificationToken(emailVerificationToken);
 
-        enqueueSnackBar('Email verified.', {
+        enqueueSnackBar(t`Email verified.`, {
           dedupeKey: 'email-verification-dedupe-key',
           variant: SnackBarVariant.Success,
         });
 
-        navigate(AppPath.Verify, undefined, { loginToken: loginToken.token });
+        const workspaceUrl = getWorkspaceUrl(workspaceUrls);
+        if (workspaceUrl.slice(0, -1) !== window.location.origin) {
+          return redirectToWorkspaceDomain(workspaceUrl, AppPath.Verify, {
+            loginToken: loginToken.token,
+            animateModal: false,
+          });
+        }
+        verifyLoginToken(loginToken.token);
       } catch (error) {
-        enqueueSnackBar('Email verification failed.', {
-          dedupeKey: 'email-verification-dedupe-key',
+        enqueueSnackBar(t`Email verification failed.`, {
+          dedupeKey: 'email-verification-error-dedupe-key',
           variant: SnackBarVariant.Error,
         });
         setIsError(true);

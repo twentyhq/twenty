@@ -1,6 +1,5 @@
-import { createState } from '@ui/utilities/state/utils/createState';
-
-import { Workspace } from '~/generated/graphql';
+import { Role, Workspace } from '~/generated/graphql';
+import { createState } from 'twenty-ui/utilities';
 
 export type CurrentWorkspace = Pick<
   Workspace,
@@ -19,11 +18,14 @@ export type CurrentWorkspace = Pick<
   | 'isMicrosoftAuthEnabled'
   | 'isPasswordAuthEnabled'
   | 'hasValidEnterpriseKey'
+  | 'isCustomDomainEnabled'
   | 'subdomain'
   | 'customDomain'
   | 'workspaceUrls'
   | 'metadataVersion'
->;
+> & {
+  defaultRole?: Omit<Role, 'workspaceMembers'> | null;
+};
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({
   key: 'currentWorkspaceState',

@@ -4,9 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { addMilliseconds } from 'date-fns';
 import { Request } from 'express';
 import ms from 'ms';
-import { ExtractJwt } from 'passport-jwt';
-import { isWorkspaceActiveOrSuspended } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 
 import {
   AuthException,
@@ -125,7 +124,7 @@ export class AccessTokenService {
   }
 
   async validateTokenByRequest(request: Request): Promise<AuthContext> {
-    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
+    const token = this.jwtWrapperService.extractJwtFromRequest()(request);
 
     if (!token) {
       throw new AuthException(

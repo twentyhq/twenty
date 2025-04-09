@@ -4,6 +4,7 @@ import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { ViewKey } from '@/views/types/ViewKey';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewSort } from '@/views/types/ViewSort';
 import { ViewType } from '@/views/types/ViewType';
 
@@ -20,6 +21,7 @@ export type GraphQLView = {
   kanbanAggregateOperationFieldMetadataId?: string | null;
   objectMetadataId: string;
   isCompact: boolean;
+  openRecordIn: ViewOpenRecordInType;
   viewFields: ViewField[];
   viewFilters: ViewFilter[];
   viewFilterGroups?: ViewFilterGroup[];

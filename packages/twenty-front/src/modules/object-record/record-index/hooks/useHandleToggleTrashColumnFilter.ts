@@ -8,10 +8,10 @@ import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUp
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
+
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseHandleToggleTrashColumnFilterProps = {
   objectNameSingular: string;
@@ -28,8 +28,6 @@ export const useHandleToggleTrashColumnFilter = ({
 
   const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
-
-  const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters(viewBarId);
 
   const isSoftDeleteFilterActiveComponentRecoilState =
     useRecoilComponentCallbackStateV2(
@@ -64,23 +62,11 @@ export const useHandleToggleTrashColumnFilter = ({
       displayValue: '',
       type: filterType,
       label: `Deleted`,
-      definition: {
-        label: `Deleted`,
-        iconName: 'IconTrash',
-        fieldMetadataId: trashFieldMetadata.id,
-        type: filterType,
-      },
       value: '',
     };
 
     upsertRecordFilter(newFilter);
-    upsertCombinedViewFilter(newFilter);
-  }, [
-    columnDefinitions,
-    objectMetadataItem,
-    upsertCombinedViewFilter,
-    upsertRecordFilter,
-  ]);
+  }, [columnDefinitions, objectMetadataItem, upsertRecordFilter]);
 
   const toggleSoftDeleteFilterState = useRecoilCallback(
     ({ set }) =>

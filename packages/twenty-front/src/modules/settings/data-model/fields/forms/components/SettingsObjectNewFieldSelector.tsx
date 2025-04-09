@@ -16,10 +16,12 @@ import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { H2Title, IconSearch, UndecoratedLink } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { t } from '@lingui/core/macro';
+import { H2Title, IconSearch } from 'twenty-ui/display';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 
 type SettingsObjectNewFieldSelectorProps = {
   className?: string;
@@ -107,7 +109,7 @@ export const SettingsObjectNewFieldSelector = ({
       <Section>
         <StyledSearchInput
           LeftIcon={IconSearch}
-          placeholder="Search a type"
+          placeholder={t`Search a type`}
           value={searchQuery}
           onChange={setSearchQuery}
         />

@@ -1,17 +1,19 @@
-import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { prefetchViewsFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchViewsFromObjectMetadataItemFamilySelector';
 import { AppPath } from '@/types/AppPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { View } from '@/views/types/View';
-import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLocation } from 'react-router-dom';
-import { AnimatedExpandableContainer, useIcons } from 'twenty-ui';
+import { useRecoilValue } from 'recoil';
 import { getAppPath } from '~/utils/navigation/getAppPath';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { useIcons } from 'twenty-ui/display';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -20,27 +22,31 @@ export type NavigationDrawerItemForObjectMetadataItemProps = {
 export const NavigationDrawerItemForObjectMetadataItem = ({
   objectMetadataItem,
 }: NavigationDrawerItemForObjectMetadataItemProps) => {
-  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
-
-  const objectMetadataViews = getObjectMetadataItemViews(
-    objectMetadataItem.id,
-    views,
+  const views = useRecoilValue(
+    prefetchViewsFromObjectMetadataItemFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
   );
+
+  const contextStoreCurrentViewId = useRecoilComponentValueV2(
+    contextStoreCurrentViewIdComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
+
+  const lastVisitedViewPerObjectMetadataItem = useRecoilValue(
+    lastVisitedViewPerObjectMetadataItemState,
+  );
+
+  const lastVisitedViewId =
+    lastVisitedViewPerObjectMetadataItem?.[objectMetadataItem.id];
 
   const { getIcon } = useIcons();
   const currentPath = useLocation().pathname;
-  const { getLastVisitedViewIdFromObjectMetadataItemId } = useLastVisitedView();
-
-  const lastVisitedViewId = getLastVisitedViewIdFromObjectMetadataItemId(
-    objectMetadataItem.id,
-  );
-
-  const viewId = lastVisitedViewId ?? objectMetadataViews[0]?.id;
 
   const navigationPath = getAppPath(
     AppPath.RecordIndexPage,
     { objectNamePlural: objectMetadataItem.namePlural },
-    viewId ? { viewId } : undefined,
+    lastVisitedViewId ? { viewId: lastVisitedViewId } : undefined,
   );
 
   const isActive =
@@ -55,14 +61,14 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       }) + '/',
     );
 
-  const shouldSubItemsBeDisplayed = isActive && objectMetadataViews.length > 1;
+  const shouldSubItemsBeDisplayed = isActive && views.length > 1;
 
-  const sortedObjectMetadataViews = [...objectMetadataViews].sort(
+  const sortedObjectMetadataViews = [...views].sort(
     (viewA, viewB) => viewA.position - viewB.position,
   );
 
   const selectedSubItemIndex = sortedObjectMetadataViews.findIndex(
-    (view) => viewId === view.id,
+    (view) => contextStoreCurrentViewId === view.id,
   );
 
   const subItemArrayLength = sortedObjectMetadataViews.length;
@@ -93,7 +99,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
               { objectNamePlural: objectMetadataItem.namePlural },
               { viewId: view.id },
             )}
-            active={viewId === view.id}
+            active={contextStoreCurrentViewId === view.id}
             subItemState={getNavigationSubItemLeftAdornment({
               index,
               arrayLength: subItemArrayLength,

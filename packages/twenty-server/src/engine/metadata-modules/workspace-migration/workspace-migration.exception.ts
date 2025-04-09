@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class WorkspaceMigrationException extends CustomException {
-  code: WorkspaceMigrationExceptionCode;
   constructor(message: string, code: WorkspaceMigrationExceptionCode) {
     super(message, code);
   }

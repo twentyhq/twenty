@@ -1,4 +1,3 @@
-import { isDefined } from 'twenty-shared';
 import {
   CreatePersonResponse,
   FindPersonResponse,
@@ -9,6 +8,7 @@ import { CREATE_PERSON } from '~/graphql/person/mutations';
 import { FIND_PERSON } from '~/graphql/person/queries';
 
 import { callMutation, callQuery } from '../utils/requestDb';
+import { isDefined } from 'twenty-shared/utils';
 
 export const fetchPerson = async (
   personFilterData: PersonFilterInput,

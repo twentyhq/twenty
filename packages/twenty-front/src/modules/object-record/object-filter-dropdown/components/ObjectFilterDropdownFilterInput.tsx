@@ -5,31 +5,41 @@ import { ObjectFilterDropdownRatingInput } from '@/object-record/object-filter-d
 import { ObjectFilterDropdownRecordSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSearchInput';
 import { ObjectFilterDropdownSourceSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSourceSelect';
-import { ObjectFilterDropdownTextSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextSearchInput';
-import { isActorSourceCompositeFilter } from '@/object-record/object-filter-dropdown/utils/isActorSourceCompositeFilter';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { isDefined } from 'twenty-shared';
 
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect';
+import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
-import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
+import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isDefined } from 'twenty-shared/utils';
 
 type ObjectFilterDropdownFilterInputProps = {
   filterDropdownId?: string;
+  recordFilterId?: string;
 };
 
 export const ObjectFilterDropdownFilterInput = ({
   filterDropdownId,
+  recordFilterId,
 }: ObjectFilterDropdownFilterInputProps) => {
-  const filterDefinitionUsedInDropdown = useRecoilComponentValueV2(
-    filterDefinitionUsedInDropdownComponentState,
+  const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
+    fieldMetadataItemUsedInDropdownComponentSelector,
     filterDropdownId,
   );
+
+  const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
+    subFieldNameUsedInDropdownComponentState,
+    filterDropdownId,
+  );
+
   const selectedOperandInDropdown = useRecoilComponentValueV2(
     selectedOperandInDropdownComponentState,
     filterDropdownId,
@@ -50,52 +60,59 @@ export const ObjectFilterDropdownFilterInput = ({
       ViewFilterOperand.IsRelative,
     ].includes(selectedOperandInDropdown);
 
-  if (!isDefined(filterDefinitionUsedInDropdown)) {
+  if (!isDefined(fieldMetadataItemUsedInDropdown)) {
     return null;
   }
+
+  const filterType = getFilterTypeFromFieldType(
+    fieldMetadataItemUsedInDropdown.type,
+  );
+
+  const isActorSourceCompositeFilter = isFilterOnActorSourceSubField(
+    subFieldNameUsedInDropdown,
+  );
 
   return (
     <>
       {isConfigurable && selectedOperandInDropdown && (
         <>
-          {TEXT_FILTER_TYPES.includes(filterDefinitionUsedInDropdown.type) &&
-            !isActorSourceCompositeFilter(filterDefinitionUsedInDropdown) && (
-              <ObjectFilterDropdownTextSearchInput />
-            )}
-          {NUMBER_FILTER_TYPES.includes(
-            filterDefinitionUsedInDropdown.type,
-          ) && <ObjectFilterDropdownNumberInput />}
-          {filterDefinitionUsedInDropdown.type === 'RATING' && (
-            <ObjectFilterDropdownRatingInput />
+          {TEXT_FILTER_TYPES.includes(filterType) && (
+            <ObjectFilterDropdownTextInput />
           )}
-          {DATE_FILTER_TYPES.includes(filterDefinitionUsedInDropdown.type) && (
+          {NUMBER_FILTER_TYPES.includes(filterType) && (
+            <ObjectFilterDropdownNumberInput />
+          )}
+          {filterType === 'RATING' && <ObjectFilterDropdownRatingInput />}
+          {DATE_FILTER_TYPES.includes(filterType) && (
             <ObjectFilterDropdownDateInput />
           )}
-          {filterDefinitionUsedInDropdown.type === 'RELATION' && (
+          {filterType === 'RELATION' && (
             <>
               <ObjectFilterDropdownSearchInput />
               <DropdownMenuSeparator />
-              <ObjectFilterDropdownRecordSelect />
+              <ObjectFilterDropdownRecordSelect
+                recordFilterId={recordFilterId}
+              />
             </>
           )}
-          {isActorSourceCompositeFilter(filterDefinitionUsedInDropdown) && (
-            <>
-              <DropdownMenuSeparator />
-              <ObjectFilterDropdownSourceSelect />
-            </>
-          )}
-          {['SELECT', 'MULTI_SELECT'].includes(
-            filterDefinitionUsedInDropdown.type,
-          ) && (
+          {filterType === 'ACTOR' &&
+            (isActorSourceCompositeFilter ? (
+              <>
+                <ObjectFilterDropdownSourceSelect />
+              </>
+            ) : (
+              <>
+                <ObjectFilterDropdownTextInput />
+              </>
+            ))}
+          {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
             <>
               <ObjectFilterDropdownSearchInput />
               <DropdownMenuSeparator />
               <ObjectFilterDropdownOptionSelect />
             </>
           )}
-          {filterDefinitionUsedInDropdown.type === 'BOOLEAN' && (
-            <ObjectFilterDropdownBooleanSelect />
-          )}
+          {filterType === 'BOOLEAN' && <ObjectFilterDropdownBooleanSelect />}
         </>
       )}
     </>

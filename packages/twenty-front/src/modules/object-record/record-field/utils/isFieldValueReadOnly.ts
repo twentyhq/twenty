@@ -3,34 +3,31 @@ import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowS
 import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type isFieldValueReadOnlyParams = {
   objectNameSingular?: string;
   fieldName?: string;
   fieldType?: FieldMetadataType;
-  isObjectRemote?: boolean;
-  isRecordDeleted?: boolean;
+  isRecordReadOnly?: boolean;
 };
 
 export const isFieldValueReadOnly = ({
   objectNameSingular,
   fieldName,
   fieldType,
-  isObjectRemote = false,
-  isRecordDeleted = false,
+  isRecordReadOnly = false,
 }: isFieldValueReadOnlyParams) => {
-  if (fieldName === 'noteTargets' || fieldName === 'taskTargets') {
+  if (isRecordReadOnly) {
     return true;
   }
 
-  if (isObjectRemote) {
-    return true;
-  }
-
-  if (isRecordDeleted) {
-    return true;
+  if (
+    objectNameSingular === CoreObjectNameSingular.WorkflowRun &&
+    fieldName === 'output'
+  ) {
+    return false;
   }
 
   if (isWorkflowSubObjectMetadata(objectNameSingular)) {
@@ -44,6 +41,20 @@ export const isFieldValueReadOnly = ({
   if (
     objectNameSingular === CoreObjectNameSingular.Workflow &&
     fieldName !== 'name'
+  ) {
+    return true;
+  }
+
+  if (
+    objectNameSingular !== CoreObjectNameSingular.Note &&
+    fieldName === 'noteTargets'
+  ) {
+    return true;
+  }
+
+  if (
+    objectNameSingular !== CoreObjectNameSingular.Task &&
+    fieldName === 'taskTargets'
   ) {
     return true;
   }

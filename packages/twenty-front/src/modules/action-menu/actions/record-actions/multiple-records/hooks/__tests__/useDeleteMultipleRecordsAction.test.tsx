@@ -2,16 +2,16 @@ import { DeleteManyRecordsProps } from '@/object-record/hooks/useDeleteManyRecor
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { useDeleteMultipleRecordsAction } from '../useDeleteMultipleRecordsAction';
 
 const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
 )!;
 
-const peopleMock = getPeopleMock();
+const peopleMock = getPeopleRecordConnectionMock();
 
 const deleteManyRecordsMock = jest.fn();
 const resetTableRowSelectionMock = jest.fn();
@@ -41,6 +41,7 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   componentInstanceId: '1',
   contextStoreCurrentObjectMetadataNameSingular:
     personMockObjectMetadataItem.nameSingular,
+  contextStoreCurrentViewId: 'my-view-id',
   contextStoreTargetedRecordsRule: {
     mode: 'selection',
     selectedRecordIds: [peopleMock[0].id, peopleMock[1].id],

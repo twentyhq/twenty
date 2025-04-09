@@ -1,6 +1,8 @@
 import request from 'supertest';
 
-const client = request(`http://localhost:${APP_PORT}`);
+const SERVER_URL = `http://localhost:${APP_PORT}`;
+
+const client = request(SERVER_URL);
 
 const auth = {
   email: 'tim@apple.dev',
@@ -26,6 +28,7 @@ describe('AuthResolve (integration)', () => {
 
     return client
       .post('/graphql')
+      .set('Origin', SERVER_URL)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -59,6 +62,7 @@ describe('AuthResolve (integration)', () => {
 
     return client
       .post('/graphql')
+      .set('Origin', SERVER_URL)
       .send(queryData)
       .expect(200)
       .expect((res) => {

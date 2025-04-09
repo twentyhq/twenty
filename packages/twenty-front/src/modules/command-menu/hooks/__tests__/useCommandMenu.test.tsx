@@ -5,11 +5,9 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { IconList, IconSearch } from 'twenty-ui';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
@@ -53,7 +51,7 @@ describe('useCommandMenu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.commandMenu.openRootCommandMenu();
+      result.current.commandMenu.openCommandMenu();
     });
 
     expect(result.current.isCommandMenuOpened).toBe(true);
@@ -81,147 +79,5 @@ describe('useCommandMenu', () => {
     });
 
     expect(result.current.isCommandMenuOpened).toBe(false);
-  });
-
-  it('should navigate to a page', () => {
-    const { result } = renderHooks();
-
-    expect(result.current.commandMenuNavigationStack).toEqual([]);
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
-    expect(result.current.commandMenuPageInfo).toEqual({
-      title: undefined,
-      Icon: undefined,
-    });
-
-    act(() => {
-      result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.SearchRecords,
-        pageTitle: 'Search',
-        pageIcon: IconSearch,
-      });
-    });
-
-    expect(result.current.commandMenuNavigationStack).toEqual([
-      {
-        page: CommandMenuPages.SearchRecords,
-        pageTitle: 'Search',
-        pageIcon: IconSearch,
-      },
-    ]);
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.SearchRecords);
-    expect(result.current.commandMenuPageInfo).toEqual({
-      title: 'Search',
-      Icon: IconSearch,
-    });
-
-    act(() => {
-      result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.ViewRecord,
-        pageTitle: 'Company',
-        pageIcon: IconList,
-      });
-    });
-
-    expect(result.current.commandMenuNavigationStack).toEqual([
-      {
-        page: CommandMenuPages.SearchRecords,
-        pageTitle: 'Search',
-        pageIcon: IconSearch,
-      },
-      {
-        page: CommandMenuPages.ViewRecord,
-        pageTitle: 'Company',
-        pageIcon: IconList,
-      },
-    ]);
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.ViewRecord);
-    expect(result.current.commandMenuPageInfo).toEqual({
-      title: 'Company',
-      Icon: IconList,
-    });
-  });
-
-  it('should go back from a page', () => {
-    const { result } = renderHooks();
-
-    act(() => {
-      result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.SearchRecords,
-        pageTitle: 'Search',
-        pageIcon: IconSearch,
-      });
-    });
-
-    act(() => {
-      result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.ViewRecord,
-        pageTitle: 'Company',
-        pageIcon: IconList,
-      });
-    });
-
-    expect(result.current.commandMenuNavigationStack).toEqual([
-      {
-        page: CommandMenuPages.SearchRecords,
-        pageTitle: 'Search',
-        pageIcon: IconSearch,
-      },
-      {
-        page: CommandMenuPages.ViewRecord,
-        pageTitle: 'Company',
-        pageIcon: IconList,
-      },
-    ]);
-
-    act(() => {
-      result.current.commandMenu.goBackFromCommandMenu();
-    });
-
-    expect(result.current.commandMenuNavigationStack).toEqual([
-      {
-        page: CommandMenuPages.SearchRecords,
-        pageTitle: 'Search',
-        pageIcon: IconSearch,
-      },
-    ]);
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.SearchRecords);
-    expect(result.current.commandMenuPageInfo).toEqual({
-      title: 'Search',
-      Icon: IconSearch,
-    });
-
-    act(() => {
-      result.current.commandMenu.goBackFromCommandMenu();
-    });
-
-    expect(result.current.commandMenuNavigationStack).toEqual([]);
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
-    expect(result.current.commandMenuPageInfo).toEqual({
-      title: undefined,
-      Icon: undefined,
-    });
-    expect(result.current.isCommandMenuOpened).toBe(false);
-  });
-
-  it('should navigate to a page in history', () => {
-    const { result } = renderHooks();
-
-    act(() => {
-      result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.SearchRecords,
-        pageTitle: 'Search',
-        pageIcon: IconSearch,
-      });
-    });
-
-    act(() => {
-      result.current.commandMenu.navigateCommandMenuHistory(0);
-    });
-
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.SearchRecords);
-    expect(result.current.commandMenuPageInfo).toEqual({
-      title: 'Search',
-      Icon: IconSearch,
-    });
   });
 });

@@ -3,15 +3,16 @@ import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/g
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
+type GenerateEmptyJestRecordNodeArgs = {
+  objectNameSingular: string;
+  input: Record<string, unknown>;
+  withDepthOneRelation?: boolean;
+};
 export const generateEmptyJestRecordNode = ({
   objectNameSingular,
   input,
   withDepthOneRelation = false,
-}: {
-  objectNameSingular: string;
-  input: Record<string, unknown>;
-  withDepthOneRelation?: boolean;
-}) => {
+}: GenerateEmptyJestRecordNodeArgs) => {
   const objectMetadataItem = generatedMockObjectMetadataItems.find(
     (item) => item.nameSingular === objectNameSingular,
   );
@@ -22,7 +23,10 @@ export const generateEmptyJestRecordNode = ({
     );
   }
 
-  const prefilledRecord = prefillRecord({ objectMetadataItem, input });
+  const prefilledRecord = prefillRecord({
+    objectMetadataItem,
+    input,
+  });
 
   return getRecordNodeFromRecord({
     record: prefilledRecord,

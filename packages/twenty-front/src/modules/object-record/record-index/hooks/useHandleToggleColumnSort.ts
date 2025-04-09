@@ -2,17 +2,16 @@ import { useCallback } from 'react';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
-import { useUpsertCombinedViewSorts } from '@/views/hooks/useUpsertCombinedViewSorts';
-import { isDefined } from 'twenty-shared';
+import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
+import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
+import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseHandleToggleColumnSortProps = {
   objectNameSingular: string;
-  viewBarId: string;
 };
 
 export const useHandleToggleColumnSort = ({
-  viewBarId,
   objectNameSingular,
 }: UseHandleToggleColumnSortProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -22,10 +21,10 @@ export const useHandleToggleColumnSort = ({
   const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
-  const { upsertCombinedViewSort } = useUpsertCombinedViewSorts(viewBarId);
+  const { upsertRecordSort } = useUpsertRecordSort();
 
   const handleToggleColumnSort = useCallback(
-    (fieldMetadataId: string) => {
+    async (fieldMetadataId: string) => {
       const correspondingColumnDefinition = columnDefinitions.find(
         (columnDefinition) =>
           columnDefinition.fieldMetadataId === fieldMetadataId,
@@ -33,19 +32,15 @@ export const useHandleToggleColumnSort = ({
 
       if (!isDefined(correspondingColumnDefinition)) return;
 
-      const newSort: Sort = {
+      const newSort: RecordSort = {
+        id: v4(),
         fieldMetadataId,
-        definition: {
-          fieldMetadataId,
-          label: correspondingColumnDefinition.label,
-          iconName: correspondingColumnDefinition.iconName,
-        },
         direction: 'asc',
       };
 
-      upsertCombinedViewSort(newSort);
+      upsertRecordSort(newSort);
     },
-    [columnDefinitions, upsertCombinedViewSort],
+    [columnDefinitions, upsertRecordSort],
   );
 
   return handleToggleColumnSort;

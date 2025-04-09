@@ -10,11 +10,12 @@ import {
 } from '@/object-record/record-index/export/hooks/useExportFetchRecords';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
-import { isDefined } from 'twenty-shared';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isDefined } from 'twenty-shared/utils';
 
 type GenerateExportOptions = {
   columns: ColumnDefinition<FieldMetadata>[];
@@ -100,7 +101,7 @@ const percentage = (part: number, whole: number): number => {
 
 export const displayedExportProgress = (progress?: ExportProgress): string => {
   if (isUndefinedOrNull(progress?.exportedRecordCount)) {
-    return 'Export';
+    return t`Export`;
   }
 
   if (

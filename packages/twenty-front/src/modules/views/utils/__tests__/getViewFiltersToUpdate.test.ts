@@ -33,12 +33,12 @@ describe('getViewFiltersToUpdate', () => {
   });
 
   it('should return filters that exist in both arrays but have different values', () => {
-    const existingFilter = { ...baseFilter };
+    const existingFilter = { ...baseFilter } satisfies ViewFilter;
     const updatedFilter = {
       ...baseFilter,
       value: 'updated-value',
       displayValue: 'updated-value',
-    };
+    } satisfies ViewFilter;
 
     const currentViewFilters: ViewFilter[] = [existingFilter];
     const newViewFilters: ViewFilter[] = [updatedFilter];
@@ -49,8 +49,8 @@ describe('getViewFiltersToUpdate', () => {
   });
 
   it('should not return filters that exist in both arrays with same values', () => {
-    const existingFilter = { ...baseFilter };
-    const sameFilter = { ...baseFilter };
+    const existingFilter = { ...baseFilter } satisfies ViewFilter;
+    const sameFilter = { ...baseFilter } satisfies ViewFilter;
 
     const currentViewFilters: ViewFilter[] = [existingFilter];
     const newViewFilters: ViewFilter[] = [sameFilter];
@@ -69,44 +69,12 @@ describe('getViewFiltersToUpdate', () => {
     expect(result).toEqual([]);
   });
 
-  it('should not update filters with same fieldMetadataId but different viewFilterGroupId', () => {
-    const existingFilter = { ...baseFilter };
-    const filterInDifferentGroup = {
-      ...baseFilter,
-      viewFilterGroupId: 'group-2',
-      value: 'updated-value',
-    };
-
-    const currentViewFilters: ViewFilter[] = [existingFilter];
-    const newViewFilters: ViewFilter[] = [filterInDifferentGroup];
-
-    const result = getViewFiltersToUpdate(currentViewFilters, newViewFilters);
-
-    expect(result).toEqual([]);
-  });
-
-  it('should not update filters with same viewFilterGroupId but different fieldMetadataId', () => {
-    const existingFilter = { ...baseFilter };
-    const filterWithDifferentField = {
-      ...baseFilter,
-      fieldMetadataId: 'field-2',
-      value: 'updated-value',
-    };
-
-    const currentViewFilters: ViewFilter[] = [existingFilter];
-    const newViewFilters: ViewFilter[] = [filterWithDifferentField];
-
-    const result = getViewFiltersToUpdate(currentViewFilters, newViewFilters);
-
-    expect(result).toEqual([]);
-  });
-
   it('should update filter when operand changes', () => {
-    const existingFilter = { ...baseFilter };
+    const existingFilter = { ...baseFilter } satisfies ViewFilter;
     const filterWithNewOperand = {
       ...baseFilter,
       operand: ViewFilterOperand.DoesNotContain,
-    };
+    } satisfies ViewFilter;
 
     const currentViewFilters: ViewFilter[] = [existingFilter];
     const newViewFilters: ViewFilter[] = [filterWithNewOperand];
@@ -117,11 +85,11 @@ describe('getViewFiltersToUpdate', () => {
   });
 
   it('should update filter when position changes', () => {
-    const existingFilter = { ...baseFilter };
+    const existingFilter = { ...baseFilter } satisfies ViewFilter;
     const filterWithNewPosition = {
       ...baseFilter,
       positionInViewFilterGroup: 1,
-    };
+    } satisfies ViewFilter;
 
     const currentViewFilters: ViewFilter[] = [existingFilter];
     const newViewFilters: ViewFilter[] = [filterWithNewPosition];

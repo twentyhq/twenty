@@ -27,7 +27,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
 
   const { buildAvailableFieldsForImport } = useBuildAvailableFieldsForImport();
 
-  const openObjectRecordsSpreasheetImportDialog = (
+  const openObjectRecordsSpreadsheetImportDialog = (
     options?: Omit<
       SpreadsheetImportDialogOptions<any>,
       'fields' | 'isOpen' | 'onClose'
@@ -56,16 +56,17 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
       onSubmit: async (data) => {
         const createInputs = data.validStructuredRows.map((record) => {
           const fieldMapping: Record<string, any> =
-            buildRecordFromImportedStructuredRow(
-              record,
-              availableFieldMetadataItems,
-            );
+            buildRecordFromImportedStructuredRow({
+              importedStructuredRow: record,
+              fields: availableFieldMetadataItems,
+            });
 
           return fieldMapping;
         });
 
         try {
-          await createManyRecords(createInputs, true);
+          const upsert = true;
+          await createManyRecords(createInputs, upsert);
         } catch (error: any) {
           enqueueSnackBar(error?.message || 'Something went wrong', {
             variant: SnackBarVariant.Error,
@@ -77,6 +78,6 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
   };
 
   return {
-    openObjectRecordsSpreasheetImportDialog,
+    openObjectRecordsSpreadsheetImportDialog,
   };
 };

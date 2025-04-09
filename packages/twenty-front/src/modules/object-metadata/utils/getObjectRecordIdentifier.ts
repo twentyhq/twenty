@@ -12,7 +12,13 @@ export const getObjectRecordIdentifier = ({
   objectMetadataItem,
   record,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: Pick<
+    ObjectMetadataItem,
+    | 'fields'
+    | 'labelIdentifierFieldMetadataId'
+    | 'nameSingular'
+    | 'imageIdentifierFieldMetadataId'
+  >;
   record: ObjectRecord;
 }): ObjectRecordIdentifier => {
   const labelIdentifierFieldMetadataItem =

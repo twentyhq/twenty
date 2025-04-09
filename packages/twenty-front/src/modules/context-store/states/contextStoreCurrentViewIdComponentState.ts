@@ -2,9 +2,9 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
 export const contextStoreCurrentViewIdComponentState = createComponentStateV2<
-  string | null
+  string | undefined
 >({
   key: 'contextStoreCurrentViewIdComponentState',
-  defaultValue: null,
+  defaultValue: undefined,
   componentInstanceContext: ContextStoreComponentInstanceContext,
 });

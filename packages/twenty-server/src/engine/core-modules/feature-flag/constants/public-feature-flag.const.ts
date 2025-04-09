@@ -9,21 +9,12 @@ type FeatureFlagMetadata = {
 export type PublicFeatureFlag = {
   key: Extract<
     FeatureFlagKey,
-    FeatureFlagKey.IsLocalizationEnabled | FeatureFlagKey.IsWorkflowEnabled
+    FeatureFlagKey.IsWorkflowEnabled | FeatureFlagKey.IsCustomDomainEnabled
   >;
   metadata: FeatureFlagMetadata;
 };
 
 export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
-  {
-    key: FeatureFlagKey.IsLocalizationEnabled,
-    metadata: {
-      label: 'Localization',
-      description:
-        "Enable this and go to Settings > Experience to change your account's language. You can also help us improve the translations on Github.",
-      imagePath: 'https://twenty.com/images/releases/labs/translation.png',
-    },
-  },
   {
     key: FeatureFlagKey.IsWorkflowEnabled,
     metadata: {
@@ -32,4 +23,17 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       imagePath: 'https://twenty.com/images/lab/is-workflow-enabled.png',
     },
   },
+  ...(process.env.CLOUDFLARE_API_KEY
+    ? [
+        {
+          key: FeatureFlagKey.IsCustomDomainEnabled as PublicFeatureFlag['key'],
+          metadata: {
+            label: 'Custom Domain',
+            description: 'Customize your workspace URL with your own domain.',
+            imagePath:
+              'https://twenty.com/images/lab/is-custom-domain-enabled.png',
+          },
+        },
+      ]
+    : []),
 ];

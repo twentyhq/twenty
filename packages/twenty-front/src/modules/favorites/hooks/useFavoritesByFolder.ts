@@ -1,4 +1,6 @@
 import { sortFavorites } from '@/favorites/utils/sortFavorites';
+import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
+import { useRecoilValue } from 'recoil';
 import { useFavoritesMetadata } from './useFavoritesMetadata';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 import { usePrefetchedFavoritesFoldersData } from './usePrefetchedFavoritesFoldersData';
@@ -7,11 +9,12 @@ export const useFavoritesByFolder = () => {
   const { favorites } = usePrefetchedFavoritesData();
   const { favoriteFolders } = usePrefetchedFavoritesFoldersData();
   const {
-    views,
     objectMetadataItems,
     getObjectRecordIdentifierByNameSingular,
     favoriteRelationFields,
   } = useFavoritesMetadata();
+
+  const prefetchViews = useRecoilValue(prefetchViewsState);
 
   const favoritesByFolder = favoriteFolders.map((folder) => ({
     folderId: folder.id,
@@ -21,7 +24,7 @@ export const useFavoritesByFolder = () => {
       favoriteRelationFields,
       getObjectRecordIdentifierByNameSingular,
       true,
-      views,
+      prefetchViews,
       objectMetadataItems,
     ),
   }));

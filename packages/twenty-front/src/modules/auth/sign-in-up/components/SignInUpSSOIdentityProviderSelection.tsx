@@ -4,10 +4,12 @@ import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { HorizontalSeparator, MainButton } from 'twenty-ui';
 
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import { isDefined } from 'twenty-shared';
+import React from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { HorizontalSeparator } from 'twenty-ui/display';
+import { MainButton } from 'twenty-ui/input';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -24,16 +26,15 @@ export const SignInUpSSOIdentityProviderSelection = () => {
       <StyledContentContainer>
         {isDefined(workspaceAuthProviders?.sso) &&
           workspaceAuthProviders?.sso.map((idp) => (
-            <>
+            <React.Fragment key={idp.id}>
               <MainButton
-                key={idp.id}
                 title={idp.name}
                 onClick={() => redirectToSSOLoginPage(idp.id)}
                 Icon={guessSSOIdentityProviderIconByUrl(idp.issuer)}
                 fullWidth
               />
               <HorizontalSeparator visible={false} />
-            </>
+            </React.Fragment>
           ))}
       </StyledContentContainer>
     </>

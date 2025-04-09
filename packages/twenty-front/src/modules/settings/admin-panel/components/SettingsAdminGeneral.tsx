@@ -1,63 +1,49 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
-import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { TabList } from '@/ui/layout/tab/components/TabList';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
-import {
-  Button,
-  H1Title,
-  H1TitleFontColor,
-  H2Title,
-  IconSearch,
-  Section,
-} from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUserLookupAdminPanelMutation } from '~/generated/graphql';
 
-const StyledLinkContainer = styled.div`
-  margin-right: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
-`;
+import { currentUserState } from '@/auth/states/currentUserState';
+import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
+import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
+import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/input';
+import {
+  H2Title,
+  IconId,
+  IconMail,
+  IconSearch,
+  IconUser,
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-`;
-
-const StyledUserInfo = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(5)};
-`;
-
-const StyledTabListContainer = styled.div`
-  align-items: center;
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  box-sizing: border-box;
-  display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledContentContainer = styled.div`
-  flex: 1;
-  width: 100%;
-  padding: ${({ theme }) => theme.spacing(4)} 0;
 `;
 
 export const SettingsAdminGeneral = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
   const { enqueueSnackBar } = useSnackBar();
 
-  const { activeTabId, setActiveTabId } = useTabList(
+  const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
+    activeTabIdComponentState,
     SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID,
   );
   const [userLookupResult, setUserLookupResult] = useRecoilState(
@@ -66,6 +52,12 @@ export const SettingsAdminGeneral = () => {
   const [isUserLookupLoading, setIsUserLookupLoading] = useState(false);
 
   const [userLookup] = useUserLookupAdminPanelMutation();
+
+  const currentUser = useRecoilValue(currentUserState);
+
+  const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel;
+
+  const canImpersonate = currentUser?.canImpersonate;
 
   const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
 
@@ -118,68 +110,95 @@ export const SettingsAdminGeneral = () => {
     userLookupResult?.user.lastName || ''
   }`.trim();
 
+  const userInfoItems = [
+    {
+      Icon: IconUser,
+      label: t`Name`,
+      value: userFullName,
+    },
+    {
+      Icon: IconMail,
+      label: t`Email`,
+      value: userLookupResult?.user.email,
+    },
+    {
+      Icon: IconId,
+      label: t`ID`,
+      value: userLookupResult?.user.id,
+    },
+  ];
+
   return (
     <>
-      <Section>
-        <H2Title
-          title={
-            canManageFeatureFlags
-              ? 'Feature Flags & Impersonation'
-              : 'User Impersonation'
-          }
-          description={
-            canManageFeatureFlags
-              ? 'Look up users and manage their workspace feature flags or impersonate them.'
-              : 'Look up users to impersonate them.'
-          }
-        />
+      {canAccessFullAdminPanel && (
+        <Section>
+          <H2Title
+            title={t`About`}
+            description={t`Version of the application`}
+          />
+          <SettingsAdminVersionContainer />
+        </Section>
+      )}
 
-        <StyledContainer>
-          <StyledLinkContainer>
+      {canImpersonate && (
+        <Section>
+          <H2Title
+            title={
+              canManageFeatureFlags
+                ? t`Feature Flags & Impersonation`
+                : t`User Impersonation`
+            }
+            description={
+              canManageFeatureFlags
+                ? t`Look up users and manage their workspace feature flags or impersonate them.`
+                : t`Look up users to impersonate them.`
+            }
+          />
+
+          <StyledContainer>
             <TextInput
               value={userIdentifier}
               onChange={setUserIdentifier}
               onInputEnter={handleSearch}
-              placeholder="Enter user ID or email address"
+              placeholder={t`Enter user ID or email address`}
               fullWidth
               disabled={isUserLookupLoading}
             />
-          </StyledLinkContainer>
-          <Button
-            Icon={IconSearch}
-            variant="primary"
-            accent="blue"
-            title="Search"
-            onClick={handleSearch}
-            disabled={!userIdentifier.trim() || isUserLookupLoading}
-          />
-        </StyledContainer>
-      </Section>
+            <Button
+              Icon={IconSearch}
+              variant="primary"
+              accent="blue"
+              title={t`Search`}
+              onClick={handleSearch}
+              disabled={!userIdentifier.trim() || isUserLookupLoading}
+            />
+          </StyledContainer>
+        </Section>
+      )}
 
       {isDefined(userLookupResult) && (
-        <Section>
-          <StyledUserInfo>
-            <H1Title title="User Info" fontColor={H1TitleFontColor.Primary} />
-            <H2Title title={userFullName} description="User Name" />
-            <H2Title
-              title={userLookupResult.user.email}
-              description="User Email"
+        <>
+          <Section>
+            <H2Title title={t`User Info`} description={t`About this user`} />
+            <SettingsAdminTableCard
+              items={userInfoItems}
+              rounded
+              gridAutoColumns="1fr 4fr"
             />
-            <H2Title title={userLookupResult.user.id} description="User ID" />
-          </StyledUserInfo>
-
-          <H1Title title="Workspaces" fontColor={H1TitleFontColor.Primary} />
-          <StyledTabListContainer>
+          </Section>
+          <Section>
+            <H2Title
+              title={t`Workspaces`}
+              description={t`All workspaces this user is a member of`}
+            />
             <TabList
               tabs={tabs}
-              tabListInstanceId={SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID}
               behaveAsLinks={false}
+              componentInstanceId={SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID}
             />
-          </StyledTabListContainer>
-          <StyledContentContainer>
             <SettingsAdminWorkspaceContent activeWorkspace={activeWorkspace} />
-          </StyledContentContainer>
-        </Section>
+          </Section>
+        </>
       )}
     </>
   );

@@ -1,4 +1,4 @@
-import { GET_AUTHORIZATION_URL } from '@/auth/graphql/mutations/getAuthorizationUrl';
+import { GET_AUTHORIZATION_URL_FOR_SSO } from '@/auth/graphql/mutations/getAuthorizationUrlForSSO';
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -23,7 +23,7 @@ const mockRedirect = jest.fn();
 const apolloMocks = [
   {
     request: {
-      query: GET_AUTHORIZATION_URL,
+      query: GET_AUTHORIZATION_URL_FOR_SSO,
       variables: {
         input: {
           identityProviderId: 'success-id',
@@ -32,13 +32,13 @@ const apolloMocks = [
     },
     result: {
       data: {
-        getAuthorizationUrl: { authorizationURL: 'http://example.com' },
+        getAuthorizationUrlForSSO: { authorizationURL: 'http://example.com' },
       },
     },
   },
   {
     request: {
-      query: GET_AUTHORIZATION_URL,
+      query: GET_AUTHORIZATION_URL_FOR_SSO,
       variables: {
         input: {
           identityProviderId: 'error-id',

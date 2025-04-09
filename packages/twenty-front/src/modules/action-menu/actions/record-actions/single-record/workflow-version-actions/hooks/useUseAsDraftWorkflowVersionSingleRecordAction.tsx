@@ -8,7 +8,7 @@ import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useUseAsDraftWorkflowVersionSingleRecordAction: ActionHookWithoutObjectMetadataItem =
@@ -33,13 +33,10 @@ export const useUseAsDraftWorkflowVersionSingleRecordAction: ActionHookWithoutOb
     const hasAlreadyDraftVersion =
       workflow?.versions.some((version) => version.status === 'DRAFT') || false;
 
-    const shouldBeRegistered =
-      isDefined(workflowVersion) &&
-      isDefined(workflow) &&
-      workflowVersion.status !== 'DRAFT';
-
     const onClick = async () => {
-      if (!shouldBeRegistered) return;
+      if (!isDefined(workflowVersion) || !isDefined(workflow)) {
+        return;
+      }
 
       if (hasAlreadyDraftVersion) {
         setOpenOverrideWorkflowDraftConfirmationModal(true);
@@ -55,7 +52,7 @@ export const useUseAsDraftWorkflowVersionSingleRecordAction: ActionHookWithoutOb
       }
     };
 
-    const ConfirmationModal = shouldBeRegistered ? (
+    const ConfirmationModal = isDefined(workflowVersion) ? (
       <OverrideWorkflowDraftConfirmationModal
         workflowId={workflowVersion.workflow.id}
         workflowVersionIdToCopy={workflowVersion.id}
@@ -63,7 +60,6 @@ export const useUseAsDraftWorkflowVersionSingleRecordAction: ActionHookWithoutOb
     ) : undefined;
 
     return {
-      shouldBeRegistered,
       onClick,
       ConfirmationModal,
     };

@@ -5,9 +5,19 @@ import { CreatedByCreateManyPreQueryHook } from 'src/engine/core-modules/actor/q
 import { CreatedByCreateOnePreQueryHook } from 'src/engine/core-modules/actor/query-hooks/created-by.create-one.pre-query-hook';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
+import { CreatedByFromAuthContextService } from './services/created-by-from-auth-context.service';
+
 @Module({
   imports: [TypeOrmModule.forFeature([FieldMetadataEntity], 'metadata')],
-  providers: [CreatedByCreateManyPreQueryHook, CreatedByCreateOnePreQueryHook],
-  exports: [CreatedByCreateManyPreQueryHook, CreatedByCreateOnePreQueryHook],
+  providers: [
+    CreatedByCreateManyPreQueryHook,
+    CreatedByCreateOnePreQueryHook,
+    CreatedByFromAuthContextService,
+  ],
+  exports: [
+    CreatedByCreateManyPreQueryHook,
+    CreatedByCreateOnePreQueryHook,
+    CreatedByFromAuthContextService,
+  ],
 })
 export class ActorModule {}

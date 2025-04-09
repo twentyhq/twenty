@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType, IsExactly } from 'twenty-shared/types';
 
 import {
   FieldMetadataDefaultActor,
@@ -60,17 +60,14 @@ export type FieldMetadataFunctionDefaultValue = ExtractValueType<
   FieldMetadataDefaultValueUuidFunction | FieldMetadataDefaultValueNowFunction
 >;
 
-type DefaultValueByFieldMetadata<T extends FieldMetadataType | 'default'> = [
-  T,
-] extends [keyof FieldMetadataDefaultValueMapping]
-  ? ExtractValueType<FieldMetadataDefaultValueMapping[T]> | null
-  : T extends 'default'
-    ? ExtractValueType<UnionOfValues<FieldMetadataDefaultValueMapping>> | null
-    : never;
-
 export type FieldMetadataDefaultValue<
-  T extends FieldMetadataType | 'default' = 'default',
-> = DefaultValueByFieldMetadata<T>;
+  T extends FieldMetadataType = FieldMetadataType,
+> =
+  IsExactly<T, FieldMetadataType> extends true
+    ? ExtractValueType<UnionOfValues<FieldMetadataDefaultValueMapping>> | null
+    : T extends keyof FieldMetadataDefaultValueMapping
+      ? ExtractValueType<FieldMetadataDefaultValueMapping[T]> | null
+      : never;
 
 type FieldMetadataDefaultValueExtractedTypes = {
   [K in keyof FieldMetadataDefaultValueMapping]: ExtractValueType<

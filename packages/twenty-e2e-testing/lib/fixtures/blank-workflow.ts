@@ -17,7 +17,7 @@ export class WorkflowVisualizerPage {
   readonly deactivateWorkflowButton: Locator;
   readonly addTriggerButton: Locator;
   readonly commandMenu: Locator;
-  readonly workflowNameButton: Locator;
+  readonly workflowNameLabel: Locator;
   readonly triggerNode: Locator;
   readonly background: Locator;
   readonly useAsDraftButton: Locator;
@@ -51,7 +51,7 @@ export class WorkflowVisualizerPage {
     'record-created': 'Record is Created',
     'record-updated': 'Record is Updated',
     'record-deleted': 'Record is Deleted',
-    manual: 'Manual Trigger',
+    manual: 'Launch manually',
   };
 
   constructor({ page, workflowName }: { page: Page; workflowName: string }) {
@@ -68,9 +68,9 @@ export class WorkflowVisualizerPage {
     });
     this.addTriggerButton = page.getByText('Add a Trigger');
     this.commandMenu = page.getByTestId('command-menu');
-    this.workflowNameButton = page.getByRole('button', {
-      name: this.workflowName,
-    });
+    this.workflowNameLabel = page
+      .getByTestId('top-bar-title')
+      .getByText(this.workflowName);
     this.triggerNode = this.#page.getByTestId('rf__node-trigger');
     this.background = page.locator('.react-flow__pane');
     this.useAsDraftButton = page.getByRole('button', { name: 'Use as draft' });
@@ -100,15 +100,23 @@ export class WorkflowVisualizerPage {
   }
 
   async waitForWorkflowVisualizerLoad() {
-    await expect(this.workflowNameButton).toBeVisible();
+    await expect(this.workflowNameLabel).toBeVisible();
   }
 
   async goToWorkflowVisualizerPage() {
-    await Promise.all([
-      this.#page.goto(`/object/workflow/${this.workflowId}`),
+    await this.#page.goto(`/`);
 
-      this.waitForWorkflowVisualizerLoad(),
-    ]);
+    const workflowsLink = this.#page.getByRole('link', { name: 'Workflows' });
+
+    await workflowsLink.click();
+
+    const workflowLink = this.#page
+      .getByTestId(`row-id-${this.workflowId}`)
+      .getByRole('link', { name: this.workflowName });
+
+    await workflowLink.click();
+
+    await this.waitForWorkflowVisualizerLoad();
   }
 
   async createInitialTrigger(trigger: WorkflowTriggerType) {
@@ -132,8 +140,10 @@ export class WorkflowVisualizerPage {
 
     const actionToCreateOption = this.commandMenu.getByText(actionName);
 
-    const [createWorkflowStepResponse] = await Promise.all([
-      this.#page.waitForResponse((response) => {
+    await actionToCreateOption.click();
+
+    const createWorkflowStepResponse = await this.#page.waitForResponse(
+      (response) => {
         if (!response.url().endsWith('/graphql')) {
           return false;
         }
@@ -141,18 +151,13 @@ export class WorkflowVisualizerPage {
         const requestBody = response.request().postDataJSON();
 
         return requestBody.operationName === 'CreateWorkflowVersionStep';
-      }),
+      },
+    );
 
-      actionToCreateOption.click(),
-    ]);
     const createWorkflowStepResponseBody =
       await createWorkflowStepResponse.json();
     const createdStepId =
       createWorkflowStepResponseBody.data.createWorkflowVersionStep.id;
-
-    await expect(
-      this.#page.getByTestId('command-menu').getByRole('textbox').first(),
-    ).toHaveValue(createdActionName);
 
     const createdActionNode = this.#page
       .locator('.react-flow__node.selected')
@@ -230,6 +235,16 @@ export class WorkflowVisualizerPage {
 
       this.getDeleteNodeButton(this.triggerNode).click(),
     ]);
+  }
+
+  async closeSidePanel() {
+    const closeButton = this.#page.getByRole('button', {
+      name: 'Close command menu',
+    });
+
+    await closeButton.click();
+
+    await expect(this.#page.getByTestId('command-menu')).not.toBeVisible();
   }
 }
 

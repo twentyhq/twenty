@@ -1,38 +1,43 @@
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
-import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { useDestroyManyRecords } from '@/object-record/hooks/useDestroyManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useCallback, useState } from 'react';
-import { isDefined } from 'twenty-shared';
 
 export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {
     const [isDestroyRecordsModalOpen, setIsDestroyRecordsModalOpen] =
       useState(false);
 
+    const contextStoreCurrentViewId = useRecoilComponentValueV2(
+      contextStoreCurrentViewIdComponentState,
+    );
+
+    if (!contextStoreCurrentViewId) {
+      throw new Error('Current view ID is not defined');
+    }
+
     const { resetTableRowSelection } = useRecordTable({
-      recordTableId: objectMetadataItem.namePlural,
+      recordTableId: getRecordIndexIdFromObjectNamePluralAndViewId(
+        objectMetadataItem.namePlural,
+        contextStoreCurrentViewId,
+      ),
     });
 
     const { destroyManyRecords } = useDestroyManyRecords({
       objectNameSingular: objectMetadataItem.nameSingular,
     });
-
-    const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
-      contextStoreNumberOfSelectedRecordsComponentState,
-    );
 
     const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
       contextStoreTargetedRecordsRuleComponentState,
@@ -57,16 +62,6 @@ export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
       ...deletedAtFilter,
     };
 
-    const deletedAtFieldMetadata = objectMetadataItem.fields.find(
-      (field) => field.name === 'deletedAt',
-    );
-
-    const isDeletedFilterActive = contextStoreFilters.some(
-      (filter) =>
-        filter.fieldMetadataId === deletedAtFieldMetadata?.id &&
-        filter.operand === RecordFilterOperand.IsNotEmpty,
-    );
-
     const { fetchAllRecords: fetchAllRecordIds } = useLazyFetchAllRecords({
       objectNameSingular: objectMetadataItem.nameSingular,
       filter: graphqlFilter,
@@ -83,20 +78,7 @@ export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
       await destroyManyRecords({ recordIdsToDestroy });
     }, [destroyManyRecords, fetchAllRecordIds, resetTableRowSelection]);
 
-    const isRemoteObject = objectMetadataItem.isRemote;
-
-    const shouldBeRegistered =
-      !isRemoteObject &&
-      isDeletedFilterActive &&
-      isDefined(contextStoreNumberOfSelectedRecords) &&
-      contextStoreNumberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT &&
-      contextStoreNumberOfSelectedRecords > 0;
-
     const onClick = () => {
-      if (!shouldBeRegistered) {
-        return;
-      }
-
       setIsDestroyRecordsModalOpen(true);
     };
 
@@ -109,12 +91,11 @@ export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
           "Are you sure you want to destroy these records? They won't be recoverable anymore."
         }
         onConfirmClick={handleDestroyClick}
-        deleteButtonText={'Destroy Records'}
+        confirmButtonText={'Destroy Records'}
       />
     );
 
     return {
-      shouldBeRegistered,
       onClick,
       ConfirmationModal: confirmationModal,
     };

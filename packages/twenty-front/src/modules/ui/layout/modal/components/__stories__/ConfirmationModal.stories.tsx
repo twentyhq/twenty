@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ConfirmationModal } from '../ConfirmationModal';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof ConfirmationModal> = {
   title: 'UI/Layout/Modal/ConfirmationModal',
@@ -18,7 +18,7 @@ export const Default: Story = {
     isOpen: true,
     title: 'Pariatur labore.',
     subtitle: 'Velit dolore aliquip laborum occaecat fugiat.',
-    deleteButtonText: 'Delete',
+    confirmButtonText: 'Delete',
   },
   decorators: [ComponentDecorator],
 };

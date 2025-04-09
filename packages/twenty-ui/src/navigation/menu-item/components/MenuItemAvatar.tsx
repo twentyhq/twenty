@@ -8,12 +8,12 @@ import {
 import { LightIconButtonGroup } from '@ui/input';
 import { MenuItemIconButton } from '@ui/navigation/menu-item/components/MenuItem';
 import { MouseEvent } from 'react';
-import { isDefined } from 'twenty-shared';
 import {
   StyledHoverableMenuItemBase,
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 import { MenuItemAccent } from '../types/MenuItemAccent';
+import { isDefined } from 'twenty-shared/utils';
 
 export type MenuItemAvatarProps = {
   accent?: MenuItemAccent;

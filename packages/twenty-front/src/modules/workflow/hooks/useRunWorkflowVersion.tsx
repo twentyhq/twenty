@@ -3,11 +3,12 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { RUN_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/runWorkflowVersion';
 import { useApolloClient, useMutation } from '@apollo/client';
 import { useTheme } from '@emotion/react';
-import { IconSettingsAutomation } from 'twenty-ui';
+import { useLingui } from '@lingui/react/macro';
 import {
   RunWorkflowVersionMutation,
   RunWorkflowVersionMutationVariables,
 } from '~/generated/graphql';
+import { IconSettingsAutomation } from 'twenty-ui/display';
 
 export const useRunWorkflowVersion = () => {
   const apolloClient = useApolloClient();
@@ -21,6 +22,7 @@ export const useRunWorkflowVersion = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const theme = useTheme();
+  const { t } = useLingui();
 
   const runWorkflowVersion = async ({
     workflowVersionId,
@@ -36,7 +38,7 @@ export const useRunWorkflowVersion = () => {
     const workflowRunId = data?.runWorkflowVersion?.workflowRunId;
 
     if (!workflowRunId) {
-      enqueueSnackBar('Workflow run failed', {
+      enqueueSnackBar(t`Workflow run failed`, {
         variant: SnackBarVariant.Error,
       });
       return;
@@ -44,7 +46,7 @@ export const useRunWorkflowVersion = () => {
 
     const link = `/object/workflowRun/${workflowRunId}`;
 
-    enqueueSnackBar('Workflow is running...', {
+    enqueueSnackBar(t`Workflow is running...`, {
       variant: SnackBarVariant.Success,
       icon: (
         <IconSettingsAutomation
@@ -54,7 +56,7 @@ export const useRunWorkflowVersion = () => {
       ),
       link: {
         href: link,
-        text: 'View execution details',
+        text: t`View execution details`,
       },
     });
   };

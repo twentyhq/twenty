@@ -3,11 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
+import { i18n } from '@lingui/core';
+import { t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordResetLinkEmail } from 'twenty-emails';
-import { APP_LOCALES } from 'twenty-shared';
+import { APP_LOCALES } from 'twenty-shared/translations';
 import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
@@ -26,6 +28,8 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 export class ResetPasswordService {
@@ -34,12 +38,17 @@ export class ResetPasswordService {
     private readonly domainManagerService: DomainManagerService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
     private readonly emailService: EmailService,
   ) {}
 
-  async generatePasswordResetToken(email: string): Promise<PasswordResetToken> {
+  async generatePasswordResetToken(
+    email: string,
+    workspaceId: string,
+  ): Promise<PasswordResetToken> {
     const user = await this.userRepository.findOneBy({
       email,
     });
@@ -93,12 +102,14 @@ export class ResetPasswordService {
 
     await this.appTokenRepository.save({
       userId: user.id,
+      workspaceId: workspaceId,
       value: hashedResetToken,
       expiresAt,
       type: AppTokenType.PasswordResetToken,
     });
 
     return {
+      workspaceId,
       passwordResetToken: plainResetToken,
       passwordResetTokenExpiresAt: expiresAt,
     };
@@ -120,12 +131,19 @@ export class ResetPasswordService {
       );
     }
 
-    const frontBaseURL = this.domainManagerService.getBaseUrl();
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: resetToken.workspaceId,
+    });
 
-    frontBaseURL.pathname = `/reset-password/${resetToken.passwordResetToken}`;
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
+    const link = this.domainManagerService.buildWorkspaceURL({
+      workspace,
+      pathname: `/reset-password/${resetToken.passwordResetToken}`,
+    });
 
     const emailData = {
-      link: frontBaseURL.toString(),
+      link: link.toString(),
       duration: ms(
         differenceInMilliseconds(
           resetToken.passwordResetTokenExpiresAt,
@@ -140,15 +158,17 @@ export class ResetPasswordService {
 
     const emailTemplate = PasswordResetLinkEmail(emailData);
 
-    const html = render(emailTemplate, { pretty: true });
-    const text = render(emailTemplate, { plainText: true });
+    const html = await render(emailTemplate, { pretty: true });
+    const text = await render(emailTemplate, { plainText: true });
+
+    i18n.activate(locale);
 
     this.emailService.send({
       from: `${this.environmentService.get(
         'EMAIL_FROM_NAME',
       )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
       to: email,
-      subject: 'Action Needed to Reset Password',
+      subject: t`Action Needed to Reset Password`,
       text,
       html,
     });

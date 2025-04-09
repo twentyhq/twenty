@@ -6,8 +6,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { useDeleteRecordFromCache } from '@/object-record/cache/hooks/useDeleteRecordFromCache';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { SettingsObjectFieldActiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldActiveActionDropdown';
 import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
@@ -16,25 +15,20 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { View } from '@/views/types/View';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
-import { useRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import {
-  IconMinus,
-  IconPlus,
-  LightIconButton,
-  UndecoratedLink,
-  useIcons,
-} from 'twenty-ui';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { RELATION_TYPES } from '../../constants/RelationTypes';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
+import { isDefined } from 'twenty-shared/utils';
+import { IconMinus, IconPlus, useIcons } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 
 type SettingsObjectFieldItemTableRowProps = {
   settingsObjectDetailTableItem: SettingsObjectDetailTableItem;
@@ -121,8 +115,7 @@ export const SettingsObjectFieldItemTableRow = ({
     deleteMetadataField,
   } = useFieldMetadataItem();
 
-  const { records: allViews } = usePrefetchedData<View>(PrefetchKey.AllViews);
-
+  const prefetchViews = useRecoilValue(prefetchViewsState);
   const deleteViewFromCache = useDeleteRecordFromCache({
     objectNameSingular: CoreObjectNameSingular.View,
   });
@@ -135,7 +128,7 @@ export const SettingsObjectFieldItemTableRow = ({
       objectMetadataItem.id,
     );
 
-    const deletedViewIds = allViews
+    const deletedViewIds = prefetchViews
       .map((view) => {
         if (view.kanbanFieldMetadataId === activeFieldMetadatItem.id) {
           deleteViewFromCache(view);

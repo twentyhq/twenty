@@ -662,6 +662,10 @@ export class WorkspaceRepository<
 
     transformedOptions.where = await this.formatData(options.where);
 
+    if (options.withDeleted) {
+      transformedOptions.withDeleted = true;
+    }
+
     return transformedOptions;
   }
 

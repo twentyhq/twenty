@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType, IsExactly } from 'twenty-shared/types';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -36,6 +36,7 @@ export type FieldMetadataDateTimeSettings = {
 export type FieldMetadataRelationSettings = {
   relationType: RelationType;
   onDelete?: RelationOnDeleteAction;
+  joinColumnName?: string;
 };
 
 type FieldMetadataSettingsMapping = {
@@ -46,13 +47,11 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.RELATION]: FieldMetadataRelationSettings;
 };
 
-type SettingsByFieldMetadata<T extends FieldMetadataType | 'default'> =
-  T extends keyof FieldMetadataSettingsMapping
-    ? FieldMetadataSettingsMapping[T] & FieldMetadataDefaultSettings
-    : T extends 'default'
-      ? FieldMetadataDefaultSettings
-      : never;
-
 export type FieldMetadataSettings<
-  T extends FieldMetadataType | 'default' = 'default',
-> = SettingsByFieldMetadata<T>;
+  T extends FieldMetadataType = FieldMetadataType,
+> =
+  IsExactly<T, FieldMetadataType> extends true
+    ? FieldMetadataDefaultSettings
+    : T extends keyof FieldMetadataSettingsMapping
+      ? FieldMetadataSettingsMapping[T] & FieldMetadataDefaultSettings
+      : never;

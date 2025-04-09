@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { LogExecutionTime } from 'src/engine/decorators/observability/log-execution-time.decorator';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
 import {
@@ -25,7 +24,6 @@ export class WorkspaceMetadataCacheService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
-  @LogExecutionTime()
   async recomputeMetadataCache({
     workspaceId,
     ignoreLock = false,

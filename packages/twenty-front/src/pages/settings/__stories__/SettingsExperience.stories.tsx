@@ -63,7 +63,7 @@ export const DateTimeSettingsTimezone: Story = {
     await canvas.findByText('Date and time');
 
     const timezoneSelect = await canvas.findByText(
-      '(GMT-05:00) Eastern Standard Time - New York',
+      '(GMT-04:00) Eastern Daylight Time - New York',
     );
 
     userEvent.click(timezoneSelect);

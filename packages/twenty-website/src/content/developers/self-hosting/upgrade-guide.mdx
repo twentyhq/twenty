@@ -24,9 +24,89 @@ If you used Docker Compose, follow these steps:
 If you want to upgrade your instance by few versions, e.g. from 0.33.0 to 0.35.0, you have to upgrade your instance sequentially, in this example from 0.33.0 to 0.34.0, then from 0.34.0 to 0.35.0.
 
 
+
 ## Version-specific upgrade steps
+{/* 
+### v0.50.0 to v0.51.0
 
+We've now added  `yarn command:prod upgrade` to the entrypoint.sh[https://github.com/twentyhq/twenty/blob/main/packages/twenty-docker/twenty/entrypoint.sh#L19] file.
+This means from now on, you shouldn't have to run any command manually anymore.
+Just make sure to keep upgrading your instance sequentially, without skipping any major version (e.g. 0.43.3 to 0.44.0 is allowed, but 0.43.1 to 0.45.0 is not).
+You can view your instance version in the admin panel (at /settings/admin-panel, accessible if your user has canImpersonate property set to true in the database).
+*/}
 
+### v0.44.0 to v0.50.0
+
+Upgrade your Twenty instance to use v0.50.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.43.0 to v0.44.0
+
+Upgrade your Twenty instance to use v0.44.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.42.0 to v0.43.0
+
+Upgrade your Twenty instance to use v0.43.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+In this version, we have also switched to postgres:16 image in docker-compose.yml.
+
+#### (Option 1) Database migration
+
+Keeping the existing postgres-spilo image is fine, but you will have to freeze the version in your docker-compose.yml to be 0.43.0.
+
+#### (Option 2) Database migration
+
+If you want to migrate your database to the new postgres:16 image, please follow these steps:
+
+1. Dump your database from the old postgres-spilo container
+
+```
+docker exec -it twenty-db-1 sh 
+pg_dump -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} > databases_backup.sql
+exit
+docker cp twenty-db-1:/home/postgres/databases_backup.sql .
+```
+
+Make sure your dump file is not empty.
+
+2. Upgrade your docker-compose.yml to use postgres:16 image as in the [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) file.
+
+3. Restore the database to the new postgres:16 container
+
+```
+docker cp databases_backup.sql twenty-db-1:/databases_backup.sql
+docker exec -it twenty-db-1 sh
+psql -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} -f databases_backup.sql
+exit
+```
+
+### v0.41.0 to v0.42.0
+
+Upgrade your Twenty instance to use v0.42.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.42
+```
+
+**Environment Variables**
+
+- Removed: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
+- Added: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
 
 ### v0.40.0 to v0.41.0
 

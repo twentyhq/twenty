@@ -111,17 +111,14 @@ export const Releases = () => {
       title={t`Releases`}
       links={[
         {
-          children: <Trans>Workspace</Trans>,
+          children: <Trans>Other</Trans>,
           href: getSettingsPath(SettingsPath.Workspace),
         },
         { children: <Trans>Releases</Trans> },
       ]}
     >
       <SettingsPageContainer>
-        <ScrollWrapper
-          contextProviderName="releases"
-          componentInstanceId="scroll-wrapper-releases"
-        >
+        <ScrollWrapper componentInstanceId="scroll-wrapper-releases">
           <StyledReleaseContainer>
             {releases.map((release) => (
               <React.Fragment key={release.slug}>

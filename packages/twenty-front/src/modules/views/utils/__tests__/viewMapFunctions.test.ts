@@ -1,6 +1,6 @@
-import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -13,11 +13,13 @@ import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 
 import { FieldMetadataType } from '~/generated/graphql';
 
-const baseDefinition = {
-  fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
-  label: 'label',
-  iconName: 'iconName',
-  fieldName: 'fieldName',
+const baseFieldMetadataItem = {
+  id: '05731f68-6e7a-4903-8374-c0b6a9063482',
+  createdAt: '2021-01-01',
+  updatedAt: '2021-01-01',
+  name: 'name',
+  label: 'Name',
+  type: FieldMetadataType.FULL_NAME,
 };
 
 describe('mapViewSortsToSorts', () => {
@@ -30,16 +32,14 @@ describe('mapViewSortsToSorts', () => {
         direction: 'asc',
       },
     ];
-    const expectedSorts: Sort[] = [
+    const expectedSorts: RecordSort[] = [
       {
+        id: 'id',
         fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
         direction: 'asc',
-        definition: baseDefinition,
       },
     ];
-    expect(mapViewSortsToSorts(viewSorts, [baseDefinition])).toEqual(
-      expectedSorts,
-    );
+    expect(mapViewSortsToSorts(viewSorts)).toEqual(expectedSorts);
   });
 });
 
@@ -55,6 +55,7 @@ describe('mapViewFiltersToFilters', () => {
         operand: ViewFilterOperand.Is,
       },
     ];
+
     const expectedFilters: RecordFilter[] = [
       {
         id: 'id',
@@ -62,23 +63,14 @@ describe('mapViewFiltersToFilters', () => {
         value: 'testValue',
         displayValue: 'Test Display Value',
         operand: ViewFilterOperand.Is,
-        definition: {
-          ...baseDefinition,
-          type: 'FULL_NAME',
-        },
-        label: baseDefinition.label,
-        type: 'FULL_NAME',
-        positionInViewFilterGroup: undefined,
-        viewFilterGroupId: undefined,
+        label: baseFieldMetadataItem.label,
+        type: FieldMetadataType.FULL_NAME,
+        positionInRecordFilterGroup: undefined,
+        recordFilterGroupId: undefined,
       },
     ];
     expect(
-      mapViewFiltersToFilters(viewFilters, [
-        {
-          ...baseDefinition,
-          type: 'FULL_NAME',
-        },
-      ]),
+      mapViewFiltersToFilters(viewFilters, [baseFieldMetadataItem]),
     ).toEqual(expectedFilters);
   });
 });

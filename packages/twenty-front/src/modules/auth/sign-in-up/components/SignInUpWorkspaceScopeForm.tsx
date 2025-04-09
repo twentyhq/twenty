@@ -11,11 +11,13 @@ import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
-import { ActionLink, HorizontalSeparator } from 'twenty-ui';
+import { HorizontalSeparator } from 'twenty-ui/display';
+import { ActionLink } from 'twenty-ui/navigation';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
   margin-top: ${({ theme }) => theme.spacing(4)};
+  width: 200px;
 `;
 
 export const SignInUpWorkspaceScopeForm = () => {

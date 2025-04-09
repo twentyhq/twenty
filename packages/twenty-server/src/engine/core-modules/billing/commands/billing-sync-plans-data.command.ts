@@ -7,9 +7,9 @@ import Stripe from 'stripe';
 import { Repository } from 'typeorm';
 
 import {
-  BaseCommandOptions,
-  BaseCommandRunner,
-} from 'src/database/commands/base.command';
+  MigrationCommandOptions,
+  MigrationCommandRunner,
+} from 'src/database/commands/command-runners/migration.command-runner';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
@@ -25,7 +25,7 @@ import { transformStripeProductToDatabaseProduct } from 'src/engine/core-modules
   description:
     'Fetches from stripe the plans data (meter, product and price) and upserts it into the database',
 })
-export class BillingSyncPlansDataCommand extends BaseCommandRunner {
+export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
   private readonly batchSize = 5;
   constructor(
     @InjectRepository(BillingPrice, 'core')
@@ -43,7 +43,7 @@ export class BillingSyncPlansDataCommand extends BaseCommandRunner {
 
   private async upsertMetersRepositoryData(
     meters: Stripe.Billing.Meter[],
-    options: BaseCommandOptions,
+    options: MigrationCommandOptions,
   ) {
     meters.map(async (meter) => {
       try {
@@ -64,7 +64,7 @@ export class BillingSyncPlansDataCommand extends BaseCommandRunner {
 
   private async upsertProductRepositoryData(
     product: Stripe.Product,
-    options: BaseCommandOptions,
+    options: MigrationCommandOptions,
   ) {
     try {
       if (!options.dryRun) {
@@ -83,7 +83,7 @@ export class BillingSyncPlansDataCommand extends BaseCommandRunner {
 
   private async getBillingPrices(
     products: Stripe.Product[],
-    options: BaseCommandOptions,
+    options: MigrationCommandOptions,
   ): Promise<Stripe.Price[][]> {
     return await Promise.all(
       products.map(async (product) => {
@@ -113,7 +113,7 @@ export class BillingSyncPlansDataCommand extends BaseCommandRunner {
 
   private async processBillingPricesByProductBatches(
     products: Stripe.Product[],
-    options: BaseCommandOptions,
+    options: MigrationCommandOptions,
   ) {
     const prices: Stripe.Price[][] = [];
 
@@ -135,9 +135,9 @@ export class BillingSyncPlansDataCommand extends BaseCommandRunner {
     return prices;
   }
 
-  override async executeBaseCommand(
+  override async runMigrationCommand(
     passedParams: string[],
-    options: BaseCommandOptions,
+    options: MigrationCommandOptions,
   ): Promise<void> {
     const billingMeters = await this.stripeBillingMeterService.getAllMeters();
 

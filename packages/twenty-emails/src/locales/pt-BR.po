@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-12 12:03\n"
+"PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -18,103 +18,383 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-emails/src/locales/en.po\n"
 "X-Crowdin-File-ID: 27\n"
 
-#: src/emails/send-invite-link.email.tsx:57
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Suspended Workspace"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+#: src/emails/password-update-notify.email.tsx
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Dear {userName},"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+#: src/emails/password-update-notify.email.tsx
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Hello,"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Update your subscription"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
 msgid "Accept invite"
-msgstr "Aceitar convite"
+msgstr ""
 
-#: src/emails/clean-suspended-workspace.email.tsx:33
-msgid "All data in this workspace has been permanently deleted."
-msgstr "Todos os dados deste workspace foram excluídos permanentemente."
-
-#: src/emails/send-email-verification-link.email.tsx:22
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
-msgstr "Confirme seu endereço de e-mail"
+msgstr ""
 
-#: src/emails/password-update-notify.email.tsx:46
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Verify Email"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
 msgid "Connect to Twenty"
-msgstr "Conecte-se ao Twenty"
+msgstr ""
 
-#: src/emails/password-update-notify.email.tsx:24
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset your password 🗝"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Deleted Workspace"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "All data in this workspace has been permanently deleted."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "If you wish to use Twenty again, you can create a new workspace."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Create a new workspace"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Website"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Visit Twenty's website"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Github"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Visit Twenty's GitHub repository"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "User guide"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Read Twenty's user guide"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Developers"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Visit Twenty's developer documentation"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Twenty.com, Public Benefit Corporation"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "San Francisco / Paris"
+msgstr ""
+
+#. js-lingui-id: 4WPI3S
+#: src/emails/send-invite-link.email.tsx
+#~ msgid "Accept invite"
+#~ msgstr "Aceitar convite"
+
+#. js-lingui-id: Yxj+Uc
+#: src/emails/clean-suspended-workspace.email.tsx
+#~ msgid "All data in this workspace has been permanently deleted."
+#~ msgstr "Todos os dados deste workspace foram excluídos permanentemente."
+
+#. js-lingui-id: RPHFhC
+#: src/emails/send-email-verification-link.email.tsx
+#~ msgid "Confirm your email address"
+#~ msgstr "Confirme seu endereço de e-mail"
+
+#. js-lingui-id: nvkBPN
+#: src/emails/password-update-notify.email.tsx
+#~ msgid "Connect to Twenty"
+#~ msgstr "Conecte-se ao Twenty"
+
+#. js-lingui-id: jPQSEz
+#: src/emails/clean-suspended-workspace.email.tsx
+#~ msgid "Create a new workspace"
+#~ msgstr "Criar um novo espaço de trabalho"
+
+#. js-lingui-id: JRzgV7
+#: src/emails/password-update-notify.email.tsx
 #~ msgid "Dear"
 #~ msgstr "Dear"
 
-#: src/emails/password-update-notify.email.tsx:24
-msgid "Dear {userName}"
-msgstr "Caro {userName}"
+#. js-lingui-id: Lm5BBI
+#: src/emails/password-update-notify.email.tsx
+#~ msgid "Dear {userName}"
+#~ msgstr "Caro {userName}"
 
-#: src/emails/send-invite-link.email.tsx:50
-msgid "has invited you to join a workspace called "
-msgstr "convidou você para participar de um workspace chamado "
+#. js-lingui-id: lIdkf2
+#: src/emails/clean-suspended-workspace.email.tsx
+#~ msgid "Dear {userName},"
+#~ msgstr "Caro {userName},"
 
-#: src/emails/password-update-notify.email.tsx:24
-msgid "Hello"
-msgstr "Olá"
+#. js-lingui-id: NTwcnq
+#: src/emails/clean-suspended-workspace.email.tsx
+#~ msgid "Deleted Workspace"
+#~ msgstr "Espaço de Trabalho Excluído"
 
-#: src/emails/password-update-notify.email.tsx:40
-msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "Se você não iniciou essa alteração, entre em contato com o proprietário do workspace imediatamente."
+#. js-lingui-id: S3uuQj
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "email addresses to join your workspace without requiring an invitation."
+#~ msgstr "endereços de email para ingressar em seu espaço de trabalho sem precisar de um convite."
 
-#: src/emails/warn-suspended-workspace.email.tsx:46
-msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-msgstr "Se quiser continuar usando o Twenty, atualize sua assinatura nos próximos {remainingDays} {dayOrDays}."
+#. js-lingui-id: tGme7M
+#: src/emails/send-invite-link.email.tsx
+#~ msgid "has invited you to join a workspace called "
+#~ msgstr "convidou você para participar de um workspace chamado "
 
-#: src/emails/clean-suspended-workspace.email.tsx:36
-msgid "If you wish to use Twenty again, you can create a new workspace."
-msgstr "Se quiser usar o Twenty novamente, você pode criar um novo workspace."
+#. js-lingui-id: uzTaYi
+#: src/emails/password-update-notify.email.tsx
+#~ msgid "Hello"
+#~ msgstr "Olá"
 
-#: src/emails/warn-suspended-workspace.email.tsx:34
-msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
-msgstr "Parece que seu workspace <0>{workspaceDisplayName}</0> foi suspenso por {daysSinceInactive} dias."
+#. js-lingui-id: Xa0d85
+#: src/emails/clean-suspended-workspace.email.tsx
+#~ msgid "Hello,"
+#~ msgstr "Olá,"
 
-#: src/emails/send-invite-link.email.tsx:42
-msgid "Join your team on Twenty"
-msgstr "Junte-se à sua equipe no Twenty"
+#. js-lingui-id: eE1nG1
+#: src/emails/password-update-notify.email.tsx
+#~ msgid "If you did not initiate this change, please contact your workspace owner immediately."
+#~ msgstr "Se você não iniciou essa alteração, entre em contato com o proprietário do workspace imediatamente."
 
-#: src/emails/password-update-notify.email.tsx:29
-msgid "Password updated"
-msgstr "Senha atualizada"
+#. js-lingui-id: Gz91L8
+#: src/emails/warn-suspended-workspace.email.tsx
+#~ msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
+#~ msgstr "Se quiser continuar usando o Twenty, atualize sua assinatura nos próximos {remainingDays} {dayOrDays}."
 
-#: src/emails/password-reset-link.email.tsx:24
-msgid "Reset"
-msgstr "Redefinir"
+#. js-lingui-id: 0weyko
+#: src/emails/clean-suspended-workspace.email.tsx
+#~ msgid "If you wish to use Twenty again, you can create a new workspace."
+#~ msgstr "Se quiser usar o Twenty novamente, você pode criar um novo workspace."
 
-#: src/emails/password-reset-link.email.tsx:23
-msgid "Reset your password 🗝"
-msgstr "Redefina sua senha 🗝"
+#. js-lingui-id: 7JuhZQ
+#: src/emails/warn-suspended-workspace.email.tsx
+#~ msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
+#~ msgstr "Parece que seu workspace <0>{workspaceDisplayName}</0> foi suspenso por {daysSinceInactive} dias."
 
-#: src/emails/send-email-verification-link.email.tsx:27
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
-msgstr "Obrigado por se registrar no Twenty! Antes de começarmos, precisamos confirmar que é você. Clique acima para verificar seu endereço de e-mail."
+#. js-lingui-id: PviVyk
+#: src/emails/send-invite-link.email.tsx
+#~ msgid "Join your team on Twenty"
+#~ msgstr "Junte-se à sua equipe no Twenty"
 
-#: src/emails/warn-suspended-workspace.email.tsx:40
-msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
-msgstr "O workspace será desativado em {remainingDays} {dayOrDays}, e todos os seus dados serão excluídos."
+#. js-lingui-id: ogtYkT
+#: src/emails/password-update-notify.email.tsx
+#~ msgid "Password updated"
+#~ msgstr "Senha atualizada"
 
-#: src/emails/password-update-notify.email.tsx:34
-msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Esta é uma confirmação de que a senha da sua conta ({email}) foi alterada com sucesso em {formattedDate}."
+#. js-lingui-id: Yucjaa
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with"
+#~ msgstr "Por favor, valide este domínio para permitir que os usuários com"
 
-#: src/emails/password-update-notify.email.tsx:36
+#. js-lingui-id: u3Ns4p
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+#~ msgstr "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+
+#. js-lingui-id: OfhWJH
+#: src/emails/password-reset-link.email.tsx
+#~ msgid "Reset"
+#~ msgstr "Redefinir"
+
+#. js-lingui-id: RE5NiU
+#: src/emails/password-reset-link.email.tsx
+#~ msgid "Reset your password 🗝"
+#~ msgstr "Redefina sua senha 🗝"
+
+#. js-lingui-id: UBadaJ
+#: src/emails/warn-suspended-workspace.email.tsx
+#~ msgid "Suspended Workspace "
+#~ msgstr "Espaço de Trabalho Suspenso "
+
+#. js-lingui-id: 7yDt8q
+#: src/emails/send-email-verification-link.email.tsx
+#~ msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
+#~ msgstr "Obrigado por se registrar no Twenty! Antes de começarmos, precisamos confirmar que é você. Clique acima para verificar seu endereço de e-mail."
+
+#. js-lingui-id: igorB1
+#: src/emails/warn-suspended-workspace.email.tsx
+#~ msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
+#~ msgstr "O workspace será desativado em {remainingDays} {dayOrDays}, e todos os seus dados serão excluídos."
+
+#. js-lingui-id: 7OEHy1
+#: src/emails/password-update-notify.email.tsx
+#~ msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+#~ msgstr "Esta é uma confirmação de que a senha da sua conta ({email}) foi alterada com sucesso em {formattedDate}."
+
+#. js-lingui-id: wSOsS+
+#: src/emails/password-update-notify.email.tsx
 #~ msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
 #~ msgstr "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
 
-#: src/emails/password-reset-link.email.tsx:26
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "Este link é válido apenas para os próximos {duration}. Se o link não funcionar, você pode usar o link de verificação de login diretamente:"
+#. js-lingui-id: R4gMjN
+#: src/emails/password-reset-link.email.tsx
+#~ msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+#~ msgstr "Este link é válido apenas para os próximos {duration}. Se o link não funcionar, você pode usar o link de verificação de login diretamente:"
 
-#: src/emails/password-reset-link.email.tsx:28
+#. js-lingui-id: 2oA637
+#: src/emails/password-reset-link.email.tsx
 #~ msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
 #~ msgstr "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
 
-#: src/emails/warn-suspended-workspace.email.tsx:53
-msgid "Update your subscription"
-msgstr "Atualize sua assinatura"
+#. js-lingui-id: H0v4yC
+#: src/emails/warn-suspended-workspace.email.tsx
+#~ msgid "Update your subscription"
+#~ msgstr "Atualize sua assinatura"
 
-#: src/emails/send-email-verification-link.email.tsx:23
-msgid "Verify Email"
-msgstr "Verificar e-mail"
+#. js-lingui-id: QbiUqd
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Validate domain"
+#~ msgstr "Validar domínio"
 
-#: src/emails/clean-suspended-workspace.email.tsx:27
-msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
-msgstr "Seu workspace <0>{workspaceDisplayName}</0> foi excluído porque sua assinatura expirou há {inactiveDaysBeforeDelete} dias."
+#. js-lingui-id: wCKkSr
+#: src/emails/send-email-verification-link.email.tsx
+#~ msgid "Verify Email"
+#~ msgstr "Verificar e-mail"
 
+#. js-lingui-id: 9MqLGX
+#: src/emails/clean-suspended-workspace.email.tsx
+#~ msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
+#~ msgstr "Seu workspace <0>{workspaceDisplayName}</0> foi excluído porque sua assinatura expirou há {daysSinceInactive} dias."
+
+#. js-lingui-id: KFmFrQ
+#: src/emails/clean-suspended-workspace.email.tsx
+#~ msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
+#~ msgstr "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."

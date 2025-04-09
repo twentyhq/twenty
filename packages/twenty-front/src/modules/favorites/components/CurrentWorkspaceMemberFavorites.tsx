@@ -21,13 +21,9 @@ import { useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import {
-  AnimatedExpandableContainer,
-  IconFolder,
-  IconFolderOpen,
-  IconHeartOff,
-  LightIconButton,
-} from 'twenty-ui';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { IconFolder, IconFolderOpen, IconHeartOff } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
 type CurrentWorkspaceMemberFavoritesProps = {
   folder: {
@@ -218,7 +214,7 @@ export const CurrentWorkspaceMemberFavorites = ({
           title={`Remove ${folder.favorites.length} ${folder.favorites.length > 1 ? 'favorites' : 'favorite'}?`}
           subtitle={`This action will delete this favorite folder ${folder.favorites.length > 1 ? `and all ${folder.favorites.length} favorites` : 'and the favorite'} inside. Do you want to continue?`}
           onConfirmClick={handleConfirmDelete}
-          deleteButtonText="Delete Folder"
+          confirmButtonText="Delete Folder"
         />,
         document.body,
       )}

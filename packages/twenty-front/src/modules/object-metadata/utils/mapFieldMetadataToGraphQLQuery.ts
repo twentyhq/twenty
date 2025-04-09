@@ -1,45 +1,33 @@
-import { isUndefined } from '@sniptt/guards';
-
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { isUndefined } from '@sniptt/guards';
 import {
   FieldMetadataType,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
+type MapFieldMetadataToGraphQLQueryArgs = {
+  objectMetadataItems: ObjectMetadataItem[];
+  field: Pick<FieldMetadataItem, 'name' | 'type' | 'relationDefinition'>;
+  relationRecordGqlFields?: RecordGqlFields;
+  computeReferences?: boolean;
+};
 // TODO: change ObjectMetadataItems mock before refactoring with relationDefinition computed field
 export const mapFieldMetadataToGraphQLQuery = ({
   objectMetadataItems,
   field,
-  relationrecordFields,
+  relationRecordGqlFields,
   computeReferences = false,
-}: {
-  objectMetadataItems: ObjectMetadataItem[];
-  field: Pick<FieldMetadataItem, 'name' | 'type' | 'relationDefinition'>;
-  relationrecordFields?: Record<string, any>;
-  computeReferences?: boolean;
-}): any => {
+}: MapFieldMetadataToGraphQLQueryArgs): string => {
   const fieldType = field.type;
 
-  const fieldIsSimpleValue = [
-    FieldMetadataType.UUID,
-    FieldMetadataType.TEXT,
-    FieldMetadataType.DATE_TIME,
-    FieldMetadataType.DATE,
-    FieldMetadataType.NUMBER,
-    FieldMetadataType.BOOLEAN,
-    FieldMetadataType.RATING,
-    FieldMetadataType.SELECT,
-    FieldMetadataType.MULTI_SELECT,
-    FieldMetadataType.POSITION,
-    FieldMetadataType.RAW_JSON,
-    FieldMetadataType.RICH_TEXT,
-    FieldMetadataType.ARRAY,
-  ].includes(fieldType);
+  const fieldIsNonCompositeField = isNonCompositeField(fieldType);
 
-  if (fieldIsSimpleValue) {
+  if (fieldIsNonCompositeField) {
     return field.name;
   }
 
@@ -61,7 +49,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
 ${mapObjectMetadataToGraphQLQuery({
   objectMetadataItems,
   objectMetadataItem: relationMetadataItem,
-  recordGqlFields: relationrecordFields,
+  recordGqlFields: relationRecordGqlFields,
   computeReferences: computeReferences,
   isRootLevel: false,
 })}`;
@@ -87,7 +75,7 @@ ${mapObjectMetadataToGraphQLQuery({
     node ${mapObjectMetadataToGraphQLQuery({
       objectMetadataItems,
       objectMetadataItem: relationMetadataItem,
-      recordGqlFields: relationrecordFields,
+      recordGqlFields: relationRecordGqlFields,
       computeReferences,
       isRootLevel: false,
     })}

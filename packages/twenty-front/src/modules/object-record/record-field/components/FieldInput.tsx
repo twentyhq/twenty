@@ -10,11 +10,8 @@ import { PhonesFieldInput } from '@/object-record/record-field/meta-types/input/
 import { RawJsonFieldInput } from '@/object-record/record-field/meta-types/input/components/RawJsonFieldInput';
 import { RelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInput';
 import { SelectFieldInput } from '@/object-record/record-field/meta-types/input/components/SelectFieldInput';
-import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
-import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
 import { ArrayFieldInput } from '@/object-record/record-field/meta-types/input/components/ArrayFieldInput';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
@@ -30,6 +27,7 @@ import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/is
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
+import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { FieldContext } from '../contexts/FieldContext';
 import { BooleanFieldInput } from '../meta-types/input/components/BooleanFieldInput';
@@ -43,7 +41,6 @@ import { FieldInputEvent } from '../types/FieldInputEvent';
 import { isFieldText } from '../types/guards/isFieldText';
 
 type FieldInputProps = {
-  recordFieldInputdId: string;
   onSubmit?: FieldInputEvent;
   onCancel?: () => void;
   onClickOutside?: (
@@ -58,7 +55,6 @@ type FieldInputProps = {
 };
 
 export const FieldInput = ({
-  recordFieldInputdId,
   onCancel,
   onSubmit,
   onEnter,
@@ -71,18 +67,13 @@ export const FieldInput = ({
   const { fieldDefinition } = useContext(FieldContext);
 
   return (
-    <RecordFieldInputScope
-      recordFieldInputScopeId={getScopeIdFromComponentId(recordFieldInputdId)}
-    >
+    <>
       {isFieldRelationToOneObject(fieldDefinition) ? (
         <RelationToOneFieldInput onSubmit={onSubmit} onCancel={onCancel} />
       ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
         <RelationFromManyFieldInput onSubmit={onSubmit} />
       ) : isFieldPhones(fieldDefinition) ? (
-        <PhonesFieldInput
-          onCancel={onCancel}
-          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
-        />
+        <PhonesFieldInput onCancel={onCancel} onClickOutside={onClickOutside} />
       ) : isFieldText(fieldDefinition) ? (
         <TextFieldInput
           onEnter={onEnter}
@@ -173,6 +164,6 @@ export const FieldInput = ({
       ) : (
         <></>
       )}
-    </RecordFieldInputScope>
+    </>
   );
 };

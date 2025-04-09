@@ -1,21 +1,25 @@
 import { ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS } from '@/object-record/advanced-filter/constants/AdvancedFilterLogicalOperatorOptions';
-import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
+import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
+import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { Select } from '@/ui/input/components/Select';
-import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
-import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 
 type AdvancedFilterLogicalOperatorDropdownProps = {
-  viewFilterGroup: ViewFilterGroup;
+  recordFilterGroup: RecordFilterGroup;
 };
 
 export const AdvancedFilterLogicalOperatorDropdown = ({
-  viewFilterGroup,
+  recordFilterGroup,
 }: AdvancedFilterLogicalOperatorDropdownProps) => {
-  const { upsertCombinedViewFilterGroup } = useUpsertCombinedViewFilterGroup();
+  const { upsertRecordFilterGroup } = useUpsertRecordFilterGroup();
 
-  const handleChange = (value: ViewFilterGroupLogicalOperator) => {
-    upsertCombinedViewFilterGroup({
-      ...viewFilterGroup,
+  const handleChange = (value: RecordFilterGroupLogicalOperator) => {
+    upsertRecordFilterGroup({
+      id: recordFilterGroup.id,
+      parentRecordFilterGroupId: recordFilterGroup.parentRecordFilterGroupId,
+      positionInRecordFilterGroup:
+        recordFilterGroup.positionInRecordFilterGroup,
       logicalOperator: value,
     });
   };
@@ -23,10 +27,11 @@ export const AdvancedFilterLogicalOperatorDropdown = ({
   return (
     <Select
       fullWidth
-      dropdownId={`advanced-filter-logical-operator-${viewFilterGroup.id}`}
-      value={viewFilterGroup.logicalOperator}
+      dropdownId={`advanced-filter-logical-operator-${recordFilterGroup.id}`}
+      value={recordFilterGroup.logicalOperator}
       onChange={handleChange}
       options={ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS}
+      dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
     />
   );
 };

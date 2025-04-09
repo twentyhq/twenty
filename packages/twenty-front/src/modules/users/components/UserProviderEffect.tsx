@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { workspacesState } from '@/auth/states/workspaces';
@@ -15,20 +16,25 @@ import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
+import { AppPath } from '@/types/AppPath';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { APP_LOCALES, isDefined, SOURCE_LOCALE } from 'twenty-shared';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
 import { useGetCurrentUserQuery } from '~/generated/graphql';
+import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 export const UserProviderEffect = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const { isMatchingLocation } = useIsMatchingLocation();
 
   const [isCurrentUserLoaded, setIsCurrentUserLoaded] = useRecoilState(
     isCurrentUserLoadedState,
   );
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+  const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
   const setWorkspaces = useSetRecoilState(workspacesState);
 
   const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
@@ -41,7 +47,10 @@ export const UserProviderEffect = () => {
   );
 
   const { loading: queryLoading, data: queryData } = useGetCurrentUserQuery({
-    skip: isCurrentUserLoaded,
+    skip:
+      isCurrentUserLoaded ||
+      isMatchingLocation(AppPath.Verify) ||
+      isMatchingLocation(AppPath.VerifyEmail),
   });
 
   useEffect(() => {
@@ -55,7 +64,14 @@ export const UserProviderEffect = () => {
     setCurrentUser(queryData.currentUser);
 
     if (isDefined(queryData.currentUser.currentWorkspace)) {
-      setCurrentWorkspace(queryData.currentUser.currentWorkspace);
+      setCurrentWorkspace({
+        ...queryData.currentUser.currentWorkspace,
+        defaultRole: queryData.currentUser.currentWorkspace.defaultRole ?? null,
+      });
+    }
+
+    if (isDefined(queryData.currentUser.currentUserWorkspace)) {
+      setCurrentUserWorkspace(queryData.currentUser.currentUserWorkspace);
     }
 
     const {
@@ -115,6 +131,7 @@ export const UserProviderEffect = () => {
     }
   }, [
     setCurrentUser,
+    setCurrentUserWorkspace,
     setCurrentWorkspaceMembers,
     isLoading,
     queryLoading,

@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
@@ -9,10 +9,10 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 export interface FieldMetadataInterface<
-  T extends FieldMetadataType | 'default' = 'default',
+  T extends FieldMetadataType = FieldMetadataType,
 > {
   id: string;
-  type: FieldMetadataType;
+  type: T;
   name: string;
   label: string;
   defaultValue?: FieldMetadataDefaultValue<T>;
@@ -30,6 +30,8 @@ export interface FieldMetadataInterface<
   relationTargetObjectMetadataId?: string;
   relationTargetObjectMetadata?: ObjectMetadataEntity;
   isCustom?: boolean;
+  isSystem?: boolean;
+  isActive?: boolean;
   generatedType?: 'STORED' | 'VIRTUAL';
   asExpression?: string;
 }

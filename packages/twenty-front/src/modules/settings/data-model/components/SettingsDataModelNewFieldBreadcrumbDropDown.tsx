@@ -7,9 +7,12 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
-import { isDefined } from 'twenty-shared';
-import { Button, IconChevronDown, MenuItem } from 'twenty-ui';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/input';
+import { IconChevronDown } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -100,9 +103,9 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
           <StyledButtonContainer>
             <StyledDownChevron size={theme.icon.size.md} />
             {isConfigureStep ? (
-              <StyledButton variant="tertiary" title="2. Configure" />
+              <StyledButton variant="tertiary" title={t`2. Configure`} />
             ) : (
-              <StyledButton variant="tertiary" title="1. Type" />
+              <StyledButton variant="tertiary" title={t`1. Type`} />
             )}
           </StyledButtonContainer>
         }
@@ -111,14 +114,14 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
             <DropdownMenuItemsContainer>
               <StyledMenuItemWrapper>
                 <StyledMenuItem
-                  text="1. Type"
+                  text={t`1. Type`}
                   onClick={() => handleClick('select')}
                   selected={!isConfigureStep}
                 />
               </StyledMenuItemWrapper>
               <StyledMenuItemWrapper disabled={!isDefined(fieldType)}>
                 <StyledMenuItem
-                  text="2. Configure"
+                  text={t`2. Configure`}
                   onClick={() => handleClick('configure')}
                   selected={isConfigureStep}
                   disabled={!isDefined(fieldType)}

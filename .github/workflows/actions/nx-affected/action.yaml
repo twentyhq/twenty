@@ -7,6 +7,9 @@ inputs:
     required: false
   tasks:
     required: true
+  configuration:
+    required: false
+    default: 'ci'
 
 runs:
   using: "composite"
@@ -15,4 +18,4 @@ runs:
       uses: nrwl/nx-set-shas@v4
     - name: Run affected command
       shell: bash
-      run: npx nx affected --nxBail --configuration=ci -t=${{ inputs.tasks }} --parallel=${{ inputs.parallel }} --exclude='*,!tag:${{ inputs.tag }}'
+      run: npx nx affected --nxBail --configuration=${{ inputs.configuration }} -t=${{ inputs.tasks }} --parallel=${{ inputs.parallel }} --exclude='*,!tag:${{ inputs.tag }}'

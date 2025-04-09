@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { IconSearch } from '@ui/display';
+import { IconReload, IconSearch } from '@ui/display';
 import {
   CatalogDecorator,
   CatalogStory,
@@ -11,7 +11,7 @@ import {
   ButtonPosition,
   ButtonSize,
   ButtonVariant,
-} from '../Button';
+} from '../Button/Button';
 
 const meta: Meta<typeof Button> = {
   title: 'UI/Input/Button/Button',
@@ -39,6 +39,7 @@ export const Default: Story = {
     position: 'standalone',
     Icon: IconSearch,
     className: '',
+    isLoading: false,
   },
   decorators: [ComponentDecorator],
 };
@@ -55,6 +56,7 @@ export const Catalog: CatalogStory<Story, typeof Button> = {
     soon: { control: false },
     position: { control: false },
     className: { control: false },
+    isLoading: { control: false },
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
@@ -319,6 +321,38 @@ export const FullWidth: Story = {
     position: { control: false },
     className: { control: false },
     Icon: { control: false },
+  },
+  decorators: [ComponentDecorator],
+};
+
+export const LoadingButton: Story = {
+  args: {
+    title: 'Reload',
+    Icon: IconReload,
+    isLoading: true,
+  },
+  argTypes: {
+    size: { control: false },
+    variant: { control: false },
+    accent: { control: false },
+    focus: { control: false },
+    disabled: { control: false },
+    fullWidth: { control: false },
+    soon: { control: false },
+    position: { control: false },
+    className: { control: false },
+    isLoading: { control: 'boolean' },
+  },
+  parameters: {
+    catalog: {
+      isLoading: [
+        {
+          name: 'isLoading',
+          values: [true, false] satisfies boolean[],
+          props: (value: boolean) => ({ isLoading: value }),
+        },
+      ],
+    },
   },
   decorators: [ComponentDecorator],
 };

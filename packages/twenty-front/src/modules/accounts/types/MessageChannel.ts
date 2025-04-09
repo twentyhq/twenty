@@ -1,4 +1,5 @@
 import { MessageChannelVisibility } from '~/generated/graphql';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 export enum MessageChannelContactAutoCreationPolicy {
   SENT_AND_RECEIVED = 'SENT_AND_RECEIVED',
@@ -36,5 +37,9 @@ export type MessageChannel = {
   syncCursor: string;
   syncStageStartedAt: Date;
   throttleFailureCount: number;
+  connectedAccount?: {
+    id: string;
+    provider: ConnectedAccountProvider;
+  };
   __typename: 'MessageChannel';
 };

@@ -1,5 +1,6 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
+  FieldActorForInputValue,
   FieldAddressValue,
   FieldEmailsValue,
   FieldLinksValue,
@@ -9,16 +10,20 @@ import {
 import { COMPOSITE_FIELD_IMPORT_LABELS } from '@/object-record/spreadsheet-import/constants/CompositeFieldImportLabels';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { castToString } from '~/utils/castToString';
 import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
 
-export const buildRecordFromImportedStructuredRow = (
-  importedStructuredRow: ImportedStructuredRow<any>,
-  fields: FieldMetadataItem[],
-) => {
+type BuildRecordFromImportedStructuredRowArgs = {
+  importedStructuredRow: ImportedStructuredRow<any>;
+  fields: FieldMetadataItem[];
+};
+export const buildRecordFromImportedStructuredRow = ({
+  fields,
+  importedStructuredRow,
+}: BuildRecordFromImportedStructuredRowArgs) => {
   const recordToBuild: Record<string, any> = {};
 
   const {
@@ -219,7 +224,8 @@ export const buildRecordFromImportedStructuredRow = (
       case FieldMetadataType.ACTOR:
         recordToBuild[field.name] = {
           source: 'IMPORT',
-        };
+          context: {},
+        } satisfies FieldActorForInputValue;
         break;
       case FieldMetadataType.ARRAY:
       case FieldMetadataType.MULTI_SELECT: {

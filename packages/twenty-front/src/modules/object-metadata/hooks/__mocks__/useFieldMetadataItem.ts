@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType, PermissionsOnAllObjectRecords } from '~/generated/graphql';
 
 export const FIELD_METADATA_ID = '2c43466a-fe9e-4005-8d08-c5836067aa6c';
 export const FIELD_RELATION_METADATA_ID =
@@ -113,6 +113,7 @@ export const queries = {
         settings
         defaultValue
         options
+        isLabelSyncedWithName
       }
     }
   `,
@@ -128,16 +129,9 @@ export const queries = {
       firstName
       lastName
       email
+      canAccessFullAdminPanel
       canImpersonate
       supportUserHash
-      analyticsTinybirdJwts {
-        getWebhookAnalytics
-        getPageviewsAnalytics
-        getUsersAnalytics
-        getServerlessFunctionDuration
-        getServerlessFunctionSuccessRate
-        getServerlessFunctionErrorCount
-      }
       onboardingStatus
       workspaceMember {
         ...WorkspaceMemberQueryFragment
@@ -147,6 +141,7 @@ export const queries = {
       }
       currentUserWorkspace {
         settingsPermissions
+        objectRecordsPermissions
       }
       currentWorkspace {
         id
@@ -283,16 +278,9 @@ export const responseData = {
       firstName: 'Test',
       lastName: 'User',
       email: 'test@example.com',
+      canAccessFullAdminPanel: false,
       canImpersonate: false,
       supportUserHash: null,
-      analyticsTinybirdJwts: {
-        getWebhookAnalytics: null,
-        getPageviewsAnalytics: null,
-        getUsersAnalytics: null,
-        getServerlessFunctionDuration: null,
-        getServerlessFunctionSuccessRate: null,
-        getServerlessFunctionErrorCount: null,
-      },
       onboardingStatus: 'completed',
       workspaceMember: {
         id: 'test-workspace-member-id',
@@ -310,6 +298,12 @@ export const responseData = {
       workspaceMembers: [],
       currentUserWorkspace: {
         settingsPermissions: ['DATA_MODEL'],
+        objectRecordsPermissions: [
+          PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS,
+          PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS,
+          PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS,
+          PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS,
+        ],
       },
       currentWorkspace: {
         id: 'test-workspace-id',
@@ -333,6 +327,17 @@ export const responseData = {
         metadataVersion: 1,
         currentBillingSubscription: null,
         workspaceMembersCount: 1,
+        defaultRole:  {
+          id: 'default-role-id',
+          label: 'Default Role',
+          description: 'Default Role Description',
+          canUpdateAllSettings: true,
+          isEditable: true,
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: true,
+          canSoftDeleteAllObjectRecords: true,
+          canDestroyAllObjectRecords: true,
+        }
       },
       currentBillingSubscription: null,
       billingSubscriptions: [],

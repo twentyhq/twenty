@@ -6,7 +6,8 @@ process.env.TZ = 'GMT';
 process.env.LC_ALL = 'en_US.UTF-8';
 const jestConfig: JestConfigWithTsJest = {
   // to enable logs, comment out the following line
-  silent: false,
+  silent: true,
+  verbose: false,
   // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string
   // Prettier v3 will should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
   prettierPath: null,
@@ -14,12 +15,26 @@ const jestConfig: JestConfigWithTsJest = {
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['./setupTests.ts'],
   testEnvironment: 'jsdom',
-  transformIgnorePatterns: ['../../node_modules/'],
+
+  transformIgnorePatterns: [
+    '/node_modules/(?!(twenty-ui)/.*)',
+    '../../node_modules/(?!(twenty-ui)/.*)',
+    '../../twenty-ui/',
+  ],
   transform: {
     '^.+\\.(ts|js|tsx|jsx)$': [
       '@swc/jest',
       {
         jsc: {
+          parser: {
+            syntax: 'typescript',
+            tsx: true,
+          },
+          transform: {
+            react: {
+              runtime: 'automatic',
+            },
+          },
           experimental: {
             plugins: [['@lingui/swc-plugin', {}]],
           },

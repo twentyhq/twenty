@@ -8,8 +8,6 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { SettingsFeatures } from 'twenty-shared';
-
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -26,6 +24,7 @@ import {
 import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
@@ -42,7 +41,7 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.objectMetadataService.resolveTranslatableString(
+    return this.objectMetadataService.resolveOverridableString(
       objectMetadata,
       'labelPlural',
       context.req.headers['x-locale'],
@@ -54,7 +53,7 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.objectMetadataService.resolveTranslatableString(
+    return this.objectMetadataService.resolveOverridableString(
       objectMetadata,
       'labelSingular',
       context.req.headers['x-locale'],
@@ -66,14 +65,27 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.objectMetadataService.resolveTranslatableString(
+    return this.objectMetadataService.resolveOverridableString(
       objectMetadata,
       'description',
       context.req.headers['x-locale'],
     );
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
+  @ResolveField(() => String, { nullable: true })
+  async icon(
+    @Parent() objectMetadata: ObjectMetadataDTO,
+    @Context() context: I18nContext,
+  ): Promise<string> {
+    return this.objectMetadataService.resolveOverridableString(
+      objectMetadata,
+      'icon',
+      context.req.headers['x-locale'],
+    );
+  }
+
+  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async deleteOneObject(
     @Args('input') input: DeleteOneObjectInput,
@@ -89,17 +101,21 @@ export class ObjectMetadataResolver {
     }
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async updateOneObject(
     @Args('input') input: UpdateOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
+    @Context() context: I18nContext,
   ) {
     try {
-      await this.beforeUpdateOneObject.run(input, workspaceId);
+      const updatedInput = (await this.beforeUpdateOneObject.run(input, {
+        workspaceId,
+        locale: context.req.headers['x-locale'],
+      })) as UpdateOneObjectInput;
 
       return await this.objectMetadataService.updateOneObject(
-        input,
+        updatedInput,
         workspaceId,
       );
     } catch (error) {

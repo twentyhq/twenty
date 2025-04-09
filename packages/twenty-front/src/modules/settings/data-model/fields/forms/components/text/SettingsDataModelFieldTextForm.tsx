@@ -3,8 +3,9 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { Select } from '@/ui/input/components/Select';
-import { IconTextWrap } from 'twenty-ui';
 import { z } from 'zod';
+import { t } from '@lingui/core/macro';
+import { IconTextWrap } from 'twenty-ui/display';
 
 type SettingsDataModelFieldTextFormProps = {
   disabled?: boolean;
@@ -45,8 +46,8 @@ export const SettingsDataModelFieldTextForm = ({
           <>
             <SettingsOptionCardContentSelect
               Icon={IconTextWrap}
-              title="Wrap on record pages"
-              description="Display text on multiple lines"
+              title={t`Wrap on record pages`}
+              description={t`Display text on multiple lines`}
             >
               <Select<number>
                 dropdownId="text-wrap"
@@ -55,23 +56,23 @@ export const SettingsDataModelFieldTextForm = ({
                 disabled={disabled}
                 options={[
                   {
-                    label: 'Deactivated',
+                    label: t`Deactivated`,
                     value: 0,
                   },
                   {
-                    label: 'First 2 lines',
+                    label: t`First 2 lines`,
                     value: 2,
                   },
                   {
-                    label: 'First 5 lines',
+                    label: t`First 5 lines`,
                     value: 5,
                   },
                   {
-                    label: 'First 10 lines',
+                    label: t`First 10 lines`,
                     value: 10,
                   },
                   {
-                    label: 'All lines',
+                    label: t`All lines`,
                     value: 99,
                   },
                 ]}

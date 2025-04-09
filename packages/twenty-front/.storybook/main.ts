@@ -37,7 +37,7 @@ const config: StorybookConfig = {
         '@storybook/addon-docs',
         '@storybook/addon-essentials/docs',
       ],
-    }
+    },
   },
   addons: [
     '@storybook/addon-links',

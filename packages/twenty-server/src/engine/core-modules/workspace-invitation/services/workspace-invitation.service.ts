@@ -3,11 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
+import { i18n } from '@lingui/core';
+import { t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
-import { APP_LOCALES } from 'twenty-shared';
+import { APP_LOCALES } from 'twenty-shared/translations';
 import { IsNull, Repository } from 'typeorm';
 
 import {
@@ -288,6 +290,8 @@ export class WorkspaceInvitationService {
               }
             : {},
         });
+
+        // Todo: sender name and locale should come from workspace member not user!
         const emailData = {
           link: link.toString(),
           workspace: { name: workspace.displayName, logo: workspace.logo },
@@ -297,19 +301,21 @@ export class WorkspaceInvitationService {
             lastName: sender.lastName,
           },
           serverUrl: this.environmentService.get('SERVER_URL'),
-          locale: 'en' as keyof typeof APP_LOCALES,
+          locale: sender.locale as keyof typeof APP_LOCALES,
         };
 
         const emailTemplate = SendInviteLinkEmail(emailData);
-        const html = render(emailTemplate);
-        const text = render(emailTemplate, {
+        const html = await render(emailTemplate);
+        const text = await render(emailTemplate, {
           plainText: true,
         });
+
+        i18n.activate(sender.locale);
 
         await this.emailService.send({
           from: `${sender.firstName} ${sender.lastName} (via Twenty) <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
           to: invitation.value.email,
-          subject: 'Join your team on Twenty',
+          subject: t`Join your team on Twenty`,
           text,
           html,
         });

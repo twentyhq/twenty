@@ -4,10 +4,11 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { phonesSchema as phonesFieldDefaultValueSchema } from '@/object-record/record-field/types/guards/isFieldPhonesValue';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { countryCodeToCallingCode } from '@/settings/data-model/fields/preview/utils/getPhonesFieldPreviewValue';
-import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { Select } from '@/ui/input/components/Select';
+import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
+import { useLingui } from '@lingui/react/macro';
 import { CountryCode } from 'libphonenumber-js';
-import { IconCircleOff, IconComponentProps, IconMap } from 'twenty-ui';
+import { IconCircleOff, IconComponentProps, IconMap } from 'twenty-ui/display';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -35,10 +36,11 @@ export const SettingsDataModelFieldPhonesForm = ({
   disabled,
   fieldMetadataItem,
 }: SettingsDataModelFieldPhonesFormProps) => {
+  const { t } = useLingui();
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
 
   const countries = [
-    { label: 'No country', value: '', Icon: IconCircleOff },
+    { label: t`No country`, value: '', Icon: IconCircleOff },
     ...useCountries()
       .sort((a, b) => a.countryName.localeCompare(b.countryName))
       .map((country) => ({
@@ -68,11 +70,10 @@ export const SettingsDataModelFieldPhonesForm = ({
         return (
           <SettingsOptionCardContentSelect
             Icon={IconMap}
-            title="Default Country Code"
-            description="The default country code for new phone numbers."
+            title={t`Default Country Code`}
+            description={t`The default country code for new phone numbers.`}
           >
             <Select<string>
-              dropdownWidth={'auto'}
               dropdownId="selectDefaultCountryCode"
               value={stripSimpleQuotesFromString(
                 value?.primaryPhoneCountryCode,

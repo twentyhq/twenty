@@ -1,16 +1,16 @@
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { t } from '@lingui/core/macro';
 import {
   IconArchiveOff,
   IconDotsVertical,
   IconEye,
   IconPencil,
   IconTrash,
-  LightIconButton,
-  MenuItem,
-} from 'twenty-ui';
-
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsObjectFieldInactiveActionDropdownProps = {
@@ -60,22 +60,22 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
           accent="tertiary"
         />
       }
-      dropdownMenuWidth={160}
+      dropdownWidth={160}
       dropdownComponents={
         <DropdownMenuItemsContainer>
           <MenuItem
-            text={isCustomField ? 'Edit' : 'View'}
+            text={isCustomField ? t`Edit` : t`View`}
             LeftIcon={isCustomField ? IconPencil : IconEye}
             onClick={handleEdit}
           />
           <MenuItem
-            text="Activate"
+            text={t`Activate`}
             LeftIcon={IconArchiveOff}
             onClick={handleActivate}
           />
           {isDeletable && (
             <MenuItem
-              text="Delete"
+              text={t`Delete`}
               accent="danger"
               LeftIcon={IconTrash}
               onClick={handleDelete}

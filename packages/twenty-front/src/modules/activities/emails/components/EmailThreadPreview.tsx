@@ -1,14 +1,12 @@
 import styled from '@emotion/styled';
-import { useRecoilCallback } from 'recoil';
-import { Avatar, GRAY_SCALE } from 'twenty-ui';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
-import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
-import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/states/lastViewableEmailThreadIdState';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEmailThreadInCommandMenu';
 import { MessageChannelVisibility, TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
+import { Avatar } from 'twenty-ui/display';
+import { GRAY_SCALE } from 'twenty-ui/theme';
 
 const StyledHeading = styled.div<{ unread: boolean }>`
   display: flex;
@@ -71,7 +69,7 @@ type EmailThreadPreviewProps = {
 };
 
 export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
-  const { openEmailThread } = useEmailThread();
+  const { openEmailThreadInCommandMenu } = useOpenEmailThreadInCommandMenu();
 
   const visibility = thread.visibility;
 
@@ -93,42 +91,19 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
           false,
         ];
 
-  const { isSameEventThanRightDrawerClose } = useRightDrawer();
+  const handleThreadClick = () => {
+    const canOpen =
+      thread.visibility === MessageChannelVisibility.SHARE_EVERYTHING;
 
-  const handleThreadClick = useRecoilCallback(
-    ({ snapshot }) =>
-      (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        const clickJustTriggeredEmailDrawerClose =
-          isSameEventThanRightDrawerClose(event.nativeEvent);
-
-        const emailThreadIdWhenEmailThreadWasClosed = snapshot
-          .getLoadable(emailThreadIdWhenEmailThreadWasClosedState)
-          .getValue();
-
-        const canOpen =
-          thread.visibility === MessageChannelVisibility.SHARE_EVERYTHING &&
-          (!clickJustTriggeredEmailDrawerClose ||
-            emailThreadIdWhenEmailThreadWasClosed !== thread.id);
-
-        if (canOpen) {
-          openEmailThread(thread.id);
-        }
-      },
-    [
-      isSameEventThanRightDrawerClose,
-      openEmailThread,
-      thread.id,
-      thread.visibility,
-    ],
-  );
+    if (canOpen) {
+      openEmailThreadInCommandMenu(thread.id);
+    }
+  };
 
   const isDisabled = visibility !== MessageChannelVisibility.SHARE_EVERYTHING;
 
   return (
-    <ActivityRow
-      onClick={(event) => handleThreadClick(event)}
-      disabled={isDisabled}
-    >
+    <ActivityRow onClick={handleThreadClick} disabled={isDisabled}>
       <StyledHeading unread={!thread.read}>
         <StyledParticipantsContainer>
           <Avatar

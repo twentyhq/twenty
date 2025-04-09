@@ -13,7 +13,7 @@ import { isFieldSelect } from '../../types/guards/isFieldSelect';
 import { isFieldSelectValue } from '../../types/guards/isFieldSelectValue';
 
 export const useSelectField = () => {
-  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   assertFieldMetadata(FieldMetadataType.SELECT, isFieldSelect, fieldDefinition);
 
@@ -30,7 +30,7 @@ export const useSelectField = () => {
   const persistField = usePersistField();
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldSelectValue>(`${recordId}-${fieldName}`);
+    useRecordFieldInput<FieldSelectValue>();
   const draftValue = useRecoilValue(getDraftValueSelector());
 
   return {
@@ -40,6 +40,5 @@ export const useSelectField = () => {
     draftValue,
     setDraftValue,
     setFieldValue,
-    hotkeyScope,
   };
 };

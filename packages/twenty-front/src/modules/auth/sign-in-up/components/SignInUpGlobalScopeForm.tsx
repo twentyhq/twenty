@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { HorizontalSeparator, Loader, MainButton } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { SignInUpEmailField } from '@/auth/sign-in-up/components/SignInUpEmailField';
@@ -26,8 +25,11 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { isDefined } from 'twenty-shared';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { isDefined } from 'twenty-shared/utils';
+import { HorizontalSeparator } from 'twenty-ui/display';
+import { Loader } from 'twenty-ui/feedback';
+import { MainButton } from 'twenty-ui/input';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};

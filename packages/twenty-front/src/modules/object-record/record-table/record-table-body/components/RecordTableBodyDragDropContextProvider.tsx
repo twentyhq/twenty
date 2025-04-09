@@ -5,20 +5,21 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { isDefined } from 'twenty-shared';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableBodyDragDropContextProvider = ({
   children,
 }: {
   children: ReactNode;
 }) => {
-  const { objectNameSingular, recordTableId } = useRecordTableContextOrThrow();
+  const { objectNameSingular } = useRecordTableContextOrThrow();
 
   const { updateOneRecord: updateOneRow } = useUpdateOneRecord({
     objectNameSingular,
@@ -28,20 +29,19 @@ export const RecordTableBodyDragDropContextProvider = ({
     recordIndexAllRecordIdsComponentSelector,
   );
 
-  const { currentViewWithCombinedFiltersAndSorts } =
-    useGetCurrentView(recordTableId);
+  const currentRecordSorts = useRecoilComponentValueV2(
+    currentRecordSortsComponentState,
+  );
 
-  const viewSorts = currentViewWithCombinedFiltersAndSorts?.viewSorts || [];
-
-  const setIsRemoveSortingModalOpenState = useSetRecoilState(
+  const setIsRemoveSortingModalOpen = useSetRecoilState(
     isRemoveSortingModalOpenState,
   );
 
   const handleDragEnd = useRecoilCallback(
     ({ snapshot }) =>
       (result: DropResult) => {
-        if (viewSorts.length > 0) {
-          setIsRemoveSortingModalOpenState(true);
+        if (currentRecordSorts.length > 0) {
+          setIsRemoveSortingModalOpen(true);
           return;
         }
 
@@ -101,9 +101,9 @@ export const RecordTableBodyDragDropContextProvider = ({
       },
     [
       recordIndexAllRecordIdsSelector,
-      setIsRemoveSortingModalOpenState,
+      setIsRemoveSortingModalOpen,
       updateOneRow,
-      viewSorts.length,
+      currentRecordSorts,
     ],
   );
 

@@ -15,6 +15,7 @@ import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { UserResolver } from 'src/engine/core-modules/user/user.resolver';
@@ -50,6 +51,7 @@ import { UserService } from './services/user.service';
     UserRoleModule,
     FeatureFlagModule,
     PermissionsModule,
+    UserWorkspaceModule,
   ],
   exports: [UserService],
   providers: [UserService, UserResolver, TypeORMService],

@@ -1,9 +1,14 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
+import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
+import { useParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { OnboardingStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
@@ -11,17 +16,20 @@ export const usePageChangeEffectNavigateLocation = () => {
   const { isMatchingLocation } = useIsMatchingLocation();
   const isLoggedIn = useIsLogged();
   const onboardingStatus = useOnboardingStatus();
-  const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
+  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
+    WorkspaceActivationStatus.SUSPENDED,
+  );
+
   const { defaultHomePagePath } = useDefaultHomePagePath();
 
   const isMatchingOpenRoute =
     isMatchingLocation(AppPath.Invite) ||
-    isMatchingLocation(AppPath.ResetPassword) ||
-    isMatchingLocation(AppPath.VerifyEmail);
+    isMatchingLocation(AppPath.ResetPassword);
 
   const isMatchingOngoingUserCreationRoute =
     isMatchingOpenRoute ||
     isMatchingLocation(AppPath.SignInUp) ||
+    isMatchingLocation(AppPath.VerifyEmail) ||
     isMatchingLocation(AppPath.Verify);
 
   const isMatchingOnboardingRoute =
@@ -33,9 +41,11 @@ export const usePageChangeEffectNavigateLocation = () => {
     isMatchingLocation(AppPath.PlanRequired) ||
     isMatchingLocation(AppPath.PlanRequiredSuccess);
 
-  if (isMatchingOpenRoute) {
-    return;
-  }
+  const objectNamePlural = useParams().objectNamePlural ?? '';
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
+  );
 
   if (!isLoggedIn && !isMatchingOngoingUserCreationRoute) {
     return AppPath.SignInUp;
@@ -94,6 +104,13 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (isMatchingLocation(AppPath.Index) && isLoggedIn) {
     return defaultHomePagePath;
+  }
+
+  if (
+    isMatchingLocation(AppPath.RecordIndexPage) &&
+    !isDefined(objectMetadataItem)
+  ) {
+    return AppPath.NotFound;
   }
 
   return;

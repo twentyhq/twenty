@@ -1,28 +1,27 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useChipFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useChipFieldDisplay';
-import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
-import { ChipSize } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { ChipSize } from 'twenty-ui/components';
 
 export const ChipFieldDisplay = () => {
   const {
     recordValue,
     objectNameSingular,
-    isLabelIdentifier,
     labelIdentifierLink,
+    isLabelIdentifierCompact,
   } = useChipFieldDisplay();
 
-  if (!recordValue) {
+  if (!isDefined(recordValue)) {
     return null;
   }
 
-  return isLabelIdentifier ? (
-    <RecordIdentifierChip
+  return (
+    <RecordChip
       objectNameSingular={objectNameSingular}
       record={recordValue}
       size={ChipSize.Small}
       to={labelIdentifierLink}
+      isLabelHidden={isLabelIdentifierCompact}
     />
-  ) : (
-    <RecordChip objectNameSingular={objectNameSingular} record={recordValue} />
   );
 };

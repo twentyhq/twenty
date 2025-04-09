@@ -190,6 +190,7 @@ describe('computeSchemaComponents', () => {
                   'IMPORT',
                   'MANUAL',
                   'SYSTEM',
+                  'WEBHOOK',
                 ],
               },
             },
@@ -378,6 +379,7 @@ describe('computeSchemaComponents', () => {
                   'IMPORT',
                   'MANUAL',
                   'SYSTEM',
+                  'WEBHOOK',
                 ],
               },
             },
@@ -565,6 +567,7 @@ describe('computeSchemaComponents', () => {
                   'IMPORT',
                   'MANUAL',
                   'SYSTEM',
+                  'WEBHOOK',
                 ],
               },
               workspaceMemberId: {

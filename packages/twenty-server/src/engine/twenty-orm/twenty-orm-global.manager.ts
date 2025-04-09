@@ -50,8 +50,15 @@ export class TwentyORMGlobalManager {
     return repository;
   }
 
-  async getDataSourceForWorkspace(workspaceId: string) {
-    return await this.workspaceDataSourceFactory.create(workspaceId, null);
+  async getDataSourceForWorkspace(
+    workspaceId: string,
+    failOnMetadataCacheMiss = true,
+  ) {
+    return await this.workspaceDataSourceFactory.create(
+      workspaceId,
+      null,
+      failOnMetadataCacheMiss,
+    );
   }
 
   async destroyDataSourceForWorkspace(workspaceId: string) {

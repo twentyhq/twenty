@@ -21,6 +21,7 @@ import {
   WorkspaceQueryRunnerException,
   WorkspaceQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
@@ -30,6 +31,7 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
 > {
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<FindOneResolverArgs>,
+    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<ObjectRecord> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
@@ -75,13 +77,10 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
         limit: QUERY_MAX_RECORDS,
         authContext,
         dataSource: executionArgs.dataSource,
+        isNewRelationEnabled:
+          featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
       });
     }
-
-    const featureFlagsMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(
-        authContext.workspace.id,
-      );
 
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(

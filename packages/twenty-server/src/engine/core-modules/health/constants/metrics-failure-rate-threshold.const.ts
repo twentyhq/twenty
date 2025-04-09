@@ -1,0 +1,1 @@
+export const METRICS_FAILURE_RATE_THRESHOLD = 20;

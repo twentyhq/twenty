@@ -1,11 +1,12 @@
 import { Controller, useFormContext } from 'react-hook-form';
-import { IconCheck, IconX } from 'twenty-ui';
 import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
 import { Select } from '@/ui/input/components/Select';
+import { useLingui } from '@lingui/react/macro';
+import { IconCheck, IconX } from 'twenty-ui/display';
 
 export const settingsDataModelFieldBooleanFormSchema = z.object({
   defaultValue: z.boolean(),
@@ -22,6 +23,7 @@ type SettingsDataModelFieldBooleanFormProps = {
 export const SettingsDataModelFieldBooleanForm = ({
   fieldMetadataItem,
 }: SettingsDataModelFieldBooleanFormProps) => {
+  const { t } = useLingui();
   const { control } = useFormContext<SettingsDataModelFieldBooleanFormValues>();
 
   const { initialDefaultValue } = useBooleanSettingsFormInitialValues({
@@ -36,8 +38,8 @@ export const SettingsDataModelFieldBooleanForm = ({
       render={({ field: { onChange, value } }) => (
         <SettingsOptionCardContentSelect
           Icon={IconCheck}
-          title="Default Value"
-          description="Select the default value for this boolean field"
+          title={t`Default Value`}
+          description={t`Select the default value for this boolean field`}
         >
           <Select<boolean>
             value={value}
@@ -48,12 +50,12 @@ export const SettingsDataModelFieldBooleanForm = ({
             options={[
               {
                 value: true,
-                label: 'True',
+                label: t`True`,
                 Icon: IconCheck,
               },
               {
                 value: false,
-                label: 'False',
+                label: t`False`,
                 Icon: IconX,
               },
             ]}

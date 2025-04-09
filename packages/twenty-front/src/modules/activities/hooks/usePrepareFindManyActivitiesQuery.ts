@@ -13,20 +13,14 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { isDefined } from 'twenty-shared';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { sortByAscString } from '~/utils/array/sortByAscString';
+import { isDefined } from 'twenty-shared/utils';
 
 export const usePrepareFindManyActivitiesQuery = ({
   activityObjectNameSingular,
 }: {
   activityObjectNameSingular: CoreObjectNameSingular;
 }) => {
-  const isRichTextV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsRichTextV2Enabled,
-  );
-
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItem({
       objectNameSingular: activityObjectNameSingular,
@@ -120,7 +114,6 @@ export const usePrepareFindManyActivitiesQuery = ({
       findActivitiesOperationSignatureFactory({
         objectNameSingular: activityObjectNameSingular,
         objectMetadataItems,
-        isRichTextV2Enabled,
       });
 
     upsertFindManyActivitiesInCache({

@@ -3,8 +3,9 @@ import { usePhonesFieldDisplay } from '@/object-record/record-field/meta-types/h
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { PhonesDisplay } from '@/ui/field/display/components/PhonesDisplay';
+import { useLingui } from '@lingui/react/macro';
 import React from 'react';
-import { useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
 
 export const PhonesFieldDisplay = () => {
   const { fieldValue } = usePhonesFieldDisplay();
@@ -14,6 +15,8 @@ export const PhonesFieldDisplay = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const { getIcon } = useIcons();
+
+  const { t } = useLingui();
 
   const IconCircleCheck = getIcon('IconCircleCheck');
   const IconExclamationCircle = getIcon('IconExclamationCircle');
@@ -26,13 +29,13 @@ export const PhonesFieldDisplay = () => {
 
     try {
       await navigator.clipboard.writeText(phoneNumber);
-      enqueueSnackBar('Phone number copied to clipboard', {
+      enqueueSnackBar(t`Phone number copied to clipboard`, {
         variant: SnackBarVariant.Success,
         icon: <IconCircleCheck size={16} color="green" />,
         duration: 2000,
       });
     } catch (err) {
-      enqueueSnackBar('Error copying to clipboard', {
+      enqueueSnackBar(t`Error copying to clipboard`, {
         variant: SnackBarVariant.Error,
         icon: <IconExclamationCircle size={16} color="red" />,
         duration: 2000,

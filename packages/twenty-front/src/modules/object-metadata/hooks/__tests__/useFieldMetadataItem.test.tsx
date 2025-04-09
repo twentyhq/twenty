@@ -21,6 +21,16 @@ import {
   responseData as findManyObjectMetadataItemsResponseData,
 } from '../__mocks__/useFindManyObjectMetadataItems';
 
+jest.mock('@/object-metadata/hooks/useUpdateOneFieldMetadataItem', () => ({
+  useUpdateOneFieldMetadataItem: () => ({
+    updateOneFieldMetadataItem: jest.fn().mockResolvedValue({
+      data: {
+        updateOneField: responseData.default,
+      },
+    }),
+  }),
+}));
+
 const fieldMetadataItem: FieldMetadataItem = {
   id: FIELD_METADATA_ID,
   createdAt: '',
@@ -113,17 +123,6 @@ const mocks = [
   },
   {
     request: {
-      query: queries.activateMetadataField,
-      variables: variables.activateMetadataField,
-    },
-    result: jest.fn(() => ({
-      data: {
-        updateOneField: responseData.default,
-      },
-    })),
-  },
-  {
-    request: {
       query: queries.createMetadataField,
       variables: variables.createMetadataField,
     },
@@ -131,26 +130,6 @@ const mocks = [
       data: {
         createOneField: responseData.createMetadataField,
       },
-    })),
-  },
-  {
-    request: {
-      query: queries.activateMetadataField,
-      variables: variables.deactivateMetadataField,
-    },
-    result: jest.fn(() => ({
-      data: {
-        updateOneField: responseData.default,
-      },
-    })),
-  },
-  {
-    request: {
-      query: queries.getCurrentUser,
-      variables: {},
-    },
-    result: jest.fn(() => ({
-      data: responseData.getCurrentUser,
     })),
   },
   {

@@ -8,9 +8,11 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { Button, H2Title, Section } from 'twenty-ui';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { Button } from 'twenty-ui/input';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 export const SettingsServerlessFunctionSettingsTab = ({
   formValues,
@@ -85,7 +87,7 @@ export const SettingsServerlessFunctionSettingsTab = ({
           </>
         }
         onConfirmClick={deleteFunction}
-        deleteButtonText="Delete function"
+        confirmButtonText="Delete function"
       />
     </>
   );

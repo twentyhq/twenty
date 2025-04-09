@@ -9,12 +9,13 @@ import {
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
 import { GraphqlQueryRestoreManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-restore-many-resolver.service';
+import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 
 @Injectable()
 export class RestoreManyResolverFactory
   implements WorkspaceResolverBuilderFactoryInterface
 {
-  public static methodName = 'restoreMany' as const;
+  public static methodName = RESOLVER_METHOD_NAMES.RESTORE_MANY;
 
   constructor(
     private readonly graphqlQueryRunnerService: GraphqlQueryRestoreManyResolverService,

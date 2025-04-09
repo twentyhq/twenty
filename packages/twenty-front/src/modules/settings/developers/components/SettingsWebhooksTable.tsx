@@ -27,7 +27,7 @@ export const SettingsWebhooksTable = () => {
   return (
     <Table>
       <StyledTableRow>
-        <TableHeader>Url</TableHeader>
+        <TableHeader>URL</TableHeader>
         <TableHeader></TableHeader>
       </StyledTableRow>
       {!!webhooks.length && (

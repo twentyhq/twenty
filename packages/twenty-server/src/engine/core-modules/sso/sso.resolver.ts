@@ -3,17 +3,12 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import omit from 'lodash.omit';
-import { SettingsFeatures } from 'twenty-shared';
-
 import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
 import { DeleteSsoInput } from 'src/engine/core-modules/sso/dtos/delete-sso.input';
 import { DeleteSsoOutput } from 'src/engine/core-modules/sso/dtos/delete-sso.output';
 import { EditSsoInput } from 'src/engine/core-modules/sso/dtos/edit-sso.input';
 import { EditSsoOutput } from 'src/engine/core-modules/sso/dtos/edit-sso.output';
 import { FindAvailableSSOIDPOutput } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.output';
-import { GetAuthorizationUrlInput } from 'src/engine/core-modules/sso/dtos/get-authorization-url.input';
-import { GetAuthorizationUrlOutput } from 'src/engine/core-modules/sso/dtos/get-authorization-url.output';
 import {
   SetupOIDCSsoInput,
   SetupSAMLSsoInput,
@@ -25,11 +20,12 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @Resolver()
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
-@UseGuards(SettingsPermissionsGuard(SettingsFeatures.SECURITY))
+@UseGuards(SettingsPermissionsGuard(SettingPermissionType.SECURITY))
 export class SSOResolver {
   constructor(private readonly sSOService: SSOService) {}
 
@@ -45,20 +41,12 @@ export class SSOResolver {
     );
   }
 
-  @UseGuards(EnterpriseFeaturesEnabledGuard)
+  @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
   @Query(() => [FindAvailableSSOIDPOutput])
-  async listSSOIdentityProvidersByWorkspaceId(
+  async getSSOIdentityProviders(
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.sSOService.listSSOIdentityProvidersByWorkspaceId(workspaceId);
-  }
-
-  @Mutation(() => GetAuthorizationUrlOutput)
-  async getAuthorizationUrl(@Args('input') params: GetAuthorizationUrlInput) {
-    return await this.sSOService.getAuthorizationUrl(
-      params.identityProviderId,
-      omit(params, ['identityProviderId']),
-    );
+    return this.sSOService.getSSOIdentityProviders(workspaceId);
   }
 
   @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)

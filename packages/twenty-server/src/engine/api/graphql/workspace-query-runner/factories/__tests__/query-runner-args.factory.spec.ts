@@ -1,17 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { ResolverArgsType } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
-import { RecordPositionFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/record-position.factory';
+import {
+  RecordPositionService,
+  RecordPositionServiceCreateArgs,
+} from 'src/engine/core-modules/record-position/services/record-position.service';
+import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
 describe('QueryRunnerArgsFactory', () => {
-  const recordPositionFactory = {
-    create: jest.fn().mockResolvedValue(2),
+  const recordPositionService = {
+    buildRecordPosition: jest.fn().mockResolvedValue(2),
   };
   const workspaceId = 'workspaceId';
   const options = {
@@ -62,11 +66,10 @@ describe('QueryRunnerArgsFactory', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         QueryRunnerArgsFactory,
+        RecordInputTransformerService,
         {
-          provide: RecordPositionFactory,
-          useValue: {
-            create: recordPositionFactory.create,
-          },
+          provide: RecordPositionService,
+          useValue: recordPositionService,
         },
       ],
     }).compile();
@@ -104,11 +107,15 @@ describe('QueryRunnerArgsFactory', () => {
         ResolverArgsType.CreateMany,
       );
 
-      expect(recordPositionFactory.create).toHaveBeenCalledWith(
-        'last',
-        { isCustom: true, nameSingular: 'testNumber' },
+      const expectedArgs: RecordPositionServiceCreateArgs = {
+        value: 'last',
+        objectMetadata: { isCustom: true, nameSingular: 'testNumber' },
         workspaceId,
-        0,
+        index: 0,
+      };
+
+      expect(recordPositionService.buildRecordPosition).toHaveBeenCalledWith(
+        expectedArgs,
       );
       expect(result).toEqual({
         id: 'uuid',
@@ -128,11 +135,15 @@ describe('QueryRunnerArgsFactory', () => {
         ResolverArgsType.CreateMany,
       );
 
-      expect(recordPositionFactory.create).toHaveBeenCalledWith(
-        'first',
-        { isCustom: true, nameSingular: 'testNumber' },
+      const expectedArgs: RecordPositionServiceCreateArgs = {
+        value: 'first',
+        objectMetadata: { isCustom: true, nameSingular: 'testNumber' },
         workspaceId,
-        0,
+        index: 0,
+      };
+
+      expect(recordPositionService.buildRecordPosition).toHaveBeenCalledWith(
+        expectedArgs,
       );
       expect(result).toEqual({
         id: 'uuid',

@@ -1,37 +1,43 @@
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
-import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
-import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
-import { isDefined } from 'twenty-shared';
 
 export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {
     const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
       useState(false);
 
+    const contextStoreCurrentViewId = useRecoilComponentValueV2(
+      contextStoreCurrentViewIdComponentState,
+    );
+
+    if (!contextStoreCurrentViewId) {
+      throw new Error('Current view ID is not defined');
+    }
+
     const { resetTableRowSelection } = useRecordTable({
-      recordTableId: objectMetadataItem.namePlural,
+      recordTableId: getRecordIndexIdFromObjectNamePluralAndViewId(
+        objectMetadataItem.namePlural,
+        contextStoreCurrentViewId,
+      ),
     });
 
     const { deleteManyRecords } = useDeleteManyRecords({
       objectNameSingular: objectMetadataItem.nameSingular,
     });
-
-    const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
-      contextStoreNumberOfSelectedRecordsComponentState,
-    );
 
     const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
       contextStoreTargetedRecordsRuleComponentState,
@@ -48,12 +54,6 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
       contextStoreFilters,
       objectMetadataItem,
       filterValueDependencies,
-    );
-
-    const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
-
-    const isDeletedFilterActive = contextStoreFilters.some(
-      checkIsSoftDeleteFilter,
     );
 
     const { fetchAllRecords: fetchAllRecordIds } = useLazyFetchAllRecords({
@@ -74,20 +74,7 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
       });
     }, [deleteManyRecords, fetchAllRecordIds, resetTableRowSelection]);
 
-    const isRemoteObject = objectMetadataItem.isRemote;
-
-    const shouldBeRegistered =
-      !isRemoteObject &&
-      !isDeletedFilterActive &&
-      isDefined(contextStoreNumberOfSelectedRecords) &&
-      contextStoreNumberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT &&
-      contextStoreNumberOfSelectedRecords > 0;
-
     const onClick = () => {
-      if (!shouldBeRegistered) {
-        return;
-      }
-
       setIsDeleteRecordsModalOpen(true);
     };
 
@@ -96,14 +83,13 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
         isOpen={isDeleteRecordsModalOpen}
         setIsOpen={setIsDeleteRecordsModalOpen}
         title={'Delete Records'}
-        subtitle={`Are you sure you want to delete these records? They can be recovered from the Options menu.`}
+        subtitle={t`Are you sure you want to delete these records? They can be recovered from the Command menu.`}
         onConfirmClick={handleDeleteClick}
-        deleteButtonText={'Delete Records'}
+        confirmButtonText={'Delete Records'}
       />
     );
 
     return {
-      shouldBeRegistered,
       onClick,
       ConfirmationModal: confirmationModal,
     };

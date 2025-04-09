@@ -1,7 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const getLabelIdentifierFieldValue = (
@@ -17,7 +17,7 @@ export const getLabelIdentifierFieldValue = (
   }
 
   if (isDefined(labelIdentifierFieldMetadataItem?.name)) {
-    return String(record[labelIdentifierFieldMetadataItem.name]);
+    return record[labelIdentifierFieldMetadataItem.name];
   }
 
   return '';

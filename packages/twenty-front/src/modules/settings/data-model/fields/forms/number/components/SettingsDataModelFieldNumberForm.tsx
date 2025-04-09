@@ -7,8 +7,14 @@ import { Separator } from '@/settings/components/Separator';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { Select } from '@/ui/input/components/Select';
-import { IconDecimal, IconEye, IconNumber9, IconPercentage } from 'twenty-ui';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
+import { t } from '@lingui/core/macro';
+import {
+  IconDecimal,
+  IconEye,
+  IconNumber9,
+  IconPercentage,
+} from 'twenty-ui/display';
 
 export const settingsDataModelFieldNumberFormSchema = z.object({
   settings: numberFieldDefaultValueSchema,
@@ -49,8 +55,8 @@ export const SettingsDataModelFieldNumberForm = ({
           <>
             <SettingsOptionCardContentSelect
               Icon={IconEye}
-              title="Number type"
-              description="Display as a plain number or a percentage"
+              title={t`Number type`}
+              description={t`Display as a plain number or a percentage`}
             >
               <Select<string>
                 selectSizeVariant="small"
@@ -63,12 +69,12 @@ export const SettingsDataModelFieldNumberForm = ({
                 options={[
                   {
                     Icon: IconNumber9,
-                    label: 'Number',
+                    label: t`Number`,
                     value: 'number',
                   },
                   {
                     Icon: IconPercentage,
-                    label: 'Percentage',
+                    label: t`Percentage`,
                     value: 'percentage',
                   },
                 ]}
@@ -77,7 +83,7 @@ export const SettingsDataModelFieldNumberForm = ({
             <Separator />
             <SettingsOptionCardContentCounter
               Icon={IconDecimal}
-              title="Number of decimals"
+              title={t`Number of decimals`}
               description={`E.g. ${(type === 'percentage' ? 99 : 1000).toFixed(count)}${type === 'percentage' ? '%' : ''} for ${count} decimal${count > 1 ? 's' : ''}`}
               value={count}
               onChange={(value) => onChange({ type: type, decimals: value })}

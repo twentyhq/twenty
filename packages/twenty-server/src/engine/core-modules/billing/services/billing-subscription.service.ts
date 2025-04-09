@@ -16,35 +16,28 @@ import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/bil
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
-import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
-import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
-import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
+import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
+import { getSubscriptionStatus } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Injectable()
 export class BillingSubscriptionService {
   protected readonly logger = new Logger(BillingSubscriptionService.name);
   constructor(
     private readonly stripeSubscriptionService: StripeSubscriptionService,
-    private readonly stripePriceService: StripePriceService,
-    private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
     private readonly billingPlanService: BillingPlanService,
-    private readonly environmentService: EnvironmentService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly billingProductService: BillingProductService,
     @InjectRepository(BillingEntitlement, 'core')
     private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    private readonly stripeCustomerService: StripeCustomerService,
   ) {}
 
   async getCurrentBillingSubscriptionOrThrow(criteria: {
@@ -54,7 +47,10 @@ export class BillingSubscriptionService {
     const notCanceledSubscriptions =
       await this.billingSubscriptionRepository.find({
         where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
-        relations: ['billingSubscriptionItems'],
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+        ],
       });
 
     assert(
@@ -67,41 +63,34 @@ export class BillingSubscriptionService {
 
   async getBaseProductCurrentBillingSubscriptionItemOrThrow(
     workspaceId: string,
-    stripeBaseProductId = this.environmentService.get(
-      'BILLING_STRIPE_BASE_PLAN_PRODUCT_ID',
-    ),
   ) {
-    const isBillingPlansEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsBillingPlansEnabled,
-        workspaceId,
-      );
-
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId },
     );
 
-    const getStripeProductId = isBillingPlansEnabled
-      ? (await this.billingPlanService.getPlanBaseProduct(BillingPlanKey.PRO))
-          ?.stripeProductId
-      : stripeBaseProductId;
+    const planKey = getPlanKeyFromSubscription(billingSubscription);
 
-    if (!getStripeProductId) {
+    const baseProduct =
+      await this.billingPlanService.getPlanBaseProduct(planKey);
+
+    if (!baseProduct) {
       throw new BillingException(
         'Base product not found',
         BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
       );
     }
 
+    const stripeProductId = baseProduct.stripeProductId;
+
     const billingSubscriptionItem =
       billingSubscription.billingSubscriptionItems.filter(
         (billingSubscriptionItem) =>
-          billingSubscriptionItem.stripeProductId === getStripeProductId,
+          billingSubscriptionItem.stripeProductId === stripeProductId,
       )?.[0];
 
     if (!billingSubscriptionItem) {
       throw new Error(
-        `Cannot find billingSubscriptionItem for product ${getStripeProductId} for workspace ${workspaceId}`,
+        `Cannot find billingSubscriptionItem for product ${stripeProductId} for workspace ${workspaceId}`,
       );
     }
 
@@ -135,7 +124,7 @@ export class BillingSubscriptionService {
 
     return {
       handleUnpaidInvoiceStripeSubscriptionId:
-        billingSubscription.stripeSubscriptionId,
+        billingSubscription?.stripeSubscriptionId,
     };
   }
 
@@ -156,60 +145,38 @@ export class BillingSubscriptionService {
     return entitlement.value;
   }
 
-  async applyBillingSubscription(workspace: Workspace) {
+  async switchToYearlyInterval(workspace: Workspace) {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
-    const isBillingPlansEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsBillingPlansEnabled,
-        workspace.id,
-      );
-    const newInterval =
-      billingSubscription?.interval === SubscriptionInterval.Year
-        ? SubscriptionInterval.Month
-        : SubscriptionInterval.Year;
 
-    const billingBaseProductSubscriptionItem =
-      await this.getBaseProductCurrentBillingSubscriptionItemOrThrow(
-        workspace.id,
-      );
-
-    if (isBillingPlansEnabled) {
-      const billingProductsByPlan =
-        await this.billingProductService.getProductsByPlan(BillingPlanKey.PRO);
-      const pricesPerPlanArray =
-        this.billingProductService.getProductPricesByInterval({
-          interval: newInterval,
-          billingProductsByPlan,
-        });
-
-      const subscriptionItemsToUpdate = this.getSubscriptionItemsToUpdate(
-        billingSubscription,
-        pricesPerPlanArray,
-      );
-
-      await this.stripeSubscriptionService.updateSubscriptionItems(
-        billingSubscription.stripeSubscriptionId,
-        subscriptionItemsToUpdate,
-      );
-    } else {
-      const productPrice = await this.stripePriceService.getStripePrice(
-        AvailableProduct.BasePlan,
-        newInterval,
-      );
-
-      if (!productPrice) {
-        throw new Error(
-          `Cannot find product price for product ${AvailableProduct.BasePlan} and interval ${newInterval}`,
-        );
-      }
-
-      await this.stripeSubscriptionItemService.updateBillingSubscriptionItem(
-        billingBaseProductSubscriptionItem,
-        productPrice.stripePriceId,
+    if (billingSubscription.interval === SubscriptionInterval.Year) {
+      throw new BillingException(
+        'Cannot switch from yearly to monthly billing interval',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_INTERVAL_NOT_SWITCHABLE,
       );
     }
+
+    const newInterval = SubscriptionInterval.Year;
+
+    const planKey = getPlanKeyFromSubscription(billingSubscription);
+    const billingProductsByPlan =
+      await this.billingProductService.getProductsByPlan(planKey);
+    const pricesPerPlanArray =
+      this.billingProductService.getProductPricesByInterval({
+        interval: newInterval,
+        billingProductsByPlan,
+      });
+
+    const subscriptionItemsToUpdate = this.getSubscriptionItemsToUpdate(
+      billingSubscription,
+      pricesPerPlanArray,
+    );
+
+    await this.stripeSubscriptionService.updateSubscriptionItems(
+      billingSubscription.stripeSubscriptionId,
+      subscriptionItemsToUpdate,
+    );
   }
 
   private getSubscriptionItemsToUpdate(
@@ -236,5 +203,39 @@ export class BillingSubscriptionService {
       });
 
     return subscriptionItemsToUpdate;
+  }
+
+  async endTrialPeriod(workspace: Workspace) {
+    const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
+      { workspaceId: workspace.id },
+    );
+
+    if (billingSubscription.status !== SubscriptionStatus.Trialing) {
+      throw new BillingException(
+        'Billing subscription is not in trial period',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_IN_TRIAL_PERIOD,
+      );
+    }
+
+    const hasPaymentMethod = await this.stripeCustomerService.hasPaymentMethod(
+      billingSubscription.stripeCustomerId,
+    );
+
+    if (!hasPaymentMethod) {
+      return { hasPaymentMethod: false, status: undefined };
+    }
+
+    const updatedSubscription =
+      await this.stripeSubscriptionService.updateSubscription(
+        billingSubscription.stripeSubscriptionId,
+        {
+          trial_end: 'now',
+        },
+      );
+
+    return {
+      status: getSubscriptionStatus(updatedSubscription.status),
+      hasPaymentMethod: true,
+    };
   }
 }

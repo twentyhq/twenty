@@ -75,6 +75,9 @@ export class ClientConfigResolver {
           'MUTATION_MAXIMUM_AFFECTED_RECORDS',
         ),
       },
+      isAttachmentPreviewEnabled: this.environmentService.get(
+        'IS_ATTACHMENT_PREVIEW_ENABLED',
+      ),
       analyticsEnabled: this.environmentService.get('ANALYTICS_ENABLED'),
       canManageFeatureFlags:
         this.environmentService.get('NODE_ENV') ===

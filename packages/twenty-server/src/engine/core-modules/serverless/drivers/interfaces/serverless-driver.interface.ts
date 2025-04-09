@@ -10,17 +10,14 @@ export type ServerlessExecuteError = {
 export type ServerlessExecuteResult = {
   data: object | null;
   duration: number;
+  logs: string;
   status: ServerlessFunctionExecutionStatus;
   error?: ServerlessExecuteError;
 };
 
 export interface ServerlessDriver {
   delete(serverlessFunction: ServerlessFunctionEntity): Promise<void>;
-  build(
-    serverlessFunction: ServerlessFunctionEntity,
-    version: string,
-  ): Promise<void>;
-  publish(serverlessFunction: ServerlessFunctionEntity): Promise<string>;
+  build(serverlessFunction: ServerlessFunctionEntity): Promise<void>;
   execute(
     serverlessFunction: ServerlessFunctionEntity,
     payload: object,

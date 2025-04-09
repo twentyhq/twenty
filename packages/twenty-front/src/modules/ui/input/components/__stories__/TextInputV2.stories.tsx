@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import {
   TextInputV2,
   TextInputV2ComponentProps,
 } from '@/ui/input/components/TextInputV2';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 type RenderProps = TextInputV2ComponentProps;
 
@@ -55,4 +55,16 @@ export const Small: Story = {
 
 export const AutoGrowSmall: Story = {
   args: { autoGrow: true, sizeVariant: 'sm', value: 'Tim' },
+};
+
+export const WithLeftAdornment: Story = {
+  args: {
+    leftAdornment: 'https://',
+  },
+};
+
+export const WithRightAdornment: Story = {
+  args: {
+    rightAdornment: '@twenty.com',
+  },
 };

@@ -1,6 +1,4 @@
-import { IconChevronDown } from 'twenty-ui';
-
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 
 import { ObjectFilterDropdownOperandSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownOperandSelect';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
@@ -11,6 +9,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { getOperandLabel } from '../utils/getOperandLabel';
+import { IconChevronDown } from 'twenty-ui/display';
 
 const StyledDropdownMenuHeader = styled(DropdownMenuHeader)`
   cursor: pointer;
@@ -35,7 +34,7 @@ export const ObjectFilterDropdownOperandDropdown = ({
       clickableComponent={
         <StyledDropdownMenuHeader
           key={'selected-filter-operand'}
-          EndIcon={IconChevronDown}
+          EndComponent={<IconChevronDown />}
         >
           {getOperandLabel(selectedOperandInDropdown)}
         </StyledDropdownMenuHeader>

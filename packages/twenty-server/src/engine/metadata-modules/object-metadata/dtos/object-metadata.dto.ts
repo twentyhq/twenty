@@ -9,9 +9,11 @@ import {
   QueryOptions,
 } from '@ptc-org/nestjs-query-graphql';
 
+import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
+import { ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
 import { BeforeDeleteOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-delete-one-object.hook';
 
 @ObjectType('Object')
@@ -53,6 +55,9 @@ export class ObjectMetadataDTO {
   @Field({ nullable: true })
   icon: string;
 
+  @Field(() => ObjectStandardOverridesDTO, { nullable: true })
+  standardOverrides?: ObjectStandardOverridesDTO;
+
   @Field({ nullable: true })
   shortcut: string;
 
@@ -67,6 +72,9 @@ export class ObjectMetadataDTO {
 
   @FilterableField()
   isSystem: boolean;
+
+  @FilterableField()
+  isSearchable: boolean;
 
   @HideField()
   workspaceId: string;
@@ -85,4 +93,7 @@ export class ObjectMetadataDTO {
 
   @Field()
   isLabelSyncedWithName: boolean;
+
+  @Field(() => [[String]], { nullable: true })
+  duplicateCriteria?: WorkspaceEntityDuplicateCriteria[];
 }

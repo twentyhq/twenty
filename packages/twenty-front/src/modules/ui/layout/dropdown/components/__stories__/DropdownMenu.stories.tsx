@@ -3,24 +3,25 @@ import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { PlayFunction } from '@storybook/types';
 import { useState } from 'react';
-import {
-  Avatar,
-  Button,
-  ComponentDecorator,
-  MenuItem,
-  MenuItemMultiSelectAvatar,
-  MenuItemSelectAvatar,
-} from 'twenty-ui';
 
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 
 import { Dropdown } from '../Dropdown';
-import { DropdownMenuHeader } from '../DropdownMenuHeader';
+import { DropdownMenuHeader } from '../DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuInput } from '../DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '../DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '../DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '../DropdownMenuSeparator';
 import { StyledDropdownMenuSubheader } from '../StyledDropdownMenuSubheader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { Avatar, IconChevronLeft } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { ComponentDecorator } from 'twenty-ui/testing';
+import {
+  MenuItem,
+  MenuItemMultiSelectAvatar,
+  MenuItemSelectAvatar,
+} from 'twenty-ui/navigation';
 
 const meta: Meta<typeof Dropdown> = {
   title: 'UI/Layout/Dropdown/Dropdown',
@@ -82,9 +83,7 @@ export const Empty: Story = {
   play: async () => {
     const canvas = within(document.body);
 
-    const buttons = await canvas.findAllByRole('button', {
-      name: 'Open Dropdown',
-    });
+    const buttons = await canvas.findAllByRole('button');
     userEvent.click(buttons[0]);
 
     await waitFor(async () => {
@@ -220,21 +219,26 @@ export const WithHeaders: Story = {
   args: {
     dropdownComponents: (
       <>
-        <DropdownMenuHeader>Header</DropdownMenuHeader>
-        <DropdownMenuSeparator />
+        <DropdownMenuHeader
+          StartComponent={
+            <DropdownMenuHeaderLeftComponent Icon={IconChevronLeft} />
+          }
+        >
+          Header
+        </DropdownMenuHeader>
         <StyledDropdownMenuSubheader>Subheader 1</StyledDropdownMenuSubheader>
         <DropdownMenuItemsContainer hasMaxHeight>
           <>
-            {optionsMock.slice(0, 3).map(({ name }) => (
-              <MenuItem text={name} />
+            {optionsMock.slice(0, 3).map((item) => (
+              <MenuItem key={item.id} text={item.name} />
             ))}
           </>
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
         <StyledDropdownMenuSubheader>Subheader 2</StyledDropdownMenuSubheader>
         <DropdownMenuItemsContainer>
-          {optionsMock.slice(3).map(({ name }) => (
-            <MenuItem text={name} />
+          {optionsMock.slice(3).map((item) => (
+            <MenuItem key={item.id} text={item.name} />
           ))}
         </DropdownMenuItemsContainer>
       </>
@@ -282,7 +286,7 @@ export const WithInput: Story = {
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
           {optionsMock.map(({ name }) => (
-            <MenuItem text={name} />
+            <MenuItem key={name} text={name} />
           ))}
         </DropdownMenuItemsContainer>
       </>

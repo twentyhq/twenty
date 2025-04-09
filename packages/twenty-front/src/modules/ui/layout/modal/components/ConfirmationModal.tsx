@@ -1,21 +1,15 @@
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { ReactNode, useState } from 'react';
-import {
-  Button,
-  ButtonAccent,
-  H1Title,
-  H1TitleFontColor,
-  Section,
-  SectionAlignment,
-  SectionFontColor,
-} from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { TextInput } from '@/ui/input/components/TextInput';
 
 import { Modal, ModalVariants } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
+import { Button, ButtonAccent } from 'twenty-ui/input';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
+import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 
 export type ConfirmationModalProps = {
   isOpen: boolean;
@@ -24,7 +18,7 @@ export type ConfirmationModalProps = {
   subtitle: ReactNode;
   setIsOpen: (val: boolean) => void;
   onConfirmClick: () => void;
-  deleteButtonText?: string;
+  confirmButtonText?: string;
   confirmationPlaceholder?: string;
   confirmationValue?: string;
   confirmButtonAccent?: ButtonAccent;
@@ -70,7 +64,7 @@ export const ConfirmationModal = ({
   subtitle,
   setIsOpen,
   onConfirmClick,
-  deleteButtonText = `Delete`,
+  confirmButtonText = 'Confirm',
   confirmationValue,
   confirmationPlaceholder,
   confirmButtonAccent = 'danger',
@@ -159,7 +153,7 @@ export const ConfirmationModal = ({
               onClick={handleConfirmClick}
               variant="secondary"
               accent={confirmButtonAccent}
-              title={deleteButtonText}
+              title={confirmButtonText}
               disabled={!isValidValue || loading}
               fullWidth
               dataTestId="confirmation-modal-confirm-button"

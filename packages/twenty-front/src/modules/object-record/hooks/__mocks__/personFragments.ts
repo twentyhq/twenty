@@ -127,6 +127,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
         employees
         id
         idealCustomerProfile
+        internalCompetitions
         introVideo {
           primaryLinkUrl
           primaryLinkLabel
@@ -170,6 +171,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             createdAt
             deletedAt
             favoriteFolderId
+            forWorkspaceMemberId
             id
             noteId
             opportunityId
@@ -183,7 +185,6 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             workflowId
             workflowRunId
             workflowVersionId
-            workspaceMemberId
           }
         }
       }

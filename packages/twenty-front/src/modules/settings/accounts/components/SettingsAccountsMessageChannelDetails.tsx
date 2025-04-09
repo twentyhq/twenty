@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { Card, H2Title, IconBriefcase, IconUsers, Section } from 'twenty-ui';
 
 import {
   MessageChannel,
@@ -11,6 +10,9 @@ import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/com
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { MessageChannelVisibility } from '~/generated-metadata/graphql';
+import { t } from '@lingui/core/macro';
+import { Card, Section } from 'twenty-ui/layout';
+import { H2Title, IconBriefcase, IconUsers } from 'twenty-ui/display';
 
 type SettingsAccountsMessageChannelDetailsProps = {
   messageChannel: Pick<
@@ -79,8 +81,8 @@ export const SettingsAccountsMessageChannelDetails = ({
     <StyledDetailsContainer>
       <Section>
         <H2Title
-          title="Visibility"
-          description="Define what will be visible to other users in your workspace"
+          title={t`Visibility`}
+          description={t`Define what will be visible to other users in your workspace`}
         />
         <SettingsAccountsMessageVisibilityCard
           value={messageChannel.visibility}
@@ -89,8 +91,8 @@ export const SettingsAccountsMessageChannelDetails = ({
       </Section>
       <Section>
         <H2Title
-          title="Contact auto-creation"
-          description="Automatically create People records when receiving or sending emails"
+          title={t`Contact auto-creation`}
+          description={t`Automatically create People records when receiving or sending emails`}
         />
         <SettingsAccountsMessageAutoCreationCard
           value={messageChannel.contactAutoCreationPolicy}
@@ -101,8 +103,8 @@ export const SettingsAccountsMessageChannelDetails = ({
         <Card rounded>
           <SettingsOptionCardContentToggle
             Icon={IconBriefcase}
-            title="Exclude non-professional emails"
-            description="Don’t create contacts from/to Gmail, Outlook emails"
+            title={t`Exclude non-professional emails`}
+            description={t`Don’t create contacts from/to Gmail, Outlook emails`}
             divider
             checked={messageChannel.excludeNonProfessionalEmails}
             onChange={() => {
@@ -113,8 +115,8 @@ export const SettingsAccountsMessageChannelDetails = ({
           />
           <SettingsOptionCardContentToggle
             Icon={IconUsers}
-            title="Exclude group emails"
-            description="Don’t sync emails from team@ support@ noreply@..."
+            title={t`Exclude group emails`}
+            description={t`Don’t sync emails from team@ support@ noreply@...`}
             checked={messageChannel.excludeGroupEmails}
             onChange={() =>
               handleIsGroupEmailExcludedToggle(

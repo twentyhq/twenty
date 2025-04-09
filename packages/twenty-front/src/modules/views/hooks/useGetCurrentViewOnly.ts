@@ -1,19 +1,18 @@
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
-import { View } from '@/views/types/View';
 
-import { useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
 
 export const useGetCurrentViewOnly = () => {
-  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
+  const currentViewId = useRecoilComponentValueV2(
+    contextStoreCurrentViewIdComponentState,
+  );
 
-  const currentViewId = useRecoilComponentValueV2(currentViewIdComponentState);
-
-  const currentView = useMemo(
-    () => views.find((view) => view.id === currentViewId),
-    [views, currentViewId],
+  const currentView = useRecoilValue(
+    prefetchViewFromViewIdFamilySelector({
+      viewId: currentViewId ?? '',
+    }),
   );
 
   return {

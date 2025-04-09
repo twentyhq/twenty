@@ -10,12 +10,12 @@ export const tasksByStatusView = (
   objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
 ) => {
   return {
-    name: 'By status',
+    name: 'By Status',
     objectMetadataId:
       objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].id,
     type: 'kanban',
     key: null,
-    position: 0,
+    position: 1,
     icon: 'IconLayoutKanban',
     kanbanFieldMetadataId:
       objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[

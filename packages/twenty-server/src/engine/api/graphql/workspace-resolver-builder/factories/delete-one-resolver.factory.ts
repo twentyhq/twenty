@@ -9,13 +9,13 @@ import {
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
 import { GraphqlQueryDeleteOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-delete-one-resolver.service';
+import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 
 @Injectable()
 export class DeleteOneResolverFactory
   implements WorkspaceResolverBuilderFactoryInterface
 {
-  public static methodName = 'deleteOne' as const;
-
+  public static methodName = RESOLVER_METHOD_NAMES.DELETE_ONE;
   constructor(
     private readonly graphqlQueryRunnerService: GraphqlQueryDeleteOneResolverService,
   ) {}

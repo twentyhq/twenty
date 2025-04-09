@@ -9,8 +9,8 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
-import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { ExistingUserOrNewUser } from 'src/engine/core-modules/auth/types/signInUp.type';
@@ -28,7 +28,7 @@ import { AuthService } from './auth.service';
 jest.mock('bcrypt');
 
 const UserFindOneMock = jest.fn();
-const UserWorkspaceFindOneByMock = jest.fn();
+const UserWorkspacefindOneMock = jest.fn();
 
 const userWorkspaceServiceCheckUserWorkspaceExistsMock = jest.fn();
 const workspaceInvitationGetOneWorkspaceInvitationMock = jest.fn();
@@ -41,7 +41,7 @@ describe('AuthService', () => {
   let service: AuthService;
   let userService: UserService;
   let workspaceRepository: Repository<Workspace>;
-  let socialSsoService: SocialSsoService;
+  let authSsoService: AuthSsoService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -50,7 +50,7 @@ describe('AuthService', () => {
         {
           provide: getRepositoryToken(Workspace, 'core'),
           useValue: {
-            findOneBy: jest.fn(),
+            findOne: jest.fn(),
           },
         },
         {
@@ -101,7 +101,8 @@ describe('AuthService', () => {
           useValue: {
             checkUserWorkspaceExists:
               userWorkspaceServiceCheckUserWorkspaceExistsMock,
-            addUserToWorkspace: userWorkspaceAddUserToWorkspaceMock,
+            addUserToWorkspaceIfUserNotInWorkspace:
+              userWorkspaceAddUserToWorkspaceMock,
           },
         },
         {
@@ -120,7 +121,7 @@ describe('AuthService', () => {
           },
         },
         {
-          provide: SocialSsoService,
+          provide: AuthSsoService,
           useValue: {
             findWorkspaceFromWorkspaceIdOrAuthProvider: jest.fn(),
           },
@@ -130,7 +131,7 @@ describe('AuthService', () => {
 
     service = module.get<AuthService>(AuthService);
     userService = module.get<UserService>(UserService);
-    socialSsoService = module.get<SocialSsoService>(SocialSsoService);
+    authSsoService = module.get<AuthSsoService>(AuthSsoService);
     workspaceRepository = module.get<Repository<Workspace>>(
       getRepositoryToken(Workspace, 'core'),
     );
@@ -160,7 +161,7 @@ describe('AuthService', () => {
       captchaToken: user.captchaToken,
     });
 
-    UserWorkspaceFindOneByMock.mockReturnValueOnce({});
+    UserWorkspacefindOneMock.mockReturnValueOnce({});
 
     userWorkspaceServiceCheckUserWorkspaceExistsMock.mockReturnValueOnce({});
 
@@ -245,7 +246,8 @@ describe('AuthService', () => {
         workspace: {
           id: 'workspace-id',
           isPublicInviteLinkEnabled: true,
-        } as Workspace,
+          approvedAccessDomains: [],
+        } as unknown as Workspace,
       });
 
       expect(spy).toHaveBeenCalledTimes(1);
@@ -269,7 +271,8 @@ describe('AuthService', () => {
           workspace: {
             id: 'workspace-id',
             isPublicInviteLinkEnabled: true,
-          } as Workspace,
+            approvedAccessDomains: [],
+          } as unknown as Workspace,
         }),
       ).rejects.toThrow(new Error('Access denied'));
 
@@ -292,7 +295,8 @@ describe('AuthService', () => {
           workspace: {
             id: 'workspace-id',
             isPublicInviteLinkEnabled: false,
-          } as Workspace,
+            approvedAccessDomains: [],
+          } as unknown as Workspace,
         }),
       ).rejects.toThrow(
         new AuthException(
@@ -356,7 +360,7 @@ describe('AuthService', () => {
         } as ExistingUserOrNewUser['userData'],
         invitation: {} as AppToken,
         workspaceInviteHash: undefined,
-        workspace: {} as Workspace,
+        workspace: { approvedAccessDomains: [] } as unknown as Workspace,
       });
 
       expect(spy).toHaveBeenCalledTimes(0);
@@ -376,99 +380,127 @@ describe('AuthService', () => {
         workspaceInviteHash: 'workspaceInviteHash',
         workspace: {
           isPublicInviteLinkEnabled: true,
-        } as Workspace,
+          approvedAccessDomains: [],
+        } as unknown as Workspace,
       });
 
       expect(spy).toHaveBeenCalledTimes(0);
     });
+
+    it('checkAccessForSignIn - allow signup for new user who target a workspace with valid trusted domain', async () => {
+      expect(async () => {
+        await service.checkAccessForSignIn({
+          userData: {
+            type: 'newUser',
+            newUserPayload: {
+              email: 'email@domain.com',
+            },
+          } as ExistingUserOrNewUser['userData'],
+          invitation: undefined,
+          workspaceInviteHash: 'workspaceInviteHash',
+          workspace: {
+            isPublicInviteLinkEnabled: true,
+            approvedAccessDomains: [
+              { domain: 'domain.com', isValidated: true },
+            ],
+          } as unknown as Workspace,
+        });
+      }).not.toThrow();
+    });
   });
 
-  it('findWorkspaceForSignInUp - signup password auth', async () => {
-    const spyWorkspaceRepository = jest.spyOn(workspaceRepository, 'findOneBy');
-    const spySocialSsoService = jest.spyOn(
-      socialSsoService,
-      'findWorkspaceFromWorkspaceIdOrAuthProvider',
-    );
+  describe('findWorkspaceForSignInUp', () => {
+    it('findWorkspaceForSignInUp - signup password auth', async () => {
+      const spyWorkspaceRepository = jest.spyOn(workspaceRepository, 'findOne');
+      const spyAuthSsoService = jest.spyOn(
+        authSsoService,
+        'findWorkspaceFromWorkspaceIdOrAuthProvider',
+      );
 
-    const result = await service.findWorkspaceForSignInUp({
-      authProvider: 'password',
-      workspaceId: 'workspaceId',
+      const result = await service.findWorkspaceForSignInUp({
+        authProvider: 'password',
+        workspaceId: 'workspaceId',
+      });
+
+      expect(result).toBeUndefined();
+      expect(spyWorkspaceRepository).toHaveBeenCalledTimes(1);
+      expect(spyAuthSsoService).toHaveBeenCalledTimes(0);
     });
+    it('findWorkspaceForSignInUp - signup password auth with workspaceInviteHash', async () => {
+      const spyWorkspaceRepository = jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue({
+          approvedAccessDomains: [],
+        } as unknown as Workspace);
+      const spyAuthSsoService = jest.spyOn(
+        authSsoService,
+        'findWorkspaceFromWorkspaceIdOrAuthProvider',
+      );
 
-    expect(result).toBeUndefined();
-    expect(spyWorkspaceRepository).toHaveBeenCalledTimes(0);
-    expect(spySocialSsoService).toHaveBeenCalledTimes(0);
-  });
-  it('findWorkspaceForSignInUp - signup password auth with workspaceInviteHash', async () => {
-    const spyWorkspaceRepository = jest
-      .spyOn(workspaceRepository, 'findOneBy')
-      .mockResolvedValue({} as Workspace);
-    const spySocialSsoService = jest.spyOn(
-      socialSsoService,
-      'findWorkspaceFromWorkspaceIdOrAuthProvider',
-    );
+      const result = await service.findWorkspaceForSignInUp({
+        authProvider: 'password',
+        workspaceId: 'workspaceId',
+        workspaceInviteHash: 'workspaceInviteHash',
+      });
 
-    const result = await service.findWorkspaceForSignInUp({
-      authProvider: 'password',
-      workspaceId: 'workspaceId',
-      workspaceInviteHash: 'workspaceInviteHash',
+      expect(result).toBeDefined();
+      expect(spyWorkspaceRepository).toHaveBeenCalledTimes(1);
+      expect(spyAuthSsoService).toHaveBeenCalledTimes(0);
     });
+    it('findWorkspaceForSignInUp - signup social sso auth with workspaceInviteHash', async () => {
+      const spyWorkspaceRepository = jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue({
+          approvedAccessDomains: [],
+        } as unknown as Workspace);
+      const spyAuthSsoService = jest.spyOn(
+        authSsoService,
+        'findWorkspaceFromWorkspaceIdOrAuthProvider',
+      );
 
-    expect(result).toBeDefined();
-    expect(spyWorkspaceRepository).toHaveBeenCalledTimes(1);
-    expect(spySocialSsoService).toHaveBeenCalledTimes(0);
-  });
-  it('findWorkspaceForSignInUp - signup social sso auth with workspaceInviteHash', async () => {
-    const spyWorkspaceRepository = jest
-      .spyOn(workspaceRepository, 'findOneBy')
-      .mockResolvedValue({} as Workspace);
-    const spySocialSsoService = jest.spyOn(
-      socialSsoService,
-      'findWorkspaceFromWorkspaceIdOrAuthProvider',
-    );
+      const result = await service.findWorkspaceForSignInUp({
+        authProvider: 'password',
+        workspaceId: 'workspaceId',
+        workspaceInviteHash: 'workspaceInviteHash',
+      });
 
-    const result = await service.findWorkspaceForSignInUp({
-      authProvider: 'password',
-      workspaceId: 'workspaceId',
-      workspaceInviteHash: 'workspaceInviteHash',
+      expect(result).toBeDefined();
+      expect(spyWorkspaceRepository).toHaveBeenCalledTimes(1);
+      expect(spyAuthSsoService).toHaveBeenCalledTimes(0);
     });
+    it('findWorkspaceForSignInUp - signup social sso auth', async () => {
+      const spyWorkspaceRepository = jest.spyOn(workspaceRepository, 'findOne');
 
-    expect(result).toBeDefined();
-    expect(spyWorkspaceRepository).toHaveBeenCalledTimes(1);
-    expect(spySocialSsoService).toHaveBeenCalledTimes(0);
-  });
-  it('findWorkspaceForSignInUp - signup social sso auth', async () => {
-    const spyWorkspaceRepository = jest.spyOn(workspaceRepository, 'findOneBy');
+      const spyAuthSsoService = jest
+        .spyOn(authSsoService, 'findWorkspaceFromWorkspaceIdOrAuthProvider')
+        .mockResolvedValue({} as Workspace);
 
-    const spySocialSsoService = jest
-      .spyOn(socialSsoService, 'findWorkspaceFromWorkspaceIdOrAuthProvider')
-      .mockResolvedValue({} as Workspace);
+      const result = await service.findWorkspaceForSignInUp({
+        authProvider: 'google',
+        workspaceId: 'workspaceId',
+        email: 'email',
+      });
 
-    const result = await service.findWorkspaceForSignInUp({
-      authProvider: 'google',
-      workspaceId: 'workspaceId',
-      email: 'email',
+      expect(result).toBeDefined();
+      expect(spyWorkspaceRepository).toHaveBeenCalledTimes(0);
+      expect(spyAuthSsoService).toHaveBeenCalledTimes(1);
     });
+    it('findWorkspaceForSignInUp - sso auth', async () => {
+      const spyWorkspaceRepository = jest.spyOn(workspaceRepository, 'findOne');
 
-    expect(result).toBeDefined();
-    expect(spyWorkspaceRepository).toHaveBeenCalledTimes(0);
-    expect(spySocialSsoService).toHaveBeenCalledTimes(1);
-  });
-  it('findWorkspaceForSignInUp - sso auth', async () => {
-    const spyWorkspaceRepository = jest.spyOn(workspaceRepository, 'findOneBy');
+      const spyAuthSsoService = jest
+        .spyOn(authSsoService, 'findWorkspaceFromWorkspaceIdOrAuthProvider')
+        .mockResolvedValue({} as Workspace);
 
-    const spySocialSsoService = jest
-      .spyOn(socialSsoService, 'findWorkspaceFromWorkspaceIdOrAuthProvider')
-      .mockResolvedValue({} as Workspace);
+      const result = await service.findWorkspaceForSignInUp({
+        authProvider: 'sso',
+        workspaceId: 'workspaceId',
+        email: 'email',
+      });
 
-    const result = await service.findWorkspaceForSignInUp({
-      authProvider: 'sso',
-      workspaceId: 'workspaceId',
-      email: 'email',
+      expect(result).toBeDefined();
+      expect(spyWorkspaceRepository).toHaveBeenCalledTimes(0);
+      expect(spyAuthSsoService).toHaveBeenCalledTimes(1);
     });
-
-    expect(result).toBeDefined();
-    expect(spyWorkspaceRepository).toHaveBeenCalledTimes(0);
-    expect(spySocialSsoService).toHaveBeenCalledTimes(1);
   });
 });

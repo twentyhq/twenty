@@ -1,14 +1,8 @@
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
 import ReactDatePicker from 'react-datepicker';
-import {
-  IconCalendarX,
-  MenuItemLeftContent,
-  StyledHoverableMenuItemBase,
-} from 'twenty-ui';
 
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { isDefined } from 'twenty-shared';
 
 import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
@@ -19,16 +13,24 @@ import {
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
+import { isDefined } from 'twenty-shared/utils';
+import { IconCalendarX } from 'twenty-ui/display';
+import {
+  MenuItemLeftContent,
+  StyledHoverableMenuItemBase,
+} from 'twenty-ui/navigation';
 
-export const MONTH_AND_YEAR_DROPDOWN_ID = 'date-picker-month-and-year-dropdown';
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';
 export const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
   'date-picker-month-and-year-dropdown-year-select';
 
 const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
+  width: 280px;
+
   & .react-datepicker {
     border-color: ${({ theme }) => theme.border.color.light};
     background: transparent;
@@ -243,7 +245,11 @@ const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
 
   & .react-datepicker__day--selected {
     background-color: ${({ theme }) => theme.color.blue};
-    color: ${({ theme }) => theme.grayScale.gray0};
+    color: ${({ theme }) => theme.background.primary};
+
+    &.react-datepicker__day:hover {
+      color: ${({ theme }) => theme.background.primary};
+    }
   }
 
   & .react-datepicker__day--outside-month {
@@ -260,8 +266,9 @@ const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
 `;
 
 const StyledButtonContainer = styled(StyledHoverableMenuItemBase)`
-  height: ${({ theme }) => theme.spacing(4)};
-  margin: ${({ theme }) => theme.spacing(2)};
+  box-sizing: border-box;
+  height: 32px;
+  margin: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(1)};
   width: auto;
 `;
@@ -317,7 +324,6 @@ export const DateTimePicker = ({
 
   const { timeZone } = useContext(UserContext);
 
-  const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
   const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
     MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   );
@@ -333,7 +339,6 @@ export const DateTimePicker = ({
   const closeDropdowns = () => {
     closeDropdownYearSelect();
     closeDropdownMonthSelect();
-    closeDropdown();
   };
 
   const handleClose = (newDate: Date) => {
@@ -490,7 +495,7 @@ export const DateTimePicker = ({
       </div>
       {clearable && (
         <StyledButtonContainer onClick={handleClear}>
-          <StyledButton LeftIcon={IconCalendarX} text="Clear" />
+          <StyledButton LeftIcon={IconCalendarX} text={t`Clear`} />
         </StyledButtonContainer>
       )}
     </StyledContainer>

@@ -3,7 +3,8 @@ import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/s
 import { DropResult, ResponderProvided } from '@hello-pangea/dnd';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
-import { RecoilRoot } from 'recoil';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 jest.mock('@/views/hooks/useSaveCurrentViewFields', () => ({
   useSaveCurrentViewFields: jest.fn(() => ({
@@ -17,53 +18,67 @@ jest.mock('@/views/hooks/useUpdateCurrentView', () => ({
   })),
 }));
 
-jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
-  useObjectMetadataItem: jest.fn(() => ({
-    objectMetadataItem: {
-      fields: [
-        {
-          id: 'field1',
-          name: 'field1',
-          label: 'Field 1',
-          isVisible: true,
-          position: 0,
-        },
-        {
-          id: 'field2',
-          name: 'field2',
-          label: 'Field 2',
-          isVisible: true,
-          position: 1,
-        },
-      ],
-    },
-  })),
-}));
+const objectNameSingular = 'company';
 
 describe('useObjectOptionsForBoard', () => {
+  const mockObjectMetadataItem = generatedMockObjectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular === objectNameSingular,
+  );
+
+  if (!mockObjectMetadataItem) {
+    throw new Error('Mock object metadata item not found');
+  }
+
+  const mockFieldMetadataItem1 = mockObjectMetadataItem.fields.find(
+    (field) => field.name === 'name',
+  );
+
+  if (!mockFieldMetadataItem1) {
+    throw new Error('Mock field metadata item not found for "name"');
+  }
+
+  const mockFieldMetadataItem2 = mockObjectMetadataItem.fields.find(
+    (field) => field.name === 'createdAt',
+  );
+
+  if (!mockFieldMetadataItem2) {
+    throw new Error('Mock field metadata item not found for "createdAt"');
+  }
+
   const initialRecoilState = [
-    { fieldMetadataId: 'field1', isVisible: true, position: 0 },
-    { fieldMetadataId: 'field2', isVisible: true, position: 1 },
+    {
+      fieldMetadataId: mockFieldMetadataItem1.id,
+      isVisible: true,
+      position: 0,
+    },
+    {
+      fieldMetadataId: mockFieldMetadataItem2.id,
+      isVisible: true,
+      position: 1,
+    },
   ];
 
   const renderWithRecoil = () =>
     renderHook(
       () =>
         useObjectOptionsForBoard({
-          objectNameSingular: 'object',
+          objectNameSingular,
           recordBoardId: 'boardId',
           viewBarId: 'viewBarId',
         }),
       {
-        wrapper: ({ children }) => (
-          <RecoilRoot
-            initializeState={({ set }) => {
-              set(recordIndexFieldDefinitionsState, initialRecoilState as any);
-            }}
-          >
-            {children}
-          </RecoilRoot>
-        ),
+        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+          apolloMocks: [],
+          onInitializeRecoilSnapshot: (snapshot) => {
+            snapshot.set(
+              recordIndexFieldDefinitionsState,
+              initialRecoilState as any,
+            );
+          },
+          componentInstanceId: 'test',
+          contextStoreCurrentObjectMetadataNameSingular: objectNameSingular,
+        }),
       },
     );
 
@@ -73,7 +88,7 @@ describe('useObjectOptionsForBoard', () => {
     const dropResult: DropResult = {
       source: { droppableId: 'droppable', index: 1 },
       destination: { droppableId: 'droppable', index: 2 },
-      draggableId: 'field1',
+      draggableId: mockFieldMetadataItem1.id,
       type: 'TYPE',
       mode: 'FLUID',
       reason: 'DROP',
@@ -90,12 +105,12 @@ describe('useObjectOptionsForBoard', () => {
 
     expect(result.current.visibleBoardFields).toEqual([
       {
-        fieldMetadataId: 'field2',
+        fieldMetadataId: mockFieldMetadataItem2.id,
         isVisible: true,
         position: 0,
       },
       {
-        fieldMetadataId: 'field1',
+        fieldMetadataId: mockFieldMetadataItem1.id,
         isVisible: true,
         position: 1,
       },

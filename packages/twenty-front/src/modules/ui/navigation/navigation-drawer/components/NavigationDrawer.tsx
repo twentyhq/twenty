@@ -3,10 +3,8 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { ReactNode, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
@@ -14,12 +12,12 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { isNavigationDrawerExpandedState } from '../../states/isNavigationDrawerExpanded';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 export type NavigationDrawerProps = {
   children: ReactNode;
   className?: string;
   footer?: ReactNode;
-  logo?: string;
   title: string;
 };
 
@@ -56,7 +54,7 @@ const StyledItemsContainer = styled.div<{ isSettings?: boolean }>`
   display: flex;
   flex-direction: column;
   margin-bottom: auto;
-  overflow: ${({ isSettings }) => (isSettings ? 'visible' : 'hidden')};
+  overflow: hidden;
   flex: 1;
 `;
 
@@ -64,7 +62,6 @@ export const NavigationDrawer = ({
   children,
   className,
   footer,
-  logo,
   title,
 }: NavigationDrawerProps) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -113,11 +110,7 @@ export const NavigationDrawer = ({
         {isSettingsDrawer && title ? (
           !isMobile && <NavigationDrawerBackButton title={title} />
         ) : (
-          <NavigationDrawerHeader
-            name={title}
-            logo={logo || ''}
-            showCollapseButton={isHovered}
-          />
+          <NavigationDrawerHeader showCollapseButton={isHovered} />
         )}
         <StyledItemsContainer isSettings={isSettingsDrawer}>
           {children}

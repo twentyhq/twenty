@@ -1,5 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
-
+import { FieldMetadataType } from 'twenty-shared/types';
 export const isTextColumnType = (type: FieldMetadataType) => {
   return (
     type === FieldMetadataType.TEXT ||

@@ -1,41 +1,45 @@
 import { useEffect } from 'react';
 
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
-import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+
+import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type EditableFilterDropdownButtonEffectProps = {
-  viewFilterDropdownId: string;
-  viewFilter: RecordFilter;
+  recordFilter: RecordFilter;
 };
 
 export const EditableFilterDropdownButtonEffect = ({
-  viewFilterDropdownId,
-  viewFilter,
+  recordFilter,
 }: EditableFilterDropdownButtonEffectProps) => {
-  const setFilterDefinitionUsedInDropdown = useSetRecoilComponentStateV2(
-    filterDefinitionUsedInDropdownComponentState,
-    viewFilterDropdownId,
-  );
-
   const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
     fieldMetadataItemIdUsedInDropdownComponentState,
   );
 
   const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
     selectedOperandInDropdownComponentState,
-    viewFilterDropdownId,
+    recordFilter.id,
+  );
+
+  const setSubFieldNameUsedInDropdown = useSetRecoilComponentStateV2(
+    subFieldNameUsedInDropdownComponentState,
+    recordFilter.id,
   );
 
   const setSelectedFilter = useSetRecoilComponentStateV2(
     selectedFilterComponentState,
-    viewFilterDropdownId,
+    recordFilter.id,
+  );
+
+  const setObjectFilterDropdownSelectedRecordIds = useSetRecoilComponentStateV2(
+    objectFilterDropdownSelectedRecordIdsComponentState,
+    recordFilter.id,
   );
 
   const { filterableFieldMetadataItems } =
@@ -44,31 +48,33 @@ export const EditableFilterDropdownButtonEffect = ({
   useEffect(() => {
     const fieldMetadataItem = filterableFieldMetadataItems.find(
       (fieldMetadataItem) =>
-        fieldMetadataItem.id === viewFilter.fieldMetadataId,
+        fieldMetadataItem.id === recordFilter.fieldMetadataId,
     );
 
     if (!isDefined(fieldMetadataItem)) {
       return;
     }
 
-    const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-      field: fieldMetadataItem,
-    });
+    setFieldMetadataItemIdUsedInDropdown(fieldMetadataItem.id);
+    setSelectedOperandInDropdown(recordFilter.operand);
+    setSelectedFilter(recordFilter);
+    setSubFieldNameUsedInDropdown(recordFilter.subFieldName);
 
-    if (isDefined(filterDefinition)) {
-      setFilterDefinitionUsedInDropdown(filterDefinition);
-      setFieldMetadataItemIdUsedInDropdown(filterDefinition.fieldMetadataId);
-      setSelectedOperandInDropdown(viewFilter.operand);
-      setSelectedFilter(viewFilter);
+    try {
+      const selectedOptions = JSON.parse(recordFilter.value);
+
+      setObjectFilterDropdownSelectedRecordIds(selectedOptions);
+    } catch {
+      setObjectFilterDropdownSelectedRecordIds([]);
     }
   }, [
     filterableFieldMetadataItems,
-    setFilterDefinitionUsedInDropdown,
     setFieldMetadataItemIdUsedInDropdown,
-    viewFilter,
+    recordFilter,
     setSelectedOperandInDropdown,
     setSelectedFilter,
-    viewFilterDropdownId,
+    setSubFieldNameUsedInDropdown,
+    setObjectFilterDropdownSelectedRecordIds,
   ]);
 
   return null;

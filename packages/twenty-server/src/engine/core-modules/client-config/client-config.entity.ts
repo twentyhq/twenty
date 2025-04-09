@@ -110,6 +110,9 @@ export class ClientConfig {
   @Field(() => Support)
   support: Support;
 
+  @Field(() => Boolean)
+  isAttachmentPreviewEnabled: boolean;
+
   @Field(() => Sentry)
   sentry: Sentry;
 

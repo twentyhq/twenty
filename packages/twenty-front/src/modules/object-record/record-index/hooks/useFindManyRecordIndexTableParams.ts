@@ -1,17 +1,16 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
+import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
-import { tableSortsComponentState } from '@/object-record/record-table/states/tableSortsComponentState';
-import { tableViewFilterGroupsComponentState } from '@/object-record/record-table/states/tableViewFilterGroupsComponentState';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const useFindManyRecordIndexTableParams = (
   objectNameSingular: string,
-  recordTableId?: string,
 ) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -23,14 +22,12 @@ export const useFindManyRecordIndexTableParams = (
 
   const currentRecordGroupDefinition = useCurrentRecordGroupDefinition();
 
-  const tableViewFilterGroups = useRecoilComponentValueV2(
-    tableViewFilterGroupsComponentState,
-    recordTableId,
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
+    currentRecordFilterGroupsComponentState,
   );
 
-  const tableSorts = useRecoilComponentValueV2(
-    tableSortsComponentState,
-    recordTableId,
+  const currentRecordSorts = useRecoilComponentValueV2(
+    currentRecordSortsComponentState,
   );
 
   const currentRecordFilters = useRecoilComponentValueV2(
@@ -39,14 +36,14 @@ export const useFindManyRecordIndexTableParams = (
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const stateFilter = computeViewRecordGqlOperationFilter(
+  const stateFilter = computeRecordGqlOperationFilter({
+    fields: objectMetadataItem?.fields ?? [],
     filterValueDependencies,
-    currentRecordFilters,
-    objectMetadataItem?.fields ?? [],
-    tableViewFilterGroups,
-  );
+    recordFilterGroups: currentRecordFilterGroups,
+    recordFilters: currentRecordFilters,
+  });
 
-  const orderBy = turnSortsIntoOrderBy(objectMetadataItem, tableSorts);
+  const orderBy = turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts);
 
   return {
     objectNameSingular,

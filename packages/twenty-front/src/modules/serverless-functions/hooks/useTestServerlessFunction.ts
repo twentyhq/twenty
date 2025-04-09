@@ -1,10 +1,9 @@
-import { useBuildDraftServerlessFunction } from '@/settings/serverless-functions/hooks/useBuildDraftServerlessFunction';
 import { useExecuteOneServerlessFunction } from '@/settings/serverless-functions/hooks/useExecuteOneServerlessFunction';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { sleep } from '~/utils/sleep';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useTestServerlessFunction = ({
   serverlessFunctionId,
@@ -14,21 +13,12 @@ export const useTestServerlessFunction = ({
   callback?: (testResult: object) => void;
 }) => {
   const [isTesting, setIsTesting] = useState(false);
-  const [isBuilding, setIsBuilding] = useState(false);
   const { executeOneServerlessFunction } = useExecuteOneServerlessFunction();
-  const { buildDraftServerlessFunction } = useBuildDraftServerlessFunction();
   const [serverlessFunctionTestData, setServerlessFunctionTestData] =
     useRecoilState(serverlessFunctionTestDataFamilyState(serverlessFunctionId));
 
-  const testServerlessFunction = async (shouldBuild = true) => {
+  const testServerlessFunction = async () => {
     try {
-      if (shouldBuild) {
-        setIsBuilding(true);
-        await buildDraftServerlessFunction({
-          id: serverlessFunctionId,
-        });
-        setIsBuilding(false);
-      }
       setIsTesting(true);
       await sleep(200); // Delay artificially to avoid flashing the UI
       const result = await executeOneServerlessFunction({
@@ -55,6 +45,7 @@ export const useTestServerlessFunction = ({
                 4,
               )
             : undefined,
+          logs: result?.data?.executeOneServerlessFunction?.logs || '',
           duration: result?.data?.executeOneServerlessFunction?.duration,
           status: result?.data?.executeOneServerlessFunction?.status,
           error: result?.data?.executeOneServerlessFunction?.error
@@ -67,11 +58,10 @@ export const useTestServerlessFunction = ({
         },
       }));
     } catch (error) {
-      setIsBuilding(false);
       setIsTesting(false);
       throw error;
     }
   };
 
-  return { testServerlessFunction, isTesting, isBuilding };
+  return { testServerlessFunction, isTesting };
 };

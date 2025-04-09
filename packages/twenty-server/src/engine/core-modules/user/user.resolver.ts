@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -13,22 +13,20 @@ import crypto from 'crypto';
 
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { SettingsFeatures } from 'twenty-shared';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
 import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
-import { AnalyticsTinybirdJwtMap } from 'src/engine/core-modules/analytics/entities/analytics-tinybird-jwts.entity';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
@@ -48,7 +46,9 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
@@ -64,6 +64,7 @@ const getHMACKey = (email?: string, key?: string | null) => {
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver(() => User)
+@UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class UserResolver {
   constructor(
     @InjectRepository(User, 'core')
@@ -80,7 +81,6 @@ export class UserResolver {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly userRoleService: UserRoleService,
     private readonly permissionsService: PermissionsService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Query(() => User)
@@ -100,31 +100,44 @@ export class UserResolver {
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
 
-    const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsPermissionsEnabled,
-      workspace.id,
+    const currentUserWorkspace = user.workspaces.find(
+      (userWorkspace) => userWorkspace.workspace.id === workspace.id,
     );
 
-    if (permissionsEnabled === true) {
-      const currentUserWorkspace = user.workspaces.find(
-        (userWorkspace) => userWorkspace.workspace.id === workspace.id,
-      );
+    if (!currentUserWorkspace) {
+      throw new Error('Current user workspace not found');
+    }
+    let settingsPermissions = {};
+    let objectRecordsPermissions = {};
 
-      if (!currentUserWorkspace) {
-        throw new Error('Current user workspace not found');
-      }
+    if (
+      ![
+        WorkspaceActivationStatus.PENDING_CREATION,
+        WorkspaceActivationStatus.ONGOING_CREATION,
+      ].includes(workspace.activationStatus)
+    ) {
       const permissions =
-        await this.permissionsService.getUserWorkspaceSettingsPermissions({
+        await this.permissionsService.getUserWorkspacePermissions({
           userWorkspaceId: currentUserWorkspace.id,
+          workspaceId: workspace.id,
         });
 
-      const permittedFeatures: SettingsFeatures[] = (
-        Object.keys(permissions) as SettingsFeatures[]
-      ).filter((feature) => permissions[feature] === true);
-
-      currentUserWorkspace.settingsPermissions = permittedFeatures;
-      user.currentUserWorkspace = currentUserWorkspace;
+      settingsPermissions = permissions.settingsPermissions;
+      objectRecordsPermissions = permissions.objectRecordsPermissions;
     }
+
+    const grantedSettingsPermissions: SettingPermissionType[] = (
+      Object.keys(settingsPermissions) as SettingPermissionType[]
+    ).filter((feature) => settingsPermissions[feature] === true);
+
+    const grantedObjectRecordsPermissions = (
+      Object.keys(objectRecordsPermissions) as PermissionsOnAllObjectRecords[]
+    ).filter((permission) => objectRecordsPermissions[permission] === true);
+
+    currentUserWorkspace.settingsPermissions = grantedSettingsPermissions;
+    currentUserWorkspace.objectRecordsPermissions =
+      grantedObjectRecordsPermissions;
+    user.currentUserWorkspace = currentUserWorkspace;
 
     return {
       ...user,
@@ -192,34 +205,31 @@ export class UserResolver {
 
     const workspaceMembers: WorkspaceMember[] = [];
 
-    const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsPermissionsEnabled,
-      workspace.id,
-    );
-
     let userWorkspacesByUserId = new Map<string, UserWorkspace>();
     let rolesByUserWorkspaces = new Map<string, RoleDTO[]>();
 
-    if (permissionsEnabled === true) {
-      const userWorkspaces = await this.userWorkspaceRepository.find({
-        where: {
-          userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
-          workspaceId: workspace.id,
-        },
-      });
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      where: {
+        userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
+        workspaceId: workspace.id,
+      },
+    });
 
-      userWorkspacesByUserId = new Map(
-        userWorkspaces.map((userWorkspace) => [
-          userWorkspace.userId,
-          userWorkspace,
-        ]),
-      );
+    userWorkspacesByUserId = new Map(
+      userWorkspaces.map((userWorkspace) => [
+        userWorkspace.userId,
+        userWorkspace,
+      ]),
+    );
 
-      rolesByUserWorkspaces =
-        await this.userRoleService.getRolesByUserWorkspaces(
-          userWorkspaces.map((userWorkspace) => userWorkspace.id),
-        );
-    }
+    rolesByUserWorkspaces = await this.userRoleService.getRolesByUserWorkspaces(
+      {
+        userWorkspaceIds: userWorkspaces.map(
+          (userWorkspace) => userWorkspace.id,
+        ),
+        workspaceId: workspace.id,
+      },
+    );
 
     for (const workspaceMemberEntity of workspaceMemberEntities) {
       if (workspaceMemberEntity.avatarUrl) {
@@ -233,32 +243,36 @@ export class UserResolver {
 
       const workspaceMember = workspaceMemberEntity as WorkspaceMember;
 
-      if (permissionsEnabled === true) {
-        const userWorkspace = userWorkspacesByUserId.get(
-          workspaceMemberEntity.userId,
-        );
+      const userWorkspace = userWorkspacesByUserId.get(
+        workspaceMemberEntity.userId,
+      );
 
-        if (!userWorkspace) {
-          throw new Error('User workspace not found');
-        }
-
-        workspaceMember.userWorkspaceId = userWorkspace.id;
-
-        const workspaceMemberRoles = (
-          rolesByUserWorkspaces.get(userWorkspace.id) ?? []
-        ).map((roleEntity) => {
-          return {
-            id: roleEntity.id,
-            label: roleEntity.label,
-            canUpdateAllSettings: roleEntity.canUpdateAllSettings,
-            description: roleEntity.description,
-            isEditable: roleEntity.isEditable,
-            userWorkspaceRoles: roleEntity.userWorkspaceRoles,
-          };
-        });
-
-        workspaceMember.roles = workspaceMemberRoles;
+      if (!userWorkspace) {
+        throw new Error('User workspace not found');
       }
+
+      workspaceMember.userWorkspaceId = userWorkspace.id;
+
+      const workspaceMemberRoles = (
+        rolesByUserWorkspaces.get(userWorkspace.id) ?? []
+      ).map((roleEntity) => {
+        return {
+          id: roleEntity.id,
+          label: roleEntity.label,
+          canUpdateAllSettings: roleEntity.canUpdateAllSettings,
+          description: roleEntity.description,
+          icon: roleEntity.icon,
+          isEditable: roleEntity.isEditable,
+          userWorkspaceRoles: roleEntity.userWorkspaceRoles,
+          canReadAllObjectRecords: roleEntity.canReadAllObjectRecords,
+          canUpdateAllObjectRecords: roleEntity.canUpdateAllObjectRecords,
+          canSoftDeleteAllObjectRecords:
+            roleEntity.canSoftDeleteAllObjectRecords,
+          canDestroyAllObjectRecords: roleEntity.canDestroyAllObjectRecords,
+        };
+      });
+
+      workspaceMember.roles = workspaceMemberRoles;
 
       workspaceMembers.push(workspaceMember);
     }
@@ -277,11 +291,6 @@ export class UserResolver {
     const key = this.environmentService.get('SUPPORT_FRONT_HMAC_KEY');
 
     return getHMACKey(parent.email, key);
-  }
-
-  @ResolveField(() => AnalyticsTinybirdJwtMap, { nullable: true })
-  analyticsTinybirdJwts(@AuthWorkspace() workspace: Workspace | undefined) {
-    return this.analyticsService.generateWorkspaceJwt(workspace?.id);
   }
 
   @Mutation(() => String)

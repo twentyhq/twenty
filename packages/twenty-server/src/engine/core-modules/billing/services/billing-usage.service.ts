@@ -3,19 +3,22 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { BillingMeteredProductUsageOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-metered-product-usage.output';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class BillingUsageService {
@@ -23,21 +26,14 @@ export class BillingUsageService {
   constructor(
     @InjectRepository(BillingCustomer, 'core')
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    private readonly environmentService: EnvironmentService,
     private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
+    private readonly environmentService: EnvironmentService,
+    private readonly billingSubscriptionItemService: BillingSubscriptionItemService,
   ) {}
 
   async canFeatureBeUsed(workspaceId: string): Promise<boolean> {
-    const isBillingEnabled = this.environmentService.get('IS_BILLING_ENABLED');
-    const isBillingPlansEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsBillingPlansEnabled,
-        workspaceId,
-      );
-
-    if (!isBillingPlansEnabled || !isBillingEnabled) {
+    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
       return true;
     }
 
@@ -88,5 +84,61 @@ export class BillingUsageService {
         BillingExceptionCode.BILLING_METER_EVENT_FAILED,
       );
     }
+  }
+
+  async getMeteredProductsUsage(
+    workspace: Workspace,
+  ): Promise<BillingMeteredProductUsageOutput[]> {
+    const subscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        { workspaceId: workspace.id },
+      );
+
+    const meteredSubscriptionItemDetails =
+      await this.billingSubscriptionItemService.getMeteredSubscriptionItemDetails(
+        subscription.id,
+      );
+
+    let periodStart: Date;
+    let periodEnd: Date;
+
+    if (
+      subscription.status === SubscriptionStatus.Trialing &&
+      isDefined(subscription.trialStart) &&
+      isDefined(subscription.trialEnd)
+    ) {
+      periodStart = subscription.trialStart;
+      periodEnd = subscription.trialEnd;
+    } else {
+      periodStart = subscription.currentPeriodStart;
+      periodEnd = subscription.currentPeriodEnd;
+    }
+
+    return Promise.all(
+      meteredSubscriptionItemDetails.map(async (item) => {
+        const meterEventsSum =
+          await this.stripeBillingMeterEventService.sumMeterEvents(
+            item.stripeMeterId,
+            subscription.stripeCustomerId,
+            periodStart,
+            periodEnd,
+          );
+
+        const totalCostCents =
+          meterEventsSum - item.includedFreeQuantity > 0
+            ? (meterEventsSum - item.includedFreeQuantity) * item.unitPriceCents
+            : 0;
+
+        return {
+          productKey: item.productKey,
+          periodStart,
+          periodEnd,
+          usageQuantity: meterEventsSum,
+          includedFreeQuantity: item.includedFreeQuantity,
+          unitPriceCents: item.unitPriceCents,
+          totalCostCents,
+        };
+      }),
+    );
   }
 }

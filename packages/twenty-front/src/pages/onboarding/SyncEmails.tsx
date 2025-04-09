@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { ActionLink, IconGoogle, IconMicrosoft, MainButton } from 'twenty-ui';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
@@ -19,13 +18,16 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { AppPath } from '@/types/AppPath';
-import { ConnectedAccountProvider } from 'twenty-shared';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
   OnboardingStatus,
   useSkipSyncEmailOnboardingStepMutation,
 } from '~/generated/graphql';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { ActionLink } from 'twenty-ui/navigation';
+import { IconGoogle, IconMicrosoft } from 'twenty-ui/display';
+import { MainButton } from 'twenty-ui/input';
 
 const StyledSyncEmailsContainer = styled.div`
   display: flex;

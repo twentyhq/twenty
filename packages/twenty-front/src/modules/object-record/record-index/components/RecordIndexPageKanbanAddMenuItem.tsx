@@ -2,8 +2,9 @@ import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/s
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { MenuItem, Tag } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { MenuItem } from 'twenty-ui/navigation';
+import { Tag } from 'twenty-ui/components';
 
 const StyledMenuItem = styled(MenuItem)`
   width: calc(100% - 2 * var(--horizontal-padding));

@@ -33,7 +33,7 @@ export const DateTimeSettingsDateFormatSelect = ({
     <Select
       dropdownId="datetime-settings-date-format"
       dropdownWidth={218}
-      label="Date format"
+      label={t`Date format`}
       fullWidth
       dropdownWidthAuto
       value={value}

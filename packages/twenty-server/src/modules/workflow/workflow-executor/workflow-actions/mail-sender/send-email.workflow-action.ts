@@ -2,40 +2,43 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
-import { isDefined, isValidUuid } from 'twenty-shared';
 import { z } from 'zod';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
+import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
+import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutorInput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
+import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
+import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 import {
   SendEmailActionException,
   SendEmailActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/exceptions/send-email-action.exception';
+import { isWorkflowSendEmailAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/guards/is-workflow-send-email-action.guard';
 import { WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
-import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
 
 export type WorkflowSendEmailStepOutputSchema = {
   success: boolean;
 };
 
 @Injectable()
-export class SendEmailWorkflowAction implements WorkflowAction {
+export class SendEmailWorkflowAction implements WorkflowExecutor {
   private readonly logger = new Logger(SendEmailWorkflowAction.name);
   constructor(
-    private readonly gmailClientProvider: GmailClientProvider,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly sendMessageService: MessagingSendMessageService,
   ) {}
 
-  private async getEmailClient(connectedAccountId: string) {
+  private async getConnectedAccount(connectedAccountId: string) {
     if (!isValidUuid(connectedAccountId)) {
       throw new SendEmailActionException(
         `Connected Account ID is not a valid UUID`,
@@ -68,23 +71,32 @@ export class SendEmailWorkflowAction implements WorkflowAction {
       );
     }
 
-    switch (connectedAccount.provider) {
-      case 'google':
-        return await this.gmailClientProvider.getGmailClient(connectedAccount);
-      default:
-        throw new SendEmailActionException(
-          `Provider ${connectedAccount.provider} is not supported`,
-          SendEmailActionExceptionCode.PROVIDER_NOT_SUPPORTED,
-        );
-    }
+    return connectedAccount;
   }
 
-  async execute(
-    workflowActionInput: WorkflowSendEmailActionInput,
-  ): Promise<WorkflowActionResult> {
-    const emailProvider = await this.getEmailClient(
-      workflowActionInput.connectedAccountId,
+  async execute({
+    currentStepIndex,
+    steps,
+    context,
+  }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
+    const step = steps[currentStepIndex];
+
+    if (!isWorkflowSendEmailAction(step)) {
+      throw new WorkflowStepExecutorException(
+        'Step is not a send email action',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+      );
+    }
+
+    const connectedAccount = await this.getConnectedAccount(
+      step.settings.input.connectedAccountId,
     );
+
+    const workflowActionInput = resolveInput(
+      step.settings.input,
+      context,
+    ) as WorkflowSendEmailActionInput;
+
     const { email, body, subject } = workflowActionInput;
 
     const emailSchema = z.string().trim().email('Invalid email');
@@ -103,23 +115,14 @@ export class SendEmailWorkflowAction implements WorkflowAction {
     const safeBody = purify.sanitize(body || '');
     const safeSubject = purify.sanitize(subject || '');
 
-    const message = [
-      `To: ${email}`,
-      `Subject: ${safeSubject || ''}`,
-      'MIME-Version: 1.0',
-      'Content-Type: text/plain; charset="UTF-8"',
-      '',
-      safeBody,
-    ].join('\n');
-
-    const encodedMessage = Buffer.from(message).toString('base64');
-
-    await emailProvider.users.messages.send({
-      userId: 'me',
-      requestBody: {
-        raw: encodedMessage,
+    await this.sendMessageService.sendMessage(
+      {
+        to: email,
+        subject: safeSubject,
+        body: safeBody,
       },
-    });
+      connectedAccount,
+    );
 
     this.logger.log(`Email sent successfully`);
 

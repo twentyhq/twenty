@@ -2,7 +2,12 @@ import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionM
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
+import {
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
+} from '@/action-menu/types/ActionMenuEntry';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -12,7 +17,8 @@ import { extractComponentState } from '@/ui/utilities/state/component-state/util
 import styled from '@emotion/styled';
 import { i18n } from '@lingui/core';
 import { useRecoilValue } from 'recoil';
-import { MenuItem } from 'twenty-ui';
+import { IconLayoutSidebarRightExpand } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledDropdownMenuContainer = styled.div`
   width: 100%;
@@ -29,6 +35,12 @@ export const RecordIndexActionMenuDropdown = () => {
     actionMenuEntriesComponentSelector,
   );
 
+  const recordIndexActions = actionMenuEntries.filter(
+    (actionMenuEntry) =>
+      actionMenuEntry.type === ActionMenuEntryType.Standard &&
+      actionMenuEntry.scope === ActionMenuEntryScope.RecordSelection,
+  );
+
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(
     ActionMenuComponentInstanceContext,
   );
@@ -43,8 +55,10 @@ export const RecordIndexActionMenuDropdown = () => {
     ),
   );
 
+  const { openCommandMenu } = useCommandMenu();
+
   //TODO: remove this
-  const width = actionMenuEntries.some(
+  const width = recordIndexActions.some(
     (actionMenuEntry) =>
       i18n._(actionMenuEntry.label) === 'Remove from favorites',
   )
@@ -58,7 +72,7 @@ export const RecordIndexActionMenuDropdown = () => {
         scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
       }}
       data-select-disable
-      dropdownMenuWidth={width}
+      dropdownWidth={width}
       dropdownPlacement="bottom-start"
       dropdownStrategy="absolute"
       dropdownOffset={{
@@ -68,18 +82,27 @@ export const RecordIndexActionMenuDropdown = () => {
       dropdownComponents={
         <StyledDropdownMenuContainer className="action-menu-dropdown">
           <DropdownMenuItemsContainer>
-            {actionMenuEntries.map((item) => (
+            {recordIndexActions.map((item) => (
               <MenuItem
                 key={item.key}
                 LeftIcon={item.Icon}
                 onClick={() => {
-                  item.onClick?.();
                   closeDropdown();
+                  item.onClick?.();
                 }}
                 accent={item.accent}
                 text={i18n._(item.label)}
               />
             ))}
+            <MenuItem
+              key="more-actions"
+              LeftIcon={IconLayoutSidebarRightExpand}
+              onClick={() => {
+                closeDropdown();
+                openCommandMenu();
+              }}
+              text="More actions"
+            />
           </DropdownMenuItemsContainer>
         </StyledDropdownMenuContainer>
       }

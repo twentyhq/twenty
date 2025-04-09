@@ -10,13 +10,14 @@ import { previousUrlState } from '@/auth/states/previousUrlState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
-import { isDefined } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { AppPath } from '@/types/AppPath';
 import { ApolloFactory, Options } from '../services/apollo.factory';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   // eslint-disable-next-line @nx/workspace-no-state-useref
@@ -34,6 +35,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
+  const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
 
   const setWorkspaces = useSetRecoilState(workspacesState);
   const [, setPreviousUrl] = useRecoilState(previousUrlState);
@@ -71,6 +73,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         setCurrentUser(null);
         setCurrentWorkspaceMember(null);
         setCurrentWorkspace(null);
+        setCurrentUserWorkspace(null);
         setWorkspaces([]);
         if (
           !isMatchingLocation(AppPath.Verify) &&

@@ -4,16 +4,18 @@ import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/use
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useHasSettingsPermission } from '@/settings/roles/hooks/useHasSettingsPermission';
 import { SettingsPath } from '@/types/SettingsPath';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
-import { useCallback, useContext, useMemo } from 'react';
+import { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { IconEyeOff, IconSettings } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { SettingPermissionType } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { IconEyeOff, IconSettings } from 'twenty-ui/display';
 
 type UseRecordGroupActionsParams = {
   viewType: ViewType;
@@ -25,7 +27,7 @@ export const useRecordGroupActions = ({
   const navigate = useNavigateSettings();
   const location = useLocation();
 
-  const { objectNameSingular, recordIndexId } = useRecordIndexContextOrThrow();
+  const { objectNameSingular } = useRecordIndexContextOrThrow();
 
   const { columnDefinition: recordGroupDefinition } = useContext(
     RecordBoardColumnContext,
@@ -41,7 +43,6 @@ export const useRecordGroupActions = ({
 
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
     useRecordGroupVisibility({
-      viewBarId: recordIndexId,
       viewType,
     });
 
@@ -69,37 +70,36 @@ export const useRecordGroupActions = ({
     recordGroupFieldMetadata,
   ]);
 
-  const recordGroupActions: RecordGroupAction[] = useMemo(
-    () =>
-      [
-        {
-          id: 'edit',
-          label: 'Edit',
-          icon: IconSettings,
-          position: 0,
-          callback: () => {
-            navigateToSelectSettings();
-          },
-        },
-        {
-          id: 'hide',
-          label: 'Hide',
-          icon: IconEyeOff,
-          position: 1,
-          callback: () => {
-            handleRecordGroupVisibilityChange({
-              ...recordGroupDefinition,
-              isVisible: false,
-            });
-          },
-        },
-      ].filter(isDefined),
-    [
-      handleRecordGroupVisibilityChange,
-      navigateToSelectSettings,
-      recordGroupDefinition,
-    ],
+  const hasAccessToDataModelSettings = useHasSettingsPermission(
+    SettingPermissionType.DATA_MODEL,
   );
+
+  const recordGroupActions: RecordGroupAction[] = [];
+
+  if (hasAccessToDataModelSettings) {
+    recordGroupActions.push({
+      id: 'edit',
+      label: 'Edit',
+      icon: IconSettings,
+      position: 0,
+      callback: () => {
+        navigateToSelectSettings();
+      },
+    });
+  }
+
+  recordGroupActions.push({
+    id: 'hide',
+    label: 'Hide',
+    icon: IconEyeOff,
+    position: 1,
+    callback: () => {
+      handleRecordGroupVisibilityChange({
+        ...recordGroupDefinition,
+        isVisible: false,
+      });
+    },
+  });
 
   return recordGroupActions;
 };

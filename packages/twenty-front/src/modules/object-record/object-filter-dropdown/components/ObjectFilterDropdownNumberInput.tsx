@@ -1,12 +1,13 @@
 import { ChangeEvent, useCallback, useState } from 'react';
 import { v4 } from 'uuid';
 
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const ObjectFilterDropdownNumberInput = () => {
@@ -44,32 +45,35 @@ export const ObjectFilterDropdownNumberInput = () => {
   return (
     fieldMetadataItemUsedInDropdown &&
     selectedOperandInDropdown && (
-      <DropdownMenuInput
-        ref={handleInputRef}
-        value={inputValue}
-        autoFocus
-        type="number"
-        placeholder={fieldMetadataItemUsedInDropdown.label}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          const newValue = event.target.value;
+      <DropdownMenuItemsContainer>
+        <DropdownMenuInput
+          ref={handleInputRef}
+          value={inputValue}
+          autoFocus
+          type="number"
+          placeholder={fieldMetadataItemUsedInDropdown.label}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            const newValue = event.target.value;
 
-          setInputValue(newValue);
+            setInputValue(newValue);
 
-          const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-            field: fieldMetadataItemUsedInDropdown,
-          });
-
-          applyRecordFilter({
-            id: selectedFilter?.id ? selectedFilter.id : v4(),
-            fieldMetadataId: fieldMetadataItemUsedInDropdown?.id ?? '',
-            value: newValue,
-            operand: selectedOperandInDropdown,
-            displayValue: newValue,
-            definition: filterDefinition,
-            viewFilterGroupId: selectedFilter?.viewFilterGroupId,
-          });
-        }}
-      />
+            applyRecordFilter({
+              id: selectedFilter?.id ? selectedFilter.id : v4(),
+              fieldMetadataId: fieldMetadataItemUsedInDropdown?.id ?? '',
+              value: newValue,
+              operand: selectedOperandInDropdown,
+              displayValue: newValue,
+              type: getFilterTypeFromFieldType(
+                fieldMetadataItemUsedInDropdown.type,
+              ),
+              label: fieldMetadataItemUsedInDropdown.label,
+              recordFilterGroupId: selectedFilter?.recordFilterGroupId,
+              positionInRecordFilterGroup:
+                selectedFilter?.positionInRecordFilterGroup,
+            });
+          }}
+        />
+      </DropdownMenuItemsContainer>
     )
   );
 };

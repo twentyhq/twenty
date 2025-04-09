@@ -1,12 +1,17 @@
-import { extractVariableLabel } from '@/workflow/workflow-variables/utils/extractVariableLabel';
+import { useWorkflowStepContextOrThrow } from '@/workflow/states/context/WorkflowStepContext';
+import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
+import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
+import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared';
-import { IconX } from 'twenty-ui';
+import { useLingui } from '@lingui/react/macro';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { IconAlertTriangle, IconX } from 'twenty-ui/display';
 
-const StyledChip = styled.div<{ deletable: boolean }>`
-  background-color: ${({ theme }) => theme.accent.quaternary};
-  border: 1px solid ${({ theme }) => theme.accent.tertiary};
+const StyledChip = styled.div<{ deletable: boolean; danger: boolean }>`
+  background-color: ${({ theme, danger }) =>
+    danger ? theme.background.danger : theme.accent.quaternary};
   border-radius: 4px;
   height: 20px;
   box-sizing: border-box;
@@ -29,12 +34,13 @@ const StyledChip = styled.div<{ deletable: boolean }>`
         `}
 `;
 
-const StyledLabel = styled.span`
-  color: ${({ theme }) => theme.color.blue};
+const StyledLabel = styled.span<{ danger: boolean }>`
+  color: ${({ theme, danger }) =>
+    danger ? theme.color.red : theme.color.blue};
   line-height: 140%;
 `;
 
-const StyledDelete = styled.button`
+const StyledDelete = styled.button<{ danger: boolean }>`
   box-sizing: border-box;
   height: 20px;
   width: 20px;
@@ -48,32 +54,77 @@ const StyledDelete = styled.button`
   margin: 0;
   background: none;
   border: none;
-  color: ${({ theme }) => theme.color.blue};
+  color: ${({ theme, danger }) =>
+    danger ? theme.color.red : theme.color.blue};
   border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
   border-bottom-right-radius: ${({ theme }) => theme.border.radius.sm};
 
   &:hover {
-    background-color: ${({ theme }) => theme.accent.secondary};
+    background-color: ${({ theme, danger }) =>
+      danger ? theme.color.red20 : theme.accent.secondary};
   }
 `;
 
 type VariableChipProps = {
   rawVariableName: string;
   onRemove?: () => void;
+  isFullRecord?: boolean;
 };
 
 export const VariableChip = ({
   rawVariableName,
   onRemove,
+  isFullRecord = false,
 }: VariableChipProps) => {
   const theme = useTheme();
+  const { t } = useLingui();
+  const { workflowVersionId } = useWorkflowStepContextOrThrow();
+
+  const stepId = extractRawVariableNamePart({
+    rawVariableName,
+    part: 'stepId',
+  });
+  const stepsOutputSchema = useRecoilValue(
+    stepsOutputSchemaFamilySelector({
+      workflowVersionId,
+      stepIds: [stepId],
+    }),
+  );
+
+  if (!isDefined(stepId)) {
+    return null;
+  }
+
+  const { variableLabel, variablePathLabel } =
+    searchVariableThroughOutputSchema({
+      stepOutputSchema: stepsOutputSchema?.[0],
+      rawVariableName,
+      isFullRecord,
+    });
+
+  const isVariableNotFound = !isDefined(variableLabel);
+  const label = isVariableNotFound ? t`Not Found` : variableLabel;
+  const title = isVariableNotFound ? t`Variable not found` : variablePathLabel;
 
   return (
-    <StyledChip deletable={isDefined(onRemove)}>
-      <StyledLabel>{extractVariableLabel(rawVariableName)}</StyledLabel>
+    <StyledChip deletable={isDefined(onRemove)} danger={isVariableNotFound}>
+      {!isDefined(variableLabel) && (
+        <IconAlertTriangle
+          size={theme.icon.size.sm}
+          stroke={theme.icon.stroke.sm}
+          color={theme.color.red}
+        />
+      )}
+      <StyledLabel title={title} danger={isVariableNotFound}>
+        {label}
+      </StyledLabel>
 
       {onRemove ? (
-        <StyledDelete onClick={onRemove} aria-label="Remove variable">
+        <StyledDelete
+          onClick={onRemove}
+          aria-label="Remove variable"
+          danger={isVariableNotFound}
+        >
           <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
         </StyledDelete>
       ) : null}

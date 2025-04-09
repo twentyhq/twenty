@@ -7,13 +7,15 @@ import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/Comman
 import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { useResetPreviousCommandMenuContext } from '@/command-menu/hooks/useResetPreviousCommandMenuContext';
+import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
+import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
 
@@ -24,13 +26,6 @@ export type CommandMenuListProps = {
   loading?: boolean;
   noResults?: boolean;
 };
-
-const StyledList = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  overscroll-behavior: contain;
-  transition: 100ms ease;
-  transition-property: height;
-`;
 
 const StyledInnerList = styled.div`
   max-height: calc(
@@ -75,74 +70,75 @@ export const CommandMenuList = ({
   const { resetPreviousCommandMenuContext } =
     useResetPreviousCommandMenuContext();
 
+  const setHasUserSelectedCommand = useSetRecoilState(
+    hasUserSelectedCommandState,
+  );
+
   return (
     <>
       <CommandMenuDefaultSelectionEffect
         selectableItemIds={selectableItemIds}
       />
-      <StyledList>
-        <ScrollWrapper
-          contextProviderName="commandMenu"
-          componentInstanceId={`scroll-wrapper-command-menu`}
-        >
-          <StyledInnerList>
-            <SelectableList
-              selectableListId="command-menu-list"
-              hotkeyScope={AppHotkeyScope.CommandMenuOpen}
-              selectableItemIdArray={selectableItemIds}
-              onEnter={(itemId) => {
-                if (itemId === RESET_CONTEXT_TO_SELECTION) {
-                  resetPreviousCommandMenuContext();
-                  return;
-                }
+      <ScrollWrapper componentInstanceId={`scroll-wrapper-command-menu`}>
+        <StyledInnerList>
+          <SelectableList
+            selectableListId="command-menu-list"
+            hotkeyScope={AppHotkeyScope.CommandMenuOpen}
+            selectableItemIdArray={selectableItemIds}
+            onEnter={(itemId) => {
+              if (itemId === RESET_CONTEXT_TO_SELECTION) {
+                resetPreviousCommandMenuContext();
+                return;
+              }
 
-                const command = commands.find((item) => item.id === itemId);
+              const command = commands.find((item) => item.id === itemId);
 
-                if (isDefined(command)) {
-                  const { to, onCommandClick, shouldCloseCommandMenuOnClick } =
-                    command;
+              if (isDefined(command)) {
+                const { to, onCommandClick, shouldCloseCommandMenuOnClick } =
+                  command;
 
-                  onItemClick({
-                    shouldCloseCommandMenuOnClick,
-                    onClick: onCommandClick,
-                    to,
-                  });
-                }
-              }}
-            >
-              {children}
-              {commandGroups.map(({ heading, items }) =>
-                items?.length ? (
-                  <CommandGroup heading={heading} key={heading}>
-                    {items.map((item) => {
-                      return (
-                        <SelectableItem itemId={item.id} key={item.id}>
-                          <CommandMenuItem
-                            key={item.id}
-                            id={item.id}
-                            Icon={item.Icon}
-                            label={item.label}
-                            description={item.description}
-                            to={item.to}
-                            onClick={item.onCommandClick}
-                            hotKeys={item.hotKeys}
-                            shouldCloseCommandMenuOnClick={
-                              item.shouldCloseCommandMenuOnClick
-                            }
-                          />
-                        </SelectableItem>
-                      );
-                    })}
-                  </CommandGroup>
-                ) : null,
-              )}
-              {noResults && !loading && (
-                <StyledEmpty>No results found</StyledEmpty>
-              )}
-            </SelectableList>
-          </StyledInnerList>
-        </ScrollWrapper>
-      </StyledList>
+                onItemClick({
+                  shouldCloseCommandMenuOnClick,
+                  onClick: onCommandClick,
+                  to,
+                });
+              }
+            }}
+            onSelect={() => {
+              setHasUserSelectedCommand(true);
+            }}
+          >
+            {children}
+            {commandGroups.map(({ heading, items }) =>
+              items?.length ? (
+                <CommandGroup heading={heading} key={heading}>
+                  {items.map((item) => {
+                    return (
+                      <SelectableItem itemId={item.id} key={item.id}>
+                        <CommandMenuItem
+                          id={item.id}
+                          Icon={item.Icon}
+                          label={item.label}
+                          description={item.description}
+                          to={item.to}
+                          onClick={item.onCommandClick}
+                          hotKeys={item.hotKeys}
+                          shouldCloseCommandMenuOnClick={
+                            item.shouldCloseCommandMenuOnClick
+                          }
+                        />
+                      </SelectableItem>
+                    );
+                  })}
+                </CommandGroup>
+              ) : null,
+            )}
+            {noResults && !loading && (
+              <StyledEmpty>No results found</StyledEmpty>
+            )}
+          </SelectableList>
+        </StyledInnerList>
+      </ScrollWrapper>
     </>
   );
 };

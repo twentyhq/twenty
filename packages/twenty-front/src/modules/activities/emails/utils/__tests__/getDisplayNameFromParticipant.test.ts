@@ -47,6 +47,7 @@ describe('getDisplayNameFromParticipant', () => {
       updatedAt: '',
       userEmail: '',
       userId: '',
+      colorScheme: 'Light',
     },
   };
 

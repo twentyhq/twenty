@@ -91,13 +91,16 @@ Then you can set the following environment variables:
 
 On Microsoft Azure Console enable the following APIs in "Permissions":
 
-- Microsoft Graph: Mail.Read
+- Microsoft Graph: Mail.ReadWrite
+- Microsoft Graph: Mail.Send
 - Microsoft Graph: Calendars.Read
 - Microsoft Graph: User.Read.All
 - Microsoft Graph: openid
 - Microsoft Graph: email
 - Microsoft Graph: profile
 - Microsoft Graph: offline_access
+
+Note: "Mail.ReadWrite" and "Mail.Send" are only mandatory if you want to send emails using our workflow actions. You can use "Mail.Read" instead if you only want to receive emails.
 
 ### Authorized redirect URIs
 
@@ -111,8 +114,9 @@ You need to add the following redirect URIs to your project:
 - 'email'
 - 'profile'
 - 'offline_access'
-- 'Mail.Read'
-- 'Calendars.Read
+- 'Mail.ReadWrite'
+- 'Mail.Send'
+- 'Calendars.Read'
 
 ### If your app is in test mode
 
@@ -155,10 +159,9 @@ yarn command:prod cron:calendar:ongoing-stale
     ['FRONT_DOMAIN', 'localhost', 'Domain of the hosted frontend'],
     ['DEFAULT_SUBDOMAIN', 'app', 'The default subdomain name when multiworkspace mode is enabled'],
     ['SERVER_URL', 'http://localhost:3000', 'Url to the hosted server'],
-    ['FRONT_PROTOCOL', 'http', 'protocol of the frontend server. Could be `http` or `https`'],
-    ['FRONT_PORT', '3001', 'Port of the frontend server.'],
+    ['FRONTEND_URL', '$SERVER_URL', 'Url to the frontend server. Same as SERVER_URL by default'],
     ['PORT', '3000', 'Port of the backend server'],
-    ['CACHE_STORAGE_TTL', '3600 * 24 * 7', 'Cache TTL in seconds']
+    ['CACHE_STORAGE_TTL', '3600 * 24 * 7', 'Cache TTL in seconds'],
     ]}></ArticleTable>
 
 ### Security
@@ -271,11 +274,12 @@ yarn command:prod cron:calendar:ongoing-stale
   ['SERVERLESS_TYPE', 'local', "Serverless driver type: 'local' or 'lambda'"],
   ['SERVERLESS_LAMBDA_REGION', '', 'Lambda Region'],
   ['SERVERLESS_LAMBDA_ROLE', '', 'Lambda Role'],
+  ['SERVERLESS_LAMBDA_SUBHOSTING_ROLE', '', 'Role to assume when hosting lambdas in dedicated AWS account'],
   ['SERVERLESS_LAMBDA_ACCESS_KEY_ID', '', 'Optional depending on the authentication method'],
   ['SERVERLESS_LAMBDA_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
 ]}></ArticleTable>
 
-### Logging
+### Logging and Observability
 
 <ArticleTable options={[
     ['LOGGER_DRIVER', 'console', "Currently, only supports 'console'"],
@@ -286,6 +290,8 @@ yarn command:prod cron:calendar:ongoing-stale
     ['SENTRY_RELEASE', 'latest', 'The sentry release used if sentry logging driver is selected'],
     ['SENTRY_DSN', 'https://xxx@xxx.ingest.sentry.io/xxx', 'The sentry logging endpoint used if sentry logging driver is selected'],
     ['SENTRY_FRONT_DSN', 'https://xxx@xxx.ingest.sentry.io/xxx', 'The sentry logging endpoint used by the frontend if sentry logging driver is selected'],
+    ['METER_DRIVER', 'console', "The meter driver can be: 'console' and/or 'opentelemetry' "],
+    ['OTLP_COLLECTOR_ENDPOINT_URL', '', 'The OpenTelemetry collector endpoint collects metrics if opentelemetry meter driver is selected. The collector has to be set separately.'],
     ]}></ArticleTable>
 
 
@@ -304,7 +310,8 @@ This feature is WIP and is not yet useful for most users.
 <ArticleTable options={[
     ['SERVERLESS_TYPE', 'local', "Functions can either be executed through Lambda or directly by the main node process"],
     ['SERVERLESS_LAMBDA_REGION', 'us-east-1', 'If you use the Lambda driver, region of the Lambda function'],
-    ['SERVERLESS_LAMBDA_ROLE', 'arn:aws:iam::121334:role/lambda-execution-role', "If you use the Lambda drive, name of the IAM role with the right permissions"],
+    ['SERVERLESS_LAMBDA_ROLE', 'arn:aws:iam::121334:role/lambda-execution-role', "If you use the Lambda driver, name of the IAM role with the right permissions"],
+    ['SERVERLESS_LAMBDA_SUBHOSTING_ROLE', 'arn:aws:iam::121334:role/lambda-deployment-role', "If you host lambdas in a dedicated AWS account, name of the IAM role to assume in the dedicated account"],
 ]}></ArticleTable>
 
 
@@ -335,7 +342,8 @@ This feature is WIP and is not yet useful for most users.
 
 <ArticleTable options={[
   ['WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION', '', 'Number of inactive days before sending workspace deleting warning email'],
-  ['WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION', '', 'Number of inactive days before deleting workspace'],
+  ['WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION', '', 'Number of inactive days before soft deleting workspace'],
+  ['WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION', '', 'Number of inactive days before destroying workspace'],
   ]}></ArticleTable>
 
 ### Captcha

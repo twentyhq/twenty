@@ -8,15 +8,16 @@ import { View } from '@/views/types/View';
 import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import {
   IconHeart,
   IconLock,
   IconPencil,
   IconTrash,
-  MenuItem,
   useIcons,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;
@@ -31,6 +32,7 @@ export const ViewPickerOptionDropdown = ({
   view,
   handleViewSelect,
 }: ViewPickerOptionDropdownProps) => {
+  const { t } = useLingui();
   const { closeDropdown } = useDropdown(`view-picker-options-${view.id}`);
   const { getIcon } = useIcons();
   const [isHovered, setIsHovered] = useState(false);
@@ -44,7 +46,8 @@ export const ViewPickerOptionDropdown = ({
   const { createFavorite } = useCreateFavorite();
 
   const isFavorite = favorites.some(
-    (favorite) => favorite.recordId === view.id && favorite.workspaceMemberId,
+    (favorite) =>
+      favorite.recordId === view.id && favorite.forWorkspaceMemberId,
   );
 
   const handleDelete = () => {
@@ -74,7 +77,6 @@ export const ViewPickerOptionDropdown = ({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => {
           setIsHovered(false);
-          closeDropdown();
         }}
         dropdownPlacement="bottom-start"
         dropdownId={`view-picker-options-${view.id}`}
@@ -83,20 +85,20 @@ export const ViewPickerOptionDropdown = ({
             {isIndexView ? (
               <MenuItem
                 LeftIcon={IconHeart}
-                text={isFavorite ? 'Manage favorite' : 'Add to Favorite'}
+                text={isFavorite ? t`Manage favorite` : t`Add to Favorite`}
                 onClick={handleAddToFavorites}
               />
             ) : (
               <>
                 <MenuItem
                   LeftIcon={IconHeart}
-                  text={isFavorite ? 'Manage favorite' : 'Add to Favorite'}
+                  text={isFavorite ? t`Manage favorite` : t`Add to Favorite`}
                   onClick={handleAddToFavorites}
                 />
 
                 <MenuItem
                   LeftIcon={IconPencil}
-                  text="Edit"
+                  text={t`Edit`}
                   onClick={(event) => {
                     onEdit(event, view.id);
                     closeDropdown();
@@ -104,7 +106,7 @@ export const ViewPickerOptionDropdown = ({
                 />
                 <MenuItem
                   LeftIcon={IconTrash}
-                  text="Delete"
+                  text={t`Delete`}
                   onClick={handleDelete}
                   accent="danger"
                 />

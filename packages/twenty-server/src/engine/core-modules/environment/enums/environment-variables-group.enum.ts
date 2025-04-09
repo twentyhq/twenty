@@ -6,6 +6,7 @@ export enum EnvironmentVariablesGroup {
   MicrosoftAuth = 'microsoft-auth',
   EmailSettings = 'email-settings',
   Logging = 'logging',
+  Metering = 'metering',
   ExceptionHandler = 'exception-handler',
   Other = 'other',
   BillingConfig = 'billing-config',
@@ -15,6 +16,6 @@ export enum EnvironmentVariablesGroup {
   ServerlessConfig = 'serverless-config',
   SSL = 'ssl',
   SupportChatConfig = 'support-chat-config',
-  TinybirdConfig = 'tinybird-config',
+  AnalyticsConfig = 'analytics-config',
   TokensDuration = 'tokens-duration',
 }

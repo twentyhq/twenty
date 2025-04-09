@@ -3,16 +3,14 @@ import styled from '@emotion/styled';
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { ServerlessFunctionTestData } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { useTheme } from '@emotion/react';
+import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql';
+import { CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import {
-  CodeEditor,
-  CoreEditorHeader,
   IconSquareRoundedCheck,
   IconSquareRoundedX,
   IconLoader,
-  IconSettings,
-  AnimatedCircleLoading,
-} from 'twenty-ui';
-import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql';
+} from 'twenty-ui/display';
+import { AnimatedCircleLoading } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -41,11 +39,9 @@ const StyledOutput = styled.div<{ accent?: OutputAccent }>`
 export const ServerlessFunctionExecutionResult = ({
   serverlessFunctionTestData,
   isTesting = false,
-  isBuilding = false,
 }: {
   serverlessFunctionTestData: ServerlessFunctionTestData;
   isTesting?: boolean;
-  isBuilding?: boolean;
 }) => {
   const theme = useTheme();
 
@@ -70,23 +66,17 @@ export const ServerlessFunctionExecutionResult = ({
 
   const IdleLeftNode = 'Output';
 
-  const PendingLeftNode = (isTesting || isBuilding) && (
+  const PendingLeftNode = isTesting && (
     <StyledOutput>
       <AnimatedCircleLoading>
-        {isTesting ? (
-          <IconLoader size={theme.icon.size.md} />
-        ) : (
-          <IconSettings size={theme.icon.size.md} />
-        )}
+        <IconLoader size={theme.icon.size.md} />
       </AnimatedCircleLoading>
-      <StyledInfoContainer>
-        {isTesting ? 'Running function' : 'Building function'}
-      </StyledInfoContainer>
+      <StyledInfoContainer>Running function</StyledInfoContainer>
     </StyledOutput>
   );
 
   const computeLeftNode = () => {
-    if (isTesting || isBuilding) {
+    if (isTesting) {
       return PendingLeftNode;
     }
     if (
@@ -115,8 +105,8 @@ export const ServerlessFunctionExecutionResult = ({
         language={serverlessFunctionTestData.language}
         height={serverlessFunctionTestData.height}
         options={{ readOnly: true, domReadOnly: true }}
-        isLoading={isTesting || isBuilding}
-        withHeader
+        isLoading={isTesting}
+        variant="with-header"
       />
     </StyledContainer>
   );

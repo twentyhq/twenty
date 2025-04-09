@@ -1,8 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { IconSearch, IconSettings } from 'twenty-ui';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
@@ -18,12 +17,14 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { IconSearch, IconSettings } from 'twenty-ui/display';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
   min-height: fit-content;
 `;
 const StyledInnerContainer = styled.div`
   height: 100%;
+  width: 100%;
 `;
 
 export const MainNavigationDrawerItems = () => {
@@ -41,7 +42,7 @@ export const MainNavigationDrawerItems = () => {
 
   const { t } = useLingui();
 
-  const { openRecordsSearchPage } = useCommandMenu();
+  const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
 
   return (
     <>
@@ -66,10 +67,8 @@ export const MainNavigationDrawerItems = () => {
         </StyledMainSection>
       )}
       <ScrollWrapper
-        contextProviderName="navigationDrawer"
         componentInstanceId={`scroll-wrapper-navigation-drawer`}
         defaultEnableXScroll={false}
-        scrollbarVariant="no-padding"
       >
         <StyledInnerContainer>
           <NavigationDrawerOpenedSection />

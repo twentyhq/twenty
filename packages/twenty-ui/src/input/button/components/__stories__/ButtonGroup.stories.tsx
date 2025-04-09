@@ -5,7 +5,12 @@ import {
   CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { Button, ButtonAccent, ButtonSize, ButtonVariant } from '../Button';
+import {
+  Button,
+  ButtonAccent,
+  ButtonSize,
+  ButtonVariant,
+} from '../Button/Button';
 import { ButtonGroup } from '../ButtonGroup';
 
 const meta: Meta<typeof ButtonGroup> = {

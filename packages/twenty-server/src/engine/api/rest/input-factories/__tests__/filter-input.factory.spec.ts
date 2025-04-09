@@ -1,10 +1,79 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+
+import {
+  fieldCurrencyMock,
+  fieldNumberMock,
+  fieldTextMock,
+  objectMetadataItemMock,
+} from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { FilterInputFactory } from 'src/engine/api/rest/input-factories/filter-input.factory';
+import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
 describe('FilterInputFactory', () => {
-  const objectMetadata = { objectMetadataItem: objectMetadataItemMock };
+  const completeFieldNumberMock: FieldMetadataInterface = {
+    id: 'field-number-id',
+    type: fieldNumberMock.type,
+    name: fieldNumberMock.name,
+    label: 'Field Number',
+    objectMetadataId: 'object-metadata-id',
+    isNullable: fieldNumberMock.isNullable,
+    defaultValue: fieldNumberMock.defaultValue,
+  };
+
+  const completeFieldTextMock: FieldMetadataInterface = {
+    id: 'field-text-id',
+    type: fieldTextMock.type,
+    name: fieldTextMock.name,
+    label: 'Field Text',
+    objectMetadataId: 'object-metadata-id',
+    isNullable: fieldTextMock.isNullable,
+    defaultValue: fieldTextMock.defaultValue,
+  };
+
+  const completeFieldCurrencyMock: FieldMetadataInterface = {
+    id: 'field-currency-id',
+    type: fieldCurrencyMock.type,
+    name: fieldCurrencyMock.name,
+    label: 'Field Currency',
+    objectMetadataId: 'object-metadata-id',
+    isNullable: fieldCurrencyMock.isNullable,
+    defaultValue: fieldCurrencyMock.defaultValue,
+  };
+
+  const fieldsById: FieldMetadataMap = {
+    'field-number-id': completeFieldNumberMock,
+    'field-text-id': completeFieldTextMock,
+    'field-currency-id': completeFieldCurrencyMock,
+  };
+
+  const fieldsByName: FieldMetadataMap = {
+    [completeFieldNumberMock.name]: completeFieldNumberMock,
+    [completeFieldTextMock.name]: completeFieldTextMock,
+    [completeFieldCurrencyMock.name]: completeFieldCurrencyMock,
+  };
+
+  const objectMetadataMapItem = {
+    ...objectMetadataItemMock,
+    fieldsById,
+    fieldsByName,
+  };
+
+  const objectMetadataMaps = {
+    byId: {
+      [objectMetadataItemMock.id || 'mock-id']: objectMetadataMapItem,
+    },
+    idByNameSingular: {
+      [objectMetadataItemMock.nameSingular]:
+        objectMetadataItemMock.id || 'mock-id',
+    },
+  };
+
+  const objectMetadata = {
+    objectMetadataMaps,
+    objectMetadataMapItem,
+  };
 
   let service: FilterInputFactory;
 

@@ -2,10 +2,8 @@ import { useRecoilCallback } from 'recoil';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
-import { getActionBarIdFromActionMenuId } from '@/action-menu/utils/getActionBarIdFromActionMenuId';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -37,10 +35,6 @@ export const useTriggerActionMenuDropdown = ({
     getActionMenuDropdownIdFromActionMenuId(actionMenuInstanceId),
   );
 
-  const isActionBarOpenState = isBottomBarOpenedComponentState.atomFamily({
-    instanceId: getActionBarIdFromActionMenuId(actionMenuInstanceId),
-  });
-
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
 
@@ -63,7 +57,6 @@ export const useTriggerActionMenuDropdown = ({
           set(isRowSelectedFamilyState(recordId), true);
         }
 
-        set(isActionBarOpenState, false);
         set(isActionMenuDropdownOpenState, true);
 
         const actionMenuDropdownId =
@@ -72,7 +65,6 @@ export const useTriggerActionMenuDropdown = ({
         setActiveDropdownFocusIdAndMemorizePrevious(actionMenuDropdownId);
       },
     [
-      isActionBarOpenState,
       isActionMenuDropdownOpenState,
       isRowSelectedFamilyState,
       recordIndexActionMenuDropdownPositionState,

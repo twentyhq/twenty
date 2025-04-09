@@ -1,50 +1,94 @@
+/* @license Enterprise */
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
-import { H2Title, Section } from 'twenty-ui';
-import { useGetCustomDomainDetailsQuery } from '~/generated/graphql';
 import { SettingsCustomDomainRecords } from '~/pages/settings/workspace/SettingsCustomDomainRecords';
+import { SettingsCustomDomainRecordsStatus } from '~/pages/settings/workspace/SettingsCustomDomainRecordsStatus';
+import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
+import { useRecoilValue } from 'recoil';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useCheckCustomDomainValidRecords } from '~/pages/settings/workspace/hooks/useCheckCustomDomainValidRecords';
+import { Button } from 'twenty-ui/input';
+import { H2Title, IconReload } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledDomainFormWrapper = styled.div`
-  align-items: center;
   display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledButton = styled(Button)`
+  align-self: flex-start;
+`;
+
+const StyledRecordsWrapper = styled.div`
+  margin-top: ${({ theme }) => theme.spacing(2)};
+
+  & > :not(:first-of-type) {
+    margin-top: ${({ theme }) => theme.spacing(4)};
+  }
 `;
 
 export const SettingsCustomDomain = () => {
-  const { data: getCustomDomainDetailsData } = useGetCustomDomainDetailsQuery();
+  const { customDomainRecords, isLoading } = useRecoilValue(
+    customDomainRecordsState,
+  );
+
+  const { checkCustomDomainRecords } = useCheckCustomDomainValidRecords();
+
+  if (!customDomainRecords && !isLoading) {
+    checkCustomDomainRecords();
+  }
+
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { t } = useLingui();
 
-  const { control, getValues } = useFormContext<{
+  const { control } = useFormContext<{
     customDomain: string;
   }>();
 
   return (
     <Section>
-      <H2Title title={t`Domain`} description={t`Set the name of your domain`} />
+      <H2Title
+        title={t`Custom Domain`}
+        description={t`Set the name of your custom domain and configure your DNS records.`}
+      />
       <StyledDomainFormWrapper>
         <Controller
           name="customDomain"
           control={control}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <TextInputV2
-              value={value ?? undefined}
+              value={value}
               type="text"
               onChange={onChange}
+              placeholder="crm.yourdomain.com"
               error={error?.message}
               fullWidth
             />
           )}
         />
+        <StyledButton
+          isLoading={isLoading}
+          Icon={IconReload}
+          title={t`Reload`}
+          variant="primary"
+          onClick={checkCustomDomainRecords}
+          type="button"
+        />
       </StyledDomainFormWrapper>
-      {getCustomDomainDetailsData?.getCustomDomainDetails &&
-        getValues('customDomain') ===
-          getCustomDomainDetailsData?.getCustomDomainDetails?.customDomain && (
-          <SettingsCustomDomainRecords
-            records={getCustomDomainDetailsData.getCustomDomainDetails.records}
-          />
-        )}
+      {currentWorkspace?.customDomain && (
+        <StyledRecordsWrapper>
+          <SettingsCustomDomainRecordsStatus />
+          {customDomainRecords && (
+            <SettingsCustomDomainRecords
+              records={customDomainRecords.records}
+            />
+          )}
+        </StyledRecordsWrapper>
+      )}
     </Section>
   );
 };

@@ -1,12 +1,13 @@
 import { AppRouterProviders } from '@/app/components/AppRouterProviders';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
+import { Verify } from '@/auth/components/Verify';
 
-import { VerifyEffect } from '@/auth/components/VerifyEffect';
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import indexAppPath from '@/navigation/utils/indexAppPath';
 import { AppPath } from '@/types/AppPath';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
+
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -26,10 +27,8 @@ import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 
 export const useCreateAppRouter = (
-  isBillingEnabled?: boolean,
   isFunctionSettingsEnabled?: boolean,
   isAdminPageEnabled?: boolean,
-  isPermissionsEnabled?: boolean,
 ) =>
   createBrowserRouter(
     createRoutesFromElements(
@@ -40,7 +39,7 @@ export const useCreateAppRouter = (
         loader={async () => Promise.resolve(null)}
       >
         <Route element={<DefaultLayout />}>
-          <Route path={AppPath.Verify} element={<VerifyEffect />} />
+          <Route path={AppPath.Verify} element={<Verify />} />
           <Route path={AppPath.VerifyEmail} element={<VerifyEmailEffect />} />
           <Route path={AppPath.SignInUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<SignInUp />} />
@@ -61,10 +60,8 @@ export const useCreateAppRouter = (
             path={AppPath.SettingsCatchAll}
             element={
               <SettingsRoutes
-                isBillingEnabled={isBillingEnabled}
                 isFunctionSettingsEnabled={isFunctionSettingsEnabled}
                 isAdminPageEnabled={isAdminPageEnabled}
-                isPermissionsEnabled={isPermissionsEnabled}
               />
             }
           />

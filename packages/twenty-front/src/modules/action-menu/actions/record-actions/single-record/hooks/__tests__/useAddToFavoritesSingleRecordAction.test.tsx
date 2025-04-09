@@ -4,16 +4,16 @@ import { act } from 'react';
 import {
   GetJestMetadataAndApolloMocksAndActionMenuWrapperProps,
   getJestMetadataAndApolloMocksAndActionMenuWrapper,
-} from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
+} from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { useAddToFavoritesSingleRecordAction } from '../useAddToFavoritesSingleRecordAction';
 
 const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
 )!;
 
-const peopleMock = getPeopleMock();
+const peopleMock = getPeopleRecordConnectionMock();
 
 const favoritesMock = [
   {
@@ -70,45 +70,12 @@ const wrapperConfigWithSelectedRecordNotAsFavorite: GetJestMetadataAndApolloMock
     },
   };
 
-const wrapperWithSelectedRecordAsFavorite =
-  getJestMetadataAndApolloMocksAndActionMenuWrapper(
-    wrapperConfigWithSelectedRecordAsFavorite,
-  );
-
 const wrapperWithSelectedRecordNotAsFavorite =
   getJestMetadataAndApolloMocksAndActionMenuWrapper(
     wrapperConfigWithSelectedRecordNotAsFavorite,
   );
 
 describe('useAddToFavoritesSingleRecordAction', () => {
-  it('should be registered when the record is not a favorite', () => {
-    const { result } = renderHook(
-      () =>
-        useAddToFavoritesSingleRecordAction({
-          objectMetadataItem: personMockObjectMetadataItem,
-        }),
-      {
-        wrapper: wrapperWithSelectedRecordNotAsFavorite,
-      },
-    );
-
-    expect(result.current.shouldBeRegistered).toBe(true);
-  });
-
-  it('should not be registered when the record is a favorite', () => {
-    const { result } = renderHook(
-      () =>
-        useAddToFavoritesSingleRecordAction({
-          objectMetadataItem: personMockObjectMetadataItem,
-        }),
-      {
-        wrapper: wrapperWithSelectedRecordAsFavorite,
-      },
-    );
-
-    expect(result.current.shouldBeRegistered).toBe(false);
-  });
-
   it('should call createFavorite on click', () => {
     const { result } = renderHook(
       () =>

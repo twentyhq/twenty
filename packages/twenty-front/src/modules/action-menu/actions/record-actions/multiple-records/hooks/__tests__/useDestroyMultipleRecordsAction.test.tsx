@@ -7,9 +7,9 @@ import { act } from 'react';
 import {
   GetJestMetadataAndApolloMocksAndActionMenuWrapperProps,
   getJestMetadataAndApolloMocksAndActionMenuWrapper,
-} from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
+} from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { useDestroyMultipleRecordsAction } from '../useDestroyMultipleRecordsAction';
 
 const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
@@ -20,10 +20,12 @@ const personMockObjectMetadataItemDeletedAtField =
 if (personMockObjectMetadataItemDeletedAtField === undefined)
   throw new Error('Should never occur');
 
-const [firstPeopleMock, secondPeopleMock] = getPeopleMock().map((record) => ({
-  ...record,
-  deletedAt: new Date().toISOString(),
-}));
+const [firstPeopleMock, secondPeopleMock] = getPeopleRecordConnectionMock().map(
+  (record) => ({
+    ...record,
+    deletedAt: new Date().toISOString(),
+  }),
+);
 
 const destroyManyRecordsMock = jest.fn();
 const resetTableRowSelectionMock = jest.fn();
@@ -56,6 +58,7 @@ const getWrapper = (
     componentInstanceId: '1',
     contextStoreCurrentObjectMetadataNameSingular:
       personMockObjectMetadataItem.nameSingular,
+    contextStoreCurrentViewId: 'my-view-id',
     contextStoreTargetedRecordsRule: {
       mode: 'selection',
       selectedRecordIds: [firstPeopleMock.id, secondPeopleMock.id],
@@ -71,8 +74,6 @@ const getWrapper = (
     },
     ...overrides,
   });
-
-const defaultWrapper = getWrapper();
 
 describe('useDestroyMultipleRecordsAction', () => {
   it('should call destroyManyRecords on click if records are filtered by deletedAt', async () => {
@@ -90,12 +91,8 @@ describe('useDestroyMultipleRecordsAction', () => {
               value: '',
               displayValue: '',
               operand: ViewFilterOperand.IsNotEmpty,
-              definition: {
-                label: 'Deleted',
-                iconName: 'IconTrash',
-                fieldMetadataId: personMockObjectMetadataItemDeletedAtField.id,
-                type: 'DATE_TIME',
-              },
+              type: 'DATE_TIME',
+              label: 'Deleted',
             },
           ],
         }),
@@ -121,25 +118,5 @@ describe('useDestroyMultipleRecordsAction', () => {
       expect(resetTableRowSelectionMock).toHaveBeenCalled();
       expect(destroyManyRecordsMock).toHaveBeenCalledWith(expectedParams);
     });
-  });
-
-  it('should not call destroyManyRecords on click if records are not filtered by deletedAt', async () => {
-    const { result } = renderHook(
-      () =>
-        useDestroyMultipleRecordsAction({
-          objectMetadataItem: personMockObjectMetadataItem,
-        }),
-      {
-        wrapper: defaultWrapper,
-      },
-    );
-
-    expect(result.current.ConfirmationModal?.props?.isOpen).toBeFalsy();
-
-    act(() => {
-      result.current.onClick();
-    });
-
-    expect(result.current.ConfirmationModal?.props?.isOpen).toBeFalsy();
   });
 });

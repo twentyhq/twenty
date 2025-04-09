@@ -7,45 +7,34 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { SettingsFeatures } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
+  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 export const SettingsPermissionsGuard = (
-  requiredPermission: SettingsFeatures,
+  requiredPermission: SettingPermissionType,
 ): Type<CanActivate> => {
   @Injectable()
   class SettingsPermissionsMixin implements CanActivate {
-    constructor(
-      private readonly featureFlagService: FeatureFlagService,
-      private readonly permissionsService: PermissionsService,
-    ) {}
+    constructor(private readonly permissionsService: PermissionsService) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
       const ctx = GqlExecutionContext.create(context);
       const workspaceId = ctx.getContext().req.workspace.id;
-
-      const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsPermissionsEnabled,
-        workspaceId,
-      );
-
-      if (!permissionsEnabled) {
-        return true;
-      }
-
       const userWorkspaceId = ctx.getContext().req.userWorkspaceId;
 
       const hasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
-          _setting: requiredPermission,
+          setting: requiredPermission,
+          workspaceId,
+          isExecutedByApiKey: isDefined(ctx.getContext().req.apiKey),
         });
 
       if (hasPermission === true) {
@@ -53,7 +42,7 @@ export const SettingsPermissionsGuard = (
       }
 
       throw new PermissionsException(
-        'User is not authorized to perform this action',
+        PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
       );
     }

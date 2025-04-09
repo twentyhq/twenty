@@ -10,7 +10,6 @@ const task: Task = {
   id: '123',
   status: 'DONE',
   title: 'Test',
-  body: 'Test',
   bodyV2: {
     blocknote: 'Test',
     markdown: 'Test',
@@ -91,6 +90,7 @@ const mocks: MockedResponse[] = [
                   createdAt
                   deletedAt
                   favoriteFolderId
+                  forWorkspaceMemberId
                   id
                   noteId
                   opportunityId
@@ -104,7 +104,6 @@ const mocks: MockedResponse[] = [
                   workflowId
                   workflowRunId
                   workflowVersionId
-                  workspaceMemberId
                 }
               }
             }

@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
-import { IconPencil } from 'twenty-ui';
 
 import {
   phonesFieldDefinition,
@@ -11,6 +10,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { IconPencil } from 'twenty-ui/display';
 
 const recordId = 'recordId';
 
@@ -21,8 +21,8 @@ const getWrapper =
       value={{
         fieldDefinition,
         recordId,
-        hotkeyScope: 'hotkeyScope',
         isLabelIdentifier: false,
+        isReadOnly: false,
       }}
     >
       <RecoilRoot>{children}</RecoilRoot>

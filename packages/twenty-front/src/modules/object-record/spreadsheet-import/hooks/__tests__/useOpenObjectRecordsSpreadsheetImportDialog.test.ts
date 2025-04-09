@@ -8,6 +8,7 @@ import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spread
 
 import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
 
+import { FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const companyId = 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a';
@@ -104,6 +105,7 @@ const companyMocks = [
                   createdAt
                   deletedAt
                   favoriteFolderId
+                  forWorkspaceMemberId
                   id
                   noteId
                   opportunityId
@@ -117,12 +119,12 @@ const companyMocks = [
                   workflowId
                   workflowRunId
                   workflowVersionId
-                  workspaceMemberId
                 }
               }
             }
             id
             idealCustomerProfile
+            internalCompetitions
             introVideo {
               primaryLinkUrl
               primaryLinkLabel
@@ -294,7 +296,10 @@ const companyMocks = [
       variables: {
         data: [
           {
-            createdBy: { source: 'IMPORT' },
+            createdBy: {
+              source: 'IMPORT',
+              context: {},
+            } satisfies FieldActorForInputValue,
             employees: 0,
             idealCustomerProfile: true,
             name: 'Example Company',
@@ -341,7 +346,7 @@ describe('useSpreadsheetCompanyImport', () => {
           spreadsheetImportDialogState,
         );
         const {
-          openObjectRecordsSpreasheetImportDialog: openRecordSpreadsheetImport,
+          openObjectRecordsSpreadsheetImportDialog: openRecordSpreadsheetImport,
         } = useOpenObjectRecordsSpreadsheetImportDialog(
           CoreObjectNameSingular.Company,
         );

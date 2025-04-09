@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Request } from 'express';
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
@@ -39,6 +39,7 @@ describe('AccessTokenService', () => {
             verifyWorkspaceToken: jest.fn(),
             decode: jest.fn(),
             generateAppSecret: jest.fn(),
+            extractJwtFromRequest: jest.fn(),
           },
         },
         {
@@ -180,6 +181,9 @@ describe('AccessTokenService', () => {
       };
 
       jest
+        .spyOn(jwtWrapperService, 'extractJwtFromRequest')
+        .mockReturnValue(() => mockToken);
+      jest
         .spyOn(jwtWrapperService, 'verifyWorkspaceToken')
         .mockResolvedValue(undefined);
       jest
@@ -206,6 +210,10 @@ describe('AccessTokenService', () => {
       const mockRequest = {
         headers: {},
       } as Request;
+
+      jest
+        .spyOn(jwtWrapperService, 'extractJwtFromRequest')
+        .mockReturnValue(() => null);
 
       await expect(service.validateTokenByRequest(mockRequest)).rejects.toThrow(
         AuthException,

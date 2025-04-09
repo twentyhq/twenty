@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { capitalize, FieldMetadataType } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
+import { capitalize } from 'twenty-shared/utils';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -73,7 +74,7 @@ export class ObjectMetadataRelationService {
     createdObjectMetadata: ObjectMetadataEntity,
     objectPrimaryKeyType: FieldMetadataType,
     objectPrimaryKeyFieldSettings:
-      | FieldMetadataSettings<FieldMetadataType | 'default'>
+      | FieldMetadataSettings<FieldMetadataType>
       | undefined,
     relationObjectMetadataStandardId: string,
   ) {
@@ -109,7 +110,7 @@ export class ObjectMetadataRelationService {
     relatedObjectMetadata: ObjectMetadataEntity,
     objectPrimaryKeyType: FieldMetadataType,
     objectPrimaryKeyFieldSettings:
-      | FieldMetadataSettings<FieldMetadataType | 'default'>
+      | FieldMetadataSettings<FieldMetadataType>
       | undefined,
   ) {
     return this.fieldMetadataRepository.save([
@@ -340,7 +341,7 @@ export class ObjectMetadataRelationService {
     relatedObjectMetadata: ObjectMetadataEntity,
     objectPrimaryKeyType: FieldMetadataType,
     objectPrimaryKeyFieldSettings:
-      | FieldMetadataSettings<FieldMetadataType | 'default'>
+      | FieldMetadataSettings<FieldMetadataType>
       | undefined,
     isUpdate = false,
   ) {

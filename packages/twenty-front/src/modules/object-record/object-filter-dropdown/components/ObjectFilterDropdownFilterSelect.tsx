@@ -2,15 +2,13 @@ import styled from '@emotion/styled';
 
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
-import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
 import { AdvancedFilterButton } from '@/object-record/object-filter-dropdown/components/AdvancedFilterButton';
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
-import { useSelectFilterDefinitionUsedInDropdown } from '@/object-record/object-filter-dropdown/hooks/useSelectFilterDefinitionUsedInDropdown';
+
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
@@ -18,17 +16,15 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { isDefined } from 'twenty-shared';
-import { FeatureFlagKey } from '~/generated/graphql';
 
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
+import { useSelectFilterUsedInDropdown } from '@/object-record/object-filter-dropdown/hooks/useSelectFilterUsedInDropdown';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 export const StyledInput = styled.input`
   background: transparent;
@@ -65,21 +61,8 @@ export const ObjectFilterDropdownFilterSelect = ({
 }: ObjectFilterDropdownFilterSelectProps) => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
-  const setObjectFilterDropdownSearchInput = useSetRecoilComponentStateV2(
-    objectFilterDropdownSearchInputComponentState,
-  );
-
-  const advancedFilterViewFilterId = useRecoilComponentValueV2(
-    advancedFilterViewFilterIdComponentState,
-  );
-
-  const objectFilterDropdownSearchInput = useRecoilComponentValueV2(
-    objectFilterDropdownSearchInputComponentState,
-  );
-
-  const { closeAdvancedFilterDropdown } = useAdvancedFilterDropdown(
-    advancedFilterViewFilterId,
-  );
+  const [objectFilterDropdownSearchInput, setObjectFilterDropdownSearchInput] =
+    useRecoilComponentStateV2(objectFilterDropdownSearchInputComponentState);
 
   const { filterableFieldMetadataItems } =
     useFilterableFieldMetadataItemsInRecordIndexContext();
@@ -89,13 +72,6 @@ export const ObjectFilterDropdownFilterSelect = ({
     recordIndexId,
   );
   const visibleColumnsIds = visibleTableColumns.map(
-    (column) => column.fieldMetadataId,
-  );
-  const hiddenTableColumns = useRecoilComponentValueV2(
-    hiddenTableColumnsComponentSelector,
-    recordIndexId,
-  );
-  const hiddenColumnIds = hiddenTableColumns.map(
     (column) => column.fieldMetadataId,
   );
 
@@ -116,16 +92,15 @@ export const ObjectFilterDropdownFilterSelect = ({
 
   const hiddenColumnsFieldMetadataItems = filteredSearchInputFieldMetadataItems
     .sort((a, b) => a.label.localeCompare(b.label))
-    .filter((fieldMetadataItem) =>
-      hiddenColumnIds.includes(fieldMetadataItem.id),
+    .filter(
+      (fieldMetadataItem) => !visibleColumnsIds.includes(fieldMetadataItem.id),
     );
 
   const selectableFieldMetadataItemIds = filterableFieldMetadataItems.map(
     (fieldMetadataItem) => fieldMetadataItem.id,
   );
 
-  const { selectFilterDefinitionUsedInDropdown } =
-    useSelectFilterDefinitionUsedInDropdown();
+  const { selectFilterUsedInDropdown } = useSelectFilterUsedInDropdown();
 
   const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
     fieldMetadataItemIdUsedInDropdownComponentState,
@@ -144,35 +119,21 @@ export const ObjectFilterDropdownFilterSelect = ({
 
     resetSelectedItem();
 
-    const selectedFilterDefinition = formatFieldMetadataItemAsFilterDefinition({
-      field: selectedFieldMetadataItem,
-    });
-
-    selectFilterDefinitionUsedInDropdown({
-      filterDefinition: selectedFilterDefinition,
+    selectFilterUsedInDropdown({
+      fieldMetadataItemId,
     });
 
     setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemId);
-
-    closeAdvancedFilterDropdown();
   };
 
-  const shoudShowSeparator =
+  const shouldShowSeparator =
     visibleColumnsFieldMetadataItems.length > 0 &&
     hiddenColumnsFieldMetadataItems.length > 0;
 
-  const { currentViewId, currentViewWithCombinedFiltersAndSorts } =
-    useGetCurrentView();
-
-  const isAdvancedFiltersEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsAdvancedFiltersEnabled,
-  );
+  const { currentView } = useGetCurrentViewOnly();
 
   const shouldShowAdvancedFilterButton =
-    isDefined(currentViewId) &&
-    isDefined(currentViewWithCombinedFiltersAndSorts?.objectMetadataId) &&
-    isAdvancedFilterButtonVisible &&
-    isAdvancedFiltersEnabled;
+    isDefined(currentView?.objectMetadataId) && isAdvancedFilterButtonVisible;
 
   const { t } = useLingui();
 
@@ -205,7 +166,7 @@ export const ObjectFilterDropdownFilterSelect = ({
               </SelectableItem>
             ),
           )}
-          {shoudShowSeparator && <DropdownMenuSeparator />}
+          {shouldShowSeparator && <DropdownMenuSeparator />}
           {hiddenColumnsFieldMetadataItems.map(
             (hiddenFieldMetadataItem, index) => (
               <SelectableItem

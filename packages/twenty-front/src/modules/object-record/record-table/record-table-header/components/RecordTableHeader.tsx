@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableHeaderCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCell';
 import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn';
 import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderDragDropColumn';
 import { RecordTableHeaderLastColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLastColumn';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 export const FIRST_TH_WIDTH = '9px';
 

@@ -1,9 +1,10 @@
-import { IconComponent } from 'twenty-ui';
+import { IconComponent } from 'twenty-ui/display';
 export enum CommandType {
   Navigate = 'Navigate',
   Create = 'Create',
   StandardAction = 'StandardAction',
   WorkflowRun = 'WorkflowRun',
+  Fallback = 'Fallback',
 }
 
 export enum CommandScope {

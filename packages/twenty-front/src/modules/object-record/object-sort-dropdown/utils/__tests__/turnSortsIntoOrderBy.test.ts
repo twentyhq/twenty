@@ -1,18 +1,23 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
-import { SortDefinition } from '@/object-record/object-sort-dropdown/types/SortDefinition';
+import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
+import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { EachTestingContext } from 'twenty-shared/testing';
 
-const sortDefinition: SortDefinition = {
-  fieldMetadataId: 'id',
-  label: 'definition label',
-  iconName: 'icon',
-};
-
-const objectMetadataItem: ObjectMetadataItem = {
+const objectMetadataItemWithPositionField: ObjectMetadataItem = {
   id: 'object1',
-  fields: [],
+  fields: [
+    {
+      name: 'name',
+      updatedAt: '2021-01-01',
+      createdAt: '2021-01-01',
+      id: '20202020-18b3-4099-86e3-c46b2d5d42f2',
+      type: FieldMetadataType.POSITION,
+      label: 'label',
+    },
+  ],
   indexMetadatas: [],
   createdAt: '2021-01-01',
   updatedAt: '2021-01-01',
@@ -24,86 +29,132 @@ const objectMetadataItem: ObjectMetadataItem = {
   isSystem: false,
   isCustom: false,
   isRemote: false,
+  isSearchable: false,
   labelPlural: 'object1s',
   labelSingular: 'object1',
   isLabelSyncedWithName: true,
 };
 
-describe('turnSortsIntoOrderBy', () => {
-  it('should sort by recordPosition if no sorts', () => {
-    const fields = [{ id: 'field1', name: 'createdAt' }] as FieldMetadataItem[];
-    expect(turnSortsIntoOrderBy({ ...objectMetadataItem, fields }, [])).toEqual(
-      [
+type PartialFieldMetadaItemWithRequiredId = Pick<FieldMetadataItem, 'id'> &
+  Partial<Omit<FieldMetadataItem, 'id'>>;
+const getMockFieldMetadataItem = (
+  overrides: PartialFieldMetadaItemWithRequiredId,
+): FieldMetadataItem => ({
+  name: 'name',
+  updatedAt: '2021-01-01',
+  createdAt: '2021-01-01',
+  type: FieldMetadataType.TEXT,
+  label: 'label',
+  ...overrides,
+});
+
+type TurnSortsIntoOrderTestContext = EachTestingContext<{
+  fields: PartialFieldMetadaItemWithRequiredId[];
+  expected: RecordGqlOperationOrderBy;
+  sort: RecordSort[];
+  objectMetadataItemOverrides?: Partial<Omit<ObjectMetadataItem, 'fields'>>;
+}>;
+
+const turnSortsIntoOrderByTestUseCases: TurnSortsIntoOrderTestContext[] = [
+  {
+    title: 'It should sort by recordPosition if no sorts',
+    context: {
+      fields: [{ id: 'field1', name: 'field1' }],
+      sort: [],
+      expected: [
         {
           position: 'AscNullsFirst',
         },
       ],
-    );
-  });
+    },
+  },
+  {
+    title: 'It should create OrderByField with single sort',
+    context: {
+      fields: [{ id: 'field1', name: 'field1' }],
+      sort: [
+        {
+          id: 'id',
+          fieldMetadataId: 'field1',
+          direction: 'asc',
+        },
+      ],
+      expected: [{ field1: 'AscNullsFirst' }, { position: 'AscNullsFirst' }],
+    },
+  },
+  {
+    title: 'It should create OrderByField with multiple sorts',
+    context: {
+      fields: [
+        { id: 'field1', name: 'field1' },
+        { id: 'field2', name: 'field2' },
+      ],
+      sort: [
+        {
+          id: 'id',
+          fieldMetadataId: 'field1',
+          direction: 'asc',
+        },
+        {
+          id: 'id',
+          fieldMetadataId: 'field2',
+          direction: 'desc',
+        },
+      ],
+      expected: [
+        { field1: 'AscNullsFirst' },
+        { field2: 'DescNullsLast' },
+        { position: 'AscNullsFirst' },
+      ],
+    },
+  },
+  {
+    title: 'It should ignore if field not found',
+    context: {
+      fields: [],
+      sort: [
+        {
+          id: 'id',
+          fieldMetadataId: 'invalidField',
+          direction: 'asc',
+        },
+      ],
+      expected: [{ position: 'AscNullsFirst' }],
+    },
+  },
+  {
+    title: 'It should not return position for remotes',
+    context: {
+      fields: [],
+      sort: [
+        {
+          id: 'id',
+          fieldMetadataId: 'invalidField',
+          direction: 'asc',
+        },
+      ],
+      expected: [],
+      objectMetadataItemOverrides: {
+        isRemote: true,
+      },
+    },
+  },
+];
 
-  it('should create OrderByField with single sort', () => {
-    const sorts: Sort[] = [
-      {
-        fieldMetadataId: 'field1',
-        direction: 'asc',
-        definition: sortDefinition,
-      },
-    ];
-    const fields = [{ id: 'field1', name: 'field1' }] as FieldMetadataItem[];
-    expect(
-      turnSortsIntoOrderBy({ ...objectMetadataItem, fields }, sorts),
-    ).toEqual([{ field1: 'AscNullsFirst' }, { position: 'AscNullsFirst' }]);
-  });
+describe('turnSortsIntoOrderBy', () => {
+  it.each<TurnSortsIntoOrderTestContext>(turnSortsIntoOrderByTestUseCases)(
+    '.$title',
+    ({ context: { fields, sort, expected, objectMetadataItemOverrides } }) => {
+      const newFields = fields.map(getMockFieldMetadataItem);
+      const objectMetadataItemWithNewFields = {
+        ...objectMetadataItemWithPositionField,
+        ...objectMetadataItemOverrides,
+        fields: [...objectMetadataItemWithPositionField.fields, ...newFields],
+      };
 
-  it('should create OrderByField with multiple sorts', () => {
-    const sorts: Sort[] = [
-      {
-        fieldMetadataId: 'field1',
-        direction: 'asc',
-        definition: sortDefinition,
-      },
-      {
-        fieldMetadataId: 'field2',
-        direction: 'desc',
-        definition: sortDefinition,
-      },
-    ];
-    const fields = [
-      { id: 'field1', name: 'field1' },
-      { id: 'field2', name: 'field2' },
-    ] as FieldMetadataItem[];
-    expect(
-      turnSortsIntoOrderBy({ ...objectMetadataItem, fields }, sorts),
-    ).toEqual([
-      { field1: 'AscNullsFirst' },
-      { field2: 'DescNullsLast' },
-      { position: 'AscNullsFirst' },
-    ]);
-  });
-
-  it('should ignore if field not found', () => {
-    const sorts: Sort[] = [
-      {
-        fieldMetadataId: 'invalidField',
-        direction: 'asc',
-        definition: sortDefinition,
-      },
-    ];
-    expect(turnSortsIntoOrderBy(objectMetadataItem, sorts)).toEqual([
-      { position: 'AscNullsFirst' },
-    ]);
-  });
-
-  it('should not return position for remotes', () => {
-    const sorts: Sort[] = [
-      {
-        fieldMetadataId: 'invalidField',
-        direction: 'asc',
-        definition: sortDefinition,
-      },
-    ];
-    expect(
-      turnSortsIntoOrderBy({ ...objectMetadataItem, isRemote: true }, sorts),
-    ).toEqual([]);
-  });
+      expect(
+        turnSortsIntoOrderBy(objectMetadataItemWithNewFields, sort),
+      ).toEqual(expected);
+    },
+  );
 });

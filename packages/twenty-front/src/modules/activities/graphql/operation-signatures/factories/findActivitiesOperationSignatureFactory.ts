@@ -7,20 +7,16 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
   ({
     objectMetadataItems,
     objectNameSingular,
-    isRichTextV2Enabled,
   }: {
     objectMetadataItems: ObjectMetadataItem[];
     objectNameSingular: CoreObjectNameSingular;
-    isRichTextV2Enabled: boolean;
   }) => {
-    const body = isRichTextV2Enabled
-      ? {
-          bodyV2: {
-            markdown: true,
-            blocknote: true,
-          },
-        }
-      : { body: true };
+    const body = {
+      bodyV2: {
+        markdown: true,
+        blocknote: true,
+      },
+    };
 
     return {
       objectNameSingular: objectNameSingular,

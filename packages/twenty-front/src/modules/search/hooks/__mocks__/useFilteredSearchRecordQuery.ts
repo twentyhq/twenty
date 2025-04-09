@@ -96,9 +96,9 @@ export const query = gql`
                 id
                 companyId
                 createdAt
+                forWorkspaceMemberId
                 personId
                 position
-                workspaceMemberId
                 updatedAt
               }
             }

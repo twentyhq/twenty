@@ -14,24 +14,27 @@ import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockedFavoritesData } from '~/testing/mock-data/favorite';
 import { mockedFavoriteFoldersData } from '~/testing/mock-data/favorite-folders';
 import { mockedNotes } from '~/testing/mock-data/notes';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
 import { mockedUserData } from '~/testing/mock-data/users';
 import { mockedViewsData } from '~/testing/mock-data/views';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
+import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
+import { getRolesMock } from '~/testing/mock-data/roles';
 import { mockedTasks } from '~/testing/mock-data/tasks';
 import {
   getWorkflowMock,
   getWorkflowVersionsMock,
   workflowQueryResult,
 } from '~/testing/mock-data/workflow';
+import { oneSucceededWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
 import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 
-const peopleMock = getPeopleMock();
+const peopleMock = getPeopleRecordConnectionMock();
 const companiesMock = getCompaniesMock();
 const duplicateCompanyMock = getCompanyDuplicateMock();
 
@@ -41,6 +44,39 @@ export const metadataGraphql = graphql.link(
 
 export const graphqlMocks = {
   handlers: [
+    graphql.query('IntrospectionQuery', () => {
+      return HttpResponse.json({
+        data: {
+          __schema: {
+            queryType: { name: 'Query' },
+            types: [
+              {
+                kind: 'OBJECT',
+                name: 'Query',
+                fields: [
+                  {
+                    name: 'name',
+                    type: { kind: 'SCALAR', name: 'String' },
+                    args: [],
+                  },
+                ],
+                interfaces: [],
+                args: [],
+              },
+              {
+                kind: 'SCALAR',
+                name: 'String',
+                fields: [],
+                interfaces: [],
+                args: [],
+              },
+            ],
+            directives: [],
+          },
+        },
+      });
+    }),
+
     graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
       return HttpResponse.json({
         data: {
@@ -146,42 +182,47 @@ export const graphqlMocks = {
         },
       });
     }),
-    graphql.query('CombinedSearchRecords', () => {
+    graphql.query('Search', () => {
       return HttpResponse.json({
         data: {
-          searchOpportunities: {
-            edges: [],
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
+          search: [
+            {
+              __typename: 'SearchRecordDTO',
+              recordId: '20202020-2d40-4e49-8df4-9c6a049191de',
+              objectNameSingular: 'person',
+              label: 'Louis Duss',
+              imageUrl: '',
+              tsRankCD: 0.2,
+              tsRank: 0.12158542,
             },
-          },
-          searchCompanies: {
-            edges: companiesMock.slice(0, 3).map((company) => ({
-              node: company,
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
+            {
+              __typename: 'SearchRecordDTO',
+              recordId: '20202020-3ec3-4fe3-8997-b76aa0bfa408',
+              objectNameSingular: 'company',
+              label: 'Linkedin',
+              imageUrl: 'https://twenty-icons.com/linkedin.com',
+              tsRankCD: 0.2,
+              tsRank: 0.12158542,
             },
-          },
-          searchPeople: {
-            edges: peopleMock.slice(0, 3).map((person) => ({
-              node: person,
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
+            {
+              __typename: 'SearchRecordDTO',
+              recordId: '20202020-3f74-492d-a101-2a70f50a1645',
+              objectNameSingular: 'company',
+              label: 'Libeo',
+              imageUrl: 'https://twenty-icons.com/libeo.io',
+              tsRankCD: 0.2,
+              tsRank: 0.12158542,
             },
-          },
+            {
+              __typename: 'SearchRecordDTO',
+              recordId: '20202020-ac73-4797-824e-87a1f5aea9e0',
+              objectNameSingular: 'person',
+              label: 'Sylvie Palmer',
+              imageUrl: '',
+              tsRankCD: 0.1,
+              tsRank: 0.06079271,
+            },
+          ],
         },
       });
     }),
@@ -668,10 +709,22 @@ export const graphqlMocks = {
         },
       });
     }),
+    graphql.query('FindOneWorkflowRun', () => {
+      return HttpResponse.json({
+        data: oneSucceededWorkflowRunQueryResult,
+      });
+    }),
     graphql.query('FindManyWorkflowVersions', () => {
       return HttpResponse.json({
         data: {
           workflowVersions: getWorkflowVersionsMock(),
+        },
+      });
+    }),
+    graphql.query(getOperationName(GET_ROLES) ?? '', () => {
+      return HttpResponse.json({
+        data: {
+          getRoles: getRolesMock(),
         },
       });
     }),

@@ -8,19 +8,16 @@ import {
   useRecoilValue,
   useSetRecoilState,
 } from 'recoil';
-import { iconsState } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
-import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { billingState } from '@/client-config/states/billingState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { APP_LOCALES, isDefined } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   useCheckUserExistsLazyQuery,
@@ -44,6 +41,7 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -58,10 +56,13 @@ import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useL
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
 import { useSearchParams } from 'react-router-dom';
+import { APP_LOCALES } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
+import { iconsState } from 'twenty-ui/display';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
@@ -71,9 +72,8 @@ export const useAuth = () => {
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
-  const setIsAppWaitingForFreshObjectMetadataState = useSetRecoilState(
-    isAppWaitingForFreshObjectMetadataState,
-  );
+  const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
+
   const setCurrentWorkspaceMembers = useSetRecoilState(
     currentWorkspaceMembersState,
   );
@@ -82,9 +82,10 @@ export const useAuth = () => {
     isEmailVerificationRequiredState,
   );
 
+  const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
+
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-  const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
   const setWorkspaces = useSetRecoilState(workspacesState);
   const { redirect } = useRedirect();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
@@ -255,6 +256,10 @@ export const useAuth = () => {
       setCurrentWorkspaceMembers(workspaceMembers);
     }
 
+    if (isDefined(user.currentUserWorkspace)) {
+      setCurrentUserWorkspace(user.currentUserWorkspace);
+    }
+
     if (isDefined(user.workspaceMember)) {
       workspaceMember = {
         ...user.workspaceMember,
@@ -307,7 +312,6 @@ export const useAuth = () => {
 
       setWorkspaces(validWorkspaces);
     }
-    setIsAppWaitingForFreshObjectMetadataState(true);
 
     return {
       user,
@@ -318,19 +322,17 @@ export const useAuth = () => {
     getCurrentUser,
     isOnAWorkspace,
     setCurrentUser,
+    setCurrentUserWorkspace,
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
     setCurrentWorkspaceMembers,
     setDateTimeFormat,
-    setIsAppWaitingForFreshObjectMetadataState,
     setLastAuthenticateWorkspaceDomain,
     setWorkspaces,
   ]);
 
   const handleGetAuthTokensFromLoginToken = useCallback(
     async (loginToken: string) => {
-      setIsVerifyPendingState(true);
-
       const getAuthTokensResult = await getAuthTokensFromLoginToken({
         variables: { loginToken },
       });
@@ -347,14 +349,13 @@ export const useAuth = () => {
         getAuthTokensResult.data?.getAuthTokensFromLoginToken.tokens,
       );
 
+      await refreshObjectMetadataItems();
       await loadCurrentUser();
-
-      setIsVerifyPendingState(false);
     },
     [
-      setIsVerifyPendingState,
       getAuthTokensFromLoginToken,
       setTokenPair,
+      refreshObjectMetadataItems,
       loadCurrentUser,
     ],
   );
@@ -383,8 +384,6 @@ export const useAuth = () => {
       workspacePersonalInviteToken?: string,
       captchaToken?: string,
     ) => {
-      setIsVerifyPendingState(true);
-
       const signUpResult = await signUp({
         variables: {
           email,
@@ -421,6 +420,7 @@ export const useAuth = () => {
           {
             ...(!isEmailVerificationRequired && {
               loginToken: signUpResult.data.signUp.loginToken.token,
+              animateModal: false,
             }),
             email,
           },
@@ -432,7 +432,6 @@ export const useAuth = () => {
       );
     },
     [
-      setIsVerifyPendingState,
       signUp,
       workspacePublicData,
       isMultiWorkspaceEnabled,
@@ -455,7 +454,7 @@ export const useAuth = () => {
     ) => {
       const url = new URL(`${REACT_APP_SERVER_BASE_URL}${path}`);
       if (isDefined(params.workspaceInviteHash)) {
-        url.searchParams.set('inviteHash', params.workspaceInviteHash);
+        url.searchParams.set('workspaceInviteHash', params.workspaceInviteHash);
       }
       if (isDefined(params.workspacePersonalInviteToken)) {
         url.searchParams.set(

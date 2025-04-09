@@ -1,3 +1,4 @@
+import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 
@@ -31,6 +32,12 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     sleep(1000);
 
-    await canvas.findByRole('button', { name: 'View billing details' });
+    const buttons = await canvas.findAllByRole('button');
+
+    expect(
+      buttons.findIndex((button) =>
+        button.outerHTML.includes('View billing details'),
+      ),
+    ).toBeGreaterThan(-1);
   },
 };

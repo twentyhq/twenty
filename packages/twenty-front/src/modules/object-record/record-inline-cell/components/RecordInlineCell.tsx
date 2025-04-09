@@ -1,24 +1,23 @@
 import { useContext } from 'react';
-import { useIcons } from 'twenty-ui';
 
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
+import {
+  FieldInputClickOutsideEvent,
+  FieldInputEvent,
+} from '@/object-record/record-field/types/FieldInputEvent';
+
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
-import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
+import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 
-import { useInlineCell } from '../hooks/useInlineCell';
-
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
-import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
-import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
+import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { useRecoilCallback } from 'recoil';
+import { useIcons } from 'twenty-ui/display';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
   RecordInlineCellContext,
@@ -31,13 +30,19 @@ type RecordInlineCellProps = {
 };
 
 export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
-  const { fieldDefinition, recordId, isCentered, isDisplayModeFixHeight } =
-    useContext(FieldContext);
+  const {
+    fieldDefinition,
+    recordId,
+    isCentered,
+    isDisplayModeFixHeight,
+    onOpenEditMode,
+    onCloseEditMode,
+    isReadOnly,
+  } = useContext(FieldContext);
+
   const buttonIcon = useGetButtonIcon();
 
   const isFieldInputOnly = useIsFieldInputOnly();
-
-  const isFieldReadOnly = useIsFieldValueReadOnly();
 
   const { closeInlineCell } = useInlineCell();
 
@@ -72,36 +77,26 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
   const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
     ({ snapshot }) =>
       (persistField, event) => {
-        const recordFieldDropdownId = getDropdownFocusIdForRecordField(
-          recordId,
-          fieldDefinition.fieldMetadataId,
-          'inline-cell',
-        );
-
-        const activeDropdownFocusId = snapshot
-          .getLoadable(activeDropdownFocusIdState)
+        const hotkeyScope = snapshot
+          .getLoadable(currentHotkeyScopeState)
           .getValue();
-
-        if (recordFieldDropdownId !== activeDropdownFocusId) {
+        if (hotkeyScope.scope !== InlineCellHotkeyScope.InlineCell) {
           return;
         }
-
         event.stopImmediatePropagation();
 
         persistField();
         closeInlineCell();
       },
-    [closeInlineCell, fieldDefinition.fieldMetadataId, recordId],
+    [closeInlineCell],
   );
 
   const { getIcon } = useIcons();
+  const { openFieldInput, closeFieldInput } = useOpenFieldInputEditMode();
 
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
-    readonly: isFieldReadOnly,
+    readonly: isReadOnly,
     buttonIcon: buttonIcon,
-    customEditHotkeyScope: isFieldRelation(fieldDefinition)
-      ? { scope: RelationPickerHotkeyScope.RelationPicker }
-      : undefined,
     IconLabel: fieldDefinition.iconName
       ? getIcon(fieldDefinition.iconName)
       : undefined,
@@ -111,10 +106,6 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     isCentered,
     editModeContent: (
       <FieldInput
-        recordFieldInputdId={getRecordFieldInputId(
-          recordId,
-          fieldDefinition?.metadata?.fieldName,
-        )}
         onEnter={handleEnter}
         onCancel={handleCancel}
         onEscape={handleEscape}
@@ -122,13 +113,16 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
         onTab={handleTab}
         onShiftTab={handleShiftTab}
         onClickOutside={handleClickOutside}
-        isReadOnly={isFieldReadOnly}
+        isReadOnly={isReadOnly}
       />
     ),
     displayModeContent: <FieldDisplay />,
     isDisplayModeFixHeight: isDisplayModeFixHeight,
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
+    onOpenEditMode:
+      onOpenEditMode ?? (() => openFieldInput({ fieldDefinition, recordId })),
+    onCloseEditMode: onCloseEditMode ?? (() => closeFieldInput()),
   };
 
   return (

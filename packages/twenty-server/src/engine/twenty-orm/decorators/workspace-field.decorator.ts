@@ -1,5 +1,5 @@
 import { MessageDescriptor } from '@lingui/core';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
@@ -11,7 +11,7 @@ import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 export interface WorkspaceFieldOptions<
-  T extends FieldMetadataType | 'default',
+  T extends FieldMetadataType = FieldMetadataType,
 > {
   standardId: string;
   type: T;

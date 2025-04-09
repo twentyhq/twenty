@@ -2,7 +2,7 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDeactivateWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
   () => {
@@ -12,12 +12,8 @@ export const useDeactivateWorkflowSingleRecordAction: ActionHookWithoutObjectMet
 
     const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
-    const shouldBeRegistered =
-      isDefined(workflowWithCurrentVersion) &&
-      workflowWithCurrentVersion.currentVersion.status === 'ACTIVE';
-
     const onClick = () => {
-      if (!shouldBeRegistered) {
+      if (!isDefined(workflowWithCurrentVersion)) {
         return;
       }
 
@@ -27,7 +23,6 @@ export const useDeactivateWorkflowSingleRecordAction: ActionHookWithoutObjectMet
     };
 
     return {
-      shouldBeRegistered,
       onClick,
     };
   };

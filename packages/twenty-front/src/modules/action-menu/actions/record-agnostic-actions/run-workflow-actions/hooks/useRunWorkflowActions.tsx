@@ -6,10 +6,9 @@ import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/use
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { msg } from '@lingui/core/macro';
-
-import { capitalize, isDefined } from 'twenty-shared';
-import { IconSettingsAutomation } from 'twenty-ui';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { IconSettingsAutomation } from 'twenty-ui/display';
 
 export const useRunWorkflowActions = () => {
   const isWorkflowEnabled = useIsFeatureEnabled(
@@ -37,12 +36,12 @@ export const useRunWorkflowActions = () => {
         type: ActionMenuEntryType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionMenuEntryScope.Global,
-        label: msg`${name}`, // eslint-disable-line lingui/no-single-variables-to-translate
+        label: msg`${name}`,
         position: index,
         Icon: IconSettingsAutomation,
+        shouldBeRegistered: () => true,
         useAction: () => {
           return {
-            shouldBeRegistered: true,
             onClick: async () => {
               await runWorkflowVersion({
                 workflowVersionId: activeWorkflowVersion.id,

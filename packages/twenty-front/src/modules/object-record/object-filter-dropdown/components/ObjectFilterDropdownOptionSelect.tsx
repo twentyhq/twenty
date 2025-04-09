@@ -5,25 +5,26 @@ import { v4 } from 'uuid';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { useOptionsForSelect } from '@/object-record/object-filter-dropdown/hooks/useOptionsForSelect';
-import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListStates';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { objectFilterDropdownSelectedOptionValuesComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedOptionValuesComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
+import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { isDefined } from 'twenty-shared';
-import { MenuItem, MenuItemMultiSelect } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
 
 export const EMPTY_FILTER_VALUE = '';
 export const MAX_OPTIONS_TO_DISPLAY = 3;
@@ -53,17 +54,19 @@ export const ObjectFilterDropdownOptionSelect = () => {
     selectedOperandInDropdownComponentState,
   );
 
+  const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
+    ObjectFilterDropdownComponentInstanceContext,
+  );
+
   const { applyRecordFilter } = useApplyRecordFilter();
 
   const { closeDropdown } = useDropdown();
 
   const { selectedItemIdState } = useSelectableListStates({
-    selectableListScopeId: MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID,
+    selectableListScopeId: componentInstanceId,
   });
 
-  const { resetSelectedItem } = useSelectableList(
-    MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID,
-  );
+  const { resetSelectedItem } = useSelectableList(componentInstanceId);
 
   const selectedItemId = useRecoilValue(selectedItemIdState);
 
@@ -98,7 +101,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
       closeDropdown();
       resetSelectedItem();
     },
-    RelationPickerHotkeyScope.RelationPicker,
+    SingleRecordPickerHotkeyScope.SingleRecordPicker,
     [closeDropdown, resetSelectedItem],
   );
 
@@ -134,18 +137,17 @@ export const ObjectFilterDropdownOptionSelect = () => {
           ? JSON.stringify(selectedOptions.map((option) => option.value))
           : EMPTY_FILTER_VALUE;
 
-      const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-        field: fieldMetadataItemUsedInDropdown,
-      });
-
       applyRecordFilter({
         id: selectedFilter?.id ? selectedFilter.id : v4(),
-        definition: filterDefinition,
+        type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
+        label: fieldMetadataItemUsedInDropdown.label,
         operand: selectedOperandInDropdown,
         displayValue: filterDisplayValue,
         fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
         value: newFilterValue,
-        viewFilterGroupId: selectedFilter?.viewFilterGroupId,
+        recordFilterGroupId: selectedFilter?.recordFilterGroupId,
+        positionInRecordFilterGroup:
+          selectedFilter?.positionInRecordFilterGroup,
       });
     }
     resetSelectedItem();
@@ -162,9 +164,9 @@ export const ObjectFilterDropdownOptionSelect = () => {
 
   return (
     <SelectableList
-      selectableListId={MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID}
+      selectableListId={componentInstanceId}
       selectableItemIdArray={objectRecordsIds}
-      hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+      hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
       onEnter={(itemId) => {
         const option = optionsInDropdown.find((option) => option.id === itemId);
         if (isDefined(option)) {

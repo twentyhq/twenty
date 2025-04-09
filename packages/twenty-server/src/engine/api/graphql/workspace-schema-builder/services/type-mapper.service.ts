@@ -13,7 +13,7 @@ import {
   GraphQLString,
   GraphQLType,
 } from 'graphql';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -45,7 +45,7 @@ export interface TypeOptions<T = any> {
   isArray?: boolean;
   arrayDepth?: number;
   defaultValue?: T;
-  settings?: FieldMetadataSettings<FieldMetadataType | 'default'>;
+  settings?: FieldMetadataSettings<FieldMetadataType>;
   isIdField?: boolean;
 }
 
@@ -55,7 +55,7 @@ const StringArrayScalarType = new GraphQLList(GraphQLString);
 export class TypeMapperService {
   mapToScalarType(
     fieldMetadataType: FieldMetadataType,
-    settings?: FieldMetadataSettings<FieldMetadataType | 'default'>,
+    settings?: FieldMetadataSettings<FieldMetadataType>,
     isIdField?: boolean,
   ): GraphQLScalarType | undefined {
     if (isIdField || settings?.isForeignKey) {
@@ -90,7 +90,7 @@ export class TypeMapperService {
 
   mapToFilterType(
     fieldMetadataType: FieldMetadataType,
-    settings?: FieldMetadataSettings<FieldMetadataType | 'default'>,
+    settings?: FieldMetadataSettings<FieldMetadataType>,
     isIdField?: boolean,
   ): GraphQLInputObjectType | GraphQLScalarType | undefined {
     if (isIdField || settings?.isForeignKey) {

@@ -4,7 +4,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
-import { Avatar, IconComponent, Pill } from 'twenty-ui';
+import { Avatar, IconComponent } from 'twenty-ui/display';
+import { Pill } from 'twenty-ui/components';
 
 type TabProps = {
   id: string;
@@ -22,6 +23,7 @@ type TabProps = {
 const StyledTab = styled('button', {
   shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'active',
 })<{ active?: boolean; disabled?: boolean; to?: string }>`
+  all: unset;
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-color: ${({ theme, active }) =>
@@ -37,11 +39,12 @@ const StyledTab = styled('button', {
   border-left: none;
   border-right: none;
   border-top: none;
+  font-family: inherit;
 
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: center;
-  margin-bottom: 0;
+  margin-bottom: -1px;
   padding: ${({ theme }) => theme.spacing(2) + ' 0'};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : '')};
   text-decoration: none;
@@ -83,7 +86,9 @@ export const Tab = ({
   const theme = useTheme();
   const iconColor = active
     ? theme.font.color.primary
-    : theme.font.color.secondary;
+    : disabled
+      ? theme.font.color.light
+      : theme.font.color.secondary;
 
   return (
     <StyledTab

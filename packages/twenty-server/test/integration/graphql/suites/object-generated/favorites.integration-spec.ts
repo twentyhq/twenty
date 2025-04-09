@@ -15,7 +15,7 @@ describe('favoritesResolver (e2e)', () => {
                 createdAt
                 updatedAt
                 deletedAt
-                workspaceMemberId
+                forWorkspaceMemberId
                 personId
                 companyId
                 opportunityId
@@ -36,7 +36,7 @@ describe('favoritesResolver (e2e)', () => {
 
     return client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -59,7 +59,7 @@ describe('favoritesResolver (e2e)', () => {
           expect(favorites).toHaveProperty('createdAt');
           expect(favorites).toHaveProperty('updatedAt');
           expect(favorites).toHaveProperty('deletedAt');
-          expect(favorites).toHaveProperty('workspaceMemberId');
+          expect(favorites).toHaveProperty('forWorkspaceMemberId');
           expect(favorites).toHaveProperty('personId');
           expect(favorites).toHaveProperty('companyId');
           expect(favorites).toHaveProperty('opportunityId');

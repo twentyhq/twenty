@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { capitalize } from 'twenty-shared';
+import { capitalize } from 'twenty-shared/utils';
+
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 @Injectable()
 export class DeleteQueryFactory {
-  create(objectMetadataItem): string {
-    const objectNameSingular = capitalize(objectMetadataItem.nameSingular);
+  create(objectMetadataMapItem: ObjectMetadataItemWithFieldMaps): string {
+    const objectNameSingular = capitalize(objectMetadataMapItem.nameSingular);
 
     return `
       mutation Delete${objectNameSingular}($id: ID!) {

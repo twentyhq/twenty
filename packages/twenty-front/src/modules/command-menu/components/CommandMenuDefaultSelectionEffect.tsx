@@ -1,7 +1,8 @@
+import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuDefaultSelectionEffect = ({
   selectableItemIds,
@@ -13,10 +14,13 @@ export const CommandMenuDefaultSelectionEffect = ({
 
   const selectedItemId = useRecoilValue(selectedItemIdState);
 
+  const hasUserSelectedCommand = useRecoilValue(hasUserSelectedCommandState);
+
   useEffect(() => {
     if (
       isDefined(selectedItemId) &&
-      selectableItemIds.includes(selectedItemId)
+      selectableItemIds.includes(selectedItemId) &&
+      hasUserSelectedCommand
     ) {
       return;
     }
@@ -24,7 +28,12 @@ export const CommandMenuDefaultSelectionEffect = ({
     if (selectableItemIds.length > 0) {
       setSelectedItemId(selectableItemIds[0]);
     }
-  }, [selectableItemIds, selectedItemId, setSelectedItemId]);
+  }, [
+    hasUserSelectedCommand,
+    selectableItemIds,
+    selectedItemId,
+    setSelectedItemId,
+  ]);
 
   return null;
 };

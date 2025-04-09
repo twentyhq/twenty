@@ -1,13 +1,13 @@
 import { Favorite } from '@/favorites/types/Favorite';
+import { getObjectMetadataNamePluralFromViewId } from '@/favorites/utils/getObjectMetadataNamePluralFromViewId';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { AppPath } from '@/types/AppPath';
 import { View } from '@/views/types/View';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { getAppPath } from '~/utils/navigation/getAppPath';
-import { getObjectMetadataLabelPluralFromViewId } from './getObjectMetadataLabelPluralFromViewId';
 
 export type ProcessedFavorite = Favorite & {
   Icon?: string;
@@ -22,16 +22,26 @@ export const sortFavorites = (
     objectNameSingular: string,
   ) => ObjectRecordIdentifier,
   hasLinkToShowPage: boolean,
-  views: View[],
+  views: Pick<View, 'id' | 'name' | 'objectMetadataId' | 'icon'>[],
   objectMetadataItems: ObjectMetadataItem[],
 ) => {
   return favorites
     .map((favorite) => {
-      if (isDefined(favorite.viewId) && isDefined(favorite.workspaceMemberId)) {
-        const { labelPlural, view } = getObjectMetadataLabelPluralFromViewId(
-          views,
+      if (
+        isDefined(favorite.viewId) &&
+        isDefined(favorite.forWorkspaceMemberId)
+      ) {
+        const view = views.find((view) => view.id === favorite.viewId);
+
+        if (!isDefined(view)) {
+          return {
+            ...favorite,
+          } as ProcessedFavorite;
+        }
+
+        const { namePlural } = getObjectMetadataNamePluralFromViewId(
+          view,
           objectMetadataItems,
-          favorite.viewId,
         );
 
         return {
@@ -44,10 +54,10 @@ export const sortFavorites = (
           labelIdentifier: view?.name,
           link: getAppPath(
             AppPath.RecordIndexPage,
-            { objectNamePlural: labelPlural.toLowerCase() },
+            { objectNamePlural: namePlural },
             favorite.viewId ? { viewId: favorite.viewId } : undefined,
           ),
-          workspaceMemberId: favorite.workspaceMemberId,
+          forWorkspaceMemberId: favorite.forWorkspaceMemberId,
           favoriteFolderId: favorite.favoriteFolderId,
           objectNameSingular: 'view',
           Icon: view?.icon,
@@ -79,7 +89,7 @@ export const sortFavorites = (
             link: hasLinkToShowPage
               ? objectRecordIdentifier.linkToShowPage
               : '',
-            workspaceMemberId: favorite.workspaceMemberId,
+            forWorkspaceMemberId: favorite.forWorkspaceMemberId,
             favoriteFolderId: favorite.favoriteFolderId,
             objectNameSingular: objectNameSingular,
           } as ProcessedFavorite;

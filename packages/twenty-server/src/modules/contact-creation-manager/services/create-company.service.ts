@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import axios, { AxiosInstance } from 'axios';
 import uniqBy from 'lodash.uniqby';
-import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared';
 import { DeepPartial, EntityManager, ILike } from 'typeorm';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared/constants';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -18,6 +19,9 @@ type CompanyToCreate = {
   domainName: string | undefined;
   createdBySource: FieldActorSource;
   createdByWorkspaceMember?: WorkspaceMemberWorkspaceEntity | null;
+  createdByContext: {
+    provider: ConnectedAccountProvider;
+  };
 };
 
 @Injectable()
@@ -120,6 +124,9 @@ export class CreateCompanyService {
         source: company.createdBySource,
         workspaceMemberId: company.createdByWorkspaceMember?.id,
         name: createdByName,
+        context: {
+          provider: company.createdByContext.provider,
+        },
       },
       address: {
         addressCity: city,

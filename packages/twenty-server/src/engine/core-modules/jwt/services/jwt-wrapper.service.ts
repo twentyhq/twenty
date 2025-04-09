@@ -3,8 +3,10 @@ import { JwtService, JwtSignOptions, JwtVerifyOptions } from '@nestjs/jwt';
 
 import { createHash } from 'crypto';
 
+import { Request as ExpressRequest } from 'express';
 import * as jwt from 'jsonwebtoken';
-import { isDefined } from 'twenty-shared';
+import { ExtractJwt, JwtFromRequestFunction } from 'passport-jwt';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   AuthException,
@@ -121,5 +123,21 @@ export class JwtWrapperService {
     }
 
     return accessTokenSecret;
+  }
+
+  extractJwtFromRequest(): JwtFromRequestFunction {
+    return (request: ExpressRequest) => {
+      // First try to extract token from Authorization header
+      const tokenFromHeader = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
+
+      if (tokenFromHeader) {
+        return tokenFromHeader;
+      }
+
+      // If not found in header, try to extract from URL query parameter
+      // This is for edge cases where we don't control the origin request
+      // (e.g. the REST API playground)
+      return ExtractJwt.fromUrlQueryParameter('token')(request);
+    };
   }
 }

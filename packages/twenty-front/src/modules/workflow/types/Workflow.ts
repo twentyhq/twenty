@@ -1,179 +1,102 @@
-type BaseWorkflowActionSettings = {
-  input: object;
-  outputSchema: object;
-  errorHandlingOptions: {
-    retryOnFailure: {
-      value: boolean;
-    };
-    continueOnFailure: {
-      value: boolean;
-    };
-  };
-};
+import {
+  workflowActionSchema,
+  workflowCodeActionSchema,
+  workflowCodeActionSettingsSchema,
+  workflowCreateRecordActionSchema,
+  workflowCreateRecordActionSettingsSchema,
+  workflowCronTriggerSchema,
+  workflowDatabaseEventTriggerSchema,
+  workflowDeleteRecordActionSchema,
+  workflowDeleteRecordActionSettingsSchema,
+  workflowFindRecordsActionSchema,
+  workflowFindRecordsActionSettingsSchema,
+  workflowFormActionSchema,
+  workflowFormActionSettingsSchema,
+  workflowManualTriggerSchema,
+  workflowRunContextSchema,
+  workflowRunOutputSchema,
+  workflowRunOutputStepsOutputSchema,
+  workflowRunSchema,
+  workflowRunStatusSchema,
+  workflowSendEmailActionSchema,
+  workflowSendEmailActionSettingsSchema,
+  workflowTriggerSchema,
+  workflowUpdateRecordActionSchema,
+  workflowUpdateRecordActionSettingsSchema,
+  workflowWebhookTriggerSchema,
+} from '@/workflow/validation-schemas/workflowSchema';
+import { z } from 'zod';
 
-export type WorkflowCodeActionSettings = BaseWorkflowActionSettings & {
-  input: {
-    serverlessFunctionId: string;
-    serverlessFunctionVersion: string;
-    serverlessFunctionInput: {
-      [key: string]: any;
-    };
-  };
-};
+export type WorkflowCodeActionSettings = z.infer<
+  typeof workflowCodeActionSettingsSchema
+>;
+export type WorkflowSendEmailActionSettings = z.infer<
+  typeof workflowSendEmailActionSettingsSchema
+>;
+export type WorkflowCreateRecordActionSettings = z.infer<
+  typeof workflowCreateRecordActionSettingsSchema
+>;
+export type WorkflowUpdateRecordActionSettings = z.infer<
+  typeof workflowUpdateRecordActionSettingsSchema
+>;
+export type WorkflowDeleteRecordActionSettings = z.infer<
+  typeof workflowDeleteRecordActionSettingsSchema
+>;
+export type WorkflowFindRecordsActionSettings = z.infer<
+  typeof workflowFindRecordsActionSettingsSchema
+>;
+export type WorkflowFormActionSettings = z.infer<
+  typeof workflowFormActionSettingsSchema
+>;
 
-export type WorkflowSendEmailActionSettings = BaseWorkflowActionSettings & {
-  input: {
-    connectedAccountId: string;
-    email: string;
-    subject?: string;
-    body?: string;
-  };
-};
+export type WorkflowCodeAction = z.infer<typeof workflowCodeActionSchema>;
+export type WorkflowSendEmailAction = z.infer<
+  typeof workflowSendEmailActionSchema
+>;
+export type WorkflowCreateRecordAction = z.infer<
+  typeof workflowCreateRecordActionSchema
+>;
+export type WorkflowUpdateRecordAction = z.infer<
+  typeof workflowUpdateRecordActionSchema
+>;
+export type WorkflowDeleteRecordAction = z.infer<
+  typeof workflowDeleteRecordActionSchema
+>;
+export type WorkflowFindRecordsAction = z.infer<
+  typeof workflowFindRecordsActionSchema
+>;
+export type WorkflowFormAction = z.infer<typeof workflowFormActionSchema>;
 
-type ObjectRecord = Record<string, any>;
-
-export type WorkflowCreateRecordActionSettings = BaseWorkflowActionSettings & {
-  input: {
-    objectName: string;
-    objectRecord: ObjectRecord;
-  };
-};
-
-export type WorkflowUpdateRecordActionSettings = BaseWorkflowActionSettings & {
-  input: {
-    objectName: string;
-    objectRecord: ObjectRecord;
-    objectRecordId: string;
-    fieldsToUpdate: string[];
-  };
-};
-
-export type WorkflowDeleteRecordActionSettings = BaseWorkflowActionSettings & {
-  input: {
-    objectName: string;
-    objectRecordId: string;
-  };
-};
-
-export type WorkflowFindRecordsActionSettings = BaseWorkflowActionSettings & {
-  input: {
-    objectName: string;
-    limit?: number;
-  };
-};
-
-type BaseWorkflowAction = {
-  id: string;
-  name: string;
-  valid: boolean;
-};
-
-export type WorkflowCodeAction = BaseWorkflowAction & {
-  type: 'CODE';
-  settings: WorkflowCodeActionSettings;
-};
-
-export type WorkflowSendEmailAction = BaseWorkflowAction & {
-  type: 'SEND_EMAIL';
-  settings: WorkflowSendEmailActionSettings;
-};
-
-export type WorkflowCreateRecordAction = BaseWorkflowAction & {
-  type: 'CREATE_RECORD';
-  settings: WorkflowCreateRecordActionSettings;
-};
-
-export type WorkflowUpdateRecordAction = BaseWorkflowAction & {
-  type: 'UPDATE_RECORD';
-  settings: WorkflowUpdateRecordActionSettings;
-};
-
-export type WorkflowDeleteRecordAction = BaseWorkflowAction & {
-  type: 'DELETE_RECORD';
-  settings: WorkflowDeleteRecordActionSettings;
-};
-
-export type WorkflowFindRecordsAction = BaseWorkflowAction & {
-  type: 'FIND_RECORDS';
-  settings: WorkflowFindRecordsActionSettings;
-};
-
-export type WorkflowAction =
-  | WorkflowCodeAction
-  | WorkflowSendEmailAction
-  | WorkflowCreateRecordAction
-  | WorkflowUpdateRecordAction
-  | WorkflowDeleteRecordAction
-  | WorkflowFindRecordsAction;
-
+export type WorkflowAction = z.infer<typeof workflowActionSchema>;
 export type WorkflowActionType = WorkflowAction['type'];
-
 export type WorkflowStep = WorkflowAction;
-
 export type WorkflowStepType = WorkflowStep['type'];
 
-type BaseTrigger = {
-  name?: string;
-  type: string;
-};
-
-export type WorkflowDatabaseEventTrigger = BaseTrigger & {
-  type: 'DATABASE_EVENT';
-  settings: {
-    eventName: string;
-    input?: object;
-    outputSchema: object;
-    objectType?: string;
-  };
-};
-
-export type WorkflowManualTrigger = BaseTrigger & {
-  type: 'MANUAL';
-  settings: {
-    objectType?: string;
-    outputSchema: object;
-  };
-};
-
-export type WorkflowCronTrigger = BaseTrigger & {
-  type: 'CRON';
-  settings: (
-    | {
-        type: 'HOURS';
-        schedule: { hour: number; minute: number };
-      }
-    | {
-        type: 'MINUTES';
-        schedule: { minute: number };
-      }
-    | {
-        type: 'CUSTOM';
-        pattern: string;
-      }
-  ) & { outputSchema: object };
-};
+export type WorkflowDatabaseEventTrigger = z.infer<
+  typeof workflowDatabaseEventTriggerSchema
+>;
+export type WorkflowManualTrigger = z.infer<typeof workflowManualTriggerSchema>;
+export type WorkflowCronTrigger = z.infer<typeof workflowCronTriggerSchema>;
+export type WorkflowWebhookTrigger = z.infer<
+  typeof workflowWebhookTriggerSchema
+>;
 
 export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
-
 export type WorkflowManualTriggerAvailability =
   | 'EVERYWHERE'
   | 'WHEN_RECORD_SELECTED';
 
-export type WorkflowTrigger =
-  | WorkflowDatabaseEventTrigger
-  | WorkflowManualTrigger
-  | WorkflowCronTrigger;
-
+export type WorkflowTrigger = z.infer<typeof workflowTriggerSchema>;
 export type WorkflowTriggerType = WorkflowTrigger['type'];
 
 export type WorkflowStatus = 'DRAFT' | 'ACTIVE' | 'DEACTIVATED';
-
 export type WorkflowVersionStatus =
   | 'DRAFT'
   | 'ACTIVE'
   | 'DEACTIVATED'
   | 'ARCHIVED';
 
+// Keep existing types that are not covered by schemas
 export type WorkflowVersion = {
   id: string;
   name: string;
@@ -186,28 +109,18 @@ export type WorkflowVersion = {
   __typename: 'WorkflowVersion';
 };
 
-type StepRunOutput = {
-  id: string;
-  name: string;
-  type: string;
-  outputs: {
-    attemptCount: number;
-    result: object | undefined;
-    error: string | undefined;
-  }[];
-};
+export type WorkflowRunOutput = z.infer<typeof workflowRunOutputSchema>;
+export type WorkflowRunOutputStepsOutput = z.infer<
+  typeof workflowRunOutputStepsOutputSchema
+>;
 
-export type WorkflowRunOutput = {
-  steps: Record<string, StepRunOutput>;
-  error?: string;
-};
+export type WorkflowRunContext = z.infer<typeof workflowRunContextSchema>;
 
-export type WorkflowRun = {
-  __typename: 'WorkflowRun';
-  id: string;
-  workflowVersionId: string;
-  output: WorkflowRunOutput;
-};
+export type WorkflowRunFlow = WorkflowRunOutput['flow'];
+
+export type WorkflowRunStatus = z.infer<typeof workflowRunStatusSchema>;
+
+export type WorkflowRun = z.infer<typeof workflowRunSchema>;
 
 export type Workflow = {
   __typename: 'Workflow';

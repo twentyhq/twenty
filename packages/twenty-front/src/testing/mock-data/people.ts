@@ -1,55 +1,8 @@
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-
-export const getPeopleMock = (): ObjectRecord[] => {
-  const peopleMock = peopleQueryResult.people.edges.map((edge) => edge.node);
-
-  return peopleMock;
-};
-
-export const getPersonObjectMetadataItem = () => {
-  const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === 'person',
-  );
-
-  if (!personObjectMetadataItem) {
-    throw new Error('Person object metadata item not found');
-  }
-
-  return personObjectMetadataItem;
-};
-
-export const getPersonRecord = (
-  overrides?: Partial<ObjectRecord>,
-  index = 0,
-) => {
-  const personRecords = getPeopleMock();
-  return {
-    ...personRecords[index],
-    ...overrides,
-  };
-};
-
-export const mockedEmptyPersonData = {
-  id: 'ce7f0a37-88d7-4cd8-8b41-6721c57195b5',
-  firstName: '',
-  lastName: '',
-  phone: null,
-  email: null,
-  city: null,
-  createdBy: null,
-  displayName: null,
-  avatarUrl: null,
-  createdAt: null,
-  jobTitle: null,
-  linkedinUrl: null,
-  xUrl: null,
-  _activityCount: null,
-  company: null,
-  deletedAt: null,
-  __typename: 'Person',
-};
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export const peopleQueryResult = {
   people: {
@@ -1745,3 +1698,71 @@ export const peopleQueryResult = {
     ],
   },
 } satisfies { people: RecordGqlConnection };
+
+export const allMockPersonRecords = peopleQueryResult.people.edges.map((edge) =>
+  getRecordFromRecordNode({ recordNode: edge.node }),
+);
+
+export const getPeopleRecordConnectionMock = () => {
+  const peopleMock = peopleQueryResult.people.edges.map((edge) => edge.node);
+
+  return peopleMock;
+};
+
+export const getMockPersonObjectMetadataItem = () => {
+  const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
+    (item) => item.nameSingular === 'person',
+  );
+
+  if (!personObjectMetadataItem) {
+    throw new Error('Person object metadata item not found');
+  }
+
+  return personObjectMetadataItem;
+};
+
+export const getMockPersonFieldMetadataItem = (
+  fieldMetadataType: FieldMetadataType,
+  objectMetadataItem = getMockPersonObjectMetadataItem(),
+) => {
+  const result = objectMetadataItem.fields.find(
+    (field) => field.type === fieldMetadataType,
+  );
+  if (!result) {
+    throw new Error(
+      `Person fieldmetadata item type ${fieldMetadataType} not found`,
+    );
+  }
+
+  return result;
+};
+
+export const getMockPersonRecord = (
+  overrides?: Partial<ObjectRecord>,
+  index = 0,
+) => {
+  return {
+    ...allMockPersonRecords[index],
+    ...overrides,
+  };
+};
+
+export const mockedEmptyPersonData = {
+  id: 'ce7f0a37-88d7-4cd8-8b41-6721c57195b5',
+  firstName: '',
+  lastName: '',
+  phone: null,
+  email: null,
+  city: null,
+  createdBy: null,
+  displayName: null,
+  avatarUrl: null,
+  createdAt: null,
+  jobTitle: null,
+  linkedinUrl: null,
+  xUrl: null,
+  _activityCount: null,
+  company: null,
+  deletedAt: null,
+  __typename: 'Person',
+};

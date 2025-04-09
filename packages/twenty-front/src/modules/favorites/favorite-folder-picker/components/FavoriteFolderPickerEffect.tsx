@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { favoriteFolderIdsPickerComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFolderIdPickerComponentState';
@@ -13,6 +12,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { isDefined } from 'twenty-shared/utils';
 
 type FavoriteFolderPickerEffectProps = {
   record?: ObjectRecord;
@@ -72,7 +72,7 @@ export const FavoriteFolderPickerEffect = ({
     const checkedFolderIds = favorites
       .filter(
         (favorite) =>
-          favorite.recordId === targetId && favorite.workspaceMemberId,
+          favorite.recordId === targetId && favorite.forWorkspaceMemberId,
       )
       .map((favorite) => favorite.favoriteFolderId || 'no-folder');
     setCheckedState(checkedFolderIds);

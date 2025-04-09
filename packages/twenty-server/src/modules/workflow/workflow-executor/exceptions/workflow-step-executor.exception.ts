@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class WorkflowStepExecutorException extends CustomException {
-  code: WorkflowStepExecutorExceptionCode;
   constructor(message: string, code: WorkflowStepExecutorExceptionCode) {
     super(message, code);
   }

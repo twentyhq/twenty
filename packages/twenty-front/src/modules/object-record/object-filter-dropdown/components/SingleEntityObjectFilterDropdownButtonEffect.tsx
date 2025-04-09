@@ -1,17 +1,13 @@
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
-import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
-import { getRecordFilterOperandsForRecordFilterDefinition } from '@/object-record/record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
+import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useEffect } from 'react';
 
 export const SingleEntityObjectFilterDropdownButtonEffect = () => {
-  const setFilterDefinitionUsedInDropdown = useSetRecoilComponentStateV2(
-    filterDefinitionUsedInDropdownComponentState,
-  );
-
   const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
     fieldMetadataItemIdUsedInDropdownComponentState,
   );
@@ -25,21 +21,16 @@ export const SingleEntityObjectFilterDropdownButtonEffect = () => {
 
   const firstFieldMetadataItem = filterableFieldMetadataItems[0];
 
-  const firstFieldDefinition = formatFieldMetadataItemAsFilterDefinition({
-    field: firstFieldMetadataItem,
-  });
-
   useEffect(() => {
-    setFieldMetadataItemIdUsedInDropdown(firstFieldDefinition.fieldMetadataId);
-    setFilterDefinitionUsedInDropdown(firstFieldDefinition);
+    setFieldMetadataItemIdUsedInDropdown(firstFieldMetadataItem.id);
 
-    const defaultOperand =
-      getRecordFilterOperandsForRecordFilterDefinition(firstFieldDefinition)[0];
+    const filterType = getFilterTypeFromFieldType(firstFieldMetadataItem.type);
+
+    const defaultOperand = getRecordFilterOperands({ filterType })[0];
 
     setSelectedOperandInDropdown(defaultOperand);
   }, [
-    firstFieldDefinition,
-    setFilterDefinitionUsedInDropdown,
+    firstFieldMetadataItem,
     setSelectedOperandInDropdown,
     setFieldMetadataItemIdUsedInDropdown,
   ]);

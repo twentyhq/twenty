@@ -5,12 +5,17 @@ import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants
 import { FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { RatingInput } from '@/ui/field/input/components/RatingInput';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
+import styled from '@emotion/styled';
+
+const StyledRatingInputContainer = styled.div`
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
 const convertFieldRatingValueToNumber = (
   rating: Exclude<FieldRatingValue, null>,
 ): string => {
@@ -51,7 +56,7 @@ export const ObjectFilterDropdownRatingInput = () => {
   return (
     fieldMetadataItemUsedInDropdown &&
     selectedOperandInDropdown && (
-      <DropdownMenuItemsContainer>
+      <StyledRatingInputContainer>
         <RatingInput
           value={selectedFilter?.value as FieldRatingValue}
           onChange={(newValue: FieldRatingValue) => {
@@ -59,22 +64,23 @@ export const ObjectFilterDropdownRatingInput = () => {
               return;
             }
 
-            const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-              field: fieldMetadataItemUsedInDropdown,
-            });
-
             applyRecordFilter?.({
               id: selectedFilter?.id ? selectedFilter.id : v4(),
               fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
               value: convertFieldRatingValueToNumber(newValue),
               operand: selectedOperandInDropdown,
               displayValue: convertFieldRatingValueToNumber(newValue),
-              definition: filterDefinition,
-              viewFilterGroupId: selectedFilter?.viewFilterGroupId,
+              recordFilterGroupId: selectedFilter?.recordFilterGroupId,
+              positionInRecordFilterGroup:
+                selectedFilter?.positionInRecordFilterGroup,
+              type: getFilterTypeFromFieldType(
+                fieldMetadataItemUsedInDropdown.type,
+              ),
+              label: fieldMetadataItemUsedInDropdown.label,
             });
           }}
         />
-      </DropdownMenuItemsContainer>
+      </StyledRatingInputContainer>
     )
   );
 };

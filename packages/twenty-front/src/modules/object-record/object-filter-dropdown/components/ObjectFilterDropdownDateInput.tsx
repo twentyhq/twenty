@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
@@ -16,7 +16,7 @@ import {
   VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const ObjectFilterDropdownDateInput = () => {
@@ -49,13 +49,8 @@ export const ObjectFilterDropdownDateInput = () => {
 
     if (!fieldMetadataItemUsedInDropdown || !selectedOperandInDropdown) return;
 
-    const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-      field: fieldMetadataItemUsedInDropdown,
-    });
-
     applyRecordFilter({
       id: selectedFilter?.id ? selectedFilter.id : v4(),
-      definition: filterDefinition,
       fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
       value: newDate?.toISOString() ?? '',
       operand: selectedOperandInDropdown,
@@ -64,7 +59,10 @@ export const ObjectFilterDropdownDateInput = () => {
           ? newDate.toLocaleString()
           : newDate.toLocaleDateString()
         : '',
-      viewFilterGroupId: selectedFilter?.viewFilterGroupId,
+      recordFilterGroupId: selectedFilter?.recordFilterGroupId,
+      positionInRecordFilterGroup: selectedFilter?.positionInRecordFilterGroup,
+      type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
+      label: fieldMetadataItemUsedInDropdown.label,
     });
   };
 
@@ -76,10 +74,6 @@ export const ObjectFilterDropdownDateInput = () => {
     } | null,
   ) => {
     if (!fieldMetadataItemUsedInDropdown || !selectedOperandInDropdown) return;
-
-    const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-      field: fieldMetadataItemUsedInDropdown,
-    });
 
     const value = relativeDate
       ? computeVariableDateViewFilterValue(
@@ -95,8 +89,10 @@ export const ObjectFilterDropdownDateInput = () => {
       value,
       operand: selectedOperandInDropdown,
       displayValue: getRelativeDateDisplayValue(relativeDate),
-      definition: filterDefinition,
-      viewFilterGroupId: selectedFilter?.viewFilterGroupId,
+      recordFilterGroupId: selectedFilter?.recordFilterGroupId,
+      positionInRecordFilterGroup: selectedFilter?.positionInRecordFilterGroup,
+      type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
+      label: fieldMetadataItemUsedInDropdown.label,
     });
   };
 
@@ -120,7 +116,6 @@ export const ObjectFilterDropdownDateInput = () => {
       date={internalDate}
       onChange={handleAbsoluteDateChange}
       onRelativeDateChange={handleRelativeDateChange}
-      onClose={handleAbsoluteDateChange}
       isDateTimeInput={isDateTimeInput}
     />
   );

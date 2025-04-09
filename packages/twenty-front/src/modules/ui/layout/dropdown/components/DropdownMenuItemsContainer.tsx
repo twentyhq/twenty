@@ -1,9 +1,12 @@
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useId } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledDropdownMenuItemsExternalContainer = styled.div<{
   hasMaxHeight?: boolean;
+  width: number;
 }>`
   --padding: ${({ theme }) => theme.spacing(1)};
 
@@ -11,11 +14,15 @@ const StyledDropdownMenuItemsExternalContainer = styled.div<{
   display: flex;
 
   flex-direction: column;
-  max-height: ${({ hasMaxHeight }) => (hasMaxHeight ? '188px' : 'none')};
+  max-height: ${({ hasMaxHeight }) => (hasMaxHeight ? '168px' : 'none')};
 
   padding: var(--padding);
 
-  width: calc(100% - 2 * var(--padding));
+  ${({ width }) =>
+    isDefined(width) &&
+    css`
+      width: ${width}px;
+    `}
 `;
 
 const StyledDropdownMenuItemsInternalContainer = styled.div`
@@ -38,12 +45,14 @@ export const DropdownMenuItemsContainer = ({
   children,
   hasMaxHeight,
   className,
+  width = 200,
   scrollable = true,
 }: {
   children: React.ReactNode;
   hasMaxHeight?: boolean;
   className?: string;
   scrollable?: boolean;
+  width?: number;
 }) => {
   const id = useId();
 
@@ -52,10 +61,10 @@ export const DropdownMenuItemsContainer = ({
       hasMaxHeight={hasMaxHeight}
       className={className}
       role="listbox"
+      width={width}
     >
       {hasMaxHeight ? (
         <StyledScrollWrapper
-          contextProviderName="dropdownMenuItemsContainer"
           componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
         >
           <StyledDropdownMenuItemsInternalContainer>
@@ -69,15 +78,12 @@ export const DropdownMenuItemsContainer = ({
       )}
     </StyledDropdownMenuItemsExternalContainer>
   ) : (
-    <ScrollWrapper
-      contextProviderName="dropdownMenuItemsContainer"
-      componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
-      heightMode="fit-content"
-    >
+    <ScrollWrapper componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}>
       <StyledDropdownMenuItemsExternalContainer
         hasMaxHeight={hasMaxHeight}
         className={className}
         role="listbox"
+        width={width}
       >
         <StyledDropdownMenuItemsInternalContainer>
           {children}

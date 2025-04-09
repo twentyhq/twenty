@@ -1,10 +1,9 @@
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useContext, useRef } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
@@ -20,8 +19,11 @@ import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/s
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
@@ -30,9 +32,9 @@ import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/get
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { ViewType } from '@/views/types/ViewType';
-import { useScrollRestoration } from '~/hooks/useScrollRestoration';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -58,11 +60,6 @@ const StyledBoardContentContainer = styled.div`
   height: calc(100% - 48px);
 `;
 
-const RecordBoardScrollRestoreEffect = () => {
-  useScrollRestoration();
-  return null;
-};
-
 export const RecordBoard = () => {
   const { updateOneRecord, selectFieldMetadataItem, recordBoardId } =
     useContext(RecordBoardContext);
@@ -73,10 +70,11 @@ export const RecordBoard = () => {
   );
 
   const actionMenuId = getActionMenuIdFromRecordIndexId(recordBoardId);
-  const { closeActionMenuDropdown } = useActionMenu(actionMenuId);
+
+  const { closeDropdown } = useDropdownV2();
 
   const handleDragSelectionStart = () => {
-    closeActionMenuDropdown();
+    closeDropdown(actionMenuId);
 
     toggleClickOutsideListener(false);
   };
@@ -101,6 +99,10 @@ export const RecordBoard = () => {
 
   const { resetRecordSelection, setRecordAsSelected } =
     useRecordBoardSelection(recordBoardId);
+
+  const currentRecordSorts = useRecoilComponentValueV2(
+    currentRecordSortsComponentState,
+  );
 
   useListenClickOutside({
     excludeClassNames: [
@@ -142,10 +144,19 @@ export const RecordBoard = () => {
     ActionBarHotkeyScope.ActionBar,
   );
 
+  const setIsRemoveSortingModalOpen = useSetRecoilState(
+    isRemoveSortingModalOpenState,
+  );
+
   const handleDragEnd: OnDragEndResponder = useRecoilCallback(
     ({ snapshot }) =>
       (result) => {
         if (!result.destination) return;
+
+        if (currentRecordSorts.length > 0) {
+          setIsRemoveSortingModalOpen(true);
+          return;
+        }
 
         const draggedRecordId = result.draggableId;
         const sourceRecordGroupId = result.source.droppableId;
@@ -201,6 +212,8 @@ export const RecordBoard = () => {
       recordIndexRecordIdsByGroupFamilyState,
       selectFieldMetadataItem,
       updateOneRecord,
+      setIsRemoveSortingModalOpen,
+      currentRecordSorts,
     ],
   );
 
@@ -220,7 +233,6 @@ export const RecordBoard = () => {
         value={{ instanceId: recordBoardId }}
       >
         <ScrollWrapper
-          contextProviderName="recordBoard"
           componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
         >
           <RecordBoardStickyHeaderEffect />
@@ -239,7 +251,6 @@ export const RecordBoard = () => {
                   </StyledColumnContainer>
                 </DragDropContext>
               </StyledContainer>
-              <RecordBoardScrollRestoreEffect />
               <DragSelect
                 dragSelectable={boardRef}
                 onDragSelectionEnd={handleDragSelectionEnd}

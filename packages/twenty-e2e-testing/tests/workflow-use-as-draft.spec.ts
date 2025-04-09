@@ -86,90 +86,92 @@ test('Use an old version as draft', async ({ workflowVisualizer, page }) => {
   await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(1);
 });
 
-test.fixme(
-  'Use an old version as draft while having a pending draft version',
-  async ({ workflowVisualizer, page }) => {
-    await workflowVisualizer.createInitialTrigger('record-created');
+test('Use an old version as draft while having a pending draft version', async ({
+  workflowVisualizer,
+  page,
+}) => {
+  await workflowVisualizer.createInitialTrigger('record-created');
 
-    await workflowVisualizer.createStep('create-record');
+  await workflowVisualizer.createStep('create-record');
 
-    await workflowVisualizer.background.click();
+  await workflowVisualizer.background.click();
 
-    await Promise.all([
-      expect(workflowVisualizer.workflowStatus).toHaveText('Active'),
+  await Promise.all([
+    expect(workflowVisualizer.workflowStatus).toHaveText('Active'),
 
-      workflowVisualizer.activateWorkflowButton.click(),
-    ]);
+    workflowVisualizer.activateWorkflowButton.click(),
+  ]);
 
-    await Promise.all([
-      expect(workflowVisualizer.workflowStatus).toHaveText('Draft'),
+  await Promise.all([
+    expect(workflowVisualizer.workflowStatus).toHaveText('Draft'),
 
-      workflowVisualizer.createStep('delete-record'),
-    ]);
+    workflowVisualizer.createStep('delete-record'),
+  ]);
 
-    await expect(workflowVisualizer.triggerNode).toContainText(
-      'Record is Created',
-    );
-    await expect(workflowVisualizer.getAllStepNodes()).toContainText([
-      'Create Record',
-      'Delete Record',
-    ]);
-    await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(2);
-    await expect(workflowVisualizer.useAsDraftButton).not.toBeVisible();
+  await expect(workflowVisualizer.triggerNode).toContainText(
+    'Record is Created',
+  );
+  await expect(workflowVisualizer.getAllStepNodes()).toContainText([
+    'Create Record',
+    'Delete Record',
+  ]);
+  await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(2);
+  await expect(workflowVisualizer.useAsDraftButton).not.toBeVisible();
 
-    const workflowsLink = page.getByRole('link', { name: 'Workflows' });
-    await workflowsLink.click();
+  await workflowVisualizer.closeSidePanel();
 
-    const recordTableRowForWorkflow = page.getByRole('row', {
-      name: workflowVisualizer.workflowName,
-    });
+  const workflowsLink = page.getByRole('link', { name: 'Workflows' });
+  await workflowsLink.click();
 
-    const linkToWorkflow = recordTableRowForWorkflow.getByRole('link', {
-      name: workflowVisualizer.workflowName,
-    });
-    expect(linkToWorkflow).toBeVisible();
+  const recordTableRowForWorkflow = page.getByRole('row', {
+    name: workflowVisualizer.workflowName,
+  });
 
-    const linkToFirstWorkflowVersion = recordTableRowForWorkflow.getByRole(
-      'link',
-      {
-        name: 'v1',
-      },
-    );
+  const linkToWorkflow = recordTableRowForWorkflow.getByRole('link', {
+    name: workflowVisualizer.workflowName,
+  });
+  expect(linkToWorkflow).toBeVisible();
 
-    await linkToFirstWorkflowVersion.click();
+  const linkToFirstWorkflowVersion = recordTableRowForWorkflow.getByRole(
+    'link',
+    {
+      name: 'v1',
+    },
+  );
 
-    await expect(workflowVisualizer.workflowStatus).toHaveText('Active');
-    await expect(workflowVisualizer.useAsDraftButton).toBeVisible();
-    await expect(workflowVisualizer.triggerNode).toContainText(
-      'Record is Created',
-    );
-    await expect(workflowVisualizer.getAllStepNodes()).toContainText([
-      'Create Record',
-    ]);
-    await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(1);
+  await linkToFirstWorkflowVersion.click();
 
-    await Promise.all([
-      expect(workflowVisualizer.overrideDraftButton).toBeVisible(),
+  await expect(workflowVisualizer.workflowStatus).toHaveText('Active');
+  await expect(workflowVisualizer.useAsDraftButton).toBeVisible();
+  await expect(workflowVisualizer.triggerNode).toContainText(
+    'Record is Created',
+  );
+  await expect(workflowVisualizer.getAllStepNodes()).toContainText([
+    'Create Record',
+  ]);
+  await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(1);
 
-      workflowVisualizer.useAsDraftButton.click(),
-    ]);
+  await Promise.all([
+    expect(workflowVisualizer.overrideDraftButton).toBeVisible(),
 
-    await Promise.all([
-      page.waitForURL(`/object/workflow/${workflowVisualizer.workflowId}`),
+    workflowVisualizer.useAsDraftButton.click(),
+  ]);
 
-      workflowVisualizer.overrideDraftButton.click(),
-    ]);
+  await Promise.all([
+    page.waitForURL(`/object/workflow/${workflowVisualizer.workflowId}`),
 
-    await expect(workflowVisualizer.workflowStatus).toHaveText('Draft');
-    await expect(workflowVisualizer.useAsDraftButton).not.toBeVisible();
-    await expect(workflowVisualizer.triggerNode).toContainText(
-      'Record is Created',
-    );
-    await expect(workflowVisualizer.getAllStepNodes()).toContainText([
-      'Create Record',
-    ]);
-    await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(1);
-    await expect(workflowVisualizer.activateWorkflowButton).toBeVisible();
-    await expect(workflowVisualizer.discardDraftButton).toBeVisible();
-  },
-);
+    workflowVisualizer.overrideDraftButton.click(),
+  ]);
+
+  await expect(workflowVisualizer.workflowStatus).toHaveText('Draft');
+  await expect(workflowVisualizer.useAsDraftButton).not.toBeVisible();
+  await expect(workflowVisualizer.triggerNode).toContainText(
+    'Record is Created',
+  );
+  await expect(workflowVisualizer.getAllStepNodes()).toContainText([
+    'Create Record',
+  ]);
+  await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(1);
+  await expect(workflowVisualizer.activateWorkflowButton).toBeVisible();
+  await expect(workflowVisualizer.discardDraftButton).toBeVisible();
+});

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   GraphqlQueryBaseResolverService,
@@ -28,6 +28,7 @@ import {
   getCursor,
   getPaginationInfo,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
@@ -41,6 +42,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
 
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<FindManyResolverArgs>,
+    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<IConnection<ObjectRecord>> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
@@ -149,16 +151,13 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
         parentObjectRecordsAggregatedValues,
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         aggregate: executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
-        limit,
+        limit: QUERY_MAX_RECORDS,
         authContext,
         dataSource: executionArgs.dataSource,
+        isNewRelationEnabled:
+          featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
       });
     }
-
-    const featureFlagsMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(
-        authContext.workspace.id,
-      );
 
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(

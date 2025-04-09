@@ -7,10 +7,10 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from 'twenty-shared/utils';
 
 export const useCreateOneRecordInCache = <T extends ObjectRecord>({
   objectMetadataItem,
@@ -24,6 +24,14 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
   const apolloClient = useApolloClient();
 
   return (record: ObjectRecord) => {
+    const prefilledRecord = prefillRecord({
+      objectMetadataItem,
+      input: record,
+    });
+    const recordGqlFields = computeDepthOneRecordGqlFieldsFromRecord({
+      objectMetadataItem,
+      record: prefilledRecord,
+    });
     const fragment = gql`
           fragment Create${capitalize(
             objectMetadataItem.nameSingular,
@@ -33,16 +41,9 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
             objectMetadataItems,
             objectMetadataItem,
             computeReferences: true,
-            recordGqlFields: generateDepthOneRecordGqlFields({
-              objectMetadataItem,
-            }),
+            recordGqlFields,
           })}
         `;
-
-    const prefilledRecord = prefillRecord({
-      objectMetadataItem,
-      input: record,
-    });
 
     const recordToCreateWithNestedConnections = getRecordNodeFromRecord({
       record: prefilledRecord,

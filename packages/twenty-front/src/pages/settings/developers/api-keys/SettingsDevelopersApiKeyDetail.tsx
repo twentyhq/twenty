@@ -4,7 +4,6 @@ import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { Button, H2Title, IconRepeat, IconTrash, Section } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -27,6 +26,9 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { Button } from 'twenty-ui/input';
+import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -90,7 +92,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         updateOneRecordInput: { revokedAt: DateTime.now().toString() },
       });
       if (redirect) {
-        navigate(SettingsPath.Developers);
+        navigate(SettingsPath.APIs);
       }
     } catch (err) {
       enqueueSnackBar(t`Error deleting api key: ${err}`, {
@@ -166,8 +168,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
               href: getSettingsPath(SettingsPath.Workspace),
             },
             {
-              children: t`Developers`,
-              href: getSettingsPath(SettingsPath.Developers),
+              children: t`APIs`,
+              href: getSettingsPath(SettingsPath.APIs),
             },
             { children: t`${apiKeyName} API Key` },
           ]}
@@ -260,7 +262,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
           </Trans>
         }
         onConfirmClick={deleteIntegration}
-        deleteButtonText="Delete"
+        confirmButtonText={t`Delete`}
         loading={isLoading}
       />
       <ConfirmationModal
@@ -277,7 +279,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
           </Trans>
         }
         onConfirmClick={regenerateApiKey}
-        deleteButtonText={t`Regenerate key`}
+        confirmButtonText={t`Regenerate key`}
         loading={isLoading}
       />
     </>

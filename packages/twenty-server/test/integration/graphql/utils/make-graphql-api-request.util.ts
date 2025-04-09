@@ -11,7 +11,7 @@ export const makeGraphqlAPIRequest = (graphqlOperation: GraphqlOperation) => {
 
   return client
     .post('/graphql')
-    .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+    .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
     .send({
       query: print(graphqlOperation.query),
       variables: graphqlOperation.variables || {},

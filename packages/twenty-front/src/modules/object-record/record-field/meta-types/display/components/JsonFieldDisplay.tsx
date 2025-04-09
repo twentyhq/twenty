@@ -1,6 +1,6 @@
 import { useJsonFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useJsonFieldDisplay';
 import { JsonDisplay } from '@/ui/field/display/components/JsonDisplay';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const JsonFieldDisplay = () => {
   const { fieldValue, maxWidth } = useJsonFieldDisplay();

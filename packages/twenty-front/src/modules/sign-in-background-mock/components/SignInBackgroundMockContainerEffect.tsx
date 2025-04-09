@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
 
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { useSetRecordIndexEntityCount } from '@/object-record/record-index/hooks/useSetRecordIndexEntityCount';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useSetTableColumns } from '@/object-record/record-table/hooks/useSetTableColumns';
 import { SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockColumnDefinitions';
-import { SIGN_IN_BACKGROUND_MOCK_SORT_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockSortDefinitions';
 import { SIGN_IN_BACKGROUND_MOCK_VIEW_FIELDS } from '@/sign-in-background-mock/constants/SignInBackgroundMockViewFields';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useInitViewBar } from '@/views/hooks/useInitViewBar';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 
@@ -21,10 +23,19 @@ export const SignInBackgroundMockContainerEffect = ({
   recordTableId,
   viewId,
 }: SignInBackgroundMockContainerEffectProps) => {
-  const { setAvailableTableColumns, setOnEntityCountChange, setTableColumns } =
-    useRecordTable({
-      recordTableId,
-    });
+  const [
+    contextStoreCurrentObjectMetadataItemId,
+    setContextStoreCurrentObjectMetadataItemId,
+  ] = useRecoilComponentStateV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
+
+  const { setAvailableTableColumns } = useRecordTable({
+    recordTableId,
+  });
+
+  const { setTableColumns } = useSetTableColumns();
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
@@ -34,18 +45,12 @@ export const SignInBackgroundMockContainerEffect = ({
     objectNameSingular,
   });
 
-  const {
-    setAvailableSortDefinitions,
-    setAvailableFieldDefinitions,
-    setViewObjectMetadataId,
-  } = useInitViewBar(viewId);
-
-  const { setRecordIndexEntityCount } = useSetRecordIndexEntityCount(viewId);
+  const { setAvailableFieldDefinitions, setViewObjectMetadataId } =
+    useInitViewBar(viewId);
 
   useEffect(() => {
     setViewObjectMetadataId?.(objectMetadataItem.id);
 
-    setAvailableSortDefinitions?.(SIGN_IN_BACKGROUND_MOCK_SORT_DEFINITIONS);
     setAvailableFieldDefinitions?.(SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS);
 
     setAvailableTableColumns(SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS);
@@ -55,21 +60,22 @@ export const SignInBackgroundMockContainerEffect = ({
         viewFields: SIGN_IN_BACKGROUND_MOCK_VIEW_FIELDS,
         columnDefinitions: SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS,
       }),
+      recordTableId,
     );
+
+    if (contextStoreCurrentObjectMetadataItemId !== objectMetadataItem.id) {
+      setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
+    }
   }, [
     setViewObjectMetadataId,
-    setAvailableSortDefinitions,
     setAvailableFieldDefinitions,
     objectMetadataItem,
     setAvailableTableColumns,
     setTableColumns,
+    recordTableId,
+    setContextStoreCurrentObjectMetadataItemId,
+    contextStoreCurrentObjectMetadataItemId,
   ]);
-
-  useEffect(() => {
-    setOnEntityCountChange(
-      () => (entityCount: number) => setRecordIndexEntityCount(entityCount),
-    );
-  }, [setRecordIndexEntityCount, setOnEntityCountChange]);
 
   return <></>;
 };

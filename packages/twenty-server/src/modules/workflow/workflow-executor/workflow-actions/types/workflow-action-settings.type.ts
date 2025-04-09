@@ -1,5 +1,6 @@
-import { OutputSchema } from 'src/modules/workflow/workflow-builder/types/output-schema.type';
+import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { WorkflowCodeActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-settings.type';
+import { WorkflowFormActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
 import { WorkflowSendEmailActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-settings.type';
 import {
   WorkflowCreateRecordActionSettings,
@@ -9,7 +10,6 @@ import {
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-settings.type';
 
 export type BaseWorkflowActionSettings = {
-  input: object;
   outputSchema: OutputSchema;
   errorHandlingOptions: {
     retryOnFailure: {
@@ -27,4 +27,5 @@ export type WorkflowActionSettings =
   | WorkflowCreateRecordActionSettings
   | WorkflowUpdateRecordActionSettings
   | WorkflowDeleteRecordActionSettings
-  | WorkflowFindRecordsActionSettings;
+  | WorkflowFindRecordsActionSettings
+  | WorkflowFormActionSettings;

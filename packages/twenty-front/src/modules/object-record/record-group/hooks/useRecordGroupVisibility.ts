@@ -8,12 +8,10 @@ import { recordGroupDefinitionToViewGroup } from '@/views/utils/recordGroupDefin
 import { useRecoilCallback } from 'recoil';
 
 type UseRecordGroupVisibilityParams = {
-  viewBarId: string;
   viewType: ViewType;
 };
 
 export const useRecordGroupVisibility = ({
-  viewBarId,
   viewType,
 }: UseRecordGroupVisibilityParams) => {
   const objectOptionsDropdownRecordGroupHideFamilyState =
@@ -21,7 +19,7 @@ export const useRecordGroupVisibility = ({
       recordIndexRecordGroupHideComponentFamilyState,
     );
 
-  const { saveViewGroup } = useSaveCurrentViewGroups(viewBarId);
+  const { saveViewGroup } = useSaveCurrentViewGroups();
 
   const handleVisibilityChange = useRecoilCallback(
     ({ set }) =>

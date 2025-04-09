@@ -11,9 +11,13 @@ export function getUniqueContactsAndHandles(contacts: Contact[]): {
     return { uniqueContacts: [], uniqueHandles: [] };
   }
 
-  const uniqueHandles = uniq(contacts.map((participant) => participant.handle));
+  const uniqueHandles = uniq(
+    contacts.map((participant) => participant.handle.toLocaleLowerCase()),
+  );
 
-  const uniqueContacts = uniqBy(contacts, 'handle');
+  const uniqueContacts = uniqBy(contacts, (contact) =>
+    contact.handle.toLocaleLowerCase(),
+  );
 
   return { uniqueContacts, uniqueHandles };
 }

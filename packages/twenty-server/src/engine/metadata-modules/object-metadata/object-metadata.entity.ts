@@ -12,9 +12,12 @@ import {
 
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
+import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
+import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 @Entity('objectMetadata')
@@ -51,6 +54,9 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @Column({ nullable: true })
   icon: string;
 
+  @Column({ type: 'jsonb', nullable: true })
+  standardOverrides?: ObjectStandardOverridesDTO;
+
   @Column({ nullable: false })
   targetTableName: string;
 
@@ -68,6 +74,12 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
 
   @Column({ default: true })
   isAuditLogged: boolean;
+
+  @Column({ default: false })
+  isSearchable: boolean;
+
+  @Column({ type: 'jsonb', nullable: true })
+  duplicateCriteria?: WorkspaceEntityDuplicateCriteria[];
 
   @Column({ nullable: true })
   shortcut: string;
@@ -128,4 +140,14 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  @OneToMany(
+    () => ObjectPermissionEntity,
+    (objectPermission: ObjectPermissionEntity) =>
+      objectPermission.objectMetadata,
+    {
+      cascade: true,
+    },
+  )
+  objectPermissions: Relation<ObjectPermissionEntity[]>;
 }

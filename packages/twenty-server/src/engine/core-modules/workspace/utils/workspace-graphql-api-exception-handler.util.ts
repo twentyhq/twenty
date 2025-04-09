@@ -1,5 +1,6 @@
 import {
   ConflictError,
+  ForbiddenError,
   InternalServerError,
   NotFoundError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -16,6 +17,8 @@ export const workspaceGraphqlApiExceptionHandler = (error: Error) => {
         throw new NotFoundError(error.message);
       case WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN:
         throw new ConflictError(error.message);
+      case WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED:
+        throw new ForbiddenError(error.message);
       default:
         throw new InternalServerError(error.message);
     }

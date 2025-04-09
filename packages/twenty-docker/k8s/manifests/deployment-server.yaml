@@ -33,7 +33,7 @@ spec:
           image: twentycrm/twenty:latest
           imagePullPolicy: Always
           env:
-            - name: PORT
+            - name: NODE_PORT
               value: 3000
             - name: SERVER_URL
               value: "https://crm.example.com:443"

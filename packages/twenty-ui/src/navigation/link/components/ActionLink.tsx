@@ -1,5 +1,5 @@
-import React from 'react';
 import styled from '@emotion/styled';
+import React from 'react';
 
 const StyledButtonLink = styled.a`
   align-items: center;
@@ -17,9 +17,14 @@ const StyledButtonLink = styled.a`
   }
 `;
 
-export const ActionLink = (props: React.ComponentProps<'a'>) => {
+type ActionLinkProps = React.ComponentProps<'a'> & {
+  className?: string;
+};
+
+export const ActionLink = (props: ActionLinkProps) => {
   return (
     <StyledButtonLink
+      className={props.className}
       href={props.href}
       onClick={props.onClick}
       target={props.target}

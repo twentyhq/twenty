@@ -15,17 +15,21 @@ import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryP
 
 import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { SoftDeleteFilterChip } from '@/views/components/SoftDeleteFilterChip';
 import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyCurrentViewFiltersToCurrentRecordFilters';
+import { useApplyCurrentViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyCurrentViewSortsToCurrentRecordSorts';
 import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAreViewFiltersDifferentFromRecordFilters';
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStates';
-import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
+
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
+import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/hooks/useAreViewFilterGroupsDifferentFromRecordFilterGroups';
 import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
-import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
+import { LightButton } from 'twenty-ui/input';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
@@ -46,6 +50,7 @@ const StyledBar = styled.div`
   min-height: 32px;
   padding-top: ${({ theme }) => theme.spacing(1)};
   padding-bottom: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
   z-index: 4;
 `;
 
@@ -54,23 +59,14 @@ const StyledChipcontainer = styled.div`
   display: flex;
   flex-direction: row;
   overflow: scroll;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(2)};
   z-index: 1;
 `;
 
-const StyledCancelButton = styled.button`
-  background-color: inherit;
-  border: none;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  cursor: pointer;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  user-select: none;
-  margin-right: ${({ theme }) => theme.spacing(2)};
-  &:hover {
-    background-color: ${({ theme }) => theme.background.tertiary};
-    border-radius: ${({ theme }) => theme.spacing(1)};
-  }
+const StyledActionButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledFilterContainer = styled.div`
@@ -78,6 +74,8 @@ const StyledFilterContainer = styled.div`
   align-items: center;
   flex: 1;
   overflow-x: hidden;
+
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledSeperatorContainer = styled.div`
@@ -97,7 +95,6 @@ const StyledSeperator = styled.div`
 `;
 
 const StyledAddFilterContainer = styled.div`
-  margin-left: ${({ theme }) => theme.spacing(1)};
   z-index: 5;
 `;
 
@@ -108,22 +105,22 @@ export const ViewBarDetails = ({
   viewBarId,
   objectNamePlural,
 }: ViewBarDetailsProps) => {
-  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
-
-  const viewId = currentViewWithCombinedFiltersAndSorts?.id;
-
   const isViewBarExpanded = useRecoilComponentValueV2(
     isViewBarExpandedComponentState,
   );
 
   const { hasFiltersQueryParams } = useViewFromQueryParams();
 
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
+    currentRecordFilterGroupsComponentState,
+  );
+
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
 
-  const availableSortDefinitions = useRecoilComponentValueV2(
-    availableSortDefinitionsComponentState,
+  const currentRecordSorts = useRecoilComponentValueV2(
+    currentRecordSortsComponentState,
   );
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
@@ -133,7 +130,9 @@ export const ViewBarDetails = ({
     objectNameSingular: objectNameSingular,
     viewBarId: viewBarId,
   });
-  const { resetUnsavedViewStates } = useResetUnsavedViewStates();
+
+  const { viewFilterGroupsAreDifferentFromRecordFilterGroups } =
+    useAreViewFilterGroupsDifferentFromRecordFilterGroups();
 
   const { viewFiltersAreDifferentFromRecordFilters } =
     useAreViewFiltersDifferentFromRecordFilters();
@@ -143,7 +142,8 @@ export const ViewBarDetails = ({
 
   const canResetView =
     (viewFiltersAreDifferentFromRecordFilters ||
-      viewSortsAreDifferentFromRecordSorts) &&
+      viewSortsAreDifferentFromRecordSorts ||
+      viewFilterGroupsAreDifferentFromRecordFilterGroups) &&
     !hasFiltersQueryParams;
 
   const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
@@ -155,35 +155,42 @@ export const ViewBarDetails = ({
   const recordFilters = useMemo(() => {
     return currentRecordFilters.filter(
       (recordFilter) =>
-        !recordFilter.viewFilterGroupId &&
+        !recordFilter.recordFilterGroupId &&
         !checkIsSoftDeleteFilter(recordFilter),
     );
   }, [currentRecordFilters, checkIsSoftDeleteFilter]);
 
+  const { applyCurrentViewFilterGroupsToCurrentRecordFilterGroups } =
+    useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
+
   const { applyCurrentViewFiltersToCurrentRecordFilters } =
     useApplyCurrentViewFiltersToCurrentRecordFilters();
 
+  const { applyCurrentViewSortsToCurrentRecordSorts } =
+    useApplyCurrentViewSortsToCurrentRecordSorts();
+
   const handleCancelClick = () => {
-    if (isDefined(viewId)) {
-      resetUnsavedViewStates(viewId);
-      applyCurrentViewFiltersToCurrentRecordFilters();
-      toggleSoftDeleteFilterState(false);
-    }
+    applyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
+    applyCurrentViewFiltersToCurrentRecordFilters();
+    applyCurrentViewSortsToCurrentRecordSorts();
+    toggleSoftDeleteFilterState(false);
   };
 
   const shouldExpandViewBar =
     viewFiltersAreDifferentFromRecordFilters ||
-    ((currentViewWithCombinedFiltersAndSorts?.viewSorts?.length ||
-      currentRecordFilters?.length) &&
+    viewSortsAreDifferentFromRecordSorts ||
+    viewFilterGroupsAreDifferentFromRecordFilterGroups ||
+    ((currentRecordSorts.length > 0 ||
+      currentRecordFilters.length > 0 ||
+      currentRecordFilterGroups.length > 0) &&
       isViewBarExpanded);
 
   if (!shouldExpandViewBar) {
     return null;
   }
 
-  const showAdvancedFilterDropdownButton =
-    currentViewWithCombinedFiltersAndSorts?.viewFilterGroups &&
-    currentViewWithCombinedFiltersAndSorts?.viewFilterGroups.length > 0;
+  const shouldShowAdvancedFilterDropdownButton =
+    currentRecordFilterGroups.length > 0;
 
   return (
     <StyledBar>
@@ -201,21 +208,21 @@ export const ViewBarDetails = ({
               <StyledSeperator />
             </StyledSeperatorContainer>
           )}
-          {mapViewSortsToSorts(
-            currentViewWithCombinedFiltersAndSorts?.viewSorts ?? [],
-            availableSortDefinitions,
-          ).map((sort) => (
-            <EditableSortChip key={sort.fieldMetadataId} viewSort={sort} />
+          {currentRecordSorts.map((recordSort) => (
+            <EditableSortChip
+              key={recordSort.fieldMetadataId}
+              recordSort={recordSort}
+            />
           ))}
           {isNonEmptyArray(recordFilters) &&
-            isNonEmptyArray(
-              currentViewWithCombinedFiltersAndSorts?.viewSorts,
-            ) && (
+            isNonEmptyArray(currentRecordSorts) && (
               <StyledSeperatorContainer>
                 <StyledSeperator />
               </StyledSeperatorContainer>
             )}
-          {showAdvancedFilterDropdownButton && <AdvancedFilterDropdownButton />}
+          {shouldShowAdvancedFilterDropdownButton && (
+            <AdvancedFilterDropdownButton />
+          )}
           {recordFilters.map((recordFilter) => (
             <ObjectFilterDropdownComponentInstanceContext.Provider
               key={recordFilter.id}
@@ -224,11 +231,10 @@ export const ViewBarDetails = ({
               <DropdownScope dropdownScopeId={recordFilter.id}>
                 <ViewBarFilterEffect filterDropdownId={recordFilter.id} />
                 <EditableFilterDropdownButton
-                  viewFilter={recordFilter}
+                  recordFilter={recordFilter}
                   hotkeyScope={{
                     scope: recordFilter.id,
                   }}
-                  viewFilterDropdownId={recordFilter.id}
                 />
               </DropdownScope>
             </ObjectFilterDropdownComponentInstanceContext.Provider>
@@ -242,15 +248,17 @@ export const ViewBarDetails = ({
           </StyledAddFilterContainer>
         )}
       </StyledFilterContainer>
-      {canResetView && (
-        <StyledCancelButton
-          data-testid="cancel-button"
-          onClick={handleCancelClick}
-        >
-          Reset
-        </StyledCancelButton>
-      )}
-      {rightComponent}
+      <StyledActionButtonContainer>
+        {canResetView && (
+          <LightButton
+            data-testid="cancel-button"
+            accent="tertiary"
+            title={t`Reset`}
+            onClick={handleCancelClick}
+          />
+        )}
+        {rightComponent}
+      </StyledActionButtonContainer>
     </StyledBar>
   );
 };

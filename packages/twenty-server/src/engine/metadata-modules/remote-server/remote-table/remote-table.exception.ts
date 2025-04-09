@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class RemoteTableException extends CustomException {
-  code: RemoteTableExceptionCode;
   constructor(message: string, code: RemoteTableExceptionCode) {
     super(message, code);
   }

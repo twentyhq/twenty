@@ -7,8 +7,8 @@ import { z } from 'zod';
 
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useLingui } from '@lingui/react/macro';
-import { Button } from 'twenty-ui';
-import { isDomain } from '~/utils/is-domain';
+import { isValidHostname } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -43,12 +43,15 @@ export const SettingsAccountsBlocklistInput = ({
           .trim()
           .email(t`Invalid email or domain`)
           .or(
-            z
-              .string()
-              .refine(
-                (value) => value.startsWith('@') && isDomain(value.slice(1)),
-                t`Invalid email or domain`,
-              ),
+            z.string().refine(
+              (value) =>
+                value.startsWith('@') &&
+                isValidHostname(value.slice(1), {
+                  allowIp: false,
+                  allowLocalhost: false,
+                }),
+              t`Invalid email or domain`,
+            ),
           )
           .refine(
             (value) => !blockedEmailOrDomainList.includes(value),

@@ -124,6 +124,7 @@ export class GoogleAPIsAuthController {
           err,
           workspace ?? {
             subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+            customDomain: null,
           },
         ),
       );

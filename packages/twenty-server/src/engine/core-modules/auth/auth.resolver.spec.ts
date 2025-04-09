@@ -11,6 +11,8 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -64,6 +66,10 @@ describe('AuthResolver', () => {
           useValue: {},
         },
         {
+          provide: SignInUpService,
+          useValue: {},
+        },
+        {
           provide: ApiKeyService,
           useValue: {},
         },
@@ -93,6 +99,10 @@ describe('AuthResolver', () => {
         },
         {
           provide: FeatureFlagService,
+          useValue: {},
+        },
+        {
+          provide: SSOService,
           useValue: {},
         },
         // {

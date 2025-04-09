@@ -1,7 +1,8 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
-import { APP_LOCALES, FieldMetadataType, SOURCE_LOCALE } from 'twenty-shared';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -18,6 +19,7 @@ import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WORKSPACE_MEMBER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
@@ -81,7 +83,19 @@ export const SEARCH_FIELDS_FOR_WORKSPACE_MEMBER: FieldTypeAndNameMetadata[] = [
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
+@WorkspaceIsSearchable()
 export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.position,
+    type: FieldMetadataType.POSITION,
+    label: msg`Position`,
+    description: msg`Workspace member position`,
+    icon: 'IconHierarchy2',
+    defaultValue: 0,
+  })
+  @WorkspaceIsSystem()
+  position: number;
+
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.FULL_NAME,
@@ -99,6 +113,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconColorSwatch',
     defaultValue: "'System'",
   })
+  @WorkspaceIsSystem()
   colorScheme: string;
 
   @WorkspaceField({
@@ -109,6 +124,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconLanguage',
     defaultValue: `'${SOURCE_LOCALE}'`,
   })
+  @WorkspaceIsSystem()
   locale: keyof typeof APP_LOCALES;
 
   @WorkspaceField({
@@ -118,6 +134,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Workspace member avatar`,
     icon: 'IconFileUpload',
   })
+  @WorkspaceIsSystem()
   avatarUrl: string;
 
   @WorkspaceField({
@@ -127,6 +144,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Related user email address`,
     icon: 'IconMail',
   })
+  @WorkspaceIsSystem()
   userEmail: string;
 
   @WorkspaceField({
@@ -136,7 +154,87 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Associated User Id`,
     icon: 'IconCircleUsers',
   })
+  @WorkspaceIsSystem()
   userId: string;
+
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,
+    type: FieldMetadataType.TEXT,
+    label: msg`Time zone`,
+    defaultValue: "'system'",
+    description: msg`User time zone`,
+    icon: 'IconTimezone',
+  })
+  @WorkspaceIsSystem()
+  timeZone: string;
+
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,
+    type: FieldMetadataType.SELECT,
+    label: msg`Date format`,
+    description: msg`User's preferred date format`,
+    icon: 'IconCalendarEvent',
+    options: [
+      {
+        value: WorkspaceMemberDateFormatEnum.SYSTEM,
+        label: 'System',
+        position: 0,
+        color: 'turquoise',
+      },
+      {
+        value: WorkspaceMemberDateFormatEnum.MONTH_FIRST,
+        label: 'Month First',
+        position: 1,
+        color: 'red',
+      },
+      {
+        value: WorkspaceMemberDateFormatEnum.DAY_FIRST,
+        label: 'Day First',
+        position: 2,
+        color: 'purple',
+      },
+      {
+        value: WorkspaceMemberDateFormatEnum.YEAR_FIRST,
+        label: 'Year First',
+        position: 3,
+        color: 'sky',
+      },
+    ],
+    defaultValue: `'${WorkspaceMemberDateFormatEnum.SYSTEM}'`,
+  })
+  @WorkspaceIsSystem()
+  dateFormat: string;
+
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeFormat,
+    type: FieldMetadataType.SELECT,
+    label: msg`Time format`,
+    description: msg`User's preferred time format`,
+    icon: 'IconClock2',
+    options: [
+      {
+        value: WorkspaceMemberTimeFormatEnum.SYSTEM,
+        label: 'System',
+        position: 0,
+        color: 'sky',
+      },
+      {
+        value: WorkspaceMemberTimeFormatEnum.HOUR_24,
+        label: '24HRS',
+        position: 1,
+        color: 'red',
+      },
+      {
+        value: WorkspaceMemberTimeFormatEnum.HOUR_12,
+        label: '12HRS',
+        position: 2,
+        color: 'purple',
+      },
+    ],
+    defaultValue: `'${WorkspaceMemberTimeFormatEnum.SYSTEM}'`,
+  })
+  @WorkspaceIsSystem()
+  timeFormat: string;
 
   // Relations
   @WorkspaceRelation({
@@ -158,6 +256,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Favorites linked to the workspace member`,
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
+    inverseSideFieldKey: 'forWorkspaceMember',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   favorites: Relation<FavoriteWorkspaceEntity[]>;
@@ -261,82 +360,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   auditLogs: Relation<AuditLogWorkspaceEntity[]>;
-
-  @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,
-    type: FieldMetadataType.TEXT,
-    label: msg`Time zone`,
-    defaultValue: "'system'",
-    description: msg`User time zone`,
-    icon: 'IconTimezone',
-  })
-  timeZone: string;
-
-  @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,
-    type: FieldMetadataType.SELECT,
-    label: msg`Date format`,
-    description: msg`User's preferred date format`,
-    icon: 'IconCalendarEvent',
-    options: [
-      {
-        value: WorkspaceMemberDateFormatEnum.SYSTEM,
-        label: 'System',
-        position: 0,
-        color: 'turquoise',
-      },
-      {
-        value: WorkspaceMemberDateFormatEnum.MONTH_FIRST,
-        label: 'Month First',
-        position: 1,
-        color: 'red',
-      },
-      {
-        value: WorkspaceMemberDateFormatEnum.DAY_FIRST,
-        label: 'Day First',
-        position: 2,
-        color: 'purple',
-      },
-      {
-        value: WorkspaceMemberDateFormatEnum.YEAR_FIRST,
-        label: 'Year First',
-        position: 3,
-        color: 'sky',
-      },
-    ],
-    defaultValue: `'${WorkspaceMemberDateFormatEnum.SYSTEM}'`,
-  })
-  dateFormat: string;
-
-  @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeFormat,
-    type: FieldMetadataType.SELECT,
-    label: msg`Time format`,
-    description: msg`User's preferred time format`,
-    icon: 'IconClock2',
-    options: [
-      {
-        value: WorkspaceMemberTimeFormatEnum.SYSTEM,
-        label: 'System',
-        position: 0,
-        color: 'sky',
-      },
-      {
-        value: WorkspaceMemberTimeFormatEnum.HOUR_24,
-        label: '24HRS',
-        position: 1,
-        color: 'red',
-      },
-      {
-        value: WorkspaceMemberTimeFormatEnum.HOUR_12,
-        label: '12HRS',
-        position: 2,
-        color: 'purple',
-      },
-    ],
-    defaultValue: `'${WorkspaceMemberTimeFormatEnum.SYSTEM}'`,
-  })
-  timeFormat: string;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.searchVector,

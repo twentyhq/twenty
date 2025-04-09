@@ -5,14 +5,10 @@ import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedF
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 
 export const PrefetchLoadingDecorator: Decorator = (Story) => {
-  const setAreViewsPrefetched = useSetRecoilState(
-    prefetchIsLoadedFamilyState(PrefetchKey.AllViews),
-  );
   const setAreFavoritesPrefetched = useSetRecoilState(
-    prefetchIsLoadedFamilyState(PrefetchKey.AllFavorites),
+    prefetchIsLoadedFamilyState(PrefetchKey.AllFavoritesFolders),
   );
 
-  setAreViewsPrefetched(false);
   setAreFavoritesPrefetched(false);
 
   return <Story />;

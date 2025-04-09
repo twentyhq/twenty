@@ -17,6 +17,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
   objectRecordIds = [],
   objectNameSingular,
   onCompleted,
+  skip,
 }: ObjectMetadataItemIdentifier & {
   objectRecordIds: string[] | undefined;
   onCompleted?: (data: RecordGqlConnection[]) => void;
@@ -42,6 +43,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
     useQuery<RecordGqlOperationFindDuplicatesResult>(
       findDuplicateRecordsQuery,
       {
+        skip: !!skip,
         variables: {
           ids: objectRecordIds,
         },

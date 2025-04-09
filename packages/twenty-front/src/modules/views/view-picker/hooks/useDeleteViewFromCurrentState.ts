@@ -1,19 +1,18 @@
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { prefetchViewsFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchViewsFromObjectMetadataItemFamilySelector';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useDeleteView } from '@/views/hooks/useDeleteView';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 
 export const useDeleteViewFromCurrentState = (viewBarInstanceId?: string) => {
-  const { viewsOnCurrentObject, currentViewId } =
-    useGetCurrentView(viewBarInstanceId);
-
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
 
   const viewPickerIsPersistingCallbackState = useRecoilComponentCallbackStateV2(
@@ -32,7 +31,17 @@ export const useDeleteViewFromCurrentState = (viewBarInstanceId?: string) => {
       viewBarInstanceId,
     );
 
-  const { changeView } = useChangeView(viewBarInstanceId);
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
+  const viewsOnCurrentObject = useRecoilValue(
+    prefetchViewsFromObjectMetadataItemFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
+
+  const { currentView } = useGetCurrentViewOnly();
+
+  const { changeView } = useChangeView();
 
   const { deleteView } = useDeleteView();
 
@@ -48,7 +57,7 @@ export const useDeleteViewFromCurrentState = (viewBarInstanceId?: string) => {
           viewPickerReferenceViewIdCallbackState,
         );
 
-        const shouldChangeView = viewPickerReferenceViewId === currentViewId;
+        const shouldChangeView = viewPickerReferenceViewId === currentView?.id;
 
         if (shouldChangeView) {
           changeView(
@@ -61,7 +70,7 @@ export const useDeleteViewFromCurrentState = (viewBarInstanceId?: string) => {
         await deleteView(viewPickerReferenceViewId);
       },
     [
-      currentViewId,
+      currentView,
       closeAndResetViewPicker,
       changeView,
       deleteView,

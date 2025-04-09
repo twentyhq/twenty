@@ -3,7 +3,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
-import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
+import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 
 export const computeContextStoreFilters = (
@@ -16,12 +16,12 @@ export const computeContextStoreFilters = (
 
   if (contextStoreTargetedRecordsRule.mode === 'exclusion') {
     queryFilter = makeAndFilterVariables([
-      computeViewRecordGqlOperationFilter(
+      computeRecordGqlOperationFilter({
         filterValueDependencies,
-        contextStoreFilters,
-        objectMetadataItem?.fields ?? [],
-        [],
-      ),
+        fields: objectMetadataItem?.fields ?? [],
+        recordFilters: contextStoreFilters,
+        recordFilterGroups: [],
+      }),
       contextStoreTargetedRecordsRule.excludedRecordIds.length > 0
         ? {
             not: {
@@ -41,12 +41,12 @@ export const computeContextStoreFilters = (
               in: contextStoreTargetedRecordsRule.selectedRecordIds,
             },
           }
-        : computeViewRecordGqlOperationFilter(
+        : computeRecordGqlOperationFilter({
             filterValueDependencies,
-            contextStoreFilters,
-            objectMetadataItem?.fields ?? [],
-            [],
-          );
+            fields: objectMetadataItem?.fields ?? [],
+            recordFilters: contextStoreFilters,
+            recordFilterGroups: [],
+          });
   }
 
   return queryFilter;

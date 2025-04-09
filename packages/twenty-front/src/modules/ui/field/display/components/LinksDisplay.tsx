@@ -1,12 +1,14 @@
 import { useMemo } from 'react';
-import { LinkType, RoundedLink, SocialLink } from 'twenty-ui';
 
 import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { isDefined } from 'twenty-shared';
 import { checkUrlType } from '~/utils/checkUrlType';
-import { getAbsoluteUrl } from '~/utils/url/getAbsoluteUrl';
-import { getUrlHostname } from '~/utils/url/getUrlHostname';
+import {
+  getAbsoluteUrlOrThrow,
+  getUrlHostnameOrThrow,
+  isDefined,
+} from 'twenty-shared/utils';
+import { LinkType, RoundedLink, SocialLink } from 'twenty-ui/navigation';
 
 type LinksDisplayProps = {
   value?: FieldLinksValue;
@@ -26,10 +28,18 @@ export const LinksDisplay = ({ value }: LinksDisplayProps) => {
       ]
         .filter(isDefined)
         .map(({ url, label }) => {
-          const absoluteUrl = getAbsoluteUrl(url);
+          let absoluteUrl = '';
+          let hostname = '';
+          try {
+            absoluteUrl = getAbsoluteUrlOrThrow(url);
+            hostname = getUrlHostnameOrThrow(absoluteUrl);
+          } catch {
+            absoluteUrl = '';
+            hostname = '';
+          }
           return {
             url: absoluteUrl,
-            label: label || getUrlHostname(absoluteUrl),
+            label: label || hostname,
             type: checkUrlType(absoluteUrl),
           };
         }),

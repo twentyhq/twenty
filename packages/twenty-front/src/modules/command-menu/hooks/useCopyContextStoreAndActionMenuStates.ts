@@ -1,5 +1,5 @@
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
-import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
@@ -17,19 +17,19 @@ export const useCopyContextStoreStates = () => {
         instanceIdToCopyFrom: string;
         instanceIdToCopyTo: string;
       }) => {
-        const contextStoreCurrentObjectMetadataId = snapshot
+        const contextStoreCurrentObjectMetadataItemId = snapshot
           .getLoadable(
-            contextStoreCurrentObjectMetadataIdComponentState.atomFamily({
+            contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
               instanceId: instanceIdToCopyFrom,
             }),
           )
           .getValue();
 
         set(
-          contextStoreCurrentObjectMetadataIdComponentState.atomFamily({
+          contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
             instanceId: instanceIdToCopyTo,
           }),
-          contextStoreCurrentObjectMetadataId,
+          contextStoreCurrentObjectMetadataItemId,
         );
 
         const contextStoreTargetedRecordsRule = snapshot

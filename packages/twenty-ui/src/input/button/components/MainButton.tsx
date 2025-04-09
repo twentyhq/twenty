@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconComponent } from '@ui/display';
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 
 export type MainButtonVariant = 'primary' | 'secondary';
 
@@ -103,7 +103,7 @@ const StyledButton = styled.button<
 `;
 
 type MainButtonProps = Props & {
-  Icon?: IconComponent;
+  Icon?: IconComponent | FunctionComponent<{ size: number }>;
 };
 
 export const MainButton = ({

@@ -52,14 +52,8 @@ describe('computeContextStoreFilters', () => {
         displayValue: 'John',
         displayAvatarUrl: undefined,
         operand: ViewFilterOperand.Contains,
-        definition: {
-          fieldMetadataId: personObjectMetadataItem.fields.find(
-            (field) => field.name === 'name',
-          )!.id,
-          label: 'Name',
-          iconName: 'person',
-          type: 'TEXT',
-        },
+        type: 'TEXT',
+        label: 'Name',
       },
     ];
 
@@ -73,9 +67,22 @@ describe('computeContextStoreFilters', () => {
     expect(filters).toEqual({
       and: [
         {
-          name: {
-            ilike: '%John%',
-          },
+          or: [
+            {
+              name: {
+                firstName: {
+                  ilike: '%John%',
+                },
+              },
+            },
+            {
+              name: {
+                lastName: {
+                  ilike: '%John%',
+                },
+              },
+            },
+          ],
         },
         {
           not: {

@@ -1,9 +1,11 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useCallback, useContext } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
-import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+
+import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { EMPTY_TRIGGER_STEP_ID } from '@/workflow/workflow-diagram/constants/EmptyTriggerStepId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
@@ -14,22 +16,18 @@ import {
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { isCreateStepNode } from '@/workflow/workflow-diagram/utils/isCreateStepNode';
-import { useLingui } from '@lingui/react/macro';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
-import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { IconBolt, useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 
 export const WorkflowDiagramCanvasEditableEffect = () => {
-  const { t } = useLingui();
   const { getIcon } = useIcons();
   const { startNodeCreation } = useStartNodeCreation();
 
-  const { openRightDrawer, closeRightDrawer } = useRightDrawer();
-  const { closeCommandMenu } = useCommandMenu();
-
-  const setHotkeyScope = useSetHotkeyScope();
+  const {
+    openWorkflowTriggerTypeInCommandMenu,
+    openWorkflowEditStepInCommandMenu,
+  } = useWorkflowCommandMenu();
 
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
 
@@ -37,25 +35,28 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
     commandMenuNavigationStackState,
   );
 
+  const { isInRightDrawer } = useContext(ActionMenuContext);
+
+  const workflowId = useRecoilValue(workflowIdState);
+
   const handleSelectionChange = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
-      const selectedNode = nodes[0] as WorkflowDiagramNode;
-      const isClosingStep = isDefined(selectedNode) === false;
+      const selectedNode = nodes[0] as WorkflowDiagramNode | undefined;
 
-      setCommandMenuNavigationStack([]);
+      if (!isInRightDrawer) {
+        setCommandMenuNavigationStack([]);
+      }
 
-      if (isClosingStep) {
-        closeRightDrawer();
-        closeCommandMenu();
+      if (!isDefined(selectedNode)) {
         return;
       }
 
       const isEmptyTriggerNode = selectedNode.type === EMPTY_TRIGGER_STEP_ID;
       if (isEmptyTriggerNode) {
-        openRightDrawer(RightDrawerPages.WorkflowStepSelectTriggerType, {
-          title: t`Trigger Type`,
-          Icon: IconBolt,
-        });
+        if (isDefined(workflowId)) {
+          openWorkflowTriggerTypeInCommandMenu(workflowId);
+          return;
+        }
 
         return;
       }
@@ -69,22 +70,26 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
 
       setWorkflowSelectedNode(selectedNode.id);
-      setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-      openRightDrawer(RightDrawerPages.WorkflowStepEdit, {
-        title: selectedNodeData.name,
-        Icon: getIcon(getWorkflowNodeIconKey(selectedNodeData)),
-      });
+
+      if (isDefined(workflowId)) {
+        openWorkflowEditStepInCommandMenu(
+          workflowId,
+          selectedNodeData.name,
+          getIcon(getWorkflowNodeIconKey(selectedNodeData)),
+        );
+
+        return;
+      }
     },
     [
+      isInRightDrawer,
       setCommandMenuNavigationStack,
-      setWorkflowSelectedNode,
-      setHotkeyScope,
-      openRightDrawer,
-      getIcon,
-      closeRightDrawer,
-      closeCommandMenu,
-      t,
+      workflowId,
+      openWorkflowTriggerTypeInCommandMenu,
       startNodeCreation,
+      openWorkflowEditStepInCommandMenu,
+      getIcon,
+      setWorkflowSelectedNode,
     ],
   );
 

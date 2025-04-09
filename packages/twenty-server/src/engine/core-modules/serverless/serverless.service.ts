@@ -16,15 +16,8 @@ export class ServerlessService implements ServerlessDriver {
     return this.driver.delete(serverlessFunction);
   }
 
-  async build(
-    serverlessFunction: ServerlessFunctionEntity,
-    version: string,
-  ): Promise<void> {
-    return this.driver.build(serverlessFunction, version);
-  }
-
-  async publish(serverlessFunction: ServerlessFunctionEntity): Promise<string> {
-    return this.driver.publish(serverlessFunction);
+  async build(serverlessFunction: ServerlessFunctionEntity): Promise<void> {
+    return this.driver.build(serverlessFunction);
   }
 
   async execute(

@@ -1,13 +1,19 @@
-import { SelectOption, SelectSizeVariant } from '@/ui/input/components/Select';
-import { useTheme } from '@emotion/react';
+import { SelectSizeVariant } from '@/ui/input/components/Select';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared';
-import { IconChevronDown, OverflowingTextWithTooltip } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { IconChevronDown, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 
+export type SelectControlTextAccent = 'default' | 'placeholder';
+
+// TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
 const StyledControlContainer = styled.div<{
   disabled?: boolean;
   hasIcon: boolean;
   selectSizeVariant?: SelectSizeVariant;
+  textAccent: SelectControlTextAccent;
+  hasRightElement?: boolean;
 }>`
   display: grid;
   grid-template-columns: ${({ hasIcon }) =>
@@ -21,9 +27,28 @@ const StyledControlContainer = styled.div<{
   padding: 0 ${({ theme }) => theme.spacing(2)};
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ disabled, theme }) =>
-    disabled ? theme.font.color.tertiary : theme.font.color.primary};
+  border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
+  border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
+
+  ${({ hasRightElement, theme }) =>
+    !hasRightElement
+      ? css`
+          border-right: auto;
+          border-bottom-right-radius: ${theme.border.radius.sm};
+          border-top-right-radius: ${theme.border.radius.sm};
+        `
+      : css`
+          border-right: none;
+          border-bottom-right-radius: none;
+          border-top-right-radius: none;
+        `}
+
+  color: ${({ disabled, theme, textAccent }) =>
+    disabled
+      ? theme.font.color.tertiary
+      : textAccent === 'default'
+        ? theme.font.color.primary
+        : theme.font.color.secondary};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   text-align: left;
 `;
@@ -39,12 +64,16 @@ type SelectControlProps = {
   selectedOption: SelectOption<string | number | boolean | null>;
   isDisabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
+  textAccent?: SelectControlTextAccent;
+  hasRightElement?: boolean;
 };
 
 export const SelectControl = ({
   selectedOption,
   isDisabled,
   selectSizeVariant,
+  textAccent = 'default',
+  hasRightElement,
 }: SelectControlProps) => {
   const theme = useTheme();
 
@@ -53,6 +82,8 @@ export const SelectControl = ({
       disabled={isDisabled}
       hasIcon={isDefined(selectedOption.Icon)}
       selectSizeVariant={selectSizeVariant}
+      textAccent={textAccent}
+      hasRightElement={hasRightElement}
     >
       {isDefined(selectedOption.Icon) ? (
         <selectedOption.Icon

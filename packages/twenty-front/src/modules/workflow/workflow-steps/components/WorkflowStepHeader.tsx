@@ -1,9 +1,9 @@
-import { TextInput } from '@/ui/field/input/components/TextInput';
+import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
+import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { IconComponent } from 'twenty-ui';
-import { useDebouncedCallback } from 'use-debounce';
+import { IconComponent } from 'twenty-ui/display';
 
 const StyledHeader = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -17,6 +17,7 @@ const StyledHeader = styled.div`
 const StyledHeaderInfo = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -24,13 +25,16 @@ const StyledHeaderTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   font-size: ${({ theme }) => theme.font.size.xl};
-  width: 420px;
-  overflow: hidden;
+  width: fit-content;
+  max-width: 420px;
+  & > input:disabled {
+    color: ${({ theme }) => theme.font.color.primary};
+  }
 `;
 
 const StyledHeaderType = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledHeaderIconContainer = styled.div`
@@ -43,27 +47,46 @@ const StyledHeaderIconContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
+type WorkflowStepHeaderProps = {
+  Icon: IconComponent;
+  iconColor: string;
+  initialTitle: string;
+  headerType: string;
+} & (
+  | {
+      disabled: true;
+      onTitleChange?: never;
+    }
+  | {
+      disabled?: boolean;
+      onTitleChange: (newTitle: string) => void;
+    }
+);
+
 export const WorkflowStepHeader = ({
-  onTitleChange,
   Icon,
   iconColor,
   initialTitle,
   headerType,
   disabled,
-}: {
-  onTitleChange: (newTitle: string) => void;
-  Icon: IconComponent;
-  iconColor: string;
-  initialTitle: string;
-  headerType: string;
-  disabled?: boolean;
-}) => {
+  onTitleChange,
+}: WorkflowStepHeaderProps) => {
   const theme = useTheme();
+
   const [title, setTitle] = useState(initialTitle);
-  const debouncedOnTitleChange = useDebouncedCallback(onTitleChange, 100);
+
+  const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
+
   const handleChange = (newTitle: string) => {
     setTitle(newTitle);
-    debouncedOnTitleChange(newTitle);
+  };
+
+  const saveTitle = () => {
+    onTitleChange?.(title);
+    updateCommandMenuPageInfo({
+      pageTitle: title,
+      pageIcon: Icon,
+    });
   };
 
   return (
@@ -77,15 +100,20 @@ export const WorkflowStepHeader = ({
       </StyledHeaderIconContainer>
       <StyledHeaderInfo>
         <StyledHeaderTitle>
-          <TextInput
+          <TitleInput
             disabled={disabled}
+            sizeVariant="md"
             value={title}
-            copyButton={false}
-            hotkeyScope="workflow-step-title"
-            onEnter={onTitleChange}
-            onEscape={onTitleChange}
             onChange={handleChange}
-            shouldTrim={false}
+            placeholder={headerType}
+            hotkeyScope="workflow-step-title"
+            onEnter={saveTitle}
+            onEscape={() => {
+              setTitle(initialTitle);
+            }}
+            onClickOutside={saveTitle}
+            onTab={saveTitle}
+            onShiftTab={saveTitle}
           />
         </StyledHeaderTitle>
         <StyledHeaderType>{headerType}</StyledHeaderType>

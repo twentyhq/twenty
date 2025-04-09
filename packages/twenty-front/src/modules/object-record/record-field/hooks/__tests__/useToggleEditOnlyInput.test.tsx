@@ -105,6 +105,7 @@ const mocks: MockedResponse[] = [
                   createdAt
                   deletedAt
                   favoriteFolderId
+                  forWorkspaceMemberId
                   id
                   noteId
                   opportunityId
@@ -118,12 +119,12 @@ const mocks: MockedResponse[] = [
                   workflowId
                   workflowRunId
                   workflowVersionId
-                  workspaceMemberId
                 }
               }
             }
             id
             idealCustomerProfile
+            internalCompetitions
             introVideo {
               primaryLinkUrl
               primaryLinkLabel
@@ -338,9 +339,9 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
         value={{
           fieldDefinition: booleanFieldDefinition,
           recordId,
-          hotkeyScope: 'hotkeyScope',
           isLabelIdentifier: false,
           useUpdateRecord: useUpdateOneRecordMutation,
+          isReadOnly: false,
         }}
       >
         {children}

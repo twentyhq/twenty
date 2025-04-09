@@ -1,30 +1,29 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import {
-  formatFieldMetadataItemAsFilterDefinition,
+  getFilterTypeFromFieldType,
   getRelationObjectMetadataNameSingular,
 } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { ObjectFilterDropdownRecordPinnedItems } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordPinnedItems';
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
-import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
+import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
-import { isDefined } from 'twenty-shared';
-import { IconUserCircle } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { IconUserCircle } from 'twenty-ui/display';
 
 export const EMPTY_FILTER_VALUE: string = JSON.stringify({
   isCurrentWorkspaceMemberSelected: false,
@@ -35,15 +34,13 @@ export const MAX_RECORDS_TO_DISPLAY = 3;
 
 type ObjectFilterDropdownRecordSelectProps = {
   viewComponentId?: string;
+  recordFilterId?: string;
 };
 
 export const ObjectFilterDropdownRecordSelect = ({
   viewComponentId,
+  recordFilterId,
 }: ObjectFilterDropdownRecordSelectProps) => {
-  const filterDefinitionUsedInDropdown = useRecoilComponentValueV2(
-    filterDefinitionUsedInDropdownComponentState,
-  );
-
   const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentValueV2(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
@@ -60,14 +57,11 @@ export const ObjectFilterDropdownRecordSelect = ({
     objectFilterDropdownSearchInputComponentState,
   );
 
-  const objectFilterDropdownSelectedRecordIds = useRecoilComponentValueV2(
-    objectFilterDropdownSelectedRecordIdsComponentState,
+  const currentRecordFilters = useRecoilComponentValueV2(
+    currentRecordFiltersComponentState,
   );
 
   const { applyRecordFilter } = useApplyRecordFilter(viewComponentId);
-
-  const { currentViewWithCombinedFiltersAndSorts } =
-    useGetCurrentView(viewComponentId);
 
   const { isCurrentWorkspaceMemberSelected } = jsonRelationFilterValueSchema
     .catch({
@@ -100,10 +94,34 @@ export const ObjectFilterDropdownRecordSelect = ({
     throw new Error('objectNameSingular is not defined');
   }
 
+  const firstSimpleRecordFilterForFieldMetadataItemUsedInDropdown =
+    currentRecordFilters.find(
+      (filter) =>
+        filter.fieldMetadataId === fieldMetadataItemUsedInFilterDropdown?.id &&
+        !isDefined(filter.recordFilterGroupId),
+    );
+
+  const recordFilterPassedInProps = currentRecordFilters.find(
+    (filter) => filter.id === recordFilterId,
+  );
+
+  const recordFilterUsedInDropdown = isDefined(recordFilterId)
+    ? recordFilterPassedInProps
+    : firstSimpleRecordFilterForFieldMetadataItemUsedInDropdown;
+
+  const { selectedRecordIds } = jsonRelationFilterValueSchema
+    .catch({
+      isCurrentWorkspaceMemberSelected: false,
+      selectedRecordIds: simpleRelationFilterValueSchema.parse(
+        recordFilterUsedInDropdown?.value,
+      ),
+    })
+    .parse(recordFilterUsedInDropdown?.value);
+
   const { loading, filteredSelectedRecords, recordsToSelect, selectedRecords } =
     useRecordsForSelect({
       searchFilterText: objectFilterDropdownSearchInput,
-      selectedIds: objectFilterDropdownSelectedRecordIds,
+      selectedIds: selectedRecordIds,
       objectNameSingular,
       limit: 10,
     });
@@ -138,16 +156,16 @@ export const ObjectFilterDropdownRecordSelect = ({
       itemToSelect.id === CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID;
 
     const selectedRecordIdsWithAddedRecord = [
-      ...objectFilterDropdownSelectedRecordIds,
+      ...selectedRecordIds,
       itemToSelect.id,
     ];
-    const selectedRecordIdsWithRemovedRecord =
-      objectFilterDropdownSelectedRecordIds.filter(
-        (id) => id !== itemToSelect.id,
-      );
+
+    const selectedRecordIdsWithRemovedRecord = selectedRecordIds.filter(
+      (id) => id !== itemToSelect.id,
+    );
 
     const newSelectedRecordIds = isItemCurrentWorkspaceMember
-      ? objectFilterDropdownSelectedRecordIds
+      ? selectedRecordIds
       : isNewSelectedValue
         ? selectedRecordIdsWithAddedRecord
         : selectedRecordIdsWithRemovedRecord;
@@ -182,10 +200,7 @@ export const ObjectFilterDropdownRecordSelect = ({
         ? `${selectedItemNames.length} ${objectLabelPlural.toLowerCase()}`
         : selectedItemNames.join(', ');
 
-    if (
-      isDefined(filterDefinitionUsedInDropdown) &&
-      isDefined(selectedOperandInDropdown)
-    ) {
+    if (isDefined(selectedOperandInDropdown)) {
       const newFilterValue =
         newSelectedRecordIds.length > 0 || newIsCurrentWorkspaceMemberSelected
           ? JSON.stringify({
@@ -195,28 +210,48 @@ export const ObjectFilterDropdownRecordSelect = ({
             } satisfies RelationFilterValue)
           : '';
 
-      const viewFilter =
-        currentViewWithCombinedFiltersAndSorts?.viewFilters.find(
-          (viewFilter) =>
-            viewFilter.fieldMetadataId ===
-            fieldMetadataItemUsedInFilterDropdown.id,
-        );
+      const duplicateFilterInCurrentRecordFilters =
+        findDuplicateRecordFilterInNonAdvancedRecordFilters({
+          recordFilters: currentRecordFilters,
+          fieldMetadataItemId: fieldMetadataItemUsedInFilterDropdown.id,
+        });
 
-      const filterId = viewFilter?.id ?? v4();
+      const filterIsAlreadyInCurrentRecordFilters = isDefined(
+        duplicateFilterInCurrentRecordFilters,
+      );
 
-      const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-        field: fieldMetadataItemUsedInFilterDropdown,
-      });
-
-      applyRecordFilter({
-        id: selectedFilter?.id ? selectedFilter.id : filterId,
-        definition: filterDefinition,
-        operand: selectedOperandInDropdown,
-        displayValue: filterDisplayValue,
-        fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
-        value: newFilterValue,
-        viewFilterGroupId: selectedFilter?.viewFilterGroupId,
-      });
+      if (filterIsAlreadyInCurrentRecordFilters && !isDefined(recordFilterId)) {
+        applyRecordFilter({
+          id: duplicateFilterInCurrentRecordFilters.id,
+          type: getFilterTypeFromFieldType(
+            fieldMetadataItemUsedInFilterDropdown.type,
+          ),
+          label: fieldMetadataItemUsedInFilterDropdown.label,
+          operand: selectedOperandInDropdown,
+          displayValue: filterDisplayValue,
+          fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
+          value: newFilterValue,
+          recordFilterGroupId:
+            duplicateFilterInCurrentRecordFilters.recordFilterGroupId,
+          positionInRecordFilterGroup:
+            duplicateFilterInCurrentRecordFilters.positionInRecordFilterGroup,
+        });
+      } else {
+        applyRecordFilter({
+          id: selectedFilter?.id ? selectedFilter.id : v4(),
+          type: getFilterTypeFromFieldType(
+            fieldMetadataItemUsedInFilterDropdown.type,
+          ),
+          label: fieldMetadataItemUsedInFilterDropdown.label,
+          operand: selectedOperandInDropdown,
+          displayValue: filterDisplayValue,
+          fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
+          value: newFilterValue,
+          recordFilterGroupId: selectedFilter?.recordFilterGroupId,
+          positionInRecordFilterGroup:
+            selectedFilter?.positionInRecordFilterGroup,
+        });
+      }
     }
   };
 
@@ -233,7 +268,7 @@ export const ObjectFilterDropdownRecordSelect = ({
       )}
       <MultipleSelectDropdown
         selectableListId="object-filter-record-select-id"
-        hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+        hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
         itemsToSelect={recordsToSelect}
         filteredSelectedItems={filteredSelectedRecords}
         selectedItems={selectedRecords}

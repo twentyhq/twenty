@@ -12,8 +12,9 @@ import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { msg } from '@lingui/core/macro';
 
 import { useRecoilValue } from 'recoil';
-import { capitalize, isDefined } from 'twenty-shared';
-import { IconSettingsAutomation } from 'twenty-ui';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+import { IconSettingsAutomation } from 'twenty-ui/display';
+
 export const useWorkflowRunRecordActions = ({
   objectMetadataItem,
 }: {
@@ -62,7 +63,7 @@ export const useWorkflowRunRecordActions = ({
         type: ActionMenuEntryType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionMenuEntryScope.RecordSelection,
-        label: msg`${name}`, // eslint-disable-line lingui/no-single-variables-to-translate
+        label: msg`${name}`,
         position: index,
         Icon: IconSettingsAutomation,
         onClick: async () => {

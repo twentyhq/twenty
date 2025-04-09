@@ -9,7 +9,7 @@ import {
   Min,
   validateOrReject,
 } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -44,7 +44,7 @@ class TextSettingsValidation {
 
 @Injectable()
 export class FieldMetadataValidationService<
-  T extends FieldMetadataType | 'default' = 'default',
+  T extends FieldMetadataType = FieldMetadataType,
 > {
   constructor() {}
 

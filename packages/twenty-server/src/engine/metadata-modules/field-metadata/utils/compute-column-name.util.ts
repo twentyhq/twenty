@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { CompositeProperty } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
@@ -21,12 +21,12 @@ export function computeColumnName(
   fieldName: string,
   options?: ComputeColumnNameOptions,
 ): string;
-export function computeColumnName<T extends FieldMetadataType | 'default'>(
+export function computeColumnName<T extends FieldMetadataType>(
   fieldMetadata: FieldMetadataInterface<T>,
   ioptions?: ComputeColumnNameOptions,
 ): string;
 // TODO: If we need to implement custom name logic for columns, we can do it here
-export function computeColumnName<T extends FieldMetadataType | 'default'>(
+export function computeColumnName<T extends FieldMetadataType>(
   fieldMetadataOrFieldName: FieldMetadataInterface<T> | string,
   options?: ComputeColumnNameOptions,
 ): string {
@@ -51,15 +51,11 @@ export function computeCompositeColumnName(
   fieldName: string,
   compositeProperty: CompositeProperty,
 ): string;
-export function computeCompositeColumnName<
-  T extends FieldMetadataType | 'default',
->(
+export function computeCompositeColumnName<T extends FieldMetadataType>(
   fieldMetadata: FieldTypeAndNameMetadata | FieldMetadataInterface<T>,
   compositeProperty: CompositeProperty,
 ): string;
-export function computeCompositeColumnName<
-  T extends FieldMetadataType | 'default',
->(
+export function computeCompositeColumnName<T extends FieldMetadataType>(
   fieldMetadataOrFieldName:
     | FieldTypeAndNameMetadata
     | FieldMetadataInterface<T>

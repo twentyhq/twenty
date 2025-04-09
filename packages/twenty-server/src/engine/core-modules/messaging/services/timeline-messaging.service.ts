@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { Any, Not } from 'typeorm';
+import { In, Not } from 'typeorm';
 
 import { TimelineThread } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -32,34 +32,32 @@ export class TimelineMessagingService {
         'messageThread',
       );
 
-    const [messageThreadIds, totalNumberOfThreads] =
-      await messageThreadRepository.findAndCount({
-        select: {
-          id: true,
-        },
-        where: {
-          messages: {
-            messageParticipants: {
-              personId: Any(personIds),
-            },
-          },
-        },
-        order: {
-          messages: {
-            receivedAt: 'DESC',
-          },
-        },
-        skip: offset,
-        take: pageSize,
-        relations: ['messages'],
-      });
+    const totalNumberOfThreads = await messageThreadRepository
+      .createQueryBuilder('messageThread')
+      .innerJoin('messageThread.messages', 'messages')
+      .innerJoin('messages.messageParticipants', 'messageParticipants')
+      .where('messageParticipants.personId IN(:...personIds)', { personIds })
+      .groupBy('messageThread.id')
+      .getCount();
+
+    const threadIdsQuery = await messageThreadRepository
+      .createQueryBuilder('messageThread')
+      .select('messageThread.id', 'id')
+      .addSelect('MAX(messages.receivedAt)', 'max_received_at')
+      .innerJoin('messageThread.messages', 'messages')
+      .innerJoin('messages.messageParticipants', 'messageParticipants')
+      .where('messageParticipants.personId IN (:...personIds)', { personIds })
+      .groupBy('messageThread.id')
+      .orderBy('max_received_at', 'DESC')
+      .offset(offset)
+      .limit(pageSize)
+      .getRawMany();
+
+    const messageThreadIds = threadIdsQuery.map((thread) => thread.id);
 
     const messageThreads = await messageThreadRepository.find({
-      select: {
-        id: true,
-      },
       where: {
-        id: Any(messageThreadIds.map((thread) => thread.id)),
+        id: In(messageThreadIds),
       },
       order: {
         messages: {
@@ -187,7 +185,7 @@ export class TimelineMessagingService {
         id: true,
       },
       where: {
-        id: Any(messageThreadIds),
+        id: In(messageThreadIds),
         messages: {
           messageChannelMessageAssociations: {
             messageChannel: {

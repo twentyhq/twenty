@@ -1,11 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconCheck, IconPlus, LightIconButton, MenuItem } from 'twenty-ui';
 
 import {
   MultiItemBaseInput,
   MultiItemBaseInputProps,
 } from '@/object-record/record-field/meta-types/input/components/MultiItemBaseInput';
+import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { PhoneRecord } from '@/object-record/record-field/types/FieldMetadata';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -16,6 +16,9 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { IconCheck, IconPlus } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type MultiItemFieldInputProps<T> = {
   items: T[];
@@ -35,7 +38,8 @@ type MultiItemFieldInputProps<T> = {
   newItemLabel?: string;
   fieldMetadataType: FieldMetadataType;
   renderInput?: MultiItemBaseInputProps['renderInput'];
-  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
+  onClickOutside?: FieldInputClickOutsideEvent;
+  onError?: (hasError: boolean, values: any[]) => void;
 };
 
 // Todo: the API of this component does not look healthy: we have renderInput, renderItem, formatInput, ...
@@ -53,6 +57,7 @@ export const MultiItemFieldInput = <T,>({
   fieldMetadataType,
   renderInput,
   onClickOutside,
+  onError,
 }: MultiItemFieldInputProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const handleDropdownClose = () => {
@@ -62,7 +67,13 @@ export const MultiItemFieldInput = <T,>({
   useListenClickOutside({
     refs: [containerRef],
     callback: (event) => {
-      onClickOutside?.(event);
+      const isEditing = inputValue !== '';
+      const isPrimaryItem = items.length === 0;
+
+      if (isEditing && isPrimaryItem) {
+        handleSubmitInput();
+      }
+      onClickOutside?.(() => {}, event);
     },
     listenerId: hotkeyScope,
   });
@@ -85,6 +96,7 @@ export const MultiItemFieldInput = <T,>({
     setErrorData(
       errorData.isValid ? errorData : { isValid: true, errorMessage: '' },
     );
+    onError?.(false, items);
   };
 
   const handleAddButtonClick = () => {
@@ -123,6 +135,7 @@ export const MultiItemFieldInput = <T,>({
     if (validateInput !== undefined) {
       const validationData = validateInput(inputValue) ?? { isValid: true };
       if (!validationData.isValid) {
+        onError?.(true, items);
         setErrorData(validationData);
         return;
       }
@@ -191,22 +204,13 @@ export const MultiItemFieldInput = <T,>({
           value={inputValue}
           hotkeyScope={hotkeyScope}
           hasError={!errorData.isValid}
-          renderInput={
-            renderInput
-              ? (props) =>
-                  renderInput({
-                    ...props,
-                    onChange: (newValue) =>
-                      setInputValue(newValue as unknown as string),
-                  })
-              : undefined
-          }
+          renderInput={renderInput}
           onEscape={handleDropdownClose}
-          onChange={(event) =>
-            handleOnChange(
-              turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
-            )
-          }
+          onChange={(value) => {
+            value
+              ? handleOnChange(turnIntoEmptyStringIfWhitespacesOnly(value))
+              : handleOnChange('');
+          }}
           onEnter={handleSubmitInput}
           hasItem={!!items.length}
           rightComponent={

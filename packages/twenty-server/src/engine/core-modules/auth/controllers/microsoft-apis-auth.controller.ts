@@ -131,6 +131,7 @@ export class MicrosoftAPIsAuthController {
           err,
           workspace ?? {
             subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+            customDomain: null,
           },
         ),
       );

@@ -5,7 +5,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableContextProvider } from '@/object-record/record-table/contexts/RecordTableContext';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableDecorator: Decorator = (Story) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
@@ -45,8 +45,7 @@ export const RecordTableDecorator: Decorator = (Story) => {
             onOpenTableCell: () => {},
             onActionMenuDropdownOpened: () => {},
             onMoveFocus: () => {},
-            onMoveSoftFocusToCell: () => {},
-            onUpsertRecord: () => {},
+            onMoveSoftFocusToCurrentCell: () => {},
           }}
         >
           <Story />

@@ -10,8 +10,10 @@ import {
   IsString,
   IsUrl,
   ValidateIf,
+  ValidationError,
   validateSync,
 } from 'class-validator';
+import { isDefined } from 'twenty-shared/utils';
 
 import { EmailDriver } from 'src/engine/core-modules/email/interfaces/email.interface';
 import { AwsRegion } from 'src/engine/core-modules/environment/interfaces/aws-region.interface';
@@ -23,17 +25,20 @@ import { LLMTracingDriver } from 'src/engine/core-modules/llm-tracing/interfaces
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CastToBoolean } from 'src/engine/core-modules/environment/decorators/cast-to-boolean.decorator';
 import { CastToLogLevelArray } from 'src/engine/core-modules/environment/decorators/cast-to-log-level-array.decorator';
+import { CastToMeterDriverArray } from 'src/engine/core-modules/environment/decorators/cast-to-meter-driver.decorator';
 import { CastToPositiveNumber } from 'src/engine/core-modules/environment/decorators/cast-to-positive-number.decorator';
 import { EnvironmentVariablesMetadata } from 'src/engine/core-modules/environment/decorators/environment-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/environment/decorators/is-aws-region.decorator';
 import { IsDuration } from 'src/engine/core-modules/environment/decorators/is-duration.decorator';
+import { IsOptionalOrEmptyString } from 'src/engine/core-modules/environment/decorators/is-optional-or-empty-string.decorator';
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/environment/decorators/is-strictly-lower-than.decorator';
+import { IsTwentySemVer } from 'src/engine/core-modules/environment/decorators/is-twenty-semver.decorator';
 import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
+import { MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
 import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverless.interface';
-import { assert } from 'src/utils/assert';
 
 export class EnvironmentVariables {
   @EnvironmentVariablesMetadata({
@@ -291,6 +296,15 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.EmailSettings,
+    description: 'Use unsecure connection for SMTP',
+  })
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  EMAIL_SMTP_NO_TLS = false;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.EmailSettings,
     description: 'SMTP port for sending emails',
   })
   @CastToPositiveNumber()
@@ -409,8 +423,16 @@ export class EnvironmentVariables {
   })
   @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
   @IsString()
-  @IsOptional()
   SERVERLESS_LAMBDA_ROLE: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.ServerlessConfig,
+    description: 'Role to assume when hosting lambdas in dedicated AWS account',
+  })
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @IsString()
+  @IsOptional()
+  SERVERLESS_LAMBDA_SUBHOSTING_ROLE?: string;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerlessConfig,
@@ -433,7 +455,7 @@ export class EnvironmentVariables {
   SERVERLESS_LAMBDA_SECRET_ACCESS_KEY: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.TinybirdConfig,
+    group: EnvironmentVariablesGroup.AnalyticsConfig,
     description: 'Enable or disable analytics for telemetry',
   })
   @CastToBoolean()
@@ -449,33 +471,6 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   TELEMETRY_ENABLED = true;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.TinybirdConfig,
-    sensitive: true,
-    description: 'Ingest token for Tinybird analytics',
-  })
-  @IsString()
-  @ValidateIf((env) => env.ANALYTICS_ENABLED)
-  TINYBIRD_INGEST_TOKEN: string;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.TinybirdConfig,
-    sensitive: true,
-    description: 'Workspace UUID for Tinybird analytics',
-  })
-  @IsString()
-  @ValidateIf((env) => env.ANALYTICS_ENABLED)
-  TINYBIRD_WORKSPACE_UUID: string;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.TinybirdConfig,
-    sensitive: true,
-    description: 'JWT token for Tinybird analytics',
-  })
-  @IsString()
-  @ValidateIf((env) => env.ANALYTICS_ENABLED)
-  TINYBIRD_GENERATE_JWT_TOKEN: string;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.BillingConfig,
@@ -533,21 +528,12 @@ export class EnvironmentVariables {
   BILLING_STRIPE_WEBHOOK_SECRET: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.BillingConfig,
-    sensitive: true,
-    description: 'Base plan product ID for Stripe billing',
-  })
-  @IsString()
-  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_STRIPE_BASE_PLAN_PRODUCT_ID: string;
-
-  @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
-    description: 'Domain for the frontend application',
+    description: 'Url for the frontend application',
   })
-  @IsString()
+  @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
-  FRONT_DOMAIN?: string;
+  FRONTEND_URL: string;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
@@ -557,23 +543,6 @@ export class EnvironmentVariables {
   @IsString()
   @ValidateIf((env) => env.IS_MULTIWORKSPACE_ENABLED)
   DEFAULT_SUBDOMAIN = 'app';
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.ServerConfig,
-    description: 'Protocol for the frontend application (http or https)',
-  })
-  @IsString()
-  @IsOptional()
-  FRONT_PROTOCOL?: 'http' | 'https' = 'http';
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.ServerConfig,
-    description: 'Port for the frontend application',
-  })
-  @CastToPositiveNumber()
-  @IsNumber()
-  @IsOptional()
-  FRONT_PORT?: number;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
@@ -608,6 +577,21 @@ export class EnvironmentVariables {
   @CastToLogLevelArray()
   @IsOptional()
   LOG_LEVELS: LogLevel[] = ['log', 'error', 'warn'];
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Metering,
+    description: 'Driver used for collect metrics (OpenTelemetry or Console)',
+  })
+  @CastToMeterDriverArray()
+  @IsOptional()
+  METER_DRIVER: MeterDriver[] = [];
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Metering,
+    description: 'Endpoint URL for the OpenTelemetry collector',
+  })
+  @IsOptional()
+  OTLP_COLLECTOR_ENDPOINT_URL: string;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ExceptionHandler,
@@ -692,7 +676,7 @@ export class EnvironmentVariables {
   })
   @IsDefined()
   @IsUrl({
-    protocols: ['postgres'],
+    protocols: ['postgres', 'postgresql'],
     require_tld: false,
     allow_underscores: true,
     require_host: false,
@@ -723,7 +707,7 @@ export class EnvironmentVariables {
   })
   @IsOptional()
   @IsUrl({
-    protocols: ['redis'],
+    protocols: ['redis', 'rediss'],
     require_tld: false,
     allow_underscores: true,
   })
@@ -739,12 +723,12 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
-    description: 'Port for the backend server',
+    description: 'Port for the node server',
   })
   @CastToPositiveNumber()
   @IsNumber()
   @IsOptional()
-  PORT = 3000;
+  NODE_PORT = 3000;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
@@ -821,6 +805,14 @@ export class EnvironmentVariables {
   CLOUDFLARE_ZONE_ID: string;
 
   @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'Random string to validate queries from Cloudflare',
+  })
+  @IsString()
+  @IsOptional()
+  CLOUDFLARE_WEBHOOK_SECRET: string;
+
+  @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.LLM,
     description: 'Driver for the LLM chat model',
   })
@@ -864,27 +856,27 @@ export class EnvironmentVariables {
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
     description:
-      'Use as a feature flag for the new permission feature we are working on.',
-  })
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  PERMISSIONS_ENABLED = false;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Other,
-    description:
       'Number of inactive days before sending a deletion warning for workspaces. Used in the workspace deletion cron job to determine when to send warning emails.',
   })
   @CastToPositiveNumber()
   @IsNumber()
-  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
+  @IsStrictlyLowerThan('WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION', {
+    message:
+      '"WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION" should be strictly lower than "WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION"',
+  })
+  WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION = 7;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'Number of inactive days before soft deleting workspaces',
+  })
+  @CastToPositiveNumber()
+  @IsNumber()
   @IsStrictlyLowerThan('WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION', {
     message:
-      '"WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION" should be strictly lower than "WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION"',
+      '"WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION" should be strictly lower than "WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION"',
   })
-  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
-  WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION = 7;
+  WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION = 14;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
@@ -892,8 +884,7 @@ export class EnvironmentVariables {
   })
   @CastToPositiveNumber()
   @IsNumber()
-  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION > 0)
-  WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 14;
+  WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 21;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
@@ -910,7 +901,7 @@ export class EnvironmentVariables {
     description: 'Throttle limit for workflow execution',
   })
   @CastToPositiveNumber()
-  WORKFLOW_EXEC_THROTTLE_LIMIT = 10;
+  WORKFLOW_EXEC_THROTTLE_LIMIT = 500;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.RateLimiting,
@@ -961,7 +952,24 @@ export class EnvironmentVariables {
   @IsNumber()
   @CastToPositiveNumber()
   @IsOptional()
-  HEALTH_MONITORING_TIME_WINDOW_IN_MINUTES = 5;
+  HEALTH_METRICS_TIME_WINDOW_IN_MINUTES = 5;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'Enable or disable the attachment preview feature',
+  })
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  IS_ATTACHMENT_PREVIEW_ENABLED = true;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.ServerConfig,
+    description: 'Twenty server version',
+  })
+  @IsOptionalOrEmptyString()
+  @IsTwentySemVer()
+  APP_VERSION?: string;
 }
 
 export const validate = (
@@ -969,21 +977,32 @@ export const validate = (
 ): EnvironmentVariables => {
   const validatedConfig = plainToClass(EnvironmentVariables, config);
 
-  const errors = validateSync(validatedConfig, { strictGroups: true });
+  const validationErrors = validateSync(validatedConfig, {
+    strictGroups: true,
+  });
 
-  const warnings = validateSync(validatedConfig, { groups: ['warning'] });
-
-  if (warnings.length > 0) {
-    warnings.forEach((warning) => {
-      if (warning.constraints && warning.property) {
-        Object.values(warning.constraints).forEach((message) => {
-          Logger.warn(message);
-        });
+  const validationWarnings = validateSync(validatedConfig, {
+    groups: ['warning'],
+  });
+  const logValidatonErrors = (
+    errorCollection: ValidationError[],
+    type: 'error' | 'warn',
+  ) =>
+    errorCollection.forEach((error) => {
+      if (!isDefined(error.constraints) || !isDefined(error.property)) {
+        return;
       }
+      Logger[type](Object.values(error.constraints).join('\n'));
     });
+
+  if (validationWarnings.length > 0) {
+    logValidatonErrors(validationWarnings, 'warn');
   }
 
-  assert(!errors.length, errors.toString());
+  if (validationErrors.length > 0) {
+    logValidatonErrors(validationErrors, 'error');
+    throw new Error('Environment variables validation failed');
+  }
 
   return validatedConfig;
 };

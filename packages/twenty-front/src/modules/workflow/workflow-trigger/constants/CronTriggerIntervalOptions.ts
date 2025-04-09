@@ -1,11 +1,11 @@
 import {
-  IconComponent,
-  Icon24Hours,
-  IconTimeDuration60,
   IconClockPlay,
-} from 'twenty-ui';
-
-export type CronTriggerInterval = 'HOURS' | 'MINUTES' | 'CUSTOM';
+  IconComponent,
+  IconHours24,
+  IconTimeDuration60,
+  IconBrandDaysCounter,
+} from 'twenty-ui/display';
+export type CronTriggerInterval = 'DAYS' | 'HOURS' | 'MINUTES' | 'CUSTOM';
 
 export const CRON_TRIGGER_INTERVAL_OPTIONS: Array<{
   label: string;
@@ -13,9 +13,14 @@ export const CRON_TRIGGER_INTERVAL_OPTIONS: Array<{
   Icon: IconComponent;
 }> = [
   {
+    label: 'Days',
+    value: 'DAYS',
+    Icon: IconBrandDaysCounter,
+  },
+  {
     label: 'Hours',
     value: 'HOURS',
-    Icon: Icon24Hours,
+    Icon: IconHours24,
   },
   {
     label: 'Minutes',

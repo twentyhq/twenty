@@ -28,7 +28,7 @@ describe('formatDateString', () => {
 
   it('should format date as relative when displayAsRelativeDate is true', () => {
     const mockDate = DateTime.now().minus({ months: 2 }).toISO();
-    const mockRelativeDate = '2 months ago';
+    const mockRelativeDate = 'about 2 months ago';
 
     jest.mock('@/localization/utils/formatDateISOStringToRelativeDate', () => ({
       formatDateISOStringToRelativeDate: jest

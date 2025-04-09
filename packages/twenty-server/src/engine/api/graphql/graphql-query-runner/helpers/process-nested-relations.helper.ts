@@ -21,8 +21,6 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
@@ -34,7 +32,6 @@ export class ProcessNestedRelationsHelper {
   constructor(
     private readonly processNestedRelationsV2Helper: ProcessNestedRelationsV2Helper,
     private readonly processAggregateHelper: ProcessAggregateHelper,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>({
@@ -47,6 +44,7 @@ export class ProcessNestedRelationsHelper {
     limit,
     authContext,
     dataSource,
+    isNewRelationEnabled,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -57,12 +55,8 @@ export class ProcessNestedRelationsHelper {
     limit: number;
     authContext: AuthContext;
     dataSource: DataSource;
+    isNewRelationEnabled: boolean;
   }): Promise<void> {
-    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsNewRelationEnabled,
-      authContext.workspace.id,
-    );
-
     if (isNewRelationEnabled) {
       return this.processNestedRelationsV2Helper.processNestedRelations({
         objectMetadataMaps,
@@ -90,6 +84,7 @@ export class ProcessNestedRelationsHelper {
           limit,
           authContext,
           dataSource,
+          isNewRelationEnabled,
         }),
     );
 
@@ -107,6 +102,7 @@ export class ProcessNestedRelationsHelper {
     limit,
     authContext,
     dataSource,
+    isNewRelationEnabled,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -118,6 +114,7 @@ export class ProcessNestedRelationsHelper {
     limit: number;
     authContext: any;
     dataSource: DataSource;
+    isNewRelationEnabled: boolean;
   }): Promise<void> {
     const relationFieldMetadata =
       parentObjectMetadataItem.fieldsByName[relationName];
@@ -143,6 +140,7 @@ export class ProcessNestedRelationsHelper {
       limit,
       authContext,
       dataSource,
+      isNewRelationEnabled,
     });
   }
 
@@ -157,6 +155,7 @@ export class ProcessNestedRelationsHelper {
     limit,
     authContext,
     dataSource,
+    isNewRelationEnabled,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -168,6 +167,7 @@ export class ProcessNestedRelationsHelper {
     limit: number;
     authContext: any;
     dataSource: DataSource;
+    isNewRelationEnabled: boolean;
   }): Promise<void> {
     const { inverseRelationName, referenceObjectMetadata } =
       this.getRelationMetadata({
@@ -235,6 +235,7 @@ export class ProcessNestedRelationsHelper {
         limit,
         authContext,
         dataSource,
+        isNewRelationEnabled,
       });
     }
   }
@@ -250,6 +251,7 @@ export class ProcessNestedRelationsHelper {
     limit,
     authContext,
     dataSource,
+    isNewRelationEnabled,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -261,6 +263,7 @@ export class ProcessNestedRelationsHelper {
     limit: number;
     authContext: any;
     dataSource: DataSource;
+    isNewRelationEnabled: boolean;
   }): Promise<void> {
     const { referenceObjectMetadata } = this.getRelationMetadata({
       objectMetadataMaps,
@@ -326,6 +329,7 @@ export class ProcessNestedRelationsHelper {
         limit,
         authContext,
         dataSource,
+        isNewRelationEnabled,
       });
     }
   }

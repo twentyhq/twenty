@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class FieldMetadataException extends CustomException {
-  code: FieldMetadataExceptionCode;
   constructor(message: string, code: FieldMetadataExceptionCode) {
     super(message, code);
   }
@@ -16,4 +15,5 @@ export enum FieldMetadataExceptionCode {
   INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
   FIELD_METADATA_RELATION_NOT_ENABLED = 'FIELD_METADATA_RELATION_NOT_ENABLED',
   FIELD_METADATA_RELATION_MALFORMED = 'FIELD_METADATA_RELATION_MALFORMED',
+  LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND = 'LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND',
 }

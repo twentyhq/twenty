@@ -11,6 +11,9 @@ import {
   within,
 } from '@storybook/test';
 import { DateTime } from 'luxon';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormDateFieldInput } from '../FormDateFieldInput';
 
 const meta: Meta<typeof FormDateFieldInput> = {
@@ -18,6 +21,7 @@ const meta: Meta<typeof FormDateFieldInput> = {
   component: FormDateFieldInput,
   args: {},
   argTypes: {},
+  decorators: [I18nFrontDecorator, WorkflowStepDecorator],
 };
 
 export default meta;
@@ -57,7 +61,7 @@ export const SetsDateWithInput: Story = {
   args: {
     label: 'Created At',
     defaultValue: undefined,
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -72,7 +76,7 @@ export const SetsDateWithInput: Story = {
     await userEvent.type(input, `12/08/${currentYear}{enter}`);
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith(
+      expect(args.onChange).toHaveBeenCalledWith(
         `${currentYear}-12-08T00:00:00.000Z`,
       );
     });
@@ -85,7 +89,7 @@ export const SetsDateWithDatePicker: Story = {
   args: {
     label: 'Created At',
     defaultValue: `2024-12-09T13:20:19.631Z`,
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -107,7 +111,7 @@ export const SetsDateWithDatePicker: Story = {
 
       waitForElementToBeRemoved(datePicker),
       waitFor(() => {
-        expect(args.onPersist).toHaveBeenCalledWith(
+        expect(args.onChange).toHaveBeenCalledWith(
           expect.stringMatching(new RegExp(`^2024-12-07`)),
         );
       }),
@@ -122,7 +126,7 @@ export const ResetsDateByClickingButton: Story = {
   args: {
     label: 'Created At',
     defaultValue: `${currentYear}-12-09T13:20:19.631Z`,
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -142,7 +146,7 @@ export const ResetsDateByClickingButton: Story = {
 
       waitForElementToBeRemoved(datePicker),
       waitFor(() => {
-        expect(args.onPersist).toHaveBeenCalledWith(null);
+        expect(args.onChange).toHaveBeenCalledWith(null);
       }),
       waitFor(() => {
         expect(input).toHaveDisplayValue('');
@@ -155,7 +159,7 @@ export const ResetsDateByErasingInputContent: Story = {
   args: {
     label: 'Created At',
     defaultValue: `${currentYear}-12-09T13:20:19.631Z`,
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -172,7 +176,7 @@ export const ResetsDateByErasingInputContent: Story = {
 
       waitForElementToBeRemoved(() => canvas.queryByRole('dialog')),
       waitFor(() => {
-        expect(args.onPersist).toHaveBeenCalledWith(null);
+        expect(args.onChange).toHaveBeenCalledWith(null);
       }),
       waitFor(() => {
         expect(input).toHaveDisplayValue('');
@@ -185,7 +189,7 @@ export const DefaultsToMinValueWhenTypingReallyOldDate: Story = {
   args: {
     label: 'Created At',
     defaultValue: undefined,
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -202,7 +206,7 @@ export const DefaultsToMinValueWhenTypingReallyOldDate: Story = {
       userEvent.type(input, '02/02/1500{Enter}'),
 
       waitFor(() => {
-        expect(args.onPersist).toHaveBeenCalledWith(MIN_DATE.toISOString());
+        expect(args.onChange).toHaveBeenCalledWith(MIN_DATE.toISOString());
       }),
       waitFor(() => {
         expect(input).toHaveDisplayValue(
@@ -243,7 +247,7 @@ export const DefaultsToMaxValueWhenTypingReallyFarDate: Story = {
   args: {
     label: 'Created At',
     defaultValue: undefined,
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -260,7 +264,7 @@ export const DefaultsToMaxValueWhenTypingReallyFarDate: Story = {
       userEvent.type(input, '02/02/2500{Enter}'),
 
       waitFor(() => {
-        expect(args.onPersist).toHaveBeenCalledWith(MAX_DATE.toISOString());
+        expect(args.onChange).toHaveBeenCalledWith(MAX_DATE.toISOString());
       }),
       waitFor(() => {
         expect(input).toHaveDisplayValue(
@@ -301,12 +305,12 @@ export const SwitchesToStandaloneVariable: Story = {
   args: {
     label: 'Created At',
     defaultValue: undefined,
-    onPersist: fn(),
+    onChange: fn(),
     VariablePicker: ({ onVariableSelect }) => {
       return (
         <button
           onClick={() => {
-            onVariableSelect('{{test}}');
+            onVariableSelect(`{{${MOCKED_STEP_ID}.createdAt}}`);
           }}
         >
           Add variable
@@ -320,7 +324,7 @@ export const SwitchesToStandaloneVariable: Story = {
     const addVariableButton = await canvas.findByText('Add variable');
     await userEvent.click(addVariableButton);
 
-    const variableTag = await canvas.findByText('test');
+    const variableTag = await canvas.findByText('Creation date');
     expect(variableTag).toBeVisible();
 
     const removeVariableButton = canvasElement.querySelector(
@@ -343,7 +347,7 @@ export const ClickingOutsideDoesNotResetInputState: Story = {
   args: {
     label: 'Created At',
     defaultValue: `${currentYear}-12-09T13:20:19.631Z`,
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const defaultValueAsDisplayString = parseDateToString({
@@ -369,7 +373,7 @@ export const ClickingOutsideDoesNotResetInputState: Story = {
       waitForElementToBeRemoved(datePicker),
     ]);
 
-    expect(args.onPersist).not.toHaveBeenCalled();
+    expect(args.onChange).not.toHaveBeenCalled();
 
     expect(input).toHaveDisplayValue(defaultValueAsDisplayString.slice(0, -2));
   },
@@ -379,7 +383,7 @@ export const Disabled: Story = {
   args: {
     label: 'Created At',
     defaultValue: `${currentYear}-12-09T13:20:19.631Z`,
-    onPersist: fn(),
+    onChange: fn(),
     readonly: true,
   },
   play: async ({ canvasElement }) => {
@@ -393,14 +397,14 @@ export const Disabled: Story = {
 export const DisabledWithVariable: Story = {
   args: {
     label: 'Created At',
-    defaultValue: `{{a.b.c}}`,
-    onPersist: fn(),
+    defaultValue: `{{${MOCKED_STEP_ID}.createdAt}}`,
+    onChange: fn(),
     readonly: true,
     VariablePicker: ({ onVariableSelect }) => {
       return (
         <button
           onClick={() => {
-            onVariableSelect('{{test}}');
+            onVariableSelect(`{{${MOCKED_STEP_ID}.createdAt}}`);
           }}
         >
           Add variable
@@ -408,10 +412,11 @@ export const DisabledWithVariable: Story = {
       );
     },
   },
+  decorators: [WorkflowStepDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const variableChip = await canvas.findByText('c');
+    const variableChip = await canvas.findByText('Creation date');
     expect(variableChip).toBeVisible();
   },
 };

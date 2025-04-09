@@ -7,7 +7,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ViewType } from '@/views/types/ViewType';
-import { MenuItem } from 'twenty-ui';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledMenuContainer = styled.div`
   position: absolute;

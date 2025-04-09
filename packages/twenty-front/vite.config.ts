@@ -13,7 +13,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 type Checkers = Parameters<typeof checker>[0];
 
 export default defineConfig(({ command, mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
+  const env = loadEnv(mode, __dirname, '');
 
   const {
     REACT_APP_SERVER_BASE_URL,
@@ -63,7 +63,8 @@ export default defineConfig(({ command, mode }) => {
   if (VITE_DISABLE_ESLINT_CHECKER !== 'true') {
     checkers['eslint'] = {
       lintCommand:
-        'cd ../.. && eslint packages/twenty-front --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',
+        // Appended to packages/twenty-front/.eslintrc.cjs
+        'eslint ../../packages/twenty-front --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',
     };
   }
 
@@ -99,7 +100,7 @@ export default defineConfig(({ command, mode }) => {
         plugins: [['@lingui/swc-plugin', {}]],
       }),
       tsconfigPaths({
-        projects: ['tsconfig.json', '../twenty-ui/tsconfig.json'],
+        projects: ['tsconfig.json'],
       }),
       svgr(),
       lingui({
@@ -139,12 +140,28 @@ export default defineConfig(({ command, mode }) => {
     ],
 
     optimizeDeps: {
-      exclude: ['../../node_modules/.vite', '../../node_modules/.cache'],
+      exclude: [
+        '../../node_modules/.vite',
+        '../../node_modules/.cache',
+        '../../node_modules/twenty-ui',
+      ],
     },
 
     build: {
+      minify: false,
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
+      rollupOptions: {
+        output: {
+          manualChunks: (id) => {
+            if (id.includes('@scalar')) {
+              return 'scalar';
+            }
+
+            return null;
+          },
+        },
+      },
     },
 
     envPrefix: 'REACT_APP_',
@@ -165,6 +182,9 @@ export default defineConfig(({ command, mode }) => {
     resolve: {
       alias: {
         path: 'rollup-plugin-node-polyfills/polyfills/path',
+        // https://github.com/twentyhq/twenty/pull/10782/files
+        // This will likely be migrated to twenty-ui package when built separately
+        '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
       },
     },
   };

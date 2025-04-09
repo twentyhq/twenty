@@ -7,13 +7,16 @@ import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { AnimatedEaseIn, IconCheck, MainButton, RGBA } from 'twenty-ui';
 import {
   OnboardingStatus,
   useGetCurrentUserLazyQuery,
 } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { isDefined } from 'twenty-shared/utils';
+import { AnimatedEaseIn } from 'twenty-ui/utilities';
+import { IconCheck } from 'twenty-ui/display';
+import { MainButton } from 'twenty-ui/input';
+import { RGBA } from 'twenty-ui/theme';
 
 const StyledCheckContainer = styled.div`
   align-items: center;

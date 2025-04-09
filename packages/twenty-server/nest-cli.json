@@ -21,6 +21,10 @@
       {
         "include": "**/serverless/drivers/layers/engine/**",
         "outDir": "dist/assets"
+      },
+      {
+        "include": "**/serverless/drivers/constants/executor/index.mjs",
+        "outDir": "dist/assets"
       }
     ],
     "watchAssets": true

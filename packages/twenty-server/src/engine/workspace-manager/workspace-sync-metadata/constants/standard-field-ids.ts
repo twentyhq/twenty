@@ -206,7 +206,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
 
 export const FAVORITE_STANDARD_FIELD_IDS = {
   position: '20202020-dd26-42c6-8c3c-2a7598c204f6',
-  workspaceMember: '20202020-ce63-49cb-9676-fdc0c45892cd',
+  forWorkspaceMember: '20202020-ce63-49cb-9676-fdc0c45892cd',
   person: '20202020-c428-4f40-b6f3-86091511c41c',
   company: '20202020-cff5-4682-8bf9-069169e08279',
   opportunity: '20202020-dabc-48e1-8318-2781a2b32aa2',
@@ -325,7 +325,7 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   favorites: '20202020-a1c2-4500-aaae-83ba8a0e827a',
   // TODO: check if activityTargets field can be deleted
   activityTargets: '20202020-220a-42d6-8261-b2102d6eab35',
-  taskTargets: '20202020-59c0-4279-a208-4a255f04a5be',
+  taskTargets: '20202020-59c0-4179-a208-4a255f04a5be',
   noteTargets: '20202020-dd3f-42d5-a382-db58aabf43d3',
   attachments: '20202020-87c7-4118-83d6-2f4031005209',
   timelineActivities: '20202020-30e2-421f-96c7-19c69d1cf631',
@@ -338,7 +338,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   emails: '20202020-3c51-43fa-8b6e-af39e29368ab',
   linkedinLink: '20202020-f1af-48f7-893b-2007a73dd508',
   xLink: '20202020-8fc2-487c-b84a-55a99b145cfd',
-  jobTitle: '20202020-b0d0-425a-bef9-640a26dacd9b',
+  jobTitle: '20202020-b0d0-415a-bef9-640a26dacd9b',
   phone: '20202020-4564-4b8b-a09f-05445f2e0bce',
   phones: '20202020-0638-448e-8825-439134618022',
   city: '20202020-5243-4ffb-afc5-2c675da41346',
@@ -380,7 +380,7 @@ export const TASK_TARGET_STANDARD_FIELD_IDS = {
   person: '20202020-c8a0-4e85-a016-87e2349cfbec',
   company: '20202020-4703-4a4e-948c-487b0c60a92c',
   opportunity: '20202020-6cb2-4c01-a9a5-aca3dbc11d41',
-  custom: '20202020-42c1-4c9a-8c75-be0971ef89af',
+  custom: '20202020-41c1-4c9a-8c75-be0971ef89af',
 };
 
 export const VIEW_FIELD_STANDARD_FIELD_IDS = {
@@ -435,6 +435,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
     '20202020-b1b3-4bf3-85e4-dc7d58aa9b02',
   position: '20202020-e9db-4303-b271-e8250c450172',
   isCompact: '20202020-674e-4314-994d-05754ea7b22b',
+  openRecordIn: '20202020-086d-4eef-9f03-56c6392eacb8',
   viewFields: '20202020-542b-4bdc-b177-b63175d48edf',
   viewGroups: '20202020-e1a1-419f-ac81-1986a5ea59a8',
   viewFilters: '20202020-ff23-4154-b63c-21fb36cd0967',
@@ -497,6 +498,7 @@ export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
 };
 
 export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
+  position: '20202020-1810-4591-a93c-d0df97dca843',
   name: '20202020-e914-43a6-9c26-3603c59065f4',
   colorScheme: '20202020-66bc-47f2-adac-f2ef7c598b63',
   locale: '20202020-402e-4695-b169-794fa015afbe',

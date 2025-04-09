@@ -1,9 +1,6 @@
 import { v4 } from 'uuid';
 
-import {
-  formatFieldMetadataItemAsFilterDefinition,
-  getFilterTypeFromFieldType,
-} from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
@@ -17,9 +14,9 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared';
-import { MenuItem } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 import { getOperandLabel } from '../utils/getOperandLabel';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   background-color: ${({ theme }) => theme.background.primary};
@@ -68,17 +65,15 @@ export const ObjectFilterDropdownOperandSelect = () => {
     setSelectedOperandInDropdown(newOperand);
 
     if (isValuelessOperand && isDefined(fieldMetadataItemUsedInDropdown)) {
-      const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-        field: fieldMetadataItemUsedInDropdown,
-      });
-
       applyRecordFilter({
-        id: v4(),
+        id: selectedFilter?.id ? selectedFilter.id : v4(),
         fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
         displayValue: '',
         operand: newOperand,
         value: '',
-        definition: filterDefinition,
+        type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
+        label: fieldMetadataItemUsedInDropdown.label,
+        subFieldName: subFieldNameUsedInDropdown,
       });
       return;
     }
@@ -98,17 +93,15 @@ export const ObjectFilterDropdownOperandSelect = () => {
         selectedFilter.displayValue,
       );
 
-      const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-        field: fieldMetadataItemUsedInDropdown,
-      });
-
       applyRecordFilter({
         id: selectedFilter.id ? selectedFilter.id : v4(),
         fieldMetadataId: selectedFilter.fieldMetadataId,
         displayValue,
         operand: newOperand,
         value,
-        definition: filterDefinition,
+        type: filterType,
+        label: fieldMetadataItemUsedInDropdown.label,
+        subFieldName: subFieldNameUsedInDropdown,
       });
     }
   };

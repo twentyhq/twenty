@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -53,7 +53,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   // Relations
   @WorkspaceRelation({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.workspaceMember,
+    standardId: FAVORITE_STANDARD_FIELD_IDS.forWorkspaceMember,
     type: RelationMetadataType.MANY_TO_ONE,
     label: msg`Workspace Member`,
     description: msg`Favorite workspace member`,
@@ -62,10 +62,10 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
   })
   @WorkspaceIsNullable()
-  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
+  forWorkspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
 
-  @WorkspaceJoinColumn('workspaceMember')
-  workspaceMemberId: string;
+  @WorkspaceJoinColumn('forWorkspaceMember')
+  forWorkspaceMemberId: string;
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.person,

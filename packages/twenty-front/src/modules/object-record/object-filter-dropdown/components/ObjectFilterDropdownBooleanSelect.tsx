@@ -3,19 +3,19 @@ import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { v4 } from 'uuid';
 
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
+import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { BooleanDisplay } from '@/ui/field/display/components/BooleanDisplay';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { isDefined } from 'twenty-shared';
-import { IconCheck } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { IconCheck } from 'twenty-ui/display';
 
 const StyledBooleanSelectContainer = styled.div<{ selected?: boolean }>`
   align-items: center;
@@ -24,7 +24,7 @@ const StyledBooleanSelectContainer = styled.div<{ selected?: boolean }>`
   padding: ${({ theme }) =>
     `${theme.spacing(2)} ${theme.spacing(2)} ${theme.spacing(2)} ${theme.spacing(1)}`};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-
+  color: ${({ theme }) => theme.font.color.primary};
   &:hover {
     background: ${({ theme }) => theme.background.transparent.light};
   }
@@ -72,18 +72,16 @@ export const ObjectFilterDropdownBooleanSelect = () => {
       return;
     }
 
-    const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-      field: fieldMetadataItemUsedInDropdown,
-    });
-
     applyRecordFilter({
       id: selectedFilter?.id ?? v4(),
-      definition: filterDefinition,
       operand: selectedOperandInDropdown,
       displayValue: value ? 'True' : 'False',
       fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
       value: value.toString(),
-      viewFilterGroupId: selectedFilter?.viewFilterGroupId,
+      recordFilterGroupId: selectedFilter?.recordFilterGroupId,
+      positionInRecordFilterGroup: selectedFilter?.positionInRecordFilterGroup,
+      type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
+      label: fieldMetadataItemUsedInDropdown.label,
     });
 
     setSelectedValue(value);
@@ -94,7 +92,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
     <SelectableList
       selectableListId="boolean-select"
       selectableItemIdArray={options.map((option) => option.toString())}
-      hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+      hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
       onEnter={(itemId) => {
         handleOptionSelect(itemId === 'true');
       }}

@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import axios from 'axios';
+import semver from 'semver';
 import { Repository } from 'typeorm';
 
 import { EnvironmentVariable } from 'src/engine/core-modules/admin-panel/dtos/environment-variable.dto';
 import { EnvironmentVariablesGroupData } from 'src/engine/core-modules/admin-panel/dtos/environment-variables-group.dto';
 import { EnvironmentVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/environment-variables.output';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
+import { VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
 import {
   AuthException,
   AuthExceptionCode,
@@ -18,15 +21,8 @@ import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/e
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import {
-  FeatureFlagException,
-  FeatureFlagExceptionCode,
-} from 'src/engine/core-modules/feature-flag/feature-flag.exception';
-import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 export class AdminPanelService {
@@ -36,10 +32,6 @@ export class AdminPanelService {
     private readonly domainManagerService: DomainManagerService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(FeatureFlag, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlag>,
   ) {}
 
   async impersonate(userId: string, workspaceId: string) {
@@ -131,44 +123,6 @@ export class AdminPanelService {
     };
   }
 
-  async updateWorkspaceFeatureFlags(
-    workspaceId: string,
-    featureFlag: FeatureFlagKey,
-    value: boolean,
-  ) {
-    featureFlagValidator.assertIsFeatureFlagKey(
-      featureFlag,
-      new FeatureFlagException(
-        'Invalid feature flag key',
-        FeatureFlagExceptionCode.INVALID_FEATURE_FLAG_KEY,
-      ),
-    );
-
-    const workspace = await this.workspaceRepository.findOne({
-      where: { id: workspaceId },
-      relations: ['featureFlags'],
-    });
-
-    workspaceValidator.assertIsDefinedOrThrow(
-      workspace,
-      new AuthException('Workspace not found', AuthExceptionCode.INVALID_INPUT),
-    );
-
-    const existingFlag = workspace.featureFlags?.find(
-      (flag) => flag.key === FeatureFlagKey[featureFlag],
-    );
-
-    if (existingFlag) {
-      await this.featureFlagRepository.update(existingFlag.id, { value });
-    } else {
-      await this.featureFlagRepository.save({
-        key: FeatureFlagKey[featureFlag],
-        value,
-        workspaceId: workspace.id,
-      });
-    }
-  }
-
   getEnvironmentVariablesGrouped(): EnvironmentVariablesOutput {
     const rawEnvVars = this.environmentService.getAll();
     const groupedData = new Map<
@@ -211,5 +165,31 @@ export class AdminPanelService {
       }));
 
     return { groups };
+  }
+
+  async getVersionInfo(): Promise<VersionInfo> {
+    const currentVersion = this.environmentService.get('APP_VERSION');
+
+    try {
+      const response = await axios.get(
+        'https://hub.docker.com/v2/repositories/twentycrm/twenty/tags?page_size=100',
+      );
+
+      const versions = response.data.results
+        .filter((tag) => tag && tag.name !== 'latest')
+        .map((tag) => semver.coerce(tag.name)?.version)
+        .filter((version) => version !== undefined);
+
+      if (versions.length === 0) {
+        return { currentVersion, latestVersion: 'latest' };
+      }
+
+      versions.sort((a, b) => semver.compare(b, a));
+      const latestVersion = versions[0];
+
+      return { currentVersion, latestVersion };
+    } catch (error) {
+      return { currentVersion, latestVersion: 'latest' };
+    }
   }
 }

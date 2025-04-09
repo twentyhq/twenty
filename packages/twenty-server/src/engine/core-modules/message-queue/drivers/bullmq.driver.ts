@@ -1,8 +1,8 @@
 import { OnModuleDestroy } from '@nestjs/common';
 
-import { JobsOptions, Queue, QueueOptions, Worker } from 'bullmq';
-import { isDefined } from 'twenty-shared';
+import { JobsOptions, MetricsTime, Queue, QueueOptions, Worker } from 'bullmq';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   QueueCronJobOptions,
@@ -50,12 +50,16 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
     handler: (job: MessageQueueJob<T>) => Promise<void>,
     options?: MessageQueueWorkerOptions,
   ) {
-    const workerOptions = isDefined(options?.concurrency)
-      ? {
-          ...this.options,
-          concurrency: options.concurrency,
-        }
-      : this.options;
+    const workerOptions = {
+      ...this.options,
+      ...(isDefined(options?.concurrency)
+        ? { concurrency: options.concurrency }
+        : {}),
+      metrics: {
+        maxDataPoints: MetricsTime.ONE_WEEK,
+        collectInterval: 60000,
+      },
+    };
 
     this.workerMap[queueName] = new Worker(
       queueName,

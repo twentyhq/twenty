@@ -1,14 +1,6 @@
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  IconApps,
-  IconButton,
-  IconButtonVariant,
-  IconComponent,
-  LightIconButton,
-  useIcons,
-} from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -21,6 +13,14 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
+import { t } from '@lingui/core/macro';
+import { IconApps, IconComponent, useIcons } from 'twenty-ui/display';
+import {
+  IconButton,
+  IconButtonSize,
+  IconButtonVariant,
+  LightIconButton,
+} from 'twenty-ui/input';
 import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
 
 export type IconPickerProps = {
@@ -33,6 +33,7 @@ export type IconPickerProps = {
   onOpen?: () => void;
   variant?: IconButtonVariant;
   className?: string;
+  size?: IconButtonSize;
 };
 
 const StyledMenuIconItemsContainer = styled.div`
@@ -90,6 +91,7 @@ export const IconPicker = ({
   onOpen,
   variant = 'secondary',
   className,
+  size = 'medium',
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
   const {
@@ -167,9 +169,10 @@ export const IconPicker = ({
             disabled={disabled}
             Icon={icon}
             variant={variant}
+            size={size}
           />
         }
-        dropdownMenuWidth={176}
+        dropdownWidth={176}
         dropdownComponents={
           <SelectableList
             selectableListId="icon-list"
@@ -182,7 +185,7 @@ export const IconPicker = ({
           >
             <DropdownMenu width={176}>
               <DropdownMenuSearchInput
-                placeholder="Search icon"
+                placeholder={t`Search icon`}
                 autoFocus
                 onChange={(event) => {
                   setSearchString(event.target.value);

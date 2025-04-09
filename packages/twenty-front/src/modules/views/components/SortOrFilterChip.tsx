@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent, IconX } from 'twenty-ui';
+import { IconComponent, IconX } from 'twenty-ui/display';
 
 const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   align-items: center;
@@ -46,8 +46,6 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   column-gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   white-space: nowrap;
-
-  margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledIcon = styled.div`

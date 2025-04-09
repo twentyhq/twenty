@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class FeatureFlagException extends CustomException {
-  code: FeatureFlagExceptionCode;
   constructor(message: string, code: FeatureFlagExceptionCode) {
     super(message, code);
   }

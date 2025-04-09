@@ -33,6 +33,16 @@ export function WorkspaceEntity(
       'workspace:gate-metadata-args',
       target,
     );
+    const duplicateCriteria = TypedReflect.getMetadata(
+      'workspace:duplicate-criteria-metadata-args',
+      target,
+    );
+    const isSearchable =
+      TypedReflect.getMetadata(
+        'workspace:is-searchable-metadata-args',
+        target,
+      ) ?? false;
+
     const objectName = convertClassNameToObjectMetadataName(target.name);
 
     metadataArgsStorage.addEntities({
@@ -51,6 +61,8 @@ export function WorkspaceEntity(
       isAuditLogged,
       isSystem,
       gate,
+      duplicateCriteria,
+      isSearchable,
     });
   };
 }

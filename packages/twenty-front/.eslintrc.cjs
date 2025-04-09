@@ -1,9 +1,8 @@
 const path = require('path');
 
 module.exports = {
-  extends: ['../../.eslintrc.cjs', '../../.eslintrc.react.cjs'],
+  extends: ['../../.eslintrc.global.cjs', '../../.eslintrc.react.cjs'],
   ignorePatterns: [
-    '!**/*',
     'node_modules',
     'mockServiceWorker.js',
     '**/generated*/*',
@@ -19,19 +18,19 @@ module.exports = {
   ],
   overrides: [
     {
-      files: ['*.ts', '*.tsx'],
+      files: ['**/*.ts', '**/*.tsx'],
       parserOptions: {
-        project: ['packages/twenty-front/tsconfig.{json,*.json}'],
+        project: ['packages/twenty-front/tsconfig.*.json'],
       },
-      plugins: ['project-structure'],
+      // plugins: ['project-structure'],
       settings: {
-        'project-structure/folder-structure-config-path': path.join(
-          __dirname,
-          'folderStructure.json',
-        ),
+        // 'project-structure/folder-structure-config-path': path.join(
+        //   __dirname,
+        //   'folderStructure.json',
+        // ),
       },
       rules: {
-        'project-structure/folder-structure': 'error',
+        // 'project-structure/folder-structure': 'error',
         /* 
         Uncomment this rule when we have a way to work on 
         'lingui/no-unlocalized-strings': [

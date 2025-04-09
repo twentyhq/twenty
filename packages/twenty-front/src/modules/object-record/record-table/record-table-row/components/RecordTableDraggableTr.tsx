@@ -1,49 +1,45 @@
 import { useTheme } from '@emotion/react';
-import { Draggable, DraggableId } from '@hello-pangea/dnd';
-import { forwardRef, ReactNode } from 'react';
+import { Draggable } from '@hello-pangea/dnd';
+import { ReactNode } from 'react';
 
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
-import { combineRefs } from '~/utils/combineRefs';
+import { RecordTableTrEffect } from '@/object-record/record-table/record-table-row/components/RecordTableTrEffect';
 
 type RecordTableDraggableTrProps = {
   className?: string;
-  draggableId: DraggableId;
+  recordId: string;
   draggableIndex: number;
+  focusIndex: number;
   isDragDisabled?: boolean;
   onClick?: (event: React.MouseEvent<HTMLTableRowElement>) => void;
   children: ReactNode;
 };
 
-export const RecordTableDraggableTr = forwardRef<
-  HTMLTableRowElement,
-  RecordTableDraggableTrProps
->(
-  (
-    {
-      className,
-      draggableId,
-      draggableIndex,
-      isDragDisabled,
-      onClick,
-      children,
-    },
-    ref,
-  ) => {
-    const theme = useTheme();
+export const RecordTableDraggableTr = ({
+  className,
+  recordId,
+  draggableIndex,
+  focusIndex,
+  isDragDisabled,
+  onClick,
+  children,
+}: RecordTableDraggableTrProps) => {
+  const theme = useTheme();
 
-    return (
-      <Draggable
-        draggableId={draggableId}
-        index={draggableIndex}
-        isDragDisabled={isDragDisabled}
-      >
-        {(draggableProvided, draggableSnapshot) => (
+  return (
+    <Draggable
+      draggableId={recordId}
+      index={draggableIndex}
+      isDragDisabled={isDragDisabled}
+    >
+      {(draggableProvided, draggableSnapshot) => (
+        <>
+          <RecordTableTrEffect recordId={recordId} />
           <RecordTableTr
-            ref={combineRefs<HTMLTableRowElement>(
-              ref,
-              draggableProvided.innerRef,
-            )}
+            recordId={recordId}
+            focusIndex={focusIndex}
+            ref={draggableProvided.innerRef}
             className={className}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided.draggableProps}
@@ -57,8 +53,9 @@ export const RecordTableDraggableTr = forwardRef<
                 : 'transparent',
             }}
             isDragging={draggableSnapshot.isDragging}
-            data-testid={`row-id-${draggableId}`}
-            data-selectable-id={draggableId}
+            data-testid={`row-id-${recordId}`}
+            data-virtualized-id={recordId}
+            data-selectable-id={recordId}
             onClick={onClick}
           >
             <RecordTableRowDraggableContextProvider
@@ -70,8 +67,8 @@ export const RecordTableDraggableTr = forwardRef<
               {children}
             </RecordTableRowDraggableContextProvider>
           </RecordTableTr>
-        )}
-      </Draggable>
-    );
-  },
-);
+        </>
+      )}
+    </Draggable>
+  );
+};
