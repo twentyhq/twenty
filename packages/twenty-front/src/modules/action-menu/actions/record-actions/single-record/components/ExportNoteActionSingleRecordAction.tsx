@@ -12,7 +12,7 @@ export const ExportNoteActionSingleRecordAction = () => {
 
   const filename = `${(selectedRecord?.title || 'Untitled Note').replace(/[<>:"/\\|?*]/g, '-')}`;
 
-  const onClick = async () => {
+  const handleClick = async () => {
     if (!isDefined(selectedRecord)) {
       return;
     }
@@ -50,5 +50,5 @@ export const ExportNoteActionSingleRecordAction = () => {
     // await exportBlockNoteEditorToDocx(editor, filename);
   };
 
-  return <Action onClick={onClick} />;
+  return <Action onClick={handleClick} />;
 };

@@ -4,8 +4,8 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useListenToEnterHotkeyOnListItem } from '@/ui/layout/selectable-list/hooks/useListenToEnterHotkeyOnListItem';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useNavigate } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ActionListItem = ({
   action,
@@ -13,20 +13,22 @@ export const ActionListItem = ({
   to,
 }: {
   action: ActionDisplayProps;
-  onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
+  onClick?: () => void;
   to?: string;
 }) => {
   const navigate = useNavigate();
 
+  const handleClick = () => {
+    onClick?.();
+    if (isDefined(to)) {
+      navigate(to);
+    }
+  };
+
   useListenToEnterHotkeyOnListItem({
     hotkeyScope: AppHotkeyScope.CommandMenuOpen,
     itemId: action.key,
-    onEnter: () => {
-      onClick?.();
-      if (isNonEmptyString(to)) {
-        navigate(to);
-      }
-    },
+    onEnter: handleClick,
   });
 
   return (

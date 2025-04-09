@@ -41,7 +41,7 @@ export const HideDeletedRecordsNoSelectionRecordAction = () => {
 
   const { removeRecordFilter } = useRemoveRecordFilter();
 
-  const onClick = () => {
+  const handleClick = () => {
     if (!isDefined(deletedFilter)) {
       return;
     }
@@ -50,5 +50,5 @@ export const HideDeletedRecordsNoSelectionRecordAction = () => {
     toggleSoftDeleteFilterState(false);
   };
 
-  return <Action onClick={onClick} />;
+  return <Action onClick={handleClick} />;
 };

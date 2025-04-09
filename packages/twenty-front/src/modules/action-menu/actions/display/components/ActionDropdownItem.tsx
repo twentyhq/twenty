@@ -10,21 +10,23 @@ export const ActionDropdownItem = ({
   to,
 }: {
   action: ActionDisplayProps;
-  onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
+  onClick?: () => void;
   to?: string;
 }) => {
   const navigate = useNavigate();
+
+  const handleClick = () => {
+    onClick?.();
+    if (isDefined(to)) {
+      navigate(to);
+    }
+  };
 
   return (
     <MenuItem
       key={action.key}
       LeftIcon={action.Icon}
-      onClick={() => {
-        onClick?.();
-        if (isDefined(to)) {
-          navigate(to);
-        }
-      }}
+      onClick={handleClick}
       text={getActionLabel(action.label)}
     />
   );

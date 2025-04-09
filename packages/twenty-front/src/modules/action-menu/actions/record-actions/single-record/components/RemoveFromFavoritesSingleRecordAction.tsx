@@ -15,7 +15,7 @@ export const RemoveFromFavoritesSingleRecordAction = () => {
     (favorite) => favorite.recordId === recordId,
   );
 
-  const onClick = () => {
+  const handleClick = () => {
     if (!isDefined(foundFavorite)) {
       return;
     }
@@ -23,5 +23,5 @@ export const RemoveFromFavoritesSingleRecordAction = () => {
     deleteFavorite(foundFavorite.id);
   };
 
-  return <Action onClick={onClick} />;
+  return <Action onClick={handleClick} />;
 };

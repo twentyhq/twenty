@@ -15,7 +15,7 @@ export const AddToFavoritesSingleRecordAction = () => {
 
   const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
 
-  const onClick = () => {
+  const handleClick = () => {
     if (!isDefined(selectedRecord)) {
       return;
     }
@@ -23,5 +23,5 @@ export const AddToFavoritesSingleRecordAction = () => {
     createFavorite(selectedRecord, objectMetadataItem.nameSingular);
   };
 
-  return <Action onClick={onClick} />;
+  return <Action onClick={handleClick} />;
 };
