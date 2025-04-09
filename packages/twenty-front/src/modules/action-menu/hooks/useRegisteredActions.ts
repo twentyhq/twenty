@@ -36,7 +36,7 @@ export const useRegisteredActions = (
   };
 
   const actionsToRegister = isDefined(viewType)
-    ? Object.values(actionsConfig ?? {}).filter(
+    ? Object.values(actionsConfig).filter(
         (action) =>
           action.availableOn?.includes(viewType) ||
           action.availableOn?.includes(ActionViewType.GLOBAL),
