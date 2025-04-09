@@ -41,10 +41,17 @@ export class InterIntegrationService {
   }
 
   async findAll(workspaceId: string): Promise<InterIntegration[]> {
-    return this.interIntegrationRepository.find({
+    const integrations = await this.interIntegrationRepository.find({
       where: { workspace: { id: workspaceId } },
       relations: ['workspace'],
     });
+
+    return integrations.map((integration) => ({
+      ...integration,
+      status: this.getStatusFromExpirationDate(
+        integration.expirationDate ?? new Date(),
+      ),
+    }));
   }
 
   async findById(id: string): Promise<InterIntegration | null> {
@@ -83,9 +90,18 @@ export class InterIntegrationService {
       throw new NotFoundException('Integration not found');
     }
 
-    integration.status =
-      integration.status === 'active' ? 'inactive' : 'active';
+    integration.status = this.getStatusFromExpirationDate(
+      integration.expirationDate ?? new Date(),
+    );
 
     return await this.interIntegrationRepository.save(integration);
+  }
+
+  private getStatusFromExpirationDate(
+    expirationDate: Date | null,
+  ): 'Active' | 'Expired' | 'Disabled' {
+    if (!expirationDate) return 'Disabled';
+
+    return expirationDate > new Date() ? 'Expired' : 'Active';
   }
 }

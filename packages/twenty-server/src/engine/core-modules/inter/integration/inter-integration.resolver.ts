@@ -39,7 +39,7 @@ export class InterIntegrationResolver {
     return this.interIntegrationService.update(updateInput);
   }
 
-  @Mutation(() => String) // Alterado para retornar apenas o status
+  @Mutation(() => String)
   async toggleInterIntegrationStatus(
     @Args('integrationId') integrationId: string,
   ): Promise<string> {

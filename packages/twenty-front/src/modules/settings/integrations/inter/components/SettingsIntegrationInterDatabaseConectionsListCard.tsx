@@ -4,14 +4,13 @@
 /* eslint-disable unused-imports/no-unused-vars */
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardFooter, IconButton } from 'twenty-ui';
 
 import { useFindAllInterIntegrations } from '@/settings/integrations/inter/hooks/useFindAllInterIntegrations';
 import { useToggleInterIntegration } from '@/settings/integrations/inter/hooks/useToggleInterIntegrationDisable';
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 // eslint-disable-next-line no-restricted-imports
 import { SettingsSelectStatusPill } from '@/settings/integrations/meta/components/SettingsSelectStatusPill';
 import { IconPencil, IconPlus, IconPointFilled } from '@tabler/icons-react';
@@ -20,27 +19,9 @@ type SettingsIntegrationInterDatabaseConectionsListCardProps = {
   integration: SettingsIntegration;
 };
 
-enum ChangeType {
-  DisableWhatsapp = 'DISABLE_WHATSAPP',
-}
-
-const StyledDatabaseLogoContainer = styled.div`
-  align-items: center;
-  display: flex;
-  height: ${({ theme }) => theme.spacing(4)};
-  justify-content: center;
-  width: ${({ theme }) => theme.spacing(4)};
-`;
-
 const StyledDatabaseLogo = styled.img`
   height: 100%;
   width: 16px;
-`;
-
-const StyledRowRightContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledIntegrationsSection = styled.div`
@@ -101,11 +82,6 @@ export const SettingsIntegrationInterDatabaseConectionsListCard = ({
   // const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
-  const { databaseKey = '' } = useParams();
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [changeType, setChangeType] = useState<ChangeType>();
-  const [selectedIntegrationId, setSelectedIntegrationId] =
-    useState<string>('');
 
   const { interIntegrations = [], refetchInter } =
     useFindAllInterIntegrations();
@@ -115,21 +91,9 @@ export const SettingsIntegrationInterDatabaseConectionsListCard = ({
     refetchInter();
   }, [refetchInter]);
 
-  const handleStatusIntegration = (integrationId: string) => {
-    setChangeType(ChangeType.DisableWhatsapp);
-    setSelectedIntegrationId(integrationId);
-    setIsModalOpen(true);
-  };
-
-  const handleConfirmChange = () => {
-    switch (changeType) {
-      case ChangeType.DisableWhatsapp:
-        toggleInterIntegrationDisable(selectedIntegrationId);
-        refetchInter();
-        return;
-      default:
-        return;
-    }
+  const handleConfirmChange = (id: string) => {
+    toggleInterIntegrationDisable(id);
+    refetchInter();
   };
 
   const handleEditIntegration = (integrationId: string) => {
@@ -156,18 +120,13 @@ export const SettingsIntegrationInterDatabaseConectionsListCard = ({
                     options={[
                       {
                         Icon: IconPointFilled,
-                        label: 'Active',
-                        value: false,
-                      },
-                      {
-                        Icon: IconPointFilled,
-                        label: 'Deactive',
-                        value: true,
+                        label: interIntegrations.status,
+                        value:
+                          interIntegrations.status === 'Active' ? false : true,
                       },
                     ]}
-                    //value={interIntegrations.disabled}
-                    onChange={(newValue) => {
-                      handleStatusIntegration(interIntegrations.id);
+                    onChange={() => {
+                      handleConfirmChange(interIntegrations.id);
                     }}
                   />
                   <IconButton
@@ -188,16 +147,6 @@ export const SettingsIntegrationInterDatabaseConectionsListCard = ({
           </StyledButton>
         </StyledFooter>
       </StyledIntegrationsSection>
-      <ConfirmationModal
-        isOpen={isModalOpen}
-        setIsOpen={setIsModalOpen}
-        title={`Disable Inbox`}
-        subtitle={
-          <>{`This will disabled this inbox and all chat conversations.`}</>
-        }
-        onConfirmClick={handleConfirmChange}
-        //deleteButtonText={'Continue'}
-      />
     </>
   );
 };
