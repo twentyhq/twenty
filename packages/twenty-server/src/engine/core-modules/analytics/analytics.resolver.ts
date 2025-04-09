@@ -35,7 +35,7 @@ export class AnalyticsResolver {
     }
 
     return analyticsContext.sendUnknownEvent(
-      makeUnknownEvent(createAnalyticsInput.payload),
+      makeUnknownEvent(createAnalyticsInput),
     );
   }
 }

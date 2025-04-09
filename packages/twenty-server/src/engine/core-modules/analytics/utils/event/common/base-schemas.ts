@@ -7,6 +7,6 @@ export const eventSchema = z
     version: z.string(),
     userId: z.string().nullish(),
     workspaceId: z.string().nullish(),
-    payload: z.any().nullish(),
+    payload: z.optional(z.nullable(z.any())),
   })
   .strict();

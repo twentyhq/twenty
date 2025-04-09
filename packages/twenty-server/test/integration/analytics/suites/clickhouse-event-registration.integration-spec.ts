@@ -1,24 +1,19 @@
-import { gql } from 'graphql-tag';
 import request from 'supertest';
-import { createClient } from '@clickhouse/client';
-
+import { createClient, ClickHouseClient } from '@clickhouse/client';
 describe('ClickHouse Event Registration (integration)', () => {
-  let clickhouseClient: any;
+  let clickhouseClient: ClickHouseClient;
 
   beforeAll(async () => {
+    jest.useRealTimers();
+
     clickhouseClient = createClient({
       // use variable
       url: 'http://default:devPassword@localhost:8123/twenty-dev',
-      compression: {
-        response: true,
-        request: true,
-      },
     });
-  });
 
-  beforeEach(async () => {
     await clickhouseClient.query({
       query: 'TRUNCATE TABLE events',
+      format: 'JSONEachRow',
     });
   });
 
@@ -28,8 +23,8 @@ describe('ClickHouse Event Registration (integration)', () => {
     }
   });
 
-  it('should register events in ClickHouse when sending an event through AnalyticsService', async () => {
-    const mutation = gql`
+  it('should register events in ClickHouse when sending an event', async () => {
+    const mutation = `
       mutation Track($action: String!, $payload: JSON!) {
         track(action: $action, payload: $payload) {
           success
@@ -40,21 +35,21 @@ describe('ClickHouse Event Registration (integration)', () => {
     const variables = {
       action: 'random.event',
       payload: {
-        key: 'value',
+        foo: 'bar',
       },
     };
 
     const response = await request(`http://localhost:${APP_PORT}`)
       .post('/graphql')
       .send({
-        query: mutation.loc?.source.body,
+        query: mutation,
         variables,
       });
 
     expect(response.status).toBe(200);
-    expect(response.body.data.track).toBe(true);
+    expect(response.body.data.track.success).toBe(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 20));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     const queryResult = await clickhouseClient.query({
       query: `
@@ -66,6 +61,8 @@ describe('ClickHouse Event Registration (integration)', () => {
     });
 
     const rows = await queryResult.json();
+
+    expect(rows.length).toBe(1);
 
     console.log('>>>>>>>>>>>>>>', rows);
   });
