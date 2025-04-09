@@ -9,7 +9,6 @@ import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import camelCase from 'lodash.camelcase';
 import { IconSettingsAutomation, IconX } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
@@ -64,20 +63,6 @@ export const WorkflowEditActionFormFieldSettings = ({
   onClose,
 }: WorkflowEditActionFormFieldSettingsProps) => {
   const theme = useTheme();
-  const onSubFieldUpdate = (fieldName: string, value: any) => {
-    if (fieldName === 'label') {
-      onChange({
-        ...field,
-        name: camelCase(value),
-        label: value,
-      });
-    } else {
-      onChange({
-        ...field,
-        [fieldName]: value,
-      });
-    }
-  };
 
   return (
     <StyledFormFieldSettingsContainer>
@@ -119,15 +104,13 @@ export const WorkflowEditActionFormFieldSettings = ({
                 name,
                 label,
                 settings,
+                placeholder: '',
               });
             }}
             defaultValue={field.type}
           />
         </FormFieldInputContainer>
-        <WorkflowFormFieldSettingsByType
-          field={field}
-          onChange={onSubFieldUpdate}
-        />
+        <WorkflowFormFieldSettingsByType field={field} onChange={onChange} />
       </StyledSettingsContent>
     </StyledFormFieldSettingsContainer>
   );

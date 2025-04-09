@@ -157,5 +157,8 @@ export const useSelectableListHotKeys = (
     ),
     hotkeyScope,
     [],
+    {
+      preventDefault: false,
+    },
   );
 };

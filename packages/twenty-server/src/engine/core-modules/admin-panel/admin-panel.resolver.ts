@@ -3,7 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
-import { EnvironmentVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/environment-variables.output';
+import { ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
 import { ImpersonateInput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.input';
 import { ImpersonateOutput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.output';
 import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
@@ -17,7 +17,6 @@ import { FeatureFlagException } from 'src/engine/core-modules/feature-flag/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
-import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
@@ -33,7 +32,6 @@ export class AdminPanelResolver {
   constructor(
     private adminService: AdminPanelService,
     private adminPanelHealthService: AdminPanelHealthService,
-    private workerHealthIndicator: WorkerHealthIndicator,
     private featureFlagService: FeatureFlagService,
   ) {}
 
@@ -76,9 +74,9 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
-  @Query(() => EnvironmentVariablesOutput)
-  async getEnvironmentVariablesGrouped(): Promise<EnvironmentVariablesOutput> {
-    return this.adminService.getEnvironmentVariablesGrouped();
+  @Query(() => ConfigVariablesOutput)
+  async getConfigVariablesGrouped(): Promise<ConfigVariablesOutput> {
+    return this.adminService.getConfigVariablesGrouped();
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)

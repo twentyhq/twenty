@@ -7,7 +7,7 @@ import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/doma
 import { EmailVerificationResolver } from 'src/engine/core-modules/email-verification/email-verification.resolver';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
-import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
+import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 
@@ -15,7 +15,7 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
   imports: [
     TypeOrmModule.forFeature([AppToken], 'core'),
     EmailModule,
-    EnvironmentModule,
+    TwentyConfigModule,
     DomainManagerModule,
     UserModule,
     UserWorkspaceModule,

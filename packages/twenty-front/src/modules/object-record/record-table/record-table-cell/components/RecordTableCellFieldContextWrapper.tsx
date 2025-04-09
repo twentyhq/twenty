@@ -41,11 +41,11 @@ export const RecordTableCellFieldContextWrapper = ({
   return (
     <RecordFieldComponentInstanceContext.Provider value={{ instanceId }}>
       {isLabelIdentifier ? (
-        <RecordTableCellFieldContextLabelIdentifier>
+        <RecordTableCellFieldContextLabelIdentifier key={instanceId}>
           {children}
         </RecordTableCellFieldContextLabelIdentifier>
       ) : (
-        <RecordTableCellFieldContextGeneric>
+        <RecordTableCellFieldContextGeneric key={instanceId}>
           {children}
         </RecordTableCellFieldContextGeneric>
       )}

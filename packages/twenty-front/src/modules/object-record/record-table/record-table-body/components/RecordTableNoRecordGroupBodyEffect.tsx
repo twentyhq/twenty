@@ -2,25 +2,28 @@ import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { useLazyLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLazyLoadRecordIndexTable';
 import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
 import { tableEncounteredUnrecoverableErrorComponentState } from '@/object-record/record-table/states/tableEncounteredUnrecoverableErrorComponentState';
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
+import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { isNonEmptyString, isNull } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 
 export const RecordTableNoRecordGroupBodyEffect = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
 
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const { setIsRecordTableInitialLoading } = useRecordTable();
+
+  const showAuthModal = useShowAuthModal();
 
   const [hasInitializedScroll, setHasInitializedScroll] = useState(false);
 
@@ -139,7 +142,8 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   ]);
 
   useEffect(() => {
-    if (isNull(currentWorkspaceMember)) {
+    if (showAuthModal) {
+      setIsRecordTableInitialLoading(false);
       return;
     }
 
@@ -147,7 +151,12 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
       findManyRecords();
       setHasInitialized(true);
     }
-  }, [currentWorkspaceMember, findManyRecords, hasInitialized]);
+  }, [
+    findManyRecords,
+    hasInitialized,
+    setIsRecordTableInitialLoading,
+    showAuthModal,
+  ]);
 
   return <></>;
 };

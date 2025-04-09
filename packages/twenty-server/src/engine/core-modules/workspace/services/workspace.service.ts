@@ -13,7 +13,6 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
@@ -23,6 +22,7 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -64,7 +64,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingService: BillingService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly permissionsService: PermissionsService,
@@ -97,7 +97,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     if (
       !subdomainAvailable ||
-      this.environmentService.get('DEFAULT_SUBDOMAIN') === newSubdomain
+      this.twentyConfigService.get('DEFAULT_SUBDOMAIN') === newSubdomain
     ) {
       throw new WorkspaceException(
         'Subdomain already taken',
@@ -167,6 +167,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       userWorkspaceId,
       workspaceId: workspace.id,
       apiKey,
+      workspaceActivationStatus: workspace.activationStatus,
     });
 
     if (payload.subdomain && workspace.subdomain !== payload.subdomain) {
@@ -190,9 +191,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
 
     const authProvidersBySystem = {
-      google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
-      password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
-      microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
+      google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),
+      password: this.twentyConfigService.get('AUTH_PASSWORD_ENABLED'),
+      microsoft: this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED'),
     };
 
     if (payload.isGoogleAuthEnabled && !authProvidersBySystem.google) {
@@ -268,7 +269,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
-    const appVersion = this.environmentService.get('APP_VERSION');
+    const appVersion = this.twentyConfigService.get('APP_VERSION');
 
     await this.workspaceRepository.update(workspace.id, {
       displayName: data.displayName,
@@ -472,11 +473,13 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     userWorkspaceId,
     workspaceId,
     apiKey,
+    workspaceActivationStatus,
   }: {
     payload: Partial<Workspace>;
     userWorkspaceId?: string;
     workspaceId: string;
     apiKey?: string;
+    workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     if (
       'displayName' in payload ||
@@ -486,6 +489,12 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     ) {
       if (!userWorkspaceId) {
         throw new Error('Missing userWorkspaceId in authContext');
+      }
+
+      if (
+        workspaceActivationStatus === WorkspaceActivationStatus.PENDING_CREATION
+      ) {
+        return;
       }
 
       const userHasPermission =

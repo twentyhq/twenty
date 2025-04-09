@@ -9,7 +9,7 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
@@ -26,7 +26,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
-    protected readonly environmentService: EnvironmentService,
+    protected readonly twentyConfigService: TwentyConfigService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     protected readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
   ) {
@@ -87,7 +87,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
   }
 
   private retrieveToVersionFromAppVersion() {
-    const appVersion = this.environmentService.get('APP_VERSION');
+    const appVersion = this.twentyConfigService.get('APP_VERSION');
 
     if (!isDefined(appVersion)) {
       throw new Error(

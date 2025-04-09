@@ -1,14 +1,19 @@
+import { Action } from '@/action-menu/actions/components/Action';
+import { ActionLink } from '@/action-menu/actions/components/ActionLink';
+import { ActionScope } from '@/action-menu/actions/types/ActionScope';
+import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { AppPath } from '@/types/AppPath';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { capitalize } from 'twenty-shared/utils';
+import { Avatar } from 'twenty-ui/display';
 import { useDebounce } from 'use-debounce';
 import { useSearchQuery } from '~/generated/graphql';
-import { Avatar } from 'twenty-ui/display';
 
 export const useCommandMenuSearchRecords = () => {
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
@@ -25,14 +30,14 @@ export const useCommandMenuSearchRecords = () => {
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-  const commands = useMemo(() => {
-    return (searchData?.search ?? []).map((searchRecord) => {
-      const command = {
-        id: searchRecord.recordId,
+  const actionItems = useMemo(() => {
+    return (searchData?.search ?? []).map((searchRecord, index) => {
+      const baseAction = {
+        type: ActionType.Navigation,
+        scope: ActionScope.Global,
+        key: searchRecord.recordId,
         label: searchRecord.label,
-        description: capitalize(searchRecord.objectNameSingular),
-        to: `object/${searchRecord.objectNameSingular}/${searchRecord.recordId}`,
-        shouldCloseCommandMenuOnClick: true,
+        position: index,
         Icon: () => (
           <Avatar
             type={
@@ -45,39 +50,59 @@ export const useCommandMenuSearchRecords = () => {
             placeholder={searchRecord.label}
           />
         ),
+        shouldBeRegistered: () => true,
+        description: capitalize(searchRecord.objectNameSingular),
+        shouldCloseCommandMenuOnClick: true,
       };
+
       if (
         [CoreObjectNameSingular.Task, CoreObjectNameSingular.Note].includes(
           searchRecord.objectNameSingular as CoreObjectNameSingular,
         )
       ) {
         return {
-          ...command,
-          to: '',
-          onCommandClick: () => {
-            searchRecord.objectNameSingular === 'task'
-              ? openRecordInCommandMenu({
-                  recordId: searchRecord.recordId,
-                  objectNameSingular: CoreObjectNameSingular.Task,
-                })
-              : openRecordInCommandMenu({
-                  recordId: searchRecord.recordId,
-                  objectNameSingular: CoreObjectNameSingular.Note,
-                });
-          },
+          ...baseAction,
+          component: (
+            <Action
+              onClick={() => {
+                searchRecord.objectNameSingular === 'task'
+                  ? openRecordInCommandMenu({
+                      recordId: searchRecord.recordId,
+                      objectNameSingular: CoreObjectNameSingular.Task,
+                    })
+                  : openRecordInCommandMenu({
+                      recordId: searchRecord.recordId,
+                      objectNameSingular: CoreObjectNameSingular.Note,
+                    });
+              }}
+              preventCommandMenuClosing
+            />
+          ),
         };
       }
-      return command;
+
+      return {
+        ...baseAction,
+        component: (
+          <ActionLink
+            to={AppPath.RecordShowPage}
+            params={{
+              objectNameSingular: searchRecord.objectNameSingular,
+              objectRecordId: searchRecord.recordId,
+            }}
+          />
+        ),
+      };
     });
   }, [searchData, openRecordInCommandMenu]);
 
   return {
     loading,
-    noResults: !commands?.length,
+    noResults: !actionItems?.length,
     commandGroups: [
       {
         heading: t`Results`,
-        items: commands,
+        items: actionItems,
       },
     ],
     hasMore: false,
