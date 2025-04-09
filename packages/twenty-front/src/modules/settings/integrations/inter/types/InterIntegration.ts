@@ -7,6 +7,7 @@ export type InterIntegration = {
   certificate?: string | null;
   status: string;
   workspaceId: string;
+  expirationDate?: Date | null;
   workspace: {
     id: string;
   };

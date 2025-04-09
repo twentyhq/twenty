@@ -372,6 +372,7 @@ export type CreateInterIntegrationInput = {
   certificate?: InputMaybe<Scalars['String']>;
   clientId: Scalars['String'];
   clientSecret: Scalars['String'];
+  expirationDate?: InputMaybe<Scalars['DateTime']>;
   integrationName: Scalars['String'];
   privateKey?: InputMaybe<Scalars['String']>;
   status?: Scalars['String'];
@@ -928,6 +929,7 @@ export type InterIntegration = {
   certificate?: Maybe<Scalars['String']>;
   clientId: Scalars['String'];
   clientSecret: Scalars['String'];
+  expirationDate?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
   integrationName: Scalars['String'];
   privateKey?: Maybe<Scalars['String']>;
@@ -2593,6 +2595,7 @@ export type UpdateInterIntegrationInput = {
   certificate?: InputMaybe<Scalars['String']>;
   clientId?: InputMaybe<Scalars['String']>;
   clientSecret?: InputMaybe<Scalars['String']>;
+  expirationDate?: InputMaybe<Scalars['DateTime']>;
   id: Scalars['String'];
   integrationName?: InputMaybe<Scalars['String']>;
   privateKey?: InputMaybe<Scalars['String']>;

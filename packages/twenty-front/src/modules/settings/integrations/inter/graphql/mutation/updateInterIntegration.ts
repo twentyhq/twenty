@@ -9,6 +9,7 @@ export const UPDATE_INTER_INTEGRATION = gql`
       clientSecret
       privateKey
       certificate
+      expirationDate
       status
     }
   }

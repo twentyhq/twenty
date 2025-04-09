@@ -88,9 +88,4 @@ export class InterIntegrationService {
 
     return await this.interIntegrationRepository.save(integration);
   }
-
-  /*async delete(id: string): Promise<boolean> {
-    const result = await this.interIntegrationRepository.delete(id);
-    return result.affected > 0;
-  }*/
 }

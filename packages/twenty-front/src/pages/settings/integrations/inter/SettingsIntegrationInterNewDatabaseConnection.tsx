@@ -24,6 +24,7 @@ export const settingsIntegrationInterConnectionFormSchema = z.object({
   status: z.string().optional(),
   privateKey: z.any().optional(),
   certificate: z.any().optional(),
+  expirationDate: z.coerce.date().optional(),
 });
 
 export type SettingsIntegrationInterConnectionFormValues = z.infer<
@@ -75,6 +76,7 @@ export const SettingsIntegrationInterNewDatabaseConnection = () => {
         status: 'active',
         certificate: formValues.certificate,
         privateKey: formValues.privateKey,
+        expirationDate: formValues.expirationDate,
       });
 
       navigate(SettingsPath.IntegrationInterDatabase);

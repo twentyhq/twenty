@@ -28,6 +28,7 @@ export const settingsIntegrationInterConnectionFormSchema = z.object({
   status: z.string().optional(),
   privateKey: z.any().optional(),
   certificate: z.any().optional(),
+  expirationDate: z.coerce.date().optional(),
 });
 
 export type SettingsEditIntegrationInterConnectionFormValues = z.infer<
@@ -75,6 +76,7 @@ export const SettingsIntegrationInterEditDatabaseConnection = () => {
       clientId: activeConnection?.clientId,
       clientSecret: activeConnection?.clientSecret,
       integrationName: activeConnection?.integrationName,
+      expirationDate: activeConnection?.expirationDate ?? undefined,
     },
   });
 
@@ -92,6 +94,7 @@ export const SettingsIntegrationInterEditDatabaseConnection = () => {
         status: 'active',
         certificate: formValues.certificate,
         privateKey: formValues.privateKey,
+        expirationDate: formValues.expirationDate,
       });
 
       navigate(SettingsPath.IntegrationInterDatabase);

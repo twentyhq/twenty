@@ -11,17 +11,17 @@ export class UpdateInterIntegrationInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  integrationName?: string;
+  integrationName: string;
 
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  clientId?: string;
+  clientId: string;
 
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  clientSecret?: string;
+  clientSecret: string;
 
   @Field({ nullable: true })
   @IsString()
@@ -36,5 +36,9 @@ export class UpdateInterIntegrationInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  status?: string;
+  status: string;
+
+  @Field(() => Date, { nullable: true })
+  @IsOptional()
+  expirationDate?: Date;
 }

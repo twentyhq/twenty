@@ -58,6 +58,29 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
             )}
           />
         </StyledHalfWidthInput>
+
+        <StyledHalfWidthInput>
+          <Controller
+            name="expirationDate"
+            control={control}
+            render={({ field }) => (
+              <TextInputV2
+                label="Expiration Date"
+                type="date"
+                value={
+                  field.value
+                    ? new Date(field.value).toISOString().split('T')[0]
+                    : ''
+                }
+                onChange={(value) => {
+                  field.onChange(value ? new Date(value) : null);
+                }}
+                disabled={disabled}
+                fullWidth
+              />
+            )}
+          />
+        </StyledHalfWidthInput>
       </StyledRow>
 
       <StyledRow>

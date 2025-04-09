@@ -32,7 +32,11 @@ export class CreateInterIntegrationInput {
   @Field({ defaultValue: 'active' })
   @IsString()
   @IsOptional()
-  status?: string;
+  status: string;
+
+  @Field(() => Date, { nullable: true })
+  @IsOptional()
+  expirationDate?: Date;
 
   @Field(() => ID)
   @IsString()

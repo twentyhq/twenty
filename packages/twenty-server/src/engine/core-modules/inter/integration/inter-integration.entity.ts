@@ -43,6 +43,10 @@ export class InterIntegration {
   @Column({ default: 'active' })
   status: string;
 
+  @Field(() => Date, { nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
+  expirationDate?: Date;
+
   @Field(() => Workspace)
   @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
   workspace: Relation<Workspace>;

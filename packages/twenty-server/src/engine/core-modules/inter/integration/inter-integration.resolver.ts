@@ -15,8 +15,6 @@ export class InterIntegrationResolver {
   async createInterIntegration(
     @Args('createInput') createInput: CreateInterIntegrationInput,
   ): Promise<InterIntegration> {
-    console.log('CHEGOU NO RESOLVER VANESA');
-
     return this.interIntegrationService.create(createInput);
   }
 
@@ -50,11 +48,4 @@ export class InterIntegrationResolver {
 
     return integration.status;
   }
-
-  /*@Mutation(() => Boolean)
-  async deleteInterIntegration(
-    @Args('integrationId') integrationId: string,
-  ): Promise<boolean> {
-    return this.interIntegrationService.remove(integrationId);
-  }*/
 }

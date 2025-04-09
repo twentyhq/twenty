@@ -9,6 +9,7 @@ export const CREATE_INTER_INTEGRATION = gql`
       clientSecret
       privateKey
       certificate
+      expirationDate
       status
       workspace {
         id

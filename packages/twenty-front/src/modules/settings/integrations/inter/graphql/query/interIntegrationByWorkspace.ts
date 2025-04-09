@@ -10,6 +10,7 @@ export const GET_ALL_INTER_INTEGRATIONS = gql`
       privateKey
       certificate
       status
+      expirationDate
       workspace {
         id
       }
