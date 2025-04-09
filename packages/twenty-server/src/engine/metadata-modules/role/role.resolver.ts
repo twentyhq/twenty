@@ -34,6 +34,7 @@ import { SettingPermissionDTO } from 'src/engine/metadata-modules/setting-permis
 import { UpsertSettingPermissionInput } from 'src/engine/metadata-modules/setting-permission/dtos/upsert-setting-permission-input';
 import { SettingPermissionService } from 'src/engine/metadata-modules/setting-permission/setting-permission.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/workspace-roles-permissions-cache/workspace-roles-permissions-cache.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Resolver(() => RoleDTO)
@@ -47,6 +48,7 @@ export class RoleResolver {
     private readonly featureFlagService: FeatureFlagService,
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly settingPermissionService: SettingPermissionService,
+    private readonly workspaceRolesPermissionsCacheService: WorkspaceRolesPermissionsCacheService,
   ) {}
 
   @Query(() => [RoleDTO])
@@ -111,10 +113,18 @@ export class RoleResolver {
   ): Promise<RoleDTO> {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
 
-    return this.roleService.createRole({
+    const role = await this.roleService.createRole({
       workspaceId: workspace.id,
       input: createRoleInput,
     });
+
+    await this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
+      {
+        workspaceId: workspace.id,
+      },
+    );
+
+    return role;
   }
 
   @Mutation(() => RoleDTO)
@@ -124,10 +134,18 @@ export class RoleResolver {
   ): Promise<RoleDTO> {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
 
-    return this.roleService.updateRole({
+    const role = await this.roleService.updateRole({
       input: updateRoleInput,
       workspaceId: workspace.id,
     });
+
+    await this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
+      {
+        workspaceId: workspace.id,
+      },
+    );
+
+    return role;
   }
 
   @Mutation(() => String)
@@ -137,7 +155,18 @@ export class RoleResolver {
   ): Promise<string> {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
 
-    return this.roleService.deleteRole(roleId, workspace.id);
+    const deletedRoleId = await this.roleService.deleteRole(
+      roleId,
+      workspace.id,
+    );
+
+    await this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
+      {
+        workspaceId: workspace.id,
+      },
+    );
+
+    return deletedRoleId;
   }
 
   @Mutation(() => ObjectPermissionDTO)
@@ -148,10 +177,19 @@ export class RoleResolver {
   ) {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
 
-    return this.objectPermissionService.upsertObjectPermission({
-      workspaceId: workspace.id,
-      input: upsertObjectPermissionInput,
-    });
+    const objectPermission =
+      await this.objectPermissionService.upsertObjectPermission({
+        workspaceId: workspace.id,
+        input: upsertObjectPermissionInput,
+      });
+
+    await this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
+      {
+        workspaceId: workspace.id,
+      },
+    );
+
+    return objectPermission;
   }
 
   @Mutation(() => SettingPermissionDTO)
