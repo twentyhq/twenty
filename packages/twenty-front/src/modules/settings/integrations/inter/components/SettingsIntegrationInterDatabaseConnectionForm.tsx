@@ -127,7 +127,7 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
           <FileDropZone
             label="Private Key"
             accept=".pem,.key"
-            file={watch('privateKey') as File | null}
+            file={watch('privateKey')}
             onFileSelected={(file) => setValue('privateKey', file)}
             onFileRemoved={() => setValue('privateKey', undefined)}
             disabled={disabled}

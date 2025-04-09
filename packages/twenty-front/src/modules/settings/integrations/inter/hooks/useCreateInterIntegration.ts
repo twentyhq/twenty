@@ -33,9 +33,27 @@ export const useCreateInterIntegration = (): CreateInterIntegration => {
     });
 
   const createInterIntegration = async (input: CreateInterIntegrationInput) => {
+    const toBase64 = (file: File): Promise<string> =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+      });
+
+    const privateKeyContent = input.privateKey
+      ? await toBase64(input.privateKey as File)
+      : null;
+
+    const certificateContent = input.certificate
+      ? await toBase64(input.certificate as File)
+      : null;
+
     const createInput = {
       ...input,
       workspaceId: currentWorkspace?.id,
+      privateKey: privateKeyContent,
+      certificate: certificateContent,
     };
 
     await createInterIntegrationMutation({

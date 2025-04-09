@@ -77,6 +77,8 @@ export const SettingsIntegrationInterEditDatabaseConnection = () => {
       clientSecret: activeConnection?.clientSecret,
       integrationName: activeConnection?.integrationName,
       expirationDate: activeConnection?.expirationDate ?? undefined,
+      certificate: activeConnection?.certificate,
+      privateKey: activeConnection?.privateKey,
     },
   });
 
@@ -91,7 +93,6 @@ export const SettingsIntegrationInterEditDatabaseConnection = () => {
         clientId: formValues.clientId,
         integrationName: formValues.integrationName,
         clientSecret: formValues.clientSecret,
-        status: 'active',
         certificate: formValues.certificate,
         privateKey: formValues.privateKey,
         expirationDate: formValues.expirationDate,

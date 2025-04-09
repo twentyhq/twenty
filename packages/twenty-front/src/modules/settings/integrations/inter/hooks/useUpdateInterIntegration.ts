@@ -34,10 +34,32 @@ export const useUpdateInterIntegration = (): UpdateInterIntegration => {
   const updateInterIntegration = async (
     updateInput: UpdateInterIntegrationInput,
   ) => {
+    const toBase64 = (file: File): Promise<string> =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+      });
+
+    const privateKeyContent = updateInput.privateKey
+      ? await toBase64(updateInput.privateKey as File)
+      : null;
+
+    const certificateContent = updateInput.certificate
+      ? await toBase64(updateInput.certificate as File)
+      : null;
+
+    const input = {
+      ...updateInput,
+      privateKey: privateKeyContent,
+      certificate: certificateContent,
+    };
+
     try {
       await updateInterIntegrationMutation({
         variables: {
-          updateInput,
+          updateInput: input,
         },
       });
     } catch (err) {

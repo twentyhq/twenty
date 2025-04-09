@@ -3,9 +3,11 @@
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
+// eslint-disable-next-line no-restricted-imports
+import { IconFileDownload } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { MainButton } from 'twenty-ui';
+import { IconButton, MainButton } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -66,6 +68,29 @@ type FileDropZoneProps = {
   disabled?: boolean;
   file?: File | null;
 };
+
+const StyledFileDisplay = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledFileIcon = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: 20px;
+`;
+
+const StyledFileLink = styled.a`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:hover {
+    color: ${({ theme }) => theme.font.color.primary};
+  }
+`;
 
 export const FileDropZone = ({
   onFileSelected,
@@ -132,7 +157,28 @@ export const FileDropZone = ({
           <div>Processing...</div>
         ) : file ? (
           <>
-            <StyledFileName>{file.name}</StyledFileName>
+            <StyledFileDisplay>
+              <StyledFileIcon>
+                <IconButton
+                  Icon={IconFileDownload}
+                  size="small"
+                  variant="secondary"
+                />
+              </StyledFileIcon>
+
+              {typeof file === 'string' ? (
+                <StyledFileLink
+                  href={file}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download
+                >
+                  Download
+                </StyledFileLink>
+              ) : (
+                <StyledFileName>{file.name}</StyledFileName>
+              )}
+            </StyledFileDisplay>
 
             <StyledButtonContainer>
               <MainButton
