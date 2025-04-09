@@ -12,11 +12,13 @@ export const ActionOpenSidePanelPage = ({
   page,
   pageTitle,
   pageIcon,
+  onClick,
   shouldResetSearchState = false,
 }: {
   page: CommandMenuPages;
   pageTitle: string;
   pageIcon: IconComponent;
+  onClick?: () => void;
   shouldResetSearchState?: boolean;
 }) => {
   const actionConfig = useContext(ActionConfigContext);
@@ -30,6 +32,8 @@ export const ActionOpenSidePanelPage = ({
   }
 
   const handleClick = () => {
+    onClick?.();
+
     navigateCommandMenu({
       page,
       pageTitle,
