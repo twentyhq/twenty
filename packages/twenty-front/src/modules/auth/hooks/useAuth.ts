@@ -63,6 +63,7 @@ import { useSearchParams } from 'react-router-dom';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { iconsState } from 'twenty-ui/display';
+import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
@@ -347,6 +348,12 @@ export const useAuth = () => {
 
       setTokenPair(
         getAuthTokensResult.data?.getAuthTokensFromLoginToken.tokens,
+      );
+      cookieStorage.setItem(
+        'tokenPair',
+        JSON.stringify(
+          getAuthTokensResult.data?.getAuthTokensFromLoginToken.tokens,
+        ),
       );
 
       await refreshObjectMetadataItems();
