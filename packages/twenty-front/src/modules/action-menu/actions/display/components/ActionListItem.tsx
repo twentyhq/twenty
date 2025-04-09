@@ -7,15 +7,23 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useNavigate } from 'react-router-dom';
 
-export const ActionListItem = ({ action }: { action: ActionDisplayProps }) => {
+export const ActionListItem = ({
+  action,
+  onClick,
+  to,
+}: {
+  action: ActionDisplayProps;
+  onClick: (event?: React.MouseEvent<HTMLElement>) => void;
+  to?: string;
+}) => {
   const navigate = useNavigate();
   useOnSelectableListEnter({
     hotkeyScope: AppHotkeyScope.CommandMenuOpen,
     itemId: action.key,
     onEnter: () => {
-      action.onClick?.();
-      if (isNonEmptyString(action.to)) {
-        navigate(action.to);
+      onClick();
+      if (isNonEmptyString(to)) {
+        navigate(to);
       }
     },
   });
@@ -27,8 +35,8 @@ export const ActionListItem = ({ action }: { action: ActionDisplayProps }) => {
         Icon={action.Icon}
         label={getActionLabel(action.label)}
         description={getActionLabel(action.description ?? '')}
-        to={action.to}
-        onClick={action.onClick}
+        to={to}
+        onClick={onClick}
         hotKeys={action.hotKeys}
       />
     </SelectableItem>

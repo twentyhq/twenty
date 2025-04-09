@@ -15,12 +15,18 @@ export type ActionDisplayProps = {
   description?: MessageDescriptor | string;
   Icon: IconComponent;
   accent?: MenuItemAccent;
-  to?: string;
-  onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
   hotKeys?: string[];
 };
 
-export const ActionDisplay = ({ action }: { action: ActionDisplayProps }) => {
+export const ActionDisplay = ({
+  action,
+  onClick,
+  to,
+}: {
+  action: ActionDisplayProps;
+  onClick: (event?: React.MouseEvent<HTMLElement>) => void;
+  to?: string;
+}) => {
   const { displayType } = useContext(ActionMenuContext);
 
   if (!action) {
@@ -28,15 +34,15 @@ export const ActionDisplay = ({ action }: { action: ActionDisplayProps }) => {
   }
 
   if (displayType === 'button') {
-    return <ActionButton action={action} />;
+    return <ActionButton action={action} onClick={onClick} to={to} />;
   }
 
   if (displayType === 'listItem') {
-    return <ActionListItem action={action} />;
+    return <ActionListItem action={action} onClick={onClick} to={to} />;
   }
 
   if (displayType === 'dropdownItem') {
-    return <ActionDropdownItem action={action} />;
+    return <ActionDropdownItem action={action} onClick={onClick} to={to} />;
   }
 
   return assertUnreachable(

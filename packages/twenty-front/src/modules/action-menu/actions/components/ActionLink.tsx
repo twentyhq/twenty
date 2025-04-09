@@ -27,7 +27,9 @@ export const ActionLink = <T extends AppPath>({
 
   return (
     <ActionDisplay
-      action={{ ...actionConfig, to: path, onClick: closeActionMenu }}
+      action={{ ...actionConfig }}
+      onClick={closeActionMenu}
+      to={path}
     />
   );
 };

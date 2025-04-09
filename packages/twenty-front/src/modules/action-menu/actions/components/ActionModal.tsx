@@ -46,7 +46,7 @@ export const ActionModal = ({
 
   return (
     <>
-      <ActionDisplay action={{ ...actionConfig, onClick: handleOpen }} />
+      <ActionDisplay action={actionConfig} onClick={handleOpen} />
       {isOpen &&
         createPortal(
           <ConfirmationModal

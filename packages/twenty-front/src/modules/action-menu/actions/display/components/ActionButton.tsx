@@ -9,7 +9,15 @@ const StyledWrapper = styled.div`
   font-size: ${({ theme }) => theme.font.size.md};
 `;
 
-export const ActionButton = ({ action }: { action: ActionDisplayProps }) => {
+export const ActionButton = ({
+  action,
+  onClick,
+  to,
+}: {
+  action: ActionDisplayProps;
+  onClick: (event?: React.MouseEvent<HTMLElement>) => void;
+  to?: string;
+}) => {
   const label = getActionLabel(action.label);
 
   const shortLabel = isDefined(action.shortLabel)
@@ -24,8 +32,8 @@ export const ActionButton = ({ action }: { action: ActionDisplayProps }) => {
           size="small"
           variant="secondary"
           accent="default"
-          to={action.to}
-          onClick={action.onClick}
+          to={to}
+          onClick={onClick}
           title={shortLabel}
           ariaLabel={label}
         />
@@ -36,8 +44,8 @@ export const ActionButton = ({ action }: { action: ActionDisplayProps }) => {
             size="small"
             variant="secondary"
             accent="default"
-            to={action.to}
-            onClick={action.onClick}
+            to={to}
+            onClick={onClick}
             ariaLabel={label}
           />
           <StyledWrapper>
