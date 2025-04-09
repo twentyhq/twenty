@@ -25,7 +25,7 @@ export const useFilterActionsWithCommandMenuSearch = ({
     return false;
   };
 
-  const matchActions = (actions: ActionConfig[]) => {
+  const filterActionsWithCommandMenuSearch = (actions: ActionConfig[]) => {
     return actions.filter((action) =>
       deferredCommandMenuSearch.length > 0
         ? checkInShortcuts(action, deferredCommandMenuSearch) ||
@@ -35,6 +35,6 @@ export const useFilterActionsWithCommandMenuSearch = ({
   };
 
   return {
-    matchActions,
+    filterActionsWithCommandMenuSearch,
   };
 };

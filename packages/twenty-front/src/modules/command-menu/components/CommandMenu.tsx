@@ -3,7 +3,7 @@ import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { ResetContextToSelectionCommandButton } from '@/command-menu/components/ResetContextToSelectionCommandButton';
 import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
-import { useMatchingCommandMenuCommands } from '@/command-menu/hooks/useMatchingCommandMenuCommands';
+import { useMatchingCommandMenuActions } from '@/command-menu/hooks/useMatchingCommandMenuActions';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -33,7 +33,7 @@ export const CommandMenu = () => {
     matchingWorkflowRunGlobalActions,
     matchingNavigateActions,
     fallbackActions,
-  } = useMatchingCommandMenuCommands({
+  } = useMatchingCommandMenuActions({
     commandMenuSearch,
   });
 

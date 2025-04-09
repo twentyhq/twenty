@@ -1,14 +1,15 @@
 import { useCommandMenuActions } from '@/command-menu/hooks/useCommandMenuActions';
 import { useFilterActionsWithCommandMenuSearch } from '@/command-menu/hooks/useFilterActionsWithCommandMenuSearch';
 
-export const useMatchingCommandMenuCommands = ({
+export const useMatchingCommandMenuActions = ({
   commandMenuSearch,
 }: {
   commandMenuSearch: string;
 }) => {
-  const { matchActions } = useFilterActionsWithCommandMenuSearch({
-    commandMenuSearch,
-  });
+  const { filterActionsWithCommandMenuSearch } =
+    useFilterActionsWithCommandMenuSearch({
+      commandMenuSearch,
+    });
 
   const {
     navigateActions,
@@ -20,21 +21,22 @@ export const useMatchingCommandMenuCommands = ({
     fallbackActions,
   } = useCommandMenuActions();
 
-  const matchingNavigateActions = matchActions(navigateActions);
+  const matchingNavigateActions =
+    filterActionsWithCommandMenuSearch(navigateActions);
 
-  const matchingStandardActionRecordSelectionActions = matchActions(
-    actionRecordSelectionActions,
-  );
+  const matchingStandardActionRecordSelectionActions =
+    filterActionsWithCommandMenuSearch(actionRecordSelectionActions);
 
-  const matchingStandardActionObjectActions = matchActions(actionObjectActions);
+  const matchingStandardActionObjectActions =
+    filterActionsWithCommandMenuSearch(actionObjectActions);
 
-  const matchingStandardActionGlobalActions = matchActions(actionGlobalActions);
+  const matchingStandardActionGlobalActions =
+    filterActionsWithCommandMenuSearch(actionGlobalActions);
 
-  const matchingWorkflowRunRecordSelectionActions = matchActions(
-    workflowRunRecordSelectionActions,
-  );
+  const matchingWorkflowRunRecordSelectionActions =
+    filterActionsWithCommandMenuSearch(workflowRunRecordSelectionActions);
 
-  const matchingWorkflowRunGlobalActions = matchActions(
+  const matchingWorkflowRunGlobalActions = filterActionsWithCommandMenuSearch(
     workflowRunGlobalActions,
   );
 
