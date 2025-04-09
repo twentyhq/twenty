@@ -145,7 +145,7 @@ export class BillingSubscriptionService {
     return entitlement.value;
   }
 
-  async applyBillingSubscription(workspace: Workspace) {
+  async switchToYearlyInterval(workspace: Workspace) {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );

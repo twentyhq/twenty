@@ -118,8 +118,8 @@ export class BillingResolver {
     WorkspaceAuthGuard,
     SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
   )
-  async updateBillingSubscription(@AuthWorkspace() workspace: Workspace) {
-    await this.billingSubscriptionService.applyBillingSubscription(workspace);
+  async switchToYearlyInterval(@AuthWorkspace() workspace: Workspace) {
+    await this.billingSubscriptionService.switchToYearlyInterval(workspace);
 
     return { success: true };
   }

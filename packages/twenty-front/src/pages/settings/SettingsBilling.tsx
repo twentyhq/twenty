@@ -27,7 +27,7 @@ import {
   SubscriptionInterval,
   SubscriptionStatus,
   useBillingPortalSessionQuery,
-  useUpdateBillingSubscriptionMutation,
+  useSwitchSubscriptionToYearlyIntervalMutation,
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -51,7 +51,8 @@ export const SettingsBilling = () => {
 
   const [isSwitchingIntervalModalOpen, setIsSwitchingIntervalModalOpen] =
     useState(false);
-  const [updateBillingSubscription] = useUpdateBillingSubscriptionMutation();
+  const [switchToYearlyInterval] =
+    useSwitchSubscriptionToYearlyIntervalMutation();
   const { data, loading } = useBillingPortalSessionQuery({
     variables: {
       returnUrlPath: '/settings/billing',
@@ -74,7 +75,7 @@ export const SettingsBilling = () => {
 
   const switchInterval = async () => {
     try {
-      await updateBillingSubscription();
+      await switchToYearlyInterval();
       if (isDefined(currentWorkspace?.currentBillingSubscription)) {
         const newCurrentWorkspace = {
           ...currentWorkspace,

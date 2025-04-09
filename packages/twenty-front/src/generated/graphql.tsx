@@ -887,8 +887,8 @@ export type Mutation = {
   signUpInNewWorkspace: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean'];
+  switchToYearlyInterval: BillingUpdateOutput;
   track: Analytics;
-  updateBillingSubscription: BillingUpdateOutput;
   updateLabPublicFeatureFlag: FeatureFlag;
   updateOneField: Field;
   updateOneObject: Object;
@@ -2583,10 +2583,10 @@ export type GetMeteredProductsUsageQueryVariables = Exact<{ [key: string]: never
 
 export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsageOutput', productKey: BillingProductKey, usageQuantity: number, includedFreeQuantity: number, unitPriceCents: number, totalCostCents: number }> };
 
-export type UpdateBillingSubscriptionMutationVariables = Exact<{ [key: string]: never; }>;
+export type SwitchSubscriptionToYearlyIntervalMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UpdateBillingSubscriptionMutation = { __typename?: 'Mutation', updateBillingSubscription: { __typename?: 'BillingUpdateOutput', success: boolean } };
+export type SwitchSubscriptionToYearlyIntervalMutation = { __typename?: 'Mutation', switchToYearlyInterval: { __typename?: 'BillingUpdateOutput', success: boolean } };
 
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4281,38 +4281,38 @@ export function useGetMeteredProductsUsageLazyQuery(baseOptions?: Apollo.LazyQue
 export type GetMeteredProductsUsageQueryHookResult = ReturnType<typeof useGetMeteredProductsUsageQuery>;
 export type GetMeteredProductsUsageLazyQueryHookResult = ReturnType<typeof useGetMeteredProductsUsageLazyQuery>;
 export type GetMeteredProductsUsageQueryResult = Apollo.QueryResult<GetMeteredProductsUsageQuery, GetMeteredProductsUsageQueryVariables>;
-export const UpdateBillingSubscriptionDocument = gql`
-    mutation UpdateBillingSubscription {
-  updateBillingSubscription {
+export const SwitchSubscriptionToYearlyIntervalDocument = gql`
+    mutation SwitchSubscriptionToYearlyInterval {
+  switchToYearlyInterval {
     success
   }
 }
     `;
-export type UpdateBillingSubscriptionMutationFn = Apollo.MutationFunction<UpdateBillingSubscriptionMutation, UpdateBillingSubscriptionMutationVariables>;
+export type SwitchSubscriptionToYearlyIntervalMutationFn = Apollo.MutationFunction<SwitchSubscriptionToYearlyIntervalMutation, SwitchSubscriptionToYearlyIntervalMutationVariables>;
 
 /**
- * __useUpdateBillingSubscriptionMutation__
+ * __useSwitchSubscriptionToYearlyIntervalMutation__
  *
- * To run a mutation, you first call `useUpdateBillingSubscriptionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateBillingSubscriptionMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useSwitchSubscriptionToYearlyIntervalMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSwitchSubscriptionToYearlyIntervalMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateBillingSubscriptionMutation, { data, loading, error }] = useUpdateBillingSubscriptionMutation({
+ * const [switchSubscriptionToYearlyIntervalMutation, { data, loading, error }] = useSwitchSubscriptionToYearlyIntervalMutation({
  *   variables: {
  *   },
  * });
  */
-export function useUpdateBillingSubscriptionMutation(baseOptions?: Apollo.MutationHookOptions<UpdateBillingSubscriptionMutation, UpdateBillingSubscriptionMutationVariables>) {
+export function useSwitchSubscriptionToYearlyIntervalMutation(baseOptions?: Apollo.MutationHookOptions<SwitchSubscriptionToYearlyIntervalMutation, SwitchSubscriptionToYearlyIntervalMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateBillingSubscriptionMutation, UpdateBillingSubscriptionMutationVariables>(UpdateBillingSubscriptionDocument, options);
+        return Apollo.useMutation<SwitchSubscriptionToYearlyIntervalMutation, SwitchSubscriptionToYearlyIntervalMutationVariables>(SwitchSubscriptionToYearlyIntervalDocument, options);
       }
-export type UpdateBillingSubscriptionMutationHookResult = ReturnType<typeof useUpdateBillingSubscriptionMutation>;
-export type UpdateBillingSubscriptionMutationResult = Apollo.MutationResult<UpdateBillingSubscriptionMutation>;
-export type UpdateBillingSubscriptionMutationOptions = Apollo.BaseMutationOptions<UpdateBillingSubscriptionMutation, UpdateBillingSubscriptionMutationVariables>;
+export type SwitchSubscriptionToYearlyIntervalMutationHookResult = ReturnType<typeof useSwitchSubscriptionToYearlyIntervalMutation>;
+export type SwitchSubscriptionToYearlyIntervalMutationResult = Apollo.MutationResult<SwitchSubscriptionToYearlyIntervalMutation>;
+export type SwitchSubscriptionToYearlyIntervalMutationOptions = Apollo.BaseMutationOptions<SwitchSubscriptionToYearlyIntervalMutation, SwitchSubscriptionToYearlyIntervalMutationVariables>;
 export const GetClientConfigDocument = gql`
     query GetClientConfig {
   clientConfig {
