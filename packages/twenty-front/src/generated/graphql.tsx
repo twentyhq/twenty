@@ -3389,7 +3389,7 @@ export type CreateInterIntegrationMutationVariables = Exact<{
 }>;
 
 
-export type CreateInterIntegrationMutation = { __typename?: 'Mutation', createInterIntegration: { __typename?: 'InterIntegration', id: any, integrationName: string, clientId: string, clientSecret: string, privateKey?: string | null, certificate?: string | null, status: string, workspace: { __typename?: 'Workspace', id: any } } };
+export type CreateInterIntegrationMutation = { __typename?: 'Mutation', createInterIntegration: { __typename?: 'InterIntegration', id: any, integrationName: string, clientId: string, clientSecret: string, privateKey?: string | null, certificate?: string | null, expirationDate?: string | null, status: string, workspace: { __typename?: 'Workspace', id: any } } };
 
 export type ToggleInterIntegrationStatusMutationVariables = Exact<{
   integrationId: Scalars['String'];
@@ -3403,14 +3403,14 @@ export type UpdateInterIntegrationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateInterIntegrationMutation = { __typename?: 'Mutation', updateInterIntegration: { __typename?: 'InterIntegration', id: any, integrationName: string, clientId: string, clientSecret: string, privateKey?: string | null, certificate?: string | null, status: string } };
+export type UpdateInterIntegrationMutation = { __typename?: 'Mutation', updateInterIntegration: { __typename?: 'InterIntegration', id: any, integrationName: string, clientId: string, clientSecret: string, privateKey?: string | null, certificate?: string | null, expirationDate?: string | null, status: string } };
 
 export type InterIntegrationsByWorkspaceQueryVariables = Exact<{
   workspaceId: Scalars['String'];
 }>;
 
 
-export type InterIntegrationsByWorkspaceQuery = { __typename?: 'Query', interIntegrationsByWorkspace: Array<{ __typename?: 'InterIntegration', id: any, integrationName: string, clientId: string, clientSecret: string, privateKey?: string | null, certificate?: string | null, status: string, workspace: { __typename?: 'Workspace', id: any } }> };
+export type InterIntegrationsByWorkspaceQuery = { __typename?: 'Query', interIntegrationsByWorkspace: Array<{ __typename?: 'InterIntegration', id: any, integrationName: string, clientId: string, clientSecret: string, privateKey?: string | null, certificate?: string | null, status: string, expirationDate?: string | null, workspace: { __typename?: 'Workspace', id: any } }> };
 
 export type CreateWhatsappIntegrationMutationVariables = Exact<{
   createInput: CreateWhatsappIntegrationInput;
@@ -5908,6 +5908,7 @@ export const CreateInterIntegrationDocument = gql`
     clientSecret
     privateKey
     certificate
+    expirationDate
     status
     workspace {
       id
@@ -5981,6 +5982,7 @@ export const UpdateInterIntegrationDocument = gql`
     clientSecret
     privateKey
     certificate
+    expirationDate
     status
   }
 }
@@ -6021,6 +6023,7 @@ export const InterIntegrationsByWorkspaceDocument = gql`
     privateKey
     certificate
     status
+    expirationDate
     workspace {
       id
     }

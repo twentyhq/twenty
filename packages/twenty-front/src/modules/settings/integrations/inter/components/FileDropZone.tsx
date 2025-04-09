@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 import { IconFileDownload } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { IconButton, MainButton } from 'twenty-ui';
+import { IconButton, MainButton } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};

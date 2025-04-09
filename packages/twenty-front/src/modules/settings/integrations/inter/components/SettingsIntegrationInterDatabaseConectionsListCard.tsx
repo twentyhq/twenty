@@ -5,7 +5,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardFooter, IconButton } from 'twenty-ui';
+import { IconButton } from 'twenty-ui/input';
+import { Card, CardFooter } from 'twenty-ui/layout';
 
 import { useFindAllInterIntegrations } from '@/settings/integrations/inter/hooks/useFindAllInterIntegrations';
 import { useToggleInterIntegration } from '@/settings/integrations/inter/hooks/useToggleInterIntegrationDisable';
@@ -120,7 +121,9 @@ export const SettingsIntegrationInterDatabaseConectionsListCard = ({
                     options={[
                       {
                         Icon: IconPointFilled,
-                        label: interIntegrations.status,
+                        label: interIntegrations?.status
+                          ? interIntegrations?.status
+                          : 'Active',
                         value:
                           interIntegrations.status === 'Active' ? false : true,
                       },
