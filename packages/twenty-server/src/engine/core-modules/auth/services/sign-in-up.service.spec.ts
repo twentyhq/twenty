@@ -2,8 +2,8 @@ import { HttpService } from '@nestjs/axios';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { Repository } from 'typeorm';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
@@ -17,10 +17,10 @@ import {
   SignInUpBaseParams,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -42,7 +42,7 @@ describe('SignInUpService', () => {
   let fileUploadService: FileUploadService;
   let workspaceInvitationService: WorkspaceInvitationService;
   let userWorkspaceService: UserWorkspaceService;
-  let environmentService: EnvironmentService;
+  let twentyConfigService: TwentyConfigService;
   let domainManagerService: DomainManagerService;
 
   beforeEach(async () => {
@@ -98,7 +98,7 @@ describe('SignInUpService', () => {
           useValue: {},
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
           },
@@ -143,7 +143,7 @@ describe('SignInUpService', () => {
     );
     userWorkspaceService =
       module.get<UserWorkspaceService>(UserWorkspaceService);
-    environmentService = module.get<EnvironmentService>(EnvironmentService);
+    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     domainManagerService =
       module.get<DomainManagerService>(DomainManagerService);
   });
@@ -242,7 +242,7 @@ describe('SignInUpService', () => {
       },
     };
 
-    jest.spyOn(environmentService, 'get').mockReturnValue(false);
+    jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
     jest.spyOn(WorkspaceRepository, 'count').mockResolvedValue(0);
     jest.spyOn(WorkspaceRepository, 'create').mockReturnValue({} as Workspace);
     jest.spyOn(WorkspaceRepository, 'save').mockResolvedValue({
@@ -292,7 +292,7 @@ describe('SignInUpService', () => {
       },
     };
 
-    jest.spyOn(environmentService, 'get').mockReturnValue(false);
+    jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
     jest
       .spyOn(userWorkspaceService, 'addUserToWorkspaceIfUserNotInWorkspace')
       .mockResolvedValue(undefined);
@@ -324,7 +324,7 @@ describe('SignInUpService', () => {
       },
     };
 
-    jest.spyOn(environmentService, 'get').mockReturnValue(false);
+    jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
     jest
       .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
       .mockResolvedValue(null);
@@ -349,7 +349,7 @@ describe('SignInUpService', () => {
       },
     };
 
-    jest.spyOn(environmentService, 'get').mockReturnValue(false);
+    jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
     jest.spyOn(WorkspaceRepository, 'count').mockResolvedValue(0);
     jest.spyOn(WorkspaceRepository, 'create').mockReturnValue({} as Workspace);
     jest.spyOn(WorkspaceRepository, 'save').mockResolvedValue({

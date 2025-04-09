@@ -9,21 +9,21 @@ import {
   DomainManagerExceptionCode,
 } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
 import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
-import { domainManagerValidator } from 'src/engine/core-modules/domain-manager/validator/cloudflare.validate';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { domainManagerValidator } from 'src/engine/core-modules/domain-manager/validator/cloudflare.validate';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class CustomDomainService {
   cloudflareClient?: Cloudflare;
 
   constructor(
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
   ) {
-    if (this.environmentService.get('CLOUDFLARE_API_KEY')) {
+    if (this.twentyConfigService.get('CLOUDFLARE_API_KEY')) {
       this.cloudflareClient = new Cloudflare({
-        apiToken: this.environmentService.get('CLOUDFLARE_API_KEY'),
+        apiToken: this.twentyConfigService.get('CLOUDFLARE_API_KEY'),
       });
     }
   }
@@ -39,7 +39,7 @@ export class CustomDomainService {
     }
 
     return await this.cloudflareClient.customHostnames.create({
-      zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
+      zone_id: this.twentyConfigService.get('CLOUDFLARE_ZONE_ID'),
       hostname: customDomain,
       ssl: {
         method: 'txt',
@@ -63,7 +63,7 @@ export class CustomDomainService {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     const response = await this.cloudflareClient.customHostnames.list({
-      zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
+      zone_id: this.twentyConfigService.get('CLOUDFLARE_ZONE_ID'),
       hostname: customDomain,
     });
 
@@ -163,7 +163,7 @@ export class CustomDomainService {
 
       if (customHostname) {
         await this.cloudflareClient.customHostnames.delete(customHostname.id, {
-          zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
+          zone_id: this.twentyConfigService.get('CLOUDFLARE_ZONE_ID'),
         });
       }
     } catch (err) {
@@ -175,7 +175,7 @@ export class CustomDomainService {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     await this.cloudflareClient.customHostnames.delete(customHostnameId, {
-      zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
+      zone_id: this.twentyConfigService.get('CLOUDFLARE_ZONE_ID'),
     });
   }
 
