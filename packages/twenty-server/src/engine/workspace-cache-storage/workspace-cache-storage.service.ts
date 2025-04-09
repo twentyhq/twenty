@@ -270,6 +270,10 @@ export class WorkspaceCacheStorageService {
       `${WorkspaceCacheKeys.MetadataRolesPermissions}:${workspaceId}`,
     );
 
+    await this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.MetadataRolesPermissionsVersion}:${workspaceId}`,
+    );
+
     // TODO: remove this after the feature flag is droped
     await this.cacheStorageService.del(
       `${FeatureFlagKey.IsNewRelationEnabled}:${workspaceId}`,
