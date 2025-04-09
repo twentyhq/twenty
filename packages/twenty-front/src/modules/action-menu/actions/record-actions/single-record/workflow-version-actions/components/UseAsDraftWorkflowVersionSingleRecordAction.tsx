@@ -29,7 +29,7 @@ export const UseAsDraftWorkflowVersionSingleRecordAction = () => {
   const hasAlreadyDraftVersion =
     workflow?.versions.some((version) => version.status === 'DRAFT') || false;
 
-  const onClick = () => {
+  const handleClick = () => {
     if (!isDefined(workflowVersion) || !isDefined(workflow) || hasNavigated) {
       return;
     }
@@ -37,7 +37,7 @@ export const UseAsDraftWorkflowVersionSingleRecordAction = () => {
     if (hasAlreadyDraftVersion) {
       setOpenOverrideWorkflowDraftConfirmationModal(true);
     } else {
-      const executeAction = async () => {
+      const executeActionWithoutWaiting = async () => {
         await createDraftFromWorkflowVersion({
           workflowId: workflowVersion.workflow.id,
           workflowVersionIdToCopy: workflowVersion.id,
@@ -51,13 +51,13 @@ export const UseAsDraftWorkflowVersionSingleRecordAction = () => {
         setHasNavigated(true);
       };
 
-      executeAction();
+      executeActionWithoutWaiting();
     }
   };
 
   return isDefined(workflowVersion) ? (
     <>
-      <Action onClick={onClick} />
+      <Action onClick={handleClick} />
       <OverrideWorkflowDraftConfirmationModal
         workflowId={workflowVersion.workflow.id}
         workflowVersionIdToCopy={workflowVersion.id}
