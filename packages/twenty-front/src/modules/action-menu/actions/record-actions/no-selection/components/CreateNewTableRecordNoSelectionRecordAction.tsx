@@ -9,5 +9,7 @@ export const CreateNewTableRecordNoSelectionRecordAction = () => {
     objectMetadataItem,
   });
 
-  return <Action onClick={() => createNewIndexRecord()} />;
+  return (
+    <Action onClick={() => createNewIndexRecord()} preventCommandMenuClosing />
+  );
 };
