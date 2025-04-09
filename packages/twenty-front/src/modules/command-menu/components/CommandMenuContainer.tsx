@@ -1,9 +1,7 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { CommandMenuOpenContainer } from '@/command-menu/components/CommandMenuOpenContainer';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
-import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -14,29 +12,18 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { AnimatePresence } from 'framer-motion';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useRecoilValue } from 'recoil';
 
 export const CommandMenuContainer = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const { toggleCommandMenu } = useCommandMenu();
-  const { closeCommandMenu } = useCommandMenu();
-
   const { commandMenuCloseAnimationCompleteCleanup } =
     useCommandMenuCloseAnimationCompleteCleanup();
 
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
-
-  const isWorkflowEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsWorkflowEnabled,
-  );
-
-  const setCommandMenuSearch = useSetRecoilState(commandMenuSearchState);
 
   const objectMetadataItemId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,
