@@ -1,11 +1,11 @@
 import { LLMChatModelDriver } from 'src/engine/core-modules/llm-chat-model/interfaces/llm-chat-model.interface';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export const llmChatModelModuleFactory = (
-  environmentService: EnvironmentService,
+  twentyConfigService: TwentyConfigService,
 ) => {
-  const driver = environmentService.get('LLM_CHAT_MODEL_DRIVER');
+  const driver = twentyConfigService.get('LLM_CHAT_MODEL_DRIVER');
 
   switch (driver) {
     case LLMChatModelDriver.OpenAI: {

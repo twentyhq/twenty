@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { ApiKeyService } from './api-key.service';
 
 describe('ApiKeyService', () => {
   let service: ApiKeyService;
   let jwtWrapperService: JwtWrapperService;
-  let environmentService: EnvironmentService;
+  let twentyConfigService: TwentyConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -22,7 +22,7 @@ describe('ApiKeyService', () => {
           },
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
           },
@@ -32,7 +32,7 @@ describe('ApiKeyService', () => {
 
     service = module.get<ApiKeyService>(ApiKeyService);
     jwtWrapperService = module.get<JwtWrapperService>(JwtWrapperService);
-    environmentService = module.get<EnvironmentService>(EnvironmentService);
+    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
   });
 
   it('should be defined', () => {
@@ -51,7 +51,7 @@ describe('ApiKeyService', () => {
       const apiKeyId = 'api-key-id';
       const mockToken = 'mock-token';
 
-      jest.spyOn(environmentService, 'get').mockReturnValue('1h');
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
       jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
       jest
         .spyOn(jwtWrapperService, 'generateAppSecret')

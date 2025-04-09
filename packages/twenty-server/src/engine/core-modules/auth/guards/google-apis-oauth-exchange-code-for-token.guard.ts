@@ -7,8 +7,8 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { GoogleAPIsOauthExchangeCodeForTokenStrategy } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-exchange-code-for-token.auth.strategy';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
@@ -16,7 +16,7 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
 ) {
   constructor(
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {
     super();
   }
@@ -27,8 +27,8 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
       const state = JSON.parse(request.query.state);
 
       if (
-        !this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED') &&
-        !this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED')
+        !this.twentyConfigService.get('MESSAGING_PROVIDER_GMAIL_ENABLED') &&
+        !this.twentyConfigService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED')
       ) {
         throw new AuthException(
           'Google apis auth is not enabled',
@@ -36,7 +36,7 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
         );
       }
 
-      new GoogleAPIsOauthExchangeCodeForTokenStrategy(this.environmentService);
+      new GoogleAPIsOauthExchangeCodeForTokenStrategy(this.twentyConfigService);
 
       setRequestExtraParams(request, {
         transientToken: state.transientToken,
