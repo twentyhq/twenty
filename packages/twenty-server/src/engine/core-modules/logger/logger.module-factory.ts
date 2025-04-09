@@ -1,19 +1,19 @@
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import {
-  LoggerModuleOptions,
   LoggerDriverType,
+  LoggerModuleOptions,
 } from 'src/engine/core-modules/logger/interfaces';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 /**
  * Logger Module factory
  * @returns LoggerModuleOptions
- * @param environmentService
+ * @param twentyConfigService
  */
 export const loggerModuleFactory = async (
-  environmentService: EnvironmentService,
+  twentyConfigService: TwentyConfigService,
 ): Promise<LoggerModuleOptions> => {
-  const driverType = environmentService.get('LOGGER_DRIVER');
-  const logLevels = environmentService.get('LOG_LEVELS');
+  const driverType = twentyConfigService.get('LOGGER_DRIVER');
+  const logLevels = twentyConfigService.get('LOG_LEVELS');
 
   switch (driverType) {
     case LoggerDriverType.Console: {

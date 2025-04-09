@@ -6,16 +6,16 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { IconChevronRight, IconEye, IconEyeOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 type SettingsAdminEnvVariablesRowProps = {
   variable: {
     name: string;
     description: string;
     value: string;
-    sensitive: boolean;
+    isSensitive: boolean;
   };
   isExpanded: boolean;
   onExpandToggle: (name: string) => void;
@@ -79,7 +79,7 @@ export const SettingsAdminEnvVariablesRow = ({
   const displayValue =
     variable.value === ''
       ? 'null'
-      : variable.sensitive && !showSensitiveValue
+      : variable.isSensitive && !showSensitiveValue
         ? '••••••'
         : variable.value;
 
@@ -112,7 +112,7 @@ export const SettingsAdminEnvVariablesRow = ({
             displayText={displayValue}
             multiline={true}
           />
-          {variable.sensitive && variable.value !== '' && (
+          {variable.isSensitive && variable.value !== '' && (
             <LightIconButton
               Icon={showSensitiveValue ? IconEyeOff : IconEye}
               size="small"

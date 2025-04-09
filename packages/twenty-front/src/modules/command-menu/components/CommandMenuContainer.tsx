@@ -1,10 +1,3 @@
-import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
-import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
-import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
-import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
-import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
-import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { CommandMenuOpenContainer } from '@/command-menu/components/CommandMenuOpenContainer';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
@@ -32,6 +25,7 @@ export const CommandMenuContainer = ({
   children: React.ReactNode;
 }) => {
   const { toggleCommandMenu } = useCommandMenu();
+  const { closeCommandMenu } = useCommandMenu();
 
   const { commandMenuCloseAnimationCompleteCleanup } =
     useCommandMenuCloseAnimationCompleteCleanup();
@@ -81,44 +75,16 @@ export const CommandMenuContainer = ({
             <ActionMenuComponentInstanceContext.Provider
               value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
             >
-              <ActionMenuContext.Provider
-                value={{
-                  isInRightDrawer: true,
-                  onActionExecutedCallback: ({ key }) => {
-                    if (
-                      key !== RecordAgnosticActionsKeys.SEARCH_RECORDS &&
-                      key !==
-                        RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK &&
-                      key !== NoSelectionRecordActionKeys.CREATE_NEW_RECORD
-                    ) {
-                      toggleCommandMenu();
-                    }
-
-                    if (
-                      key !== RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK
-                    ) {
-                      setCommandMenuSearch('');
-                    }
-                  },
-                }}
+              <AnimatePresence
+                mode="wait"
+                onExitComplete={commandMenuCloseAnimationCompleteCleanup}
               >
-                <RecordActionMenuEntriesSetter />
-                <RecordAgnosticActionMenuEntriesSetter />
-                {isWorkflowEnabled && (
-                  <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
+                {isCommandMenuOpened && (
+                  <CommandMenuOpenContainer>
+                    {children}
+                  </CommandMenuOpenContainer>
                 )}
-                <ActionMenuConfirmationModals />
-                <AnimatePresence
-                  mode="wait"
-                  onExitComplete={commandMenuCloseAnimationCompleteCleanup}
-                >
-                  {isCommandMenuOpened && (
-                    <CommandMenuOpenContainer>
-                      {children}
-                    </CommandMenuOpenContainer>
-                  )}
-                </AnimatePresence>
-              </ActionMenuContext.Provider>
+              </AnimatePresence>
             </ActionMenuComponentInstanceContext.Provider>
           </ContextStoreComponentInstanceContext.Provider>
         </RecordSortsComponentInstanceContext.Provider>
