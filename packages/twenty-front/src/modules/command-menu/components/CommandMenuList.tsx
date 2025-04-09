@@ -1,26 +1,23 @@
+import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
-import { CommandGroupConfig } from '@/command-menu/components/CommandMenu';
+import { ActionGroupConfig } from '@/command-menu/components/CommandMenu';
 import { CommandMenuDefaultSelectionEffect } from '@/command-menu/components/CommandMenuDefaultSelectionEffect';
-import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
-import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { useResetPreviousCommandMenuContext } from '@/command-menu/hooks/useResetPreviousCommandMenuContext';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
 
 export type CommandMenuListProps = {
-  commandGroups: CommandGroupConfig[];
+  commandGroups: ActionGroupConfig[];
   selectableItemIds: string[];
   children?: React.ReactNode;
   loading?: boolean;
@@ -63,10 +60,6 @@ export const CommandMenuList = ({
   loading = false,
   noResults = false,
 }: CommandMenuListProps) => {
-  const { onItemClick } = useCommandMenuOnItemClick();
-
-  const commands = commandGroups.flatMap((group) => group.items ?? []);
-
   const { resetPreviousCommandMenuContext } =
     useResetPreviousCommandMenuContext();
 
@@ -90,19 +83,6 @@ export const CommandMenuList = ({
                 resetPreviousCommandMenuContext();
                 return;
               }
-
-              const command = commands.find((item) => item.id === itemId);
-
-              if (isDefined(command)) {
-                const { to, onCommandClick, shouldCloseCommandMenuOnClick } =
-                  command;
-
-                onItemClick({
-                  shouldCloseCommandMenuOnClick,
-                  onClick: onCommandClick,
-                  to,
-                });
-              }
             }}
             onSelect={() => {
               setHasUserSelectedCommand(true);
@@ -112,24 +92,9 @@ export const CommandMenuList = ({
             {commandGroups.map(({ heading, items }) =>
               items?.length ? (
                 <CommandGroup heading={heading} key={heading}>
-                  {items.map((item) => {
-                    return (
-                      <SelectableItem itemId={item.id} key={item.id}>
-                        <CommandMenuItem
-                          id={item.id}
-                          Icon={item.Icon}
-                          label={item.label}
-                          description={item.description}
-                          to={item.to}
-                          onClick={item.onCommandClick}
-                          hotKeys={item.hotKeys}
-                          shouldCloseCommandMenuOnClick={
-                            item.shouldCloseCommandMenuOnClick
-                          }
-                        />
-                      </SelectableItem>
-                    );
-                  })}
+                  {items.map((item) => (
+                    <ActionComponent action={item} key={item.key} />
+                  ))}
                 </CommandGroup>
               ) : null,
             )}
