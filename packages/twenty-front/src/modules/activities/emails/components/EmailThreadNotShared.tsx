@@ -8,6 +8,7 @@ const StyledContainer = styled.div`
   flex: 1 0 0;
   gap: ${({ theme }) => theme.spacing(1)};
   height: 20px;
+  min-width: 100px;
   padding: ${({ theme }) => theme.spacing(0, 1)};
 
   border-radius: 4px;
