@@ -31,7 +31,7 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { SettingPermissionDTO } from 'src/engine/metadata-modules/setting-permission/dtos/setting-permission.dto';
-import { UpsertSettingPermissionInput } from 'src/engine/metadata-modules/setting-permission/dtos/upsert-setting-permission-input';
+import { UpsertSettingPermissionsInput } from 'src/engine/metadata-modules/setting-permission/dtos/upsert-setting-permission-input';
 import { SettingPermissionService } from 'src/engine/metadata-modules/setting-permission/setting-permission.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/workspace-roles-permissions-cache/workspace-roles-permissions-cache.service';
@@ -192,17 +192,17 @@ export class RoleResolver {
     return objectPermission;
   }
 
-  @Mutation(() => SettingPermissionDTO)
-  async upsertOneSettingPermission(
+  @Mutation(() => [SettingPermissionDTO])
+  async upsertSettingPermissions(
     @AuthWorkspace() workspace: Workspace,
-    @Args('upsertSettingPermissionInput')
-    upsertSettingPermissionInput: UpsertSettingPermissionInput,
+    @Args('upsertSettingPermissionsInput')
+    upsertSettingPermissionsInput: UpsertSettingPermissionsInput,
   ) {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
 
-    return this.settingPermissionService.upsertSettingPermission({
+    return this.settingPermissionService.upsertSettingPermissions({
       workspaceId: workspace.id,
-      input: upsertSettingPermissionInput,
+      input: upsertSettingPermissionsInput,
     });
   }
 

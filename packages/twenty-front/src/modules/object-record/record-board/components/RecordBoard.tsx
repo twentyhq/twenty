@@ -4,7 +4,6 @@ import { useContext, useRef } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
@@ -35,7 +34,6 @@ import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { ViewType } from '@/views/types/ViewType';
-import { useScrollRestoration } from '~/hooks/useScrollRestoration';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -60,11 +58,6 @@ const StyledBoardContentContainer = styled.div`
   flex-direction: column;
   height: calc(100% - 48px);
 `;
-
-const RecordBoardScrollRestoreEffect = () => {
-  useScrollRestoration();
-  return null;
-};
 
 export const RecordBoard = () => {
   const { updateOneRecord, selectFieldMetadataItem, recordBoardId } =
@@ -142,13 +135,8 @@ export const RecordBoard = () => {
   );
 
   useScopedHotkeys('ctrl+a,meta+a', selectAll, TableHotkeyScope.Table);
-  useScopedHotkeys('ctrl+a,meta+a', selectAll, ActionBarHotkeyScope.ActionBar);
 
-  useScopedHotkeys(
-    Key.Escape,
-    resetRecordSelection,
-    ActionBarHotkeyScope.ActionBar,
-  );
+  useScopedHotkeys(Key.Escape, resetRecordSelection, TableHotkeyScope.Table);
 
   const setIsRemoveSortingModalOpen = useSetRecoilState(
     isRemoveSortingModalOpenState,
@@ -239,7 +227,6 @@ export const RecordBoard = () => {
         value={{ instanceId: recordBoardId }}
       >
         <ScrollWrapper
-          contextProviderName="recordBoard"
           componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
         >
           <RecordBoardStickyHeaderEffect />
@@ -258,7 +245,6 @@ export const RecordBoard = () => {
                   </StyledColumnContainer>
                 </DragDropContext>
               </StyledContainer>
-              <RecordBoardScrollRestoreEffect />
               <DragSelect
                 dragSelectable={boardRef}
                 onDragSelectionEnd={handleDragSelectionEnd}

@@ -11,11 +11,13 @@ import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
-import { ActionLink, HorizontalSeparator } from 'twenty-ui';
+import { HorizontalSeparator } from 'twenty-ui/display';
+import { ClickToActionLink } from 'twenty-ui/navigation';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
   margin-top: ${({ theme }) => theme.spacing(4)};
+  width: 200px;
 `;
 
 export const SignInUpWorkspaceScopeForm = () => {
@@ -54,9 +56,11 @@ export const SignInUpWorkspaceScopeForm = () => {
         )}
       </StyledContentContainer>
       {signInUpStep === SignInUpStep.Password && (
-        <ActionLink onClick={handleResetPassword(form.getValues('email'))}>
+        <ClickToActionLink
+          onClick={handleResetPassword(form.getValues('email'))}
+        >
           <Trans>Forgot your password?</Trans>
-        </ActionLink>
+        </ClickToActionLink>
       )}
     </>
   );

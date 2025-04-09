@@ -1,5 +1,5 @@
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { SubMatchingSelect } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelect';
+import { SubMatchingSelectRow } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectRow';
 import { UnmatchColumnBanner } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumnBanner';
 import { SpreadsheetImportFields } from '@/spreadsheet-import/types';
 import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { AnimatedExpandableContainer } from 'twenty-ui';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 const getExpandableContainerTitle = <T extends string>(
   fields: SpreadsheetImportFields<T>,
@@ -71,7 +71,7 @@ export const UnmatchColumn = <T extends string>({
       >
         <StyledContentWrapper>
           {column.matchedOptions.map((option) => (
-            <SubMatchingSelect
+            <SubMatchingSelectRow
               option={option}
               column={column}
               onSubChange={onSubChange}

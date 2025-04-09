@@ -20,14 +20,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  Button,
-  IconChevronLeft,
-  IconX,
-  getOsControlSymbol,
-  useIsMobile,
-} from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/input';
+import { IconChevronLeft, IconX } from 'twenty-ui/display';
+import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
 
 const StyledInputContainer = styled.div`
   align-items: center;

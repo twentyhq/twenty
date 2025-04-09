@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { useContext, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilValue } from 'recoil';
-import { GRAY_SCALE } from 'twenty-ui';
 
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { isRecordBoardFetchingRecordsByColumnFamilyState } from '@/object-record/record-board/states/isRecordBoardFetchingRecordsByColumnFamilyState';
@@ -10,6 +9,7 @@ import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object
 import { isRecordIndexLoadMoreLockedComponentState } from '@/object-record/record-index/states/isRecordIndexLoadMoreLockedComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
+import { GRAY_SCALE } from 'twenty-ui/theme';
 
 const StyledText = styled.div`
   align-items: center;

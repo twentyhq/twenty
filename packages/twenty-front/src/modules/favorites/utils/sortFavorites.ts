@@ -1,13 +1,13 @@
 import { Favorite } from '@/favorites/types/Favorite';
+import { getObjectMetadataNamePluralFromViewId } from '@/favorites/utils/getObjectMetadataNamePluralFromViewId';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { AppPath } from '@/types/AppPath';
 import { View } from '@/views/types/View';
-import { getAppPath } from '~/utils/navigation/getAppPath';
-import { getObjectMetadataLabelPluralFromViewId } from './getObjectMetadataLabelPluralFromViewId';
 import { isDefined } from 'twenty-shared/utils';
+import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export type ProcessedFavorite = Favorite & {
   Icon?: string;
@@ -39,7 +39,7 @@ export const sortFavorites = (
           } as ProcessedFavorite;
         }
 
-        const { labelPlural } = getObjectMetadataLabelPluralFromViewId(
+        const { namePlural } = getObjectMetadataNamePluralFromViewId(
           view,
           objectMetadataItems,
         );
@@ -54,7 +54,7 @@ export const sortFavorites = (
           labelIdentifier: view?.name,
           link: getAppPath(
             AppPath.RecordIndexPage,
-            { objectNamePlural: labelPlural.toLowerCase() },
+            { objectNamePlural: namePlural },
             favorite.viewId ? { viewId: favorite.viewId } : undefined,
           ),
           forWorkspaceMemberId: favorite.forWorkspaceMemberId,

@@ -4,11 +4,11 @@ import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { EntitySchema } from 'typeorm';
 
-import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/workspace-roles-permissions-cache/workspace-roles-permissions-cache.service';
@@ -29,7 +29,7 @@ export class WorkspaceDatasourceFactory {
 
   constructor(
     private readonly dataSourceService: DataSourceService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly entitySchemaFactory: EntitySchemaFactory,
@@ -143,16 +143,16 @@ export class WorkspaceDatasourceFactory {
             {
               url:
                 dataSourceMetadata.url ??
-                this.environmentService.get('PG_DATABASE_URL'),
+                this.twentyConfigService.get('PG_DATABASE_URL'),
               type: 'postgres',
               logging:
-                this.environmentService.get('NODE_ENV') ===
+                this.twentyConfigService.get('NODE_ENV') ===
                 NodeEnvironment.development
                   ? ['query', 'error']
                   : ['error'],
               schema: dataSourceMetadata.schema,
               entities: cachedEntitySchemas,
-              ssl: this.environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
+              ssl: this.twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')
                 ? {
                     rejectUnauthorized: false,
                   }

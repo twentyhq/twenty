@@ -12,8 +12,8 @@ import { useTheme } from '@emotion/react';
 import { isNumber } from '@sniptt/guards';
 import cron from 'cron-validate';
 import { useState } from 'react';
-import { useIcons } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 
 type WorkflowEditTriggerCronFormProps = {
   trigger: WorkflowCronTrigger;

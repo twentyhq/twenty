@@ -11,8 +11,8 @@ export const prefetchViewsFromObjectMetadataItemFamilySelector = selectorFamily<
     ({ objectMetadataItemId }) =>
     ({ get }) => {
       const views = get(prefetchViewsState);
-      return views.filter(
-        (view) => view.objectMetadataId === objectMetadataItemId,
-      );
+      return views
+        .filter((view) => view.objectMetadataId === objectMetadataItemId)
+        .sort((a, b) => a.position - b.position);
     },
 });

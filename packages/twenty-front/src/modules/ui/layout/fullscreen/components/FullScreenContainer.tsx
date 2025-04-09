@@ -8,7 +8,9 @@ import {
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { IconButton, IconX, useIsMobile } from 'twenty-ui';
+import { IconButton } from 'twenty-ui/input';
+import { IconX } from 'twenty-ui/display';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 type FullScreenContainerProps = {
   children: JSX.Element | JSX.Element[];

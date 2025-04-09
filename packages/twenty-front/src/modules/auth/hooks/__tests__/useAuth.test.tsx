@@ -1,19 +1,19 @@
-import { useApolloClient } from '@apollo/client';
-import { MockedProvider } from '@apollo/client/testing';
-import { expect } from '@storybook/test';
-import { ReactNode, act } from 'react';
-import { MemoryRouter } from 'react-router-dom';
-import { RecoilRoot, useRecoilValue } from 'recoil';
-import { iconsState } from 'twenty-ui';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingState } from '@/client-config/states/billingState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { useApolloClient } from '@apollo/client';
+import { MockedProvider } from '@apollo/client/testing';
+import { expect } from '@storybook/test';
+import { ReactNode, act } from 'react';
+import { MemoryRouter } from 'react-router-dom';
+import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { renderHook } from '@testing-library/react';
+import { iconsState } from 'twenty-ui/display';
 import { email, mocks, password, results, token } from '../__mocks__/useAuth';
 
 const redirectSpy = jest.fn();
@@ -21,6 +21,12 @@ const redirectSpy = jest.fn();
 jest.mock('@/domain-manager/hooks/useRedirect', () => ({
   useRedirect: jest.fn().mockImplementation(() => ({
     redirect: redirectSpy,
+  })),
+}));
+
+jest.mock('@/object-metadata/hooks/useRefreshObjectMetadataItem', () => ({
+  useRefreshObjectMetadataItems: jest.fn().mockImplementation(() => ({
+    refreshObjectMetadataItems: jest.fn(),
   })),
 }));
 

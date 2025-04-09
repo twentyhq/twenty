@@ -6,11 +6,11 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
@@ -84,6 +84,10 @@ export const FieldsCard = ({
       ),
   );
 
+  const isRecordReadOnly = useIsRecordReadOnly({
+    recordId: objectRecordId,
+  });
+
   return (
     <>
       <PropertyBox>
@@ -107,8 +111,8 @@ export const FieldsCard = ({
                       labelWidth: 90,
                     }),
                     useUpdateRecord: useUpdateOneObjectRecordMutation,
-                    hotkeyScope: InlineCellHotkeyScope.InlineCell,
                     isDisplayModeFixHeight: true,
+                    isReadOnly: isRecordReadOnly,
                   }}
                 >
                   <ActivityTargetsInlineCell
@@ -144,8 +148,8 @@ export const FieldsCard = ({
                     labelWidth: 90,
                   }),
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
-                  hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   isDisplayModeFixHeight: true,
+                  isReadOnly: isRecordReadOnly,
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider
@@ -180,8 +184,8 @@ export const FieldsCard = ({
               objectMetadataItem,
             }),
             useUpdateRecord: useUpdateOneObjectRecordMutation,
-            hotkeyScope: InlineCellHotkeyScope.InlineCell,
             isDisplayModeFixHeight: true,
+            isReadOnly: isRecordReadOnly,
           }}
         >
           <RecordDetailRelationSection

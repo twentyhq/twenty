@@ -5,8 +5,8 @@ import { Repository } from 'typeorm';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 
 import { RefreshTokenService } from './refresh-token.service';
@@ -14,7 +14,7 @@ import { RefreshTokenService } from './refresh-token.service';
 describe('RefreshTokenService', () => {
   let service: RefreshTokenService;
   let jwtWrapperService: JwtWrapperService;
-  let environmentService: EnvironmentService;
+  let twentyConfigService: TwentyConfigService;
   let appTokenRepository: Repository<AppToken>;
   let userRepository: Repository<User>;
 
@@ -32,7 +32,7 @@ describe('RefreshTokenService', () => {
           },
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
           },
@@ -50,7 +50,7 @@ describe('RefreshTokenService', () => {
 
     service = module.get<RefreshTokenService>(RefreshTokenService);
     jwtWrapperService = module.get<JwtWrapperService>(JwtWrapperService);
-    environmentService = module.get<EnvironmentService>(EnvironmentService);
+    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     appTokenRepository = module.get<Repository<AppToken>>(
       getRepositoryToken(AppToken, 'core'),
     );
@@ -91,7 +91,7 @@ describe('RefreshTokenService', () => {
         .spyOn(appTokenRepository, 'findOneBy')
         .mockResolvedValue(mockAppToken as AppToken);
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
-      jest.spyOn(environmentService, 'get').mockReturnValue('1h');
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
 
       const result = await service.verifyRefreshToken(mockToken);
 
@@ -123,7 +123,7 @@ describe('RefreshTokenService', () => {
       const mockToken = 'mock-refresh-token';
       const mockExpiresIn = '7d';
 
-      jest.spyOn(environmentService, 'get').mockReturnValue(mockExpiresIn);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(mockExpiresIn);
       jest
         .spyOn(jwtWrapperService, 'generateAppSecret')
         .mockReturnValue('mock-secret');
@@ -153,7 +153,7 @@ describe('RefreshTokenService', () => {
     });
 
     it('should throw an error if expiration time is not set', async () => {
-      jest.spyOn(environmentService, 'get').mockReturnValue(undefined);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(undefined);
 
       await expect(
         service.generateRefreshToken('user-id', 'workspace-id'),

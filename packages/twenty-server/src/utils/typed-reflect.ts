@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import { Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
 import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
-import { EnvironmentVariablesMetadataMap } from 'src/engine/core-modules/environment/decorators/environment-variables-metadata.decorator';
+import { ConfigVariablesMetadataMap } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 
 export interface ReflectMetadataTypeMap {
   ['workspace:is-nullable-metadata-args']: true;
@@ -14,7 +14,7 @@ export interface ReflectMetadataTypeMap {
   ['workspace:is-deprecated-field-metadata-args']: true;
   ['workspace:is-unique-metadata-args']: true;
   ['workspace:duplicate-criteria-metadata-args']: WorkspaceEntityDuplicateCriteria[];
-  ['environment-variables']: EnvironmentVariablesMetadataMap;
+  ['config-variables']: ConfigVariablesMetadataMap;
   ['workspace:is-searchable-metadata-args']: boolean;
 }
 

@@ -5,10 +5,10 @@ import { Meta, StoryObj } from '@storybook/react';
 import { http, HttpResponse } from 'msw';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { ComponentDecorator } from 'twenty-ui';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { RestPlayground } from '../RestPlayground';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const PlaygroundApiKeySetterEffect = () => {
   const setPlaygroundApiKey = useSetRecoilState(playgroundApiKeyState);

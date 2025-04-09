@@ -89,7 +89,9 @@ export class UserRoleService {
         workspaceId,
       },
       relations: {
-        role: true,
+        role: {
+          settingPermissions: true,
+        },
       },
     });
 

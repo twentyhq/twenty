@@ -1,7 +1,7 @@
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
@@ -10,8 +10,8 @@ import { RecordTitleCell } from '@/object-record/record-title-cell/components/Re
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilValue } from 'recoil';
-import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated/graphql';
 
 type SummaryCardProps = {
   objectNameSingular: string;
@@ -54,6 +54,10 @@ export const SummaryCard = ({
     }),
   );
 
+  const isRecordReadOnly = useIsRecordReadOnly({
+    recordId: objectRecordId,
+  });
+
   return (
     <ShowPageSummaryCard
       isMobile={isMobile}
@@ -85,9 +89,9 @@ export const SummaryCard = ({
               defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
             },
             useUpdateRecord: useUpdateOneObjectRecordMutation,
-            hotkeyScope: InlineCellHotkeyScope.InlineCell,
             isCentered: !isMobile,
             isDisplayModeFixHeight: true,
+            isReadOnly: isRecordReadOnly,
           }}
         >
           <RecordTitleCell sizeVariant="md" />

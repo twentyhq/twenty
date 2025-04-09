@@ -13,26 +13,17 @@ import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinit
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
 
-import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Key } from 'ts-key-enum';
 
-const StyledTableWithHeader = styled.div`
-  height: 100%;
-`;
-
 const StyledTableContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
   position: relative;
-`;
-
-const StyledTableInternalContainer = styled.div`
-  height: 100%;
+  width: 100%;
 `;
 
 type RecordTableWithWrappersProps = {
@@ -63,17 +54,8 @@ export const RecordTableWithWrappers = ({
     handleSelectAllRows,
     TableHotkeyScope.Table,
   );
-  useScopedHotkeys(
-    'ctrl+a,meta+a',
-    handleSelectAllRows,
-    ActionBarHotkeyScope.ActionBar,
-  );
 
-  useScopedHotkeys(
-    Key.Escape,
-    resetTableRowSelection,
-    ActionBarHotkeyScope.ActionBar,
-  );
+  useScopedHotkeys(Key.Escape, resetTableRowSelection, TableHotkeyScope.Table);
 
   const { saveViewFields } = useSaveCurrentViewFields();
 
@@ -102,17 +84,12 @@ export const RecordTableWithWrappers = ({
       >
         <EntityDeleteContext.Provider value={deleteOneRecord}>
           <ScrollWrapper
-            contextProviderName="recordTableWithWrappers"
             componentInstanceId={`record-table-scroll-${recordTableId}`}
           >
             <RecordUpdateContext.Provider value={updateRecordMutation}>
-              <StyledTableWithHeader>
-                <StyledTableContainer>
-                  <StyledTableInternalContainer>
-                    <RecordTable />
-                  </StyledTableInternalContainer>
-                </StyledTableContainer>
-              </StyledTableWithHeader>
+              <StyledTableContainer>
+                <RecordTable />
+              </StyledTableContainer>
             </RecordUpdateContext.Provider>
           </ScrollWrapper>
         </EntityDeleteContext.Provider>

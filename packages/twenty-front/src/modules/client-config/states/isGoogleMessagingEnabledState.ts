@@ -1,5 +1,4 @@
-import { createState } from '@ui/utilities/state/utils/createState';
-
+import { createState } from 'twenty-ui/utilities';
 export const isGoogleMessagingEnabledState = createState<boolean>({
   key: 'isGoogleMessagingEnabled',
   defaultValue: false,

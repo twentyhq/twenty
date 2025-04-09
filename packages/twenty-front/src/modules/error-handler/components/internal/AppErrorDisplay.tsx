@@ -5,9 +5,9 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-  Button,
-  IconRefresh,
-} from 'twenty-ui';
+} from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/input';
+import { IconRefresh } from 'twenty-ui/display';
 
 export const AppErrorDisplay = ({
   error,

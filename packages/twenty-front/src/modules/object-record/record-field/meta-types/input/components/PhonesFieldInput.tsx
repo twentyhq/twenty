@@ -4,14 +4,15 @@ import styled from '@emotion/styled';
 import { E164Number, parsePhoneNumber } from 'libphonenumber-js';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 import { createPhonesFromFieldValue } from '@/object-record/record-field/meta-types/input/utils/phonesUtils';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { css } from '@emotion/react';
+import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
@@ -69,8 +70,7 @@ export const PhonesFieldInput = ({
   onCancel,
   onClickOutside,
 }: PhonesFieldInputProps) => {
-  const { persistPhonesField, hotkeyScope, fieldValue, fieldDefinition } =
-    usePhonesField();
+  const { persistPhonesField, fieldValue, fieldDefinition } = usePhonesField();
 
   const phones = createPhonesFromFieldValue(fieldValue);
 
@@ -128,7 +128,7 @@ export const PhonesFieldInput = ({
       }) => (
         <PhonesFieldMenuItem
           key={index}
-          dropdownId={`${hotkeyScope}-phones-${index}`}
+          dropdownId={`phones-field-input-${fieldDefinition.metadata.fieldName}-${index}`}
           isPrimary={isPrimaryPhone(index)}
           phone={phone}
           onEdit={handleEdit}
@@ -152,7 +152,7 @@ export const PhonesFieldInput = ({
           </StyledCustomPhoneInputContainer>
         );
       }}
-      hotkeyScope={hotkeyScope}
+      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
     />
   );
 };

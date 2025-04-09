@@ -26,7 +26,7 @@ import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/reco
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
-import { IconDotsVertical } from 'twenty-ui';
+import { IconDotsVertical } from 'twenty-ui/display';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { CommandMenu } from '../CommandMenu';
@@ -115,10 +115,10 @@ export const DefaultWithoutSearch: Story = {
     const canvas = within(document.body);
 
     expect(await canvas.findByText('Go to People')).toBeVisible();
-    expect(await canvas.findByText('Go to Companies')).toBeVisible();
     expect(await canvas.findByText('Go to Opportunities')).toBeVisible();
     expect(await canvas.findByText('Go to Settings')).toBeVisible();
     expect(await canvas.findByText('Go to Tasks')).toBeVisible();
+    expect(await canvas.findByText('Go to Notes')).toBeVisible();
   },
 };
 

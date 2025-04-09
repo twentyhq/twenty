@@ -2,7 +2,7 @@ import { WorkflowFormAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { ComponentDecorator } from 'twenty-ui';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -60,7 +60,7 @@ export const TextFieldSettings: Story = {
     const placeholderInput = await canvas.findByText('Enter text');
     expect(placeholderInput).toBeVisible();
 
-    const closeButton = await canvas.findByRole('button');
+    const closeButton = await canvas.findByTestId('close-button');
     await userEvent.click(closeButton);
     expect(args.onClose).toHaveBeenCalled();
   },
@@ -87,7 +87,7 @@ export const NumberFieldSettings: Story = {
     const placeholderInput = await canvas.findByText('Enter number');
     expect(placeholderInput).toBeInTheDocument();
 
-    const closeButton = await canvas.findByRole('button');
+    const closeButton = await canvas.findByTestId('close-button');
     await userEvent.click(closeButton);
     expect(args.onClose).toHaveBeenCalled();
   },

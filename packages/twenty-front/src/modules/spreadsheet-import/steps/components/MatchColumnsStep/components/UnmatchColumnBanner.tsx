@@ -1,6 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Banner, IconChevronDown, IconInfoCircle } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { Banner, IconChevronDown, IconInfoCircle } from 'twenty-ui/display';
 
 const StyledBanner = styled(Banner)`
   background: ${({ theme }) => theme.accent.secondary};
@@ -27,6 +28,16 @@ const StyledTransitionedIconChevronDown = styled(IconChevronDown)<{
   cursor: pointer;
 `;
 
+const StyledClickableContainer = styled.div`
+  cursor: pointer;
+  display: flex;
+
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+`;
+
 export const UnmatchColumnBanner = ({
   message,
   isExpanded,
@@ -37,16 +48,20 @@ export const UnmatchColumnBanner = ({
   buttonOnClick?: () => void;
 }) => {
   const theme = useTheme();
+
   return (
     <StyledBanner>
       <IconInfoCircle color={theme.color.blue} size={theme.icon.size.md} />
-      <StyledText>{message}</StyledText>
-      {buttonOnClick && (
-        <StyledTransitionedIconChevronDown
-          isExpanded={isExpanded}
-          onClick={buttonOnClick}
-          size={theme.icon.size.md}
-        />
+      {isDefined(buttonOnClick) ? (
+        <StyledClickableContainer onClick={buttonOnClick}>
+          <StyledText>{message}</StyledText>
+          <StyledTransitionedIconChevronDown
+            isExpanded={isExpanded}
+            size={theme.icon.size.md}
+          />
+        </StyledClickableContainer>
+      ) : (
+        <StyledText>{message}</StyledText>
       )}
     </StyledBanner>
   );
