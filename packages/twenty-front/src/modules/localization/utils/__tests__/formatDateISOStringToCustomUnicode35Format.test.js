@@ -18,7 +18,6 @@ describe('formatDateISOStringToCustomUnicode35Format', () => {
 
     expect(result).toBe('06:30');
   });
-  
 
   it('should gracefully handle errors', () => {
     const result = formatDateISOStringToCustomUnicode35Format(
