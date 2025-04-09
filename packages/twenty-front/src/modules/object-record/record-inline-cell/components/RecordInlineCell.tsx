@@ -80,7 +80,6 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
         const hotkeyScope = snapshot
           .getLoadable(currentHotkeyScopeState)
           .getValue();
-        console.log(hotkeyScope);
         if (hotkeyScope.scope !== DEFAULT_CELL_SCOPE.scope) {
           return;
         }
