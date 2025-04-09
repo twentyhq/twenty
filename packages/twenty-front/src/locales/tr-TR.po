@@ -122,8 +122,13 @@ msgstr "1. Tür"
 
 #. js-lingui-id: AvXug3
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "10 000 workflow node executions"
-msgstr "10 000 iş akışı düğüm yürütmesi"
+#~ msgid "10 000 workflow node executions"
+#~ msgstr "10 000 iş akışı düğüm yürütmesi"
+
+#. js-lingui-id: 7IIx+y
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "10,000 workflow node executions"
+msgstr ""
 
 #. js-lingui-id: 4EdXYs
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -143,8 +148,13 @@ msgstr "2. Alanı Yapılandır"
 
 #. js-lingui-id: kAtmAv
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "20 000 workflow node executions"
-msgstr "20 000 iş akışı düğüm yürütmesi"
+#~ msgid "20 000 workflow node executions"
+#~ msgstr "20 000 iş akışı düğüm yürütmesi"
+
+#. js-lingui-id: YfwnsU
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "20,000 workflow node executions"
+msgstr ""
 
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -553,8 +563,13 @@ msgstr "Arapça"
 
 #. js-lingui-id: 3iX0kh
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Are you sure that you want to change your billing interval?"
-msgstr "Faturalandırma aralığınızı değiştirmek istediğinizden emin misiniz?"
+#~ msgid "Are you sure that you want to change your billing interval?"
+#~ msgstr "Faturalandırma aralığınızı değiştirmek istediğinizden emin misiniz?"
+
+#. js-lingui-id: CWb74a
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Are you sure that you want to change your billing interval? You will be charged immediately for the full year."
+msgstr ""
 
 #. js-lingui-id: 3SRf5B
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
@@ -785,8 +800,8 @@ msgstr "Katalanca"
 
 #. js-lingui-id: OfzMnb
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Change {to}"
-msgstr "{to} Değiştir"
+#~ msgid "Change {to}"
+#~ msgstr "{to} Değiştir"
 
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
@@ -794,6 +809,11 @@ msgstr "{to} Değiştir"
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Change Password"
 msgstr "Şifre Değiştir"
+
+#. js-lingui-id: b0h4XW
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Change to yearly"
+msgstr ""
 
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -1044,6 +1064,16 @@ msgstr "Çekirdek"
 #. js-lingui-id: w5Stxm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Correct the issues and fill the missing data."
+msgstr ""
+
+#. js-lingui-id: I99Miw
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Cost"
+msgstr ""
+
+#. js-lingui-id: iX2opZ
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Cost per 1k Extra Credits"
 msgstr ""
 
 #. js-lingui-id: s8lFtq
@@ -1817,8 +1847,13 @@ msgstr ""
 
 #. js-lingui-id: VSQxWH
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Error while switching subscription {to}."
-msgstr "Abonelik değiştirilirken hata {to}."
+#~ msgid "Error while switching subscription {to}."
+#~ msgstr "Abonelik değiştirilirken hata {to}."
+
+#. js-lingui-id: k06M7e
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Error while switching subscription to yearly."
+msgstr ""
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -1996,6 +2031,11 @@ msgstr "İş Akışlarını Dışa Aktar"
 #~ msgid "Export Workflows"
 #~ msgstr "Export Workflows"
 
+#. js-lingui-id: uE7S0L
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Extra Credits Used"
+msgstr ""
+
 #. js-lingui-id: jARNNi
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Failed to validate API key. Please check your API key and try again."
@@ -2095,6 +2135,11 @@ msgstr "İsim"
 msgid "Forgot your password?"
 msgstr "Parolanızı mı unuttunuz?"
 
+#. js-lingui-id: wjsFMQ
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Free Credits Used"
+msgstr ""
+
 #. js-lingui-id: nLC6tu
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "French"
@@ -2102,13 +2147,13 @@ msgstr "Fransızca"
 
 #. js-lingui-id: aTieE0
 #: src/pages/settings/SettingsBilling.tsx
-msgid "from monthly to yearly"
-msgstr "aylıktan yıllığa"
+#~ msgid "from monthly to yearly"
+#~ msgstr "aylıktan yıllığa"
 
 #. js-lingui-id: K04lE5
 #: src/pages/settings/SettingsBilling.tsx
-msgid "from yearly to monthly"
-msgstr "yıllıktan aylığa"
+#~ msgid "from yearly to monthly"
+#~ msgstr "yıllıktan aylığa"
 
 #. js-lingui-id: scmRyR
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -2817,6 +2862,11 @@ msgstr "Takvim etkinlikleri senkronizasyon işinizin yürütülmesini izleyin"
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Monitor the execution of your emails sync job"
 msgstr "E-posta senkronizasyon işinizin yürütülmesini izleyin"
+
+#. js-lingui-id: 1cOZuL
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Monthly Credits"
+msgstr ""
 
 #. js-lingui-id: 3Siwmw
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -4152,8 +4202,13 @@ msgstr ""
 
 #. js-lingui-id: B5jRKH
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Subscription has been switched {to}"
-msgstr "Abonelik {to} olarak değiştirildi"
+#~ msgid "Subscription has been switched {to}"
+#~ msgstr "Abonelik {to} olarak değiştirildi"
+
+#. js-lingui-id: TXH0ad
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Subscription has been switched to yearly."
+msgstr ""
 
 #. js-lingui-id: AxQiPW
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -4173,18 +4228,28 @@ msgstr "İsveççe"
 
 #. js-lingui-id: 9yk9d1
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch {from}"
-msgstr "{from} değiştir"
+#~ msgid "Switch {from}"
+#~ msgstr "{from} değiştir"
 
 #. js-lingui-id: qi74XZ
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch {to}"
-msgstr "{to} değiştir"
+#~ msgid "Switch {to}"
+#~ msgstr "{to} değiştir"
 
 #. js-lingui-id: L6Fg36
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch billing {to}"
-msgstr "Faturalandırmayı {to} olarak değiştir"
+#~ msgid "Switch billing {to}"
+#~ msgstr "Faturalandırmayı {to} olarak değiştir"
+
+#. js-lingui-id: o04bjR
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Switch billing to yearly"
+msgstr ""
+
+#. js-lingui-id: /IYUDq
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Switch from monthly to yearly"
+msgstr ""
 
 #. js-lingui-id: E4rPXj
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -4195,6 +4260,11 @@ msgstr ""
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #~ msgid "Switch to {alternatePlanName}"
 #~ msgstr "{alternatePlanName} değiştir"
+
+#. js-lingui-id: 1EwZPZ
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Switch to yearly"
+msgstr ""
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -4420,13 +4490,13 @@ msgstr "Zaman damgası ve katılımcılar ekibinizle paylaşılacak."
 
 #. js-lingui-id: aqMzDX
 #: src/pages/settings/SettingsBilling.tsx
-msgid "to monthly"
-msgstr "aylığa"
+#~ msgid "to monthly"
+#~ msgstr "aylığa"
 
 #. js-lingui-id: WXXiXO
 #: src/pages/settings/SettingsBilling.tsx
-msgid "to yearly"
-msgstr "yıllığa"
+#~ msgid "to yearly"
+#~ msgstr "yıllığa"
 
 #. js-lingui-id: ecUA8p
 #: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
@@ -4442,6 +4512,11 @@ msgstr ""
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Total Users"
 #~ msgstr "Total Users"
+
+#. js-lingui-id: dshGKq
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Track your monthly workflow credit consumption."
+msgstr ""
 
 #. js-lingui-id: PiUt3N
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
@@ -4844,13 +4919,13 @@ msgstr "Bu nesne için kayıt oluşturmaya izin verilmiyor"
 
 #. js-lingui-id: zSkMV0
 #: src/pages/settings/SettingsBilling.tsx
-msgid "You will be charged immediately for the full year."
-msgstr "Tüm yıl için hemen ücretlendirileceksiniz."
+#~ msgid "You will be charged immediately for the full year."
+#~ msgstr "Tüm yıl için hemen ücretlendirileceksiniz."
 
 #. js-lingui-id: XVnj6K
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Your credit balance will be used to pay the monthly bills."
-msgstr "Kredi bakiyeniz aylık faturaları ödemek için kullanılacak."
+#~ msgid "Your credit balance will be used to pay the monthly bills."
+#~ msgstr "Kredi bakiyeniz aylık faturaları ödemek için kullanılacak."
 
 #. js-lingui-id: +5YqGH
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
