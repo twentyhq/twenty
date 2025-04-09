@@ -5,7 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-export const useOnSelectableListEnter = ({
+export const useListenToEnterHotkeyOnListItem = ({
   hotkeyScope,
   itemId,
   onEnter,
