@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
-import { IconX } from 'twenty-ui';
 
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -35,6 +34,7 @@ import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
+import { IconX } from 'twenty-ui/display';
 
 const StyledNoKanbanFieldAvailableContainer = styled.div`
   color: ${({ theme }) => theme.font.color.light};

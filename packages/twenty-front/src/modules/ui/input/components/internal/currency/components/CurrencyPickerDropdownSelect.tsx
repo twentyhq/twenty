@@ -4,9 +4,8 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-
-import { MenuItem, MenuItemSelectAvatar } from 'twenty-ui';
 import { Currency } from './CurrencyPickerDropdownButton';
+import { MenuItem, MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
 export const CurrencyPickerDropdownSelect = ({
   currencies,

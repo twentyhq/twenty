@@ -7,7 +7,7 @@ import {
   IconNotes,
   IconPaperclip,
   IconTimelineEvent,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
 
 export const BASE_RECORD_LAYOUT: RecordLayout = {
   tabs: {

@@ -1,12 +1,13 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { Button, H2Title, IconTrash } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
+import { Button } from 'twenty-ui/input';
+import { H2Title, IconTrash } from 'twenty-ui/display';
 
 export const DeleteWorkspace = () => {
   const [isDeleteWorkSpaceModalOpen, setIsDeleteWorkSpaceModalOpen] =

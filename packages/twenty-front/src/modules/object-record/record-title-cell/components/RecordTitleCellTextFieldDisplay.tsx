@@ -3,7 +3,7 @@ import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlin
 import { useRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { OverflowingTextWithTooltip } from 'twenty-ui';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledDiv = styled.div`
   background: inherit;

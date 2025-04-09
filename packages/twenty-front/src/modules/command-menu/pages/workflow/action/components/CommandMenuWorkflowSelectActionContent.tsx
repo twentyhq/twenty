@@ -4,9 +4,8 @@ import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/co
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { OTHER_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/OtherActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { MenuItemCommand, useIcons } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { MenuItemCommand } from 'twenty-ui/navigation';
+import { useIcons } from 'twenty-ui/display';
 
 export const CommandMenuWorkflowSelectActionContent = ({
   workflow,
@@ -17,9 +16,6 @@ export const CommandMenuWorkflowSelectActionContent = ({
   const { createStep } = useCreateStep({
     workflow,
   });
-  const isWorkflowFormActionEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsWorkflowFormActionEnabled,
-  );
 
   return (
     <RightDrawerStepListContainer>
@@ -37,9 +33,7 @@ export const CommandMenuWorkflowSelectActionContent = ({
       <RightDrawerWorkflowSelectStepTitle>
         Other
       </RightDrawerWorkflowSelectStepTitle>
-      {OTHER_ACTIONS.filter(
-        (action) => isWorkflowFormActionEnabled || action.type !== 'FORM',
-      ).map((action) => (
+      {OTHER_ACTIONS.map((action) => (
         <MenuItemCommand
           key={action.type}
           LeftIcon={getIcon(action.icon)}

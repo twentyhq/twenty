@@ -7,8 +7,9 @@ import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthPro
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { HorizontalSeparator, IconLock, MainButton } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { HorizontalSeparator, IconLock } from 'twenty-ui/display';
+import { MainButton } from 'twenty-ui/input';
 
 export const SignInUpWithSSO = () => {
   const theme = useTheme();

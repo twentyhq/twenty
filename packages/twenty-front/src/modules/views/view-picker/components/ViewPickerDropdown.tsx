@@ -1,11 +1,5 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  IconChevronDown,
-  IconList,
-  MOBILE_VIEWPORT,
-  useIcons,
-} from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
@@ -22,6 +16,8 @@ import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPicke
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { isDefined } from 'twenty-shared/utils';
+import { IconChevronDown, IconList, useIcons } from 'twenty-ui/display';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledDropdownLabelAdornments = styled.span`
   align-items: center;
@@ -78,7 +74,6 @@ export const ViewPickerDropdown = () => {
       dropdownHotkeyScope={{ scope: ViewsHotkeyScope.ListDropdown }}
       dropdownOffset={{ x: 0, y: 8 }}
       dropdownPlacement="bottom-start"
-      dropdownMenuWidth={200}
       onClickOutside={handleClickOutside}
       clickableComponent={
         <StyledDropdownButtonContainer isUnfolded={isViewsListDropdownOpen}>

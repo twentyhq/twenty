@@ -1,6 +1,7 @@
 import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
 import { LinksFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/LinksFieldMenuItem';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useMemo } from 'react';
 import { absoluteUrlSchema, isDefined } from 'twenty-shared/utils';
@@ -16,7 +17,7 @@ export const LinksFieldInput = ({
   onCancel,
   onClickOutside,
 }: LinksFieldInputProps) => {
-  const { persistLinksField, hotkeyScope, fieldValue } = useLinksField();
+  const { persistLinksField, fieldValue, fieldDefinition } = useLinksField();
 
   const links = useMemo<{ url: string; label: string }[]>(
     () =>
@@ -62,7 +63,10 @@ export const LinksFieldInput = ({
       items={links}
       onPersist={handlePersistLinks}
       onCancel={onCancel}
-      onClickOutside={onClickOutside}
+      onClickOutside={(persist, event) => {
+        onClickOutside?.(event);
+        persist();
+      }}
       placeholder="URL"
       fieldMetadataType={FieldMetadataType.LINKS}
       validateInput={(input) => ({
@@ -80,7 +84,7 @@ export const LinksFieldInput = ({
       }) => (
         <LinksFieldMenuItem
           key={index}
-          dropdownId={`${hotkeyScope}-links-${index}`}
+          dropdownId={`links-field-input-${fieldDefinition.metadata.fieldName}-${index}`}
           isPrimary={isPrimaryLink(index)}
           label={link.label}
           onEdit={handleEdit}
@@ -89,7 +93,7 @@ export const LinksFieldInput = ({
           url={link.url}
         />
       )}
-      hotkeyScope={hotkeyScope}
+      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
     />
   );
 };

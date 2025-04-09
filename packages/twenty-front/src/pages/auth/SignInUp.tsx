@@ -18,13 +18,13 @@ import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCu
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useMemo } from 'react';
-import { AnimatedEaseIn } from 'twenty-ui';
 
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
 import { PublicWorkspaceDataOutput } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { AnimatedEaseIn } from 'twenty-ui/utilities';
 
 const StandardContent = ({
   workspacePublicData,

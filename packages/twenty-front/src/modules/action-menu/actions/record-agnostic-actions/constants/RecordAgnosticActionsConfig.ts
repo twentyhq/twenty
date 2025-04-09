@@ -1,25 +1,22 @@
 import { useSearchRecordsRecordAgnosticAction } from '@/action-menu/actions/record-agnostic-actions/hooks/useSearchRecordsRecordAgnosticAction';
-import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKey';
-import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
+import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { RecordAgnosticConfigAction } from '@/action-menu/actions/types/RecordAgnosticConfigAction';
 import {
-  ActionMenuEntry,
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import { msg } from '@lingui/core/macro';
-import { IconSearch } from 'twenty-ui';
+import { IconSearch } from 'twenty-ui/display';
 
 export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
   string,
-  ActionMenuEntry & {
-    useAction: ActionHookWithoutObjectMetadataItem;
-  }
+  RecordAgnosticConfigAction
 > = {
-  searchRecords: {
+  [RecordAgnosticActionsKeys.SEARCH_RECORDS]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.Global,
-    key: RecordAgnosticActionsKey.SEARCH_RECORDS,
+    key: RecordAgnosticActionsKeys.SEARCH_RECORDS,
     label: msg`Search records`,
     shortLabel: msg`Search`,
     position: 0,
@@ -28,11 +25,12 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
     availableOn: [ActionViewType.GLOBAL],
     useAction: useSearchRecordsRecordAgnosticAction,
     hotKeys: ['/'],
+    shouldBeRegistered: () => true,
   },
-  searchRecordsFallback: {
+  [RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK]: {
     type: ActionMenuEntryType.Fallback,
     scope: ActionMenuEntryScope.Global,
-    key: RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK,
+    key: RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK,
     label: msg`Search records`,
     shortLabel: msg`Search`,
     position: 1,
@@ -41,5 +39,6 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
     availableOn: [ActionViewType.GLOBAL],
     useAction: useSearchRecordsRecordAgnosticAction,
     hotKeys: ['/'],
+    shouldBeRegistered: () => true,
   },
 };

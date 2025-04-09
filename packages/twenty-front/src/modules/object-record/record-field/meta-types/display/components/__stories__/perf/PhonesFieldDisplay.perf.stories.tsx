@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { PhonesFieldDisplay } from '@/object-record/record-field/meta-types/display/components/PhonesFieldDisplay';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
@@ -7,6 +6,7 @@ import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta = {
   title: 'UI/Data/Field/Display/PhonesFieldDisplay',

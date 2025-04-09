@@ -7,7 +7,7 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import styled from '@emotion/styled';
 import * as React from 'react';
 import { useEffect } from 'react';
-import { IconComponent } from 'twenty-ui';
+import { IconComponent } from 'twenty-ui/display';
 import { Tab } from './Tab';
 
 export type SingleTabProps<T extends string = string> = {
@@ -37,6 +37,7 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
   height: 40px;
   user-select: none;
+  width: 100%;
 `;
 
 const StyledOuterContainer = styled.div`
@@ -79,7 +80,6 @@ export const TabList = ({
         />
         <ScrollWrapper
           defaultEnableYScroll={false}
-          contextProviderName="tabList"
           componentInstanceId={`scroll-wrapper-tab-list-${componentInstanceId}`}
         >
           <StyledContainer className={className}>

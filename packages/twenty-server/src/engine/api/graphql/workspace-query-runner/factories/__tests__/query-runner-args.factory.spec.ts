@@ -10,6 +10,7 @@ import {
   RecordPositionService,
   RecordPositionServiceCreateArgs,
 } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
 describe('QueryRunnerArgsFactory', () => {
@@ -65,6 +66,7 @@ describe('QueryRunnerArgsFactory', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         QueryRunnerArgsFactory,
+        RecordInputTransformerService,
         {
           provide: RecordPositionService,
           useValue: recordPositionService,

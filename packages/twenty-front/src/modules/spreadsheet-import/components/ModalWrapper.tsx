@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ModalCloseButton } from './ModalCloseButton';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledModal = styled(Modal)`
   height: 61%;

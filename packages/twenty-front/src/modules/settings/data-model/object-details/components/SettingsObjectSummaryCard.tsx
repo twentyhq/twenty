@@ -1,13 +1,5 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  IconArchive,
-  IconDotsVertical,
-  IconPencil,
-  LightIconButton,
-  MenuItem,
-  useIcons,
-} from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsSummaryCard } from '@/settings/components/SettingsSummaryCard';
@@ -16,6 +8,14 @@ import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLab
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import {
+  IconArchive,
+  IconDotsVertical,
+  IconPencil,
+  useIcons,
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type SettingsObjectSummaryCardProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -77,7 +77,7 @@ export const SettingsObjectSummaryCard = ({
                 accent="tertiary"
               />
             }
-            dropdownMenuWidth={160}
+            dropdownWidth={160}
             dropdownComponents={
               <DropdownMenuItemsContainer>
                 <MenuItem

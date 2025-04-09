@@ -21,6 +21,7 @@ import { UserProvider } from '~/modules/users/components/UserProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
+import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
@@ -29,10 +30,10 @@ import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { IconsProvider } from 'twenty-ui';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { IconsProvider } from 'twenty-ui/display';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { FullHeightStorybookLayout } from '../FullHeightStorybookLayout';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 export type PageDecoratorArgs = {
   routePath: string;
@@ -86,6 +87,7 @@ const Providers = () => {
               <WorkspaceProviderEffect />
               <UserProvider>
                 <ApolloMetadataClientMockedProvider>
+                  <ObjectMetadataItemsLoadEffect />
                   <ObjectMetadataItemsProvider>
                     <FullHeightStorybookLayout>
                       <HelmetProvider>

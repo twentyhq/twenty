@@ -1,5 +1,3 @@
-import { IconEye, IconEyeOff, MenuItemDraggable, Tag } from 'twenty-ui';
-
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import {
   RecordGroupDefinition,
@@ -7,6 +5,9 @@ import {
 } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { IconEye, IconEyeOff } from 'twenty-ui/display';
+import { MenuItemDraggable } from 'twenty-ui/navigation';
+import { Tag } from 'twenty-ui/components';
 
 type RecordGroupMenuItemDraggableProps = {
   recordGroupId: string;

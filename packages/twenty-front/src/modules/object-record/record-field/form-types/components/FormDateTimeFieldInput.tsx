@@ -6,7 +6,6 @@ import { VariablePickerComponent } from '@/object-record/record-field/form-types
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import {
   DateTimePicker,
-  MONTH_AND_YEAR_DROPDOWN_ID,
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
@@ -30,7 +29,8 @@ import {
   useState,
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Nullable, TEXT_INPUT_STYLE } from 'twenty-ui';
+import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
+import { Nullable } from 'twenty-ui/utilities';
 
 const StyledInputContainer = styled(FormFieldInputInputContainer)`
   display: grid;
@@ -139,7 +139,6 @@ export const FormDateTimeFieldInput = ({
     }
   };
 
-  const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
   const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
     MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   );
@@ -161,7 +160,6 @@ export const FormDateTimeFieldInput = ({
 
       closeDropdownYearSelect();
       closeDropdownMonthSelect();
-      closeDropdown();
       handlePickerClickOutside();
     },
     enabled: displayDatePicker,

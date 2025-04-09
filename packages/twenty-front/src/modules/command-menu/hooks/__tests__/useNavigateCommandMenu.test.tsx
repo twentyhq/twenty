@@ -9,9 +9,9 @@ import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageI
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { Icon123, useIcons } from 'twenty-ui';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { Icon123, useIcons } from 'twenty-ui/display';
 
 jest.mock('uuid', () => ({
   v4: jest.fn().mockReturnValue('mocked-uuid'),

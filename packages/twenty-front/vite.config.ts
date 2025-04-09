@@ -63,7 +63,8 @@ export default defineConfig(({ command, mode }) => {
   if (VITE_DISABLE_ESLINT_CHECKER !== 'true') {
     checkers['eslint'] = {
       lintCommand:
-        'cd ../.. && eslint packages/twenty-front --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',
+        // Appended to packages/twenty-front/.eslintrc.cjs
+        'eslint ../../packages/twenty-front --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',
     };
   }
 
@@ -99,7 +100,7 @@ export default defineConfig(({ command, mode }) => {
         plugins: [['@lingui/swc-plugin', {}]],
       }),
       tsconfigPaths({
-        projects: ['tsconfig.json', '../twenty-ui/tsconfig.json'],
+        projects: ['tsconfig.json'],
       }),
       svgr(),
       lingui({
@@ -139,15 +140,20 @@ export default defineConfig(({ command, mode }) => {
     ],
 
     optimizeDeps: {
-      exclude: ['../../node_modules/.vite', '../../node_modules/.cache'],
+      exclude: [
+        '../../node_modules/.vite',
+        '../../node_modules/.cache',
+        '../../node_modules/twenty-ui',
+      ],
     },
 
     build: {
+      minify: false,
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
       rollupOptions: {
         output: {
-          manualChunks: (id: string) => {
+          manualChunks: (id) => {
             if (id.includes('@scalar')) {
               return 'scalar';
             }

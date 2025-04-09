@@ -2,10 +2,10 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { forwardRef, InputHTMLAttributes, ReactNode, useRef } from 'react';
 import 'react-phone-number-input/style.css';
-import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
+import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 
 const StyledInput = styled.input<{
   withRightComponent?: boolean;

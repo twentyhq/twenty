@@ -5,12 +5,12 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
+import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { IconForbid } from 'twenty-ui';
-import { FieldInputEvent } from './DateTimeFieldInput';
+import { IconForbid } from 'twenty-ui/display';
 
 export type RelationToOneFieldInputProps = {
   onSubmit?: FieldInputEvent;

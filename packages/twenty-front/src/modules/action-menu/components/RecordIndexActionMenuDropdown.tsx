@@ -17,7 +17,8 @@ import { extractComponentState } from '@/ui/utilities/state/component-state/util
 import styled from '@emotion/styled';
 import { i18n } from '@lingui/core';
 import { useRecoilValue } from 'recoil';
-import { IconLayoutSidebarRightExpand, MenuItem } from 'twenty-ui';
+import { IconLayoutSidebarRightExpand } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledDropdownMenuContainer = styled.div`
   width: 100%;
@@ -71,7 +72,7 @@ export const RecordIndexActionMenuDropdown = () => {
         scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
       }}
       data-select-disable
-      dropdownMenuWidth={width}
+      dropdownWidth={width}
       dropdownPlacement="bottom-start"
       dropdownStrategy="absolute"
       dropdownOffset={{

@@ -12,10 +12,14 @@ export const emailModuleFactory = (
 
   switch (driver) {
     case EmailDriver.Logger:
-      return {};
+      return {
+        type: EmailDriver.Logger,
+      };
 
     case EmailDriver.Smtp: {
-      const options: EmailModuleOptions = {};
+      const options: EmailModuleOptions = {
+        type: EmailDriver.Smtp,
+      };
 
       const host = environmentService.get('EMAIL_SMTP_HOST');
       const port = environmentService.get('EMAIL_SMTP_PORT');

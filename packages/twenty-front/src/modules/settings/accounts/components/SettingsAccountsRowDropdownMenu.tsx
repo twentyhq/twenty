@@ -1,13 +1,4 @@
 import { useState } from 'react';
-import {
-  IconCalendarEvent,
-  IconDotsVertical,
-  IconMail,
-  IconRefresh,
-  IconTrash,
-  LightIconButton,
-  MenuItem,
-} from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -19,6 +10,15 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { Trans, useLingui } from '@lingui/react/macro';
+import {
+  IconCalendarEvent,
+  IconDotsVertical,
+  IconMail,
+  IconRefresh,
+  IconTrash,
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type SettingsAccountsRowDropdownMenuProps = {
@@ -55,7 +55,7 @@ export const SettingsAccountsRowDropdownMenu = ({
         clickableComponent={
           <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
         }
-        dropdownMenuWidth={160}
+        dropdownWidth={160}
         dropdownComponents={
           <DropdownMenuItemsContainer>
             <MenuItem

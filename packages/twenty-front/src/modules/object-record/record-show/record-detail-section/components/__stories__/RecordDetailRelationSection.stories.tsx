@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -11,6 +10,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { allMockPersonRecords } from '~/testing/mock-data/people';
@@ -45,7 +45,7 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
               )!,
               objectMetadataItem: mockedCompanyObjectMetadataItem,
             }),
-            hotkeyScope: 'hotkey-scope',
+            isReadOnly: false,
           }}
         >
           <Story />

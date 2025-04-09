@@ -8,6 +8,7 @@ import {
   CatalogOptions,
   CatalogStory,
   ComponentDecorator,
+  RecoilRootDecorator,
 } from '@ui/testing';
 import { MenuItemSelectAvatar } from '../MenuItemSelectAvatar';
 
@@ -27,7 +28,7 @@ export const Default: Story = {
   argTypes: {
     className: { control: false },
   },
-  decorators: [ComponentDecorator],
+  decorators: [ComponentDecorator, RecoilRootDecorator],
 };
 
 export const Catalog: CatalogStory<Story, typeof MenuItemSelectAvatar> = {
@@ -87,5 +88,5 @@ export const Catalog: CatalogStory<Story, typeof MenuItemSelectAvatar> = {
       } as CatalogOptions,
     },
   },
-  decorators: [CatalogDecorator],
+  decorators: [CatalogDecorator, RecoilRootDecorator],
 };

@@ -11,17 +11,16 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
+import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { Button, CoreEditorHeader } from 'twenty-ui/input';
 import {
-  Button,
-  CoreEditorHeader,
   H2Title,
   IconGitCommit,
   IconPlayerPlay,
   IconRestore,
-  Section,
-} from 'twenty-ui';
-import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledTabList = styled(TabList)`
   border-bottom: none;

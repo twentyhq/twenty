@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import '@xyflow/react/dist/style.css';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { WorkflowDiagramEmptyTrigger } from '../WorkflowDiagramEmptyTrigger';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof WorkflowDiagramEmptyTrigger> = {
   title: 'Modules/Workflow/WorkflowDiagramEmptyTrigger',

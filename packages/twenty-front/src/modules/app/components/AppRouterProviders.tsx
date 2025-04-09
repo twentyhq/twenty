@@ -10,14 +10,14 @@ import { ClientConfigProviderEffect } from '@/client-config/components/ClientCon
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
-import { ObjectMetadataItemsGater } from '@/object-metadata/components/ObjectMetadataItemsGater';
+import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
-import { UserThemeProviderEffect } from '@/ui/theme/components/AppThemeProvider';
 import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
+import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { ServerPreconnect } from '@/ui/utilities/server-preconnect/components/ServerPreconnect';
@@ -45,28 +45,27 @@ export const AppRouterProviders = () => {
               <UserProvider>
                 <AuthProvider>
                   <ApolloMetadataClientProvider>
+                    <ObjectMetadataItemsLoadEffect />
                     <ObjectMetadataItemsProvider>
-                      <ObjectMetadataItemsGater>
-                        <PrefetchDataProvider>
-                          <UserThemeProviderEffect />
-                          <SnackBarProvider>
-                            <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                              <DialogManager>
-                                <StrictMode>
-                                  <PromiseRejectionEffect />
-                                  <GotoHotkeysEffectsProvider />
-                                  <ServerPreconnect />
-                                  <PageTitle title={pageTitle} />
-                                  <PageFavicon />
-                                  <Outlet />
-                                </StrictMode>
-                              </DialogManager>
-                            </DialogManagerScope>
-                          </SnackBarProvider>
-                          <MainContextStoreProvider />
-                        </PrefetchDataProvider>
-                        <PageChangeEffect />
-                      </ObjectMetadataItemsGater>
+                      <PrefetchDataProvider>
+                        <UserThemeProviderEffect />
+                        <SnackBarProvider>
+                          <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                            <DialogManager>
+                              <StrictMode>
+                                <PromiseRejectionEffect />
+                                <GotoHotkeysEffectsProvider />
+                                <ServerPreconnect />
+                                <PageTitle title={pageTitle} />
+                                <PageFavicon />
+                                <Outlet />
+                              </StrictMode>
+                            </DialogManager>
+                          </DialogManagerScope>
+                        </SnackBarProvider>
+                        <MainContextStoreProvider />
+                      </PrefetchDataProvider>
+                      <PageChangeEffect />
                     </ObjectMetadataItemsProvider>
                   </ApolloMetadataClientProvider>
                 </AuthProvider>

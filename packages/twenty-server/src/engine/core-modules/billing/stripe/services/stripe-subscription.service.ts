@@ -79,8 +79,8 @@ export class StripeSubscriptionService {
 
   async updateSubscription(
     stripeSubscriptionId: string,
-    data: Stripe.SubscriptionUpdateParams,
-  ) {
-    await this.stripe.subscriptions.update(stripeSubscriptionId, data);
+    updateData: Stripe.SubscriptionUpdateParams,
+  ): Promise<Stripe.Subscription> {
+    return this.stripe.subscriptions.update(stripeSubscriptionId, updateData);
   }
 }

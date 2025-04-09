@@ -9,8 +9,8 @@ import {
   IconList,
   IconSearch,
   IconSettings,
-  NavigationBar,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
+import { NavigationBar } from 'twenty-ui/navigation';
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
 
@@ -25,7 +25,6 @@ export const MobileNavigationBar = () => {
     useRecoilState(isNavigationDrawerExpandedState);
   const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
     useRecoilState(currentMobileNavigationDrawerState);
-
   const { openSettingsMenu } = useOpenSettingsMenu();
 
   const activeItemName = isNavigationDrawerExpanded

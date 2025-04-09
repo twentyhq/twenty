@@ -3,9 +3,9 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { Select } from '@/ui/input/components/Select';
-import { IconTextWrap } from 'twenty-ui';
 import { z } from 'zod';
 import { t } from '@lingui/core/macro';
+import { IconTextWrap } from 'twenty-ui/display';
 
 type SettingsDataModelFieldTextFormProps = {
   disabled?: boolean;
