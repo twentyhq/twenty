@@ -12,7 +12,9 @@ import { AnimatedButton } from 'twenty-ui/input';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
 
 const StyledButtonWrapper = styled.div`
-  z-index: ${RootStackingContextZIndices.CommandMenuButton};
+  z-index: ${({ theme }) => RootStackingContextZIndices.CommandMenuButton + 1};
+  position: relative;
+  pointer-events: auto;
 `;
 
 const StyledTooltipWrapper = styled.div`

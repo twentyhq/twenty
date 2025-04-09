@@ -73,6 +73,8 @@ const StyledPageActionContainer = styled.div`
   display: inline-flex;
   gap: ${({ theme }) => theme.spacing(2)};
   flex: 1 0 auto;
+  align-items: center;
+  justify-content: flex-end;
 `;
 
 const StyledTopBarButtonContainer = styled.div`
