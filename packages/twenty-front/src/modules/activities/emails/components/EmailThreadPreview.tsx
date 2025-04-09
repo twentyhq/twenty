@@ -43,11 +43,12 @@ const StyledSubjectAndBody = styled.div`
   overflow: hidden;
 `;
 
-const StyledSubject = styled.span`
+const StyledSubject = styled.span<{ isShared: boolean }>`
   color: ${({ theme }) => theme.font.color.primary};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex-shrink: ${({ isShared }) => (isShared ? 0 : 1)};
 `;
 
 const StyledBody = styled.span`
@@ -142,7 +143,11 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
 
       <StyledSubjectAndBody>
         {visibility !== MessageChannelVisibility.METADATA && (
-          <StyledSubject>{thread.subject}</StyledSubject>
+          <StyledSubject
+            isShared={visibility === MessageChannelVisibility.SHARE_EVERYTHING}
+          >
+            {thread.subject}
+          </StyledSubject>
         )}
         {visibility === MessageChannelVisibility.SHARE_EVERYTHING && (
           <StyledBody>{thread.lastMessageBody}</StyledBody>
