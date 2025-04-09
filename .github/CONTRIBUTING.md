@@ -15,8 +15,8 @@ Good first issues are a great way to start contributing and get familiar with th
 
 To avoid conflicts, we follow these guidelines:
 
-1. For `Good First Issue` and `Experienced Contributor` issues without `size: long` labels, we'll merge the first PRs that meet our [our code quality standards](https://twenty.com/developers). **We don't assign contributors to these issues**. For `priority: high` issues, our core team will step in within days if no adequate contributions are received.
-2. For `size: long` Issues, you have one week to submit the first draft PR.
+1. For `Good First Issue` and `Experienced Contributor` issues without `size: long` labels, we'll merge the first PRs that meet our [code quality standards](https://twenty.com/developers). **We don't assign contributors to these issues**. For `priority: high` issues, our core team will step in within days if no adequate contributions are received.
+2. For `size: long` Issues, assigned contributors have one week to submit their first draft PR.
 
 ## How to Contribute
 
