@@ -31,6 +31,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
     featureFlagsMap: Record<FeatureFlagKey, boolean>,
+    roleId?: string,
   ): Promise<ObjectRecord[]> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
@@ -56,6 +57,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
       featureFlagsMap,
+      roleId,
     );
 
     return this.formatRecordsForResponse(
@@ -323,6 +325,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
     objectMetadataMaps: ObjectMetadataMaps,
     featureFlagsMap: Record<FeatureFlagKey, boolean>,
+    roleId?: string,
   ): Promise<void> {
     if (!executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       return;
@@ -338,6 +341,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       dataSource: executionArgs.dataSource,
       isNewRelationEnabled:
         featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
+      roleId,
     });
   }
 

@@ -22,6 +22,7 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<DestroyManyResolverArgs>,
     featureFlagsMap: Record<FeatureFlagKey, boolean>,
+    roleId?: string,
   ): Promise<ObjectRecord[]> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
@@ -69,6 +70,7 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
         dataSource: executionArgs.dataSource,
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
+        roleId,
       });
     }
 

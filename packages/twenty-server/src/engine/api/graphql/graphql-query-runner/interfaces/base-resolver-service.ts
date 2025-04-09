@@ -159,6 +159,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const results = await this.resolve(
         graphqlQueryResolverExecutionArgs,
         featureFlagsMap,
+        roleId,
       );
 
       const resultWithGetters = await this.queryResultGettersFactory.create(
@@ -276,6 +277,7 @@ export abstract class GraphqlQueryBaseResolverService<
   protected abstract resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<Input>,
     featureFlagsMap: Record<FeatureFlagKey, boolean>,
+    roleId?: string,
   ): Promise<Response>;
 
   protected abstract validate(

@@ -69,19 +69,16 @@ export class WorkspaceRolesPermissionsCacheService {
       },
     });
 
-    const workspaceObjectMetadata = await this.objectMetadataRepository.find({
-      where: {
-        workspaceId,
-      },
-    });
+    const workspaceObjectMetadataNames =
+      await this.getWorkspaceObjectMetadataNames(workspaceId);
 
     const permissionsByRoleId: ObjectRecordsPermissionsByRoleId = {};
 
     for (const role of roles) {
       const objectRecordsPermissions: ObjectRecordsPermissions = {};
 
-      for (const objectMetadata of workspaceObjectMetadata) {
-        objectRecordsPermissions[objectMetadata.nameSingular] = {
+      for (const objectMetadataNameSingular of workspaceObjectMetadataNames) {
+        objectRecordsPermissions[objectMetadataNameSingular] = {
           canRead: role.canReadAllObjectRecords,
           canUpdate: role.canUpdateAllObjectRecords,
           canSoftDelete: role.canSoftDeleteAllObjectRecords,
@@ -93,5 +90,39 @@ export class WorkspaceRolesPermissionsCacheService {
     }
 
     return permissionsByRoleId;
+  }
+
+  private async getWorkspaceObjectMetadataNames(
+    workspaceId: string,
+  ): Promise<string[]> {
+    let workspaceObjectMetadataNames: string[] = [];
+    const metadataVersion =
+      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
+
+    if (metadataVersion) {
+      const objectMetadataMaps =
+        await this.workspaceCacheStorageService.getObjectMetadataMaps(
+          workspaceId,
+          metadataVersion,
+        );
+
+      workspaceObjectMetadataNames = Object.values(
+        objectMetadataMaps?.byId ?? {},
+      ).map((objectMetadata) => objectMetadata.nameSingular);
+    }
+
+    if (!metadataVersion || workspaceObjectMetadataNames.length === 0) {
+      const workspaceObjectMetadata = await this.objectMetadataRepository.find({
+        where: {
+          workspaceId,
+        },
+      });
+
+      workspaceObjectMetadataNames = workspaceObjectMetadata.map(
+        (objectMetadata) => objectMetadata.nameSingular,
+      );
+    }
+
+    return workspaceObjectMetadataNames;
   }
 }

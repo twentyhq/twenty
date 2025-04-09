@@ -51,14 +51,14 @@ export class TwentyORMManager {
       workspaceMetadataVersion,
     );
 
-    const roleId = await this.userWorkspaceRoleRepository
-      .findOne({
-        where: {
-          userWorkspaceId: userWorkspaceId ?? '',
-          workspaceId: workspaceId,
-        },
-      })
-      .then((userWorkspaceRole) => userWorkspaceRole?.roleId);
+    const userWorkspaceRole = await this.userWorkspaceRoleRepository.findOne({
+      where: {
+        userWorkspaceId: userWorkspaceId ?? '',
+        workspaceId: workspaceId,
+      },
+    });
+
+    const roleId = userWorkspaceRole?.roleId;
 
     return workspaceDataSource.getRepository<T>(objectMetadataName, roleId);
   }

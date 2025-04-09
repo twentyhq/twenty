@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { EntitySchema } from 'typeorm';
@@ -27,10 +26,6 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 export class WorkspaceDatasourceFactory {
   private readonly logger = new Logger(WorkspaceDatasourceFactory.name);
   private promiseMemoizer = new PromiseMemoizer<WorkspaceDataSource>();
-  permissionsPerRoleId = new Map<
-    string,
-    Map<PermissionsOnAllObjectRecords, boolean>
-  >();
 
   constructor(
     private readonly dataSourceService: DataSourceService,

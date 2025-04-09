@@ -31,7 +31,7 @@ export class WorkspaceEntityManager extends EntityManager {
     roleId?: string,
   ): WorkspaceRepository<Entity> {
     const dataSource = this.connection as WorkspaceDataSource;
-    const repositoryKey = `${target.toString()}_${roleId ?? 'default'}${dataSource.rolesPermissionsVersion ? `_${dataSource.rolesPermissionsVersion}` : ''}`;
+    const repositoryKey = `${dataSource.getMetadata(target).name}_${roleId ?? 'default'}${dataSource.rolesPermissionsVersion ? `_${dataSource.rolesPermissionsVersion}` : ''}`;
     const repoFromMap = this.repositories.get(repositoryKey);
 
     if (repoFromMap) {

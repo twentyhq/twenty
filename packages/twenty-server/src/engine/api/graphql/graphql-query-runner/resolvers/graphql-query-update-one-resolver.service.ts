@@ -30,6 +30,7 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<UpdateOneResolverArgs>,
     featureFlagsMap: Record<FeatureFlagKey, boolean>,
+    roleId?: string,
   ): Promise<ObjectRecord> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
@@ -102,6 +103,7 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
         dataSource: executionArgs.dataSource,
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
+        roleId,
       });
     }
 

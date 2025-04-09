@@ -27,6 +27,7 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<DeleteOneResolverArgs>,
     featureFlagsMap: Record<FeatureFlagKey, boolean>,
+    roleId?: string,
   ): Promise<ObjectRecord> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
@@ -73,6 +74,7 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
         dataSource: executionArgs.dataSource,
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
+        roleId,
       });
     }
 

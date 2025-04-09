@@ -43,6 +43,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<FindManyResolverArgs>,
     featureFlagsMap: Record<FeatureFlagKey, boolean>,
+    roleId?: string,
   ): Promise<IConnection<ObjectRecord>> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
@@ -156,6 +157,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
         dataSource: executionArgs.dataSource,
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
+        roleId,
       });
     }
 

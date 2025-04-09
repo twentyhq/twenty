@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import {
   DataSource,
   FindOptionsRelations,
   ObjectLiteral,
-  Repository,
   SelectQueryBuilder,
 } from 'typeorm';
 
@@ -23,7 +21,6 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
@@ -36,8 +33,6 @@ export class ProcessNestedRelationsHelper {
   constructor(
     private readonly processNestedRelationsV2Helper: ProcessNestedRelationsV2Helper,
     private readonly processAggregateHelper: ProcessAggregateHelper,
-    @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
-    private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
   ) {}
 
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>({
@@ -51,6 +46,7 @@ export class ProcessNestedRelationsHelper {
     authContext,
     dataSource,
     isNewRelationEnabled,
+    roleId,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -62,6 +58,7 @@ export class ProcessNestedRelationsHelper {
     authContext: AuthContext;
     dataSource: WorkspaceDataSource;
     isNewRelationEnabled: boolean;
+    roleId?: string;
   }): Promise<void> {
     if (isNewRelationEnabled) {
       return this.processNestedRelationsV2Helper.processNestedRelations({
@@ -74,6 +71,7 @@ export class ProcessNestedRelationsHelper {
         limit,
         authContext,
         dataSource,
+        roleId,
       });
     }
 
@@ -91,6 +89,7 @@ export class ProcessNestedRelationsHelper {
           authContext,
           dataSource,
           isNewRelationEnabled,
+          roleId,
         }),
     );
 
@@ -109,6 +108,7 @@ export class ProcessNestedRelationsHelper {
     authContext,
     dataSource,
     isNewRelationEnabled,
+    roleId,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -121,6 +121,7 @@ export class ProcessNestedRelationsHelper {
     authContext: any;
     dataSource: DataSource;
     isNewRelationEnabled: boolean;
+    roleId?: string;
   }): Promise<void> {
     const relationFieldMetadata =
       parentObjectMetadataItem.fieldsByName[relationName];
@@ -147,6 +148,7 @@ export class ProcessNestedRelationsHelper {
       authContext,
       dataSource,
       isNewRelationEnabled,
+      roleId,
     });
   }
 
@@ -162,6 +164,7 @@ export class ProcessNestedRelationsHelper {
     authContext,
     dataSource,
     isNewRelationEnabled,
+    roleId,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -171,9 +174,10 @@ export class ProcessNestedRelationsHelper {
     nestedRelations: any;
     aggregate: Record<string, AggregationField>;
     limit: number;
-    authContext: any;
+    authContext: AuthContext;
     dataSource: WorkspaceDataSource;
     isNewRelationEnabled: boolean;
+    roleId?: string;
   }): Promise<void> {
     const { inverseRelationName, referenceObjectMetadata } =
       this.getRelationMetadata({
@@ -181,15 +185,6 @@ export class ProcessNestedRelationsHelper {
         parentObjectMetadataItem,
         relationName,
       });
-
-    const roleId = await this.userWorkspaceRoleRepository
-      .findOne({
-        where: {
-          userWorkspaceId: authContext.userWorkspaceId,
-          workspaceId: authContext.workspace.id,
-        },
-      })
-      .then((userWorkspaceRole) => userWorkspaceRole?.roleId);
 
     const relationRepository = dataSource.getRepository(
       referenceObjectMetadata.nameSingular,
@@ -269,6 +264,7 @@ export class ProcessNestedRelationsHelper {
     authContext,
     dataSource,
     isNewRelationEnabled,
+    roleId,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -281,21 +277,13 @@ export class ProcessNestedRelationsHelper {
     authContext: any;
     dataSource: WorkspaceDataSource;
     isNewRelationEnabled: boolean;
+    roleId?: string;
   }): Promise<void> {
     const { referenceObjectMetadata } = this.getRelationMetadata({
       objectMetadataMaps,
       parentObjectMetadataItem,
       relationName,
     });
-
-    const roleId = await this.userWorkspaceRoleRepository
-      .findOne({
-        where: {
-          userWorkspaceId: authContext.userWorkspaceId,
-          workspaceId: authContext.workspace.id,
-        },
-      })
-      .then((userWorkspaceRole) => userWorkspaceRole?.roleId);
 
     const relationRepository = dataSource.getRepository(
       referenceObjectMetadata.nameSingular,

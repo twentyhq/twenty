@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import crypto from 'crypto';
+
 import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import { EntitySchemaOptions } from 'typeorm';
 
