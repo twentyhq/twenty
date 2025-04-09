@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import { IconBrandGithub } from '@ui/display';
-import { ClickToActionLink } from '@ui/navigation/link/components/ActionLink';
+import { ClickToActionLink } from '@ui/navigation/link/components/ClickToActionLink';
 import { GITHUB_LINK } from '../constants/GithubLink';
 
 interface GithubVersionLinkProps {

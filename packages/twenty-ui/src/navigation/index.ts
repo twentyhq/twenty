@@ -7,8 +7,8 @@
  *                              |___/
  */
 
-export { ClickToActionLink } from './link/components/ActionLink';
 export { AdvancedSettingsToggle } from './link/components/AdvancedSettingsToggle';
+export { ClickToActionLink } from './link/components/ClickToActionLink';
 export { ContactLink } from './link/components/ContactLink';
 export { GithubVersionLink } from './link/components/GithubVersionLink';
 export { RawLink } from './link/components/RawLink';
