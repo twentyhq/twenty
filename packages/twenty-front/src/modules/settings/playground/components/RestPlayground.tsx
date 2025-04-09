@@ -15,7 +15,6 @@ const StyledContainer = styled.div`
   height: 100%;
   overflow-y: scroll;
   width: 100%;
-  scrollbar-width: none;
 `;
 
 const ApiReferenceReact = lazy(() =>

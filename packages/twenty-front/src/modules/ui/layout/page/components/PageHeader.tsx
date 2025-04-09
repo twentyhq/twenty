@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 
+import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
@@ -17,7 +18,7 @@ import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
-const StyledTopBarContainer = styled.div`
+const StyledTopBarContainer = styled.div<{ isShowFullscreen: boolean }>`
   align-items: center;
   background: ${({ theme }) => theme.background.noisy};
   color: ${({ theme }) => theme.font.color.primary};
@@ -27,7 +28,8 @@ const StyledTopBarContainer = styled.div`
   justify-content: space-between;
   min-height: ${PAGE_BAR_MIN_HEIGHT}px;
   padding: ${({ theme }) => theme.spacing(2)};
-  padding-left: 0;
+  padding-left: ${({ isShowFullscreen, theme }) =>
+    isShowFullscreen ? theme.spacing(3) : 0};
   padding-right: ${({ theme }) => theme.spacing(3)};
   gap: ${({ theme }) => theme.spacing(2)};
 
@@ -106,9 +108,10 @@ export const PageHeader = ({
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
   );
+  const isShowFullscreen = useShowFullscreen();
 
   return (
-    <StyledTopBarContainer>
+    <StyledTopBarContainer isShowFullscreen={isShowFullscreen}>
       <StyledLeftContainer>
         {!isMobile && !isNavigationDrawerExpanded && (
           <StyledTopBarButtonContainer>
