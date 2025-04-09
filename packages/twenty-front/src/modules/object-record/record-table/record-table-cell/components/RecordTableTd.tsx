@@ -18,25 +18,19 @@ const StyledTd = styled.td<{
   width?: number;
 }>`
   border-bottom: 1px solid
-    ${({ borderColor, hasBottomBorder }) =>
-      hasBottomBorder ? borderColor : 'transparent'};
+    ${({ borderColor, hasBottomBorder, isDragging }) =>
+      hasBottomBorder && !isDragging ? borderColor : 'transparent'};
   color: ${({ fontColor }) => fontColor};
-  border-right: ${({ borderColor, hasRightBorder }) =>
-    hasRightBorder ? `1px solid ${borderColor}` : 'none'};
+  border-right: ${({ borderColor, hasRightBorder, isDragging }) =>
+    hasRightBorder && !isDragging ? `1px solid ${borderColor}` : 'none'};
 
   padding: 0;
   transition: 0.3s ease;
 
   text-align: left;
 
-  background: ${({ backgroundColor }) => backgroundColor};
-  /* ${({ isDragging }) =>
-    isDragging
-      ? `
-      background-color: transparent;
-      border-color: transparent;
-    `
-      : ''}
+  background: ${({ backgroundColor, isDragging }) =>
+    isDragging ? 'transparent' : backgroundColor};
 
   ${({ freezeFirstColumns }) =>
     freezeFirstColumns
@@ -44,7 +38,7 @@ const StyledTd = styled.td<{
       width: ${RECORD_TABLE_TD_WIDTH};
       max-width: ${RECORD_TABLE_TD_WIDTH};
     }`
-      : ''} */
+      : ''}
 `;
 
 export const RecordTableTd = ({

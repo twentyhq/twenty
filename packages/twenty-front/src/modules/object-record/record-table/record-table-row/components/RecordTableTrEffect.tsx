@@ -1,4 +1,3 @@
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { isRowVisibleComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowVisibleComponentFamilyState';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
@@ -9,7 +8,6 @@ type RecordTableTrEffectProps = {
 };
 
 export const RecordTableTrEffect = ({ recordId }: RecordTableTrEffectProps) => {
-  const { onIndexRecordsLoaded } = useRecordIndexContextOrThrow();
   const { scrollWrapperHTMLElement } = useScrollWrapperElement();
 
   const setIsRowVisible = useSetRecoilComponentFamilyStateV2(
@@ -29,7 +27,6 @@ export const RecordTableTrEffect = ({ recordId }: RecordTableTrEffectProps) => {
         const isIntersecting = entry.isIntersecting;
 
         if (isIntersecting) {
-          // onIndexRecordsLoaded?.();
           setIsRowVisible(true);
         }
 
@@ -50,12 +47,7 @@ export const RecordTableTrEffect = ({ recordId }: RecordTableTrEffectProps) => {
     return () => {
       observer.disconnect();
     };
-  }, [
-    onIndexRecordsLoaded,
-    recordId,
-    scrollWrapperHTMLElement,
-    setIsRowVisible,
-  ]);
+  }, [recordId, scrollWrapperHTMLElement, setIsRowVisible]);
 
   return <></>;
 };

@@ -4,6 +4,7 @@ import { RecordTableCellContext } from '@/object-record/record-table/contexts/Re
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellFieldContextGeneric } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextGeneric';
+import { RecordTableCellFieldContextLabelIdentifier } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextLabelIdentifier';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { ReactNode, useContext } from 'react';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -39,9 +40,15 @@ export const RecordTableCellFieldContextWrapper = ({
 
   return (
     <RecordFieldComponentInstanceContext.Provider value={{ instanceId }}>
-      <RecordTableCellFieldContextGeneric>
-        {children}
-      </RecordTableCellFieldContextGeneric>
+      {isLabelIdentifier ? (
+        <RecordTableCellFieldContextLabelIdentifier key={instanceId}>
+          {children}
+        </RecordTableCellFieldContextLabelIdentifier>
+      ) : (
+        <RecordTableCellFieldContextGeneric key={instanceId}>
+          {children}
+        </RecordTableCellFieldContextGeneric>
+      )}
     </RecordFieldComponentInstanceContext.Provider>
   );
 };

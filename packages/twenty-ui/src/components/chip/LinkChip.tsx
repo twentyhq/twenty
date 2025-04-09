@@ -1,3 +1,4 @@
+import { styled } from '@linaria/react';
 import {
   Chip,
   ChipAccent,
@@ -16,11 +17,9 @@ export type LinkChipProps = Omit<
   onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
 };
 
-// Ideally we would use the UndecoratedLink component from @ui/navigation
-// but it led to a bug probably linked to circular dependencies, which was hard to solve
-// const StyledLink = styled(Link)`
-//   text-decoration: none;
-// `;
+const StyledLink = styled(Link)`
+  text-decoration: none;
+`;
 
 export const LinkChip = ({
   to,
@@ -36,7 +35,7 @@ export const LinkChip = ({
   onClick,
 }: LinkChipProps) => {
   return (
-    <Link to={to} onClick={onClick}>
+    <StyledLink to={to} onClick={onClick}>
       <Chip
         size={size}
         label={label}
@@ -49,6 +48,6 @@ export const LinkChip = ({
         className={className}
         maxWidth={maxWidth}
       />
-    </Link>
+    </StyledLink>
   );
 };
