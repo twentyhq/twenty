@@ -1,3 +1,5 @@
+import process from 'process';
+
 import request from 'supertest';
 import { createClient, ClickHouseClient } from '@clickhouse/client';
 
@@ -10,7 +12,7 @@ describe('ClickHouse Event Registration (integration)', () => {
 
     clickhouseClient = createClient({
       // use variable
-      url: 'http://default:devPassword@localhost:8123/twenty-dev',
+      url: process.env.CLICKHOUSE_URL,
     });
 
     await clickhouseClient.query({
