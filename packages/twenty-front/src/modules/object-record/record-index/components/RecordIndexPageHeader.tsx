@@ -44,8 +44,6 @@ export const RecordIndexPageHeader = () => {
   const { getIcon } = useIcons();
   const Icon = getIcon(objectMetadataItem?.icon);
 
-  const { recordIndexId } = useRecordIndexContextOrThrow();
-
   const label = objectMetadataItem?.labelPlural ?? capitalize(objectNamePlural);
 
   const pageHeaderTitle =
@@ -70,7 +68,7 @@ export const RecordIndexPageHeader = () => {
     <PageHeader title={pageHeaderTitle} Icon={Icon}>
       {isDefined(contextStoreCurrentViewId) && (
         <>
-          <RecordIndexActionMenu indexId={recordIndexId} />
+          <RecordIndexActionMenu />
           <PageHeaderToggleCommandMenuButton />
         </>
       )}

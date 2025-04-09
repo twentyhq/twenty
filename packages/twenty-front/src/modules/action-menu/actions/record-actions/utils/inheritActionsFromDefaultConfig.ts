@@ -1,18 +1,18 @@
 import { DEFAULT_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig';
+import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { DefaultRecordActionConfigKeys } from '@/action-menu/actions/types/DefaultRecordActionConfigKeys';
-import { RecordConfigAction } from '@/action-menu/actions/types/RecordConfigAction';
 
 export const inheritActionsFromDefaultConfig = ({
   config,
   actionKeys,
   propertiesToOverwrite,
 }: {
-  config: Record<string, RecordConfigAction>;
+  config: Record<string, ActionConfig>;
   actionKeys: DefaultRecordActionConfigKeys[];
   propertiesToOverwrite: Partial<
-    Record<DefaultRecordActionConfigKeys, Partial<RecordConfigAction>>
+    Record<DefaultRecordActionConfigKeys, Partial<ActionConfig>>
   >;
-}): Record<string, RecordConfigAction> => {
+}): Record<string, ActionConfig> => {
   const actionsFromDefaultConfig = actionKeys.reduce(
     (acc, key) => ({
       ...acc,
@@ -21,7 +21,7 @@ export const inheritActionsFromDefaultConfig = ({
         ...propertiesToOverwrite[key],
       },
     }),
-    {} as Record<string, RecordConfigAction>,
+    {} as Record<string, ActionConfig>,
   );
 
   return {

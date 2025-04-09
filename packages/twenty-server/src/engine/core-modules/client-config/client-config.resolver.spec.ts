@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { ClientConfigResolver } from './client-config.resolver';
 
@@ -13,7 +13,7 @@ describe('ClientConfigResolver', () => {
       providers: [
         ClientConfigResolver,
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {},
         },
         {

@@ -3,15 +3,15 @@ import { Injectable } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class GoogleOAuth2ClientManagerService {
-  constructor(private readonly environmentService: EnvironmentService) {}
+  constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   public async getOAuth2Client(refreshToken: string): Promise<OAuth2Client> {
-    const gmailClientId = this.environmentService.get('AUTH_GOOGLE_CLIENT_ID');
-    const gmailClientSecret = this.environmentService.get(
+    const gmailClientId = this.twentyConfigService.get('AUTH_GOOGLE_CLIENT_ID');
+    const gmailClientSecret = this.twentyConfigService.get(
       'AUTH_GOOGLE_CLIENT_SECRET',
     );
 
