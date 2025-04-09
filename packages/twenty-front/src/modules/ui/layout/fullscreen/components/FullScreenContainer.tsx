@@ -38,7 +38,7 @@ export const FullScreenContainer = ({
   const isMobile = useIsMobile();
 
   return (
-    <StyledFullScreen className={'awawdawd'}>
+    <StyledFullScreen>
       <PageHeader
         title={<Breadcrumb links={links} />}
         hasClosePageButton={!isMobile}
