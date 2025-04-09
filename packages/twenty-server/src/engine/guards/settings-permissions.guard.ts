@@ -8,6 +8,7 @@ import {
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
@@ -28,6 +29,17 @@ export const SettingsPermissionsGuard = (
       const ctx = GqlExecutionContext.create(context);
       const workspaceId = ctx.getContext().req.workspace.id;
       const userWorkspaceId = ctx.getContext().req.userWorkspaceId;
+      const workspaceActivationStatus =
+        ctx.getContext().req.workspace.activationStatus;
+
+      if (
+        [
+          WorkspaceActivationStatus.PENDING_CREATION,
+          WorkspaceActivationStatus.ONGOING_CREATION,
+        ].includes(workspaceActivationStatus)
+      ) {
+        return true;
+      }
 
       const hasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
