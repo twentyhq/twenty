@@ -8,6 +8,7 @@ import {
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
@@ -19,6 +20,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 
 export const SettingsPermissionsGuard = (
   requiredPermission: SettingPermissionType,
+  exemptedActivationStatuses: WorkspaceActivationStatus[] = [],
 ): Type<CanActivate> => {
   @Injectable()
   class SettingsPermissionsMixin implements CanActivate {
@@ -28,6 +30,12 @@ export const SettingsPermissionsGuard = (
       const ctx = GqlExecutionContext.create(context);
       const workspaceId = ctx.getContext().req.workspace.id;
       const userWorkspaceId = ctx.getContext().req.userWorkspaceId;
+      const workspaceActivationStatus =
+        ctx.getContext().req.workspace.activationStatus;
+
+      if (exemptedActivationStatuses.includes(workspaceActivationStatus)) {
+        return true;
+      }
 
       const hasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({

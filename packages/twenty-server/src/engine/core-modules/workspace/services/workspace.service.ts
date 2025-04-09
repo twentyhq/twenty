@@ -165,6 +165,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       userWorkspaceId,
       workspaceId: workspace.id,
       apiKey,
+      workspaceActivationStatus: workspace.activationStatus,
     });
 
     if (payload.subdomain && workspace.subdomain !== payload.subdomain) {
@@ -460,11 +461,13 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     userWorkspaceId,
     workspaceId,
     apiKey,
+    workspaceActivationStatus,
   }: {
     payload: Partial<Workspace>;
     userWorkspaceId?: string;
     workspaceId: string;
     apiKey?: string;
+    workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     if (
       'displayName' in payload ||
@@ -474,6 +477,12 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     ) {
       if (!userWorkspaceId) {
         throw new Error('Missing userWorkspaceId in authContext');
+      }
+
+      if (
+        workspaceActivationStatus === WorkspaceActivationStatus.PENDING_CREATION
+      ) {
+        return;
       }
 
       const userHasPermission =
