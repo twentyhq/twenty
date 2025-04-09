@@ -1,14 +1,12 @@
-import {
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
+import { ActionScope } from '@/action-menu/actions/types/ActionScope';
+import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { msg } from '@lingui/core/macro';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { IconSettingsAutomation } from 'twenty-ui/display';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRunWorkflowActions = () => {
   const isWorkflowEnabled = useIsFeatureEnabled(
@@ -33,9 +31,9 @@ export const useRunWorkflowActions = () => {
       const name = capitalize(activeWorkflowVersion.workflow.name);
 
       return {
-        type: ActionMenuEntryType.WorkflowRun,
+        type: ActionType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
-        scope: ActionMenuEntryScope.Global,
+        scope: ActionScope.Global,
         label: msg`${name}`,
         position: index,
         Icon: IconSettingsAutomation,

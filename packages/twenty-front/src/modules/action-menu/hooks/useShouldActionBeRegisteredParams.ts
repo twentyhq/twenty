@@ -1,3 +1,5 @@
+import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
+import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -18,8 +20,8 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 export const useShouldActionBeRegisteredParams = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
-}) => {
+  objectMetadataItem?: ObjectMetadataItem;
+}): ShouldBeRegisteredFunctionParams => {
   const { sortedFavorites: favorites } = useFavorites();
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
@@ -40,8 +42,6 @@ export const useShouldActionBeRegisteredParams = ({
   const selectedRecord =
     useRecoilValue(recordStoreFamilyState(recordId ?? '')) || undefined;
 
-  const isRemoteObject = objectMetadataItem.isRemote;
-
   const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
   const isNoteOrTask =
@@ -58,7 +58,7 @@ export const useShouldActionBeRegisteredParams = ({
     useRecoilComponentValueV2(contextStoreCurrentViewTypeComponentState) ===
     ContextStoreViewType.ShowPage;
 
-  const isWorkflowsEnabled = useIsFeatureEnabled(
+  const isWorkflowEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsWorkflowEnabled,
   );
 
@@ -66,16 +66,26 @@ export const useShouldActionBeRegisteredParams = ({
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
+  const contextStoreCurrentViewType = useRecoilComponentValueV2(
+    contextStoreCurrentViewTypeComponentState,
+  );
+
+  const viewType = getActionViewType(
+    contextStoreCurrentViewType,
+    contextStoreTargetedRecordsRule,
+  );
+
   return {
+    objectMetadataItem,
     isFavorite,
-    isRemoteObject,
     hasObjectReadOnlyPermission,
     isNoteOrTask,
     isInRightDrawer,
     isSoftDeleteFilterActive,
     isShowPage,
     selectedRecord,
-    isWorkflowsEnabled,
+    isWorkflowEnabled,
     numberOfSelectedRecords,
+    viewType: viewType ?? undefined,
   };
 };

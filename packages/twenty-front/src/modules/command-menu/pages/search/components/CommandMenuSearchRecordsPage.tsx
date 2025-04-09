@@ -6,7 +6,9 @@ export const CommandMenuSearchRecordsPage = () => {
   const { commandGroups, loading, noResults } = useCommandMenuSearchRecords();
 
   const selectableItemIds = useMemo(() => {
-    return commandGroups.flatMap((group) => group.items).map((item) => item.id);
+    return commandGroups
+      .flatMap((group) => group.items)
+      .map((item) => item.key);
   }, [commandGroups]);
 
   return (
