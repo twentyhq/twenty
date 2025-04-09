@@ -9,7 +9,7 @@ import { IMaskInput } from 'react-imask';
 import { IconComponent } from 'twenty-ui/display';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 
-export const StyledIMaskInput = styled(IMaskInput)<any>`
+export const StyledIMaskInput = styled(IMaskInput)`
   margin: 0;
   ${TEXT_INPUT_STYLE}
   width: 100%;
