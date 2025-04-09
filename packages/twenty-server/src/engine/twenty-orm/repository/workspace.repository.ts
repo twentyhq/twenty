@@ -310,7 +310,7 @@ export class WorkspaceRepository<
     entity: T,
     options?: SaveOptions,
     entityManager?: EntityManager,
-  ): Promise<T & T>;
+  ): Promise<U & T>;
 
   override async softRemove<U extends DeepPartial<T>>(
     entityOrEntities: U | U[],
