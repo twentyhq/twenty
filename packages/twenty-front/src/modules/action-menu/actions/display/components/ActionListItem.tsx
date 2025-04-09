@@ -26,6 +26,7 @@ export const ActionListItem = ({ action }: { action: ActionDisplayProps }) => {
         id={action.key}
         Icon={action.Icon}
         label={getActionLabel(action.label)}
+        description={getActionLabel(action.description ?? '')}
         to={action.to}
         onClick={action.onClick}
         hotKeys={action.hotKeys}

@@ -12,6 +12,7 @@ export type ActionConfig = {
   key: string;
   label: MessageDescriptor | string;
   shortLabel?: MessageDescriptor | string;
+  description?: MessageDescriptor | string;
   position: number;
   Icon: IconComponent;
   isPinned?: boolean;

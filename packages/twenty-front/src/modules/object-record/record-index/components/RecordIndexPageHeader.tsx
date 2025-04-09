@@ -66,8 +66,6 @@ export const RecordIndexPageHeader = () => {
 
   return (
     <PageHeader title={pageHeaderTitle} Icon={Icon}>
-      <RecordIndexActionMenu />
-      <PageHeaderToggleCommandMenuButton />
       {isDefined(contextStoreCurrentViewId) && (
         <>
           <RecordIndexActionMenu />

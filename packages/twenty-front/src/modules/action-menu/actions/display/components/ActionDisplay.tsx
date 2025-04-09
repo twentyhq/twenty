@@ -11,6 +11,7 @@ export type ActionDisplayProps = {
   key: string;
   label: MessageDescriptor | string;
   shortLabel?: MessageDescriptor | string;
+  description?: MessageDescriptor | string;
   Icon: IconComponent;
   accent?: MenuItemAccent;
   to?: string;
