@@ -22,9 +22,9 @@ import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Controller('auth/google-apis')
@@ -33,7 +33,7 @@ export class GoogleAPIsAuthController {
   constructor(
     private readonly googleAPIsService: GoogleAPIsService,
     private readonly transientTokenService: TransientTokenService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly onboardingService: OnboardingService,
     private readonly domainManagerService: DomainManagerService,
     private readonly guardRedirectService: GuardRedirectService,
@@ -123,7 +123,7 @@ export class GoogleAPIsAuthController {
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
           err,
           workspace ?? {
-            subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+            subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
             customDomain: null,
           },
         ),

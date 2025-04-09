@@ -7,8 +7,8 @@ import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
-import { AnimatedButton } from 'twenty-ui/input';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
+import { AnimatedButton } from 'twenty-ui/input';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
 
 const StyledButtonWrapper = styled.div`
@@ -118,7 +118,7 @@ export const PageHeaderToggleCommandMenuButton = () => {
   const theme = useTheme();
 
   return (
-    <>
+    <div>
       <StyledButtonWrapper>
         <div id="toggle-command-menu-button">
           <AnimatedButton
@@ -153,6 +153,6 @@ export const PageHeaderToggleCommandMenuButton = () => {
           noArrow
         />
       </StyledTooltipWrapper>
-    </>
+    </div>
   );
 };

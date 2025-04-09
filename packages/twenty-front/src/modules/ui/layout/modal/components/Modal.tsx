@@ -257,3 +257,4 @@ export const Modal = ({
 Modal.Header = ModalHeader;
 Modal.Content = ModalContent;
 Modal.Footer = ModalFooter;
+Modal.Backdrop = StyledBackDrop;

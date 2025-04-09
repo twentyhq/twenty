@@ -1,18 +1,18 @@
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import {
   BullMQDriverFactoryOptions,
   MessageQueueDriverType,
   MessageQueueModuleOptions,
 } from 'src/engine/core-modules/message-queue/interfaces';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 /**
  * MessageQueue Module factory
  * @returns MessageQueueModuleOptions
- * @param environmentService
+ * @param twentyConfigService
  */
 export const messageQueueModuleFactory = async (
-  environmentService: EnvironmentService,
+  twentyConfigService: TwentyConfigService,
   redisClientService: RedisClientService,
 ): Promise<MessageQueueModuleOptions> => {
   const driverType = MessageQueueDriverType.BullMQ;
@@ -26,7 +26,7 @@ export const messageQueueModuleFactory = async (
       } satisfies SyncDriverFactoryOptions;
     }
     case MessageQueueDriverType.PgBoss: {
-      const connectionString = environmentService.get('PG_DATABASE_URL');
+      const connectionString = twentyConfigService.get('PG_DATABASE_URL');
 
       return {
         type: MessageQueueDriverType.PgBoss,
