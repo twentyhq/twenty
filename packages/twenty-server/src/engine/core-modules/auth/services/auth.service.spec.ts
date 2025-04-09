@@ -16,7 +16,7 @@ import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services
 import { ExistingUserOrNewUser } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -35,7 +35,7 @@ const workspaceInvitationGetOneWorkspaceInvitationMock = jest.fn();
 const workspaceInvitationValidatePersonalInvitationMock = jest.fn();
 const userWorkspaceAddUserToWorkspaceMock = jest.fn();
 
-const environmentServiceGetMock = jest.fn();
+const twentyConfigServiceGetMock = jest.fn();
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -75,9 +75,9 @@ describe('AuthService', () => {
           useValue: {},
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
-            get: environmentServiceGetMock,
+            get: twentyConfigServiceGetMock,
           },
         },
         {
@@ -138,7 +138,7 @@ describe('AuthService', () => {
   });
 
   beforeEach(() => {
-    environmentServiceGetMock.mockReturnValue(false);
+    twentyConfigServiceGetMock.mockReturnValue(false);
   });
 
   it('should be defined', async () => {

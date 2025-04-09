@@ -5,7 +5,9 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
 import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
@@ -52,6 +54,8 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessageParticipantManagerModule,
     MessagingMonitoringModule,
     MessagingMessageCleanerModule,
+    WorkspaceEventEmitterModule,
+    TypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
   ],
   providers: [
     MessagingMessageListFetchCronCommand,

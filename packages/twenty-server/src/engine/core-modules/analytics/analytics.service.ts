@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type CreateEventInput = {
   action: string;
@@ -9,14 +9,14 @@ type CreateEventInput = {
 
 @Injectable()
 export class AnalyticsService {
-  constructor(private readonly environmentService: EnvironmentService) {}
+  constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   async create(
     createEventInput: CreateEventInput,
     userId: string | null | undefined,
     workspaceId: string | null | undefined,
   ) {
-    if (!this.environmentService.get('ANALYTICS_ENABLED')) {
+    if (!this.twentyConfigService.get('ANALYTICS_ENABLED')) {
       return { success: true };
     }
 

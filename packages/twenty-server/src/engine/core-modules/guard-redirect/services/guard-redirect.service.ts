@@ -2,17 +2,17 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { CustomException } from 'src/utils/custom-exception';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { CustomException } from 'src/utils/custom-exception';
 
 @Injectable()
 export class GuardRedirectService {
   constructor(
     private readonly domainManagerService: DomainManagerService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -52,7 +52,7 @@ export class GuardRedirectService {
           customDomain: subdomainAndCustomDomainFromReferer.customDomain,
         }
       : {
-          subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+          subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
           customDomain: null,
         };
   }

@@ -14,8 +14,8 @@ import {
   AuthContext,
   JwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -25,7 +25,7 @@ import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
