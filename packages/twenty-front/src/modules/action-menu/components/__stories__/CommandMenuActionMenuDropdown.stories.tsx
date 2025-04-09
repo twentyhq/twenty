@@ -11,11 +11,11 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { userEvent, waitFor, within } from '@storybook/test';
 import {
   ComponentDecorator,
+  RouterDecorator,
   getCanvasElementForDropdownTesting,
 } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-
 const deleteMock = jest.fn();
 const addToFavoritesMock = jest.fn();
 const exportMock = jest.fn();
@@ -67,6 +67,7 @@ const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
     ),
     ComponentDecorator,
     ContextStoreDecorator,
+    RouterDecorator,
   ],
   args: {
     actionMenuId: 'story-action-menu',

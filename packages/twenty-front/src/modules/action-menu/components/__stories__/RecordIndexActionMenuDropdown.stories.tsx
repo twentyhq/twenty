@@ -10,7 +10,10 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
-import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
+import {
+  RouterDecorator,
+  getCanvasElementForDropdownTesting,
+} from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
@@ -64,6 +67,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
       </RecoilRoot>
     ),
     ContextStoreDecorator,
+    RouterDecorator,
   ],
 };
 
