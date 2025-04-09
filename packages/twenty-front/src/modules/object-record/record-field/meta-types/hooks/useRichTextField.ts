@@ -15,8 +15,7 @@ import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 
 export const useRichTextField = () => {
-  const { recordId, fieldDefinition, hotkeyScope, maxWidth } =
-    useContext(FieldContext);
+  const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
 
   assertFieldMetadata(
     FieldMetadataType.RICH_TEXT,
@@ -62,7 +61,6 @@ export const useRichTextField = () => {
     fieldDefinition,
     fieldValue: fieldRichTextValue,
     setFieldValue,
-    hotkeyScope,
     persistRichTextField,
   };
 };

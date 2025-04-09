@@ -12,9 +12,12 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 export const RecordTableCellSoftFocusModeHotkeysSetterEffect = () => {
+  const currentHotkeyScope = useRecoilValue(currentHotkeyScopeState);
+
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const { isReadOnly } = useContext(FieldContext);
 
@@ -29,10 +32,14 @@ export const RecordTableCellSoftFocusModeHotkeysSetterEffect = () => {
   const clearField = useClearField();
 
   useEffect(() => {
+    if (currentHotkeyScope.scope !== TableHotkeyScope.TableSoftFocus) {
+      return;
+    }
+
     if (!isSoftFocusUsingMouse) {
       scrollRef.current?.scrollIntoView({ block: 'nearest' });
     }
-  }, [isSoftFocusUsingMouse]);
+  }, [currentHotkeyScope.scope, isSoftFocusUsingMouse]);
 
   useScopedHotkeys(
     [Key.Backspace, Key.Delete],

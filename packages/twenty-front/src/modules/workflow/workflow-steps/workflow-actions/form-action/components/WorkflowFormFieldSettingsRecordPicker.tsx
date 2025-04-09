@@ -3,15 +3,16 @@ import { FormFieldInputContainer } from '@/object-record/record-field/form-types
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Select } from '@/ui/input/components/Select';
+import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import styled from '@emotion/styled';
-import { SelectOption } from 'twenty-ui/input';
+import camelCase from 'lodash.camelcase';
 import { useIcons } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 
 type WorkflowFormFieldSettingsRecordPickerProps = {
-  label?: string;
-  settings?: Record<string, any>;
-  onChange: (fieldName: string, value: unknown) => void;
+  field: WorkflowFormActionField;
+  onChange: (updatedField: WorkflowFormActionField) => void;
 };
 
 const StyledContainer = styled.div`
@@ -21,8 +22,7 @@ const StyledContainer = styled.div`
 `;
 
 export const WorkflowFormFieldSettingsRecordPicker = ({
-  label,
-  settings,
+  field,
   onChange,
 }: WorkflowFormFieldSettingsRecordPickerProps) => {
   const { getIcon } = useIcons();
@@ -43,13 +43,21 @@ export const WorkflowFormFieldSettingsRecordPicker = ({
           dropdownId="workflow-form-field-settings-record-picker-object-name"
           label="Object"
           fullWidth
-          value={settings?.objectName}
+          value={field.settings?.objectName}
           emptyOption={{ label: 'Select an option', value: '' }}
           options={availableMetadata}
           onChange={(updatedObjectName) => {
-            onChange('settings', {
-              ...settings,
-              objectName: updatedObjectName,
+            onChange({
+              ...field,
+              placeholder: `Select a ${
+                activeObjectMetadataItems.find(
+                  (item) => item.nameSingular === updatedObjectName,
+                )?.labelSingular || 'record'
+              }`,
+              settings: {
+                ...field.settings,
+                objectName: updatedObjectName,
+              },
             });
           }}
           withSearchInput
@@ -58,10 +66,14 @@ export const WorkflowFormFieldSettingsRecordPicker = ({
       <FormFieldInputContainer>
         <InputLabel>Label</InputLabel>
         <FormTextFieldInput
-          onChange={(newLabel: string | null) => {
-            onChange('label', newLabel);
+          onChange={(newLabel: string) => {
+            onChange({
+              ...field,
+              label: newLabel,
+              name: camelCase(newLabel),
+            });
           }}
-          defaultValue={label}
+          defaultValue={field.label}
           placeholder={getDefaultFormFieldSettings('RECORD').label}
         />
       </FormFieldInputContainer>

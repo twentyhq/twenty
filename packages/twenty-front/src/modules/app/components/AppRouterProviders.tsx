@@ -10,7 +10,7 @@ import { ClientConfigProviderEffect } from '@/client-config/components/ClientCon
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
-import { ObjectMetadataItemsGater } from '@/object-metadata/components/ObjectMetadataItemsGater';
+import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
@@ -27,7 +27,7 @@ import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProvide
 import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { getPageTitleFromPath } from '~/utils/title-utils';
-import { ApolloSubscriptionProvider } from '@/subscription/components/ApolloSubscriptionProvider';
+import { ApolloSubscriptionClientProvider } from '@/subscription/components/ApolloSubscriptionClientProvider';
 
 export const AppRouterProviders = () => {
   const { pathname } = useLocation();
@@ -46,31 +46,30 @@ export const AppRouterProviders = () => {
               <UserProvider>
                 <AuthProvider>
                   <ApolloMetadataClientProvider>
-                    <ApolloSubscriptionProvider>
+                    <ApolloSubscriptionClientProvider>
+                      <ObjectMetadataItemsLoadEffect />
                       <ObjectMetadataItemsProvider>
-                        <ObjectMetadataItemsGater>
-                          <PrefetchDataProvider>
-                            <UserThemeProviderEffect />
-                            <SnackBarProvider>
-                              <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                                <DialogManager>
-                                  <StrictMode>
-                                    <PromiseRejectionEffect />
-                                    <GotoHotkeysEffectsProvider />
-                                    <ServerPreconnect />
-                                    <PageTitle title={pageTitle} />
-                                    <PageFavicon />
-                                    <Outlet />
-                                  </StrictMode>
-                                </DialogManager>
-                              </DialogManagerScope>
-                            </SnackBarProvider>
-                            <MainContextStoreProvider />
-                          </PrefetchDataProvider>
-                          <PageChangeEffect />
-                        </ObjectMetadataItemsGater>
+                        <PrefetchDataProvider>
+                          <UserThemeProviderEffect />
+                          <SnackBarProvider>
+                            <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                              <DialogManager>
+                                <StrictMode>
+                                  <PromiseRejectionEffect />
+                                  <GotoHotkeysEffectsProvider />
+                                  <ServerPreconnect />
+                                  <PageTitle title={pageTitle} />
+                                  <PageFavicon />
+                                  <Outlet />
+                                </StrictMode>
+                              </DialogManager>
+                            </DialogManagerScope>
+                          </SnackBarProvider>
+                          <MainContextStoreProvider />
+                        </PrefetchDataProvider>
+                        <PageChangeEffect />
                       </ObjectMetadataItemsProvider>
-                    </ApolloSubscriptionProvider>
+                    </ApolloSubscriptionClientProvider>
                   </ApolloMetadataClientProvider>
                 </AuthProvider>
               </UserProvider>

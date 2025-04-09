@@ -6,6 +6,7 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -40,7 +41,7 @@ const RatingFieldInputWithContext = ({
   const setHotKeyScope = useSetHotkeyScope();
 
   useEffect(() => {
-    setHotKeyScope('hotkey-scope');
+    setHotKeyScope(DEFAULT_CELL_SCOPE.scope);
   }, [setHotKeyScope]);
 
   return (
@@ -66,7 +67,6 @@ const RatingFieldInputWithContext = ({
             },
           },
           recordId: recordId ?? '123',
-          hotkeyScope: 'hotkey-scope',
           isLabelIdentifier: false,
           isReadOnly: false,
         }}

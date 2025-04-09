@@ -2,7 +2,7 @@ import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
 import { ApolloSubscriptionClientContext } from '@/subscription/contexts/ApolloClientSubscriptionContext';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
-export const ApolloSubscriptionProvider = ({
+export const ApolloSubscriptionClientProvider = ({
   children,
 }: {
   children: React.ReactNode;

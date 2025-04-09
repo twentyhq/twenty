@@ -52,7 +52,6 @@ export const RecordTableRecordGroupRows = () => {
             recordId={recordId}
             rowIndexForFocus={rowIndex}
             rowIndexForDrag={rowIndexInGroup}
-            isPendingRow={!isRecordGroupTableSectionToggled}
           />
         );
       })}

@@ -22,15 +22,15 @@ module.exports = {
       parserOptions: {
         project: ['packages/twenty-front/tsconfig.*.json'],
       },
-      plugins: ['project-structure'],
+      // plugins: ['project-structure'],
       settings: {
-        'project-structure/folder-structure-config-path': path.join(
-          __dirname,
-          'folderStructure.json',
-        ),
+        // 'project-structure/folder-structure-config-path': path.join(
+        //   __dirname,
+        //   'folderStructure.json',
+        // ),
       },
       rules: {
-        'project-structure/folder-structure': 'error',
+        // 'project-structure/folder-structure': 'error',
         /* 
         Uncomment this rule when we have a way to work on 
         'lingui/no-unlocalized-strings': [

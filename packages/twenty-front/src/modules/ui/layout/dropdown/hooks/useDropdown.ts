@@ -12,14 +12,10 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useDropdown = (dropdownId?: string) => {
-  const {
-    scopeId,
-    dropdownWidthState,
-    isDropdownOpenState,
-    dropdownPlacementState,
-  } = useDropdownStates({
-    dropdownScopeId: getScopeIdOrUndefinedFromComponentId(dropdownId),
-  });
+  const { scopeId, isDropdownOpenState, dropdownPlacementState } =
+    useDropdownStates({
+      dropdownScopeId: getScopeIdOrUndefinedFromComponentId(dropdownId),
+    });
 
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
@@ -31,8 +27,6 @@ export const useDropdown = (dropdownId?: string) => {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
-
-  const [dropdownWidth, setDropdownWidth] = useRecoilState(dropdownWidthState);
 
   const [dropdownPlacement, setDropdownPlacement] = useRecoilState(
     dropdownPlacementState,
@@ -103,8 +97,6 @@ export const useDropdown = (dropdownId?: string) => {
     closeDropdown,
     toggleDropdown,
     openDropdown,
-    dropdownWidth,
-    setDropdownWidth,
     dropdownPlacement,
     setDropdownPlacement,
   };
