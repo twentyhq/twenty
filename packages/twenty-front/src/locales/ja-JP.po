@@ -378,7 +378,7 @@ msgid "Advanced filter"
 msgstr "\\\\u9ad8\\\\u5ea6\\\\u306a\\\\u30d5\\\\u30a3\\\\u30eb\\\\u30bf\\\\u30fc"
 
 #. js-lingui-id: WsKDNF
-#: src/modules/navigation/components/AppNavigationDrawer.tsx
+#: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 msgid "Advanced:"
 msgstr "上級："
 
@@ -1916,7 +1916,7 @@ msgid "Exit import flow"
 msgstr ""
 
 #. js-lingui-id: IZ4o2e
-#: src/modules/navigation/components/AppNavigationDrawer.tsx
+#: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 msgid "Exit Settings"
 msgstr "設定を終了"
 
@@ -3755,7 +3755,7 @@ msgstr "スキーマ"
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-#: src/modules/navigation/components/MainNavigationDrawerItems.tsx
+#: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -4039,7 +4039,7 @@ msgstr "サブドメイン名を設定"
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
-#: src/modules/navigation/components/MainNavigationDrawerItems.tsx
+#: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Settings"
 msgstr "設定"
