@@ -16,6 +16,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { isDefined } from 'twenty-shared/utils';
 
 type DeprecatedFieldMetadataDateSettings = {
   displayAsRelativeDate?: boolean;
@@ -73,7 +74,7 @@ export class UpgradeDateAndDateTimeFieldsSettingsJsonCommand extends ActiveOrSus
   ): FieldMetadataEntity<FieldMetadataType.DATE> {
     const settings = field.settings as DeprecatedFieldMetadataDateSettings;
 
-    if (typeof settings?.displayAsRelativeDate === 'undefined') {
+    if (!isDefined(settings?.displayAsRelativeDate)) {
       return field;
     }
 
