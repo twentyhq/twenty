@@ -64,11 +64,15 @@ export const SettingsDataModelFieldDateForm = ({
 
   const displayFormatFromForm = watch('settings.displayFormat');
 
-  const activeDisplayFormat = displayFormatFromForm ? displayFormatFromForm : initialDisplayFormat
+  const activeDisplayFormat = displayFormatFromForm
+    ? displayFormatFromForm
+    : initialDisplayFormat;
 
-  const showCustomFormatTextInput = isDateFieldCustomDisplayFormat(activeDisplayFormat)
+  const showCustomFormatTextInput =
+    isDateFieldCustomDisplayFormat(activeDisplayFormat);
 
-  const displayFormatSelectDescription = getDisplayFormatSelectDescription(activeDisplayFormat)
+  const displayFormatSelectDescription =
+    getDisplayFormatSelectDescription(activeDisplayFormat);
 
   return (
     <>
