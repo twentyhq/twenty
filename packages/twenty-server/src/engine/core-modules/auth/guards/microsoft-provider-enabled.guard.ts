@@ -5,26 +5,26 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { MicrosoftStrategy } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class MicrosoftProviderEnabledGuard implements CanActivate {
   constructor(
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly guardRedirectService: GuardRedirectService,
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
     try {
-      if (!this.environmentService.get('AUTH_MICROSOFT_ENABLED')) {
+      if (!this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED')) {
         throw new AuthException(
           'Microsoft auth is not enabled',
           AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED,
         );
       }
 
-      new MicrosoftStrategy(this.environmentService);
+      new MicrosoftStrategy(this.twentyConfigService);
 
       return true;
     } catch (err) {

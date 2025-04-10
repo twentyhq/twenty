@@ -8,7 +8,6 @@ import { HEALTH_INDICATORS } from 'src/engine/core-modules/admin-panel/constants
 import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
 import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
 import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';
@@ -18,6 +17,7 @@ import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 jest.mock('bullmq');
 
@@ -29,7 +29,7 @@ describe('AdminPanelHealthService', () => {
   let connectedAccountHealth: jest.Mocked<ConnectedAccountHealth>;
   let appHealth: jest.Mocked<AppHealthIndicator>;
   let redisClient: jest.Mocked<RedisClientService>;
-  let environmentService: jest.Mocked<EnvironmentService>;
+  let twentyConfigService: jest.Mocked<TwentyConfigService>;
   let loggerSpy: jest.SpyInstance;
 
   beforeEach(async () => {
@@ -41,7 +41,7 @@ describe('AdminPanelHealthService', () => {
     redisClient = {
       getClient: jest.fn().mockReturnValue({} as Redis),
     } as any;
-    environmentService = { get: jest.fn() } as any;
+    twentyConfigService = { get: jest.fn() } as any;
 
     (Queue as unknown as jest.Mock) = jest.fn().mockImplementation(() => ({
       getMetrics: jest.fn(),
@@ -58,7 +58,7 @@ describe('AdminPanelHealthService', () => {
         { provide: ConnectedAccountHealth, useValue: connectedAccountHealth },
         { provide: AppHealthIndicator, useValue: appHealth },
         { provide: RedisClientService, useValue: redisClient },
-        { provide: EnvironmentService, useValue: environmentService },
+        { provide: TwentyConfigService, useValue: twentyConfigService },
       ],
     }).compile();
 

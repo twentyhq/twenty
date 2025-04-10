@@ -11,8 +11,8 @@ export const IconsProvider = ({ children }: IconsProviderProps) => {
   const setIcons = useSetRecoilState(iconsState);
 
   useEffect(() => {
-    import('./internal/AllIcons').then((lazyLoadedIcons) => {
-      setIcons(lazyLoadedIcons.ALL_ICONS);
+    import('./internal/AllIcons').then(({ ALL_ICONS }) => {
+      setIcons(ALL_ICONS);
     });
   }, [setIcons]);
 

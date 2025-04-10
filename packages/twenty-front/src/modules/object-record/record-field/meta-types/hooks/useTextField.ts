@@ -1,19 +1,17 @@
 import { useContext } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { FieldTextValue } from '@/object-record/record-field/types/FieldMetadata';
+import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
+import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
+import { isFieldTextValue } from '@/object-record/record-field/types/guards/isFieldTextValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { FieldContext } from '../../contexts/FieldContext';
-import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
-import { isFieldText } from '../../types/guards/isFieldText';
-import { isFieldTextValue } from '../../types/guards/isFieldTextValue';
-
 export const useTextField = () => {
-  const { recordId, fieldDefinition, hotkeyScope, maxWidth } =
-    useContext(FieldContext);
+  const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
 
   assertFieldMetadata(FieldMetadataType.TEXT, isFieldText, fieldDefinition);
 
@@ -39,6 +37,5 @@ export const useTextField = () => {
     fieldDefinition,
     fieldValue: fieldTextValue,
     setFieldValue,
-    hotkeyScope,
   };
 };

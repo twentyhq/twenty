@@ -7,10 +7,10 @@ import { v4 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { getMicrosoftApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -51,7 +51,7 @@ export class MicrosoftAPIsService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   private shouldBypassPermissionChecks = true;
@@ -206,7 +206,7 @@ export class MicrosoftAPIsService {
         });
 
         if (
-          this.environmentService.get('CALENDAR_PROVIDER_MICROSOFT_ENABLED')
+          this.twentyConfigService.get('CALENDAR_PROVIDER_MICROSOFT_ENABLED')
         ) {
           const newCalendarChannel = await calendarChannelRepository.save(
             {
@@ -335,7 +335,7 @@ export class MicrosoftAPIsService {
       }
     });
 
-    if (this.environmentService.get('MESSAGING_PROVIDER_MICROSOFT_ENABLED')) {
+    if (this.twentyConfigService.get('MESSAGING_PROVIDER_MICROSOFT_ENABLED')) {
       const messageChannels = await messageChannelRepository.find({
         where: {
           connectedAccountId: newOrExistingConnectedAccountId,
@@ -353,7 +353,7 @@ export class MicrosoftAPIsService {
       }
     }
 
-    if (this.environmentService.get('CALENDAR_PROVIDER_MICROSOFT_ENABLED')) {
+    if (this.twentyConfigService.get('CALENDAR_PROVIDER_MICROSOFT_ENABLED')) {
       const calendarChannels = await calendarChannelRepository.find({
         where: {
           connectedAccountId: newOrExistingConnectedAccountId,

@@ -1,6 +1,5 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { IconSearch, IconSettings } from 'twenty-ui';
 
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
@@ -18,12 +17,14 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { IconSearch, IconSettings } from 'twenty-ui/display';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
   min-height: fit-content;
 `;
 const StyledInnerContainer = styled.div`
   height: 100%;
+  width: 100%;
 `;
 
 export const MainNavigationDrawerItems = () => {
@@ -66,10 +67,8 @@ export const MainNavigationDrawerItems = () => {
         </StyledMainSection>
       )}
       <ScrollWrapper
-        contextProviderName="navigationDrawer"
         componentInstanceId={`scroll-wrapper-navigation-drawer`}
         defaultEnableXScroll={false}
-        scrollbarVariant="no-padding"
       >
         <StyledInnerContainer>
           <NavigationDrawerOpenedSection />

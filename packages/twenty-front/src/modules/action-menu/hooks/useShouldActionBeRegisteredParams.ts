@@ -1,3 +1,5 @@
+import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
+import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -10,7 +12,6 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -19,8 +20,8 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 export const useShouldActionBeRegisteredParams = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
-}) => {
+  objectMetadataItem?: ObjectMetadataItem;
+}): ShouldBeRegisteredFunctionParams => {
   const { sortedFavorites: favorites } = useFavorites();
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
@@ -41,8 +42,6 @@ export const useShouldActionBeRegisteredParams = ({
   const selectedRecord =
     useRecoilValue(recordStoreFamilyState(recordId ?? '')) || undefined;
 
-  const isRemoteObject = objectMetadataItem.isRemote;
-
   const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
   const isNoteOrTask =
@@ -59,7 +58,7 @@ export const useShouldActionBeRegisteredParams = ({
     useRecoilComponentValueV2(contextStoreCurrentViewTypeComponentState) ===
     ContextStoreViewType.ShowPage;
 
-  const isWorkflowsEnabled = useIsFeatureEnabled(
+  const isWorkflowEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsWorkflowEnabled,
   );
 
@@ -67,22 +66,26 @@ export const useShouldActionBeRegisteredParams = ({
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
-    recordId,
-    objectMetadataItem.nameSingular !== CoreObjectNameSingular.Workflow,
+  const contextStoreCurrentViewType = useRecoilComponentValueV2(
+    contextStoreCurrentViewTypeComponentState,
+  );
+
+  const viewType = getActionViewType(
+    contextStoreCurrentViewType,
+    contextStoreTargetedRecordsRule,
   );
 
   return {
+    objectMetadataItem,
     isFavorite,
-    isRemoteObject,
     hasObjectReadOnlyPermission,
     isNoteOrTask,
     isInRightDrawer,
     isSoftDeleteFilterActive,
     isShowPage,
     selectedRecord,
-    isWorkflowsEnabled,
+    isWorkflowEnabled,
     numberOfSelectedRecords,
-    workflowWithCurrentVersion,
+    viewType: viewType ?? undefined,
   };
 };

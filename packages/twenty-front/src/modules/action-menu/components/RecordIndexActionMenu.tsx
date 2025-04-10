@@ -1,62 +1,36 @@
-import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
-import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
-import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
-import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
-import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { PageHeaderActionMenuButtons } from '@/action-menu/components/PageHeaderActionMenuButtons';
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { ActionMenuContextProvider } from '@/action-menu/contexts/ActionMenuContextProvider';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { isRecordIndexLoadMoreLockedComponentState } from '@/object-record/record-index/states/isRecordIndexLoadMoreLockedComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useIsMobile } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { useIsMobile } from 'twenty-ui/utilities';
 
-export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
+export const RecordIndexActionMenu = () => {
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  const isWorkflowEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsWorkflowEnabled,
-  );
-
   const isMobile = useIsMobile();
-
-  const setIsLoadMoreLocked = useSetRecoilComponentStateV2(
-    isRecordIndexLoadMoreLockedComponentState,
-    indexId,
-  );
 
   return (
     <>
       {contextStoreCurrentObjectMetadataItemId && (
-        <ActionMenuContext.Provider
-          value={{
-            isInRightDrawer: false,
-            onActionStartedCallback: (action) => {
-              if (action.key === MultipleRecordsActionKeys.DELETE) {
-                setIsLoadMoreLocked(true);
-              }
-            },
-            onActionExecutedCallback: (action) => {
-              if (action.key === MultipleRecordsActionKeys.DELETE) {
-                setIsLoadMoreLocked(false);
-              }
-            },
-          }}
-        >
-          {!isMobile && <PageHeaderActionMenuButtons />}
-          <RecordIndexActionMenuDropdown />
-          <ActionMenuConfirmationModals />
-          <RecordActionMenuEntriesSetter />
-          <RecordAgnosticActionMenuEntriesSetter />
-          {isWorkflowEnabled && (
-            <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
-          )}
-        </ActionMenuContext.Provider>
+        <>
+          <ActionMenuContextProvider
+            isInRightDrawer={false}
+            displayType="button"
+            actionMenuType="index-page-action-menu"
+          >
+            {!isMobile && <PageHeaderActionMenuButtons />}
+          </ActionMenuContextProvider>
+          <ActionMenuContextProvider
+            isInRightDrawer={false}
+            displayType="dropdownItem"
+            actionMenuType="index-page-action-menu-dropdown"
+          >
+            <RecordIndexActionMenuDropdown />
+          </ActionMenuContextProvider>
+        </>
       )}
     </>
   );

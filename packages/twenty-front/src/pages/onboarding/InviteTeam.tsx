@@ -21,17 +21,13 @@ import {
 } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import {
-  ActionLink,
-  IconCopy,
-  LightButton,
-  MainButton,
-  SeparatorLineText,
-} from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { IconCopy, SeparatorLineText } from 'twenty-ui/display';
+import { LightButton, MainButton } from 'twenty-ui/input';
+import { ClickToActionLink } from 'twenty-ui/navigation';
 import { z } from 'zod';
 import { OnboardingStatus } from '~/generated/graphql';
 import { useCreateWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useCreateWorkspaceInvitation';
-import { isDefined } from 'twenty-shared/utils';
 
 const StyledAnimatedContainer = styled.div`
   display: flex;
@@ -231,9 +227,9 @@ export const InviteTeam = () => {
         />
       </StyledButtonContainer>
       <StyledActionSkipLinkContainer>
-        <ActionLink onClick={handleSkip}>
+        <ClickToActionLink onClick={handleSkip}>
           <Trans>Skip</Trans>
-        </ActionLink>
+        </ClickToActionLink>
       </StyledActionSkipLinkContainer>
     </>
   );

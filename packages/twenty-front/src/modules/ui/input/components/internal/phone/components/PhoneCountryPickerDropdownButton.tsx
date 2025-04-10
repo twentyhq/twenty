@@ -5,7 +5,6 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
-import { IconChevronDown, IconWorld } from 'twenty-ui';
 
 import { CountryPickerHotkeyScope } from '../types/CountryPickerHotkeyScope';
 
@@ -13,6 +12,7 @@ import { PhoneCountryPickerDropdownSelect } from './PhoneCountryPickerDropdownSe
 
 import 'react-phone-number-input/style.css';
 import { isDefined } from 'twenty-shared/utils';
+import { IconChevronDown, IconWorld } from 'twenty-ui/display';
 
 type StyledDropdownButtonProps = {
   isUnfolded: boolean;

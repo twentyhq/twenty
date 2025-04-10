@@ -26,7 +26,6 @@ import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/g
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
@@ -46,6 +45,7 @@ export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   repository: WorkspaceRepository<ObjectLiteral>;
   graphqlQueryParser: GraphqlQueryParser;
   graphqlQuerySelectedFieldsResult: GraphqlQuerySelectedFieldsResult;
+  roleId?: string;
 };
 
 @Injectable()
@@ -70,8 +70,6 @@ export abstract class GraphqlQueryBaseResolverService<
   @Inject()
   protected readonly processNestedRelationsHelper: ProcessNestedRelationsHelper;
   @Inject()
-  protected readonly featureFlagService: FeatureFlagService;
-  @Inject()
   protected readonly permissionsService: PermissionsService;
   @Inject()
   protected readonly userRoleService: UserRoleService;
@@ -86,10 +84,12 @@ export abstract class GraphqlQueryBaseResolverService<
 
       await this.validate(args, options);
 
-      const featureFlagsMap =
-        await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+      const dataSource =
+        await this.twentyORMGlobalManager.getDataSourceForWorkspace(
           authContext.workspace.id,
         );
+
+      const featureFlagsMap = dataSource.featureFlagMap;
 
       const isPermissionsV2Enabled =
         featureFlagsMap[FeatureFlagKey.IsPermissionsV2Enabled];
@@ -118,13 +118,8 @@ export abstract class GraphqlQueryBaseResolverService<
         ResolverArgsType[capitalize(operationName)],
       )) as Input;
 
-      const dataSource =
-        await this.twentyORMGlobalManager.getDataSourceForWorkspace(
-          authContext.workspace.id,
-        );
-
       const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-        userWorkspaceId: authContext.userWorkspaceId ?? '',
+        userWorkspaceId: authContext.userWorkspaceId,
         workspaceId: authContext.workspace.id,
       });
 
@@ -154,6 +149,7 @@ export abstract class GraphqlQueryBaseResolverService<
         repository,
         graphqlQueryParser,
         graphqlQuerySelectedFieldsResult,
+        roleId,
       };
 
       const results = await this.resolve(
@@ -204,7 +200,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const userHasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId: authContext.userWorkspaceId,
-          _setting: permissionRequired,
+          setting: permissionRequired,
           workspaceId: authContext.workspace.id,
           isExecutedByApiKey: isDefined(authContext.apiKey),
         });

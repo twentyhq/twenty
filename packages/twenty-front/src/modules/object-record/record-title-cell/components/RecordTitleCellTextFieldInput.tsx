@@ -17,6 +17,7 @@ type RecordTitleCellTextFieldInputProps = {
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
   sizeVariant?: 'xs' | 'md';
+  hotkeyScope: string;
 };
 
 export const RecordTitleCellTextFieldInput = ({
@@ -26,9 +27,9 @@ export const RecordTitleCellTextFieldInput = ({
   onClickOutside,
   onTab,
   onShiftTab,
+  hotkeyScope,
 }: RecordTitleCellTextFieldInputProps) => {
-  const { fieldDefinition, draftValue, hotkeyScope, setDraftValue } =
-    useTextField();
+  const { fieldDefinition, draftValue, setDraftValue } = useTextField();
 
   const wrapperRef = useRef<HTMLInputElement>(null);
 

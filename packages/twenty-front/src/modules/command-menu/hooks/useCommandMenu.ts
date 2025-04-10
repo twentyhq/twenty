@@ -1,13 +1,13 @@
 import { useRecoilCallback } from 'recoil';
 
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
-import { IconDotsVertical } from 'twenty-ui';
 
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
 import { useCallback } from 'react';
+import { IconDotsVertical } from 'twenty-ui/display';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
 export const useCommandMenu = () => {

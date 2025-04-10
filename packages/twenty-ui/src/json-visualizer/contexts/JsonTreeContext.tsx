@@ -13,6 +13,7 @@ export type JsonTreeContextType = {
   emptyObjectLabel: string;
   arrowButtonCollapsedLabel: string;
   arrowButtonExpandedLabel: string;
+  onNodeValueClick?: (valueAsString: string) => void;
 };
 
 export const JsonTreeContext = createContext<JsonTreeContextType | undefined>(

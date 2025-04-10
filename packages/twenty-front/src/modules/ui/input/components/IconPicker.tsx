@@ -1,15 +1,6 @@
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  IconApps,
-  IconButton,
-  IconButtonSize,
-  IconButtonVariant,
-  IconComponent,
-  LightIconButton,
-  useIcons,
-} from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -23,6 +14,13 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 import { t } from '@lingui/core/macro';
+import { IconApps, IconComponent, useIcons } from 'twenty-ui/display';
+import {
+  IconButton,
+  IconButtonSize,
+  IconButtonVariant,
+  LightIconButton,
+} from 'twenty-ui/input';
 import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
 
 export type IconPickerProps = {
@@ -174,7 +172,7 @@ export const IconPicker = ({
             size={size}
           />
         }
-        dropdownMenuWidth={176}
+        dropdownWidth={176}
         dropdownComponents={
           <SelectableList
             selectableListId="icon-list"

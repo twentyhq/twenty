@@ -65,7 +65,6 @@ export class BillingPortalWorkspaceService {
     const stripeSubscriptionLineItems = this.getStripeSubscriptionLineItems({
       quantity,
       billingPricesPerPlan,
-      forTrialSubscription: !isDefined(subscription),
     });
 
     const checkoutSession =
@@ -128,11 +127,9 @@ export class BillingPortalWorkspaceService {
   private getStripeSubscriptionLineItems({
     quantity,
     billingPricesPerPlan,
-    forTrialSubscription,
   }: {
     quantity: number;
     billingPricesPerPlan?: BillingGetPricesPerPlanResult;
-    forTrialSubscription: boolean;
   }): Stripe.Checkout.SessionCreateParams.LineItem[] {
     if (billingPricesPerPlan) {
       return [
@@ -140,11 +137,9 @@ export class BillingPortalWorkspaceService {
           price: billingPricesPerPlan.baseProductPrice.stripePriceId,
           quantity,
         },
-        ...(forTrialSubscription
-          ? []
-          : billingPricesPerPlan.meteredProductsPrices.map((price) => ({
-              price: price.stripePriceId,
-            }))),
+        ...billingPricesPerPlan.meteredProductsPrices.map((price) => ({
+          price: price.stripePriceId,
+        })),
       ];
     }
 

@@ -345,6 +345,7 @@ const StyledButton = styled('button', {
   padding: ${({ theme }) => {
     return `0 ${theme.spacing(2)} 0 ${theme.spacing(2)}`;
   }};
+  box-sizing: border-box;
 
   transition: background 0.1s ease;
 

@@ -1,6 +1,7 @@
 import { Injectable, Type } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { ObjectLiteral, Repository } from 'typeorm';
 
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
@@ -51,14 +52,18 @@ export class TwentyORMManager {
       workspaceMetadataVersion,
     );
 
-    const roleId = await this.userWorkspaceRoleRepository
-      .findOne({
+    let roleId: string | undefined;
+
+    if (isDefined(userWorkspaceId)) {
+      const userWorkspaceRole = await this.userWorkspaceRoleRepository.findOne({
         where: {
-          userWorkspaceId: userWorkspaceId ?? '',
+          userWorkspaceId,
           workspaceId: workspaceId,
         },
-      })
-      .then((userWorkspaceRole) => userWorkspaceRole?.roleId);
+      });
+
+      roleId = userWorkspaceRole?.roleId;
+    }
 
     return workspaceDataSource.getRepository<T>(objectMetadataName, roleId);
   }

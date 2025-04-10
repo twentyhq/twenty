@@ -59,12 +59,16 @@ export class UserRoleService {
   }
 
   public async getRoleIdForUserWorkspace({
-    userWorkspaceId,
     workspaceId,
+    userWorkspaceId,
   }: {
-    userWorkspaceId: string;
     workspaceId: string;
+    userWorkspaceId?: string;
   }): Promise<string | undefined> {
+    if (!isDefined(userWorkspaceId)) {
+      return;
+    }
+
     const userWorkspaceRole = await this.userWorkspaceRoleRepository.findOne({
       where: { userWorkspaceId, workspaceId },
     });
@@ -89,7 +93,9 @@ export class UserRoleService {
         workspaceId,
       },
       relations: {
-        role: true,
+        role: {
+          settingPermissions: true,
+        },
       },
     });
 

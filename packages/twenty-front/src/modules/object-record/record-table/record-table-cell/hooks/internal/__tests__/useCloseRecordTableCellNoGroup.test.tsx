@@ -18,7 +18,6 @@ import {
 import { useCloseRecordTableCellNoGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellNoGroup';
 import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
 import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -52,8 +51,8 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
           value={{
             fieldDefinition: textfieldDefinition,
             recordId: 'recordId',
-            hotkeyScope: TableHotkeyScope.Table,
             isLabelIdentifier: false,
+            isReadOnly: false,
           }}
         >
           <RecordTableRowContextProvider value={recordTableRowContextValue}>

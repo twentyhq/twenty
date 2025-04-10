@@ -34,7 +34,7 @@ export class WorkspaceEntityManager extends EntityManager {
     const dataSource = this.connection as WorkspaceDataSource;
     const repositoryKey = shouldBypassPermissionChecks
       ? `${target.toString()}_bypass`
-      : `${target.toString()}_${roleId ?? 'default'}${dataSource.rolesPermissionsVersion ? `_${dataSource.rolesPermissionsVersion}` : ''}`;
+      : `${dataSource.getMetadata(target).name}_${roleId ?? 'default'}${dataSource.rolesPermissionsVersion ? `_${dataSource.rolesPermissionsVersion}` : ''}${dataSource.featureFlagMapVersion ? `_${dataSource.featureFlagMapVersion}` : ''}`;
     const repoFromMap = this.repositories.get(repositoryKey);
 
     if (repoFromMap) {
@@ -53,6 +53,7 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext,
       target,
       this,
+      dataSource.featureFlagMap,
       this.queryRunner,
       objectPermissions,
       shouldBypassPermissionChecks,

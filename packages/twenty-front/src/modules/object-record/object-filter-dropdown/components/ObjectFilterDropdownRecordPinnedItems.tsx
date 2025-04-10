@@ -1,7 +1,7 @@
 import { StyledMultipleSelectDropdownAvatarChip } from '@/object-record/select/components/StyledMultipleSelectDropdownAvatarChip';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import styled from '@emotion/styled';
-import { MenuItemMultiSelectAvatar } from 'twenty-ui';
+import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 
 const StyledPinnedItemsContainer = styled.div`
   display: flex;

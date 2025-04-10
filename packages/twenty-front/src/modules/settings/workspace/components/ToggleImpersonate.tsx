@@ -5,8 +5,9 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
-import { Card, IconLifebuoy } from 'twenty-ui';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import { Card } from 'twenty-ui/layout';
+import { IconLifebuoy } from 'twenty-ui/display';
 
 export const ToggleImpersonate = () => {
   const { enqueueSnackBar } = useSnackBar();

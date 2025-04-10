@@ -20,11 +20,14 @@ import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
+import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
+import { BillingWebhookAlertService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-alert.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-entitlement.service';
+import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-invoice.service';
 import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-price.service';
 import { BillingWebhookProductService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-subscription.service';
@@ -62,6 +65,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
   controllers: [BillingController],
   providers: [
     BillingSubscriptionService,
+    BillingSubscriptionItemService,
     BillingWebhookSubscriptionService,
     BillingWebhookEntitlementService,
     BillingPortalWorkspaceService,
@@ -73,6 +77,8 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingService,
     BillingWebhookProductService,
     BillingWebhookPriceService,
+    BillingWebhookAlertService,
+    BillingWebhookInvoiceService,
     BillingRestApiExceptionFilter,
     BillingSyncCustomerDataCommand,
     BillingSyncPlansDataCommand,

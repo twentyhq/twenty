@@ -16,7 +16,7 @@ import { RecordValueSetterEffect } from '@/object-record/record-store/components
 import { AppPath } from '@/types/AppPath';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
@@ -25,9 +25,9 @@ import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { AnimatedEaseInOut } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -144,10 +144,10 @@ export const RecordBoardCard = () => {
     }
   }, 800);
 
-  const scrollWrapperRef = useContext(RecordBoardScrollWrapperContext);
+  const { scrollWrapperHTMLElement } = useScrollWrapperElement();
 
   const { ref: cardRef } = useInView({
-    root: scrollWrapperRef?.ref.current,
+    root: scrollWrapperHTMLElement,
     rootMargin: '1000px',
   });
 

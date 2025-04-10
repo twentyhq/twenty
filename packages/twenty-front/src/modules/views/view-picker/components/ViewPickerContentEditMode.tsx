@@ -1,5 +1,4 @@
 import { Key } from 'ts-key-enum';
-import { IconChevronLeft } from 'twenty-ui';
 
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
@@ -22,6 +21,7 @@ import { viewPickerInputNameComponentState } from '@/views/view-picker/states/vi
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
+import { IconChevronLeft } from 'twenty-ui/display';
 
 export const ViewPickerContentEditMode = () => {
   const { setViewPickerMode } = useViewPickerMode();

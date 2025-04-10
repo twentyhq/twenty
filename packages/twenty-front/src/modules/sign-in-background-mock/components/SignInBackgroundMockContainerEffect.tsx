@@ -8,7 +8,7 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { useSetTableColumns } from '@/object-record/record-table/hooks/useSetTableColumns';
 import { SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockColumnDefinitions';
 import { SIGN_IN_BACKGROUND_MOCK_VIEW_FIELDS } from '@/sign-in-background-mock/constants/SignInBackgroundMockViewFields';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useInitViewBar } from '@/views/hooks/useInitViewBar';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 
@@ -23,11 +23,13 @@ export const SignInBackgroundMockContainerEffect = ({
   recordTableId,
   viewId,
 }: SignInBackgroundMockContainerEffectProps) => {
-  const setContextStoreCurrentObjectMetadataItemId =
-    useSetRecoilComponentStateV2(
-      contextStoreCurrentObjectMetadataItemIdComponentState,
-      MAIN_CONTEXT_STORE_INSTANCE_ID,
-    );
+  const [
+    contextStoreCurrentObjectMetadataItemId,
+    setContextStoreCurrentObjectMetadataItemId,
+  ] = useRecoilComponentStateV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
 
   const { setAvailableTableColumns } = useRecordTable({
     recordTableId,
@@ -61,7 +63,9 @@ export const SignInBackgroundMockContainerEffect = ({
       recordTableId,
     );
 
-    setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
+    if (contextStoreCurrentObjectMetadataItemId !== objectMetadataItem.id) {
+      setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
+    }
   }, [
     setViewObjectMetadataId,
     setAvailableFieldDefinitions,
@@ -70,6 +74,7 @@ export const SignInBackgroundMockContainerEffect = ({
     setTableColumns,
     recordTableId,
     setContextStoreCurrentObjectMetadataItemId,
+    contextStoreCurrentObjectMetadataItemId,
   ]);
 
   return <></>;

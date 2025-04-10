@@ -2,7 +2,6 @@ import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconComponent, MenuItemSelect } from 'twenty-ui';
 
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -20,6 +19,8 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
+import { IconComponent } from 'twenty-ui/display';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 
 export type SingleRecordPickerMenuItemsProps = {
   EmptyIcon?: IconComponent;

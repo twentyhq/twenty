@@ -1,15 +1,5 @@
 import styled from '@emotion/styled';
 import { format, getYear } from 'date-fns';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-  H3Title,
-  Section,
-} from 'twenty-ui';
 
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from '@/activities/calendar/constants/Calendar';
@@ -23,6 +13,16 @@ import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { TimelineCalendarEventsWithTotal } from '~/generated/graphql';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+  Section,
+} from 'twenty-ui/layout';
+import { H3Title } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;

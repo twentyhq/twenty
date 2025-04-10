@@ -339,9 +339,9 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
         value={{
           fieldDefinition: booleanFieldDefinition,
           recordId,
-          hotkeyScope: 'hotkeyScope',
           isLabelIdentifier: false,
           useUpdateRecord: useUpdateOneRecordMutation,
+          isReadOnly: false,
         }}
       >
         {children}
