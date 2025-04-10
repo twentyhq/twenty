@@ -62,8 +62,6 @@ export const WorkflowRunDiagramCanvasEffect = () => {
           (isOutputTabDisabled &&
             activeWorkflowRunRightDrawerTab === WorkflowRunTabId.OUTPUT)
         ) {
-          console.log('set to NODE');
-
           set(
             activeTabIdComponentState.atomFamily({
               instanceId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,

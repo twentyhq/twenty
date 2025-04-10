@@ -66,7 +66,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
           activeTabIdComponentState.atomFamily({
             instanceId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
           }),
-          WorkflowRunTabId.NODE,
+          WorkflowRunTabId.OUTPUT,
         );
         set(
           activeTabIdComponentState.atomFamily({
