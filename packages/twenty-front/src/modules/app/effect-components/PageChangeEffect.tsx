@@ -13,6 +13,7 @@ import {
   setSessionId,
   useEventTracker,
 } from '@/analytics/hooks/useEventTracker';
+import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
@@ -52,13 +53,17 @@ export const PageChangeEffect = () => {
 
   const resetTableSelections = useResetTableRowSelection(objectNamePlural);
 
+  const { executeTasksOnAnyLocationChange } =
+    useExecuteTasksOnAnyLocationChange();
+
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
       setPreviousLocation(location.pathname);
+      executeTasksOnAnyLocationChange();
     } else {
       return;
     }
-  }, [location, previousLocation]);
+  }, [location, previousLocation, executeTasksOnAnyLocationChange]);
 
   const [searchParams] = useSearchParams();
 
