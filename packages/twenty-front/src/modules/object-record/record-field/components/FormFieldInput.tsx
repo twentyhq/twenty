@@ -24,6 +24,7 @@ import {
   FieldMetadata,
   FieldMultiSelectValue,
   FieldPhonesValue,
+  FieldRichTextV2Value,
   FormFieldCurrencyValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
@@ -192,7 +193,7 @@ export const FormFieldInput = ({
   ) : isFieldRichTextV2(field) ? (
     <FormRichTextV2FieldInput
       label={field.label}
-      defaultValue={defaultValue as string | undefined}
+      defaultValue={defaultValue as FieldRichTextV2Value | undefined}
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
