@@ -177,7 +177,7 @@ jobs:
           - 8123:8123
           - 9000:9000
         options: >-
-          --health-cmd "clickhouse-client -u default --password=clickhousePassword -d twenty --port 8123 --query='SELECT 1'" 
+          --health-cmd "clickhouse-client clickhouse://default:clickhousePassword@localhost:8123/twenty --query='SELECT 1'" 
           --health-interval 10s 
           --health-timeout 5s 
           --health-retries 5
