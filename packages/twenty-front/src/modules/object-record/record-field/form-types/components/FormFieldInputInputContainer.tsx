@@ -1,11 +1,17 @@
+import { FormFieldInputHotKeyScope } from '@/object-record/record-field/form-types/constants/FormFieldInputHotKeyScope';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { HTMLAttributes } from 'react';
 
-const StyledFormFieldInputInputContainer = styled.div<{
+type FormFieldInputInputContainerProps = {
   hasRightElement: boolean;
   multiline?: boolean;
   readonly?: boolean;
-}>`
+  preventSetHotkeyScope?: boolean;
+};
+
+const StyledFormFieldInputInputContainer = styled.div<FormFieldInputInputContainerProps>`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
@@ -30,4 +36,49 @@ const StyledFormFieldInputInputContainer = styled.div<{
   width: 100%;
 `;
 
-export const FormFieldInputInputContainer = StyledFormFieldInputInputContainer;
+export const FormFieldInputInputContainer = ({
+  className,
+  children,
+  onFocus,
+  onBlur,
+  hasRightElement,
+  multiline,
+  readonly,
+  preventSetHotkeyScope = false,
+}: HTMLAttributes<HTMLDivElement> & FormFieldInputInputContainerProps) => {
+  const {
+    goBackToPreviousHotkeyScope,
+    setHotkeyScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeyScope();
+
+  const handleFocus = (e: React.FocusEvent<HTMLDivElement>) => {
+    onFocus?.(e);
+
+    if (!preventSetHotkeyScope) {
+      setHotkeyScopeAndMemorizePreviousScope(
+        FormFieldInputHotKeyScope.FormFieldInput,
+      );
+    }
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+    onBlur?.(e);
+
+    if (!preventSetHotkeyScope) {
+      goBackToPreviousHotkeyScope();
+    }
+  };
+
+  return (
+    <StyledFormFieldInputInputContainer
+      className={className}
+      hasRightElement={hasRightElement}
+      multiline={multiline}
+      readonly={readonly}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+    >
+      {children}
+    </StyledFormFieldInputInputContainer>
+  );
+};
