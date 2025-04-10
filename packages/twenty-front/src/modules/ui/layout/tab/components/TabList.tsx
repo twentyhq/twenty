@@ -59,9 +59,15 @@ export const TabList = ({
     componentInstanceId,
   );
 
+  console.log({
+    activeTabId,
+    visible: visibleTabs[0]?.id,
+  });
+
   const initialActiveTabId = activeTabId || visibleTabs[0]?.id || '';
 
   useEffect(() => {
+    console.log('setActiveTabId', initialActiveTabId);
     setActiveTabId(initialActiveTabId);
   }, [initialActiveTabId, setActiveTabId]);
 
