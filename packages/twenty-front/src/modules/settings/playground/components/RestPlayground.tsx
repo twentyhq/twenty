@@ -24,8 +24,8 @@ const StyledContainer = styled.div`
       theme.background.transparent.lighter};
     --scalar-border-color: ${({ theme }) => theme.border.color.medium};
     --scalar-color-1: ${({ theme }) => theme.font.color.primary};
-    --scalar-color-2: ${({ theme }) => theme.font.color.primary};
-    --scalar-color-3: ${({ theme }) => theme.font.color.primary};
+    --scalar-color-2: ${({ theme }) => theme.font.color.secondary};
+    --scalar-color-3: ${({ theme }) => theme.font.color.tertiary};
   }
 `;
 
