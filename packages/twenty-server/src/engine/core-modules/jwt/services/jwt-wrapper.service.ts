@@ -12,7 +12,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type WorkspaceTokenType =
   | 'ACCESS'
@@ -27,7 +27,7 @@ export type WorkspaceTokenType =
 export class JwtWrapperService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   sign(payload: string | object, options?: JwtSignOptions): string {
@@ -102,7 +102,7 @@ export class JwtWrapperService {
   }
 
   generateAppSecret(type: WorkspaceTokenType, workspaceId?: string): string {
-    const appSecret = this.environmentService.get('APP_SECRET');
+    const appSecret = this.twentyConfigService.get('APP_SECRET');
 
     if (!appSecret) {
       throw new Error('APP_SECRET is not set');
@@ -114,7 +114,7 @@ export class JwtWrapperService {
   }
 
   generateAppSecretLegacy(): string {
-    const accessTokenSecret = this.environmentService.get(
+    const accessTokenSecret = this.twentyConfigService.get(
       'ACCESS_TOKEN_SECRET',
     );
 

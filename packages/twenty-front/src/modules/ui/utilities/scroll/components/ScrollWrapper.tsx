@@ -9,14 +9,13 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 
 const StyledScrollWrapper = styled.div`
   &.scroll-wrapper-x-enabled {
-    overflow-x: auto;
+    overflow-x: overlay;
   }
   &.scroll-wrapper-y-enabled {
-    overflow-y: auto;
+    overflow-y: overlay;
   }
   overflow-x: hidden;
   overflow-y: hidden;
-  display: flex;
   width: 100%;
   height: 100%;
 `;

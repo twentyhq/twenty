@@ -2,9 +2,7 @@ import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useContext, useRef } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
-import { Key } from 'ts-key-enum';
 
-import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
@@ -136,13 +134,6 @@ export const RecordBoard = () => {
   );
 
   useScopedHotkeys('ctrl+a,meta+a', selectAll, TableHotkeyScope.Table);
-  useScopedHotkeys('ctrl+a,meta+a', selectAll, ActionBarHotkeyScope.ActionBar);
-
-  useScopedHotkeys(
-    Key.Escape,
-    resetRecordSelection,
-    ActionBarHotkeyScope.ActionBar,
-  );
 
   const setIsRemoveSortingModalOpen = useSetRecoilState(
     isRemoveSortingModalOpenState,

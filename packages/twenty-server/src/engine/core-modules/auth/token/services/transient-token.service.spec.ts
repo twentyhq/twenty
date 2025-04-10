@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { TransientTokenService } from './transient-token.service';
 
 describe('TransientTokenService', () => {
   let service: TransientTokenService;
   let jwtWrapperService: JwtWrapperService;
-  let environmentService: EnvironmentService;
+  let twentyConfigService: TwentyConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -24,7 +24,7 @@ describe('TransientTokenService', () => {
           },
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
           },
@@ -34,7 +34,7 @@ describe('TransientTokenService', () => {
 
     service = module.get<TransientTokenService>(TransientTokenService);
     jwtWrapperService = module.get<JwtWrapperService>(JwtWrapperService);
-    environmentService = module.get<EnvironmentService>(EnvironmentService);
+    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
   });
 
   it('should be defined', () => {
@@ -49,7 +49,7 @@ describe('TransientTokenService', () => {
       const mockExpiresIn = '15m';
       const mockToken = 'mock-token';
 
-      jest.spyOn(environmentService, 'get').mockImplementation((key) => {
+      jest.spyOn(twentyConfigService, 'get').mockImplementation((key) => {
         if (key === 'SHORT_TERM_TOKEN_EXPIRES_IN') return mockExpiresIn;
 
         return undefined;
@@ -66,7 +66,7 @@ describe('TransientTokenService', () => {
         token: mockToken,
         expiresAt: expect.any(Date),
       });
-      expect(environmentService.get).toHaveBeenCalledWith(
+      expect(twentyConfigService.get).toHaveBeenCalledWith(
         'SHORT_TERM_TOKEN_EXPIRES_IN',
       );
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(

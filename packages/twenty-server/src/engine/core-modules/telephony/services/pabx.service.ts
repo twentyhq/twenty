@@ -4,12 +4,12 @@ import https from 'https';
 
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
-import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 import { PabxServiceInterface } from 'src/engine/core-modules/telephony/interfaces/pabx.interface';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ExtetionBody } from 'src/engine/core-modules/telephony/types/Extention.type';
 import { ListExtentionsArgs } from 'src/engine/core-modules/telephony/types/pabx.type';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class PabxService implements PabxServiceInterface {
@@ -20,7 +20,7 @@ export class PabxService implements PabxServiceInterface {
     cliente_id: 3,
   };
 
-  constructor(private readonly environmentService: EnvironmentService) {
+  constructor(private readonly environmentService: TwentyConfigService) {
     const PABX_ENV = this.environmentService.get('PABX_ENV');
     const PABX_URL =
       PABX_ENV === NodeEnvironment.production

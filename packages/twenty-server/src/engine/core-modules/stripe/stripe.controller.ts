@@ -2,8 +2,8 @@ import { Controller, Logger, Post, Req, Res } from '@nestjs/common';
 
 import Stripe from 'stripe';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { StripeIntegrationService } from 'src/engine/core-modules/stripe/integrations/stripe-integration.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Controller('stripe')
 export class SripeController {
@@ -12,10 +12,10 @@ export class SripeController {
 
   constructor(
     private readonly stripeIntegrationService: StripeIntegrationService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {
     this.stripe = new Stripe(
-      this.environmentService.get('WEBHOOK_STRIPE_SECRETKEY'),
+      this.twentyConfigService.get('WEBHOOK_STRIPE_SECRETKEY'),
       {
         apiVersion: '2024-10-28.acacia',
       },

@@ -151,7 +151,7 @@ export const SettingsDomain = () => {
           variant: SnackBarVariant.Error,
         });
       },
-      onCompleted: () => {
+      onCompleted: async () => {
         const currentUrl = new URL(window.location.href);
 
         currentUrl.hostname = new URL(
@@ -167,7 +167,7 @@ export const SettingsDomain = () => {
           variant: SnackBarVariant.Success,
         });
 
-        redirectToWorkspaceDomain(currentUrl.toString());
+        await redirectToWorkspaceDomain(currentUrl.toString());
       },
     });
   };

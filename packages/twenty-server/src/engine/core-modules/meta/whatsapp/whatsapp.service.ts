@@ -18,7 +18,7 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { Agent } from 'src/engine/core-modules/agent/agent.entity';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
@@ -31,6 +31,7 @@ import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integ
 import { WhatsappDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappTemplate';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export class WhatsappService {
   private META_API_URL = this.environmentService.get('META_API_URL');
@@ -39,7 +40,7 @@ export class WhatsappService {
   constructor(
     @InjectRepository(WhatsappIntegration, 'core')
     private whatsappIntegrationRepository: Repository<WhatsappIntegration>,
-    private readonly environmentService: EnvironmentService,
+    private readonly environmentService: TwentyConfigService,
     private readonly googleStorageService: GoogleStorageService,
     @InjectRepository(Sector, 'core')
     private sectorRepository: Repository<Sector>,

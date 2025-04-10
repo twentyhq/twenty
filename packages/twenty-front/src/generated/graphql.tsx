@@ -165,6 +165,17 @@ export type BillingEndTrialPeriodOutput = {
   status?: Maybe<SubscriptionStatus>;
 };
 
+export type BillingMeteredProductUsageOutput = {
+  __typename?: 'BillingMeteredProductUsageOutput';
+  includedFreeQuantity: Scalars['Float'];
+  periodEnd: Scalars['DateTime'];
+  periodStart: Scalars['DateTime'];
+  productKey: BillingProductKey;
+  totalCostCents: Scalars['Float'];
+  unitPriceCents: Scalars['Float'];
+  usageQuantity: Scalars['Float'];
+};
+
 /** The different billing plans available */
 export enum BillingPlanKey {
   ENTERPRISE = 'ENTERPRISE',
@@ -1636,6 +1647,7 @@ export type Query = {
   getDashboardLinklogs: Array<LinkLogsWorkspaceEntity>;
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
+  getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getQueueMetrics: QueueMetricsData;
@@ -7190,17 +7202,17 @@ export type UpdateBillingSubscriptionMutationFn = Apollo.MutationFunction<
 >;
 
 /**
- * __useUpdateBillingSubscriptionMutation__
+ * __useSwitchSubscriptionToYearlyIntervalMutation__
  *
- * To run a mutation, you first call `useUpdateBillingSubscriptionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateBillingSubscriptionMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useSwitchSubscriptionToYearlyIntervalMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSwitchSubscriptionToYearlyIntervalMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateBillingSubscriptionMutation, { data, loading, error }] = useUpdateBillingSubscriptionMutation({
+ * const [switchSubscriptionToYearlyIntervalMutation, { data, loading, error }] = useSwitchSubscriptionToYearlyIntervalMutation({
  *   variables: {
  *   },
  * });
@@ -7943,16 +7955,16 @@ export const GetEnvironmentVariablesGroupedDocument = gql`
 `;
 
 /**
- * __useGetEnvironmentVariablesGroupedQuery__
+ * __useGetConfigVariablesGroupedQuery__
  *
- * To run a query within a React component, call `useGetEnvironmentVariablesGroupedQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetEnvironmentVariablesGroupedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetConfigVariablesGroupedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetConfigVariablesGroupedQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetEnvironmentVariablesGroupedQuery({
+ * const { data, loading, error } = useGetConfigVariablesGroupedQuery({
  *   variables: {
  *   },
  * });

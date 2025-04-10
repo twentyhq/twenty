@@ -162,6 +162,21 @@ export const useListenClickOutside = <T extends Element>({
             !isMouseDownInside &&
             !isClickedOnExcluded;
 
+          if (CLICK_OUTSIDE_DEBUG_MODE) {
+            // eslint-disable-next-line no-console
+            console.log('click outside compare ref', {
+              listenerId,
+              shouldTrigger,
+              clickedOnAtLeastOneRef,
+              isMouseDownInside,
+              isListening,
+              hasMouseDownHappened,
+              isClickedOnExcluded,
+              enabled,
+              event,
+            });
+          }
+
           if (shouldTrigger) {
             callback(event);
           }
