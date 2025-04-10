@@ -6,6 +6,7 @@ import {
   FieldDateDisplayFormat,
   FieldDateMetadataSettings,
 } from '@/object-record/record-field/types/FieldMetadata';
+import { isDefined } from 'twenty-shared/utils';
 
 export const formatDateString = ({
   value,
@@ -18,7 +19,7 @@ export const formatDateString = ({
   value?: string | null;
   dateFieldSettings?: FieldDateMetadataSettings;
 }): string => {
-  if (!value) {
+  if (!isDefined(value)) {
     return '';
   }
 

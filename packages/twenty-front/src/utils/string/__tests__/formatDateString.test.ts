@@ -69,7 +69,7 @@ describe('formatDateString', () => {
     expect(result).toBe(mockFormattedDate);
   });
 
-  it('should call formatDateISOStringToCustomUnicodeFormat when displayFormat is set to CUSTOM', () => {
+  it('should format date with custom format when displayFormat is set to CUSTOM', () => {
     const mockDate = '2023-01-01T12:00:00Z';
     const mockFormattedDate = '2023';
 
