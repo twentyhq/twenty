@@ -173,11 +173,8 @@ jobs:
         ports:
           - 8123:8123
           - 9000:9000
-        env:
-          CLICKHOUSE_PASSWORD: ${{ secrets.CLICKHOUSE_CI_PASSWORD }}
-          CLICKHOUSE_URL: "http://default:${{ secrets.CLICKHOUSE_CI_PASSWORD }}@localhost:8123/twenty-test"
         options: >-
-          --health-cmd "clickhouse-client --password=$CLICKHOUSE_PASSWORD --query='SELECT 1'" 
+          --health-cmd "clickhouse-client -u default --password=clickhousePassword -d twenty --port 8123 --query='SELECT 1'" 
           --health-interval 10s 
           --health-timeout 5s 
           --health-retries 5
@@ -185,8 +182,7 @@ jobs:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
       NODE_ENV: test
       ANALYTICS_ENABLED: true
-      CLICKHOUSE_PASSWORD: ${{ secrets.CLICKHOUSE_CI_PASSWORD }}
-      CLICKHOUSE_URL: "http://default:${{ secrets.CLICKHOUSE_CI_PASSWORD }}@localhost:8123/twenty-test"
+      CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -201,7 +197,6 @@ jobs:
           echo "BILLING_STRIPE_BASE_PLAN_PRODUCT_ID=test-base-plan-product-id" >> .env.test
           echo "BILLING_STRIPE_WEBHOOK_SECRET=test-webhook-secret" >> .env.test
           echo "BILLING_PLAN_REQUIRED_LINK=http://localhost:3001/stripe-redirection" >> .env.test
-          echo "CLICKHOUSE_URL=http://default:${{ secrets.CLICKHOUSE_CI_PASSWORD }}@localhost:8123/twenty-test" >> .env.test
       - name: Restore server setup
         uses: ./.github/workflows/actions/restore-cache
         with:
