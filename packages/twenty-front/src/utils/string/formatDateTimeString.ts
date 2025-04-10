@@ -3,7 +3,7 @@ import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { formatDateISOStringToCustomUnicode35Format } from '@/localization/utils/formatDateISOStringToCustomUnicode35Format';
 import { formatDateISOStringToDateTime } from '@/localization/utils/formatDateISOStringToDateTime';
 import { formatDateISOStringToRelativeDate } from '@/localization/utils/formatDateISOStringToRelativeDate';
-import { FieldDateMetadataSettings } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldDateDisplayFormat, FieldDateMetadataSettings } from '@/object-record/record-field/types/FieldMetadata';
 
 export const formatDateTimeString = ({
   value,
@@ -23,16 +23,16 @@ export const formatDateTimeString = ({
   }
 
   switch (dateFieldSettings?.displayFormat) {
-    case 'RELATIVE':
+    case FieldDateDisplayFormat.RELATIVE:
       return formatDateISOStringToRelativeDate(value);
-    case 'USER_SETTINGS':
+    case FieldDateDisplayFormat.USER_SETTINGS:
       return formatDateISOStringToDateTime(
         value,
         timeZone,
         dateFormat,
         timeFormat,
       );
-    case 'CUSTOM':
+    case FieldDateDisplayFormat.CUSTOM:
       return formatDateISOStringToCustomUnicode35Format(
         value,
         timeZone,
