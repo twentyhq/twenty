@@ -20,14 +20,18 @@ const StyledFullScreen = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding-left: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledMainContainer = styled.div`
   height: calc(
     100% - ${PAGE_BAR_MIN_HEIGHT}px - ${({ theme }) => theme.spacing(2 * 2 + 3)}
   );
-  padding: ${({ theme }) => `0 ${theme.spacing(3)} ${theme.spacing(3)} 0`};
+  padding: ${({ theme }) =>
+    `0 ${theme.spacing(3)} ${theme.spacing(3)} ${theme.spacing(3)}`};
+`;
+
+const StyledPageHeader = styled(PageHeader)`
+  padding-left: ${({ theme }) => theme.spacing(3)};
 `;
 
 export const FullScreenContainer = ({
@@ -39,7 +43,7 @@ export const FullScreenContainer = ({
 
   return (
     <StyledFullScreen>
-      <PageHeader
+      <StyledPageHeader
         title={<Breadcrumb links={links} />}
         hasClosePageButton={!isMobile}
         onClosePage={exitFullScreen}
