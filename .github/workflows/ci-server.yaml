@@ -183,6 +183,7 @@ jobs:
       NODE_ENV: test
       ANALYTICS_ENABLED: true
       CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
+      CLICKHOUSE_PASSWORD: clickhousePassword
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
