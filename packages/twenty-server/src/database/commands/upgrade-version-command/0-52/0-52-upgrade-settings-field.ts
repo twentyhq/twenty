@@ -52,8 +52,7 @@ export class UpgradeDateAndDateTimeFieldsSettingsJsonCommand extends ActiveOrSus
       where: {
         workspaceId,
         type: In([FieldMetadataType.DATE, FieldMetadataType.DATE_TIME]),
-      },
-      relations: ['fromRelationMetadata', 'toRelationMetadata'],
+      }
     })) as FieldMetadataEntity<FieldMetadataType.DATE>[];
 
     const updatedFieldMetadataCollection = fieldMetadataCollection.map(
