@@ -43,6 +43,10 @@ const StyledInnerList = styled.div`
   }
 `;
 
+const StyledCommandMenuList = styled.div`
+  overflow-y: hidden;
+`;
+
 const StyledEmpty = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.light};
@@ -68,7 +72,7 @@ export const CommandMenuList = ({
   );
 
   return (
-    <>
+    <StyledCommandMenuList>
       <CommandMenuDefaultSelectionEffect
         selectableItemIds={selectableItemIds}
       />
@@ -104,6 +108,6 @@ export const CommandMenuList = ({
           </SelectableList>
         </StyledInnerList>
       </ScrollWrapper>
-    </>
+    </StyledCommandMenuList>
   );
 };
