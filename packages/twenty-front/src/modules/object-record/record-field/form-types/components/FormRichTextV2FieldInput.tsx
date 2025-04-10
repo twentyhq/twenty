@@ -1,15 +1,13 @@
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
-import { useCreateBlockNote } from '@blocknote/react';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useEffect, useState } from 'react';
+import { FieldRichTextV2Value } from '@/object-record/record-field/types/FieldMetadata';
 
 type FormRichTextV2FieldInputProps = {
   label?: string;
   error?: string;
   hint?: string;
-  defaultValue: string | undefined;
-  onChange: (value: string) => void;
+  defaultValue: FieldRichTextV2Value | undefined;
+  onChange: (value: FieldRichTextV2Value) => void;
   onBlur?: () => void;
   readonly?: boolean;
   placeholder?: string;
@@ -20,51 +18,31 @@ export const FormRichTextV2FieldInput = ({
   label,
   error,
   hint,
-  defaultValue: rawDefaultValue,
+  defaultValue,
   placeholder,
   onChange,
   onBlur,
   readonly,
   VariablePicker,
 }: FormRichTextV2FieldInputProps) => {
-  const editor = useCreateBlockNote();
-
-  const [setupState, setSetupState] = useState<
-    | { status: 'resolving-default-value'; defaultValue: undefined }
-    | { status: 'done'; defaultValue: string }
-  >({ status: 'resolving-default-value', defaultValue: undefined });
-
-  useEffect(() => {
-    editor
-      .blocksToMarkdownLossy(
-        isNonEmptyString(rawDefaultValue) ? JSON.parse(rawDefaultValue) : [],
-      )
-      .then((defaultValueAsMarkdown) => {
-        setSetupState({
-          status: 'done',
-          defaultValue: defaultValueAsMarkdown,
-        });
-      });
-  }, []);
-
-  const handleChange = async (value: string) => {
-    const blocks = await editor.tryParseMarkdownToBlocks(value);
-
-    onChange(JSON.stringify(blocks));
+  const handleChange = (value: string) => {
+    onChange({
+      blocknote: null,
+      markdown: value,
+    });
   };
 
   return (
     <FormTextFieldInput
-      key={setupState.status}
       label={label}
       error={error}
       hint={hint}
-      defaultValue={setupState.defaultValue}
+      defaultValue={defaultValue?.markdown ?? ''}
       placeholder={placeholder}
       onChange={handleChange}
       onBlur={onBlur}
       multiline
-      readonly={setupState.status !== 'done' || readonly}
+      readonly={readonly}
       VariablePicker={VariablePicker}
     />
   );
