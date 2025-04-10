@@ -2,16 +2,29 @@ import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-action
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-actions.mock';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
+import { SelectableListScope } from '@/ui/layout/selectable-list/scopes/SelectableListScope';
 import { expect } from '@storybook/jest';
-import { Meta, StoryObj } from '@storybook/react';
+import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ActionListItem } from '../ActionListItem';
 
+const SelectableListScopeDecorator: Decorator = (Story) => {
+  return (
+    <SelectableListScope selectableListScopeId={'test'}>
+      {Story()}
+    </SelectableListScope>
+  );
+};
+
 const meta: Meta<typeof ActionListItem> = {
   title: 'Modules/ActionMenu/Actions/Display/ActionListItem',
   component: ActionListItem,
-  decorators: [ComponentDecorator, RouterDecorator],
+  decorators: [
+    ComponentDecorator,
+    RouterDecorator,
+    SelectableListScopeDecorator,
+  ],
 };
 
 export default meta;
