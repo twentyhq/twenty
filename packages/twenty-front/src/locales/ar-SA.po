@@ -1912,8 +1912,8 @@ msgstr ""
 
 #. js-lingui-id: LFNXuj
 #: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
-msgid "Exit Full Screen"
-msgstr "خروج من وضع ملء الشاشة"
+#~ msgid "Exit Full Screen"
+#~ msgstr "خروج من وضع ملء الشاشة"
 
 #. js-lingui-id: XB4onr
 #: src/modules/spreadsheet-import/components/ModalCloseButton.tsx

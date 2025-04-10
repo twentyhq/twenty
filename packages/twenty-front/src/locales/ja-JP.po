@@ -1912,8 +1912,8 @@ msgstr ""
 
 #. js-lingui-id: LFNXuj
 #: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
-msgid "Exit Full Screen"
-msgstr "フルスクリーンを終了"
+#~ msgid "Exit Full Screen"
+#~ msgstr "フルスクリーンを終了"
 
 #. js-lingui-id: XB4onr
 #: src/modules/spreadsheet-import/components/ModalCloseButton.tsx

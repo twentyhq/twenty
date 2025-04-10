@@ -1907,8 +1907,8 @@ msgstr "Exit"
 
 #. js-lingui-id: LFNXuj
 #: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
-msgid "Exit Full Screen"
-msgstr "Exit Full Screen"
+#~ msgid "Exit Full Screen"
+#~ msgstr "Exit Full Screen"
 
 #. js-lingui-id: XB4onr
 #: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
