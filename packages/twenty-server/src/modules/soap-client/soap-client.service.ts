@@ -5,6 +5,7 @@ import * as soap from 'soap';
 
 import { AuthEstrutura } from './interfaces/auth.interface';
 import { ClienteEstrutura } from './interfaces/cliente.interface';
+import { ContaVoipEstrutura } from './interfaces/conta-voip.interface';
 import { IpDeOrigemEstrutura } from './interfaces/ip-de-origem.interface';
 import { RetornoEstrutura } from './interfaces/return.interface';
 
@@ -78,6 +79,32 @@ export class SoapClientService {
       return result.return as RetornoEstrutura;
     } catch (error) {
       this.logger.error('Error inserting cliente:', error);
+      throw error;
+    }
+  }
+
+  async insereContaVoip(
+    contaVoipData: ContaVoipEstrutura,
+    tabela_roteamento_id: number,
+    tabela_preco_id: number,
+    ddd_local: number,
+  ): Promise<RetornoEstrutura> {
+    const auth = this.createAuthStruct();
+
+    const params = {
+      auth,
+      obj: contaVoipData,
+      tabela_roteamento_id,
+      tabela_preco_id,
+      ddd_local,
+    };
+
+    try {
+      const result = await this.callMethod('InsereContaVoip', params);
+
+      return result.return as RetornoEstrutura;
+    } catch (error) {
+      this.logger.error('Error inserting conta voip:', error);
       throw error;
     }
   }

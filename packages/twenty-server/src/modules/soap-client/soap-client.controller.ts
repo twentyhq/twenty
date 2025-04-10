@@ -5,6 +5,7 @@ import { ClienteEstrutura } from 'src/modules/soap-client/interfaces/cliente.int
 
 import { SoapClientService } from './soap-client.service';
 
+import { InsereContaVoipDto } from './dtos/insere-conta-voip.dto';
 import { IpDeOrigemEstrutura } from './interfaces/ip-de-origem.interface';
 import { RetornoEstrutura } from './interfaces/return.interface';
 
@@ -56,5 +57,27 @@ export class SoapClientController {
     @Body() clienteData: ClienteEstrutura,
   ): Promise<RetornoEstrutura> {
     return this.soapClientService.insereCliente(clienteData);
+  }
+
+  /**
+   * Endpoint specifically for inserting a VoIP account
+   */
+  @Post('insere-conta-voip')
+  async insereContaVoip(
+    @Body() dto: InsereContaVoipDto,
+  ): Promise<RetornoEstrutura> {
+    const {
+      tabela_roteamento_id,
+      tabela_preco_id,
+      ddd_local,
+      ...contaVoipData
+    } = dto;
+
+    return this.soapClientService.insereContaVoip(
+      contaVoipData,
+      tabela_roteamento_id,
+      tabela_preco_id,
+      ddd_local,
+    );
   }
 }
