@@ -170,6 +170,8 @@ jobs:
           - 6379:6379
       clickhouse:
         image: clickhouse/clickhouse-server:latest
+        env:
+          CLICKHOUSE_PASSWORD: clickhousePassword
         ports:
           - 8123:8123
           - 9000:9000
