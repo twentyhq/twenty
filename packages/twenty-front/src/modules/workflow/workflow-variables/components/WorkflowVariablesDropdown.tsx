@@ -1,6 +1,8 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { WorkflowVariablesDropdownFieldItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownFieldItems';
 import { WorkflowVariablesDropdownObjectItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownObjectItems';
 import { WorkflowVariablesDropdownWorkflowStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownWorkflowStepItems';
@@ -11,6 +13,7 @@ import { StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutput
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconVariablePlus } from 'twenty-ui/display';
 
@@ -43,7 +46,10 @@ export const WorkflowVariablesDropdown = ({
   const theme = useTheme();
 
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${inputId}`;
-  const { isDropdownOpen, closeDropdown } = useDropdown(dropdownId);
+  const isDropdownOpen = useRecoilValue(
+    extractComponentState(isDropdownOpenComponentState, dropdownId),
+  );
+  const { closeDropdown } = useDropdownV2();
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
     objectNameSingularToSelect,
   });
@@ -68,7 +74,7 @@ export const WorkflowVariablesDropdown = ({
   const handleSubItemSelect = (subItem: string) => {
     onVariableSelect(subItem);
     setSelectedStep(initialStep);
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   const handleBack = () => {
