@@ -6,17 +6,17 @@ import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { ActionDropdownItem } from '../ActionDropdownItem';
+import { ActionListItem } from '../ActionListItem';
 
-const meta: Meta<typeof ActionDropdownItem> = {
-  title: 'Modules/ActionMenu/Actions/Display/ActionDropdownItem',
-  component: ActionDropdownItem,
+const meta: Meta<typeof ActionListItem> = {
+  title: 'Modules/ActionMenu/Actions/Display/ActionListItem',
+  component: ActionListItem,
   decorators: [ComponentDecorator, RouterDecorator],
 };
 
 export default meta;
 
-type Story = StoryObj<typeof ActionDropdownItem>;
+type Story = StoryObj<typeof ActionListItem>;
 
 const deleteMock = fn();
 const addToFavoritesMock = fn();
