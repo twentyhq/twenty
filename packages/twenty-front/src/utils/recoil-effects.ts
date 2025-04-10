@@ -58,7 +58,6 @@ export const cookieStorageEffect =
     };
 
     onSet((newValue, _, isReset) => {
-      console.log('newValue', newValue);
       const cookieAttributes = {
         ...defaultAttributes,
         ...(isCustomCookiesAttributesValue(newValue)
