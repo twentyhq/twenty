@@ -18,8 +18,4 @@ export class ChatbotFlowInput {
   @Field()
   @IsString()
   chatbotId: string;
-
-  @Field(() => ID)
-  @IsString()
-  workspaceId: string;
 }

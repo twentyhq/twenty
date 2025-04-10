@@ -279,6 +279,7 @@ export type ChatbotFlow = {
   edges?: Maybe<Array<Scalars['JSON']>>;
   id: Scalars['UUID'];
   nodes?: Maybe<Array<Scalars['JSON']>>;
+  viewport?: Maybe<Scalars['JSON']>;
   workspace: Workspace;
 };
 
@@ -2454,6 +2455,7 @@ export type UpdateChatbotFlowInput = {
   chatbotId: Scalars['String'];
   edges: Scalars['JSON'];
   nodes: Scalars['JSON'];
+  viewport?: InputMaybe<Scalars['JSON']>;
 };
 
 export type UpdateFieldInput = {
@@ -3148,6 +3150,8 @@ export type UploadFileToBucketMutationVariables = Exact<{
 
 export type UploadFileToBucketMutation = { __typename?: 'Mutation', uploadFileToBucket: string };
 
+export type GetChatbotsFragmentFragment = { __typename?: 'ChatbotWorkspaceEntity', id: string, name?: string | null, statuses?: ChatbotStatus | null };
+
 export type UpdateChatbotFlowMutationVariables = Exact<{
   updateChatbotInput: UpdateChatbotFlowInput;
 }>;
@@ -3162,12 +3166,10 @@ export type ValidateChatbotFlowMutationVariables = Exact<{
 
 export type ValidateChatbotFlowMutation = { __typename?: 'Mutation', validateChatbotFlow: { __typename?: 'ChatbotFlow', id: any, nodes?: Array<any> | null, edges?: Array<any> | null, chatbotId: string, workspace: { __typename?: 'Workspace', id: any, displayName?: string | null } } };
 
-export type GetChatbotsFragmentFragment = { __typename?: 'ChatbotWorkspaceEntity', name?: string | null, statuses?: ChatbotStatus | null };
-
 export type GetChatbotsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetChatbotsQuery = { __typename?: 'Query', getChatbots: Array<{ __typename?: 'ChatbotWorkspaceEntity', name?: string | null, statuses?: ChatbotStatus | null }> };
+export type GetChatbotsQuery = { __typename?: 'Query', getChatbots: Array<{ __typename?: 'ChatbotWorkspaceEntity', id: string, name?: string | null, statuses?: ChatbotStatus | null }> };
 
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3705,6 +3707,7 @@ export const AvailableSsoIdentityProvidersFragmentFragmentDoc = gql`
     `;
 export const GetChatbotsFragmentFragmentDoc = gql`
     fragment GetChatbotsFragment on ChatbotWorkspaceEntity {
+  id
   name
   statuses
 }

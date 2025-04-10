@@ -28,6 +28,10 @@ export class ChatbotFlow {
   @Column({ nullable: true, type: 'jsonb' })
   edges: any[];
 
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @Column({ nullable: true, type: 'jsonb' })
+  viewport: { [key: string]: any };
+
   @Field({ nullable: false })
   @Column({ nullable: false, unique: true })
   chatbotId: string;

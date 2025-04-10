@@ -20,8 +20,12 @@ export class ChatbotFlowResolver {
   @Mutation(() => ChatbotFlow)
   async validateChatbotFlow(
     @Args('chatbotInput') chatbotInput: ChatbotFlowInput,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<ChatbotFlow> {
-    return await this.chatbotFlowService.validateOrCreateFlow(chatbotInput);
+    return await this.chatbotFlowService.validateOrCreateFlow(
+      chatbotInput,
+      workspace.id,
+    );
   }
 
   @Mutation(() => Boolean)
@@ -29,6 +33,11 @@ export class ChatbotFlowResolver {
     @Args('updateChatbotInput') updateChatbotInput: UpdateChatbotFlowInput,
   ): Promise<boolean> {
     return await this.chatbotFlowService.updateFlow(updateChatbotInput);
+  }
+
+  @Query(() => ChatbotFlow)
+  async getChatbotFlowById(@Args('chatbotId') chatbotId: string) {
+    return await this.chatbotFlowService.findById(chatbotId);
   }
 
   @Query(() => [ChatbotWorkspaceEntity])

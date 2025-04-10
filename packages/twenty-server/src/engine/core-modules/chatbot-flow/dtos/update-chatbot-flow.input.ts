@@ -18,4 +18,8 @@ export class UpdateChatbotFlowInput {
   @Field()
   @IsString()
   chatbotId: string;
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsObject()
+  viewport: { [key: string]: any };
 }

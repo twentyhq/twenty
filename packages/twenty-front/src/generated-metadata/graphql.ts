@@ -288,6 +288,7 @@ export type ChatbotFlow = {
   edges?: Maybe<Array<Scalars['JSON']['output']>>;
   id: Scalars['UUID']['output'];
   nodes?: Maybe<Array<Scalars['JSON']['output']>>;
+  viewport?: Maybe<Scalars['JSON']['output']>;
   workspace: Workspace;
 };
 
@@ -2660,6 +2661,7 @@ export type UpdateChatbotFlowInput = {
   chatbotId: Scalars['String']['input'];
   edges: Scalars['JSON']['input'];
   nodes: Scalars['JSON']['input'];
+  viewport?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type UpdateFieldInput = {
