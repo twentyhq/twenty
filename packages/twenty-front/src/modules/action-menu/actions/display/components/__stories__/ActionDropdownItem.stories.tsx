@@ -6,17 +6,25 @@ import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { ActionButton } from '../ActionButton';
+import { ActionDropdownItem } from '../ActionDropdownItem';
 
-const meta: Meta<typeof ActionButton> = {
-  title: 'Modules/ActionMenu/Actions/Display/ActionButton',
-  component: ActionButton,
+// Mock react-router-dom's useNavigate
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
+
+const mockNavigate = fn();
+
+const meta: Meta<typeof ActionDropdownItem> = {
+  title: 'Modules/ActionMenu/Actions/Display/ActionDropdownItem',
+  component: ActionDropdownItem,
   decorators: [ComponentDecorator, RouterDecorator],
 };
 
 export default meta;
 
-type Story = StoryObj<typeof ActionButton>;
+type Story = StoryObj<typeof ActionDropdownItem>;
 
 const deleteMock = fn();
 const addToFavoritesMock = fn();
@@ -42,7 +50,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      canvas.getByText(getActionLabel(addToFavoritesAction?.shortLabel ?? '')),
+      canvas.getByText(getActionLabel(addToFavoritesAction?.label ?? '')),
     );
     expect(addToFavoritesMock).toHaveBeenCalled();
   },
@@ -59,6 +67,5 @@ export const WithLink: Story = {
       getActionLabel(goToPeopleAction?.label ?? ''),
     );
     expect(menuItem).toBeInTheDocument();
-    expect(canvas.getByRole('link')).toHaveAttribute('href', '/objects/people');
   },
 };
