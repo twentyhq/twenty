@@ -11,14 +11,11 @@ import {
     KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
-import {
-    CACHE_SCAVENGE_INTERVAL,
-    INITIAL_RETRY_DELAY,
-    MAX_CACHE_ENTRIES,
-    MAX_RETRY_ATTEMPTS,
-    NEGATIVE_CACHE_TTL,
-    POSITIVE_CACHE_TTL,
-} from 'src/engine/core-modules/twenty-config/constants/config-variables-cache.constants';
+import { CONFIG_VARIABLES_CACHE_MAX_ENTRIES } from 'src/engine/core-modules/twenty-config/constants/config-variables-cache-max-entries';
+import { CONFIG_VARIABLES_CACHE_SCAVENGE_INTERVAL } from 'src/engine/core-modules/twenty-config/constants/config-variables-cache-scavenge-interval';
+import { CONFIG_VARIABLES_CACHE_TTL } from 'src/engine/core-modules/twenty-config/constants/config-variables-cache-ttl';
+import { DATABASE_CONFIG_DRIVER_INITIAL_RETRY_DELAY } from 'src/engine/core-modules/twenty-config/constants/database-config-driver-initial-retry-delay';
+import { DATABASE_CONFIG_DRIVER_INITIALIZATION_MAX_RETRIES } from 'src/engine/core-modules/twenty-config/constants/database-config-driver-initialization-max-retries';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 import { InitializationState } from 'src/engine/core-modules/twenty-config/enums/initialization-state.enum';
 import { convertConfigVarToAppType } from 'src/engine/core-modules/twenty-config/utils/convert-config-var-to-app-type.util';
@@ -98,8 +95,7 @@ export class DatabaseConfigDriver
     const negativeCacheEntry = this.negativeLookupCache.get(key as string);
 
     if (negativeCacheEntry && !this.isCacheExpired(negativeCacheEntry)) {
-      this.logger.debug(`[Cache:${key}] Negative cache hit - using env`);
-      console.log(`🔴 CACHE: Negative cache hit for ${key as string}`);
+      this.logger.debug(`🔴 [Cache:${key}] Negative cache hit - using env`);
 
       return this.environmentDriver.get(key);
     }
@@ -109,19 +105,15 @@ export class DatabaseConfigDriver
 
     if (valueCacheEntry && !this.isCacheExpired(valueCacheEntry)) {
       this.logger.debug(
-        `[Cache:${key}] Positive cache hit - using cached value`,
+        `🟢 [Cache:${key}] Positive cache hit - using cached value`,
       );
-      console.log(`🟢 CACHE: Positive cache hit for ${key as string}`);
 
       // Convert the value to the appropriate type before returning
       return convertConfigVarToAppType(valueCacheEntry.value, key);
     }
 
     // 5. Schedule background refresh - Cache miss
-    this.logger.debug(`[Cache:${key}] Cache miss - scheduling refresh`);
-    console.log(
-      `🟡 CACHE: Cache miss for ${key as string} - scheduling refresh`,
-    );
+    this.logger.debug(`🟡 [Cache:${key}] Cache miss - scheduling refresh`);
 
     this.scheduleRefresh(key).catch((error) => {
       this.logger.error(`Failed to refresh config for ${key as string}`, error);
@@ -133,8 +125,7 @@ export class DatabaseConfigDriver
 
   async refreshConfig(key: keyof ConfigVariables): Promise<void> {
     try {
-      this.logger.debug(`[Cache:${key}] Refreshing from database`);
-      console.log(`🔄 CACHE: Refreshing ${key as string} from database`);
+      this.logger.debug(`🔄 [Cache:${key}] Refreshing from database`);
 
       const result = await this.queryDatabase(key as string);
 
@@ -143,25 +134,21 @@ export class DatabaseConfigDriver
         this.valueCache.set(key as string, {
           value: result,
           timestamp: Date.now(),
-          ttl: POSITIVE_CACHE_TTL,
+          ttl: CONFIG_VARIABLES_CACHE_TTL,
         });
         this.negativeLookupCache.delete(key as string);
         this.logger.debug(
-          `[Cache:${key}] Updated positive cache with value from DB`,
+          `✅ [Cache:${key}] Updated positive cache with value from DB`,
         );
-        console.log(`✅ CACHE: Updated positive cache for ${key as string}`);
       } else {
         this.negativeLookupCache.set(key as string, {
           value: true,
           timestamp: Date.now(),
-          ttl: NEGATIVE_CACHE_TTL,
+          ttl: CONFIG_VARIABLES_CACHE_TTL,
         });
         this.valueCache.delete(key as string);
         this.logger.debug(
-          `[Cache:${key}] Updated negative cache (not found in DB)`,
-        );
-        console.log(
-          `❌ CACHE: Updated negative cache for ${key as string} (not found in DB)`,
+          `❌ [Cache:${key}] Updated negative cache (not found in DB)`,
         );
       }
     } catch (error) {
@@ -180,12 +167,11 @@ export class DatabaseConfigDriver
       // or can we store the type of value win the json?
       const processedValue = convertConfigVarToStorageType(value);
 
-      this.logger.debug(`[Cache:${key}] Updating in database`, {
+      this.logger.debug(`🔵 [Cache:${key}] Updating in database`, {
         originalType: typeof value,
         processedType: typeof processedValue,
         isArray: Array.isArray(processedValue),
       });
-      console.log(`🔵 CACHE: Updating ${key as string} in database`);
 
       // Check if the record exists
       const existingRecord = await this.keyValuePairRepository.findOne({
@@ -199,7 +185,7 @@ export class DatabaseConfigDriver
 
       if (existingRecord) {
         // Update existing record
-        this.logger.debug(`[Cache:${key}] Updating existing record in DB`);
+        this.logger.debug(`🔄 [Cache:${key}] Updating existing record in DB`);
         await this.keyValuePairRepository.update(
           {
             id: existingRecord.id,
@@ -210,7 +196,7 @@ export class DatabaseConfigDriver
         );
       } else {
         // Insert new record
-        this.logger.debug(`[Cache:${key}] Inserting new record in DB`);
+        this.logger.debug(`🔄 [Cache:${key}] Inserting new record in DB`);
         await this.keyValuePairRepository.insert({
           key: key as string,
           value: processedValue,
@@ -224,13 +210,10 @@ export class DatabaseConfigDriver
       this.valueCache.set(key as string, {
         value: processedValue,
         timestamp: Date.now(),
-        ttl: POSITIVE_CACHE_TTL,
+        ttl: CONFIG_VARIABLES_CACHE_TTL,
       });
       this.negativeLookupCache.delete(key as string);
-      this.logger.debug(`[Cache:${key}] Updated cache with new value`);
-      console.log(
-        `✅ CACHE: Updated cache for ${key as string} with new value`,
-      );
+      this.logger.debug(`✅ [Cache:${key}] Updated cache with new value`);
     } catch (error) {
       this.logger.error(`Failed to update config for ${key as string}`, error);
       throw error;
@@ -255,14 +238,10 @@ export class DatabaseConfigDriver
 
   private async scheduleRefresh(key: keyof ConfigVariables): Promise<void> {
     // Log when a refresh is scheduled but not yet executed
-    this.logger.debug(`[Cache:${key}] Scheduling background refresh`);
-    console.log(`🕒 CACHE: Scheduling background refresh for ${key as string}`);
+    this.logger.debug(`🕒 [Cache:${key}] Scheduling background refresh`);
 
     setImmediate(() => {
-      this.logger.debug(`[Cache:${key}] Executing background refresh`);
-      console.log(
-        `⏳ CACHE: Executing background refresh for ${key as string}`,
-      );
+      this.logger.debug(`⏳ [Cache:${key}] Executing background refresh`);
 
       this.refreshConfig(key).catch((error) => {
         this.logger.error(
@@ -276,13 +255,17 @@ export class DatabaseConfigDriver
   }
 
   private scheduleRetry(): void {
-    if (this.retryAttempts >= MAX_RETRY_ATTEMPTS) {
+    if (
+      this.retryAttempts >= DATABASE_CONFIG_DRIVER_INITIALIZATION_MAX_RETRIES
+    ) {
       this.logger.error('Max retry attempts reached, giving up initialization');
 
       return;
     }
 
-    const delay = INITIAL_RETRY_DELAY * Math.pow(2, this.retryAttempts);
+    const delay =
+      DATABASE_CONFIG_DRIVER_INITIAL_RETRY_DELAY *
+      Math.pow(2, this.retryAttempts);
 
     this.retryAttempts++;
 
@@ -315,7 +298,7 @@ export class DatabaseConfigDriver
           this.valueCache.set(configVar.key, {
             value: configVar.value,
             timestamp: now,
-            ttl: POSITIVE_CACHE_TTL,
+            ttl: CONFIG_VARIABLES_CACHE_TTL,
           });
         }
       }
@@ -355,44 +338,58 @@ export class DatabaseConfigDriver
   private startCacheScavenging(): void {
     this.cacheScavengeInterval = setInterval(() => {
       this.scavengeCache();
-    }, CACHE_SCAVENGE_INTERVAL);
+    }, CONFIG_VARIABLES_CACHE_SCAVENGE_INTERVAL);
   }
 
   private scavengeCache(): void {
     const now = Date.now();
+    let expiredCount = 0;
+    let sizeLimitedCount = 0;
 
     for (const [key, entry] of this.valueCache.entries()) {
       if (now - entry.timestamp > entry.ttl) {
         this.valueCache.delete(key);
+        expiredCount++;
       }
     }
 
     for (const [key, entry] of this.negativeLookupCache.entries()) {
       if (now - entry.timestamp > entry.ttl) {
         this.negativeLookupCache.delete(key);
+        expiredCount++;
       }
     }
 
     // THis is some thing I added later not in the design doc
     // makes sense tho, because we don't want to have too many cache entries
-    if (this.valueCache.size > MAX_CACHE_ENTRIES) {
-      const entriesToDelete = this.valueCache.size - MAX_CACHE_ENTRIES;
+    if (this.valueCache.size > CONFIG_VARIABLES_CACHE_MAX_ENTRIES) {
+      const entriesToDelete =
+        this.valueCache.size - CONFIG_VARIABLES_CACHE_MAX_ENTRIES;
       const keysToDelete = Array.from(this.valueCache.keys()).slice(
         0,
         entriesToDelete,
       );
 
       keysToDelete.forEach((key) => this.valueCache.delete(key));
+      sizeLimitedCount += entriesToDelete;
     }
 
-    if (this.negativeLookupCache.size > MAX_CACHE_ENTRIES) {
-      const entriesToDelete = this.negativeLookupCache.size - MAX_CACHE_ENTRIES;
+    if (this.negativeLookupCache.size > CONFIG_VARIABLES_CACHE_MAX_ENTRIES) {
+      const entriesToDelete =
+        this.negativeLookupCache.size - CONFIG_VARIABLES_CACHE_MAX_ENTRIES;
       const keysToDelete = Array.from(this.negativeLookupCache.keys()).slice(
         0,
         entriesToDelete,
       );
 
       keysToDelete.forEach((key) => this.negativeLookupCache.delete(key));
+      sizeLimitedCount += entriesToDelete;
+    }
+
+    if (expiredCount > 0 || sizeLimitedCount > 0) {
+      this.logger.debug(
+        `Cache scavenging completed: ${expiredCount} expired entries removed, ${sizeLimitedCount} entries removed due to size limits`,
+      );
     }
   }
 

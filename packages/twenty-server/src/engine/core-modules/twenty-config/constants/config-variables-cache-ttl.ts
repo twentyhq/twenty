@@ -1,0 +1,1 @@
+export const CONFIG_VARIABLES_CACHE_TTL = 30 * 1000;
