@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { ConfigKey } from 'src/engine/core-modules/twenty-config/interfaces/config-var-cache-entry.interface';
+
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_MASKING_CONFIG } from 'src/engine/core-modules/twenty-config/constants/config-variables-masking-config';
 import { ConfigVariablesMetadataOptions } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
@@ -30,12 +32,10 @@ export class TwentyConfigService
     private readonly databaseConfigDriver: DatabaseConfigDriver,
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
   ) {
-    // Always start with environment driver during construction
     this.driver = this.environmentConfigDriver;
 
     const configVarInDb = this.configService.get('IS_CONFIG_VAR_IN_DB_ENABLED');
 
-    // Handle both string and boolean values for IS_CONFIG_VAR_IN_DB_ENABLED
     this.isConfigVarInDbEnabled = configVarInDb === true;
 
     this.logger.log(
@@ -44,8 +44,6 @@ export class TwentyConfigService
   }
 
   async onModuleInit() {
-    // During module init, only use the environment driver
-    // and mark as initialized if not using DB driver
     if (!this.isConfigVarInDbEnabled) {
       this.logger.log(
         'Database configuration is disabled, using environment variables only',
@@ -55,8 +53,6 @@ export class TwentyConfigService
       return;
     }
 
-    // If we're using DB driver, mark as not initialized yet
-    // Will be fully initialized in onApplicationBootstrap
     this.logger.log(
       'Database configuration is enabled, will initialize after application bootstrap',
     );
@@ -71,23 +67,19 @@ export class TwentyConfigService
       this.logger.log('Initializing database driver for configuration');
       this.initializationState = InitializationState.INITIALIZING;
 
-      // Try to initialize the database driver
       await this.databaseConfigDriver.initialize();
 
-      // If initialization succeeds, switch to the database driver
       this.driver = this.databaseConfigDriver;
       this.initializationState = InitializationState.INITIALIZED;
       this.logger.log('Database driver initialized successfully');
       this.logger.log(`Active driver: DatabaseDriver`);
     } catch (error) {
-      // If initialization fails for any reason, log the error and keep using the environment driver
       this.logger.error(
         'Failed to initialize database driver, falling back to environment variables',
         error,
       );
       this.initializationState = InitializationState.FAILED;
 
-      // Ensure we're still using the environment driver
       this.driver = this.environmentConfigDriver;
       this.logger.log(`Active driver: EnvironmentDriver (fallback)`);
     }
@@ -183,8 +175,9 @@ export class TwentyConfigService
       let source = 'ENVIRONMENT';
 
       if (isUsingDatabaseDriver && !envMetadata.isEnvOnly) {
-        const valueCacheEntry =
-          this.databaseConfigDriver.getFromValueCache(key);
+        const valueCacheEntry = this.databaseConfigDriver.getFromValueCache(
+          key as ConfigKey,
+        );
 
         if (valueCacheEntry) {
           source = 'DATABASE';
@@ -235,7 +228,6 @@ export class TwentyConfigService
     }
   }
 
-  // Get cache information for debugging
   getCacheInfo(): {
     usingDatabaseDriver: boolean;
     initializationState: string;
