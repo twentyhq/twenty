@@ -35,7 +35,7 @@ export type ChipProps = {
   className?: string;
 };
 
-const StyledP = withTheme(styled.p<{ theme: Theme }>`
+const StyledDiv = withTheme(styled.div<{ theme: Theme }>`
   color: ${({ theme }) => theme.font.color.tertiary};
 `);
 
@@ -154,7 +154,7 @@ export const Chip = ({
       {!isLabelHidden && label.trim() ? (
         <OverflowingTextWithTooltip size={size} text={label} />
       ) : (
-        <StyledP>Unitled</StyledP>
+        <StyledDiv>Untitled</StyledDiv>
       )}
       {rightComponent?.()}
     </StyledContainer>
