@@ -26,7 +26,7 @@ export const SupportDropdown = () => {
       dropdownPlacement="top-start"
       dropdownOffset={{ x: 0, y: -28 }}
       clickableComponent={<SupportButton />}
-      dropdownMenuWidth={160}
+      dropdownWidth={160}
       dropdownComponents={
         <DropdownMenuItemsContainer>
           <MenuItem

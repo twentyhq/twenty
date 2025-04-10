@@ -127,7 +127,7 @@ export const SettingsServerlessFunctionCodeEditor = ({
         onChange={onChange}
         onValidate={handleEditorValidation}
         options={options}
-        withHeader
+        variant="with-header"
       />
     )
   );

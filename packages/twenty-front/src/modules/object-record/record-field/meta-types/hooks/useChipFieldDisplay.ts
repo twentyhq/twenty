@@ -8,8 +8,8 @@ import { isFieldText } from '@/object-record/record-field/types/guards/isFieldTe
 import { useRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
 import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
-import { FieldContext } from '../../contexts/FieldContext';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldContext } from '../../contexts/FieldContext';
 
 export const useChipFieldDisplay = () => {
   const {
@@ -17,7 +17,7 @@ export const useChipFieldDisplay = () => {
     fieldDefinition,
     isLabelIdentifier,
     labelIdentifierLink,
-    isLabelHidden,
+    isLabelIdentifierCompact,
   } = useContext(FieldContext);
 
   const { chipGeneratorPerObjectPerField } = useContext(
@@ -47,6 +47,6 @@ export const useChipFieldDisplay = () => {
     recordValue,
     isLabelIdentifier,
     labelIdentifierLink,
-    isLabelHidden,
+    isLabelIdentifierCompact,
   };
 };

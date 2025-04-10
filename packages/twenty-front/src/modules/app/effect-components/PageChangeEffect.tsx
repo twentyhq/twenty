@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
+  createSearchParams,
   matchPath,
   useLocation,
   useNavigate,
@@ -60,15 +61,27 @@ export const PageChangeEffect = () => {
   }, [location, previousLocation]);
 
   const [searchParams] = useSearchParams();
-  const navigationParams = searchParams.get('animateModal')
-    ? `?animateModal=${searchParams.get('animateModal')}`
-    : '';
 
   useEffect(() => {
     if (isDefined(pageChangeEffectNavigateLocation)) {
-      navigate(pageChangeEffectNavigateLocation + navigationParams);
+      const hasQueryParams = pageChangeEffectNavigateLocation.includes('?');
+
+      const navigationParams = createSearchParams({
+        ...(searchParams.get('animateModal')
+          ? { animateModal: searchParams.get('animateModal') ?? 'false' }
+          : {}),
+      });
+
+      if (hasQueryParams) {
+        navigate(pageChangeEffectNavigateLocation);
+      } else {
+        navigate({
+          pathname: pageChangeEffectNavigateLocation,
+          search: navigationParams.toString(),
+        });
+      }
     }
-  }, [navigate, pageChangeEffectNavigateLocation, navigationParams]);
+  }, [navigate, pageChangeEffectNavigateLocation, searchParams]);
 
   useEffect(() => {
     const isLeavingRecordIndexPage = !!matchPath(

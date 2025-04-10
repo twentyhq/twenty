@@ -23,13 +23,14 @@ import {
   StyledHoverableMenuItemBase,
 } from 'twenty-ui/navigation';
 
-export const MONTH_AND_YEAR_DROPDOWN_ID = 'date-picker-month-and-year-dropdown';
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';
 export const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
   'date-picker-month-and-year-dropdown-year-select';
 
 const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
+  width: 280px;
+
   & .react-datepicker {
     border-color: ${({ theme }) => theme.border.color.light};
     background: transparent;
@@ -323,7 +324,6 @@ export const DateTimePicker = ({
 
   const { timeZone } = useContext(UserContext);
 
-  const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
   const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
     MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   );
@@ -339,7 +339,6 @@ export const DateTimePicker = ({
   const closeDropdowns = () => {
     closeDropdownYearSelect();
     closeDropdownMonthSelect();
-    closeDropdown();
   };
 
   const handleClose = (newDate: Date) => {

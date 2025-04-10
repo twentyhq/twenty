@@ -11,46 +11,26 @@ export const WorkflowFormFieldSettingsByType = ({
   onChange,
 }: {
   field: WorkflowFormActionField;
-  onChange: (fieldName: string, value: unknown) => void;
+  onChange: (updatedField: WorkflowFormActionField) => void;
 }) => {
   switch (field.type) {
     case FieldMetadataType.TEXT:
       return (
-        <WorkflowFormFieldSettingsText
-          label={field.label}
-          placeholder={field.placeholder}
-          onChange={(fieldName, value) => {
-            onChange(fieldName, value);
-          }}
-        />
+        <WorkflowFormFieldSettingsText field={field} onChange={onChange} />
       );
     case FieldMetadataType.NUMBER:
       return (
-        <WorkflowFormFieldSettingsNumber
-          label={field.label}
-          placeholder={field.placeholder}
-          onChange={(fieldName, value) => {
-            onChange(fieldName, value);
-          }}
-        />
+        <WorkflowFormFieldSettingsNumber field={field} onChange={onChange} />
       );
     case FieldMetadataType.DATE:
       return (
-        <WorkflowFormFieldSettingsDate
-          label={field.label}
-          onChange={(fieldName, value) => {
-            onChange(fieldName, value);
-          }}
-        />
+        <WorkflowFormFieldSettingsDate field={field} onChange={onChange} />
       );
     case 'RECORD':
       return (
         <WorkflowFormFieldSettingsRecordPicker
-          label={field.label}
-          settings={field.settings}
-          onChange={(fieldName, value) => {
-            onChange(fieldName, value);
-          }}
+          field={field}
+          onChange={onChange}
         />
       );
     default:

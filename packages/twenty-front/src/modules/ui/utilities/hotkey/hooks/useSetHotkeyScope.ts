@@ -1,9 +1,9 @@
 import { useRecoilCallback } from 'recoil';
 
 import { DEBUG_HOTKEY_SCOPE } from '@/ui/utilities/hotkey/hooks/useScopedHotkeyCallback';
-import { logDebug } from '~/utils/logDebug';
 
 import { isDefined } from 'twenty-shared/utils';
+import { logDebug } from '~/utils/logDebug';
 import { DEFAULT_HOTKEYS_SCOPE_CUSTOM_SCOPES } from '../constants/DefaultHotkeysScopeCustomScopes';
 import { currentHotkeyScopeState } from '../states/internal/currentHotkeyScopeState';
 import { internalHotkeysEnabledScopesState } from '../states/internal/internalHotkeysEnabledScopesState';
@@ -84,7 +84,7 @@ export const useSetHotkeyScope = () =>
         scopesToSet.push(newHotkeyScope.scope);
 
         if (DEBUG_HOTKEY_SCOPE) {
-          logDebug('DEBUG: set new hotkey scope', {
+          logDebug(`DEBUG: set new hotkey scope : ${newHotkeyScope.scope}`, {
             scopesToSet,
             newHotkeyScope,
           });

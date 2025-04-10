@@ -3,12 +3,12 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { SSOException } from 'src/engine/core-modules/sso/sso.exception';
+import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 describe('SSOService', () => {
   let service: SSOService;
@@ -30,7 +30,7 @@ describe('SSOService', () => {
           },
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
           },

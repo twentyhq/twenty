@@ -26,7 +26,7 @@ const StyledLayout = styled.div`
   flex-direction: column;
   height: 100dvh;
   position: relative;
-  scrollbar-color: ${({ theme }) => theme.border.color.medium};
+  scrollbar-color: ${({ theme }) => theme.border.color.medium} transparent;
   scrollbar-width: 4px;
   width: 100%;
 
@@ -105,7 +105,9 @@ export const DefaultLayout = () => {
             )}
             {showAuthModal ? (
               <>
-                <SignInBackgroundMockPage />
+                <StyledMainContainer>
+                  <SignInBackgroundMockPage />
+                </StyledMainContainer>
                 <AnimatePresence mode="wait">
                   <LayoutGroup>
                     <AuthModal isOpenAnimated={animateModal}>
@@ -122,7 +124,7 @@ export const DefaultLayout = () => {
               </StyledMainContainer>
             )}
           </StyledPageContainer>
-          {isMobile && <MobileNavigationBar />}
+          {isMobile && !showAuthModal && <MobileNavigationBar />}
         </AppErrorBoundary>
       </StyledLayout>
     </>
