@@ -473,17 +473,6 @@ export class ConfigVariables {
   CLICKHOUSE_URL: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.AnalyticsConfig,
-    description:
-      'Flush interval in milliseconds for Clickhouse analytics buffer',
-  })
-  @CastToPositiveNumber()
-  @IsNumber()
-  @IsOptional()
-  @ValidateIf((env) => env.ANALYTICS_ENABLED === true)
-  ANALYTICS_FLUSH_INTERVAL_MS = 5000;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Logging,
     description: 'Enable or disable telemetry logging',
   })

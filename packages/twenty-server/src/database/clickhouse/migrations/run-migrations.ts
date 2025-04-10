@@ -30,7 +30,7 @@ async function ensureDatabaseExists() {
     query: `CREATE DATABASE IF NOT EXISTS "${database}"`,
   });
 
-  client.close();
+  await client.close();
 }
 
 async function ensureMigrationTable(client: ClickHouseClient) {

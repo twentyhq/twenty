@@ -1,5 +1,5 @@
 import { AnalyticsEvent } from 'src/engine/core-modules/analytics/types/event.type';
-import { AnalyticsPageview as AnalyticsPageview } from 'src/engine/core-modules/analytics/types/pageview.type';
+import { AnalyticsPageview } from 'src/engine/core-modules/analytics/types/pageview.type';
 
 export const AnalyticsContextMock = (params?: {
   sendEvent?:

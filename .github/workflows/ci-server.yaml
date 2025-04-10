@@ -184,7 +184,6 @@ jobs:
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
       NODE_ENV: test
-      ANALYTICS_FLUSH_INTERVAL_MS: 10
       ANALYTICS_ENABLED: true
       CLICKHOUSE_PASSWORD: ${{ secrets.CLICKHOUSE_CI_PASSWORD }}
       CLICKHOUSE_URL: "http://default:${{ secrets.CLICKHOUSE_CI_PASSWORD }}@localhost:8123/twenty-test"
