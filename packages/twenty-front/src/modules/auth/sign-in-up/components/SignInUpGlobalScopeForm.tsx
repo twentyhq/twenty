@@ -25,11 +25,11 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -89,13 +89,13 @@ export const SignInUpGlobalScopeForm = () => {
           variant: SnackBarVariant.Error,
         });
       },
-      onCompleted: (data) => {
+      onCompleted: async (data) => {
         requestFreshCaptchaToken();
         const response = data.checkUserExists;
         if (response.__typename === 'UserExists') {
           if (response.availableWorkspaces.length >= 1) {
             const workspace = response.availableWorkspaces[0];
-            return redirectToWorkspaceDomain(
+            return await redirectToWorkspaceDomain(
               getWorkspaceUrl(workspace.workspaceUrls),
               pathname,
               {

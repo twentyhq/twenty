@@ -17,7 +17,7 @@ export const animateModalState = createState<boolean>({
         }
         return {
           type: 'failure',
-          message: 'Invalid BillingCheckoutSessionState',
+          message: 'Invalid animateModalState',
           path: [] as any,
         } as const;
       },

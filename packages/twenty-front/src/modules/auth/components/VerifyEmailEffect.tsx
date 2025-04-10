@@ -53,7 +53,7 @@ export const VerifyEmailEffect = () => {
         const workspaceUrl = getWorkspaceUrl(workspaceUrls);
         if (workspaceUrl.slice(0, -1) !== window.location.origin) {
           setAnimateModal(false);
-          return redirectToWorkspaceDomain(workspaceUrl, AppPath.Verify, {
+          return await redirectToWorkspaceDomain(workspaceUrl, AppPath.Verify, {
             loginToken: loginToken.token,
           });
         }

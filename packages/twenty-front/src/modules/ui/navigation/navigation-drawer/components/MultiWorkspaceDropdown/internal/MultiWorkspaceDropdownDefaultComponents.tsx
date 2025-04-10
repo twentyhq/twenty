@@ -75,9 +75,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
 
   const createWorkspace = () => {
     signUpInNewWorkspaceMutation({
-      onCompleted: (data) => {
+      onCompleted: async (data) => {
         setAnimateModal(false);
-        return redirectToWorkspaceDomain(
+        return await redirectToWorkspaceDomain(
           getWorkspaceUrl(data.signUpInNewWorkspace.workspace.workspaceUrls),
           AppPath.Verify,
           {

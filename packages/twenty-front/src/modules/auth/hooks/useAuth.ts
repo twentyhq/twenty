@@ -423,7 +423,7 @@ export const useAuth = () => {
 
       if (isMultiWorkspaceEnabled) {
         setAnimateModal(false);
-        return redirectToWorkspaceDomain(
+        return await redirectToWorkspaceDomain(
           getWorkspaceUrl(signUpResult.data.signUp.workspace.workspaceUrls),
           isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
           {

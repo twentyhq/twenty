@@ -9,12 +9,12 @@ export const useImpersonationRedirect = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const setAnimateModal = useSetRecoilState(animateModalState);
 
-  const executeImpersonationRedirect = (
+  const executeImpersonationRedirect = async (
     workspaceUrls: WorkspaceUrls,
     loginToken: string,
   ) => {
     setAnimateModal(false);
-    return redirectToWorkspaceDomain(
+    return await redirectToWorkspaceDomain(
       getWorkspaceUrl(workspaceUrls),
       AppPath.Verify,
       { loginToken },

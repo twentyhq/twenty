@@ -1,5 +1,5 @@
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useBuildSearchParamsFromUrlSyncState } from '@/domain-manager/hooks/useBuildSearchParamsFromUrlSyncState';
+import { useBuildSearchParamsFromUrlSyncedStates } from '@/domain-manager/hooks/useBuildSearchParamsFromUrlSyncedStates';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRecoilValue } from 'recoil';
@@ -9,10 +9,10 @@ export const useRedirectToWorkspaceDomain = () => {
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const { redirect } = useRedirect();
 
-  const { buildSearchParamsFromUrlSyncState } =
-    useBuildSearchParamsFromUrlSyncState();
+  const { buildSearchParamsFromUrlSyncedStates } =
+    useBuildSearchParamsFromUrlSyncedStates();
 
-  const redirectToWorkspaceDomain = (
+  const redirectToWorkspaceDomain = async (
     baseUrl: string,
     pathname?: string,
     searchParams?: Record<string, string | boolean>,
@@ -22,7 +22,7 @@ export const useRedirectToWorkspaceDomain = () => {
     redirect(
       buildWorkspaceUrl(baseUrl, pathname, {
         ...searchParams,
-        ...buildSearchParamsFromUrlSyncState(),
+        ...(await buildSearchParamsFromUrlSyncedStates()),
       }),
       target,
     );
