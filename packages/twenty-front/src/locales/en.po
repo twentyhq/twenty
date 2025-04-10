@@ -805,6 +805,11 @@ msgstr "Catalan"
 msgid "Change Password"
 msgstr "Change Password"
 
+#. js-lingui-id: wRtBJP
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "Change Plan"
+msgstr "Change Plan"
+
 #. js-lingui-id: b0h4XW
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Change to yearly"
@@ -4258,8 +4263,8 @@ msgstr "Switch from monthly to yearly"
 
 #. js-lingui-id: E4rPXj
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Switch Plan"
-msgstr "Switch Plan"
+#~ msgid "Switch Plan"
+#~ msgstr "Switch Plan"
 
 #. js-lingui-id: lz+f/E
 #: src/pages/onboarding/ChooseYourPlan.tsx
