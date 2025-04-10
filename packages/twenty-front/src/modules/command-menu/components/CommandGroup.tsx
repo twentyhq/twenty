@@ -5,7 +5,7 @@ import { Label } from 'twenty-ui/display';
 const StyledGroupHeading = styled(Label)`
   align-items: center;
   padding-bottom: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
   padding-right: ${({ theme }) => theme.spacing(1)};
   padding-top: ${({ theme }) => theme.spacing(2)};
   user-select: none;
