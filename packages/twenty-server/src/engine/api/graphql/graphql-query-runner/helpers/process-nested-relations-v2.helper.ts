@@ -124,8 +124,11 @@ export class ProcessNestedRelationsV2Helper {
         sourceFieldName,
       });
 
+    const shouldBypassPermissionChecks = false;
+
     const targetObjectRepository = dataSource.getRepository(
       targetObjectMetadata.nameSingular,
+      shouldBypassPermissionChecks,
       roleId,
     );
 

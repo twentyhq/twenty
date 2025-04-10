@@ -186,8 +186,11 @@ export class ProcessNestedRelationsHelper {
         relationName,
       });
 
+    const shouldBypassPermissionChecks = false;
+
     const relationRepository = dataSource.getRepository(
       referenceObjectMetadata.nameSingular,
+      shouldBypassPermissionChecks,
       roleId,
     );
 
@@ -285,8 +288,11 @@ export class ProcessNestedRelationsHelper {
       relationName,
     });
 
+    const shouldBypassPermissionChecks = false;
+
     const relationRepository = dataSource.getRepository(
       referenceObjectMetadata.nameSingular,
+      shouldBypassPermissionChecks,
       roleId,
     );
 
