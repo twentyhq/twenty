@@ -163,26 +163,9 @@ export const ChooseYourPlan = () => {
     };
   };
 
-  const handleSwitchPlan = (planKey: BillingPlanKey) => {
-    return () => {
-      if (isDefined(baseProductPrice)) {
-        setBillingCheckoutSession({
-          plan: planKey,
-          interval: baseProductPrice.recurringInterval,
-          requirePaymentMethod: billingCheckoutSession.requirePaymentMethod,
-        });
-      }
-    };
-  };
-
   const { signOut } = useAuth();
 
   const withCreditCardTrialPeriodDuration = withCreditCardTrialPeriod?.duration;
-
-  const alternatePlan =
-    currentPlan === BillingPlanKey.PRO
-      ? BillingPlanKey.ENTERPRISE
-      : BillingPlanKey.PRO;
 
   const planName = plans?.plans.find((plan) => plan.planKey === currentPlan)
     ?.baseProduct.name;
