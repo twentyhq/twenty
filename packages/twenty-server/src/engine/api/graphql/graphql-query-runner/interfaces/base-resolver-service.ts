@@ -45,6 +45,7 @@ export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   repository: WorkspaceRepository<ObjectLiteral>;
   graphqlQueryParser: GraphqlQueryParser;
   graphqlQuerySelectedFieldsResult: GraphqlQuerySelectedFieldsResult;
+  roleId?: string;
 };
 
 @Injectable()
@@ -148,12 +149,12 @@ export abstract class GraphqlQueryBaseResolverService<
         repository,
         graphqlQueryParser,
         graphqlQuerySelectedFieldsResult,
+        roleId,
       };
 
       const results = await this.resolve(
         graphqlQueryResolverExecutionArgs,
         featureFlagsMap,
-        roleId,
       );
 
       const resultWithGetters = await this.queryResultGettersFactory.create(
@@ -271,7 +272,6 @@ export abstract class GraphqlQueryBaseResolverService<
   protected abstract resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<Input>,
     featureFlagsMap: Record<FeatureFlagKey, boolean>,
-    roleId?: string,
   ): Promise<Response>;
 
   protected abstract validate(

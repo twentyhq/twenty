@@ -31,10 +31,11 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
     featureFlagsMap: Record<FeatureFlagKey, boolean>,
-    roleId?: string,
   ): Promise<ObjectRecord[]> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
+
+    const { roleId } = executionArgs;
 
     const objectRecords = await this.insertOrUpsertRecords(executionArgs);
 

@@ -34,7 +34,6 @@ import { SettingPermissionDTO } from 'src/engine/metadata-modules/setting-permis
 import { UpsertSettingPermissionsInput } from 'src/engine/metadata-modules/setting-permission/dtos/upsert-setting-permission-input';
 import { SettingPermissionService } from 'src/engine/metadata-modules/setting-permission/setting-permission.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/workspace-roles-permissions-cache/workspace-roles-permissions-cache.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Resolver(() => RoleDTO)
@@ -48,7 +47,6 @@ export class RoleResolver {
     private readonly featureFlagService: FeatureFlagService,
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly settingPermissionService: SettingPermissionService,
-    private readonly workspaceRolesPermissionsCacheService: WorkspaceRolesPermissionsCacheService,
   ) {}
 
   @Query(() => [RoleDTO])
@@ -118,12 +116,6 @@ export class RoleResolver {
       input: createRoleInput,
     });
 
-    await this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
-      {
-        workspaceId: workspace.id,
-      },
-    );
-
     return role;
   }
 
@@ -139,12 +131,6 @@ export class RoleResolver {
       workspaceId: workspace.id,
     });
 
-    await this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
-      {
-        workspaceId: workspace.id,
-      },
-    );
-
     return role;
   }
 
@@ -158,12 +144,6 @@ export class RoleResolver {
     const deletedRoleId = await this.roleService.deleteRole(
       roleId,
       workspace.id,
-    );
-
-    await this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
-      {
-        workspaceId: workspace.id,
-      },
     );
 
     return deletedRoleId;
@@ -182,12 +162,6 @@ export class RoleResolver {
         workspaceId: workspace.id,
         input: upsertObjectPermissionInput,
       });
-
-    await this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
-      {
-        workspaceId: workspace.id,
-      },
-    );
 
     return objectPermission;
   }

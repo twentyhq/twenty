@@ -32,10 +32,11 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<FindOneResolverArgs>,
     featureFlagsMap: Record<FeatureFlagKey, boolean>,
-    roleId?: string,
   ): Promise<ObjectRecord> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
+
+    const { roleId } = executionArgs;
 
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,

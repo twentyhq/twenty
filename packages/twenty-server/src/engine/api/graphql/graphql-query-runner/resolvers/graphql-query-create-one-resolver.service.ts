@@ -25,10 +25,11 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateOneResolverArgs>,
     featureFlagsMap: Record<FeatureFlagKey, boolean>,
-    roleId?: string,
   ): Promise<ObjectRecord> {
     const { authContext, objectMetadataMaps, objectMetadataItemWithFieldMaps } =
       executionArgs.options;
+
+    const { roleId } = executionArgs;
 
     const objectRecords: InsertResult = !executionArgs.args.upsert
       ? await executionArgs.repository.insert(executionArgs.args.data)
