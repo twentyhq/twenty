@@ -117,10 +117,9 @@ export const SettingsDataModelFieldDateForm = ({
           defaultValue={initialCustomUnicode35DateFormat}
           render={({ field: { onChange, value } }) => (
             <StyledTextInput
-              placeholder={t`Format e.g. %m/%d/%y`}
+              placeholder={t`Format e.g. d-MMM-y (qqq''yy)`}
               value={value}
               onChange={(value) => onChange(value)}
-              // error={getErrorMessageFromError(errors.settings?.customUnicode35DateFormat?.message)}
               disabled={false}
               fullWidth
             />
