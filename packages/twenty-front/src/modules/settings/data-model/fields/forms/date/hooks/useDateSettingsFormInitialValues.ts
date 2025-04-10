@@ -11,8 +11,8 @@ export const useDateSettingsFormInitialValues = ({
 }) => {
   const initialDisplayFormat = fieldMetadataItem?.settings
     ?.displayFormat as FieldDateDisplayFormat;
-  const initialCustomUnicode35DateFormat = fieldMetadataItem?.settings
-    ?.customUnicode35DateFormat as string;
+  const initialCustomUnicodeDateFormat = fieldMetadataItem?.settings
+    ?.customUnicodeDateFormat as string;
 
   const { resetField } = useFormContext<SettingsDataModelFieldDateFormValues>();
 
@@ -20,13 +20,13 @@ export const useDateSettingsFormInitialValues = ({
     resetField('settings', {
       defaultValue: {
         displayFormat: initialDisplayFormat,
-        customUnicode35DateFormat: initialCustomUnicode35DateFormat,
+        customUnicodeDateFormat: initialCustomUnicodeDateFormat,
       },
     });
 
   return {
     initialDisplayFormat,
-    initialCustomUnicode35DateFormat,
+    initialCustomUnicodeDateFormat,
     resetDefaultValueField,
   };
 };

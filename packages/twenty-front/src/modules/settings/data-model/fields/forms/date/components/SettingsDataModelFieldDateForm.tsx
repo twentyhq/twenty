@@ -31,7 +31,7 @@ const fieldDateSettings = z.discriminatedUnion('displayFormat', [
   }),
   z.object({
     displayFormat: z.literal(FieldDateDisplayFormat.CUSTOM),
-    customUnicode35DateFormat: z.string().refine(validateCustomDateFormat),
+    customUnicodeDateFormat: z.string().refine(validateCustomDateFormat),
   }),
 ]);
 
@@ -62,7 +62,7 @@ export const SettingsDataModelFieldDateForm = ({
   const { control, watch } =
     useFormContext<SettingsDataModelFieldDateFormValues>();
 
-  const { initialDisplayFormat, initialCustomUnicode35DateFormat } =
+  const { initialDisplayFormat, initialCustomUnicodeDateFormat } =
     useDateSettingsFormInitialValues({
       fieldMetadataItem,
     });
@@ -112,9 +112,9 @@ export const SettingsDataModelFieldDateForm = ({
         containAnimation={false}
       >
         <Controller
-          name="settings.customUnicode35DateFormat"
+          name="settings.customUnicodeDateFormat"
           control={control}
-          defaultValue={initialCustomUnicode35DateFormat}
+          defaultValue={initialCustomUnicodeDateFormat}
           render={({ field: { onChange, value } }) => (
             <StyledTextInput
               placeholder={t`Format e.g. d-MMM-y (qqq''yy)`}

@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { In, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { DateDisplayFormat } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -16,7 +17,6 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { isDefined } from 'twenty-shared/utils';
 
 type DeprecatedFieldMetadataDateSettings = {
   displayAsRelativeDate?: boolean;
@@ -53,7 +53,7 @@ export class UpgradeDateAndDateTimeFieldsSettingsJsonCommand extends ActiveOrSus
       where: {
         workspaceId,
         type: In([FieldMetadataType.DATE, FieldMetadataType.DATE_TIME]),
-      }
+      },
     })) as FieldMetadataEntity<FieldMetadataType.DATE>[];
 
     const updatedFieldMetadataCollection = fieldMetadataCollection.map(

@@ -1,6 +1,6 @@
-import { formatDateISOStringToCustomUnicode35Format } from '@/localization/utils/formatDateISOStringToCustomUnicode35Format';
+import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/formatDateISOStringToCustomUnicodeFormat';
 
-describe('formatDateISOStringToCustomUnicode35Format', () => {
+describe('formatDateISOStringToCustomUnicodeFormat', () => {
   const mockDate = '2023-08-15T10:30:00Z';
   const mockTimeZone = 'America/New_York';
   const mockTimeFormat = 'HH:mm';
@@ -10,7 +10,7 @@ describe('formatDateISOStringToCustomUnicode35Format', () => {
   });
 
   it('should use provided timezone', () => {
-    const result = formatDateISOStringToCustomUnicode35Format(
+    const result = formatDateISOStringToCustomUnicodeFormat(
       mockDate,
       mockTimeZone,
       mockTimeFormat,
@@ -20,7 +20,7 @@ describe('formatDateISOStringToCustomUnicode35Format', () => {
   });
 
   it('should gracefully handle errors', () => {
-    const result = formatDateISOStringToCustomUnicode35Format(
+    const result = formatDateISOStringToCustomUnicodeFormat(
       mockDate,
       mockTimeZone,
       'f',

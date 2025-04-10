@@ -1,8 +1,11 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
-import { formatDateISOStringToCustomUnicode35Format } from '@/localization/utils/formatDateISOStringToCustomUnicode35Format';
+import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/formatDateISOStringToCustomUnicodeFormat';
 import { formatDateISOStringToDate } from '@/localization/utils/formatDateISOStringToDate';
 import { formatDateISOStringToRelativeDate } from '@/localization/utils/formatDateISOStringToRelativeDate';
-import { FieldDateDisplayFormat, FieldDateMetadataSettings } from '@/object-record/record-field/types/FieldMetadata';
+import {
+  FieldDateDisplayFormat,
+  FieldDateMetadataSettings,
+} from '@/object-record/record-field/types/FieldMetadata';
 
 export const formatDateString = ({
   value,
@@ -25,10 +28,10 @@ export const formatDateString = ({
     case FieldDateDisplayFormat.USER_SETTINGS:
       return formatDateISOStringToDate(value, timeZone, dateFormat);
     case FieldDateDisplayFormat.CUSTOM:
-      return formatDateISOStringToCustomUnicode35Format(
+      return formatDateISOStringToCustomUnicodeFormat(
         value,
         timeZone,
-        dateFieldSettings.customUnicode35DateFormat,
+        dateFieldSettings.customUnicodeDateFormat,
       );
     default:
       return formatDateISOStringToDate(value, timeZone, dateFormat);

@@ -1,6 +1,6 @@
 import { formatInTimeZone } from 'date-fns-tz';
 
-export const formatDateISOStringToCustomUnicode35Format = (
+export const formatDateISOStringToCustomUnicodeFormat = (
   date: string,
   timeZone: string,
   dateFormat: string,

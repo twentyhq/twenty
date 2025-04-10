@@ -69,14 +69,14 @@ describe('formatDateString', () => {
     expect(result).toBe(mockFormattedDate);
   });
 
-  it('should call formatDateISOStringToCustomUnicode35Format when displayFormat is set to CUSTOM', () => {
+  it('should call formatDateISOStringToCustomUnicodeFormat when displayFormat is set to CUSTOM', () => {
     const mockDate = '2023-01-01T12:00:00Z';
     const mockFormattedDate = '2023';
 
     jest.mock(
-      '@/localization/utils/formatDateISOStringToCustomUnicode35Format',
+      '@/localization/utils/formatDateISOStringToCustomUnicodeFormat',
       () => ({
-        formatDateISOStringToCustomUnicode35Format: jest
+        formatDateISOStringToCustomUnicodeFormat: jest
           .fn()
           .mockReturnValue(mockFormattedDate),
       }),
@@ -87,7 +87,7 @@ describe('formatDateString', () => {
       value: mockDate,
       dateFieldSettings: {
         displayFormat: FieldDateDisplayFormat.CUSTOM,
-        customUnicode35DateFormat: 'yyyy',
+        customUnicodeDateFormat: 'yyyy',
       },
     });
 
