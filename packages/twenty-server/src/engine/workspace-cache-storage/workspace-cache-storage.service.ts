@@ -4,6 +4,7 @@ import crypto from 'crypto';
 
 import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import { EntitySchemaOptions } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
@@ -194,7 +195,7 @@ export class WorkspaceCacheStorageService {
   }
 
   async setRolesPermissionsVersion(workspaceId: string): Promise<string> {
-    const rolesPermissionsVersion = crypto.randomUUID();
+    const rolesPermissionsVersion = v4();
 
     await this.cacheStorageService.set<string>(
       `${WorkspaceCacheKeys.MetadataRolesPermissionsVersion}:${workspaceId}`,

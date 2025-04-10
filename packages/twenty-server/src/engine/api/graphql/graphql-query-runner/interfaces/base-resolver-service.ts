@@ -118,7 +118,7 @@ export abstract class GraphqlQueryBaseResolverService<
       )) as Input;
 
       const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-        userWorkspaceId: authContext.userWorkspaceId ?? '',
+        userWorkspaceId: authContext.userWorkspaceId,
         workspaceId: authContext.workspace.id,
       });
 
