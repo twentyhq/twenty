@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import {
-  createSearchParams,
   matchPath,
   useLocation,
   useNavigate,
   useParams,
-  useSearchParams,
 } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
@@ -60,28 +58,11 @@ export const PageChangeEffect = () => {
     }
   }, [location, previousLocation]);
 
-  const [searchParams] = useSearchParams();
-
   useEffect(() => {
     if (isDefined(pageChangeEffectNavigateLocation)) {
-      const hasQueryParams = pageChangeEffectNavigateLocation.includes('?');
-
-      const navigationParams = createSearchParams({
-        ...(searchParams.get('animateModal')
-          ? { animateModal: searchParams.get('animateModal') ?? 'false' }
-          : {}),
-      });
-
-      if (hasQueryParams) {
-        navigate(pageChangeEffectNavigateLocation);
-      } else {
-        navigate({
-          pathname: pageChangeEffectNavigateLocation,
-          search: navigationParams.toString(),
-        });
-      }
+      navigate(pageChangeEffectNavigateLocation);
     }
-  }, [navigate, pageChangeEffectNavigateLocation, searchParams]);
+  }, [navigate, pageChangeEffectNavigateLocation]);
 
   useEffect(() => {
     const isLeavingRecordIndexPage = !!matchPath(
