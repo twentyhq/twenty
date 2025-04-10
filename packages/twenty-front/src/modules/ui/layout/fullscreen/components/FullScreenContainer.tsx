@@ -30,6 +30,10 @@ const StyledMainContainer = styled.div`
     `0 ${theme.spacing(3)} ${theme.spacing(3)} ${theme.spacing(3)}`};
 `;
 
+const StyledPageHeader = styled(PageHeader)`
+  padding-left: ${({ theme }) => theme.spacing(3)};
+`;
+
 export const FullScreenContainer = ({
   children,
   links,
@@ -39,7 +43,7 @@ export const FullScreenContainer = ({
 
   return (
     <StyledFullScreen>
-      <PageHeader
+      <StyledPageHeader
         title={<Breadcrumb links={links} />}
         hasClosePageButton={!isMobile}
         onClosePage={exitFullScreen}

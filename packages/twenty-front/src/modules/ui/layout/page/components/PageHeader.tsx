@@ -5,7 +5,6 @@ import { useRecoilValue } from 'recoil';
 
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 
-import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
@@ -18,7 +17,7 @@ import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
-const StyledTopBarContainer = styled.div<{ isShowFullscreen: boolean }>`
+const StyledTopBarContainer = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.noisy};
   color: ${({ theme }) => theme.font.color.primary};
@@ -28,8 +27,7 @@ const StyledTopBarContainer = styled.div<{ isShowFullscreen: boolean }>`
   justify-content: space-between;
   min-height: ${PAGE_BAR_MIN_HEIGHT}px;
   padding: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ isShowFullscreen, theme }) =>
-    isShowFullscreen ? theme.spacing(3) : 0};
+  padding-left: 0;
   padding-right: ${({ theme }) => theme.spacing(3)};
   gap: ${({ theme }) => theme.spacing(2)};
 
@@ -94,6 +92,7 @@ type PageHeaderProps = {
   onClosePage?: () => void;
   Icon?: IconComponent;
   children?: ReactNode;
+  className?: string;
 };
 
 export const PageHeader = ({
@@ -102,16 +101,16 @@ export const PageHeader = ({
   onClosePage,
   Icon,
   children,
+  className,
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
   const theme = useTheme();
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
   );
-  const isShowFullscreen = useShowFullscreen();
 
   return (
-    <StyledTopBarContainer isShowFullscreen={isShowFullscreen}>
+    <StyledTopBarContainer className={className}>
       <StyledLeftContainer>
         {!isMobile && !isNavigationDrawerExpanded && (
           <StyledTopBarButtonContainer>
