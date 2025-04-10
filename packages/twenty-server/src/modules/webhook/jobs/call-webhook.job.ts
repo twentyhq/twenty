@@ -77,7 +77,7 @@ export class CallWebhookJob {
 
       const success = response.status >= 200 && response.status < 300;
 
-      analytics.sendEvent({
+      analytics.track({
         action: 'webhook.response',
         payload: {
           status: response.status,
@@ -86,7 +86,7 @@ export class CallWebhookJob {
         },
       });
     } catch (err) {
-      analytics.sendEvent({
+      analytics.track({
         action: 'webhook.response',
         payload: {
           success: false,

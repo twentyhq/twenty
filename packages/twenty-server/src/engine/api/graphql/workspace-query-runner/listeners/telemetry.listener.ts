@@ -25,7 +25,7 @@ export class TelemetryListener {
             userId: eventPayload.userId,
             workspaceId: payload.workspaceId,
           })
-          .sendUnknownEvent({
+          .track({
             action: payload.name,
             payload: {},
           }),
@@ -44,7 +44,7 @@ export class TelemetryListener {
             userId: eventPayload.userId,
             workspaceId: payload.workspaceId,
           })
-          .sendUnknownEvent({
+          .track({
             action: USER_SIGNUP_EVENT_NAME,
             payload: {},
           });

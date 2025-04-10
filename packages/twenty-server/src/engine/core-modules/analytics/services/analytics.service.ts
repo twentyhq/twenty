@@ -1,15 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  AnalyticsEvent,
-  AnalyticsEventType,
-  KnownAnalyticsEventMap,
-  UnknownAnalyticsEvent,
-} from 'src/engine/core-modules/analytics/types/event.type';
-import { AnalyticsPageview } from 'src/engine/core-modules/analytics/types/pageview.type';
-import {
-  makeEvent,
-  makeUnknownEvent,
+  makeTrackEvent,
+  makePageview,
 } from 'src/engine/core-modules/analytics/utils/analytics.utils';
 import { ClickhouseService } from 'src/engine/core-modules/analytics/services/clickhouse.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -27,40 +20,23 @@ export class AnalyticsService {
   }) {
     const userIdAndWorkspaceId = context
       ? {
-          ...('userId' in context ? { userId: context.userId } : {}),
-          ...('workspaceId' in context
-            ? { workspaceId: context.workspaceId }
-            : {}),
+          ...(context.userId ? { userId: context.userId } : {}),
+          ...(context.workspaceId ? { workspaceId: context.workspaceId } : {}),
         }
       : {};
 
     return {
-      sendUnknownEvent: (data: UnknownAnalyticsEvent) =>
+      track: (event: string, properties: object) =>
         this.preventAnalyticsIfDisabled(() =>
-          this.sendEvent(
-            makeUnknownEvent({
-              ...data,
-              ...userIdAndWorkspaceId,
-            }),
+          this.trackEvent(
+            makeTrackEvent(event, { ...properties, ...userIdAndWorkspaceId }),
           ),
         ),
-      sendEvent: <T extends keyof KnownAnalyticsEventMap>(
-        data: AnalyticsEventType<T>,
-      ) =>
+      pageview: (name: string, properties: object) =>
         this.preventAnalyticsIfDisabled(() =>
-          this.sendEvent(
-            makeEvent({
-              ...data,
-              ...userIdAndWorkspaceId,
-            }),
+          this.trackPageview(
+            makePageview(name, { ...properties, ...userIdAndWorkspaceId }),
           ),
-        ),
-      sendPageview: (data: AnalyticsPageview) =>
-        this.preventAnalyticsIfDisabled(() =>
-          this.sendPageview({
-            ...data,
-            ...userIdAndWorkspaceId,
-          }),
         ),
     };
   }
@@ -75,11 +51,11 @@ export class AnalyticsService {
     return sendEventOrPageviewFunction();
   }
 
-  private async sendEvent(data: AnalyticsEvent) {
+  private async trackEvent(data: ReturnType<typeof makeTrackEvent>) {
     return this.clickhouseService.pushEvent(data);
   }
 
-  private async sendPageview(data: AnalyticsPageview) {
+  private async trackPageview(data: ReturnType<typeof makePageview>) {
     return this.clickhouseService.pushEvent(data);
   }
 }

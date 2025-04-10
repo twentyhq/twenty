@@ -1,16 +1,9 @@
 CREATE TABLE IF NOT EXISTS pageview
 (
-    `href`        String,
-    `locale`      LowCardinality(String),
-    `pathname`    String,
-    `referrer`    String,
-    `sessionId`   String,
-    `timeZone`    LowCardinality(String),
-    `timestamp`   DateTime64(3),
-    `userAgent`   String,
+    `name` LowCardinality(String)
+    `properties`  JSON
     `userId`      String DEFAULT '',
-    `version`     LowCardinality(String),
     `workspaceId` String DEFAULT ''
 )
     ENGINE = MergeTree
-        ORDER BY (workspaceId, userId, timestamp);
+        ORDER BY (name, workspaceId, userId, timestamp);

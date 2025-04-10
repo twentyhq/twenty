@@ -420,7 +420,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         workspaceId: workspace.id,
       });
 
-      analytics.sendEvent({
+      analytics.track({
         action: workspace.isCustomDomainEnabled
           ? 'customDomain.activated'
           : 'customDomain.deactivated',

@@ -13,8 +13,8 @@ export const AnalyticsContextMock = (params?: {
     | jest.Mock<any, any>;
 }) => {
   return {
-    sendEvent: () => params?.sendEvent ?? jest.fn(),
+    track: () => params?.track ?? jest.fn(),
     sendPageview: () => params?.sendPageview ?? jest.fn(),
-    sendUnknownEvent: () => params?.sendUnknownEvent ?? jest.fn(),
+    track: () => params?.track ?? jest.fn(),
   };
 };

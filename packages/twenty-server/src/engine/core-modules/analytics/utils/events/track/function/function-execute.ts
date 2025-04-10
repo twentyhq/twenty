@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { eventSchema } from 'src/engine/core-modules/analytics/utils/event/common/base-schemas';
+import { baseEventSchema } from 'src/engine/core-modules/analytics/utils/events/common/base-schemas';
 
-export const functionExecuteSchema = eventSchema.extend({
+export const functionExecuteSchema = baseEventSchema.extend({
   action: z.literal('function.execute'),
   payload: z
     .object({

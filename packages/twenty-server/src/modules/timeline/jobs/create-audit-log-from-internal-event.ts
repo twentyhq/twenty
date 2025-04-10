@@ -55,7 +55,7 @@ export class CreateAuditLogFromInternalEvent {
         .createAnalyticsContext({
           workspaceId: workspaceEventBatch.workspaceId,
         })
-        .sendUnknownEvent({
+        .track({
           action: workspaceEventBatch.name,
           payload: eventData.properties,
         });

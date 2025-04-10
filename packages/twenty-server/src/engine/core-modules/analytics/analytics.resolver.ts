@@ -4,10 +4,6 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import {
-  makePageview,
-  makeUnknownEvent,
-} from 'src/engine/core-modules/analytics/utils/analytics.utils';
 
 import { AnalyticsService } from './services/analytics.service';
 import { CreateAnalyticsInput } from './dtos/create-analytics.input';
@@ -29,13 +25,9 @@ export class AnalyticsResolver {
     });
 
     if (createAnalyticsInput.action === 'pageview') {
-      return analyticsContext.sendPageview(
-        makePageview(createAnalyticsInput.payload),
-      );
+      return analyticsContext.pageview(createAnalyticsInput.payload);
     }
 
-    return analyticsContext.sendUnknownEvent(
-      makeUnknownEvent(createAnalyticsInput),
-    );
+    return analyticsContext.track(createAnalyticsInput);
   }
 }

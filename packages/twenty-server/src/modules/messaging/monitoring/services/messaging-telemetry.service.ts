@@ -28,7 +28,7 @@ export class MessagingTelemetryService {
         userId,
         workspaceId,
       })
-      .sendUnknownEvent({
+      .track({
         action: 'monitoring',
         payload: {
           eventName: `messaging.${eventName}`,

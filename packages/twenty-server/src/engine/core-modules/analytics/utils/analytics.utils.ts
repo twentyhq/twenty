@@ -1,40 +1,54 @@
 import { format } from 'date-fns';
 
 import { AnalyticsCommonPropertiesType } from 'src/engine/core-modules/analytics/types/common.type';
-import { eventSchema } from 'src/engine/core-modules/analytics/utils/event/common/base-schemas';
-import { AnalyticsPageview } from 'src/engine/core-modules/analytics/types/pageview.type';
-import { pageviewSchema } from 'src/engine/core-modules/analytics/utils/pageview/pageview';
+import { pageviewSchema } from 'src/engine/core-modules/analytics/utils/events/pageview/pageview';
 import {
-  AnalyticsEventType,
-  KnownAnalyticsEventMap,
-  UnknownAnalyticsEvent,
-} from 'src/engine/core-modules/analytics/types/event.type';
+  WEBHOOK_RESPONSE_EVENT,
+  WebhookResponseTrackEvent,
+} from 'src/engine/core-modules/analytics/utils/events/track/webhook/webhook-response';
+import {
+  eventsRegistry,
+  GenericTrackEvent,
+  genericTrackSchema,
+} from 'src/engine/core-modules/analytics/utils/events/track/track';
 
-const commonProperties = (): Record<AnalyticsCommonPropertiesType, string> => ({
+const common = (): Record<AnalyticsCommonPropertiesType, string> => ({
   timestamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
-  version: '1',
 });
 
-// Use this function when you can't properly type the event. Instead prefer makeEvent
-const makeUnknownEvent = (data: UnknownAnalyticsEvent) => {
-  return eventSchema.parse({
-    ...data,
-    ...commonProperties(),
-    ...(data.payload ? { payload: data.payload } : { payload: {} }),
-  });
-};
-
-const makeEvent = <T extends keyof KnownAnalyticsEventMap>(
-  data: AnalyticsEventType<T>,
-) => {
-  return makeUnknownEvent(data);
-};
-
-const makePageview = (data: Record<string, unknown>): AnalyticsPageview => {
+export function makePageview(name: string, properties: object) {
   return pageviewSchema.parse({
-    ...data,
-    ...commonProperties(),
+    type: 'pageview',
+    name,
+    ...common(),
+    ...properties,
   });
+}
+
+type SpecificTrackEvents = {
+  [WEBHOOK_RESPONSE_EVENT]: WebhookResponseTrackEvent;
 };
 
-export { makeUnknownEvent, makePageview, makeEvent };
+export function makeTrackEvent<E extends keyof SpecificTrackEvents>(
+  event: E,
+  properties: SpecificTrackEvents[E]['properties'],
+): SpecificTrackEvents[E];
+export function makeTrackEvent<E extends string>(
+  event: E,
+  properties: object,
+): GenericTrackEvent<E>;
+export function makeTrackEvent(event: string, properties: object) {
+  const eventData = {
+    type: 'track',
+    event,
+    ...common(),
+    properties,
+  };
+  const schema = eventsRegistry.get(event);
+
+  if (schema) {
+    return schema.parse(eventData);
+  }
+
+  return genericTrackSchema.parse(eventData);
+}

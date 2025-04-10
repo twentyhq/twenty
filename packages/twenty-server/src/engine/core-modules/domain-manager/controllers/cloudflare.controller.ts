@@ -90,7 +90,7 @@ export class CloudflareController {
         ...workspaceUpdated,
       });
 
-      await analytics.sendEvent({
+      await analytics.track({
         action: 'customDomain.activated',
       });
     }

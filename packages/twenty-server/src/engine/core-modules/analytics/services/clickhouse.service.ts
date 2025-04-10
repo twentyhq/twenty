@@ -2,10 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { ClickHouseClient, createClient } from '@clickhouse/client';
 
-import { AnalyticsPageview } from 'src/engine/core-modules/analytics/types/pageview.type';
-import { AnalyticsEvent } from 'src/engine/core-modules/analytics/types/event.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import {
+  makePageview,
+  makeTrackEvent,
+} from 'src/engine/core-modules/analytics/utils/analytics.utils';
 
 @Injectable()
 export class ClickhouseService {
@@ -29,30 +31,21 @@ export class ClickhouseService {
     }
   }
 
-  async pushEvent(data: AnalyticsPageview | AnalyticsEvent) {
+  async pushEvent(
+    data: ReturnType<typeof makeTrackEvent> | ReturnType<typeof makePageview>,
+  ) {
     try {
       if (!this.clickhouseClient) {
         return { success: true };
       }
 
-      if ('action' in data) {
-        await this.clickhouseClient.insert({
-          table: 'events',
-          values: [
-            {
-              ...data,
-              payload: JSON.stringify(data.payload),
-            },
-          ],
-          format: 'JSONEachRow',
-        });
-      } else {
-        await this.clickhouseClient.insert({
-          table: 'pageview',
-          values: [data],
-          format: 'JSONEachRow',
-        });
-      }
+      const { type, ...rest } = data;
+
+      await this.clickhouseClient.insert({
+        table: type === 'page' ? 'pageview' : 'events',
+        values: [rest],
+        format: 'JSONEachRow',
+      });
 
       return { success: true };
     } catch (err) {

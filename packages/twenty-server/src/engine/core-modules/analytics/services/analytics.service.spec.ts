@@ -72,7 +72,7 @@ describe('AnalyticsService', () => {
         action: 'customDomain.activated' as const,
       };
 
-      await context.sendEvent(testEvent);
+      await context.track(testEvent);
 
       expect(insertSpy).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -119,7 +119,7 @@ describe('AnalyticsService', () => {
 
       const context = service.createAnalyticsContext(mockUserIdAndWorkspaceId);
 
-      const result = await context.sendEvent({
+      const result = await context.track({
         action: 'customDomain.activated',
       });
 
@@ -135,7 +135,7 @@ describe('AnalyticsService', () => {
         action: 'customDomain.activated' as const,
       };
 
-      await context.sendEvent(testEvent);
+      await context.track(testEvent);
 
       expect(insertSpy).toHaveBeenCalledWith(
         expect.objectContaining({

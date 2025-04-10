@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-import { eventSchema } from 'src/engine/core-modules/analytics/utils/event/common/base-schemas';
+import { baseEventSchema } from 'src/engine/core-modules/analytics/utils/events/common/base-schemas';
 
-export const serverlessFunctionExecutedSchema = eventSchema.extend({
+export const serverlessFunctionExecutedSchema = baseEventSchema.extend({
   action: z.literal('serverlessFunction.executed'),
   payload: z
     .object({
       duration: z.number(),
-      status: z.enum(['IDLE', 'SUCCESS', 'ERROR']),
+      status: z.enum(['SUCCESS', 'ERROR']),
       errorType: z.string().optional(),
       functionId: z.string(),
       functionName: z.string(),

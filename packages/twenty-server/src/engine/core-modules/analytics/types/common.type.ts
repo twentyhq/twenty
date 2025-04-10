@@ -1,2 +1,2 @@
-export type AnalyticsCommonPropertiesType = 'timestamp' | 'version';
+export type AnalyticsCommonPropertiesType = 'timestamp';
 export type IdentifierType = 'workspaceId' | 'userId';

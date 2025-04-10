@@ -147,7 +147,7 @@ export class ServerlessFunctionService {
       .createAnalyticsContext({
         workspaceId,
       })
-      .sendEvent({
+      .track({
         action: 'serverlessFunction.executed',
         payload: {
           duration: resultServerlessFunction.duration,
