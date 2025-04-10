@@ -172,6 +172,7 @@ jobs:
         image: clickhouse/clickhouse-server:latest
         env:
           CLICKHOUSE_PASSWORD: clickhousePassword
+          CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
         ports:
           - 8123:8123
           - 9000:9000
