@@ -1,7 +1,7 @@
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
-import styled from '@emotion/styled';
-import { SelectOption } from 'twenty-ui/input';
+import { styled } from '@linaria/react';
 import { Tag } from 'twenty-ui/components';
+import { SelectOption } from 'twenty-ui/input';
 import { THEME_COMMON } from 'twenty-ui/theme';
 
 const spacing1 = THEME_COMMON.spacing(1);
