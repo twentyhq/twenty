@@ -36,7 +36,7 @@ const validationSchema = z
     passwordResetToken: z.string(),
     newPassword: z
       .string()
-      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+      .regex(PASSWORD_REGEX, 'Password must be min. 8 characters'),
   })
   .required();
 
@@ -69,6 +69,10 @@ const StyledFullWidthMotionDiv = styled(motion.div)`
 
 const StyledInputContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(3)};
+`;
+
+const StyledMainButton = styled(MainButton)`
+  margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const PasswordReset = () => {
@@ -237,7 +241,7 @@ export const PasswordReset = () => {
                 />
               </StyledFullWidthMotionDiv>
 
-              <MainButton
+              <StyledMainButton
                 variant="secondary"
                 title={t`Change Password`}
                 type="submit"
