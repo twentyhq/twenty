@@ -14,7 +14,7 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
 
   it('should use provided timezone', () => {
     formatInTimeZone.mockReturnValue('06:30');
-    
+
     const result = formatDateISOStringToCustomUnicodeFormat(
       mockDate,
       mockTimeZone,
@@ -24,7 +24,7 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
     expect(formatInTimeZone).toHaveBeenCalledWith(
       new Date(mockDate),
       mockTimeZone,
-      mockTimeFormat
+      mockTimeFormat,
     );
     expect(result).toBe('06:30');
   });
@@ -43,7 +43,7 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
     expect(formatInTimeZone).toHaveBeenCalledWith(
       new Date(mockDate),
       mockTimeZone,
-     'f'
+      'f',
     );
     expect(result).toBe('Invalid format string');
   });
