@@ -157,7 +157,6 @@ export class MessagingMessageListFetchJob {
 
           await this.messagingFullMessageListFetchService.processMessageListFetch(
             messageChannel,
-            messageChannel.connectedAccount,
             workspaceId,
           );
 
