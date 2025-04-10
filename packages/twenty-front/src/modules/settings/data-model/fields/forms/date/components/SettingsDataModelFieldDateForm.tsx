@@ -8,19 +8,18 @@ import { isDateFieldCustomDisplayFormat } from '@/object-record/record-field/typ
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/AdvancedSettingsAnimationDurations';
 import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
+import { getDisplayFormatLabel } from '@/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconSlash } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { typedKeys } from '~/types/TypedKeys';
 
-const displayFormatsToLabelMap: Record<FieldDateDisplayFormat, string> = {
-  USER_SETTINGS: 'Default',
-  RELATIVE: 'Relative',
-  CUSTOM: 'Custom',
-} as const;
+const enumToArray = <T extends Record<string, string>>(e: T) =>
+  Object.values(e) as T[keyof T][];
+
+
 
 const fieldDateSettings = z.discriminatedUnion('displayFormat', [
   z.object({
@@ -93,11 +92,10 @@ export const SettingsDataModelFieldDateForm = ({
               dropdownId="selectFieldDateDisplayFormat"
               value={value}
               onChange={onChange}
-              options={typedKeys(displayFormatsToLabelMap).map((key) => {
-                const label = displayFormatsToLabelMap[key];
+              options={Object.keys(FieldDateDisplayFormat).map((key) => {
                 return {
-                  label: t`${label}`,
-                  value: key,
+                  label: getDisplayFormatLabel(key as FieldDateDisplayFormat),
+                  value: key as FieldDateDisplayFormat,
                 };
               })}
             />
