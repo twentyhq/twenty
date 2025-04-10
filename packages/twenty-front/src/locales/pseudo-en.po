@@ -2029,8 +2029,8 @@ msgstr ""
 
 #. js-lingui-id: jARNNi
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
-msgid "Failed to validate API key. Please check your API key and try again."
-msgstr ""
+#~ msgid "Failed to validate API key. Please check your API key and try again."
+#~ msgstr ""
 
 #. js-lingui-id: ocUvR+
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
@@ -2436,6 +2436,11 @@ msgstr ""
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
+msgstr ""
+
+#. js-lingui-id: GNRDhm
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Invalid API key"
 msgstr ""
 
 #. js-lingui-id: NtFk/Z
