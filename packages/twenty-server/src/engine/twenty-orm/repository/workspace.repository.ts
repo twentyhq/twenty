@@ -21,8 +21,10 @@ import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-query-builder';
@@ -34,17 +36,20 @@ export class WorkspaceRepository<
   T extends ObjectLiteral,
 > extends Repository<T> {
   private readonly internalContext: WorkspaceInternalContext;
+  private featureFlagMap: FeatureFlagMap;
   private objectRecordsPermissions?: ObjectRecordsPermissions;
 
   constructor(
     internalContext: WorkspaceInternalContext,
     target: EntityTarget<T>,
     manager: EntityManager,
+    featureFlagMap: FeatureFlagMap,
     queryRunner?: QueryRunner,
     objectRecordsPermissions?: ObjectRecordsPermissions,
   ) {
     super(target, manager, queryRunner);
     this.internalContext = internalContext;
+    this.featureFlagMap = featureFlagMap;
     this.objectRecordsPermissions = objectRecordsPermissions;
   }
 
@@ -56,7 +61,8 @@ export class WorkspaceRepository<
       alias,
       queryRunner,
     ) as unknown as WorkspaceQueryBuilder<U>;
-    const isPermissionsV2Enabled = true;
+    const isPermissionsV2Enabled =
+      this.featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
 
     if (!isPermissionsV2Enabled) {
       return queryBuilder;

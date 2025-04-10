@@ -31,7 +31,7 @@ export class WorkspaceEntityManager extends EntityManager {
     roleId?: string,
   ): WorkspaceRepository<Entity> {
     const dataSource = this.connection as WorkspaceDataSource;
-    const repositoryKey = `${dataSource.getMetadata(target).name}_${roleId ?? 'default'}${dataSource.rolesPermissionsVersion ? `_${dataSource.rolesPermissionsVersion}` : ''}`;
+    const repositoryKey = `${dataSource.getMetadata(target).name}_${roleId ?? 'default'}${dataSource.rolesPermissionsVersion ? `_${dataSource.rolesPermissionsVersion}` : ''}${dataSource.featureFlagMapVersion ? `_${dataSource.featureFlagMapVersion}` : ''}`;
     const repoFromMap = this.repositories.get(repositoryKey);
 
     if (repoFromMap) {
@@ -50,6 +50,7 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext,
       target,
       this,
+      dataSource.featureFlagMap,
       this.queryRunner,
       objectPermissions,
     );

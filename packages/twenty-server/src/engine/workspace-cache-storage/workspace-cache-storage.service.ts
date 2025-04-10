@@ -5,6 +5,8 @@ import crypto from 'crypto';
 import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import { EntitySchemaOptions } from 'typeorm';
 
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -23,6 +25,9 @@ export enum WorkspaceCacheKeys {
   MetadataRolesPermissions = 'metadata:roles-permissions',
   MetadataRolesPermissionsVersion = 'metadata:roles-permissions-version',
   MetadataRolesPermissionsOngoingCachingLock = 'metadata:roles-permissions-ongoing-caching-lock',
+  MetadataFeatureFlagMap = 'metadata:feature-flag-map',
+  MetadataFeatureFlagMapVersion = 'metadata:feature-flag-map-version',
+  MetadataFeatureFlagMapOngoingCachingLock = 'metadata:feature-flag-map-ongoing-caching-lock',
 }
 
 const TTL_INFINITE = 0;
@@ -248,6 +253,72 @@ export class WorkspaceCacheStorageService {
     );
   }
 
+  getFeatureFlagMapVersionFromCache(
+    workspaceId: string,
+  ): Promise<string | undefined> {
+    return this.cacheStorageService.get<string>(
+      `${WorkspaceCacheKeys.MetadataFeatureFlagMapVersion}:${workspaceId}`,
+    );
+  }
+
+  async setFeatureFlagMapVersion(workspaceId: string): Promise<string> {
+    const featureFlagMapVersion = crypto.randomUUID();
+
+    await this.cacheStorageService.set<string>(
+      `${WorkspaceCacheKeys.MetadataFeatureFlagMapVersion}:${workspaceId}`,
+      featureFlagMapVersion,
+      TTL_INFINITE,
+    );
+
+    return featureFlagMapVersion;
+  }
+
+  async setFeatureFlagMap(
+    workspaceId: string,
+    featureFlagMap: FeatureFlagMap,
+  ): Promise<{
+    newFeatureFlagMapVersion: string;
+  }> {
+    const [, newFeatureFlagMapVersion] = await Promise.all([
+      this.cacheStorageService.set<FeatureFlagMap>(
+        `${WorkspaceCacheKeys.MetadataFeatureFlagMap}:${workspaceId}`,
+        featureFlagMap,
+        TTL_INFINITE,
+      ),
+      this.setFeatureFlagMapVersion(workspaceId),
+    ]);
+
+    return { newFeatureFlagMapVersion };
+  }
+
+  getFeatureFlagMap(workspaceId: string): Promise<FeatureFlagMap | undefined> {
+    return this.cacheStorageService.get<FeatureFlagMap>(
+      `${WorkspaceCacheKeys.MetadataFeatureFlagMap}:${workspaceId}`,
+    );
+  }
+
+  addFeatureFlagMapOngoingCachingLock(workspaceId: string) {
+    return this.cacheStorageService.set<boolean>(
+      `${WorkspaceCacheKeys.MetadataFeatureFlagMapOngoingCachingLock}:${workspaceId}`,
+      true,
+      1_000 * 60, // 1 minute
+    );
+  }
+
+  removeFeatureFlagMapOngoingCachingLock(workspaceId: string) {
+    return this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.MetadataFeatureFlagMapOngoingCachingLock}:${workspaceId}`,
+    );
+  }
+
+  getFeatureFlagMapOngoingCachingLock(
+    workspaceId: string,
+  ): Promise<boolean | undefined> {
+    return this.cacheStorageService.get<boolean>(
+      `${WorkspaceCacheKeys.MetadataFeatureFlagMapOngoingCachingLock}:${workspaceId}`,
+    );
+  }
+
   async flush(workspaceId: string, metadataVersion: number): Promise<void> {
     await this.cacheStorageService.del(
       `${WorkspaceCacheKeys.MetadataObjectMetadataMaps}:${workspaceId}:${metadataVersion}`,
@@ -274,6 +345,22 @@ export class WorkspaceCacheStorageService {
 
     await this.cacheStorageService.del(
       `${WorkspaceCacheKeys.MetadataRolesPermissionsVersion}:${workspaceId}`,
+    );
+
+    await this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.MetadataRolesPermissionsOngoingCachingLock}:${workspaceId}`,
+    );
+
+    await this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.MetadataFeatureFlagMap}:${workspaceId}`,
+    );
+
+    await this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.MetadataFeatureFlagMapVersion}:${workspaceId}`,
+    );
+
+    await this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.MetadataFeatureFlagMapOngoingCachingLock}:${workspaceId}`,
     );
 
     // TODO: remove this after the feature flag is droped
