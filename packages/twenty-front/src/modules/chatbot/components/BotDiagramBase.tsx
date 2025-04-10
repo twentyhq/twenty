@@ -1,4 +1,7 @@
 /* eslint-disable no-constant-condition */
+import { useGetChatbotFlowById } from '@/chatbot/hooks/useGetChatbotFlowById';
+import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
+import { useValidateChatbotFlow } from '@/chatbot/hooks/useValidateChatbotFlow';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { useTheme } from '@emotion/react';
@@ -24,6 +27,7 @@ type BotDiagramBaseProps = {
   nodeTypes: NodeTypes;
   tagColor: TagColor;
   tagText: string;
+  chatbotId: string;
 };
 
 const StyledResetReactflowStyles = styled.div`
@@ -80,37 +84,63 @@ const initialNodes: Node[] = [
     data: {
       nodeStart: true,
       title: 'Mensagem Inicial',
+      outgoingEdgeId: '',
     },
     position: { x: 0, y: 0 },
   },
   {
     id: '2',
     type: 'logicInput',
-    data: { logic: {} },
+    data: {
+      logic: {
+        logicNodes: [0, 1],
+        logicNodeData: [
+          [{ comparison: '==', inputText: '', conditionValue: '' }],
+          [{ comparison: '==', inputText: '', conditionValue: '' }],
+        ],
+      },
+    },
     position: { x: 150, y: 150 },
   },
   {
     id: '3',
     type: 'textInput',
     data: { nodeStart: false, title: 'Mensagem' },
-    position: { x: 300, y: 300 },
+    position: { x: 500, y: 300 },
   },
   {
     id: '4',
     type: 'textInput',
     data: { nodeStart: false, title: 'Mensagem' },
-    position: { x: 300, y: 300 },
+    position: { x: 500, y: 600 },
   },
 ];
 
-const initialEdges: Edge[] = [];
-
-const flowKey = 'flow';
+const initialEdges: Edge[] = [
+  {
+    id: 'xy-edge__1-2',
+    source: '1',
+    target: '2',
+  },
+  {
+    id: 'xy-edge__2b-0-3',
+    source: '2',
+    target: '3',
+    sourceHandle: 'b-0',
+  },
+  {
+    id: 'xy-edge__2b-1-4',
+    source: '2',
+    target: '4',
+    sourceHandle: 'b-1',
+  },
+];
 
 export const BotDiagramBase = ({
   nodeTypes,
   tagColor,
   tagText,
+  chatbotId,
 }: BotDiagramBaseProps) => {
   const theme = useTheme();
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
@@ -120,28 +150,35 @@ export const BotDiagramBase = ({
     Edge
   > | null>(null);
 
+  const { chatbotFlow } = useValidateChatbotFlow();
+  const { updateFlow } = useUpdateChatbotFlow();
+  const { data: chatbotFlowData, refetch } = useGetChatbotFlowById(chatbotId);
+
+  useEffect(() => {
+    const flow = { nodes, edges, chatbotId };
+    chatbotFlow(flow);
+  }, []);
+
   const onSave = useCallback(() => {
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (rfInstance) {
       const flow = rfInstance.toObject();
+      const newFlow = { ...flow, chatbotId };
 
-      // change in future versions
-      console.log('dataFlow: ', { flow });
-      // localStorage.setItem(flowKey, JSON.stringify(flow));
+      updateFlow(newFlow);
+      refetch();
     }
   }, [rfInstance]);
 
-  useEffect(() => {
-    const storedFlow = localStorage.getItem(flowKey);
+  // useEffect(() => {
+  //   // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+  //   if (chatbotFlowData) {
+  //     const { nodes: storedNodes, edges: storedEdges } = JSON.parse(chatbotFlowData);
 
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-    if (storedFlow) {
-      const { nodes: storedNodes, edges: storedEdges } = JSON.parse(storedFlow);
-
-      setNodes(storedNodes);
-      setEdges(storedEdges);
-    }
-  }, []);
+  //     setNodes(storedNodes);
+  //     setEdges(storedEdges);
+  //   }
+  // }, [chatbotFlowData]);
 
   const onNodesChange = useCallback(
     (changes: any) => setNodes((nds) => applyNodeChanges(changes, nds)),

@@ -2,8 +2,16 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/ui/BaseNode';
 import styled from '@emotion/styled';
-import { Handle, Node, NodeProps, Position, useReactFlow } from '@xyflow/react';
+import {
+  Handle,
+  Node,
+  NodeProps,
+  Position,
+  useNodeConnections,
+  useReactFlow,
+} from '@xyflow/react';
 import { memo, useEffect, useRef } from 'react';
+import { isDefined } from 'twenty-shared';
 
 const StyledDiv = styled.div`
   width: 100%;
@@ -36,10 +44,41 @@ function TextNode({
   data,
   isConnectable,
 }: NodeProps<
-  Node<{ icon: string; title: string; text?: string; nodeStart: boolean }>
+  Node<{
+    icon: string;
+    title: string;
+    text?: string;
+    nodeStart: boolean;
+  }>
 >) {
   const { updateNodeData } = useReactFlow();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const connections = useNodeConnections({
+    id,
+    handleType: 'target',
+  });
+
+  useEffect(() => {
+    if (connections.length > 0) {
+      const connection = connections[0];
+      const sourceHandle = connection.sourceHandle || '';
+      const nodeId = connection.source;
+
+      updateNodeData(id, {
+        ...data,
+        incomingEdgeId: sourceHandle,
+        incomingNodeId: nodeId,
+      });
+    }
+
+    if (data.nodeStart) {
+      updateNodeData(id, {
+        ...data,
+        outgoingNodeId: '2',
+      });
+    }
+  }, [connections]);
 
   const handleInputChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = evt.target;
@@ -49,8 +88,7 @@ function TextNode({
   };
 
   useEffect(() => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-    if (textareaRef.current) {
+    if (isDefined(textareaRef.current)) {
       textareaRef.current.style.height = '30px';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
@@ -77,11 +115,13 @@ function TextNode({
           value={data.text}
         />
       </StyledDiv>
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        isConnectable={isConnectable}
-      />
+      {data.nodeStart && (
+        <Handle
+          type="source"
+          position={Position.Bottom}
+          isConnectable={isConnectable}
+        />
+      )}
     </BaseNode>
   );
 }

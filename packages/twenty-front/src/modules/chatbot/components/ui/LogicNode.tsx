@@ -1,5 +1,9 @@
 /* eslint-disable @nx/workspace-component-props-naming */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
+import {
+  comparisonOptions,
+  conditionOptions,
+} from '@/chatbot/types/condicionalOptions';
 import { LogicNodeData } from '@/chatbot/types/LogicNodeDataType';
 import { Select, SelectValue } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
@@ -90,20 +94,6 @@ const StyledButton = styled.button`
   }
 `;
 
-const comparisonOptions = [
-  { value: '==', label: 'Igual a' },
-  { value: '!==', label: 'Diferente de' },
-  { value: '>', label: 'Maior que' },
-  { value: '<', label: 'Menor que' },
-  { value: '>=', label: 'Maior ou igual a' },
-  { value: '<=', label: 'Menor ou igual a' },
-];
-
-const conditionOptions = [
-  { value: '&&', label: 'E' },
-  { value: '||', label: 'OU' },
-];
-
 const IconButton = ({
   icon,
   onClick,
@@ -119,7 +109,6 @@ const IconButton = ({
   const Icon = getIcon(icon);
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
     <StyledButton onClick={onClick} disabled={disabled}>
       <span>
         <Icon size={size} />
@@ -137,13 +126,13 @@ function LogicNode({
   onGroupsChange: (groups: LogicNodeData[]) => void;
   children: ReactNode;
 }) {
-  const [groups, setGroups] = useState<
-    { conditionValue: string; comparison: string; inputText: string }[]
-  >([{ conditionValue: '', comparison: '==', inputText: '' }]);
+  const [groups, setGroups] = useState<LogicNodeData[]>([
+    { conditionValue: '', comparison: '==', inputText: '', outgoingEdgeId: '' },
+  ]);
 
   useEffect(() => {
     onGroupsChange(groups);
-  }, [groups, onGroupsChange]);
+  }, [groups]);
 
   const handleAddGroup = () => {
     setGroups((prevGroups) => [

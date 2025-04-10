@@ -22,8 +22,6 @@ export const ChatbotFlow = ({
   targetableObject: TargetableObject;
 }) => {
   const { chatbot, refetch } = useGetChatbot(targetableObject.id);
-  // const { chatbotFlow } = useValidateChatbotFlow();
-  // const { updateFlow } = useUpdateChatbotFlow();
 
   const status = chatbot?.statuses ?? 'DEACTIVATED';
 
@@ -42,6 +40,7 @@ export const ChatbotFlow = ({
         nodeTypes={types}
         tagColor={tagProps.color}
         tagText={tagProps.text}
+        chatbotId={chatbot?.id ? chatbot.id : ''}
       />
     </ReactFlowProvider>
   );

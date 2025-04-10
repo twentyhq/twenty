@@ -8,7 +8,8 @@ import {
 } from '@/chatbot/types/LogicNodeDataType';
 import styled from '@emotion/styled';
 import { Handle, Node, NodeProps, Position, useReactFlow } from '@xyflow/react';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
+import { isDefined } from 'twenty-shared';
 import { Button } from 'twenty-ui';
 
 const initialState: CondicionalState = {
@@ -27,16 +28,30 @@ const StyledDiv = styled.div`
 
 function CondicionalNode({
   id,
+  data,
   isConnectable,
 }: NodeProps<Node<{ logic: CondicionalState }>>) {
   const { updateNodeData } = useReactFlow();
   const [state, setState] = useState<CondicionalState>(initialState);
 
+  useEffect(() => {
+    if (isDefined(data.logic)) {
+      setState(data.logic);
+    }
+  }, []);
+
   const handleAddLogicNode = () => {
     setState((prevState) => {
       const newLogicNodeData = [
         ...prevState.logicNodeData,
-        [{ comparison: '==', inputText: '', conditionValue: '' }],
+        [
+          {
+            comparison: '==',
+            inputText: '',
+            conditionValue: '',
+            outgoingEdgeId: '',
+          },
+        ],
       ];
 
       updateNodeData(id, {
@@ -58,10 +73,22 @@ function CondicionalNode({
     (updatedGroups: LogicNodeData[], nodeIndex: number) => {
       setState((prevState) => {
         const updatedLogicNodeData = [...prevState.logicNodeData];
+
         if (updatedLogicNodeData[nodeIndex] !== updatedGroups) {
           updatedLogicNodeData[nodeIndex] = updatedGroups;
-          return { ...prevState, logicNodeData: updatedLogicNodeData };
+
+          const newState = {
+            ...prevState,
+            logicNodeData: updatedLogicNodeData,
+          };
+
+          updateNodeData(id, {
+            logic: newState,
+          });
+
+          return newState;
         }
+
         return prevState;
       });
     },
@@ -76,13 +103,17 @@ function CondicionalNode({
         isConnectable={isConnectable}
       />
       <StyledDiv>
-        {state.logicNodes.map((node, index) => (
+        {state.logicNodes.map((_, index) => (
           <LogicNode
             key={index}
             dropdownId={`logicSelect-${index}`}
-            onGroupsChange={(updatedGroups) =>
-              handleGroupsChange(updatedGroups, index)
-            }
+            onGroupsChange={(updatedGroups) => {
+              const newUpdatedGroups = {
+                ...updatedGroups,
+                outgoingEdgeId: `b-${index}`,
+              };
+              handleGroupsChange(newUpdatedGroups, index);
+            }}
           >
             <Handle
               id={`b-${index}`}
