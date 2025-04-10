@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { invalidAvatarUrlsState } from '@ui/display/avatar/components/states/isInvalidAvatarUrlState';
 import { AVATAR_PROPERTIES_BY_SIZE } from '@ui/display/avatar/constants/AvatarPropertiesBySize';
@@ -11,6 +10,7 @@ import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme';
 import { Nullable, stringToHslColor } from '@ui/utilities';
 import { REACT_APP_SERVER_BASE_URL } from '@ui/utilities/config';
+import { useRecoilState } from 'recoil';
 import { getImageAbsoluteURI } from 'twenty-shared/utils';
 
 const StyledAvatar = styled.div<{
