@@ -1,5 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -21,6 +23,12 @@ export class MessageFindManyPreQueryHook implements WorkspaceQueryHookInstance {
     objectName: string,
     payload: FindManyResolverArgs,
   ): Promise<FindManyResolverArgs> {
+    const isApiContext = isDefined(authContext.apiKey?.id);
+
+    if (isApiContext) {
+      return payload;
+    }
+
     if (!payload?.filter?.messageThreadId?.eq) {
       throw new BadRequestException('messageThreadId filter is required');
     }
