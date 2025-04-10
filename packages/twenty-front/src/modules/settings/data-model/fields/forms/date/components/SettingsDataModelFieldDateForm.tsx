@@ -9,6 +9,7 @@ import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsO
 import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/AdvancedSettingsAnimationDurations';
 import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
 import { getDisplayFormatLabel } from '@/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel';
+import { getDisplayFormatSelectDescription } from '@/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
@@ -63,9 +64,11 @@ export const SettingsDataModelFieldDateForm = ({
 
   const displayFormatFromForm = watch('settings.displayFormat');
 
-  const showCustomFormatTextInput = displayFormatFromForm
-    ? isDateFieldCustomDisplayFormat(displayFormatFromForm)
-    : isDateFieldCustomDisplayFormat(initialDisplayFormat);
+  const activeDisplayFormat = displayFormatFromForm ? displayFormatFromForm : initialDisplayFormat
+
+  const showCustomFormatTextInput = isDateFieldCustomDisplayFormat(activeDisplayFormat)
+
+  const displayFormatSelectDescription = getDisplayFormatSelectDescription(activeDisplayFormat)
 
   return (
     <>
@@ -78,7 +81,7 @@ export const SettingsDataModelFieldDateForm = ({
             Icon={IconSlash}
             title={t`Display Format`}
             disabled={disabled}
-            description={t`Choose the format used to display date value`}
+            description={displayFormatSelectDescription}
           >
             <Select<FieldDateDisplayFormat>
               disabled={disabled}
