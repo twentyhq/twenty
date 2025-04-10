@@ -122,8 +122,13 @@ msgstr "1. 類型"
 
 #. js-lingui-id: AvXug3
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "10 000 workflow node executions"
-msgstr "10,000 次工作流程節點執行"
+#~ msgid "10 000 workflow node executions"
+#~ msgstr "10,000 次工作流程節點執行"
+
+#. js-lingui-id: 7IIx+y
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "10,000 workflow node executions"
+msgstr ""
 
 #. js-lingui-id: 4EdXYs
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -143,8 +148,13 @@ msgstr "2. 配置字段"
 
 #. js-lingui-id: kAtmAv
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "20 000 workflow node executions"
-msgstr "20,000 次工作流程節點執行"
+#~ msgid "20 000 workflow node executions"
+#~ msgstr "20,000 次工作流程節點執行"
+
+#. js-lingui-id: YfwnsU
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "20,000 workflow node executions"
+msgstr ""
 
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -222,12 +232,12 @@ msgstr "操作"
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Activate"
 msgstr "啟用"
 
 #. js-lingui-id: tu8A/k
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Activate Workflow"
 msgstr "啟用工作流程"
 
@@ -305,10 +315,10 @@ msgid "Add to Favorite"
 msgstr "添加到收藏夾"
 
 #. js-lingui-id: pBsoKL
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Add to favorites"
 msgstr "添加到收藏夾"
 
@@ -553,8 +563,13 @@ msgstr "阿拉伯語"
 
 #. js-lingui-id: 3iX0kh
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Are you sure that you want to change your billing interval?"
-msgstr "您確定要更改計費間隔嗎？"
+#~ msgid "Are you sure that you want to change your billing interval?"
+#~ msgstr "您確定要更改計費間隔嗎？"
+
+#. js-lingui-id: CWb74a
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Are you sure that you want to change your billing interval? You will be charged immediately for the full year."
+msgstr ""
 
 #. js-lingui-id: 3SRf5B
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
@@ -567,7 +582,7 @@ msgstr "您確定要更改計費間隔嗎？"
 #~ msgstr "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
 
 #. js-lingui-id: 2BZAqa
-#: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
+#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
 msgid "Are you sure you want to delete these records? They can be recovered from the Command menu."
 msgstr "您確定要刪除這些記錄嗎？ 它們可以從命令菜單中恢復。"
 
@@ -577,7 +592,7 @@ msgstr "您確定要刪除這些記錄嗎？ 它們可以從命令菜單中恢�
 #~ msgstr "Are you sure you want to delete this record? It can be recovered from the Command menu ({osControlSymbol} + K)."
 
 #. js-lingui-id: yb2hF4
-#: src/modules/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction.tsx
+#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
 msgid "Are you sure you want to delete this record? It can be recovered from the Command menu."
 msgstr "您確定要刪除此記錄嗎？ 它可以從命令菜單中恢復。"
 
@@ -785,8 +800,8 @@ msgstr "加泰羅尼亞語"
 
 #. js-lingui-id: OfzMnb
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Change {to}"
-msgstr "更改 {to}"
+#~ msgid "Change {to}"
+#~ msgstr "更改 {to}"
 
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
@@ -794,6 +809,11 @@ msgstr "更改 {to}"
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Change Password"
 msgstr "更改密碼"
+
+#. js-lingui-id: b0h4XW
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Change to yearly"
+msgstr ""
 
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -894,7 +914,7 @@ msgid "Compact view"
 msgstr "緊湊視圖"
 
 #. js-lingui-id: s2QZS6
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Companies"
 msgstr ""
 
@@ -1046,6 +1066,16 @@ msgstr "核心"
 msgid "Correct the issues and fill the missing data."
 msgstr ""
 
+#. js-lingui-id: I99Miw
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Cost"
+msgstr ""
+
+#. js-lingui-id: iX2opZ
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Cost per 1k Extra Credits"
+msgstr ""
+
 #. js-lingui-id: s8lFtq
 #: src/hooks/useCopyToClipboard.tsx
 msgid "Couldn't copy to clipboard"
@@ -1105,12 +1135,12 @@ msgid "Create API key"
 msgstr "創建 API 密鑰"
 
 #. js-lingui-id: d0DCww
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Create new record"
 msgstr "創建新記錄"
 
 #. js-lingui-id: UDbEyl
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Create new workflow"
 msgstr ""
 
@@ -1275,7 +1305,7 @@ msgstr "日期格式"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Deactivate"
 msgstr "停用"
 
@@ -1296,7 +1326,7 @@ msgid "Deactivate this field"
 msgstr "停用此字段"
 
 #. js-lingui-id: 4tpC8V
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Deactivate Workflow"
 msgstr "停用工作流程"
 
@@ -1345,13 +1375,11 @@ msgstr "定義在您的工作區中對其他用戶可見的內容"
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete"
 msgstr "刪除"
 
@@ -1379,7 +1407,7 @@ msgstr "刪除 API 密鑰"
 #~ msgstr "刪除記錄"
 
 #. js-lingui-id: kf0A63
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete records"
 msgstr "刪除記錄"
 
@@ -1406,12 +1434,12 @@ msgid "Delete webhook"
 msgstr "刪除 Webhook"
 
 #. js-lingui-id: UA2IpC
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Delete workflow"
 msgstr "刪除工作流"
 
 #. js-lingui-id: ABwG9x
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Delete workflows"
 msgstr "刪除工作流程"
 
@@ -1437,7 +1465,7 @@ msgstr "已刪除"
 #~ msgstr "Deleted {objectNamePlural}"
 
 #. js-lingui-id: WH/5rN
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Deleted records"
 msgstr "已刪除記錄"
 
@@ -1471,8 +1499,8 @@ msgid "Description"
 msgstr "描述"
 
 #. js-lingui-id: 2xxBws
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Destroy"
 msgstr "銷毀"
 
@@ -1487,8 +1515,8 @@ msgid "Developers"
 msgstr "開發人員"
 
 #. js-lingui-id: zAg2B9
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Discard Draft"
 msgstr "放棄草稿"
 
@@ -1817,8 +1845,13 @@ msgstr ""
 
 #. js-lingui-id: VSQxWH
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Error while switching subscription {to}."
-msgstr "切換訂閱 {to} 時出錯。"
+#~ msgid "Error while switching subscription {to}."
+#~ msgstr "切換訂閱 {to} 時出錯。"
+
+#. js-lingui-id: k06M7e
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Error while switching subscription to yearly."
+msgstr ""
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -1930,12 +1963,13 @@ msgstr "到期時間"
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
-#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export"
 msgstr "導出"
 
@@ -1945,49 +1979,49 @@ msgstr "導出"
 #~ msgstr "導出記錄"
 
 #. js-lingui-id: ep2rbf
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export records"
 msgstr "導出記錄"
 
 #. js-lingui-id: iHK6np
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "Export run"
 msgstr "導出執行"
 
 #. js-lingui-id: vwtAUW
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "Export runs"
 msgstr "導出執行"
 
 #. js-lingui-id: q46CjD
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export to PDF"
 msgstr "導出為 PDF"
 
 #. js-lingui-id: BuprEs
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Export version"
 msgstr "導出版本"
 
 #. js-lingui-id: 4FLUle
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Export versions"
 msgstr "導出版本"
 
 #. js-lingui-id: DaGxE0
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export view"
 msgstr "導出視圖"
 
 #. js-lingui-id: +FMXdE
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Export workflow"
 msgstr "導出工作流程"
 
 #. js-lingui-id: XcAij/
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Export workflows"
 msgstr "導出工作流程"
 
@@ -1995,6 +2029,11 @@ msgstr "導出工作流程"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #~ msgid "Export Workflows"
 #~ msgstr "Export Workflows"
+
+#. js-lingui-id: uE7S0L
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Extra Credits Used"
+msgstr ""
 
 #. js-lingui-id: jARNNi
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2095,6 +2134,11 @@ msgstr "名字"
 msgid "Forgot your password?"
 msgstr "忘記密碼？"
 
+#. js-lingui-id: wjsFMQ
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Free Credits Used"
+msgstr ""
+
 #. js-lingui-id: nLC6tu
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "French"
@@ -2102,13 +2146,13 @@ msgstr "法語"
 
 #. js-lingui-id: aTieE0
 #: src/pages/settings/SettingsBilling.tsx
-msgid "from monthly to yearly"
-msgstr "從每月到每年"
+#~ msgid "from monthly to yearly"
+#~ msgstr "從每月到每年"
 
 #. js-lingui-id: K04lE5
 #: src/pages/settings/SettingsBilling.tsx
-msgid "from yearly to monthly"
-msgstr "從每年到每月"
+#~ msgid "from yearly to monthly"
+#~ msgstr "從每年到每月"
 
 #. js-lingui-id: scmRyR
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -2151,41 +2195,44 @@ msgid "Global"
 msgstr "全局"
 
 #. js-lingui-id: mUbv8L
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Companies"
 msgstr ""
 
+#. js-lingui-id: BQE4ob
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to Notes"
+msgstr ""
+
 #. js-lingui-id: buPcNi
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Opportunities"
 msgstr ""
 
 #. js-lingui-id: MrE/Qb
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to People"
 msgstr ""
 
 #. js-lingui-id: iS69s6
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Go to runs"
 msgstr "前往運行"
 
 #. js-lingui-id: mT57+Q
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Settings"
 msgstr "前往設置"
 
 #. js-lingui-id: BM24SF
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Tasks"
 msgstr ""
 
 #. js-lingui-id: A5WHZY
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to workflows"
 msgstr "前往工作流程"
 
@@ -2259,17 +2306,17 @@ msgid "Hide"
 msgstr "隱藏"
 
 #. js-lingui-id: OlbYor
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Hide deleted"
 msgstr "隱藏已刪除的"
 
 #. js-lingui-id: FHhlye
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Hide deleted records"
 msgstr "隱藏已刪除記錄"
 
 #. js-lingui-id: 0dZtKR
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "Hide deleted runs"
 msgstr "隱藏已刪除的執行"
 
@@ -2279,7 +2326,7 @@ msgstr "隱藏已刪除的執行"
 #~ msgstr "隱藏已刪除的版本"
 
 #. js-lingui-id: aOZAIB
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Hide deleted workflows"
 msgstr "隱藏已刪除的工作流程"
 
@@ -2346,17 +2393,17 @@ msgid "Impersonate"
 msgstr "模擬"
 
 #. js-lingui-id: l3s5ri
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Import"
 msgstr "導入"
 
 #. js-lingui-id: eECp4f
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Import records"
 msgstr "導入記錄"
 
 #. js-lingui-id: ZsIcZZ
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Import workflows"
 msgstr "導入工作流程"
 
@@ -2752,8 +2799,8 @@ msgstr "管理您的訂閱"
 #. js-lingui-id: 3Sdni6
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-msgid "Mark as done"
-msgstr "標記為完成"
+#~ msgid "Mark as done"
+#~ msgstr "標記為完成"
 
 #. js-lingui-id: 7h8ch8
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -2818,6 +2865,11 @@ msgstr "監控您的日曆事件同步工作執行情況"
 msgid "Monitor the execution of your emails sync job"
 msgstr "監控您的電子郵件同步工作執行情況"
 
+#. js-lingui-id: 1cOZuL
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Monthly Credits"
+msgstr ""
+
 #. js-lingui-id: 3Siwmw
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
@@ -2881,7 +2933,7 @@ msgid "Name of your workspace"
 msgstr "工作區名稱"
 
 #. js-lingui-id: 2T8KCk
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to next record"
 msgstr "導航至下一條記錄"
 
@@ -2891,17 +2943,17 @@ msgstr "導航至下一條記錄"
 #~ msgstr "導航至下一次執行"
 
 #. js-lingui-id: veSA19
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Navigate to next version"
 msgstr "導航至下一版本"
 
 #. js-lingui-id: ZTEho+
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Navigate to next workflow"
 msgstr "導航至下一個工作流程"
 
 #. js-lingui-id: 2tw9bo
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to previous record"
 msgstr "導航至上一條記錄"
 
@@ -2911,12 +2963,12 @@ msgstr "導航至上一條記錄"
 #~ msgstr "導航至上一次執行"
 
 #. js-lingui-id: I+Pm5V
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Navigate to previous version"
 msgstr "導航至上一版本"
 
 #. js-lingui-id: QVUN3K
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Navigate to previous workflow"
 msgstr "導航至上一個工作流程"
 
@@ -2968,7 +3020,7 @@ msgstr "新密碼"
 #. js-lingui-id: BcCzLv
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "New record"
 msgstr "新記錄"
 
@@ -3168,6 +3220,11 @@ msgstr "未找到"
 msgid "Not synced"
 msgstr "未同步"
 
+#. js-lingui-id: 1DBGsz
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Notes"
+msgstr ""
+
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number"
@@ -3236,7 +3293,7 @@ msgid "Opened"
 msgstr "已開啟"
 
 #. js-lingui-id: 4MyDFl
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Opportunities"
 msgstr ""
 
@@ -3306,7 +3363,7 @@ msgid "Password reset link has been sent to the email"
 msgstr "密碼重置鏈接已發送至電子郵件"
 
 #. js-lingui-id: 1wdjme
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "People"
 msgstr ""
 
@@ -3343,22 +3400,22 @@ msgid "Percentage"
 msgstr "百分比"
 
 #. js-lingui-id: Bv3y5w
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Permanently destroy record"
 msgstr "永久銷毀記錄"
 
 #. js-lingui-id: xjWlSJ
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Permanently destroy records"
 msgstr "永久銷毀記錄"
 
 #. js-lingui-id: 0bQ5ba
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Permanently destroy workflow"
 msgstr ""
 
 #. js-lingui-id: uKWXhB
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Permanently destroy workflows"
 msgstr "永久銷毀工作流程"
 
@@ -3592,8 +3649,8 @@ msgid "Remove as default"
 msgstr "刪除默認值"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Remove from favorites"
 msgstr "從收藏中移除"
 
@@ -3624,18 +3681,18 @@ msgid "REST"
 msgstr "REST"
 
 #. js-lingui-id: yKu/3Y
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore"
 msgstr "還原"
 
 #. js-lingui-id: y4Ib1n
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore record"
 msgstr "還原記錄"
 
 #. js-lingui-id: Vw369F
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore records"
 msgstr "恢復記錄"
 
@@ -3700,8 +3757,8 @@ msgstr "結構"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Search"
 msgstr "搜索"
 
@@ -3759,8 +3816,8 @@ msgid "Search icon"
 msgstr "搜索圖標"
 
 #. js-lingui-id: IMeaSJ
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Search records"
 msgstr "搜索記錄"
 
@@ -3780,18 +3837,18 @@ msgid "Security"
 msgstr "安全"
 
 #. js-lingui-id: QREcJS
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See active version"
 msgstr "查看活動版本"
 
 #. js-lingui-id: BxIUpp
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "See deleted records"
 msgstr "查看已刪除記錄"
 
 #. js-lingui-id: Z+SGGW
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "See deleted runs"
 msgstr "查看已刪除的執行"
 
@@ -3801,7 +3858,7 @@ msgstr "查看已刪除的執行"
 #~ msgstr "查看已刪除的版本"
 
 #. js-lingui-id: 5jZIe5
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See deleted workflows"
 msgstr "查看已刪除的工作流程"
 
@@ -3811,45 +3868,43 @@ msgid "See Records on All Objects"
 msgstr ""
 
 #. js-lingui-id: OpPn5Z
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See runs"
 msgstr "查看運行"
 
 #. js-lingui-id: gGEfj/
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "See version"
 msgstr "查看版本"
 
 #. js-lingui-id: EtyY4+
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See versions"
 msgstr "查看版本"
 
 #. js-lingui-id: lYhPN0
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See versions history"
 msgstr "查看版本歷史"
 
 #. js-lingui-id: qEKLJV
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "See workflow"
 msgstr "查看工作流程"
 
 #. js-lingui-id: XThiR2
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "See workflows"
 msgstr "查看工作流程"
 
@@ -3985,7 +4040,7 @@ msgstr "設置您的子域名"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Settings"
 msgstr "設置"
 
@@ -4152,8 +4207,13 @@ msgstr ""
 
 #. js-lingui-id: B5jRKH
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Subscription has been switched {to}"
-msgstr "訂閱已切換 {to}"
+#~ msgid "Subscription has been switched {to}"
+#~ msgstr "訂閱已切換 {to}"
+
+#. js-lingui-id: TXH0ad
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Subscription has been switched to yearly."
+msgstr ""
 
 #. js-lingui-id: AxQiPW
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -4173,18 +4233,28 @@ msgstr "瑞典語"
 
 #. js-lingui-id: 9yk9d1
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch {from}"
-msgstr "切換 {from}"
+#~ msgid "Switch {from}"
+#~ msgstr "切換 {from}"
 
 #. js-lingui-id: qi74XZ
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch {to}"
-msgstr "切換 {to}"
+#~ msgid "Switch {to}"
+#~ msgstr "切換 {to}"
 
 #. js-lingui-id: L6Fg36
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch billing {to}"
-msgstr "切換計費 {to}"
+#~ msgid "Switch billing {to}"
+#~ msgstr "切換計費 {to}"
+
+#. js-lingui-id: o04bjR
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Switch billing to yearly"
+msgstr ""
+
+#. js-lingui-id: /IYUDq
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Switch from monthly to yearly"
+msgstr ""
 
 #. js-lingui-id: E4rPXj
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -4195,6 +4265,11 @@ msgstr ""
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #~ msgid "Switch to {alternatePlanName}"
 #~ msgstr "切換至{alternatePlanName}"
+
+#. js-lingui-id: 1EwZPZ
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Switch to yearly"
+msgstr ""
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -4240,7 +4315,7 @@ msgid "Table"
 msgstr "表格"
 
 #. js-lingui-id: GtycJ/
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Tasks"
 msgstr ""
 
@@ -4250,12 +4325,12 @@ msgid "Terms of Service"
 msgstr "服務條款"
 
 #. js-lingui-id: NnH3pK
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Test"
 msgstr "測試"
 
 #. js-lingui-id: bU9B27
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Test Workflow"
 msgstr "測試工作流程"
 
@@ -4420,13 +4495,13 @@ msgstr "時間戳和參與者將與您的團隊共享。"
 
 #. js-lingui-id: aqMzDX
 #: src/pages/settings/SettingsBilling.tsx
-msgid "to monthly"
-msgstr "至每月"
+#~ msgid "to monthly"
+#~ msgstr "至每月"
 
 #. js-lingui-id: WXXiXO
 #: src/pages/settings/SettingsBilling.tsx
-msgid "to yearly"
-msgstr "至每年"
+#~ msgid "to yearly"
+#~ msgstr "至每年"
 
 #. js-lingui-id: ecUA8p
 #: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
@@ -4442,6 +4517,11 @@ msgstr ""
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Total Users"
 #~ msgstr "Total Users"
+
+#. js-lingui-id: dshGKq
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Track your monthly workflow credit consumption."
+msgstr ""
 
 #. js-lingui-id: PiUt3N
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
@@ -4541,8 +4621,8 @@ msgid "URL"
 msgstr "網址"
 
 #. js-lingui-id: 6dMpmz
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Use as draft"
 msgstr "用作草稿"
 
@@ -4844,13 +4924,13 @@ msgstr "您無權在此對象中創建記錄"
 
 #. js-lingui-id: zSkMV0
 #: src/pages/settings/SettingsBilling.tsx
-msgid "You will be charged immediately for the full year."
-msgstr "您將立即被收取全年的費用。"
+#~ msgid "You will be charged immediately for the full year."
+#~ msgstr "您將立即被收取全年的費用。"
 
 #. js-lingui-id: XVnj6K
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Your credit balance will be used to pay the monthly bills."
-msgstr "您的信用餘額將用於支付每月賬單。"
+#~ msgid "Your credit balance will be used to pay the monthly bills."
+#~ msgstr "您的信用餘額將用於支付每月賬單。"
 
 #. js-lingui-id: +5YqGH
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx

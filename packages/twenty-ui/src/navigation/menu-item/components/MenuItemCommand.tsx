@@ -78,6 +78,7 @@ const StyledTextContainer = styled.div`
   display: flex;
   flex-direction: row;
   max-width: calc(100% - 2 * var(--horizontal-padding));
+  overflow: hidden;
 `;
 
 export type MenuItemCommandProps = {

@@ -27,7 +27,6 @@ export const CommandMenuItem = ({
   onClick,
   Icon,
   hotKeys,
-  shouldCloseCommandMenuOnClick,
   RightComponent,
 }: CommandMenuItemProps) => {
   const { onItemClick } = useCommandMenuOnItemClick();
@@ -47,7 +46,6 @@ export const CommandMenuItem = ({
       hotKeys={hotKeys}
       onClick={() =>
         onItemClick({
-          shouldCloseCommandMenuOnClick,
           onClick,
           to,
         })

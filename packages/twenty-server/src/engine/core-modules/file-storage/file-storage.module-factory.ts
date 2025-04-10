@@ -1,25 +1,25 @@
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import {
   FileStorageModuleOptions,
   StorageDriverType,
 } from 'src/engine/core-modules/file-storage/interfaces';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { resolveAbsolutePath } from 'src/utils/resolve-absolute-path';
 
 /**
  * FileStorage Module factory
  * @returns FileStorageModuleOptions
- * @param environmentService
+ * @param twentyConfigService
  */
 export const fileStorageModuleFactory = async (
-  environmentService: EnvironmentService,
+  twentyConfigService: TwentyConfigService,
 ): Promise<FileStorageModuleOptions> => {
-  const driverType = environmentService.get('STORAGE_TYPE');
+  const driverType = twentyConfigService.get('STORAGE_TYPE');
 
   switch (driverType) {
     case StorageDriverType.Local: {
-      const storagePath = environmentService.get('STORAGE_LOCAL_PATH');
+      const storagePath = twentyConfigService.get('STORAGE_LOCAL_PATH');
 
       return {
         type: StorageDriverType.Local,
@@ -29,11 +29,11 @@ export const fileStorageModuleFactory = async (
       };
     }
     case StorageDriverType.S3: {
-      const bucketName = environmentService.get('STORAGE_S3_NAME');
-      const endpoint = environmentService.get('STORAGE_S3_ENDPOINT');
-      const region = environmentService.get('STORAGE_S3_REGION');
-      const accessKeyId = environmentService.get('STORAGE_S3_ACCESS_KEY_ID');
-      const secretAccessKey = environmentService.get(
+      const bucketName = twentyConfigService.get('STORAGE_S3_NAME');
+      const endpoint = twentyConfigService.get('STORAGE_S3_ENDPOINT');
+      const region = twentyConfigService.get('STORAGE_S3_REGION');
+      const accessKeyId = twentyConfigService.get('STORAGE_S3_ACCESS_KEY_ID');
+      const secretAccessKey = twentyConfigService.get(
         'STORAGE_S3_SECRET_ACCESS_KEY',
       );
 

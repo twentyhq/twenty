@@ -20,6 +20,7 @@ import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
+import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -64,6 +65,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
   controllers: [BillingController],
   providers: [
     BillingSubscriptionService,
+    BillingSubscriptionItemService,
     BillingWebhookSubscriptionService,
     BillingWebhookEntitlementService,
     BillingPortalWorkspaceService,

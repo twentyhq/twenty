@@ -1,18 +1,15 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { IMaskInput, IMaskInputProps } from 'react-imask';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
+import { IMaskInput } from 'react-imask';
 import { IconComponent } from 'twenty-ui/display';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 
-type StyledInputProps = React.ComponentProps<'input'> &
-  IMaskInputProps<HTMLInputElement>;
-
-export const StyledIMaskInput = styled(IMaskInput)<StyledInputProps>`
+export const StyledIMaskInput = styled(IMaskInput)`
   margin: 0;
   ${TEXT_INPUT_STYLE}
   width: 100%;

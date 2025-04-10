@@ -122,8 +122,13 @@ msgstr "1. Tip"
 
 #. js-lingui-id: AvXug3
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "10 000 workflow node executions"
-msgstr "10 000 de execuții ale nodurilor fluxului de lucru"
+#~ msgid "10 000 workflow node executions"
+#~ msgstr "10 000 de execuții ale nodurilor fluxului de lucru"
+
+#. js-lingui-id: 7IIx+y
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "10,000 workflow node executions"
+msgstr ""
 
 #. js-lingui-id: 4EdXYs
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -143,8 +148,13 @@ msgstr "2. Configurează câmpul"
 
 #. js-lingui-id: kAtmAv
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "20 000 workflow node executions"
-msgstr "20 000 de execuții ale nodurilor fluxului de lucru"
+#~ msgid "20 000 workflow node executions"
+#~ msgstr "20 000 de execuții ale nodurilor fluxului de lucru"
+
+#. js-lingui-id: YfwnsU
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "20,000 workflow node executions"
+msgstr ""
 
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -222,12 +232,12 @@ msgstr "Acțiuni"
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Activate"
 msgstr "Activează"
 
 #. js-lingui-id: tu8A/k
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Activate Workflow"
 msgstr "Activează Fluxul de Lucru"
 
@@ -305,10 +315,10 @@ msgid "Add to Favorite"
 msgstr "Adaugă la favorite"
 
 #. js-lingui-id: pBsoKL
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Add to favorites"
 msgstr "Adaugă la favorite"
 
@@ -553,8 +563,13 @@ msgstr "Arabă"
 
 #. js-lingui-id: 3iX0kh
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Are you sure that you want to change your billing interval?"
-msgstr "Sunteți sigur că doriți să schimbați intervalul de facturare?"
+#~ msgid "Are you sure that you want to change your billing interval?"
+#~ msgstr "Sunteți sigur că doriți să schimbați intervalul de facturare?"
+
+#. js-lingui-id: CWb74a
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Are you sure that you want to change your billing interval? You will be charged immediately for the full year."
+msgstr ""
 
 #. js-lingui-id: 3SRf5B
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
@@ -567,7 +582,7 @@ msgstr "Sunteți sigur că doriți să schimbați intervalul de facturare?"
 #~ msgstr "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
 
 #. js-lingui-id: 2BZAqa
-#: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
+#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
 msgid "Are you sure you want to delete these records? They can be recovered from the Command menu."
 msgstr "Sigur doriți să ștergeți aceste înregistrări? Ele pot fi recuperate din meniul Command."
 
@@ -577,7 +592,7 @@ msgstr "Sigur doriți să ștergeți aceste înregistrări? Ele pot fi recuperat
 #~ msgstr "Are you sure you want to delete this record? It can be recovered from the Command menu ({osControlSymbol} + K)."
 
 #. js-lingui-id: yb2hF4
-#: src/modules/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction.tsx
+#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
 msgid "Are you sure you want to delete this record? It can be recovered from the Command menu."
 msgstr "Sigur doriți să ștergeți această înregistrare? Ea poate fi recuperată din meniul Command."
 
@@ -785,8 +800,8 @@ msgstr "Catalană"
 
 #. js-lingui-id: OfzMnb
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Change {to}"
-msgstr "Schimbă {to}"
+#~ msgid "Change {to}"
+#~ msgstr "Schimbă {to}"
 
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
@@ -794,6 +809,11 @@ msgstr "Schimbă {to}"
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Change Password"
 msgstr "Schimbă parola"
+
+#. js-lingui-id: b0h4XW
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Change to yearly"
+msgstr ""
 
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -894,7 +914,7 @@ msgid "Compact view"
 msgstr "Vizualizare compactă"
 
 #. js-lingui-id: s2QZS6
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Companies"
 msgstr ""
 
@@ -1046,6 +1066,16 @@ msgstr "Nucleu"
 msgid "Correct the issues and fill the missing data."
 msgstr ""
 
+#. js-lingui-id: I99Miw
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Cost"
+msgstr ""
+
+#. js-lingui-id: iX2opZ
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Cost per 1k Extra Credits"
+msgstr ""
+
 #. js-lingui-id: s8lFtq
 #: src/hooks/useCopyToClipboard.tsx
 msgid "Couldn't copy to clipboard"
@@ -1105,12 +1135,12 @@ msgid "Create API key"
 msgstr "Creează cheie API"
 
 #. js-lingui-id: d0DCww
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Create new record"
 msgstr "Creează înregistrare nouă"
 
 #. js-lingui-id: UDbEyl
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Create new workflow"
 msgstr ""
 
@@ -1275,7 +1305,7 @@ msgstr "Formatul datei"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Deactivate"
 msgstr "Dezactivează"
 
@@ -1296,7 +1326,7 @@ msgid "Deactivate this field"
 msgstr "Dezactivează acest câmp"
 
 #. js-lingui-id: 4tpC8V
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Deactivate Workflow"
 msgstr "Dezactivează Fluxul de Lucru"
 
@@ -1345,13 +1375,11 @@ msgstr "Definiți ce va fi vizibil pentru alți utilizatori în spațiul dvs. de
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete"
 msgstr "Șterge"
 
@@ -1379,7 +1407,7 @@ msgstr "Șterge cheia API"
 #~ msgstr "Șterge înregistrare"
 
 #. js-lingui-id: kf0A63
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete records"
 msgstr "Ștergere înregistrări"
 
@@ -1406,12 +1434,12 @@ msgid "Delete webhook"
 msgstr "Șterge webhook"
 
 #. js-lingui-id: UA2IpC
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Delete workflow"
 msgstr "Șterge fluxul de lucru"
 
 #. js-lingui-id: ABwG9x
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Delete workflows"
 msgstr "Șterge fluxuri de lucru"
 
@@ -1437,7 +1465,7 @@ msgstr "Șters"
 #~ msgstr "Deleted {objectNamePlural}"
 
 #. js-lingui-id: WH/5rN
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Deleted records"
 msgstr "Înregistrări șterse"
 
@@ -1471,8 +1499,8 @@ msgid "Description"
 msgstr "Descriere"
 
 #. js-lingui-id: 2xxBws
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Destroy"
 msgstr "Distrugere"
 
@@ -1487,8 +1515,8 @@ msgid "Developers"
 msgstr "Dezvoltatori"
 
 #. js-lingui-id: zAg2B9
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Discard Draft"
 msgstr "Renunță la ciornă"
 
@@ -1817,8 +1845,13 @@ msgstr ""
 
 #. js-lingui-id: VSQxWH
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Error while switching subscription {to}."
-msgstr "Eroare în timpul schimbării abonamentului {to}."
+#~ msgid "Error while switching subscription {to}."
+#~ msgstr "Eroare în timpul schimbării abonamentului {to}."
+
+#. js-lingui-id: k06M7e
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Error while switching subscription to yearly."
+msgstr ""
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -1930,12 +1963,13 @@ msgstr "Expiră în"
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
-#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export"
 msgstr "Export"
 
@@ -1945,49 +1979,49 @@ msgstr "Export"
 #~ msgstr "Exportă înregistrarea"
 
 #. js-lingui-id: ep2rbf
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export records"
 msgstr "Exportul înregistrărilor"
 
 #. js-lingui-id: iHK6np
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "Export run"
 msgstr "Exportare rulare"
 
 #. js-lingui-id: vwtAUW
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "Export runs"
 msgstr "Exportă rulările"
 
 #. js-lingui-id: q46CjD
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export to PDF"
 msgstr "Export în format PDF"
 
 #. js-lingui-id: BuprEs
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Export version"
 msgstr "Exportă versiunea"
 
 #. js-lingui-id: 4FLUle
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Export versions"
 msgstr "Exportă versiunile"
 
 #. js-lingui-id: DaGxE0
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export view"
 msgstr "Exportați vizualizarea"
 
 #. js-lingui-id: +FMXdE
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Export workflow"
 msgstr "Exportă flux de lucru"
 
 #. js-lingui-id: XcAij/
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Export workflows"
 msgstr "Exportă fluxuri de lucru"
 
@@ -1995,6 +2029,11 @@ msgstr "Exportă fluxuri de lucru"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #~ msgid "Export Workflows"
 #~ msgstr "Export Workflows"
+
+#. js-lingui-id: uE7S0L
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Extra Credits Used"
+msgstr ""
 
 #. js-lingui-id: jARNNi
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2095,6 +2134,11 @@ msgstr "Prenume"
 msgid "Forgot your password?"
 msgstr "Ați uitat parola?"
 
+#. js-lingui-id: wjsFMQ
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Free Credits Used"
+msgstr ""
+
 #. js-lingui-id: nLC6tu
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "French"
@@ -2102,13 +2146,13 @@ msgstr "Franceză"
 
 #. js-lingui-id: aTieE0
 #: src/pages/settings/SettingsBilling.tsx
-msgid "from monthly to yearly"
-msgstr "de la lunar la anual"
+#~ msgid "from monthly to yearly"
+#~ msgstr "de la lunar la anual"
 
 #. js-lingui-id: K04lE5
 #: src/pages/settings/SettingsBilling.tsx
-msgid "from yearly to monthly"
-msgstr "de la anual la lunar"
+#~ msgid "from yearly to monthly"
+#~ msgstr "de la anual la lunar"
 
 #. js-lingui-id: scmRyR
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -2151,41 +2195,44 @@ msgid "Global"
 msgstr "Global"
 
 #. js-lingui-id: mUbv8L
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Companies"
 msgstr ""
 
+#. js-lingui-id: BQE4ob
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to Notes"
+msgstr ""
+
 #. js-lingui-id: buPcNi
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Opportunities"
 msgstr ""
 
 #. js-lingui-id: MrE/Qb
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to People"
 msgstr ""
 
 #. js-lingui-id: iS69s6
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Go to runs"
 msgstr "Mergi la rulări"
 
 #. js-lingui-id: mT57+Q
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Settings"
 msgstr "Mergeți la Setări"
 
 #. js-lingui-id: BM24SF
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Tasks"
 msgstr ""
 
 #. js-lingui-id: A5WHZY
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to workflows"
 msgstr "Mergi la fluxuri de lucru"
 
@@ -2259,17 +2306,17 @@ msgid "Hide"
 msgstr "Ascunde"
 
 #. js-lingui-id: OlbYor
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Hide deleted"
 msgstr "Ascunde șterse"
 
 #. js-lingui-id: FHhlye
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Hide deleted records"
 msgstr "Ascunde înregistrările șterse"
 
 #. js-lingui-id: 0dZtKR
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "Hide deleted runs"
 msgstr "Ascunde rulările șterse"
 
@@ -2279,7 +2326,7 @@ msgstr "Ascunde rulările șterse"
 #~ msgstr "Ascunde versiunile șterse"
 
 #. js-lingui-id: aOZAIB
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Hide deleted workflows"
 msgstr "Ascunde fluxuri de lucru șterse"
 
@@ -2346,17 +2393,17 @@ msgid "Impersonate"
 msgstr "Impersonați"
 
 #. js-lingui-id: l3s5ri
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Import"
 msgstr "Importați"
 
 #. js-lingui-id: eECp4f
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Import records"
 msgstr "Importă înregistrări"
 
 #. js-lingui-id: ZsIcZZ
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Import workflows"
 msgstr "Importă fluxuri de lucru"
 
@@ -2752,8 +2799,8 @@ msgstr "Gestionează-ți abonamentul"
 #. js-lingui-id: 3Sdni6
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-msgid "Mark as done"
-msgstr "Marchează ca realizat"
+#~ msgid "Mark as done"
+#~ msgstr "Marchează ca realizat"
 
 #. js-lingui-id: 7h8ch8
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -2818,6 +2865,11 @@ msgstr "Monitorizează execuția sarcinii de sincronizare a evenimentelor din ca
 msgid "Monitor the execution of your emails sync job"
 msgstr "Monitorizează execuția sarcinii de sincronizare a e-mailurilor"
 
+#. js-lingui-id: 1cOZuL
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Monthly Credits"
+msgstr ""
+
 #. js-lingui-id: 3Siwmw
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
@@ -2881,7 +2933,7 @@ msgid "Name of your workspace"
 msgstr "Numele spațiului tău de lucru"
 
 #. js-lingui-id: 2T8KCk
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to next record"
 msgstr "Navighează la următoarea înregistrare"
 
@@ -2891,17 +2943,17 @@ msgstr "Navighează la următoarea înregistrare"
 #~ msgstr "Navighează la rularea următoare"
 
 #. js-lingui-id: veSA19
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Navigate to next version"
 msgstr "Navigați la versiunea următoare"
 
 #. js-lingui-id: ZTEho+
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Navigate to next workflow"
 msgstr "Navigați la workflow-ul următor"
 
 #. js-lingui-id: 2tw9bo
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to previous record"
 msgstr "Navigați la înregistrarea anterioară"
 
@@ -2911,12 +2963,12 @@ msgstr "Navigați la înregistrarea anterioară"
 #~ msgstr "Navighează la rularea anterioară"
 
 #. js-lingui-id: I+Pm5V
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Navigate to previous version"
 msgstr "Navigați la versiunea anterioară"
 
 #. js-lingui-id: QVUN3K
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Navigate to previous workflow"
 msgstr "Navigați la workflow-ul anterior"
 
@@ -2968,7 +3020,7 @@ msgstr "Parolă nouă"
 #. js-lingui-id: BcCzLv
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "New record"
 msgstr "Înregistrare nouă"
 
@@ -3168,6 +3220,11 @@ msgstr "Nu a fost găsit"
 msgid "Not synced"
 msgstr "Neacordat"
 
+#. js-lingui-id: 1DBGsz
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Notes"
+msgstr ""
+
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number"
@@ -3236,7 +3293,7 @@ msgid "Opened"
 msgstr "Deschis"
 
 #. js-lingui-id: 4MyDFl
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Opportunities"
 msgstr ""
 
@@ -3306,7 +3363,7 @@ msgid "Password reset link has been sent to the email"
 msgstr "Link-ul pentru resetarea parolei a fost trimis către email"
 
 #. js-lingui-id: 1wdjme
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "People"
 msgstr ""
 
@@ -3343,22 +3400,22 @@ msgid "Percentage"
 msgstr "Procentaj"
 
 #. js-lingui-id: Bv3y5w
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Permanently destroy record"
 msgstr "Distrugere definitivă a înregistrării"
 
 #. js-lingui-id: xjWlSJ
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Permanently destroy records"
 msgstr "Distrugere definitivă a înregistrărilor"
 
 #. js-lingui-id: 0bQ5ba
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Permanently destroy workflow"
 msgstr ""
 
 #. js-lingui-id: uKWXhB
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Permanently destroy workflows"
 msgstr "Distrugere definitivă a workflow-urilor"
 
@@ -3592,8 +3649,8 @@ msgid "Remove as default"
 msgstr "Elimină ca implicită"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Remove from favorites"
 msgstr "Elimină din favorite"
 
@@ -3624,18 +3681,18 @@ msgid "REST"
 msgstr "REST"
 
 #. js-lingui-id: yKu/3Y
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore"
 msgstr "Restaurează"
 
 #. js-lingui-id: y4Ib1n
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore record"
 msgstr "Restaurează înregistrarea"
 
 #. js-lingui-id: Vw369F
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore records"
 msgstr "Restaurează înregistrările"
 
@@ -3700,8 +3757,8 @@ msgstr "Schemat"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Search"
 msgstr "Caută"
 
@@ -3759,8 +3816,8 @@ msgid "Search icon"
 msgstr "Pictogramă căutare"
 
 #. js-lingui-id: IMeaSJ
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Search records"
 msgstr "Caută înregistrări"
 
@@ -3780,18 +3837,18 @@ msgid "Security"
 msgstr "Securitate"
 
 #. js-lingui-id: QREcJS
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See active version"
 msgstr "Vezi versiunea activă"
 
 #. js-lingui-id: BxIUpp
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "See deleted records"
 msgstr "Vezi înregistrările șterse"
 
 #. js-lingui-id: Z+SGGW
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "See deleted runs"
 msgstr "Vezi rulări șterse"
 
@@ -3801,7 +3858,7 @@ msgstr "Vezi rulări șterse"
 #~ msgstr "Vezi versiuni șterse"
 
 #. js-lingui-id: 5jZIe5
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See deleted workflows"
 msgstr "Vezi fluxuri de lucru șterse"
 
@@ -3811,45 +3868,43 @@ msgid "See Records on All Objects"
 msgstr ""
 
 #. js-lingui-id: OpPn5Z
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See runs"
 msgstr "Vezi rulările"
 
 #. js-lingui-id: gGEfj/
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "See version"
 msgstr "Vezi versiuni"
 
 #. js-lingui-id: EtyY4+
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See versions"
 msgstr "Vezi versiunile"
 
 #. js-lingui-id: lYhPN0
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See versions history"
 msgstr "Vezi istoricul versiunilor"
 
 #. js-lingui-id: qEKLJV
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "See workflow"
 msgstr "Vezi flux de lucru"
 
 #. js-lingui-id: XThiR2
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "See workflows"
 msgstr "Vezi fluxuri de lucru"
 
@@ -3985,7 +4040,7 @@ msgstr "Stabilește numele subdomeniului tău"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Settings"
 msgstr "Setări"
 
@@ -4152,8 +4207,13 @@ msgstr ""
 
 #. js-lingui-id: B5jRKH
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Subscription has been switched {to}"
-msgstr "Abonamentul a fost schimbat {to}"
+#~ msgid "Subscription has been switched {to}"
+#~ msgstr "Abonamentul a fost schimbat {to}"
+
+#. js-lingui-id: TXH0ad
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Subscription has been switched to yearly."
+msgstr ""
 
 #. js-lingui-id: AxQiPW
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -4173,18 +4233,28 @@ msgstr "Suedeză"
 
 #. js-lingui-id: 9yk9d1
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch {from}"
-msgstr "Schimbă {from}"
+#~ msgid "Switch {from}"
+#~ msgstr "Schimbă {from}"
 
 #. js-lingui-id: qi74XZ
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch {to}"
-msgstr "Schimbă {to}"
+#~ msgid "Switch {to}"
+#~ msgstr "Schimbă {to}"
 
 #. js-lingui-id: L6Fg36
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch billing {to}"
-msgstr "Schimbă facturarea {to}"
+#~ msgid "Switch billing {to}"
+#~ msgstr "Schimbă facturarea {to}"
+
+#. js-lingui-id: o04bjR
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Switch billing to yearly"
+msgstr ""
+
+#. js-lingui-id: /IYUDq
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Switch from monthly to yearly"
+msgstr ""
 
 #. js-lingui-id: E4rPXj
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -4195,6 +4265,11 @@ msgstr ""
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #~ msgid "Switch to {alternatePlanName}"
 #~ msgstr "Schimbă la {alternatePlanName}"
+
+#. js-lingui-id: 1EwZPZ
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Switch to yearly"
+msgstr ""
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -4240,7 +4315,7 @@ msgid "Table"
 msgstr "Tabel"
 
 #. js-lingui-id: GtycJ/
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Tasks"
 msgstr ""
 
@@ -4250,12 +4325,12 @@ msgid "Terms of Service"
 msgstr "Termeni și Condiții"
 
 #. js-lingui-id: NnH3pK
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Test"
 msgstr "Test"
 
 #. js-lingui-id: bU9B27
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Test Workflow"
 msgstr "Test Workflows"
 
@@ -4420,13 +4495,13 @@ msgstr "Marca temporală și participanții vor fi partajați cu echipa dvs."
 
 #. js-lingui-id: aqMzDX
 #: src/pages/settings/SettingsBilling.tsx
-msgid "to monthly"
-msgstr "pentru lunar"
+#~ msgid "to monthly"
+#~ msgstr "pentru lunar"
 
 #. js-lingui-id: WXXiXO
 #: src/pages/settings/SettingsBilling.tsx
-msgid "to yearly"
-msgstr "pentru anual"
+#~ msgid "to yearly"
+#~ msgstr "pentru anual"
 
 #. js-lingui-id: ecUA8p
 #: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
@@ -4442,6 +4517,11 @@ msgstr ""
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Total Users"
 #~ msgstr "Total Users"
+
+#. js-lingui-id: dshGKq
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Track your monthly workflow credit consumption."
+msgstr ""
 
 #. js-lingui-id: PiUt3N
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
@@ -4541,8 +4621,8 @@ msgid "URL"
 msgstr "URL"
 
 #. js-lingui-id: 6dMpmz
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Use as draft"
 msgstr "Utilizează ca schiță"
 
@@ -4844,13 +4924,13 @@ msgstr "Nu aveți permisiunea de a crea înregistrări pentru acest obiect"
 
 #. js-lingui-id: zSkMV0
 #: src/pages/settings/SettingsBilling.tsx
-msgid "You will be charged immediately for the full year."
-msgstr "Veți fi taxat imediat pentru întregul an."
+#~ msgid "You will be charged immediately for the full year."
+#~ msgstr "Veți fi taxat imediat pentru întregul an."
 
 #. js-lingui-id: XVnj6K
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Your credit balance will be used to pay the monthly bills."
-msgstr "Soldul dvs. de credit va fi utilizat pentru a plăti facturile lunare."
+#~ msgid "Your credit balance will be used to pay the monthly bills."
+#~ msgstr "Soldul dvs. de credit va fi utilizat pentru a plăti facturile lunare."
 
 #. js-lingui-id: +5YqGH
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
