@@ -10,9 +10,23 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledContainer = styled.div`
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.md};
   height: 100%;
   overflow-y: scroll;
   width: 100%;
+
+  .scalar-api-reference {
+    --scalar-background-1: ${({ theme }) => theme.background.primary};
+    --scalar-background-2: ${({ theme }) => theme.background.secondary};
+    --scalar-background-3: ${({ theme }) => theme.background.tertiary};
+    --scalar-background-accent: ${({ theme }) =>
+      theme.background.transparent.lighter};
+    --scalar-border-color: ${({ theme }) => theme.border.color.medium};
+    --scalar-color-1: ${({ theme }) => theme.font.color.primary};
+    --scalar-color-2: ${({ theme }) => theme.font.color.secondary};
+    --scalar-color-3: ${({ theme }) => theme.font.color.tertiary};
+  }
 `;
 
 const ApiReferenceReact = lazy(() =>

@@ -3,9 +3,11 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
+import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SignInUpLoading } from '~/pages/auth/SignInUpLoading';
@@ -20,6 +22,10 @@ export const Verify = () => {
   const navigate = useNavigateApp();
   const { verifyLoginToken } = useVerifyLogin();
 
+  const { isLoaded: clientConfigLoaded } = useRecoilValue(
+    clientConfigApiStatusState,
+  );
+
   useEffect(() => {
     if (isDefined(errorMessage)) {
       enqueueSnackBar(errorMessage, {
@@ -28,6 +34,8 @@ export const Verify = () => {
       });
     }
 
+    if (!clientConfigLoaded) return;
+
     if (isDefined(loginToken)) {
       verifyLoginToken(loginToken);
     } else if (!isLogged) {
@@ -35,7 +43,7 @@ export const Verify = () => {
     }
     // Verify only needs to run once at mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [clientConfigLoaded]);
 
   return <SignInUpLoading />;
 };

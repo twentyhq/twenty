@@ -17,7 +17,7 @@ import { ClickToActionLink } from 'twenty-ui/navigation';
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
   margin-top: ${({ theme }) => theme.spacing(4)};
-  width: 200px;
+  min-width: 200px;
 `;
 
 export const SignInUpWorkspaceScopeForm = () => {

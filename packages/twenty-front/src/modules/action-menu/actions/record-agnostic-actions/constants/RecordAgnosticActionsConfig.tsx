@@ -1,9 +1,10 @@
-import { SearchRecordsRecordAgnosticAction } from '@/action-menu/actions/record-agnostic-actions/components/SearchRecordsRecordAgnosticAction';
+import { ActionOpenSidePanelPage } from '@/action-menu/actions/components/ActionOpenSidePanelPage';
 import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
 import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { msg } from '@lingui/core/macro';
 import { IconSearch } from 'twenty-ui/display';
 
@@ -18,7 +19,14 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     isPinned: false,
     Icon: IconSearch,
     availableOn: [ActionViewType.GLOBAL],
-    component: <SearchRecordsRecordAgnosticAction />,
+    component: (
+      <ActionOpenSidePanelPage
+        page={CommandMenuPages.SearchRecords}
+        pageTitle="Search"
+        pageIcon={IconSearch}
+        shouldResetSearchState={true}
+      />
+    ),
     hotKeys: ['/'],
     shouldBeRegistered: () => true,
   },
@@ -32,7 +40,13 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     isPinned: false,
     Icon: IconSearch,
     availableOn: [ActionViewType.GLOBAL],
-    component: <SearchRecordsRecordAgnosticAction />,
+    component: (
+      <ActionOpenSidePanelPage
+        page={CommandMenuPages.SearchRecords}
+        pageTitle="Search"
+        pageIcon={IconSearch}
+      />
+    ),
     hotKeys: ['/'],
     shouldBeRegistered: () => true,
   },
