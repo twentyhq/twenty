@@ -141,7 +141,7 @@ export const Dropdown = ({
           dropdownHotkeyScope,
         );
 
-        toggleDropdown();
+        toggleDropdown(dropdownHotkeyScope);
         onClickOutside?.();
       },
     [dropdownId, dropdownHotkeyScope, onClickOutside, toggleDropdown],

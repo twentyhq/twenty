@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import {
-  createSearchParams,
   matchPath,
   useLocation,
   useNavigate,
   useParams,
-  useSearchParams,
 } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
@@ -13,6 +11,7 @@ import {
   setSessionId,
   useEventTracker,
 } from '@/analytics/hooks/useEventTracker';
+import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
@@ -52,36 +51,23 @@ export const PageChangeEffect = () => {
 
   const resetTableSelections = useResetTableRowSelection(objectNamePlural);
 
+  const { executeTasksOnAnyLocationChange } =
+    useExecuteTasksOnAnyLocationChange();
+
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
       setPreviousLocation(location.pathname);
+      executeTasksOnAnyLocationChange();
     } else {
       return;
     }
-  }, [location, previousLocation]);
-
-  const [searchParams] = useSearchParams();
+  }, [location, previousLocation, executeTasksOnAnyLocationChange]);
 
   useEffect(() => {
     if (isDefined(pageChangeEffectNavigateLocation)) {
-      const hasQueryParams = pageChangeEffectNavigateLocation.includes('?');
-
-      const navigationParams = createSearchParams({
-        ...(searchParams.get('animateModal')
-          ? { animateModal: searchParams.get('animateModal') ?? 'false' }
-          : {}),
-      });
-
-      if (hasQueryParams) {
-        navigate(pageChangeEffectNavigateLocation);
-      } else {
-        navigate({
-          pathname: pageChangeEffectNavigateLocation,
-          search: navigationParams.toString(),
-        });
-      }
+      navigate(pageChangeEffectNavigateLocation);
     }
-  }, [navigate, pageChangeEffectNavigateLocation, searchParams]);
+  }, [navigate, pageChangeEffectNavigateLocation]);
 
   useEffect(() => {
     const isLeavingRecordIndexPage = !!matchPath(

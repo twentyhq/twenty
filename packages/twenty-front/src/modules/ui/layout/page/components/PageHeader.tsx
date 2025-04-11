@@ -92,6 +92,7 @@ type PageHeaderProps = {
   onClosePage?: () => void;
   Icon?: IconComponent;
   children?: ReactNode;
+  className?: string;
 };
 
 export const PageHeader = ({
@@ -100,6 +101,7 @@ export const PageHeader = ({
   onClosePage,
   Icon,
   children,
+  className,
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
   const theme = useTheme();
@@ -108,7 +110,7 @@ export const PageHeader = ({
   );
 
   return (
-    <StyledTopBarContainer>
+    <StyledTopBarContainer className={className}>
       <StyledLeftContainer>
         {!isMobile && !isNavigationDrawerExpanded && (
           <StyledTopBarButtonContainer>

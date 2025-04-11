@@ -118,31 +118,30 @@ export const PageHeaderToggleCommandMenuButton = () => {
   const theme = useTheme();
 
   return (
-    <div>
-      <StyledButtonWrapper>
-        <div id="toggle-command-menu-button">
-          <AnimatedButton
-            animatedSvg={
-              <AnimatedIcon isCommandMenuOpened={isCommandMenuOpened} />
-            }
-            className="page-header-command-menu-button"
-            dataTestId="page-header-command-menu-button"
-            size={isMobile ? 'medium' : 'small'}
-            variant="secondary"
-            accent="default"
-            hotkeys={[getOsControlSymbol(), 'K']}
-            ariaLabel={ariaLabel}
-            onClick={toggleCommandMenu}
-            animate={{
-              rotate: isCommandMenuOpened ? 90 : 0,
-            }}
-            transition={{
-              duration: theme.animation.duration.normal,
-              ease: 'easeInOut',
-            }}
-          />
-        </div>
-      </StyledButtonWrapper>
+    <StyledButtonWrapper>
+      <div id="toggle-command-menu-button">
+        <AnimatedButton
+          animatedSvg={
+            <AnimatedIcon isCommandMenuOpened={isCommandMenuOpened} />
+          }
+          className="page-header-command-menu-button"
+          dataTestId="page-header-command-menu-button"
+          size={isMobile ? 'medium' : 'small'}
+          variant="secondary"
+          accent="default"
+          hotkeys={[getOsControlSymbol(), 'K']}
+          ariaLabel={ariaLabel}
+          onClick={toggleCommandMenu}
+          animate={{
+            rotate: isCommandMenuOpened ? 90 : 0,
+          }}
+          transition={{
+            duration: theme.animation.duration.normal,
+            ease: 'easeInOut',
+          }}
+        />
+      </div>
+
       <StyledTooltipWrapper>
         <AppTooltip
           anchorSelect="#toggle-command-menu-button"
@@ -153,6 +152,6 @@ export const PageHeaderToggleCommandMenuButton = () => {
           noArrow
         />
       </StyledTooltipWrapper>
-    </div>
+    </StyledButtonWrapper>
   );
 };
