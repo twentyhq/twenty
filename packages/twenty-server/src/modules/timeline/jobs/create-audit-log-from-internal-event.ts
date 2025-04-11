@@ -8,6 +8,7 @@ import { AuditLogRepository } from 'src/modules/timeline/repositiories/audit-log
 import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 
 @Processor(MessageQueue.entityEventsToDbQueue)
 export class CreateAuditLogFromInternalEvent {
@@ -16,6 +17,7 @@ export class CreateAuditLogFromInternalEvent {
     private readonly workspaceMemberService: WorkspaceMemberRepository,
     @InjectObjectMetadataRepository(AuditLogWorkspaceEntity)
     private readonly auditLogRepository: AuditLogRepository,
+    private readonly analyticsService: AnalyticsService,
   ) {}
 
   @Process(CreateAuditLogFromInternalEvent.name)
@@ -48,6 +50,15 @@ export class CreateAuditLogFromInternalEvent {
         eventData.recordId,
         workspaceEventBatch.workspaceId,
       );
+
+      this.analyticsService
+        .createAnalyticsContext({
+          workspaceId: workspaceEventBatch.workspaceId,
+        })
+        .sendUnknownEvent({
+          action: workspaceEventBatch.name,
+          payload: eventData.properties,
+        });
     }
   }
 }
