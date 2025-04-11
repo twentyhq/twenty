@@ -52,7 +52,8 @@ export const ActionMenuContextProviderWorkflowsEnabled = ({
     skip: !isSingleRecordSelection,
   });
 
-  const runWorkflowActions = useRunWorkflowRecordAgnosticActions();
+  const runWorkflowRecordAgnosticActions =
+    useRunWorkflowRecordAgnosticActions();
 
   return (
     <ActionMenuContext.Provider
@@ -63,7 +64,7 @@ export const ActionMenuContextProviderWorkflowsEnabled = ({
         actions: [
           ...actions,
           ...runWorkflowRecordActions,
-          ...runWorkflowActions,
+          ...runWorkflowRecordAgnosticActions,
         ],
       }}
     >
