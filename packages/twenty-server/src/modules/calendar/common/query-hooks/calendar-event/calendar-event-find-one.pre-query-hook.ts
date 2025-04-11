@@ -1,5 +1,7 @@
 import { BadRequestException, NotFoundException, Scope } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { FindOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -26,6 +28,12 @@ export class CalendarEventFindOnePreQueryHook
     objectName: string,
     payload: FindOneResolverArgs,
   ): Promise<FindOneResolverArgs> {
+    const isApiContext = isDefined(authContext.apiKey?.id);
+
+    if (isApiContext) {
+      return payload;
+    }
+
     if (!payload?.filter?.id?.eq) {
       throw new BadRequestException('id filter is required');
     }
