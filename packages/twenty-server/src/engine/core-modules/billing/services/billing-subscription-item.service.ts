@@ -9,6 +9,7 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -46,18 +47,12 @@ export class BillingSubscriptionItemService {
         );
       }
 
-      const freeTrialQuantity =
-        item.metadata.trialPeriodFreeWorkflowCredits ||
-        this.twentyConfigService.get(
-          'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
-        );
-
       return {
         stripeSubscriptionItemId: item.stripeSubscriptionItemId,
         productKey: item.billingProduct.metadata.productKey,
         stripeMeterId,
         freeTierQuantity: this.getFreeTierQuantity(price),
-        freeTrialQuantity,
+        freeTrialQuantity: this.getFreeTrialQuantity(item),
         unitPriceCents: this.getUnitPrice(price),
       };
     });
@@ -80,6 +75,20 @@ export class BillingSubscriptionItemService {
 
   private getFreeTierQuantity(price: BillingPrice): number {
     return price.tiers?.find((tier) => tier.unit_amount === 0)?.up_to || 0;
+  }
+
+  private getFreeTrialQuantity(item: BillingSubscriptionItem): number {
+    switch (item.billingProduct.metadata.productKey) {
+      case BillingProductKey.WORKFLOW_NODE_EXECUTION:
+        return (
+          item.metadata.trialPeriodFreeWorkflowCredits ||
+          this.twentyConfigService.get(
+            'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
+          )
+        );
+      default:
+        return 0;
+    }
   }
 
   private getUnitPrice(price: BillingPrice): number {

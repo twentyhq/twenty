@@ -64,11 +64,16 @@ export class BillingWebhookAlertService {
           item.billingProduct.stripeProductId === product.stripeProductId,
       );
 
-      const trialPeriodFreeWorkflowCredits = Number(
+      const trialPeriodFreeWorkflowCredits = isDefined(
         subscriptionItem?.metadata.trialPeriodFreeWorkflowCredits,
-      );
+      )
+        ? Number(subscriptionItem?.metadata.trialPeriodFreeWorkflowCredits)
+        : 0;
 
-      if (trialPeriodFreeWorkflowCredits !== alert.usage_threshold?.gte) {
+      if (
+        !isDefined(alert.usage_threshold?.gte) ||
+        trialPeriodFreeWorkflowCredits !== alert.usage_threshold.gte
+      ) {
         return;
       }
 
