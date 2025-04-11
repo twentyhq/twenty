@@ -13,6 +13,7 @@ import {
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
 import { WorkflowRunTabId } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
+import { isNull } from '@sniptt/guards';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { useCallback } from 'react';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -50,11 +51,20 @@ export const WorkflowRunDiagramCanvasEffect = () => {
           stepExecutionStatus,
         });
 
-        console.log({
-          activeWorkflowRunRightDrawerTab,
-          isInputTabDisabled,
-          isOutputTabDisabled,
-        });
+        if (isNull(activeWorkflowRunRightDrawerTab)) {
+          const defaultTabId = isOutputTabDisabled
+            ? WorkflowRunTabId.NODE
+            : WorkflowRunTabId.OUTPUT;
+
+          set(
+            activeTabIdComponentState.atomFamily({
+              instanceId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
+            }),
+            defaultTabId,
+          );
+
+          return;
+        }
 
         if (
           (isInputTabDisabled &&
