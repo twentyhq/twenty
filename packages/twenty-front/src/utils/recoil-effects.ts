@@ -82,3 +82,60 @@ export const cookieStorageEffect =
           );
     });
   };
+
+export const uRLParamEffect =
+  <T>(
+    paramName: string,
+    options?: {
+      parseValue?: (value: string) => T | null;
+      stringifyValue?: (value: T) => string | null;
+      defaultValue?: T;
+    },
+  ): AtomEffect<T> =>
+  ({ setSelf, onSet }) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const value = searchParams.get(paramName);
+
+    if (value !== null) {
+      if (options?.parseValue !== undefined) {
+        const parsed = options.parseValue(value);
+        if (parsed !== null) {
+          setSelf(parsed);
+        }
+      } else {
+        try {
+          const parsed = JSON.parse(decodeURIComponent(value));
+          setSelf(parsed as T);
+        } catch (e) {
+          // If parsing fails, don't set the value
+        }
+      }
+    }
+
+    onSet((newValue) => {
+      const searchParams = new URLSearchParams(window.location.search);
+      const defaultValue = options?.defaultValue;
+
+      if (
+        defaultValue !== undefined &&
+        JSON.stringify(newValue) === JSON.stringify(defaultValue)
+      ) {
+        searchParams.delete(paramName);
+      } else {
+        const stringValue = options?.stringifyValue
+          ? options.stringifyValue(newValue)
+          : encodeURIComponent(JSON.stringify(newValue));
+
+        if (stringValue !== null) {
+          searchParams.set(paramName, stringValue);
+        } else {
+          searchParams.delete(paramName);
+        }
+      }
+
+      const newUrl = `${window.location.pathname}${
+        searchParams.toString() ? `?${searchParams.toString()}` : ''
+      }`;
+      window.history.replaceState({}, '', newUrl);
+    });
+  };

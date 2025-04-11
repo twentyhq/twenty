@@ -52,7 +52,7 @@ export class GoogleAuthController {
       picture,
       workspaceInviteHash,
       workspaceId,
-      billingCheckoutSessionURLState,
+      billingCheckoutSessionURLParamState,
       locale,
     } = req.user;
 
@@ -101,7 +101,7 @@ export class GoogleAuthController {
         authParams: {
           provider: 'google',
         },
-        billingCheckoutSessionURLState,
+        billingCheckoutSessionURLParamState,
       });
 
       const loginToken = await this.loginTokenService.generateLoginToken(
@@ -113,7 +113,7 @@ export class GoogleAuthController {
         this.authService.computeRedirectURI({
           loginToken: loginToken.token,
           workspace,
-          billingCheckoutSessionURLState,
+          billingCheckoutSessionURLParamState,
         }),
       );
     } catch (err) {

@@ -1,5 +1,4 @@
 import { AppRouter } from '@/app/components/AppRouter';
-import { UrlStatesInitializationEffect } from '@/app/effect-components/UrlStatesInitializationEffect';
 import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
@@ -25,7 +24,6 @@ export const App = () => {
         <I18nProvider i18n={i18n}>
           <RecoilDebugObserverEffect />
           <ApolloDevLogEffect />
-          <UrlStatesInitializationEffect />
           <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
             <IconsProvider>
               <ExceptionHandlerProvider>

@@ -31,7 +31,7 @@ describe('useSignInWithGoogle', () => {
     const mockUseParams = { workspaceInviteHash: 'testHash' };
 
     const mockSearchParams = new URLSearchParams(
-      'inviteToken=testToken&billingCheckoutSessionURLState={"plan":"Pro","interval":"Month","requirePaymentMethod":true}',
+      'inviteToken=testToken&billingCheckoutSessionURLParamState={"plan":"Pro","interval":"Month","requirePaymentMethod":true}',
     );
 
     (useParams as jest.Mock).mockReturnValue(mockUseParams);

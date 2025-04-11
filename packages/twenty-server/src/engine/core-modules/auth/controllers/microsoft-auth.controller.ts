@@ -53,7 +53,7 @@ export class MicrosoftAuthController {
       picture,
       workspaceInviteHash,
       workspaceId,
-      billingCheckoutSessionURLState,
+      billingCheckoutSessionURLParamState,
       locale,
     } = req.user;
 
@@ -102,7 +102,7 @@ export class MicrosoftAuthController {
         authParams: {
           provider: 'microsoft',
         },
-        billingCheckoutSessionURLState,
+        billingCheckoutSessionURLParamState,
       });
 
       const loginToken = await this.loginTokenService.generateLoginToken(
@@ -114,7 +114,7 @@ export class MicrosoftAuthController {
         this.authService.computeRedirectURI({
           loginToken: loginToken.token,
           workspace,
-          billingCheckoutSessionURLState,
+          billingCheckoutSessionURLParamState,
         }),
       );
     } catch (err) {

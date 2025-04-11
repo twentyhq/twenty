@@ -8,7 +8,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 export type SignInUpBaseParams = {
   invitation?: AppToken;
   workspace?: Workspace | null;
-  billingCheckoutSessionURLState?: string | null;
+  billingCheckoutSessionURLParamState?: string | null;
 };
 
 export type SignInUpNewUserPayload = {

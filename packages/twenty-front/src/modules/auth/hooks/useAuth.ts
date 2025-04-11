@@ -41,7 +41,7 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
-import { animateModalURLState } from '@/auth/states/animateModalURLState';
+import { animateModalURLParamState } from '@/auth/states/animateModalURLParamState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import {
     SignInUpStep,
@@ -115,7 +115,7 @@ export const useAuth = () => {
   const goToRecoilSnapshot = useGotoRecoilSnapshot();
 
   const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
-  const setAnimateModal = useSetRecoilState(animateModalURLState);
+  const setAnimateModal = useSetRecoilState(animateModalURLParamState);
 
   const [, setSearchParams] = useSearchParams();
 
@@ -473,7 +473,7 @@ export const useAuth = () => {
       }
       if (isDefined(params.billingCheckoutSession)) {
         url.searchParams.set(
-          'billingCheckoutSessionURLState',
+          'billingCheckoutSessionURLParamState',
           JSON.stringify(params.billingCheckoutSession),
         );
       }

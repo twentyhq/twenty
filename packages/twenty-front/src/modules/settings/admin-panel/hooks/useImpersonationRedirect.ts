@@ -1,4 +1,4 @@
-import { animateModalURLState } from '@/auth/states/animateModalURLState';
+import { animateModalURLParamState } from '@/auth/states/animateModalURLParamState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { AppPath } from '@/types/AppPath';
 import { useSetRecoilState } from 'recoil';
@@ -7,7 +7,7 @@ import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 export const useImpersonationRedirect = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
-  const setAnimateModal = useSetRecoilState(animateModalURLState);
+  const setAnimateModal = useSetRecoilState(animateModalURLParamState);
 
   const executeImpersonationRedirect = async (
     workspaceUrls: WorkspaceUrls,

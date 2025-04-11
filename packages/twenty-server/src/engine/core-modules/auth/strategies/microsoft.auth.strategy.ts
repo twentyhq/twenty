@@ -24,7 +24,7 @@ export type MicrosoftRequest = Omit<
     workspaceInviteHash?: string;
     workspacePersonalInviteToken?: string;
     workspaceId?: string;
-    billingCheckoutSessionURLState?: string;
+    billingCheckoutSessionURLParamState?: string;
   };
 };
 
@@ -47,7 +47,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
         workspaceInviteHash: req.query.workspaceInviteHash,
         workspaceId: req.params.workspaceId,
         locale: req.query.locale,
-        billingCheckoutSessionURLState: req.query.billingCheckoutSessionURLState,
+        billingCheckoutSessionURLParamState: req.query.billingCheckoutSessionURLParamState,
         workspacePersonalInviteToken: req.query.workspacePersonalInviteToken,
       }),
     };
@@ -86,7 +86,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
       workspaceInviteHash: state.workspaceInviteHash,
       workspacePersonalInviteToken: state.workspacePersonalInviteToken,
       workspaceId: state.workspaceId,
-      billingCheckoutSessionURLState: state.billingCheckoutSessionURLState,
+      billingCheckoutSessionURLParamState: state.billingCheckoutSessionURLParamState,
       locale: state.locale,
     };
 
