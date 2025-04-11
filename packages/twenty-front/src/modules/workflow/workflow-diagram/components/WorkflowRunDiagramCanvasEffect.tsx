@@ -96,17 +96,17 @@ export const WorkflowRunDiagramCanvasEffect = () => {
       const selectedNodeData =
         selectedNode.data as WorkflowRunDiagramStepNodeData;
 
-      resetWorkflowRunRightDrawerTabIfNeeded({
-        workflowSelectedNode: selectedNode.id,
-        stepExecutionStatus: selectedNodeData.runStatus,
-      });
-
       if (isDefined(workflowId)) {
         openWorkflowRunViewStepInCommandMenu(
           workflowId,
           selectedNodeData.name,
           getIcon(getWorkflowNodeIconKey(selectedNodeData)),
         );
+
+        resetWorkflowRunRightDrawerTabIfNeeded({
+          workflowSelectedNode: selectedNode.id,
+          stepExecutionStatus: selectedNodeData.runStatus,
+        });
       }
     },
     [
