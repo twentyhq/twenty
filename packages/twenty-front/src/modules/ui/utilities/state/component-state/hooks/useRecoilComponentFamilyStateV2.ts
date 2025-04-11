@@ -29,14 +29,10 @@ export const useRecoilComponentFamilyStateV2 = <
     instanceIdFromProps,
   );
 
-  switch (componentState.type) {
-    case 'ComponentFamilyState':
-      return useRecoilState(
-        componentState.atomFamily({ instanceId, familyKey }),
-      );
-    case 'ComponentFamilySelector':
-      return useRecoilState(
-        componentState.selectorFamily({ instanceId, familyKey }),
-      );
-  }
+  const familySelector =
+    componentState.type === 'ComponentFamilyState'
+      ? componentState.atomFamily({ instanceId, familyKey })
+      : componentState.selectorFamily({ instanceId, familyKey });
+
+  return useRecoilState(familySelector);
 };
