@@ -7,7 +7,6 @@ import { dropdownMaxHeightComponentState } from '@/ui/layout/dropdown/states/int
 import { dropdownMaxWidthComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxWidthComponentState';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import {
@@ -150,7 +149,7 @@ export const Dropdown = ({
     <DropdownComponentInstanceContext.Provider
       value={{ instanceId: dropdownId }}
     >
-      <DropdownScope dropdownScopeId={getScopeIdFromComponentId(dropdownId)}>
+      <DropdownScope dropdownScopeId={dropdownId}>
         <>
           {isDefined(clickableComponent) ? (
             <StyledClickableComponent

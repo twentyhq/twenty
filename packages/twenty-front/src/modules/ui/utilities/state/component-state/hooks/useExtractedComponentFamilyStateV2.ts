@@ -1,5 +1,4 @@
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
 import { ComponentFamilyState } from '@/ui/utilities/state/component-state/types/ComponentFamilyState';
 import { SerializableParam } from 'recoil';
 
@@ -22,7 +21,7 @@ export const useExtractedComponentFamilyStateV2 = <
 
   const internalScopeId = useAvailableScopeIdOrThrow(
     componentContext,
-    getScopeIdOrUndefinedFromComponentId(componentId),
+    componentId,
   );
 
   const extractedComponentFamilyState = (familyKey: FamilyKey) =>

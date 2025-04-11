@@ -1,5 +1,4 @@
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
 import { RecoilComponentState } from '@/ui/utilities/state/component-state/types/RecoilComponentState';
 import { useRecoilState } from 'recoil';
 
@@ -19,7 +18,7 @@ export const useRecoilComponentState = <StateType>(
 
   const internalComponentId = useAvailableScopeIdOrThrow(
     componentContext,
-    getScopeIdOrUndefinedFromComponentId(componentId),
+    componentId,
   );
 
   return useRecoilState(
