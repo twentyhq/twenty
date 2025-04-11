@@ -1,10 +1,10 @@
 import {
-  Controller,
-  Get,
-  Req,
-  Res,
-  UseFilters,
-  UseGuards,
+    Controller,
+    Get,
+    Req,
+    Res,
+    UseFilters,
+    UseGuards,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -17,9 +17,9 @@ import { MicrosoftProviderEnabledGuard } from 'src/engine/core-modules/auth/guar
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -53,7 +53,7 @@ export class MicrosoftAuthController {
       picture,
       workspaceInviteHash,
       workspaceId,
-      billingCheckoutSessionState,
+      billingCheckoutSessionURLState,
       locale,
     } = req.user;
 
@@ -102,7 +102,7 @@ export class MicrosoftAuthController {
         authParams: {
           provider: 'microsoft',
         },
-        billingCheckoutSessionState,
+        billingCheckoutSessionURLState,
       });
 
       const loginToken = await this.loginTokenService.generateLoginToken(
@@ -114,7 +114,7 @@ export class MicrosoftAuthController {
         this.authService.computeRedirectURI({
           loginToken: loginToken.token,
           workspace,
-          billingCheckoutSessionState,
+          billingCheckoutSessionURLState,
         }),
       );
     } catch (err) {

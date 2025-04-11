@@ -7,22 +7,16 @@ import {
 } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
-import {
-  setSessionId,
-  useEventTracker,
-} from '@/analytics/hooks/useEventTracker';
+import { useTrackPageView } from '@/analytics/hooks/useTrackPageView';
 import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
-import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { setHotkeyScopeForPath } from '@/ui/utilities/hotkey/utils/setHotkeyScopeForPath';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
@@ -42,7 +36,10 @@ export const PageChangeEffect = () => {
   const pageChangeEffectNavigateLocation =
     usePageChangeEffectNavigateLocation();
 
-  const eventTracker = useEventTracker();
+  const trackPageView = useTrackPageView();
+
+  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
+  const isCaptchaScriptLoaded = useRecoilValue(isCaptchaScriptLoadedState);
 
   //TODO: refactor useResetTableRowSelection hook to not throw when the argument `recordTableId` is an empty string
   // - replace CoreObjectNamePlural.Person
@@ -58,8 +55,6 @@ export const PageChangeEffect = () => {
     if (!previousLocation || previousLocation !== location.pathname) {
       setPreviousLocation(location.pathname);
       executeTasksOnAnyLocationChange();
-    } else {
-      return;
     }
   }, [location, previousLocation, executeTasksOnAnyLocationChange]);
 
@@ -81,107 +76,12 @@ export const PageChangeEffect = () => {
   }, [isMatchingLocation, previousLocation, resetTableSelections]);
 
   useEffect(() => {
-    switch (true) {
-      case isMatchingLocation(AppPath.RecordIndexPage): {
-        setHotkeyScope(TableHotkeyScope.Table, {
-          goto: true,
-          keyboardShortcutMenu: true,
-        });
-        break;
-      }
-      case isMatchingLocation(AppPath.RecordShowPage): {
-        setHotkeyScope(PageHotkeyScope.CompanyShowPage, {
-          goto: true,
-          keyboardShortcutMenu: true,
-        });
-        break;
-      }
-      case isMatchingLocation(AppPath.OpportunitiesPage): {
-        setHotkeyScope(PageHotkeyScope.OpportunitiesPage, {
-          goto: true,
-          keyboardShortcutMenu: true,
-        });
-        break;
-      }
-      case isMatchingLocation(AppPath.TasksPage): {
-        setHotkeyScope(PageHotkeyScope.TaskPage, {
-          goto: true,
-          keyboardShortcutMenu: true,
-        });
-        break;
-      }
-
-      case isMatchingLocation(AppPath.SignInUp): {
-        setHotkeyScope(PageHotkeyScope.SignInUp);
-        break;
-      }
-      case isMatchingLocation(AppPath.Invite): {
-        setHotkeyScope(PageHotkeyScope.SignInUp);
-        break;
-      }
-      case isMatchingLocation(AppPath.CreateProfile): {
-        setHotkeyScope(PageHotkeyScope.CreateProfile);
-        break;
-      }
-      case isMatchingLocation(AppPath.CreateWorkspace): {
-        setHotkeyScope(PageHotkeyScope.CreateWorkspace);
-        break;
-      }
-      case isMatchingLocation(AppPath.SyncEmails): {
-        setHotkeyScope(PageHotkeyScope.SyncEmail);
-        break;
-      }
-      case isMatchingLocation(AppPath.InviteTeam): {
-        setHotkeyScope(PageHotkeyScope.InviteTeam);
-        break;
-      }
-      case isMatchingLocation(AppPath.PlanRequired): {
-        setHotkeyScope(PageHotkeyScope.PlanRequired);
-        break;
-      }
-      case isMatchingLocation(SettingsPath.ProfilePage, AppBasePath.Settings): {
-        setHotkeyScope(PageHotkeyScope.ProfilePage, {
-          goto: true,
-          keyboardShortcutMenu: true,
-        });
-        break;
-      }
-      case isMatchingLocation(SettingsPath.Domain, AppBasePath.Settings): {
-        setHotkeyScope(PageHotkeyScope.Settings, {
-          goto: false,
-          keyboardShortcutMenu: true,
-        });
-        break;
-      }
-      case isMatchingLocation(
-        SettingsPath.WorkspaceMembersPage,
-        AppBasePath.Settings,
-      ): {
-        setHotkeyScope(PageHotkeyScope.WorkspaceMemberPage, {
-          goto: true,
-          keyboardShortcutMenu: true,
-        });
-        break;
-      }
-    }
+    setHotkeyScopeForPath(isMatchingLocation, setHotkeyScope);
   }, [isMatchingLocation, setHotkeyScope]);
 
   useEffect(() => {
-    setTimeout(() => {
-      setSessionId();
-      eventTracker('pageview', {
-        pathname: location.pathname,
-        locale: navigator.language,
-        userAgent: window.navigator.userAgent,
-        href: window.location.href,
-        referrer: document.referrer,
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      });
-    }, 500);
-  }, [eventTracker, location.pathname]);
-
-  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
-  const isCaptchaScriptLoaded = useRecoilValue(isCaptchaScriptLoadedState);
+    trackPageView();
+  }, [location.pathname, trackPageView]);
 
   useEffect(() => {
     if (isCaptchaScriptLoaded && isCaptchaRequiredForPath(location.pathname)) {

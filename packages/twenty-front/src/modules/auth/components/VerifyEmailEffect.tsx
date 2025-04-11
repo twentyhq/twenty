@@ -4,7 +4,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
-import { animateModalState } from '@/auth/states/animateModalState';
+import { animateModalURLState } from '@/auth/states/animateModalURLState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
@@ -21,7 +21,7 @@ export const VerifyEmailEffect = () => {
 
   const [searchParams] = useSearchParams();
   const [isError, setIsError] = useState(false);
-  const setAnimateModal = useSetRecoilState(animateModalState);
+  const setAnimateModal = useSetRecoilState(animateModalURLState);
 
   const email = searchParams.get('email');
   const emailVerificationToken = searchParams.get('emailVerificationToken');

@@ -2,8 +2,8 @@ import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/BillingCheckoutSessionDefaultValue';
 import { createState } from 'twenty-ui/utilities';
 
-export const billingCheckoutSessionState = createState<BillingCheckoutSession>({
-  key: 'billingCheckoutSessionState',
+export const billingCheckoutSessionURLState = createState<BillingCheckoutSession>({
+  key: 'billingCheckoutSessionURLState',
   defaultValue: BILLING_CHECKOUT_SESSION_DEFAULT_VALUE,
   effects: [
     ({ setSelf, onSet }) => {

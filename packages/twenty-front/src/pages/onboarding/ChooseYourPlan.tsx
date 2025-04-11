@@ -1,7 +1,7 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
-import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
+import { billingCheckoutSessionURLState } from '@/auth/states/billingCheckoutSessionURLState';
 import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { SubscriptionPrice } from '@/billing/components/SubscriptionPrice';
 import { TrialCard } from '@/billing/components/TrialCard';
@@ -91,9 +91,8 @@ export const ChooseYourPlan = () => {
   const billing = useRecoilValue(billingState);
   const { t } = useLingui();
 
-  const [billingCheckoutSession, setBillingCheckoutSession] = useRecoilState(
-    billingCheckoutSessionState,
-  );
+  const [billingCheckoutSessionURL, setBillingCheckoutSessionURL] =
+    useRecoilState(billingCheckoutSessionURLState);
 
   const { data: plans } = useBillingBaseProductPricesQuery();
 

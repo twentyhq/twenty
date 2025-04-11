@@ -1,7 +1,7 @@
 import { createState } from 'twenty-ui/utilities';
 
-export const animateModalState = createState<boolean>({
-  key: 'animateModalState',
+export const animateModalURLState = createState<boolean>({
+  key: 'animateModalURLState',
   defaultValue: true,
   effects: [
     ({ setSelf, onSet }) => {

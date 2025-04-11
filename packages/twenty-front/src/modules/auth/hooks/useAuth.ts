@@ -2,11 +2,11 @@ import { AppPath } from '@/types/AppPath';
 import { ApolloError, useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import {
-  snapshot_UNSTABLE,
-  useGotoRecoilSnapshot,
-  useRecoilCallback,
-  useRecoilValue,
-  useSetRecoilState,
+    snapshot_UNSTABLE,
+    useGotoRecoilSnapshot,
+    useRecoilCallback,
+    useRecoilValue,
+    useSetRecoilState,
 } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -20,12 +20,12 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-  useCheckUserExistsLazyQuery,
-  useGetAuthTokensFromLoginTokenMutation,
-  useGetCurrentUserLazyQuery,
-  useGetLoginTokenFromCredentialsMutation,
-  useGetLoginTokenFromEmailVerificationTokenMutation,
-  useSignUpMutation,
+    useCheckUserExistsLazyQuery,
+    useGetAuthTokensFromLoginTokenMutation,
+    useGetCurrentUserLazyQuery,
+    useGetLoginTokenFromCredentialsMutation,
+    useGetLoginTokenFromEmailVerificationTokenMutation,
+    useSignUpMutation,
 } from '~/generated/graphql';
 
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
@@ -41,11 +41,11 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
-import { animateModalState } from '@/auth/states/animateModalState';
+import { animateModalURLState } from '@/auth/states/animateModalURLState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import {
-  SignInUpStep,
-  signInUpStepState,
+    SignInUpStep,
+    signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
@@ -115,7 +115,7 @@ export const useAuth = () => {
   const goToRecoilSnapshot = useGotoRecoilSnapshot();
 
   const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
-  const setAnimateModal = useSetRecoilState(animateModalState);
+  const setAnimateModal = useSetRecoilState(animateModalURLState);
 
   const [, setSearchParams] = useSearchParams();
 
@@ -473,7 +473,7 @@ export const useAuth = () => {
       }
       if (isDefined(params.billingCheckoutSession)) {
         url.searchParams.set(
-          'billingCheckoutSessionState',
+          'billingCheckoutSessionURLState',
           JSON.stringify(params.billingCheckoutSession),
         );
       }

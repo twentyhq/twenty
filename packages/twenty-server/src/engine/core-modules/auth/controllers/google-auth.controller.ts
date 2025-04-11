@@ -1,10 +1,10 @@
 import {
-  Controller,
-  Get,
-  Req,
-  Res,
-  UseFilters,
-  UseGuards,
+    Controller,
+    Get,
+    Req,
+    Res,
+    UseFilters,
+    UseGuards,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -18,9 +18,9 @@ import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -52,7 +52,7 @@ export class GoogleAuthController {
       picture,
       workspaceInviteHash,
       workspaceId,
-      billingCheckoutSessionState,
+      billingCheckoutSessionURLState,
       locale,
     } = req.user;
 
@@ -101,7 +101,7 @@ export class GoogleAuthController {
         authParams: {
           provider: 'google',
         },
-        billingCheckoutSessionState,
+        billingCheckoutSessionURLState,
       });
 
       const loginToken = await this.loginTokenService.generateLoginToken(
@@ -113,7 +113,7 @@ export class GoogleAuthController {
         this.authService.computeRedirectURI({
           loginToken: loginToken.token,
           workspace,
-          billingCheckoutSessionState,
+          billingCheckoutSessionURLState,
         }),
       );
     } catch (err) {

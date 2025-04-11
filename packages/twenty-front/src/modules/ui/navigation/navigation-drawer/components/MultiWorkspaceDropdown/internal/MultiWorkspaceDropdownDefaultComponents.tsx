@@ -1,7 +1,7 @@
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { animateModalState } from '@/auth/states/animateModalState';
+import { animateModalURLState } from '@/auth/states/animateModalURLState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Workspaces, workspacesState } from '@/auth/states/workspaces';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
@@ -24,18 +24,18 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  Avatar,
-  IconDotsVertical,
-  IconLogout,
-  IconPlus,
-  IconSwitchHorizontal,
-  IconUserPlus,
+    Avatar,
+    IconDotsVertical,
+    IconLogout,
+    IconPlus,
+    IconSwitchHorizontal,
+    IconUserPlus,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import {
-  MenuItem,
-  MenuItemSelectAvatar,
-  UndecoratedLink,
+    MenuItem,
+    MenuItemSelectAvatar,
+    UndecoratedLink,
 } from 'twenty-ui/navigation';
 import { useSignUpInNewWorkspaceMutation } from '~/generated/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
@@ -67,7 +67,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const setMultiWorkspaceDropdownState = useSetRecoilState(
     multiWorkspaceDropdownState,
   );
-  const setAnimateModal = useSetRecoilState(animateModalState);
+  const setAnimateModal = useSetRecoilState(animateModalURLState);
 
   const handleChange = async (workspace: Workspaces[0]) => {
     redirectToWorkspaceDomain(getWorkspaceUrl(workspace.workspaceUrls));

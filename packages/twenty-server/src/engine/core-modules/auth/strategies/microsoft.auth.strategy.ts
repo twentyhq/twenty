@@ -6,8 +6,8 @@ import { Strategy } from 'passport-microsoft';
 import { APP_LOCALES } from 'twenty-shared/translations';
 
 import {
-  AuthException,
-  AuthExceptionCode,
+    AuthException,
+    AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -24,7 +24,7 @@ export type MicrosoftRequest = Omit<
     workspaceInviteHash?: string;
     workspacePersonalInviteToken?: string;
     workspaceId?: string;
-    billingCheckoutSessionState?: string;
+    billingCheckoutSessionURLState?: string;
   };
 };
 
@@ -47,7 +47,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
         workspaceInviteHash: req.query.workspaceInviteHash,
         workspaceId: req.params.workspaceId,
         locale: req.query.locale,
-        billingCheckoutSessionState: req.query.billingCheckoutSessionState,
+        billingCheckoutSessionURLState: req.query.billingCheckoutSessionURLState,
         workspacePersonalInviteToken: req.query.workspacePersonalInviteToken,
       }),
     };
@@ -86,7 +86,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
       workspaceInviteHash: state.workspaceInviteHash,
       workspacePersonalInviteToken: state.workspacePersonalInviteToken,
       workspaceId: state.workspaceId,
-      billingCheckoutSessionState: state.billingCheckoutSessionState,
+      billingCheckoutSessionURLState: state.billingCheckoutSessionURLState,
       locale: state.locale,
     };
 

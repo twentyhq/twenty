@@ -1,5 +1,5 @@
 import { AuthModal } from '@/auth/components/AuthModal';
-import { animateModalState } from '@/auth/states/animateModalState';
+import { animateModalURLState } from '@/auth/states/animateModalURLState';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
@@ -65,7 +65,7 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
-  const animateModal = useRecoilValue(animateModalState);
+  const animateModal = useRecoilValue(animateModalURLState);
 
   return (
     <>
