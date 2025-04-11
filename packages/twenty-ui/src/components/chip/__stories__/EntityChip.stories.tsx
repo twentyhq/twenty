@@ -21,3 +21,9 @@ export default meta;
 type Story = StoryObj<typeof AvatarChip>;
 
 export const Default: Story = {};
+
+export const Empty: Story = {
+  args: {
+    name: '',
+  },
+};
