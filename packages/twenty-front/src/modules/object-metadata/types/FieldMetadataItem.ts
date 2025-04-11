@@ -1,10 +1,12 @@
+import { FieldDateMetadataSettings } from '@/object-record/record-field/types/FieldMetadata';
+
+import { ThemeColor } from 'twenty-ui/theme';
 import {
   Field,
   Object as MetadataObject,
   RelationDefinition,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
-import { ThemeColor } from 'twenty-ui/theme';
 
 export type FieldMetadataItemOption = {
   color: ThemeColor;
@@ -35,8 +37,6 @@ export type FieldMetadataItem = Omit<
       'id' | 'nameSingular' | 'namePlural'
     >;
   } | null;
-  settings?: {
-    displayAsRelativeDate?: boolean;
-  };
+  settings?: FieldDateMetadataSettings;
   isLabelSyncedWithName?: boolean | null;
 };

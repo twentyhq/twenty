@@ -993,7 +993,7 @@ export const workflowQueryResult = {
                                   isSystem: false,
                                   isUnique: false,
                                   settings: {
-                                    displayAsRelativeDate: true,
+                                    displayFormat: 'RELATIVE',
                                   },
                                   createdAt: '2025-01-30T09:40:10.256Z',
                                   updatedAt: '2025-01-30T09:40:10.256Z',
@@ -1022,7 +1022,7 @@ export const workflowQueryResult = {
                                   isSystem: false,
                                   isUnique: false,
                                   settings: {
-                                    displayAsRelativeDate: true,
+                                    displayFormat: 'RELATIVE',
                                   },
                                   createdAt: '2025-01-30T09:40:10.256Z',
                                   updatedAt: '2025-01-30T09:40:10.256Z',
@@ -1052,7 +1052,7 @@ export const workflowQueryResult = {
                                   isSystem: false,
                                   isUnique: false,
                                   settings: {
-                                    displayAsRelativeDate: true,
+                                    displayFormat: 'RELATIVE',
                                   },
                                   createdAt: '2025-01-30T09:40:10.256Z',
                                   updatedAt: '2025-01-30T09:40:10.256Z',

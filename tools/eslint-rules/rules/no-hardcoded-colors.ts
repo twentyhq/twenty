@@ -23,7 +23,7 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
     const testHardcodedColor = (
       literal: TSESTree.Literal | TSESTree.TemplateLiteral,
     ) => {
-      const colorRegex = /(?:rgba?\()|(?:#[0-9a-fA-F]{2,6})/i;
+      const colorRegex = /(?:rgba?\()|(?:#[0-9a-fA-F]{3,6})\b/i;
 
       if (
         literal.type === TSESTree.AST_NODE_TYPES.Literal &&

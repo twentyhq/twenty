@@ -11,7 +11,7 @@ import { IconComponent } from 'twenty-ui/display';
 type SettingsOptionCardContentSelectProps = {
   Icon?: IconComponent;
   title: React.ReactNode;
-  description?: string;
+  description?: string | React.ReactNode;
   disabled?: boolean;
   children?: React.ReactNode;
 };
