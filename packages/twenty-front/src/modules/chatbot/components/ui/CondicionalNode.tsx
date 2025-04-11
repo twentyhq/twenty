@@ -7,9 +7,15 @@ import {
   LogicNodeData,
 } from '@/chatbot/types/LogicNodeDataType';
 import styled from '@emotion/styled';
-import { Handle, Node, NodeProps, Position, useReactFlow } from '@xyflow/react';
+import {
+  Handle,
+  Node,
+  NodeProps,
+  Position,
+  useNodeConnections,
+  useReactFlow,
+} from '@xyflow/react';
 import { memo, useCallback, useEffect, useState } from 'react';
-import { isDefined } from 'twenty-shared';
 import { Button } from 'twenty-ui';
 
 const initialState: CondicionalState = {
@@ -35,10 +41,16 @@ function CondicionalNode({
   const [state, setState] = useState<CondicionalState>(initialState);
 
   useEffect(() => {
-    if (isDefined(data.logic)) {
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+    if (data.logic) {
       setState(data.logic);
     }
-  }, []);
+  }, [data.logic]);
+
+  const connections = useNodeConnections({
+    id,
+    handleType: 'source',
+  });
 
   const handleAddLogicNode = () => {
     setState((prevState) => {
@@ -49,7 +61,6 @@ function CondicionalNode({
             comparison: '==',
             inputText: '',
             conditionValue: '',
-            outgoingEdgeId: '',
           },
         ],
       ];
@@ -103,26 +114,35 @@ function CondicionalNode({
         isConnectable={isConnectable}
       />
       <StyledDiv>
-        {state.logicNodes.map((_, index) => (
-          <LogicNode
-            key={index}
-            dropdownId={`logicSelect-${index}`}
-            onGroupsChange={(updatedGroups) => {
-              const newUpdatedGroups = {
-                ...updatedGroups,
-                outgoingEdgeId: `b-${index}`,
-              };
-              handleGroupsChange(newUpdatedGroups, index);
-            }}
-          >
-            <Handle
-              id={`b-${index}`}
-              type="source"
-              position={Position.Right}
-              isConnectable={isConnectable}
-            />
-          </LogicNode>
-        ))}
+        {state.logicNodes.map((_, index) => {
+          const conn = connections[index];
+          const nodeId = conn.target;
+          const sourceHandle = conn.sourceHandle;
+
+          return (
+            <LogicNode
+              key={index}
+              dropdownId={`logicSelect-${index}`}
+              onGroupsChange={(updatedGroups) => {
+                // console.log('updatedGroups CondicionalNode: ', updatedGroups);
+
+                const newUpdatedGroups = {
+                  ...updatedGroups,
+                  outgoingEdgeId: sourceHandle,
+                  outgoingNodeId: nodeId,
+                };
+                handleGroupsChange(newUpdatedGroups, index);
+              }}
+            >
+              <Handle
+                id={`b-${index}`}
+                type="source"
+                position={Position.Right}
+                isConnectable={isConnectable}
+              />
+            </LogicNode>
+          );
+        })}
       </StyledDiv>
 
       <Button
