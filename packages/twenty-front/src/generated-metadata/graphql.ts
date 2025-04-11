@@ -168,6 +168,17 @@ export type BillingEndTrialPeriodOutput = {
   status?: Maybe<SubscriptionStatus>;
 };
 
+export type BillingMeteredProductUsageOutput = {
+  __typename?: 'BillingMeteredProductUsageOutput';
+  includedFreeQuantity: Scalars['Float']['output'];
+  periodEnd: Scalars['DateTime']['output'];
+  periodStart: Scalars['DateTime']['output'];
+  productKey: BillingProductKey;
+  totalCostCents: Scalars['Float']['output'];
+  unitPriceCents: Scalars['Float']['output'];
+  usageQuantity: Scalars['Float']['output'];
+};
+
 /** The different billing plans available */
 export enum BillingPlanKey {
   ENTERPRISE = 'ENTERPRISE',
@@ -338,6 +349,49 @@ export type ComputeStepOutputSchemaInput = {
   step: Scalars['JSON']['input'];
 };
 
+export type ConfigVariable = {
+  __typename?: 'ConfigVariable';
+  description: Scalars['String']['output'];
+  isSensitive: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
+  value: Scalars['String']['output'];
+};
+
+export enum ConfigVariablesGroup {
+  AnalyticsConfig = 'AnalyticsConfig',
+  BillingConfig = 'BillingConfig',
+  CaptchaConfig = 'CaptchaConfig',
+  CloudflareConfig = 'CloudflareConfig',
+  EmailSettings = 'EmailSettings',
+  ExceptionHandler = 'ExceptionHandler',
+  GoogleAuth = 'GoogleAuth',
+  LLM = 'LLM',
+  Logging = 'Logging',
+  Metering = 'Metering',
+  MicrosoftAuth = 'MicrosoftAuth',
+  Other = 'Other',
+  RateLimiting = 'RateLimiting',
+  SSL = 'SSL',
+  ServerConfig = 'ServerConfig',
+  ServerlessConfig = 'ServerlessConfig',
+  StorageConfig = 'StorageConfig',
+  SupportChatConfig = 'SupportChatConfig',
+  TokensDuration = 'TokensDuration'
+}
+
+export type ConfigVariablesGroupData = {
+  __typename?: 'ConfigVariablesGroupData';
+  description: Scalars['String']['output'];
+  isHiddenOnLoad: Scalars['Boolean']['output'];
+  name: ConfigVariablesGroup;
+  variables: Array<ConfigVariable>;
+};
+
+export type ConfigVariablesOutput = {
+  __typename?: 'ConfigVariablesOutput';
+  groups: Array<ConfigVariablesGroupData>;
+};
+
 export type CreateAgentInput = {
   inboxesIds: Array<Scalars['String']['input']>;
   isAdmin: Scalars['Boolean']['input'];
@@ -379,6 +433,17 @@ export type CreateFieldInput = {
   options?: InputMaybe<Scalars['JSON']['input']>;
   settings?: InputMaybe<Scalars['JSON']['input']>;
   type: FieldMetadataType;
+};
+
+export type CreateInterIntegrationInput = {
+  certificate?: InputMaybe<Scalars['String']['input']>;
+  clientId: Scalars['String']['input'];
+  clientSecret: Scalars['String']['input'];
+  expirationDate?: InputMaybe<Scalars['DateTime']['input']>;
+  integrationName: Scalars['String']['input'];
+  privateKey?: InputMaybe<Scalars['String']['input']>;
+  status?: Scalars['String']['input'];
+  workspaceId: Scalars['ID']['input'];
 };
 
 export type CreateObjectInput = {
@@ -630,49 +695,6 @@ export type Encaminhamento = {
   encaminhamento_destino?: Maybe<Array<Scalars['String']['output']>>;
   encaminhamento_destinos?: Maybe<Array<Scalars['String']['output']>>;
   encaminhamento_tipo?: Maybe<Scalars['String']['output']>;
-};
-
-export type EnvironmentVariable = {
-  __typename?: 'EnvironmentVariable';
-  description: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-  sensitive: Scalars['Boolean']['output'];
-  value: Scalars['String']['output'];
-};
-
-export enum EnvironmentVariablesGroup {
-  AnalyticsConfig = 'AnalyticsConfig',
-  BillingConfig = 'BillingConfig',
-  CaptchaConfig = 'CaptchaConfig',
-  CloudflareConfig = 'CloudflareConfig',
-  EmailSettings = 'EmailSettings',
-  ExceptionHandler = 'ExceptionHandler',
-  GoogleAuth = 'GoogleAuth',
-  LLM = 'LLM',
-  Logging = 'Logging',
-  Metering = 'Metering',
-  MicrosoftAuth = 'MicrosoftAuth',
-  Other = 'Other',
-  RateLimiting = 'RateLimiting',
-  SSL = 'SSL',
-  ServerConfig = 'ServerConfig',
-  ServerlessConfig = 'ServerlessConfig',
-  StorageConfig = 'StorageConfig',
-  SupportChatConfig = 'SupportChatConfig',
-  TokensDuration = 'TokensDuration'
-}
-
-export type EnvironmentVariablesGroupData = {
-  __typename?: 'EnvironmentVariablesGroupData';
-  description: Scalars['String']['output'];
-  isHiddenOnLoad: Scalars['Boolean']['output'];
-  name: EnvironmentVariablesGroup;
-  variables: Array<EnvironmentVariable>;
-};
-
-export type EnvironmentVariablesOutput = {
-  __typename?: 'EnvironmentVariablesOutput';
-  groups: Array<EnvironmentVariablesGroupData>;
 };
 
 export type ExecuteServerlessFunctionInput = {
@@ -990,6 +1012,19 @@ export enum IntegrationType {
   WHATSAPP = 'WHATSAPP'
 }
 
+export type InterIntegration = {
+  __typename?: 'InterIntegration';
+  certificate?: Maybe<Scalars['String']['output']>;
+  clientId: Scalars['String']['output'];
+  clientSecret: Scalars['String']['output'];
+  expirationDate?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['UUID']['output'];
+  integrationName: Scalars['String']['output'];
+  privateKey?: Maybe<Scalars['String']['output']>;
+  status: Scalars['String']['output'];
+  workspace: Workspace;
+};
+
 export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
@@ -1054,6 +1089,7 @@ export type Mutation = {
   createAgent: Agent;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createDraftFromWorkflowVersion: WorkflowVersion;
+  createInterIntegration: InterIntegration;
   createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
   createOneField: Field;
@@ -1112,14 +1148,17 @@ export type Mutation = {
   signUpInNewWorkspace: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean']['output'];
+  switchToYearlyInterval: BillingUpdateOutput;
+  syncInterData: Scalars['Boolean']['output'];
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
   toggleAgentStatus: Scalars['Boolean']['output'];
+  toggleInterIntegrationStatus: Scalars['String']['output'];
   toggleWhatsappIntegrationStatus: Scalars['Boolean']['output'];
   track: Analytics;
   unsyncRemoteTable: RemoteTable;
   updateAgent: Agent;
-  updateBillingSubscription: BillingUpdateOutput;
+  updateInterIntegration: InterIntegration;
   updateLabPublicFeatureFlag: FeatureFlag;
   updateOneField: Field;
   updateOneObject: Object;
@@ -1191,6 +1230,11 @@ export type MutationCreateApprovedAccessDomainArgs = {
 
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
+};
+
+
+export type MutationCreateInterIntegrationArgs = {
+  createInput: CreateInterIntegrationInput;
 };
 
 
@@ -1457,6 +1501,11 @@ export type MutationSubmitFormStepArgs = {
 };
 
 
+export type MutationSyncInterDataArgs = {
+  integrationId: Scalars['String']['input'];
+};
+
+
 export type MutationSyncRemoteTableArgs = {
   input: RemoteTableInput;
 };
@@ -1469,6 +1518,11 @@ export type MutationSyncRemoteTableSchemaChangesArgs = {
 
 export type MutationToggleAgentStatusArgs = {
   agentId: Scalars['String']['input'];
+};
+
+
+export type MutationToggleInterIntegrationStatusArgs = {
+  integrationId: Scalars['String']['input'];
 };
 
 
@@ -1490,6 +1544,11 @@ export type MutationUnsyncRemoteTableArgs = {
 
 export type MutationUpdateAgentArgs = {
   updateInput: UpdateAgentInput;
+};
+
+
+export type MutationUpdateInterIntegrationArgs = {
+  updateInput: UpdateInterIntegrationInput;
 };
 
 
@@ -1848,9 +1907,11 @@ export type Query = {
   getAllStripeIntegrations: Array<StripeIntegration>;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
+  getConfigVariablesGrouped: ConfigVariablesOutput;
   getDashboardLinklogs: Array<LinkLogsWorkspaceEntity>;
-  getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
+  getInterAccountInfo: Scalars['String']['output'];
+  getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getQueueMetrics: QueueMetricsData;
@@ -1872,6 +1933,8 @@ export type Query = {
   inboxesByWorkspace: Array<Inbox>;
   index: Index;
   indexMetadatas: IndexConnection;
+  interIntegrationById?: Maybe<InterIntegration>;
+  interIntegrationsByWorkspace: Array<InterIntegration>;
   object: Object;
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
@@ -1968,6 +2031,11 @@ export type QueryGetIndicatorHealthStatusArgs = {
 };
 
 
+export type QueryGetInterAccountInfoArgs = {
+  integrationId: Scalars['String']['input'];
+};
+
+
 export type QueryGetQueueMetricsArgs = {
   queueName: Scalars['String']['input'];
   timeRange?: InputMaybe<QueueMetricsTimeRange>;
@@ -2035,6 +2103,16 @@ export type QueryIndexArgs = {
 export type QueryIndexMetadatasArgs = {
   filter?: IndexFilter;
   paging?: CursorPaging;
+};
+
+
+export type QueryInterIntegrationByIdArgs = {
+  integrationId: Scalars['String']['input'];
+};
+
+
+export type QueryInterIntegrationsByWorkspaceArgs = {
+  workspaceId: Scalars['String']['input'];
 };
 
 
@@ -2729,6 +2807,17 @@ export type UpdateFieldInput = {
   name?: InputMaybe<Scalars['String']['input']>;
   options?: InputMaybe<Scalars['JSON']['input']>;
   settings?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type UpdateInterIntegrationInput = {
+  certificate?: InputMaybe<Scalars['String']['input']>;
+  clientId?: InputMaybe<Scalars['String']['input']>;
+  clientSecret?: InputMaybe<Scalars['String']['input']>;
+  expirationDate?: InputMaybe<Scalars['DateTime']['input']>;
+  id: Scalars['String']['input'];
+  integrationName?: InputMaybe<Scalars['String']['input']>;
+  privateKey?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateLabPublicFeatureFlagInput = {

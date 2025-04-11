@@ -1,4 +1,3 @@
-import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -105,21 +104,6 @@ export const useCopyContextStoreStates = () => {
             instanceId: instanceIdToCopyTo,
           }),
           contextStoreCurrentViewType,
-        );
-
-        const actionMenuEntries = snapshot
-          .getLoadable(
-            actionMenuEntriesComponentState.atomFamily({
-              instanceId: instanceIdToCopyFrom,
-            }),
-          )
-          .getValue();
-
-        set(
-          actionMenuEntriesComponentState.atomFamily({
-            instanceId: instanceIdToCopyTo,
-          }),
-          actionMenuEntries,
         );
       },
     [],

@@ -20,11 +20,18 @@ export const usePreviousHotkeyScope = (memoizeKey = 'global') => {
           .getValue();
 
         if (!previousHotkeyScope) {
+          if (DEBUG_HOTKEY_SCOPE) {
+            logDebug(`DEBUG: no previous hotkey scope ${memoizeKey}`);
+          }
+
           return;
         }
 
         if (DEBUG_HOTKEY_SCOPE) {
-          logDebug('DEBUG: goBackToPreviousHotkeyScope', previousHotkeyScope);
+          logDebug(
+            `DEBUG: goBackToPreviousHotkeyScope ${previousHotkeyScope.scope}`,
+            previousHotkeyScope,
+          );
         }
 
         setHotkeyScope(

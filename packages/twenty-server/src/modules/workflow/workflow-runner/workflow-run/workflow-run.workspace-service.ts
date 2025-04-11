@@ -106,7 +106,7 @@ export class WorkflowRunWorkspaceService {
   }: {
     workflowRunId: string;
     context: Record<string, any>;
-    output: Pick<WorkflowRunOutput, 'flow'>;
+    output: WorkflowRunOutput;
   }) {
     const workflowRunRepository =
       await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(

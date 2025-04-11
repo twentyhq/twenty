@@ -4,6 +4,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { RecordTitleCellTextFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellTextFieldInput';
 import { RecordTitleFullNameFieldInput } from '@/object-record/record-title-cell/components/RecordTitleFullNameFieldInput';
 
@@ -27,7 +28,7 @@ export const RecordTitleCellFieldInput = ({
   onTab,
   onClickOutside,
 }: RecordTitleCellFieldInputProps) => {
-  const { fieldDefinition, recordId } = useContext(FieldContext);
+  const { fieldDefinition } = useContext(FieldContext);
 
   if (!isFieldText(fieldDefinition) && !isFieldFullName(fieldDefinition)) {
     throw new Error('Field definition is not a text or full name field');
@@ -43,7 +44,7 @@ export const RecordTitleCellFieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
           sizeVariant={sizeVariant}
-          hotkeyScope={`record-title-cell-text-field-input-${recordId}`}
+          hotkeyScope={DEFAULT_CELL_SCOPE.scope}
         />
       ) : isFieldFullName(fieldDefinition) ? (
         <RecordTitleFullNameFieldInput
@@ -53,7 +54,7 @@ export const RecordTitleCellFieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
           sizeVariant={sizeVariant}
-          hotkeyScope={`record-title-cell-full-name-field-input-${recordId}`}
+          hotkeyScope={DEFAULT_CELL_SCOPE.scope}
         />
       ) : null}
     </>

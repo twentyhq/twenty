@@ -13,10 +13,9 @@ import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
 import { captchaModuleFactory } from 'src/engine/core-modules/captcha/captcha.module-factory';
+import { DashboardLinklogsModule } from 'src/engine/core-modules/dadshboard-linklogs/dashboard-linlogs.module';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { emailModuleFactory } from 'src/engine/core-modules/email/email.module-factory';
-import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ExceptionHandlerModule } from 'src/engine/core-modules/exception-handler/exception-handler.module';
 import { exceptionHandlerModuleFactory } from 'src/engine/core-modules/exception-handler/exception-handler.module-factory';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -49,6 +48,8 @@ import { ServerlessModule } from 'src/engine/core-modules/serverless/serverless.
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { TelephonyModule } from 'src/engine/core-modules/telephony/telephony.module';
+import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkflowApiModule } from 'src/engine/core-modules/workflow/workflow-api.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
@@ -56,7 +57,6 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 
-import { DashboardLinklogsModule } from 'src/engine/core-modules/dadshboard-linklogs/dashboard-linlogs.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
@@ -90,7 +90,7 @@ import { StripeModule } from './stripe/stripe.module';
     RoleModule,
     StripeModule,
     InterModule,
-    EnvironmentModule.forRoot({}),
+    TwentyConfigModule,
     RedisClientModule,
     MetaModule,
     SectorModule,
@@ -101,27 +101,27 @@ import { StripeModule } from './stripe/stripe.module';
     DashboardLinklogsModule,
     FileStorageModule.forRootAsync({
       useFactory: fileStorageModuleFactory,
-      inject: [EnvironmentService],
+      inject: [TwentyConfigService],
     }),
     LoggerModule.forRootAsync({
       useFactory: loggerModuleFactory,
-      inject: [EnvironmentService],
+      inject: [TwentyConfigService],
     }),
     MessageQueueModule.registerAsync({
       useFactory: messageQueueModuleFactory,
-      inject: [EnvironmentService, RedisClientService],
+      inject: [TwentyConfigService, RedisClientService],
     }),
     ExceptionHandlerModule.forRootAsync({
       useFactory: exceptionHandlerModuleFactory,
-      inject: [EnvironmentService, HttpAdapterHost],
+      inject: [TwentyConfigService, HttpAdapterHost],
     }),
     EmailModule.forRoot({
       useFactory: emailModuleFactory,
-      inject: [EnvironmentService],
+      inject: [TwentyConfigService],
     }),
     CaptchaModule.forRoot({
       useFactory: captchaModuleFactory,
-      inject: [EnvironmentService],
+      inject: [TwentyConfigService],
     }),
     EventEmitterModule.forRoot({
       wildcard: true,
@@ -129,15 +129,15 @@ import { StripeModule } from './stripe/stripe.module';
     CacheStorageModule,
     LLMChatModelModule.forRoot({
       useFactory: llmChatModelModuleFactory,
-      inject: [EnvironmentService],
+      inject: [TwentyConfigService],
     }),
     LLMTracingModule.forRoot({
       useFactory: llmTracingModuleFactory,
-      inject: [EnvironmentService],
+      inject: [TwentyConfigService],
     }),
     ServerlessModule.forRootAsync({
       useFactory: serverlessModuleFactory,
-      inject: [EnvironmentService, FileStorageService],
+      inject: [TwentyConfigService, FileStorageService],
     }),
     SearchModule,
   ],

@@ -5,13 +5,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
-import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { InterIntegrationResolver } from 'src/engine/core-modules/inter/integration/inter-integration.resolver';
 import { InterIntegrationService } from 'src/engine/core-modules/inter/integration/inter-integration.service';
 import { InterResolver } from 'src/engine/core-modules/inter/inter.resolver';
 import { InterService } from 'src/engine/core-modules/inter/inter.service';
+import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 
@@ -28,12 +28,12 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
       ],
     }),
     HttpModule,
-    EnvironmentModule,
+    TwentyConfigModule,
   ],
   providers: [
     InterIntegrationResolver,
     InterIntegrationService,
-    EnvironmentService,
+    TwentyConfigService,
     InterService,
     InterResolver,
   ],

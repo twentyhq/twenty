@@ -17,9 +17,11 @@ import { AuthTokenPair } from '~/generated/graphql';
 import { logDebug } from '~/utils/logDebug';
 
 import { GraphQLFormattedError } from 'graphql';
+import { isDefined } from 'twenty-shared/utils';
+import { cookieStorage } from '~/utils/cookie-storage';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { ApolloManager } from '../types/apolloManager.interface';
 import { loggerLink } from '../utils/loggerLink';
-import { isDefined } from 'twenty-shared/utils';
 
 const logger = loggerLink(() => 'Twenty');
 
@@ -28,7 +30,6 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
   onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
   onUnauthenticatedError?: () => void;
-  initialTokenPair: AuthTokenPair | null;
   currentWorkspaceMember: CurrentWorkspaceMember | null;
   extraLinks?: ApolloLink[];
   isDebugMode?: boolean;
@@ -36,7 +37,6 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
 
 export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
   private client: ApolloClient<TCacheShape>;
-  private tokenPair: AuthTokenPair | null = null;
   private currentWorkspaceMember: CurrentWorkspaceMember | null = null;
 
   constructor(opts: Options<TCacheShape>) {
@@ -46,15 +46,21 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       onNetworkError,
       onTokenPairChange,
       onUnauthenticatedError,
-      initialTokenPair,
       currentWorkspaceMember,
       extraLinks,
       isDebugMode,
       ...options
     } = opts;
 
-    this.tokenPair = initialTokenPair;
     this.currentWorkspaceMember = currentWorkspaceMember;
+
+    const getTokenPair = () => {
+      const stringTokenPair = cookieStorage.getItem('tokenPair');
+      const tokenPair = isDefined(stringTokenPair)
+        ? (JSON.parse(stringTokenPair) as AuthTokenPair)
+        : undefined;
+      return tokenPair;
+    };
 
     const buildApolloLink = (): ApolloLink => {
       const httpLink = createUploadLink({
@@ -62,12 +68,23 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       });
 
       const authLink = setContext(async (_, { headers }) => {
+        const tokenPair = getTokenPair();
+
+        if (isUndefinedOrNull(tokenPair)) {
+          return {
+            headers: {
+              ...headers,
+              ...options.headers,
+            },
+          };
+        }
+
         return {
           headers: {
             ...headers,
             ...options.headers,
-            authorization: this.tokenPair?.accessToken.token
-              ? `Bearer ${this.tokenPair?.accessToken.token}`
+            authorization: tokenPair.accessToken.token
+              ? `Bearer ${tokenPair.accessToken.token}`
               : '',
             ...(this.currentWorkspaceMember?.locale
               ? { 'x-locale': this.currentWorkspaceMember.locale }
@@ -92,7 +109,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             for (const graphQLError of graphQLErrors) {
               if (graphQLError.message === 'Unauthorized') {
                 return fromPromise(
-                  renewToken(uri, this.tokenPair)
+                  renewToken(uri, getTokenPair())
                     .then((tokens) => {
                       if (isDefined(tokens)) {
                         onTokenPairChange?.(tokens);
@@ -107,10 +124,14 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
               switch (graphQLError?.extensions?.code) {
                 case 'UNAUTHENTICATED': {
                   return fromPromise(
-                    renewToken(uri, this.tokenPair)
+                    renewToken(uri, getTokenPair())
                       .then((tokens) => {
                         if (isDefined(tokens)) {
                           onTokenPairChange?.(tokens);
+                          cookieStorage.setItem(
+                            'tokenPair',
+                            JSON.stringify(tokens),
+                          );
                         }
                       })
                       .catch(() => {
@@ -159,10 +180,6 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       ...options,
       link: buildApolloLink(),
     });
-  }
-
-  updateTokenPair(tokenPair: AuthTokenPair | null) {
-    this.tokenPair = tokenPair;
   }
 
   updateWorkspaceMember(workspaceMember: CurrentWorkspaceMember | null) {

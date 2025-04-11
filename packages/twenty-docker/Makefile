@@ -14,6 +14,9 @@ TAG ?= latest
 prod-migrate-kvoipv2-db:
 	docker exec -it kvoipv2-server sh -c "yarn database:migrate:prod"
 
+prod-sync-metadata:
+	docker exec -it kvoipv2-server sh -c "yarn command:prod workspace:sync-metadata"
+
 prod-build:
 	@cd ../.. && docker build -f ./packages/twenty-docker/twenty/Dockerfile --platform $(PLATFORM) --tag twenty:$(TAG) . && cd -
 

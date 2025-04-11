@@ -1,4 +1,5 @@
 import { AuthModal } from '@/auth/components/AuthModal';
+import { animateModalState } from '@/auth/states/animateModalState';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
@@ -17,7 +18,8 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
-import { Outlet, useSearchParams } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { useScreenSize } from 'twenty-ui/utilities';
 import WebSoftphone from '../../../../softphone/components/WebSoftphone';
 
@@ -27,7 +29,7 @@ const StyledLayout = styled.div`
   flex-direction: column;
   height: 100dvh;
   position: relative;
-  scrollbar-color: ${({ theme }) => theme.border.color.medium};
+  scrollbar-color: ${({ theme }) => theme.border.color.medium} transparent;
   scrollbar-width: 4px;
   width: 100%;
 
@@ -71,8 +73,7 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
-  const [searchParams] = useSearchParams();
-  const animateModal = searchParams.get('animateModal') !== 'false';
+  const animateModal = useRecoilValue(animateModalState);
 
   return (
     <>
@@ -87,14 +88,16 @@ export const DefaultLayout = () => {
         <AppErrorBoundary FallbackComponent={AppFullScreenErrorFallback}>
           <StyledPageContainer
             animate={{
-              marginLeft:
+              transform:
                 isSettingsPage && !isMobile && !useShowFullScreen
-                  ? (windowsWidth -
-                      (OBJECT_SETTINGS_WIDTH +
-                        NAV_DRAWER_WIDTHS.menu.desktop.expanded +
-                        64)) /
-                    2
-                  : 0,
+                  ? `translateX(${
+                      (windowsWidth -
+                        (OBJECT_SETTINGS_WIDTH +
+                          NAV_DRAWER_WIDTHS.menu.desktop.expanded +
+                          76)) /
+                      2
+                    }px)`
+                  : 'translateX(0)',
             }}
             transition={{
               duration: theme.animation.duration.normal,
@@ -113,7 +116,9 @@ export const DefaultLayout = () => {
             )}
             {showAuthModal ? (
               <>
-                <SignInBackgroundMockPage />
+                <StyledMainContainer>
+                  <SignInBackgroundMockPage />
+                </StyledMainContainer>
                 <AnimatePresence mode="wait">
                   <LayoutGroup>
                     <AuthModal isOpenAnimated={animateModal}>
