@@ -174,7 +174,6 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
           <StyledLabel>Record Type</StyledLabel>
           <Dropdown
             dropdownId="workflow-edit-trigger-record-type"
-            dropdownWidth={300}
             dropdownPlacement="bottom-start"
             clickableComponent={
               <SelectControl

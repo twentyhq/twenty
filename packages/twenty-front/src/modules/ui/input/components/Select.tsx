@@ -152,10 +152,7 @@ export const Select = <Value extends SelectValue>({
                 <DropdownMenuSeparator />
               )}
               {!!filteredOptions.length && (
-                <DropdownMenuItemsContainer
-                  hasMaxHeight
-                  width={dropDownMenuWidth}
-                >
+                <DropdownMenuItemsContainer hasMaxHeight width={'auto'}>
                   {filteredOptions.map((option) => (
                     <MenuItemSelect
                       key={`${option.value}-${option.label}`}
