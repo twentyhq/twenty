@@ -11,7 +11,7 @@ type FormFieldInputInnerContainerProps = {
   preventSetHotkeyScope?: boolean;
 };
 
-const StyledFormFieldInputInputContainer = styled.div<FormFieldInputInnerContainerProps>`
+const StyledFormFieldInputInnerContainer = styled.div<FormFieldInputInnerContainerProps>`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
@@ -74,7 +74,7 @@ export const FormFieldInputInnerContainer = forwardRef(
     };
 
     return (
-      <StyledFormFieldInputInputContainer
+      <StyledFormFieldInputInnerContainer
         ref={ref}
         className={className}
         hasRightElement={hasRightElement}
@@ -84,7 +84,7 @@ export const FormFieldInputInnerContainer = forwardRef(
         onBlur={handleBlur}
       >
         {children}
-      </StyledFormFieldInputInputContainer>
+      </StyledFormFieldInputInnerContainer>
     );
   },
 );
