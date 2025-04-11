@@ -1,7 +1,7 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
-import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
+import { billingCheckoutSessionAtom } from '@/auth/states/billingCheckoutSessionAtom';
 import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { SubscriptionPrice } from '@/billing/components/SubscriptionPrice';
 import { TrialCard } from '@/billing/components/TrialCard';
@@ -10,7 +10,8 @@ import { isBillingPriceLicensed } from '@/billing/utils/isBillingPriceLicensed';
 import { billingState } from '@/client-config/states/billingState';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom } from 'jotai';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
@@ -91,8 +92,8 @@ export const ChooseYourPlan = () => {
   const billing = useRecoilValue(billingState);
   const { t } = useLingui();
 
-  const [billingCheckoutSession, setBillingCheckoutSession] = useRecoilState(
-    billingCheckoutSessionState,
+  const [billingCheckoutSession, setBillingCheckoutSession] = useAtom(
+    billingCheckoutSessionAtom,
   );
 
   const { data: plans } = useBillingBaseProductPricesQuery();

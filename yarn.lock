@@ -40025,6 +40025,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jotai-location@npm:^0.5.5":
+  version: 0.5.5
+  resolution: "jotai-location@npm:0.5.5"
+  peerDependencies:
+    jotai: ">=1.11.0"
+  checksum: 10c0/39e60235187f6ea4336b3d8b0b528f1c9532e2259b5431481e94ed5ea8a75e3e9152965e127870eef6208e81108a150e4292ec7fd7c5d2b2e638b38858cf1ae0
+  languageName: node
+  linkType: hard
+
 "jotai@npm:1.3.9":
   version: 1.3.9
   resolution: "jotai@npm:1.3.9"
@@ -40102,6 +40111,21 @@ __metadata:
     jotai-zustand:
       optional: true
   checksum: 10c0/89143947a868fde093706aa592db550a443ea51721a46e61e5616d6e282d1af76b4e8b918d8648f773085c95dbd011a2523c5ae5ca41a20f8e6b2630ab2eb689
+  languageName: node
+  linkType: hard
+
+"jotai@npm:^2.12.2":
+  version: 2.12.2
+  resolution: "jotai@npm:2.12.2"
+  peerDependencies:
+    "@types/react": ">=17.0.0"
+    react: ">=17.0.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    react:
+      optional: true
+  checksum: 10c0/df135d8a8c635df5d34bdb30b2e24afa93292c9c0bdac589ed9df31da50cec8c4820f66d04f23fa05f6c0ed0726e86c83b0767ca9c6abae4d281a253526d2db3
   languageName: node
   linkType: hard
 
@@ -55004,6 +55028,8 @@ __metadata:
     eslint-plugin-unicorn: "npm:^51.0.1"
     eslint-plugin-unused-imports: "npm:^3.0.0"
     file-saver: "npm:^2.0.5"
+    jotai: "npm:^2.12.2"
+    jotai-location: "npm:^0.5.5"
     optionator: "npm:^0.9.1"
     recoil-sync: "npm:^0.2.0"
     transliteration: "npm:^2.3.5"
