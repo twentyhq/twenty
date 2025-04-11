@@ -1,4 +1,5 @@
 import { AuthModal } from '@/auth/components/AuthModal';
+import { animateModalState } from '@/auth/states/animateModalState';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
@@ -17,7 +18,8 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
-import { Outlet, useSearchParams } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { useScreenSize } from 'twenty-ui/utilities';
 
 const StyledLayout = styled.div`
@@ -63,8 +65,7 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
-  const [searchParams] = useSearchParams();
-  const animateModal = searchParams.get('animateModal') !== 'false';
+  const animateModal = useRecoilValue(animateModalState);
 
   return (
     <>
@@ -84,7 +85,7 @@ export const DefaultLayout = () => {
                   ? (windowsWidth -
                       (OBJECT_SETTINGS_WIDTH +
                         NAV_DRAWER_WIDTHS.menu.desktop.expanded +
-                        64)) /
+                        76)) /
                     2
                   : 0,
             }}
