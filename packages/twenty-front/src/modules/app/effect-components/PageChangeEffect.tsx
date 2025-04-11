@@ -12,6 +12,8 @@ import {
   useEventTracker,
 } from '@/analytics/hooks/useEventTracker';
 import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
+import { animateModalState } from '@/auth/states/animateModalState';
+import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
@@ -26,9 +28,16 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
-
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
+
+const useInitializeUrlStates = () => {
+  // These states have special getters that fetch values from URL params if they exist
+  // Reading these values will trigger their effects which sync with URL params
+  useRecoilValue(billingCheckoutSessionState);
+  useRecoilValue(animateModalState);
+};
+
 export const PageChangeEffect = () => {
   const navigate = useNavigate();
   const { isMatchingLocation } = useIsMatchingLocation();
@@ -53,6 +62,10 @@ export const PageChangeEffect = () => {
 
   const { executeTasksOnAnyLocationChange } =
     useExecuteTasksOnAnyLocationChange();
+
+  useEffect(() => {
+    useInitializeUrlStates();
+  }, []);
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
