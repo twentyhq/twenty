@@ -91,7 +91,7 @@ export const Avatar = ({
     : null;
 
   const placeholderChar = placeholder?.[0]?.toLocaleUpperCase().trim() || '-';
-  const isEmpty = placeholder?.[0]?.toLocaleUpperCase().trim() === '';
+  const isEmpty = placeholder?.[0]?.toLocaleUpperCase().trim();
 
   const showPlaceholder =
     isNull(avatarImageURI) || invalidAvatarUrls.includes(avatarImageURI);
