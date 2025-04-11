@@ -144,7 +144,7 @@ export const AdvancedFilterFieldSelectMenu = ({
       <SelectableList
         hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
         selectableItemIdArray={selectableFieldMetadataItemIds}
-        selectableListId={OBJECT_FILTER_DROPDOWN_ID}
+        selectableListInstanceId={OBJECT_FILTER_DROPDOWN_ID}
         onEnter={handleEnter}
       >
         <DropdownMenuItemsContainer>

@@ -90,7 +90,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
 
   return (
     <SelectableList
-      selectableListId="boolean-select"
+      selectableListInstanceId="boolean-select"
       selectableItemIdArray={options.map((option) => option.toString())}
       hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
       onEnter={(itemId) => {

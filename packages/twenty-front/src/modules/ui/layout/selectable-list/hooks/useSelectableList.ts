@@ -1,60 +1,85 @@
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
-import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListStates';
+import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useSelectableList = (selectableListId?: string) => {
-  const {
-    scopeId,
-    selectableItemIdsState,
-    selectableListOnEnterState,
-    isSelectedItemIdSelector,
-    selectedItemIdState,
-  } = useSelectableListStates({
-    selectableListScopeId: selectableListId,
-  });
-
-  const setSelectableItemIds = useSetRecoilState(selectableItemIdsState);
-  const setSelectableListOnEnter = useSetRecoilState(
-    selectableListOnEnterState,
+export const useSelectableList = (instanceId?: string) => {
+  const selectableListInstanceId = useAvailableComponentInstanceIdOrThrow(
+    SelectableListComponentInstanceContext,
+    instanceId,
   );
-
   const resetSelectedItem = useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
-        const selectedItemId = getSnapshotValue(snapshot, selectedItemIdState);
+        const selectedItemId = getSnapshotValue(
+          snapshot,
+          selectedItemIdComponentState.atomFamily({
+            instanceId: selectableListInstanceId,
+          }),
+        );
 
         if (isDefined(selectedItemId)) {
-          set(selectedItemIdState, null);
-          set(isSelectedItemIdSelector(selectedItemId), false);
+          set(
+            selectedItemIdComponentState.atomFamily({
+              instanceId: selectableListInstanceId,
+            }),
+            null,
+          );
+          set(
+            isSelectedItemIdComponentFamilySelector.selectorFamily({
+              instanceId: selectableListInstanceId,
+              familyKey: selectedItemId,
+            }),
+            false,
+          );
         }
       },
-    [selectedItemIdState, isSelectedItemIdSelector],
+    [selectableListInstanceId],
   );
 
   const setSelectedItemId = useRecoilCallback(
     ({ set, snapshot }) =>
       (itemId: string) => {
-        const selectedItemId = getSnapshotValue(snapshot, selectedItemIdState);
+        const selectedItemId = getSnapshotValue(
+          snapshot,
+          selectedItemIdComponentState.atomFamily({
+            instanceId: selectableListInstanceId,
+          }),
+        );
 
         if (isDefined(selectedItemId)) {
-          set(isSelectedItemIdSelector(selectedItemId), false);
+          set(
+            isSelectedItemIdComponentFamilySelector.selectorFamily({
+              instanceId: selectableListInstanceId,
+              familyKey: selectedItemId,
+            }),
+            false,
+          );
         }
 
-        set(selectedItemIdState, itemId);
-        set(isSelectedItemIdSelector(itemId), true);
+        set(
+          selectedItemIdComponentState.atomFamily({
+            instanceId: selectableListInstanceId,
+          }),
+          itemId,
+        );
+        set(
+          isSelectedItemIdComponentFamilySelector.selectorFamily({
+            instanceId: selectableListInstanceId,
+            familyKey: itemId,
+          }),
+          true,
+        );
       },
-    [selectedItemIdState, isSelectedItemIdSelector],
+    [selectableListInstanceId],
   );
 
   return {
-    selectableListId: scopeId,
-    setSelectableItemIds,
-    isSelectedItemIdSelector,
-    setSelectableListOnEnter,
     resetSelectedItem,
     setSelectedItemId,
-    selectedItemIdState,
   };
 };

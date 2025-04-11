@@ -1,9 +1,12 @@
-import { act } from 'react-dom/test-utils';
 import { renderHook } from '@testing-library/react';
-import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil';
+import { act } from 'react-dom/test-utils';
+import { RecoilRoot } from 'recoil';
 
-import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListStates';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
 const selectableListScopeId = 'testId';
 const testArr = [['1'], ['2'], ['3']];
@@ -13,15 +16,15 @@ describe('useSelectableList', () => {
   it('Should setSelectableItemIds', async () => {
     const { result } = renderHook(
       () => {
-        const { setSelectableItemIds } = useSelectableList(
+        const setSelectableItemIds = useSetRecoilComponentStateV2(
+          selectableItemIdsComponentState,
           selectableListScopeId,
         );
 
-        const { selectableItemIdsState } = useSelectableListStates({
+        const selectableItemIds = useRecoilComponentValueV2(
+          selectableItemIdsComponentState,
           selectableListScopeId,
-        });
-
-        const selectableItemIds = useRecoilValue(selectableItemIdsState);
+        );
 
         return {
           setSelectableItemIds,
@@ -47,13 +50,14 @@ describe('useSelectableList', () => {
       () => {
         const { resetSelectedItem } = useSelectableList(selectableListScopeId);
 
-        const { selectedItemIdState } = useSelectableListStates({
+        const selectedItemId = useRecoilComponentValueV2(
+          selectedItemIdComponentState,
           selectableListScopeId,
-        });
-
-        const [selectedItemId, setSelectedItemId] =
-          useRecoilState(selectedItemIdState);
-
+        );
+        const setSelectedItemId = useSetRecoilComponentStateV2(
+          selectedItemIdComponentState,
+          selectableListScopeId,
+        );
         return {
           resetSelectedItem,
           selectedItemId,
