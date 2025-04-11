@@ -20,10 +20,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
-import {
-  OnboardingStatus,
-  useActivateWorkspaceMutation,
-} from '~/generated/graphql';
+import { useActivateWorkspaceMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -109,12 +106,6 @@ export const CreateWorkspace = () => {
       handleSubmit(onSubmit)();
     }
   };
-
-  console.log('onboardingStatus', onboardingStatus);
-
-  if (onboardingStatus !== OnboardingStatus.WORKSPACE_ACTIVATION) {
-    return null;
-  }
 
   return (
     <>

@@ -1,7 +1,6 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useTheme } from '@emotion/react';
@@ -36,7 +35,6 @@ export const PaymentSuccess = () => {
   const theme = useTheme();
   const navigate = useNavigateApp();
   const subscriptionStatus = useSubscriptionStatus();
-  const onboardingStatus = useOnboardingStatus();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
   const setCurrentUser = useSetRecoilState(currentUserState);
   const color =

@@ -8,6 +8,5 @@ const StyledContentContainer = styled(motion.div)`
 `;
 
 export const SignInUpLoading = () => {
-  console.log('coucou SignInUpLoading');
   return <StyledContentContainer />;
 };
