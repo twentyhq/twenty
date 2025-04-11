@@ -16,6 +16,7 @@ import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entitie
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
+import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
@@ -64,6 +65,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         WhatsappIntegration,
         Sector,
         Agent,
+        InterIntegration,
         Inbox,
         StripeIntegration,
       ],

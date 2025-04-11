@@ -55,5 +55,14 @@ export const getSettingsIntegrationAll = ({
       text: 'Whatsapp',
       link: '/settings/integrations/whatsapp',
     },
+    {
+      from: {
+        key: 'inter',
+        image: '/images/integrations/company.svg',
+      },
+      type: 'Add',
+      text: 'Banco Inter',
+      link: '/settings/integrations/inter',
+    },
   ].filter(Boolean) as SettingsIntegration[],
 });

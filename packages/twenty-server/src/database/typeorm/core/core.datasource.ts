@@ -12,7 +12,7 @@ const isJest = process.argv.some((arg) => arg.includes('jest'));
 export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
   url: process.env.PG_DATABASE_URL,
   type: 'postgres',
-  logging: ['error'],
+  logging: ['error', 'log', 'info'],
   schema: 'core',
   entities:
     process.env.IS_BILLING_ENABLED === 'true'

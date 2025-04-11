@@ -13,6 +13,7 @@ import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
 import { captchaModuleFactory } from 'src/engine/core-modules/captcha/captcha.module-factory';
+import { DashboardLinklogsModule } from 'src/engine/core-modules/dadshboard-linklogs/dashboard-linlogs.module';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { emailModuleFactory } from 'src/engine/core-modules/email/email.module-factory';
 import { ExceptionHandlerModule } from 'src/engine/core-modules/exception-handler/exception-handler.module';
@@ -24,6 +25,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { GoogleStorageModule } from 'src/engine/core-modules/google-cloud/google-storage.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
+import { InterModule } from 'src/engine/core-modules/inter/inter.module';
 import { LabModule } from 'src/engine/core-modules/lab/lab.module';
 import { LLMChatModelModule } from 'src/engine/core-modules/llm-chat-model/llm-chat-model.module';
 import { llmChatModelModuleFactory } from 'src/engine/core-modules/llm-chat-model/llm-chat-model.module-factory';
@@ -55,7 +57,6 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 
-import { DashboardLinklogsModule } from 'src/engine/core-modules/dadshboard-linklogs/dashboard-linlogs.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
@@ -88,6 +89,7 @@ import { StripeModule } from './stripe/stripe.module';
     LabModule,
     RoleModule,
     StripeModule,
+    InterModule,
     TwentyConfigModule,
     RedisClientModule,
     MetaModule,
@@ -150,6 +152,7 @@ import { StripeModule } from './stripe/stripe.module';
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
     StripeModule,
+    InterModule,
   ],
 })
 export class CoreEngineModule {}
