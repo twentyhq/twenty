@@ -1,3 +1,4 @@
+import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
 import { getRecordTitleCellId } from '@/object-record/record-title-cell/utils/getRecordTitleCellId';
 import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
@@ -13,7 +14,7 @@ export const useRecordTitleCell = () => {
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope();
+  } = usePreviousHotkeyScope(INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY);
 
   const closeRecordTitleCell = useRecoilCallback(
     ({ set }) =>

@@ -1,4 +1,5 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { useRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
@@ -32,7 +33,9 @@ export const RecordTitleCellSingleTextDisplayMode = () => {
 
   const { openInlineCell } = useInlineCell();
 
-  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
+  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope(
+    INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
+  );
 
   return (
     <StyledDiv
