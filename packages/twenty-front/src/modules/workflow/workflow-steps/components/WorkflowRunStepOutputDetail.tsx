@@ -1,5 +1,6 @@
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
+import { WorkflowExecutorOutput } from '@/workflow/types/Workflow';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { WorkflowRunStepJsonContainer } from '@/workflow/workflow-steps/components/WorkflowRunStepJsonContainer';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
@@ -33,7 +34,9 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
     return null;
   }
 
-  const stepOutput = workflowRun.output.stepsOutput[stepId];
+  const stepOutput = workflowRun.output.stepsOutput[stepId] as
+    | WorkflowExecutorOutput
+    | undefined;
 
   const stepDefinition = getStepDefinitionOrThrow({
     stepId,
@@ -78,7 +81,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
 
       <WorkflowRunStepJsonContainer>
         <JsonTree
-          value={stepOutput}
+          value={stepOutput ?? t`No output available`}
           shouldExpandNodeInitially={isTwoFirstDepths}
           emptyArrayLabel={t`Empty Array`}
           emptyObjectLabel={t`Empty Object`}
@@ -86,7 +89,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
           arrowButtonCollapsedLabel={t`Expand`}
           arrowButtonExpandedLabel={t`Collapse`}
           getNodeHighlighting={
-            isDefined(stepOutput.error)
+            isDefined(stepOutput?.error)
               ? setRedHighlightingForEveryNode
               : undefined
           }
