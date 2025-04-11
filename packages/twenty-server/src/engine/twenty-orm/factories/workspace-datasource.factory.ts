@@ -324,12 +324,14 @@ export class WorkspaceDatasourceFactory {
     setData: (data: T) => void;
     setVersion: (version: string) => void;
   }): void {
-    if (isDefined(newVersion) && isDefined(newData)) {
-      if (currentVersion !== newVersion) {
-        workspaceDataSource.manager.repositories.clear();
-        setData(newData);
-        setVersion(newVersion);
-      }
+    if (
+      isDefined(newVersion) &&
+      isDefined(newData) &&
+      currentVersion !== newVersion
+    ) {
+      workspaceDataSource.manager.repositories.clear();
+      setData(newData);
+      setVersion(newVersion);
     }
   }
 

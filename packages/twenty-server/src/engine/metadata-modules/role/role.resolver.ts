@@ -111,12 +111,10 @@ export class RoleResolver {
   ): Promise<RoleDTO> {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
 
-    const role = await this.roleService.createRole({
+    return await this.roleService.createRole({
       workspaceId: workspace.id,
       input: createRoleInput,
     });
-
-    return role;
   }
 
   @Mutation(() => RoleDTO)
