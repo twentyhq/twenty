@@ -2,7 +2,7 @@ import { FormFieldInputHotKeyScope } from '@/object-record/record-field/form-typ
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { HTMLAttributes } from 'react';
+import { forwardRef, HTMLAttributes, Ref } from 'react';
 
 type FormFieldInputInnerContainerProps = {
   hasRightElement: boolean;
@@ -36,49 +36,55 @@ const StyledFormFieldInputInputContainer = styled.div<FormFieldInputInnerContain
   width: 100%;
 `;
 
-export const FormFieldInputInnerContainer = ({
-  className,
-  children,
-  onFocus,
-  onBlur,
-  hasRightElement,
-  multiline,
-  readonly,
-  preventSetHotkeyScope = false,
-}: HTMLAttributes<HTMLDivElement> & FormFieldInputInnerContainerProps) => {
-  const {
-    goBackToPreviousHotkeyScope,
-    setHotkeyScopeAndMemorizePreviousScope,
-  } = usePreviousHotkeyScope();
+export const FormFieldInputInnerContainer = forwardRef(
+  (
+    {
+      className,
+      children,
+      onFocus,
+      onBlur,
+      hasRightElement,
+      multiline,
+      readonly,
+      preventSetHotkeyScope = false,
+    }: HTMLAttributes<HTMLDivElement> & FormFieldInputInnerContainerProps,
+    ref: Ref<HTMLDivElement>,
+  ) => {
+    const {
+      goBackToPreviousHotkeyScope,
+      setHotkeyScopeAndMemorizePreviousScope,
+    } = usePreviousHotkeyScope();
 
-  const handleFocus = (e: React.FocusEvent<HTMLDivElement>) => {
-    onFocus?.(e);
+    const handleFocus = (e: React.FocusEvent<HTMLDivElement>) => {
+      onFocus?.(e);
 
-    if (!preventSetHotkeyScope) {
-      setHotkeyScopeAndMemorizePreviousScope(
-        FormFieldInputHotKeyScope.FormFieldInput,
-      );
-    }
-  };
+      if (!preventSetHotkeyScope) {
+        setHotkeyScopeAndMemorizePreviousScope(
+          FormFieldInputHotKeyScope.FormFieldInput,
+        );
+      }
+    };
 
-  const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
-    onBlur?.(e);
+    const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+      onBlur?.(e);
 
-    if (!preventSetHotkeyScope) {
-      goBackToPreviousHotkeyScope();
-    }
-  };
+      if (!preventSetHotkeyScope) {
+        goBackToPreviousHotkeyScope();
+      }
+    };
 
-  return (
-    <StyledFormFieldInputInputContainer
-      className={className}
-      hasRightElement={hasRightElement}
-      multiline={multiline}
-      readonly={readonly}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-    >
-      {children}
-    </StyledFormFieldInputInputContainer>
-  );
-};
+    return (
+      <StyledFormFieldInputInputContainer
+        ref={ref}
+        className={className}
+        hasRightElement={hasRightElement}
+        multiline={multiline}
+        readonly={readonly}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+      >
+        {children}
+      </StyledFormFieldInputInputContainer>
+    );
+  },
+);
