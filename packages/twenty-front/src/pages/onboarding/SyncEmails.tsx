@@ -6,7 +6,6 @@ import { Key } from 'ts-key-enum';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingSyncEmailsSettingsCard } from '@/onboarding/components/OnboardingSyncEmailsSettingsCard';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
@@ -25,7 +24,6 @@ import { ClickToActionLink } from 'twenty-ui/navigation';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
-  OnboardingStatus,
   useSkipSyncEmailOnboardingStepMutation,
 } from '~/generated/graphql';
 
@@ -54,7 +52,6 @@ export const SyncEmails = () => {
   const theme = useTheme();
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const currentUser = useRecoilValue(currentUserState);
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
     MessageChannelVisibility.SHARE_EVERYTHING,
   );
@@ -105,10 +102,6 @@ export const SyncEmails = () => {
     PageHotkeyScope.SyncEmail,
     [continueWithoutSync],
   );
-
-  if (currentUser?.onboardingStatus !== OnboardingStatus.SYNC_EMAIL) {
-    return <></>;
-  }
 
   return (
     <>
