@@ -1,6 +1,9 @@
 import { createState } from 'twenty-ui/utilities';
 import { uRLParamEffect } from '~/utils/recoil-effects';
 
+// This is used to automatically save url parameters to a state
+// which can then be accessed later after the user navigated.
+// Example use-cases: referal tracking, pricing option already select on the marketing website, etc.
 export const createURLParamState = <T>({
   key,
   paramName,
