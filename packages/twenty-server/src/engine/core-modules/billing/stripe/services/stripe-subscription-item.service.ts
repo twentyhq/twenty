@@ -27,4 +27,14 @@ export class StripeSubscriptionItemService {
   async updateSubscriptionItem(stripeItemId: string, quantity: number) {
     await this.stripe.subscriptionItems.update(stripeItemId, { quantity });
   }
+
+  async createSubscriptionItem(
+    stripeSubscriptionId: string,
+    stripePriceId: string,
+  ) {
+    return this.stripe.subscriptionItems.create({
+      subscription: stripeSubscriptionId,
+      price: stripePriceId,
+    });
+  }
 }
