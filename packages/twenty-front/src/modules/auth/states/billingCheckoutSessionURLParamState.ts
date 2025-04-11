@@ -2,6 +2,21 @@ import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/BillingCheckoutSessionDefaultValue';
 import { createURLParamState } from '~/modules/ui/utilities/state/utils/createURLParamState';
 
+const isBillingCheckoutSession = (
+  value: unknown,
+): value is BillingCheckoutSession => {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'plan' in value &&
+    'interval' in value &&
+    'requirePaymentMethod' in value &&
+    typeof (value as BillingCheckoutSession).plan === 'string' &&
+    typeof (value as BillingCheckoutSession).interval === 'string' &&
+    typeof (value as BillingCheckoutSession).requirePaymentMethod === 'boolean'
+  );
+};
+
 export const billingCheckoutSessionURLParamState =
   createURLParamState<BillingCheckoutSession>({
     key: 'billingCheckoutSessionURLParamState',
@@ -10,17 +25,12 @@ export const billingCheckoutSessionURLParamState =
     parseValue: (value) => {
       try {
         const parsed = JSON.parse(decodeURIComponent(value));
-        if (
-          typeof parsed === 'object' &&
-          parsed !== null &&
-          'plan' in parsed &&
-          'interval' in parsed &&
-          'requirePaymentMethod' in parsed
-        ) {
-          return parsed as BillingCheckoutSession;
+        if (isBillingCheckoutSession(parsed)) {
+          return parsed;
         }
+        console.warn('Invalid billing checkout session format:', parsed);
       } catch (e) {
-        // If parsing fails, return null
+        console.warn('Failed to parse billing checkout session:', e);
       }
       return null;
     },

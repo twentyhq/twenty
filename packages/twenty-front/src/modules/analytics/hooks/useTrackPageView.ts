@@ -1,9 +1,10 @@
+import { useCallback, useEffect } from 'react';
 import { setSessionId, useEventTracker } from '../hooks/useEventTracker';
 
 export const useTrackPageView = () => {
   const eventTracker = useEventTracker();
 
-  const timeoutId = setTimeout(() => {
+  const trackPageView = useCallback(() => {
     setSessionId();
     eventTracker('pageview', {
       pathname: window.location.pathname,
@@ -13,7 +14,10 @@ export const useTrackPageView = () => {
       referrer: document.referrer,
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     });
-  }, 500);
+  }, [eventTracker]);
 
-  return () => clearTimeout(timeoutId);
+  useEffect(() => {
+    const timeoutId = setTimeout(trackPageView, 500);
+    return () => clearTimeout(timeoutId);
+  }, [trackPageView]);
 };
