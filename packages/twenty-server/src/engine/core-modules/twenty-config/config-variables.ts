@@ -515,6 +515,7 @@ export class ConfigVariables {
   })
   @IsNumber()
   @CastToPositiveNumber()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   BILLING_SUBSCRIPTION_THRESHOLD_AMOUNT = 10000;
 
   @ConfigVariablesMetadata({
@@ -523,6 +524,7 @@ export class ConfigVariables {
   })
   @IsNumber()
   @CastToPositiveNumber()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD = 5000;
 
   @ConfigVariablesMetadata({
@@ -531,6 +533,7 @@ export class ConfigVariables {
   })
   @IsNumber()
   @CastToPositiveNumber()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD = 10000;
 
   @ConfigVariablesMetadata({

@@ -7,6 +7,7 @@ import assert from 'assert';
 
 import { differenceInDays } from 'date-fns';
 import Stripe from 'stripe';
+import { isDefined } from 'twenty-shared/utils';
 import { Not, Repository } from 'typeorm';
 
 import {
@@ -297,19 +298,25 @@ export class BillingSubscriptionService {
   private getTrialPeriodFreeWorkflowCredits(
     billingSubscription: BillingSubscription,
   ) {
-    const trialDuration = differenceInDays(
-      billingSubscription.trialEnd ?? new Date(),
-      billingSubscription.trialStart ?? new Date(),
-    );
+    const trialDuration =
+      isDefined(billingSubscription.trialEnd) &&
+      isDefined(billingSubscription.trialStart)
+        ? differenceInDays(
+            billingSubscription.trialEnd,
+            billingSubscription.trialStart,
+          )
+        : 0;
 
     const trialWithCreditCardDuration = this.twentyConfigService.get(
       'BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS',
     );
 
-    return this.twentyConfigService.get(
-      trialDuration === trialWithCreditCardDuration
-        ? 'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD'
-        : 'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
+    return Number(
+      this.twentyConfigService.get(
+        trialDuration === trialWithCreditCardDuration
+          ? 'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD'
+          : 'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
+      ),
     );
   }
 }

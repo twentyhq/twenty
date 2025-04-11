@@ -145,12 +145,13 @@ export class BillingWebhookSubscriptionService {
         where: {
           key: FeatureFlagKey.IsMeteredProductBillingEnabled,
           workspaceId: workspaceId,
+          value: true,
         },
       });
 
     if (
       event.type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED &&
-      isMeteredProductBillingEnabled
+      isDefined(isMeteredProductBillingEnabled)
     ) {
       await this.billingSubscriptionService.setBillingThresholdsAndTrialPeriodWorkflowCredits(
         updatedBillingSubscription.id,
