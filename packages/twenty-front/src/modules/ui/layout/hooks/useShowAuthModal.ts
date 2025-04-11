@@ -1,14 +1,10 @@
 import { useMemo } from 'react';
 
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
-import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 export const useShowAuthModal = () => {
   const { isMatchingLocation } = useIsMatchingLocation();
-  const isLoggedIn = useIsLogged();
-  const onboardingStatus = useOnboardingStatus();
 
   return useMemo(() => {
     if (
@@ -21,11 +17,12 @@ export const useShowAuthModal = () => {
       isMatchingLocation(AppPath.Verify) ||
       isMatchingLocation(AppPath.SignInUp) ||
       isMatchingLocation(AppPath.CreateWorkspace) ||
-      isMatchingLocation(AppPath.PlanRequired)
+      isMatchingLocation(AppPath.PlanRequired) ||
+      isMatchingLocation(AppPath.PlanRequiredSuccess)
     ) {
       return true;
     }
 
     return false;
-  }, [isLoggedIn, isMatchingLocation, onboardingStatus]);
+  }, [isMatchingLocation]);
 };
