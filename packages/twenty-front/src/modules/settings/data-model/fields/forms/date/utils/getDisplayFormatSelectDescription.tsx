@@ -1,5 +1,4 @@
 import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
-import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 
 export const getDisplayFormatSelectDescription = (
@@ -20,6 +19,6 @@ export const getDisplayFormatSelectDescription = (
       </>
     );
   } else {
-    return t`Choose the format used to display date value`;
+    return <Trans>Choose the format used to display date value</Trans>;
   }
 };
