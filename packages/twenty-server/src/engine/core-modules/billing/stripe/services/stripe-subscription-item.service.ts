@@ -32,7 +32,7 @@ export class StripeSubscriptionItemService {
     stripeSubscriptionId: string,
     stripePriceId: string,
   ) {
-    await this.stripe.subscriptionItems.create({
+    return this.stripe.subscriptionItems.create({
       subscription: stripeSubscriptionId,
       price: stripePriceId,
     });

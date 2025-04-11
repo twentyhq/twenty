@@ -90,7 +90,7 @@ export class BillingAddWorkflowSubscriptionItemCommand extends ActiveOrSuspended
 
   private getSubscriptionBasedProductAndPrice(
     billingProducts: BillingProduct[],
-    subscription: BillingSubscription | null,
+    subscription: BillingSubscription,
   ) {
     const basedProductSubscriptionItem =
       subscription?.billingSubscriptionItems.find((item) => {
@@ -133,7 +133,7 @@ export class BillingAddWorkflowSubscriptionItemCommand extends ActiveOrSuspended
   ) {
     const associatedMeteredProduct = billingProducts.find(
       (product) =>
-        product.metadata.planKey === basedProduct?.metadata.planKey &&
+        product.metadata.planKey === basedProduct.metadata.planKey &&
         product.metadata.productKey ===
           BillingProductKey.WORKFLOW_NODE_EXECUTION,
     );
