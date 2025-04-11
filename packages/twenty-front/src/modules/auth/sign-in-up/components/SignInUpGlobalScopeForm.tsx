@@ -90,13 +90,13 @@ export const SignInUpGlobalScopeForm = () => {
           variant: SnackBarVariant.Error,
         });
       },
-      onCompleted: (data) => {
+      onCompleted: async (data) => {
         requestFreshCaptchaToken();
         const response = data.checkUserExists;
         if (response.__typename === 'UserExists') {
           if (response.availableWorkspaces.length >= 1) {
             const workspace = response.availableWorkspaces[0];
-            return redirectToWorkspaceDomain(
+            return await redirectToWorkspaceDomain(
               getWorkspaceUrl(workspace.workspaceUrls),
               pathname,
               {

@@ -810,6 +810,11 @@ msgstr "Каталонски"
 msgid "Change Password"
 msgstr "Промени лозинку"
 
+#. js-lingui-id: wRtBJP
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "Change Plan"
+msgstr ""
+
 #. js-lingui-id: b0h4XW
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Change to yearly"
@@ -1907,8 +1912,8 @@ msgstr ""
 
 #. js-lingui-id: LFNXuj
 #: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
-msgid "Exit Full Screen"
-msgstr "Изађи из целог екрана"
+#~ msgid "Exit Full Screen"
+#~ msgstr "Изађи из целог екрана"
 
 #. js-lingui-id: XB4onr
 #: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
@@ -3136,6 +3141,11 @@ msgstr "Нема доступних података о метрикама"
 msgid "No more members to assign"
 msgstr "Нема више чланова за доделу"
 
+#. js-lingui-id: tTItk7
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+msgid "No output available"
+msgstr ""
+
 #. js-lingui-id: 5pSj4j
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "No payment method found. Please update your billing details."
@@ -4263,8 +4273,8 @@ msgstr ""
 
 #. js-lingui-id: E4rPXj
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Switch Plan"
-msgstr ""
+#~ msgid "Switch Plan"
+#~ msgstr ""
 
 #. js-lingui-id: lz+f/E
 #: src/pages/onboarding/ChooseYourPlan.tsx

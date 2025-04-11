@@ -805,6 +805,11 @@ msgstr "Catalan"
 msgid "Change Password"
 msgstr "Change Password"
 
+#. js-lingui-id: wRtBJP
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "Change Plan"
+msgstr "Change Plan"
+
 #. js-lingui-id: b0h4XW
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Change to yearly"
@@ -1902,8 +1907,8 @@ msgstr "Exit"
 
 #. js-lingui-id: LFNXuj
 #: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
-msgid "Exit Full Screen"
-msgstr "Exit Full Screen"
+#~ msgid "Exit Full Screen"
+#~ msgstr "Exit Full Screen"
 
 #. js-lingui-id: XB4onr
 #: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
@@ -3131,6 +3136,11 @@ msgstr "No metrics data available"
 msgid "No more members to assign"
 msgstr "No more members to assign"
 
+#. js-lingui-id: tTItk7
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+msgid "No output available"
+msgstr "No output available"
+
 #. js-lingui-id: 5pSj4j
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "No payment method found. Please update your billing details."
@@ -4258,8 +4268,8 @@ msgstr "Switch from monthly to yearly"
 
 #. js-lingui-id: E4rPXj
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Switch Plan"
-msgstr "Switch Plan"
+#~ msgid "Switch Plan"
+#~ msgstr "Switch Plan"
 
 #. js-lingui-id: lz+f/E
 #: src/pages/onboarding/ChooseYourPlan.tsx
