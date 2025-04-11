@@ -110,14 +110,8 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
         workspaceId,
       );
 
-    const transformedObjectRecord =
-      await this.recordInputTransformerService.process({
-        recordInput: workflowActionInput.objectRecord,
-        objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
-      });
-
     const objectRecordWithFilteredFields = Object.keys(
-      transformedObjectRecord,
+      workflowActionInput.objectRecord,
     ).reduce((acc, key) => {
       if (workflowActionInput.fieldsToUpdate.includes(key)) {
         return {
@@ -129,8 +123,14 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
       return acc;
     }, {});
 
+    const transformedObjectRecord =
+      await this.recordInputTransformerService.process({
+        recordInput: objectRecordWithFilteredFields,
+        objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
+      });
+
     const objectRecordFormatted = formatData(
-      objectRecordWithFilteredFields,
+      transformedObjectRecord,
       objectMetadataItemWithFieldsMaps,
     );
 
