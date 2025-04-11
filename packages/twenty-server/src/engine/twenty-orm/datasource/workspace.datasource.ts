@@ -1,10 +1,10 @@
 import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import {
-  DataSource,
-  DataSourceOptions,
-  EntityTarget,
-  ObjectLiteral,
-  QueryRunner,
+    DataSource,
+    DataSourceOptions,
+    EntityTarget,
+    ObjectLiteral,
+    QueryRunner,
 } from 'typeorm';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
@@ -64,11 +64,11 @@ export class WorkspaceDataSource extends DataSource {
     this.permissionsPerRoleId = permissionsPerRoleId;
   }
 
-  setFeatureFlagMap(featureFlagMap: FeatureFlagMap) {
+  setFeatureFlagsMap(featureFlagMap: FeatureFlagMap) {
     this.featureFlagMap = featureFlagMap;
   }
 
-  setFeatureFlagMapVersion(featureFlagMapVersion: string) {
+  setFeatureFlagsMapVersion(featureFlagMapVersion: string) {
     this.featureFlagMapVersion = featureFlagMapVersion;
   }
 }

@@ -13,16 +13,12 @@ import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { WorkspaceFeatureFlagMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flag-map-cache.service.ts/workspace-feature-flag-map-cache.service';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
 @UseGuards(SettingsPermissionsGuard(SettingPermissionType.WORKSPACE))
 export class LabResolver {
-  constructor(
-    private featureFlagService: FeatureFlagService,
-    private workspaceFeatureFlagMapCacheService: WorkspaceFeatureFlagMapCacheService,
-  ) {}
+  constructor(private featureFlagService: FeatureFlagService) {}
 
   @UseGuards(WorkspaceAuthGuard)
   @Mutation(() => FeatureFlag)
@@ -37,12 +33,6 @@ export class LabResolver {
         value: input.value,
         shouldBePublic: true,
       });
-
-      await this.workspaceFeatureFlagMapCacheService.recomputeFeatureFlagMapCache(
-        {
-          workspaceId: workspace.id,
-        },
-      );
 
       return result;
     } catch (error) {
