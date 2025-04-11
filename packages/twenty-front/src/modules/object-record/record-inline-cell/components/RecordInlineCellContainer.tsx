@@ -32,11 +32,12 @@ const StyledIconContainer = styled.div`
   }
 `;
 
-const StyledLabelAndIconContainer = styled.div`
+const StyledLabelAndIconContainer = styled.div<{ addTopMargin: boolean }>`
   align-items: center;
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
+  margin-top: ${({ addTopMargin }) => (addTopMargin ? '2px' : '0px')};
   height: 18px;
 `;
 
@@ -53,14 +54,15 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
   width: ${({ width }) => width}px;
 `;
 
-const StyledInlineCellBaseContainer = styled.div`
+const StyledInlineCellBaseContainer = styled.div<{ shouldAlignTop: boolean }>`
   box-sizing: border-box;
   width: 100%;
   display: flex;
   height: fit-content;
   gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
-  align-items: center;
+  align-items: ${({ shouldAlignTop }) =>
+    shouldAlignTop ? 'flex-start' : 'center'};
   justify-content: center;
 `;
 
@@ -73,6 +75,12 @@ export const RecordInlineCellContainer = () => {
     useRecordInlineCellContext();
 
   const { recordId, fieldDefinition } = useContext(FieldContext);
+
+  const displayedMaxRowsFromSettings = isFieldText(fieldDefinition)
+    ? fieldDefinition.metadata?.settings?.displayedMaxRows
+    : undefined;
+
+  const shouldAlignTop = (displayedMaxRowsFromSettings ?? 0) > 1;
 
   if (isFieldText(fieldDefinition)) {
     assertFieldMetadata(FieldMetadataType.TEXT, isFieldText, fieldDefinition);
@@ -100,11 +108,12 @@ export const RecordInlineCellContainer = () => {
 
   return (
     <StyledInlineCellBaseContainer
+      shouldAlignTop={shouldAlignTop}
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
     >
       {(IconLabel || label) && (
-        <StyledLabelAndIconContainer id={labelId}>
+        <StyledLabelAndIconContainer addTopMargin={shouldAlignTop} id={labelId}>
           {IconLabel && (
             <StyledIconContainer>
               <IconLabel stroke={theme.icon.stroke.sm} />
