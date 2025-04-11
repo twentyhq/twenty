@@ -19,9 +19,9 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum KeyValuePairType {
-  USER_VAR = 'USER_VAR',
+  USER_VARIABLE = 'USER_VARIABLE',
   FEATURE_FLAG = 'FEATURE_FLAG',
-  SYSTEM_VAR = 'SYSTEM_VAR',
+  CONFIG_VARIABLE = 'CONFIG_VARIABLE',
 }
 
 @Entity({ name: 'keyValuePair', schema: 'core' })
@@ -75,7 +75,7 @@ export class KeyValuePair {
     type: 'enum',
     enum: Object.values(KeyValuePairType),
     nullable: false,
-    default: KeyValuePairType.USER_VAR,
+    default: KeyValuePairType.USER_VARIABLE,
   })
   type: KeyValuePairType;
 
