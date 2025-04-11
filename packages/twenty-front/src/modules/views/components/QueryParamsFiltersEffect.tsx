@@ -2,16 +2,28 @@ import { useEffect } from 'react';
 
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { useApplyViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyViewFiltersToCurrentRecordFilters';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 
 export const QueryParamsFiltersEffect = () => {
-  const { hasFiltersQueryParams, getFiltersFromQueryParams } =
-    useViewFromQueryParams();
+  const {
+    hasFiltersQueryParams,
+    getFiltersFromQueryParams,
+    objectMetadataItem,
+  } = useViewFromQueryParams();
+
+  const { currentView } = useGetCurrentViewOnly();
 
   const { applyViewFiltersToCurrentRecordFilters } =
     useApplyViewFiltersToCurrentRecordFilters();
 
+  const currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem =
+    currentView?.objectMetadataId !== objectMetadataItem.id;
+
   useEffect(() => {
-    if (!hasFiltersQueryParams) {
+    if (
+      !hasFiltersQueryParams ||
+      currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem
+    ) {
       return;
     }
 
@@ -21,6 +33,7 @@ export const QueryParamsFiltersEffect = () => {
       }
     });
   }, [
+    currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem,
     applyViewFiltersToCurrentRecordFilters,
     getFiltersFromQueryParams,
     hasFiltersQueryParams,

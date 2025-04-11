@@ -189,5 +189,6 @@ export const useViewFromQueryParams = () => {
     viewIdQueryParam,
     hasFiltersQueryParams,
     getFiltersFromQueryParams,
+    objectMetadataItem,
   };
 };
