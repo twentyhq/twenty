@@ -37,7 +37,8 @@ const StyledLabelAndIconContainer = styled.div<{ addTopMargin: boolean }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  margin-top: ${({ addTopMargin }) => (addTopMargin ? '2px' : '0px')};
+  margin-top: ${({ theme, addTopMargin }) =>
+    addTopMargin ? theme.spacing(0.5) : theme.spacing(0)};
   height: 18px;
 `;
 
