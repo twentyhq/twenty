@@ -1,4 +1,3 @@
-import { DropdownCloseOnCommandMenuShortcutEffect } from '@/ui/layout/dropdown/components/DropdownCloseOnCommandMenuShortcutEffect';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownOnToggleEffect } from '@/ui/layout/dropdown/components/DropdownOnToggleEffect';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponeInstanceContext';
@@ -187,7 +186,6 @@ export const Dropdown = ({
             onDropdownClose={onClose}
             onDropdownOpen={onOpen}
           />
-          <DropdownCloseOnCommandMenuShortcutEffect />
         </>
       </DropdownScope>
     </DropdownComponentInstanceContext.Provider>

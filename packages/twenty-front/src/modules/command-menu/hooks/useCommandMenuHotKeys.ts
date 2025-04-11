@@ -44,9 +44,6 @@ export const useCommandMenuHotKeys = () => {
     },
     AppHotkeyScope.CommandMenu,
     [closeKeyboardShortcutMenu, toggleCommandMenu],
-    {
-      preventDefault: false,
-    },
   );
 
   useScopedHotkeys(
