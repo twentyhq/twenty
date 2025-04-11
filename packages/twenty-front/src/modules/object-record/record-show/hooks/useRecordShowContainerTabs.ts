@@ -17,7 +17,6 @@ import {
   IconHome,
   IconMail,
   IconNotes,
-  IconPrinter,
   IconSettings,
 } from 'twenty-ui/display';
 
