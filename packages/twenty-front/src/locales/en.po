@@ -805,6 +805,11 @@ msgstr "Catalan"
 msgid "Change Password"
 msgstr "Change Password"
 
+#. js-lingui-id: wRtBJP
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "Change Plan"
+msgstr "Change Plan"
+
 #. js-lingui-id: b0h4XW
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Change to yearly"
@@ -1902,8 +1907,8 @@ msgstr "Exit"
 
 #. js-lingui-id: LFNXuj
 #: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
-msgid "Exit Full Screen"
-msgstr "Exit Full Screen"
+#~ msgid "Exit Full Screen"
+#~ msgstr "Exit Full Screen"
 
 #. js-lingui-id: XB4onr
 #: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
@@ -2032,8 +2037,8 @@ msgstr "Extra Credits Used"
 
 #. js-lingui-id: jARNNi
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
-msgid "Failed to validate API key. Please check your API key and try again."
-msgstr "Failed to validate API key. Please check your API key and try again."
+#~ msgid "Failed to validate API key. Please check your API key and try again."
+#~ msgstr "Failed to validate API key. Please check your API key and try again."
 
 #. js-lingui-id: ocUvR+
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
@@ -2440,6 +2445,11 @@ msgstr "Instances"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
 msgstr "Integrations"
+
+#. js-lingui-id: GNRDhm
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Invalid API key"
+msgstr "Invalid API key"
 
 #. js-lingui-id: NtFk/Z
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -4253,8 +4263,8 @@ msgstr "Switch from monthly to yearly"
 
 #. js-lingui-id: E4rPXj
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Switch Plan"
-msgstr "Switch Plan"
+#~ msgid "Switch Plan"
+#~ msgstr "Switch Plan"
 
 #. js-lingui-id: lz+f/E
 #: src/pages/onboarding/ChooseYourPlan.tsx

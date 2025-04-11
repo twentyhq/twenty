@@ -3,15 +3,16 @@ import styled from '@emotion/styled';
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEmailThreadInCommandMenu';
-import { MessageChannelVisibility, TimelineThread } from '~/generated/graphql';
-import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { Avatar } from 'twenty-ui/display';
 import { GRAY_SCALE } from 'twenty-ui/theme';
+import { MessageChannelVisibility, TimelineThread } from '~/generated/graphql';
+import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 const StyledHeading = styled.div<{ unread: boolean }>`
   display: flex;
   overflow: hidden;
-  width: 20%;
+  width: fit-content;
+  max-width: 20%;
 `;
 
 const StyledParticipantsContainer = styled.div`
@@ -43,12 +44,14 @@ const StyledSubjectAndBody = styled.div`
   overflow: hidden;
 `;
 
-const StyledSubject = styled.span`
+const StyledSubject = styled.span<{ flex: number }>`
   color: ${({ theme }) => theme.font.color.primary};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   flex-shrink: 0;
+  flex: ${({ flex }) => flex};
+  max-width: max-content;
 `;
 
 const StyledBody = styled.span`
@@ -143,13 +146,19 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
 
       <StyledSubjectAndBody>
         {visibility !== MessageChannelVisibility.METADATA && (
-          <StyledSubject>{thread.subject}</StyledSubject>
+          <StyledSubject
+            flex={
+              visibility === MessageChannelVisibility.SHARE_EVERYTHING ? 0 : 1
+            }
+          >
+            {thread.subject}
+          </StyledSubject>
         )}
         {visibility === MessageChannelVisibility.SHARE_EVERYTHING && (
           <StyledBody>{thread.lastMessageBody}</StyledBody>
         )}
         {visibility !== MessageChannelVisibility.SHARE_EVERYTHING && (
-          <EmailThreadNotShared />
+          <EmailThreadNotShared visibility={visibility} />
         )}
       </StyledSubjectAndBody>
       <StyledReceivedAt>
