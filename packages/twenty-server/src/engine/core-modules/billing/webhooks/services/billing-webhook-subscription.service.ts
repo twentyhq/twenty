@@ -13,10 +13,12 @@ import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entitie
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-customer.util';
 import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
 import { transformStripeSubscriptionEventToDatabaseSubscription } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription.util';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -44,6 +46,7 @@ export class BillingWebhookSubscriptionService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(BillingCustomer, 'core')
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
     @InjectRepository(FeatureFlag, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlag>,
   ) {}
@@ -136,6 +139,23 @@ export class BillingWebhookSubscriptionService {
       String(data.object.customer),
       workspaceId,
     );
+
+    const isMeteredProductBillingEnabled =
+      await this.featureFlagRepository.findOne({
+        where: {
+          key: FeatureFlagKey.IsMeteredProductBillingEnabled,
+          workspaceId: workspaceId,
+        },
+      });
+
+    if (
+      event.type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED &&
+      isMeteredProductBillingEnabled
+    ) {
+      await this.billingSubscriptionService.setBillingThresholdsAndTrialPeriodWorkflowCredits(
+        updatedBillingSubscription.id,
+      );
+    }
 
     return {
       stripeSubscriptionId: data.object.id,

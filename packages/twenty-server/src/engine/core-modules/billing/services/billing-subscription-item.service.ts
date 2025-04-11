@@ -10,12 +10,14 @@ import {
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class BillingSubscriptionItemService {
   constructor(
     @InjectRepository(BillingSubscriptionItem, 'core')
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async getMeteredSubscriptionItemDetails(subscriptionId: string) {
@@ -44,11 +46,18 @@ export class BillingSubscriptionItemService {
         );
       }
 
+      const freeTrialQuantity =
+        item.metadata.trialPeriodFreeWorkflowCredits ||
+        this.twentyConfigService.get(
+          'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
+        );
+
       return {
         stripeSubscriptionItemId: item.stripeSubscriptionItemId,
         productKey: item.billingProduct.metadata.productKey,
         stripeMeterId,
-        includedFreeQuantity: this.getIncludedFreeQuantity(price),
+        freeTierQuantity: this.getFreeTierQuantity(price),
+        freeTrialQuantity,
         unitPriceCents: this.getUnitPrice(price),
       };
     });
@@ -69,7 +78,7 @@ export class BillingSubscriptionItemService {
     return matchingPrice;
   }
 
-  private getIncludedFreeQuantity(price: BillingPrice): number {
+  private getFreeTierQuantity(price: BillingPrice): number {
     return price.tiers?.find((tier) => tier.unit_amount === 0)?.up_to || 0;
   }
 

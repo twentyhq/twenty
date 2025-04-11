@@ -38,7 +38,10 @@ export class BillingWebhookAlertService {
     if (alert.title === TRIAL_PERIOD_ALERT_TITLE && isDefined(stripeMeterId)) {
       const subscription = await this.billingSubscriptionRepository.findOne({
         where: { stripeCustomerId, status: SubscriptionStatus.Trialing },
-        relations: ['billingSubscriptionItems'],
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+        ],
       });
 
       if (!subscription) return;
@@ -54,6 +57,19 @@ export class BillingWebhookAlertService {
           `Product associated to meter ${stripeMeterId} not found`,
           BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
         );
+      }
+
+      const subscriptionItem = subscription.billingSubscriptionItems.find(
+        (item) =>
+          item.billingProduct.stripeProductId === product.stripeProductId,
+      );
+
+      const trialPeriodFreeWorkflowCredits = Number(
+        subscriptionItem?.metadata.trialPeriodFreeWorkflowCredits,
+      );
+
+      if (trialPeriodFreeWorkflowCredits !== alert.usage_threshold?.gte) {
+        return;
       }
 
       await this.billingSubscriptionItemRepository.update(

@@ -147,7 +147,8 @@ export type BillingEndTrialPeriodOutput = {
 
 export type BillingMeteredProductUsageOutput = {
   __typename?: 'BillingMeteredProductUsageOutput';
-  includedFreeQuantity: Scalars['Float'];
+  freeTierQuantity: Scalars['Float'];
+  freeTrialQuantity: Scalars['Float'];
   periodEnd: Scalars['DateTime'];
   periodStart: Scalars['DateTime'];
   productKey: BillingProductKey;
@@ -2581,7 +2582,7 @@ export type EndSubscriptionTrialPeriodMutation = { __typename?: 'Mutation', endS
 export type GetMeteredProductsUsageQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsageOutput', productKey: BillingProductKey, usageQuantity: number, includedFreeQuantity: number, unitPriceCents: number, totalCostCents: number }> };
+export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsageOutput', productKey: BillingProductKey, usageQuantity: number, freeTierQuantity: number, freeTrialQuantity: number, unitPriceCents: number, totalCostCents: number }> };
 
 export type SwitchSubscriptionToYearlyIntervalMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -4248,7 +4249,8 @@ export const GetMeteredProductsUsageDocument = gql`
   getMeteredProductsUsage {
     productKey
     usageQuantity
-    includedFreeQuantity
+    freeTierQuantity
+    freeTrialQuantity
     unitPriceCents
     totalCostCents
   }
