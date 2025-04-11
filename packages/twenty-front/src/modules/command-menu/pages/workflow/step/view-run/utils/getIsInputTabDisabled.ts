@@ -10,7 +10,6 @@ export const getIsInputTabDisabled = ({
 }) => {
   return (
     workflowSelectedNode === TRIGGER_STEP_ID ||
-    stepExecutionStatus === 'running' ||
     stepExecutionStatus === 'not-executed'
   );
 };
