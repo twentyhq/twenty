@@ -28,8 +28,8 @@ import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { THEME_COMMON } from 'twenty-ui/theme';
 import { Tag, TagColor } from 'twenty-ui/components';
+import { THEME_COMMON } from 'twenty-ui/theme';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -84,9 +84,7 @@ export const WorkflowDiagramCanvasBase = ({
   nodeTypes,
   edgeTypes,
   children,
-  tagContainerTestId,
-  tagColor,
-  tagText,
+  statusTagOptions,
 }: {
   nodeTypes: Partial<
     Record<
@@ -111,9 +109,11 @@ export const WorkflowDiagramCanvasBase = ({
     >
   >;
   children?: React.ReactNode;
-  tagContainerTestId: string;
-  tagColor: TagColor;
-  tagText: string;
+  statusTagOptions?: {
+    containerTestId: string;
+    color: TagColor;
+    text: string;
+  };
 }) => {
   const theme = useTheme();
 
@@ -257,9 +257,13 @@ export const WorkflowDiagramCanvasBase = ({
         {children}
       </ReactFlow>
 
-      <StyledStatusTagContainer data-testid={tagContainerTestId}>
-        <Tag color={tagColor} text={tagText} />
-      </StyledStatusTagContainer>
+      {isDefined(statusTagOptions) && (
+        <StyledStatusTagContainer
+          data-testid={statusTagOptions.containerTestId}
+        >
+          <Tag color={statusTagOptions.color} text={statusTagOptions.text} />
+        </StyledStatusTagContainer>
+      )}
     </StyledResetReactflowStyles>
   );
 };

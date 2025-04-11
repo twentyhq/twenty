@@ -101,7 +101,7 @@ export const CardComponents: Record<CardType, CardComponentType> = {
     <>
       <WorkflowRunVisualizerEffect workflowRunId={targetableObject.id} />
 
-      <WorkflowRunVisualizer workflowRunId={targetableObject.id} />
+      <WorkflowRunVisualizer />
     </>
   ),
   [CardType.WorkflowRunOutputCard]: ({ targetableObject }) => (

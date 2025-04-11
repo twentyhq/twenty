@@ -28,9 +28,11 @@ export const WorkflowDiagramCanvasEditable = ({
         edgeTypes={{
           default: WorkflowDiagramDefaultEdge,
         }}
-        tagContainerTestId="workflow-visualizer-status"
-        tagColor={tagProps.color}
-        tagText={tagProps.text}
+        statusTagOptions={{
+          containerTestId: 'workflow-visualizer-status',
+          color: tagProps.color,
+          text: tagProps.text,
+        }}
       />
 
       <WorkflowDiagramCanvasEditableEffect />
