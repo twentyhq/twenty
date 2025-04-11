@@ -4,14 +4,14 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { HTMLAttributes } from 'react';
 
-type FormFieldInputInputContainerProps = {
+type FormFieldInputInnerContainerProps = {
   hasRightElement: boolean;
   multiline?: boolean;
   readonly?: boolean;
   preventSetHotkeyScope?: boolean;
 };
 
-const StyledFormFieldInputInputContainer = styled.div<FormFieldInputInputContainerProps>`
+const StyledFormFieldInputInputContainer = styled.div<FormFieldInputInnerContainerProps>`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
@@ -36,7 +36,7 @@ const StyledFormFieldInputInputContainer = styled.div<FormFieldInputInputContain
   width: 100%;
 `;
 
-export const FormFieldInputInputContainer = ({
+export const FormFieldInputInnerContainer = ({
   className,
   children,
   onFocus,
@@ -45,7 +45,7 @@ export const FormFieldInputInputContainer = ({
   multiline,
   readonly,
   preventSetHotkeyScope = false,
-}: HTMLAttributes<HTMLDivElement> & FormFieldInputInputContainerProps) => {
+}: HTMLAttributes<HTMLDivElement> & FormFieldInputInnerContainerProps) => {
   const {
     goBackToPreviousHotkeyScope,
     setHotkeyScopeAndMemorizePreviousScope,
