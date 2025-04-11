@@ -233,7 +233,7 @@ export const workflowTriggerSchema = z.discriminatedUnion('type', [
 ]);
 
 // Step output schemas
-const workflowExecutorOutputSchema = z.object({
+export const workflowExecutorOutputSchema = z.object({
   result: z.any().optional(),
   error: z.string().optional(),
   pendingEvent: z.boolean().optional(),
