@@ -110,6 +110,8 @@ export const CreateWorkspace = () => {
     }
   };
 
+  console.log('onboardingStatus', onboardingStatus);
+
   if (onboardingStatus !== OnboardingStatus.WORKSPACE_ACTIVATION) {
     return null;
   }

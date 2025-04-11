@@ -7,16 +7,13 @@ import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
-import {
-  OnboardingStatus,
-  useGetCurrentUserLazyQuery,
-} from '~/generated/graphql';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isDefined } from 'twenty-shared/utils';
-import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { IconCheck } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
 import { RGBA } from 'twenty-ui/theme';
+import { AnimatedEaseIn } from 'twenty-ui/utilities';
+import { useGetCurrentUserLazyQuery } from '~/generated/graphql';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledCheckContainer = styled.div`
   align-items: center;
@@ -67,10 +64,6 @@ export const PaymentSuccess = () => {
         'Please try again in a few seconds, sorry.',
     );
   };
-
-  if (onboardingStatus === OnboardingStatus.COMPLETED) {
-    return <></>;
-  }
 
   return (
     <>
