@@ -1,6 +1,5 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
@@ -26,7 +25,6 @@ import { IconCopy, SeparatorLineText } from 'twenty-ui/display';
 import { LightButton, MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { z } from 'zod';
-import { OnboardingStatus } from '~/generated/graphql';
 import { useCreateWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
 const StyledAnimatedContainer = styled.div`
@@ -69,7 +67,6 @@ export const InviteTeam = () => {
   const { sendInvitation } = useCreateWorkspaceInvitation();
 
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const currentUser = useRecoilValue(currentUserState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const {
     control,
@@ -165,10 +162,6 @@ export const InviteTeam = () => {
     PageHotkeyScope.InviteTeam,
     [handleSubmit],
   );
-
-  if (currentUser?.onboardingStatus !== OnboardingStatus.INVITE_TEAM) {
-    return <></>;
-  }
 
   return (
     <>
