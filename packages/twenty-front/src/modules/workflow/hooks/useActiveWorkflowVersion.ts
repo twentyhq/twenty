@@ -3,7 +3,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
 
 export const useActiveWorkflowVersion = (workflowId: string) => {
-  const { records: workflowVersions } = useFindManyRecords<
+  const { records: workflowVersions, loading } = useFindManyRecords<
     WorkflowVersion & {
       workflow: Omit<Workflow, 'versions'> & {
         versions: Array<{ __typename: string }>;
@@ -39,5 +39,8 @@ export const useActiveWorkflowVersion = (workflowId: string) => {
     },
   });
 
-  return workflowVersions?.[0];
+  return {
+    workflowVersion: workflowVersions?.[0],
+    loading,
+  };
 };

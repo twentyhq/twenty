@@ -1,4 +1,4 @@
-import { useWorkflowRunRecordActions } from '@/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions';
+import { useRunWorkflowRecordAgnosticActions } from '@/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions';
 import {
   ActionMenuContext,
   ActionMenuContextType,
@@ -8,7 +8,7 @@ import { useShouldActionBeRegisteredParams } from '@/action-menu/hooks/useShould
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 
-export const ActionMenuContextProviderWorkflowsEnabledSingleRecordSelection = ({
+export const ActionMenuContextProviderWorkflowObjects = ({
   objectMetadataItem,
   isInRightDrawer,
   displayType,
@@ -36,9 +36,8 @@ export const ActionMenuContextProviderWorkflowsEnabledSingleRecordSelection = ({
 
   const actions = useRegisteredActions(shouldBeRegisteredParams);
 
-  const workflowRunRecordActions = useWorkflowRunRecordActions({
-    objectMetadataItem,
-  });
+  const runWorkflowRecordAgnosticActions =
+    useRunWorkflowRecordAgnosticActions();
 
   return (
     <ActionMenuContext.Provider
@@ -46,7 +45,7 @@ export const ActionMenuContextProviderWorkflowsEnabledSingleRecordSelection = ({
         isInRightDrawer,
         displayType,
         actionMenuType,
-        actions: [...actions, ...workflowRunRecordActions],
+        actions: [...actions, ...runWorkflowRecordAgnosticActions],
       }}
     >
       {children}
