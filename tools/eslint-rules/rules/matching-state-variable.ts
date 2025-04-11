@@ -51,7 +51,7 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
           }
 
           const expectedVariableNameBase = stateNameBase.replace(
-            /(State|FamilyState|Selector|ScopedState|ScopedFamilyState|ScopedSelector)$/,
+            /(State|FamilyState|Selector|ScopedState|ScopedFamilyState|ScopedSelector|URLParamState)$/,
             '',
           );
 

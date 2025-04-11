@@ -1,7 +1,7 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
+import { billingCheckoutSessionURLParamState } from '@/auth/states/billingCheckoutSessionURLParamState';
 import { useRecoilValue } from 'recoil';
 
 export const useSignInWithMicrosoft = () => {
@@ -9,7 +9,7 @@ export const useSignInWithMicrosoft = () => {
   const [searchParams] = useSearchParams();
   const workspacePersonalInviteToken =
     searchParams.get('inviteToken') ?? undefined;
-  const billingCheckoutSession = useRecoilValue(billingCheckoutSessionState);
+  const billingCheckoutSession = useRecoilValue(billingCheckoutSessionURLParamState);
 
   const { signInWithMicrosoft } = useAuth();
   return {
