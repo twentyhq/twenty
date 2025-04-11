@@ -1,6 +1,6 @@
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { FormSingleRecordFieldChip } from '@/object-record/record-field/form-types/components/FormSingleRecordFieldChip';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
@@ -20,7 +20,7 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
-const StyledFormSelectContainer = styled(FormFieldInputInputContainer)`
+const StyledFormSelectContainer = styled(FormFieldInputInnerContainer)`
   justify-content: space-between;
   align-items: center;
   padding-right: ${({ theme }) => theme.spacing(1)};
@@ -132,6 +132,7 @@ export const FormSingleRecordPicker = ({
       <FormFieldInputRowContainer>
         <StyledFormSelectContainer
           hasRightElement={isDefined(VariablePicker) && !disabled}
+          preventSetHotkeyScope={true}
         >
           <FormSingleRecordFieldChip
             draftValue={draftValue}

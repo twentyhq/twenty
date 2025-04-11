@@ -3141,6 +3141,11 @@ msgstr "Nessun dato metrico disponibile"
 msgid "No more members to assign"
 msgstr "Non ci sono più membri da assegnare"
 
+#. js-lingui-id: tTItk7
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+msgid "No output available"
+msgstr ""
+
 #. js-lingui-id: 5pSj4j
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "No payment method found. Please update your billing details."

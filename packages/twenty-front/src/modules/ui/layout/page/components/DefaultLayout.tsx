@@ -80,16 +80,14 @@ export const DefaultLayout = () => {
         <AppErrorBoundary FallbackComponent={AppFullScreenErrorFallback}>
           <StyledPageContainer
             animate={{
-              transform:
+              marginLeft:
                 isSettingsPage && !isMobile && !useShowFullScreen
-                  ? `translateX(${
-                      (windowsWidth -
-                        (OBJECT_SETTINGS_WIDTH +
-                          NAV_DRAWER_WIDTHS.menu.desktop.expanded +
-                          76)) /
-                      2
-                    }px)`
-                  : 'translateX(0)',
+                  ? (windowsWidth -
+                      (OBJECT_SETTINGS_WIDTH +
+                        NAV_DRAWER_WIDTHS.menu.desktop.expanded +
+                        76)) /
+                    2
+                  : 0,
             }}
             transition={{
               duration: theme.animation.duration.normal,
