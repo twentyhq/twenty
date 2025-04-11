@@ -158,7 +158,7 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
           <StyledBody>{thread.lastMessageBody}</StyledBody>
         )}
         {visibility !== MessageChannelVisibility.SHARE_EVERYTHING && (
-          <EmailThreadNotShared />
+          <EmailThreadNotShared visibility={visibility} />
         )}
       </StyledSubjectAndBody>
       <StyledReceivedAt>
