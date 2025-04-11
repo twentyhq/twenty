@@ -1,34 +1,46 @@
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/BillingCheckoutSessionDefaultValue';
-import { syncEffect } from 'recoil-sync';
 import { createState } from 'twenty-ui/utilities';
 
 export const billingCheckoutSessionState = createState<BillingCheckoutSession>({
   key: 'billingCheckoutSessionState',
   defaultValue: BILLING_CHECKOUT_SESSION_DEFAULT_VALUE,
   effects: [
-    syncEffect({
-      itemKey: 'billingCheckoutSession',
-      refine: (value: unknown) => {
+    ({ setSelf, onSet }) => {
+      const searchParams = new URLSearchParams(window.location.search);
+      const value = searchParams.get('billingCheckoutSession');
+
+      if (value !== null) {
+        const parsed = JSON.parse(decodeURIComponent(value));
         if (
-          typeof value === 'object' &&
-          value !== null &&
-          'plan' in value &&
-          'interval' in value &&
-          'requirePaymentMethod' in value
+          typeof parsed === 'object' &&
+          parsed !== null &&
+          'plan' in parsed &&
+          'interval' in parsed &&
+          'requirePaymentMethod' in parsed
         ) {
-          return {
-            type: 'success',
-            value: value as BillingCheckoutSession,
-            warnings: [],
-          } as const;
+          setSelf(parsed as BillingCheckoutSession);
         }
-        return {
-          type: 'failure',
-          message: 'Invalid BillingCheckoutSessionState',
-          path: [] as any,
-        } as const;
-      },
-    }),
+      }
+
+      onSet((newValue) => {
+        const searchParams = new URLSearchParams(window.location.search);
+
+        if (
+          JSON.stringify(newValue) !==
+          JSON.stringify(BILLING_CHECKOUT_SESSION_DEFAULT_VALUE)
+        ) {
+          searchParams.set(
+            'billingCheckoutSession',
+            encodeURIComponent(JSON.stringify(newValue)),
+          );
+        } else {
+          searchParams.delete('billingCheckoutSession');
+        }
+
+        const newUrl = `${window.location.pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+        window.history.replaceState({}, '', newUrl);
+      });
+    },
   ],
 });
