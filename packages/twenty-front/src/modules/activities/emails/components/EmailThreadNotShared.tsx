@@ -8,7 +8,9 @@ const StyledContainer = styled.div`
   flex: 1 0 0;
   gap: ${({ theme }) => theme.spacing(1)};
   height: 20px;
-  min-width: 100px;
+  width: 100%;
+  min-width: ${({ theme }) =>
+    `calc(${theme.icon.size.md} + ${theme.spacing(2)})`};
   padding: ${({ theme }) => theme.spacing(0, 1)};
 
   border-radius: 4px;
@@ -19,12 +21,18 @@ const StyledContainer = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
+const StyledText = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 export const EmailThreadNotShared = () => {
   const theme = useTheme();
   return (
     <StyledContainer>
       <IconLock size={theme.icon.size.md} />
-      Not shared
+      <StyledText>Not shared</StyledText>
     </StyledContainer>
   );
 };

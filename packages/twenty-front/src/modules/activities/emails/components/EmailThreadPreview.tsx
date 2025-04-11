@@ -11,7 +11,8 @@ import { formatToHumanReadableDate } from '~/utils/date-utils';
 const StyledHeading = styled.div<{ unread: boolean }>`
   display: flex;
   overflow: hidden;
-  width: 20%;
+  width: fit-content;
+  max-width: 20%;
 `;
 
 const StyledParticipantsContainer = styled.div`
@@ -43,12 +44,14 @@ const StyledSubjectAndBody = styled.div`
   overflow: hidden;
 `;
 
-const StyledSubject = styled.span<{ isShared: boolean }>`
+const StyledSubject = styled.span<{ flex: number }>`
   color: ${({ theme }) => theme.font.color.primary};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex-shrink: ${({ isShared }) => (isShared ? 0 : 1)};
+  flex-shrink: 0;
+  flex: ${({ flex }) => flex};
+  max-width: max-content;
 `;
 
 const StyledBody = styled.span`
@@ -144,7 +147,9 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
       <StyledSubjectAndBody>
         {visibility !== MessageChannelVisibility.METADATA && (
           <StyledSubject
-            isShared={visibility === MessageChannelVisibility.SHARE_EVERYTHING}
+            flex={
+              visibility === MessageChannelVisibility.SHARE_EVERYTHING ? 0 : 1
+            }
           >
             {thread.subject}
           </StyledSubject>
