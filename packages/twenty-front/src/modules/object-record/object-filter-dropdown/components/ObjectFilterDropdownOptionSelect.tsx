@@ -62,10 +62,6 @@ export const ObjectFilterDropdownOptionSelect = () => {
 
   const { closeDropdown } = useDropdown();
 
-  // const { selectedItemIdState } = useSelectableListStates({
-  //   selectableListScopeId: componentInstanceId,
-  // });
-
   const { resetSelectedItem } = useSelectableList(componentInstanceId);
 
   const selectedItemId = useRecoilComponentValueV2(
