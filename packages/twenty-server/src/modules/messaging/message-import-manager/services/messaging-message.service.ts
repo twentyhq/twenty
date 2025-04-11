@@ -17,7 +17,10 @@ export class MessagingMessageService {
     messages: MessageWithParticipants[],
     messageChannelId: string,
     transactionManager: EntityManager,
-  ): Promise<Map<string, string>> {
+  ): Promise<{
+    createdMessages: Partial<MessageWorkspaceEntity>[];
+    messageExternalIdsAndIdsMap: Map<string, string>;
+  }> {
     const messageChannelMessageAssociationRepository =
       await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
         'messageChannelMessageAssociation',
@@ -34,6 +37,7 @@ export class MessagingMessageService {
       );
 
     const messageExternalIdsAndIdsMap = new Map<string, string>();
+    const createdMessages: Partial<MessageWorkspaceEntity>[] = [];
 
     for (const message of messages) {
       const existingMessageChannelMessageAssociation =
@@ -101,18 +105,18 @@ export class MessagingMessageService {
       }
 
       const newMessageId = v4();
+      const messageToCreate = {
+        id: newMessageId,
+        headerMessageId: message.headerMessageId,
+        subject: message.subject,
+        receivedAt: message.receivedAt,
+        text: message.text,
+        messageThreadId: newOrExistingMessageThreadId,
+      };
 
-      await messageRepository.insert(
-        {
-          id: newMessageId,
-          headerMessageId: message.headerMessageId,
-          subject: message.subject,
-          receivedAt: message.receivedAt,
-          text: message.text,
-          messageThreadId: newOrExistingMessageThreadId,
-        },
-        transactionManager,
-      );
+      await messageRepository.insert(messageToCreate, transactionManager);
+
+      createdMessages.push(messageToCreate);
 
       messageExternalIdsAndIdsMap.set(message.externalId, newMessageId);
 
@@ -128,6 +132,9 @@ export class MessagingMessageService {
       );
     }
 
-    return messageExternalIdsAndIdsMap;
+    return {
+      createdMessages,
+      messageExternalIdsAndIdsMap,
+    };
   }
 }
