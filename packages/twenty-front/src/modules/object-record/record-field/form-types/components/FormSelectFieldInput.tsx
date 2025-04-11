@@ -1,5 +1,5 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
@@ -134,14 +134,14 @@ export const FormSelectFieldInput = ({
             disabled={readonly}
           />
         ) : (
-          <FormFieldInputInputContainer
+          <FormFieldInputInnerContainer
             hasRightElement={isDefined(VariablePicker) && !readonly}
           >
             <VariableChipStandalone
               rawVariableName={draftValue.value}
               onRemove={readonly ? undefined : handleUnlinkVariable}
             />
-          </FormFieldInputInputContainer>
+          </FormFieldInputInnerContainer>
         )}
 
         {isDefined(VariablePicker) && !readonly && (
