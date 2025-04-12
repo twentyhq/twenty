@@ -58,6 +58,24 @@ export class UserRoleService {
     });
   }
 
+  public async getRoleIdForUserWorkspace({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<string | undefined> {
+    if (!isDefined(userWorkspaceId)) {
+      return;
+    }
+
+    const userWorkspaceRole = await this.userWorkspaceRoleRepository.findOne({
+      where: { userWorkspaceId, workspaceId },
+    });
+
+    return userWorkspaceRole?.roleId;
+  }
+
   public async getRolesByUserWorkspaces({
     userWorkspaceIds,
     workspaceId,

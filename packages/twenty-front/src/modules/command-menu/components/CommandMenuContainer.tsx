@@ -2,6 +2,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { CommandMenuOpenContainer } from '@/command-menu/components/CommandMenuOpenContainer';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
+import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -45,6 +46,8 @@ export const CommandMenuContainer = ({
     objectMetadataItem?.namePlural ?? '',
     currentViewId ?? '',
   );
+
+  useCommandMenuHotKeys();
 
   return (
     <RecordFilterGroupsComponentInstanceContext.Provider
