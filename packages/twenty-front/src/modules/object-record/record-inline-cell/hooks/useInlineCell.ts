@@ -12,9 +12,7 @@ import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropd
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { isDefined } from 'twenty-shared/utils';
 import { isInlineCellInEditModeScopedState } from '../states/isInlineCellInEditModeScopedState';
-import { InlineCellHotkeyScope } from '../types/InlineCellHotkeyScope';
 
 export const useInlineCell = (
   recordFieldComponentInstanceIdFromProps?: string,
@@ -37,10 +35,9 @@ export const useInlineCell = (
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
-  const {
-    setHotkeyScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope(INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY);
+  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope(
+    INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
+  );
 
   const initFieldInputDraftValue = useInitDraftValueV2();
 
@@ -53,7 +50,7 @@ export const useInlineCell = (
     goBackToPreviousDropdownFocusId();
   };
 
-  const openInlineCell = (customEditHotkeyScopeForField?: string) => {
+  const openInlineCell = () => {
     onOpenEditMode?.();
     setIsInlineCellInEditMode(true);
     initFieldInputDraftValue({
@@ -61,12 +58,6 @@ export const useInlineCell = (
       fieldDefinition,
       fieldComponentInstanceId: recordFieldComponentInstanceId,
     });
-
-    if (isDefined(customEditHotkeyScopeForField)) {
-      setHotkeyScopeAndMemorizePreviousScope(customEditHotkeyScopeForField);
-    } else {
-      setHotkeyScopeAndMemorizePreviousScope(InlineCellHotkeyScope.InlineCell);
-    }
 
     setActiveDropdownFocusIdAndMemorizePrevious(
       getDropdownFocusIdForRecordField(

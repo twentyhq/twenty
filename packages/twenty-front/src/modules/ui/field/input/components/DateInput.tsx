@@ -1,13 +1,15 @@
 import { useRef, useState } from 'react';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
+import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import {
   DateTimePicker,
-  MONTH_AND_YEAR_DROPDOWN_ID,
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
+import { useRecoilCallback } from 'recoil';
 import { Nullable } from 'twenty-ui/utilities';
 
 export type DateInputProps = {
@@ -59,7 +61,6 @@ export const DateInput = ({
     onSubmit?.(newDate);
   };
 
-  const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
   const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
     MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   );
@@ -70,7 +71,6 @@ export const DateInput = ({
   const handleEnter = () => {
     closeDropdownYearSelect();
     closeDropdownMonthSelect();
-    closeDropdown();
 
     onEnter(internalValue);
   };
@@ -78,20 +78,32 @@ export const DateInput = ({
   const handleEscape = () => {
     closeDropdownYearSelect();
     closeDropdownMonthSelect();
-    closeDropdown();
 
     onEscape(internalValue);
   };
 
-  const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-    event.stopImmediatePropagation();
+  const handleClickOutside = useRecoilCallback(
+    ({ snapshot }) =>
+      (event: MouseEvent | TouchEvent) => {
+        const hotkeyScope = snapshot
+          .getLoadable(currentHotkeyScopeState)
+          .getValue();
 
-    closeDropdownYearSelect();
-    closeDropdownMonthSelect();
-    closeDropdown();
-
-    onClickOutside(event, internalValue);
-  };
+        if (hotkeyScope?.scope === TableHotkeyScope.CellEditMode) {
+          closeDropdownYearSelect();
+          closeDropdownMonthSelect();
+          onEscape(internalValue);
+          onClickOutside(event, internalValue);
+        }
+      },
+    [
+      closeDropdownYearSelect,
+      closeDropdownMonthSelect,
+      onEscape,
+      onClickOutside,
+      internalValue,
+    ],
+  );
 
   useRegisterInputEvents({
     inputRef: wrapperRef,

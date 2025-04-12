@@ -17,7 +17,6 @@ import {
   IconHome,
   IconMail,
   IconNotes,
-  IconPrinter,
   IconSettings,
 } from 'twenty-ui/display';
 
@@ -160,6 +159,9 @@ export const useRecordShowContainerTabs = (
           },
           timeline: null,
           fields: null,
+          tasks: null,
+          notes: null,
+          files: null,
         },
       },
       [CoreObjectNameSingular.WorkflowVersion]: {
@@ -179,25 +181,14 @@ export const useRecordShowContainerTabs = (
             },
           },
           timeline: null,
+          tasks: null,
+          notes: null,
+          files: null,
         },
       },
       [CoreObjectNameSingular.WorkflowRun]: {
         tabs: {
-          workflowRunOutput: {
-            title: 'Output',
-            position: 0,
-            Icon: IconPrinter,
-            cards: [{ type: CardType.WorkflowRunOutputCard }],
-            hide: {
-              ifMobile: false,
-              ifDesktop: false,
-              ifInRightDrawer: false,
-              ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
-              ifRequiredObjectsInactive: [],
-              ifRelationsMissing: [],
-            },
-          },
-          workflowRunFlow: {
+          workflowRun: {
             title: 'Flow',
             position: 0,
             Icon: IconSettings,
@@ -212,6 +203,9 @@ export const useRecordShowContainerTabs = (
             },
           },
           timeline: null,
+          tasks: null,
+          notes: null,
+          files: null,
         },
       },
     }),

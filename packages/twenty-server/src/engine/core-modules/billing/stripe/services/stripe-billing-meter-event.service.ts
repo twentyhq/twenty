@@ -6,7 +6,7 @@ import Stripe from 'stripe';
 
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class StripeBillingMeterEventService {
@@ -14,14 +14,14 @@ export class StripeBillingMeterEventService {
   private readonly stripe: Stripe;
 
   constructor(
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly stripeSDKService: StripeSDKService,
   ) {
-    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return;
     }
     this.stripe = this.stripeSDKService.getStripe(
-      this.environmentService.get('BILLING_STRIPE_API_KEY'),
+      this.twentyConfigService.get('BILLING_STRIPE_API_KEY'),
     );
   }
 
@@ -41,5 +41,25 @@ export class StripeBillingMeterEventService {
         stripe_customer_id: stripeCustomerId,
       },
     });
+  }
+
+  async sumMeterEvents(
+    stripeMeterId: string,
+    stripeCustomerId: string,
+    startTime: Date,
+    endTime: Date,
+  ) {
+    const eventSummaries = await this.stripe.billing.meters.listEventSummaries(
+      stripeMeterId,
+      {
+        customer: stripeCustomerId,
+        start_time: Math.floor(startTime.getTime() / (1000 * 60)) * 60,
+        end_time: Math.ceil(endTime.getTime() / (1000 * 60)) * 60,
+      },
+    );
+
+    return eventSummaries.data.reduce((acc, eventSummary) => {
+      return acc + eventSummary.aggregated_value;
+    }, 0);
   }
 }

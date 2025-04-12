@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { EntityManager, Repository } from 'typeorm';
 import { v4 } from 'uuid';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { getGoogleApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -45,7 +45,7 @@ export class GoogleAPIsService {
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly accountsToReconnectService: AccountsToReconnectService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
@@ -69,7 +69,7 @@ export class GoogleAPIsService {
       messageVisibility,
     } = input;
 
-    const isCalendarEnabled = this.environmentService.get(
+    const isCalendarEnabled = this.twentyConfigService.get(
       'CALENDAR_PROVIDER_GOOGLE_ENABLED',
     );
 
@@ -300,7 +300,7 @@ export class GoogleAPIsService {
       }
     });
 
-    if (this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
+    if (this.twentyConfigService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
       const messageChannels = await messageChannelRepository.find({
         where: {
           connectedAccountId: newOrExistingConnectedAccountId,

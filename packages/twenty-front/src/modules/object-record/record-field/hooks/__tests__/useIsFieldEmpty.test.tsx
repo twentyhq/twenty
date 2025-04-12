@@ -14,7 +14,6 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
     value={{
       fieldDefinition: phonesFieldDefinition,
       recordId,
-      hotkeyScope: 'hotkeyScope',
       isLabelIdentifier: false,
       isReadOnly: false,
     }}

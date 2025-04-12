@@ -2,9 +2,7 @@ import { Theme, withTheme } from '@emotion/react';
 import { styled } from '@linaria/react';
 import { Ref } from 'react';
 
-const StyledOuterContainer = styled.div<{
-  hasSoftFocus?: boolean;
-}>`
+const StyledOuterContainer = styled.div`
   align-items: center;
   display: flex;
   height: 100%;
@@ -50,7 +48,6 @@ export const RecordTableCellDisplayContainer = ({
     }
     onClick={onClick}
     ref={scrollRef}
-    hasSoftFocus={softFocus}
     onContextMenu={onContextMenu}
   >
     {placeholderForEmptyCell ? (

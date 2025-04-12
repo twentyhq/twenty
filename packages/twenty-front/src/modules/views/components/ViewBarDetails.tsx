@@ -23,6 +23,7 @@ import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAr
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
 
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
 import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/hooks/useAreViewFilterGroupsDifferentFromRecordFilterGroups';
 import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
@@ -54,13 +55,11 @@ const StyledBar = styled.div`
   z-index: 4;
 `;
 
-const StyledChipcontainer = styled.div`
+const StyledChipContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  overflow: scroll;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
   z-index: 1;
 `;
 
@@ -68,7 +67,6 @@ const StyledActionButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledFilterContainer = styled.div`
@@ -197,51 +195,56 @@ export const ViewBarDetails = ({
   return (
     <StyledBar>
       <StyledFilterContainer>
-        <StyledChipcontainer>
-          {isDefined(softDeleteFilter) && (
-            <SoftDeleteFilterChip
-              key={softDeleteFilter.fieldMetadataId}
-              recordFilter={softDeleteFilter}
-              viewBarId={viewBarId}
-            />
-          )}
-          {isDefined(softDeleteFilter) && (
-            <StyledSeperatorContainer>
-              <StyledSeperator />
-            </StyledSeperatorContainer>
-          )}
-          {currentRecordSorts.map((recordSort) => (
-            <EditableSortChip
-              key={recordSort.fieldMetadataId}
-              recordSort={recordSort}
-            />
-          ))}
-          {isNonEmptyArray(recordFilters) &&
-            isNonEmptyArray(currentRecordSorts) && (
+        <ScrollWrapper
+          componentInstanceId={viewBarId}
+          defaultEnableYScroll={false}
+        >
+          <StyledChipContainer>
+            {isDefined(softDeleteFilter) && (
+              <SoftDeleteFilterChip
+                key={softDeleteFilter.fieldMetadataId}
+                recordFilter={softDeleteFilter}
+                viewBarId={viewBarId}
+              />
+            )}
+            {isDefined(softDeleteFilter) && (
               <StyledSeperatorContainer>
                 <StyledSeperator />
               </StyledSeperatorContainer>
             )}
-          {shouldShowAdvancedFilterDropdownButton && (
-            <AdvancedFilterDropdownButton />
-          )}
-          {recordFilters.map((recordFilter) => (
-            <ObjectFilterDropdownComponentInstanceContext.Provider
-              key={recordFilter.id}
-              value={{ instanceId: recordFilter.id }}
-            >
-              <DropdownScope dropdownScopeId={recordFilter.id}>
-                <ViewBarFilterEffect filterDropdownId={recordFilter.id} />
-                <EditableFilterDropdownButton
-                  recordFilter={recordFilter}
-                  hotkeyScope={{
-                    scope: recordFilter.id,
-                  }}
-                />
-              </DropdownScope>
-            </ObjectFilterDropdownComponentInstanceContext.Provider>
-          ))}
-        </StyledChipcontainer>
+            {currentRecordSorts.map((recordSort) => (
+              <EditableSortChip
+                key={recordSort.fieldMetadataId}
+                recordSort={recordSort}
+              />
+            ))}
+            {isNonEmptyArray(recordFilters) &&
+              isNonEmptyArray(currentRecordSorts) && (
+                <StyledSeperatorContainer>
+                  <StyledSeperator />
+                </StyledSeperatorContainer>
+              )}
+            {shouldShowAdvancedFilterDropdownButton && (
+              <AdvancedFilterDropdownButton />
+            )}
+            {recordFilters.map((recordFilter) => (
+              <ObjectFilterDropdownComponentInstanceContext.Provider
+                key={recordFilter.id}
+                value={{ instanceId: recordFilter.id }}
+              >
+                <DropdownScope dropdownScopeId={recordFilter.id}>
+                  <ViewBarFilterEffect filterDropdownId={recordFilter.id} />
+                  <EditableFilterDropdownButton
+                    recordFilter={recordFilter}
+                    hotkeyScope={{
+                      scope: recordFilter.id,
+                    }}
+                  />
+                </DropdownScope>
+              </ObjectFilterDropdownComponentInstanceContext.Provider>
+            ))}
+          </StyledChipContainer>
+        </ScrollWrapper>
         {hasFilterButton && (
           <StyledAddFilterContainer>
             <AddObjectFilterFromDetailsButton

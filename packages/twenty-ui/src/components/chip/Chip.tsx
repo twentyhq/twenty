@@ -30,7 +30,7 @@ export type ChipProps = {
   maxWidth?: number;
   variant?: ChipVariant;
   accent?: ChipAccent;
-  leftComponent?: (() => ReactNode) | null;
+  leftComponent?: ReactNode | null;
   rightComponent?: (() => ReactNode) | null;
   className?: string;
 };
@@ -146,7 +146,7 @@ export const Chip = ({
       className={className}
       maxWidth={maxWidth}
     >
-      {leftComponent?.()}
+      {leftComponent}
       {!isLabelHidden && (
         <OverflowingTextWithTooltip size={size} text={label} />
       )}

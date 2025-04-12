@@ -1,27 +1,25 @@
 import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
+import { userEvent, waitFor, within } from '@storybook/testing-library';
 import { RecoilRoot } from 'recoil';
 
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
-import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-actions.mock';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
-import {
-  ActionMenuEntry,
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
-import { msg } from '@lingui/core/macro';
+import {
+  RouterDecorator,
+  getCanvasElementForDropdownTesting,
+} from 'twenty-ui/testing';
+import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { IconCheckbox, IconHeart, IconTrash } from 'twenty-ui/display';
-import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 
 const deleteMock = jest.fn();
-const markAsDoneMock = jest.fn();
 const addToFavoritesMock = jest.fn();
+const exportMock = jest.fn();
 
 const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
   title: 'Modules/ActionMenu/RecordIndexActionMenuDropdown',
@@ -39,45 +37,6 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
             { x: 10, y: 10 },
           );
 
-          const map = new Map<string, ActionMenuEntry>();
-
-          set(
-            actionMenuEntriesComponentState.atomFamily({
-              instanceId: 'story-action-menu',
-            }),
-            map,
-          );
-
-          map.set('delete', {
-            type: ActionMenuEntryType.Standard,
-            scope: ActionMenuEntryScope.RecordSelection,
-            key: 'delete',
-            label: msg`Delete`,
-            position: 0,
-            Icon: IconTrash,
-            onClick: deleteMock,
-          });
-
-          map.set('markAsDone', {
-            type: ActionMenuEntryType.Standard,
-            scope: ActionMenuEntryScope.RecordSelection,
-            key: 'markAsDone',
-            label: msg`Mark as done`,
-            position: 1,
-            Icon: IconCheckbox,
-            onClick: markAsDoneMock,
-          });
-
-          map.set('addToFavorites', {
-            type: ActionMenuEntryType.Standard,
-            scope: ActionMenuEntryScope.RecordSelection,
-            key: 'addToFavorites',
-            label: msg`Add to favorites`,
-            position: 2,
-            Icon: IconHeart,
-            onClick: addToFavoritesMock,
-          });
-
           set(
             extractComponentState(
               isDropdownOpenComponentState,
@@ -90,10 +49,25 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
         <ActionMenuComponentInstanceContext.Provider
           value={{ instanceId: 'story-action-menu' }}
         >
-          <Story />
+          <ActionMenuContext.Provider
+            value={{
+              isInRightDrawer: true,
+              displayType: 'dropdownItem',
+              actionMenuType: 'index-page-action-menu-dropdown',
+              actions: createMockActionMenuActions({
+                deleteMock,
+                addToFavoritesMock,
+                exportMock,
+              }),
+            }}
+          >
+            <Story />
+          </ActionMenuContext.Provider>
         </ActionMenuComponentInstanceContext.Provider>
       </RecoilRoot>
     ),
+    ContextStoreDecorator,
+    RouterDecorator,
   ],
 };
 
@@ -112,12 +86,24 @@ export const WithInteractions: Story = {
     actionMenuId: 'story',
   },
   play: async () => {
-    const canvasElement = getCanvasElementForDropdownTesting();
-
-    const canvas = within(canvasElement);
+    const canvas = within(getCanvasElementForDropdownTesting());
 
     const deleteButton = await canvas.findByText('Delete');
     await userEvent.click(deleteButton);
-    expect(deleteMock).toHaveBeenCalled();
+
+    const addToFavoritesButton = await canvas.findByText('Add to favorites');
+    await userEvent.click(addToFavoritesButton);
+
+    const exportButton = await canvas.findByText('Export');
+    await userEvent.click(exportButton);
+
+    const moreActionsButton = await canvas.findByText('More actions');
+
+    await waitFor(() => {
+      expect(deleteMock).toHaveBeenCalled();
+      expect(addToFavoritesMock).toHaveBeenCalled();
+      expect(exportMock).toHaveBeenCalled();
+      expect(moreActionsButton).toBeInTheDocument();
+    });
   },
 };

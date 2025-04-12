@@ -102,7 +102,6 @@ const getWrapper =
           value={{
             fieldDefinition,
             recordId,
-            hotkeyScope: 'hotkeyScope',
             isLabelIdentifier: false,
             useUpdateRecord: useUpdateOneRecordMutation,
             isReadOnly: false,

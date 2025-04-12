@@ -14,10 +14,11 @@ import crypto from 'crypto';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
-import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
 import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
 import {
@@ -25,7 +26,6 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
@@ -33,6 +33,7 @@ import {
   OnboardingService,
   OnboardingStepKeys,
 } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -69,7 +70,7 @@ export class UserResolver {
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     private readonly userService: UserService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly fileUploadService: FileUploadService,
     private readonly onboardingService: OnboardingService,
     private readonly userVarService: UserVarsService,
@@ -106,11 +107,24 @@ export class UserResolver {
     if (!currentUserWorkspace) {
       throw new Error('Current user workspace not found');
     }
-    const { settingsPermissions, objectRecordsPermissions } =
-      await this.permissionsService.getUserWorkspacePermissions({
-        userWorkspaceId: currentUserWorkspace.id,
-        workspaceId: workspace.id,
-      });
+    let settingsPermissions = {};
+    let objectRecordsPermissions = {};
+
+    if (
+      ![
+        WorkspaceActivationStatus.PENDING_CREATION,
+        WorkspaceActivationStatus.ONGOING_CREATION,
+      ].includes(workspace.activationStatus)
+    ) {
+      const permissions =
+        await this.permissionsService.getUserWorkspacePermissions({
+          userWorkspaceId: currentUserWorkspace.id,
+          workspaceId: workspace.id,
+        });
+
+      settingsPermissions = permissions.settingsPermissions;
+      objectRecordsPermissions = permissions.objectRecordsPermissions;
+    }
 
     const grantedSettingsPermissions: SettingPermissionType[] = (
       Object.keys(settingsPermissions) as SettingPermissionType[]
@@ -271,10 +285,12 @@ export class UserResolver {
     nullable: true,
   })
   supportUserHash(@Parent() parent: User): string | null {
-    if (this.environmentService.get('SUPPORT_DRIVER') !== SupportDriver.Front) {
+    if (
+      this.twentyConfigService.get('SUPPORT_DRIVER') !== SupportDriver.Front
+    ) {
       return null;
     }
-    const key = this.environmentService.get('SUPPORT_FRONT_HMAC_KEY');
+    const key = this.twentyConfigService.get('SUPPORT_FRONT_HMAC_KEY');
 
     return getHMACKey(parent.email, key);
   }

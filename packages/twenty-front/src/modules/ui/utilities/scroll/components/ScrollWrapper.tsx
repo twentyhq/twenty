@@ -9,19 +9,15 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 
 const StyledScrollWrapper = styled.div`
   &.scroll-wrapper-x-enabled {
-    overflow-x: scroll;
+    overflow-x: overlay;
   }
   &.scroll-wrapper-y-enabled {
-    overflow-y: scroll;
+    overflow-y: overlay;
   }
-  display: flex;
+  overflow-x: hidden;
+  overflow-y: hidden;
   width: 100%;
   height: 100%;
-`;
-
-const StyledInnerContainer = styled.div`
-  height: 100%;
-  width: 100%;
 `;
 
 export type ScrollWrapperProps = {
@@ -76,7 +72,7 @@ export const ScrollWrapper = ({
         className={className}
         onScroll={handleScroll}
       >
-        <StyledInnerContainer>{children}</StyledInnerContainer>
+        {children}
       </StyledScrollWrapper>
     </ScrollWrapperComponentInstanceContext.Provider>
   );

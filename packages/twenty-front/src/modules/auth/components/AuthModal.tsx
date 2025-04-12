@@ -8,10 +8,20 @@ const StyledContent = styled(Modal.Content)`
   justify-content: center;
 `;
 
-type AuthModalProps = { children: React.ReactNode };
+type AuthModalProps = {
+  children: React.ReactNode;
+  isOpenAnimated?: boolean;
+};
 
-export const AuthModal = ({ children }: AuthModalProps) => (
-  <Modal padding={'none'} modalVariant="primary">
+export const AuthModal = ({
+  children,
+  isOpenAnimated = true,
+}: AuthModalProps) => (
+  <Modal
+    padding={'none'}
+    modalVariant="primary"
+    isOpenAnimated={isOpenAnimated}
+  >
     <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
       <StyledContent>{children}</StyledContent>
     </ScrollWrapper>

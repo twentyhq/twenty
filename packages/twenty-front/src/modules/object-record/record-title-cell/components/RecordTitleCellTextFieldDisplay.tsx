@@ -1,6 +1,9 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { useRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
@@ -30,8 +33,19 @@ export const RecordTitleCellSingleTextDisplayMode = () => {
 
   const { openInlineCell } = useInlineCell();
 
+  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope(
+    INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
+  );
+
   return (
-    <StyledDiv onClick={() => openInlineCell()}>
+    <StyledDiv
+      onClick={() => {
+        setHotkeyScopeAndMemorizePreviousScope(
+          TitleInputHotkeyScope.TitleInput,
+        );
+        openInlineCell();
+      }}
+    >
       <OverflowingTextWithTooltip
         text={
           recordValue?.[fieldDefinition.metadata.fieldName] ||

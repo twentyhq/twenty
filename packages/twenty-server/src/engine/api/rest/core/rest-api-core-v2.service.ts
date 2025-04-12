@@ -1,13 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
 import { capitalize } from 'twenty-shared/utils';
+import { Request } from 'express';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
@@ -16,7 +17,7 @@ export class RestApiCoreServiceV2 {
   constructor(
     private readonly coreQueryBuilderFactory: CoreQueryBuilderFactory,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-
+    private readonly recordInputTransformerService: RecordInputTransformerService,
     protected readonly apiEventEmitterService: ApiEventEmitterService,
   ) {}
 
@@ -47,11 +48,15 @@ export class RestApiCoreServiceV2 {
   }
 
   async createOne(request: Request) {
-    const { body } = request;
-
     const { objectMetadataNameSingular, objectMetadata, repository } =
       await this.getRepositoryAndMetadataOrFail(request);
-    const createdRecord = await repository.save(body);
+
+    const overriddenBody = await this.recordInputTransformerService.process({
+      recordInput: request.body,
+      objectMetadataMapItem: objectMetadata.objectMetadataMapItem,
+    });
+
+    const createdRecord = await repository.save(overriddenBody);
 
     this.apiEventEmitterService.emitCreateEvents(
       [createdRecord],
@@ -80,9 +85,14 @@ export class RestApiCoreServiceV2 {
       where: { id: recordId },
     });
 
+    const overriddenBody = await this.recordInputTransformerService.process({
+      recordInput: request.body,
+      objectMetadataMapItem: objectMetadata.objectMetadataMapItem,
+    });
+
     const updatedRecord = await repository.save({
       ...recordToUpdate,
-      ...request.body,
+      ...overriddenBody,
     });
 
     this.apiEventEmitterService.emitUpdateEvents(
@@ -139,7 +149,11 @@ export class RestApiCoreServiceV2 {
         objectMetadataNameSingular,
       );
 
-    return { objectMetadataNameSingular, objectMetadata, repository };
+    return {
+      objectMetadataNameSingular,
+      objectMetadata,
+      repository,
+    };
   }
 
   private getAuthContextFromRequest(request: Request): AuthContext {

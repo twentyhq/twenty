@@ -7,6 +7,7 @@ import {
   useListenClickOutside,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import React, { useEffect, useRef } from 'react';
@@ -148,6 +149,7 @@ export type ModalProps = React.PropsWithChildren & {
   className?: string;
   hotkeyScope?: ModalHotkeyScope;
   onEnter?: () => void;
+  isOpenAnimated?: boolean;
   modalVariant?: ModalVariants;
 } & (
     | { isClosable: true; onClose: () => void }
@@ -170,6 +172,7 @@ export const Modal = ({
   isClosable = false,
   onClose,
   modalVariant = 'primary',
+  isOpenAnimated = true,
 }: ModalProps) => {
   const isMobile = useIsMobile();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -223,6 +226,8 @@ export const Modal = ({
     e.stopPropagation();
   };
 
+  const theme = useTheme();
+
   return (
     <StyledBackDrop
       className="modal-backdrop"
@@ -233,12 +238,13 @@ export const Modal = ({
         ref={modalRef}
         size={size}
         padding={padding}
-        initial="hidden"
+        initial={isOpenAnimated ? 'hidden' : 'visible'}
         animate="visible"
         exit="exit"
         layout
         modalVariant={modalVariant}
         variants={modalAnimation}
+        transition={{ duration: theme.animation.duration.normal }}
         className={className}
         isMobile={isMobile}
       >
@@ -251,3 +257,4 @@ export const Modal = ({
 Modal.Header = ModalHeader;
 Modal.Content = ModalContent;
 Modal.Footer = ModalFooter;
+Modal.Backdrop = StyledBackDrop;

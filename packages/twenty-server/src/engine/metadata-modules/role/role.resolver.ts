@@ -31,7 +31,7 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { SettingPermissionDTO } from 'src/engine/metadata-modules/setting-permission/dtos/setting-permission.dto';
-import { UpsertSettingPermissionInput } from 'src/engine/metadata-modules/setting-permission/dtos/upsert-setting-permission-input';
+import { UpsertSettingPermissionsInput } from 'src/engine/metadata-modules/setting-permission/dtos/upsert-setting-permission-input';
 import { SettingPermissionService } from 'src/engine/metadata-modules/setting-permission/setting-permission.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -111,7 +111,7 @@ export class RoleResolver {
   ): Promise<RoleDTO> {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
 
-    return this.roleService.createRole({
+    return await this.roleService.createRole({
       workspaceId: workspace.id,
       input: createRoleInput,
     });
@@ -124,10 +124,12 @@ export class RoleResolver {
   ): Promise<RoleDTO> {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
 
-    return this.roleService.updateRole({
+    const role = await this.roleService.updateRole({
       input: updateRoleInput,
       workspaceId: workspace.id,
     });
+
+    return role;
   }
 
   @Mutation(() => String)
@@ -137,7 +139,12 @@ export class RoleResolver {
   ): Promise<string> {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
 
-    return this.roleService.deleteRole(roleId, workspace.id);
+    const deletedRoleId = await this.roleService.deleteRole(
+      roleId,
+      workspace.id,
+    );
+
+    return deletedRoleId;
   }
 
   @Mutation(() => ObjectPermissionDTO)
@@ -148,23 +155,26 @@ export class RoleResolver {
   ) {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
 
-    return this.objectPermissionService.upsertObjectPermission({
-      workspaceId: workspace.id,
-      input: upsertObjectPermissionInput,
-    });
+    const objectPermission =
+      await this.objectPermissionService.upsertObjectPermission({
+        workspaceId: workspace.id,
+        input: upsertObjectPermissionInput,
+      });
+
+    return objectPermission;
   }
 
-  @Mutation(() => SettingPermissionDTO)
-  async upsertOneSettingPermission(
+  @Mutation(() => [SettingPermissionDTO])
+  async upsertSettingPermissions(
     @AuthWorkspace() workspace: Workspace,
-    @Args('upsertSettingPermissionInput')
-    upsertSettingPermissionInput: UpsertSettingPermissionInput,
+    @Args('upsertSettingPermissionsInput')
+    upsertSettingPermissionsInput: UpsertSettingPermissionsInput,
   ) {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
 
-    return this.settingPermissionService.upsertSettingPermission({
+    return this.settingPermissionService.upsertSettingPermissions({
       workspaceId: workspace.id,
-      input: upsertSettingPermissionInput,
+      input: upsertSettingPermissionsInput,
     });
   }
 

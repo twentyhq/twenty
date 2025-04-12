@@ -68,6 +68,7 @@ msgstr ": Ma"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "[empty string]"
 msgstr ""
 
@@ -121,8 +122,13 @@ msgstr "1. Típus"
 
 #. js-lingui-id: AvXug3
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "10 000 workflow node executions"
-msgstr "10 000 munkafolyamat csomópont végrehajtás"
+#~ msgid "10 000 workflow node executions"
+#~ msgstr "10 000 munkafolyamat csomópont végrehajtás"
+
+#. js-lingui-id: 7IIx+y
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "10,000 workflow node executions"
+msgstr ""
 
 #. js-lingui-id: 4EdXYs
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -142,8 +148,13 @@ msgstr "2. Mező konfigurálása"
 
 #. js-lingui-id: kAtmAv
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "20 000 workflow node executions"
-msgstr "20 000 munkafolyamat csomópont végrehajtás"
+#~ msgid "20 000 workflow node executions"
+#~ msgstr "20 000 munkafolyamat csomópont végrehajtás"
+
+#. js-lingui-id: YfwnsU
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "20,000 workflow node executions"
+msgstr ""
 
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -154,6 +165,11 @@ msgstr "24 óra ({hour24Label})"
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Egy megosztott környezet, ahol csapatoddal együtt kezelheted az ügyfélkapcsolatokat."
+
+#. js-lingui-id: JE9zuL
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Ability to edit all settings"
+msgstr ""
 
 #. js-lingui-id: 09tRFp
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
@@ -207,7 +223,6 @@ msgid "Action"
 msgstr "Művelet"
 
 #. js-lingui-id: 7L01XJ
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Actions"
 msgstr "Műveletek"
@@ -216,12 +231,13 @@ msgstr "Műveletek"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Activate"
 msgstr "Aktiválás"
 
 #. js-lingui-id: tu8A/k
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Activate Workflow"
 msgstr "Munkafolyamat aktiválása"
 
@@ -299,10 +315,10 @@ msgid "Add to Favorite"
 msgstr "Hozzáadás a Kedvencekhez"
 
 #. js-lingui-id: pBsoKL
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Add to favorites"
 msgstr "Hozzáadás a kedvencekhez"
 
@@ -362,7 +378,7 @@ msgid "Advanced filter"
 msgstr "Speciális szűrő"
 
 #. js-lingui-id: WsKDNF
-#: src/modules/navigation/components/AppNavigationDrawer.tsx
+#: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 msgid "Advanced:"
 msgstr "Haladó:"
 
@@ -547,8 +563,13 @@ msgstr "Arab"
 
 #. js-lingui-id: 3iX0kh
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Are you sure that you want to change your billing interval?"
-msgstr "Biztosan meg akarja változtatni a számlázási intervallumát?"
+#~ msgid "Are you sure that you want to change your billing interval?"
+#~ msgstr "Biztosan meg akarja változtatni a számlázási intervallumát?"
+
+#. js-lingui-id: CWb74a
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Are you sure that you want to change your billing interval? You will be charged immediately for the full year."
+msgstr ""
 
 #. js-lingui-id: 3SRf5B
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
@@ -561,7 +582,7 @@ msgstr "Biztosan meg akarja változtatni a számlázási intervallumát?"
 #~ msgstr "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
 
 #. js-lingui-id: 2BZAqa
-#: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
+#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
 msgid "Are you sure you want to delete these records? They can be recovered from the Command menu."
 msgstr "Biztosan törölni szeretné ezeket a rekordokat? Visszaállíthatók a Parancs menüből."
 
@@ -571,7 +592,7 @@ msgstr "Biztosan törölni szeretné ezeket a rekordokat? Visszaállíthatók a 
 #~ msgstr "Are you sure you want to delete this record? It can be recovered from the Command menu ({osControlSymbol} + K)."
 
 #. js-lingui-id: yb2hF4
-#: src/modules/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction.tsx
+#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
 msgid "Are you sure you want to delete this record? It can be recovered from the Command menu."
 msgstr "Biztosan törölni szeretné ezt a rekordot? Visszaállítható a Parancs menüből."
 
@@ -759,8 +780,8 @@ msgstr "Mégse"
 
 #. js-lingui-id: 0TllC8
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Cancel anytime"
-msgstr "Bármikor lemondható"
+#~ msgid "Cancel anytime"
+#~ msgstr "Bármikor lemondható"
 
 #. js-lingui-id: rRK/Lf
 #: src/pages/settings/SettingsBilling.tsx
@@ -779,8 +800,8 @@ msgstr "Katalán"
 
 #. js-lingui-id: OfzMnb
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Change {to}"
-msgstr "Váltás {to}-ra"
+#~ msgid "Change {to}"
+#~ msgstr "Váltás {to}-ra"
 
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
@@ -788,6 +809,16 @@ msgstr "Váltás {to}-ra"
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Change Password"
 msgstr "Jelszó megváltoztatása"
+
+#. js-lingui-id: wRtBJP
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "Change Plan"
+msgstr ""
+
+#. js-lingui-id: b0h4XW
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Change to yearly"
+msgstr ""
 
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -868,6 +899,7 @@ msgstr "Kód"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Collapse"
 msgstr "Összecsuk"
 
@@ -887,7 +919,7 @@ msgid "Compact view"
 msgstr "Kompakt nézet"
 
 #. js-lingui-id: s2QZS6
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Companies"
 msgstr ""
 
@@ -1039,6 +1071,16 @@ msgstr ""
 msgid "Correct the issues and fill the missing data."
 msgstr ""
 
+#. js-lingui-id: I99Miw
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Cost"
+msgstr ""
+
+#. js-lingui-id: iX2opZ
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Cost per 1k Extra Credits"
+msgstr ""
+
 #. js-lingui-id: s8lFtq
 #: src/hooks/useCopyToClipboard.tsx
 msgid "Couldn't copy to clipboard"
@@ -1098,12 +1140,12 @@ msgid "Create API key"
 msgstr "API kulcs létrehozása"
 
 #. js-lingui-id: d0DCww
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Create new record"
 msgstr "Új rekord létrehozása"
 
 #. js-lingui-id: UDbEyl
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Create new workflow"
 msgstr ""
 
@@ -1268,7 +1310,7 @@ msgstr "Dátumformátum"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Deactivate"
 msgstr "Deaktiválás"
 
@@ -1289,7 +1331,7 @@ msgid "Deactivate this field"
 msgstr "E mező deaktiválása"
 
 #. js-lingui-id: 4tpC8V
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Deactivate Workflow"
 msgstr "Munkafolyamat deaktiválása"
 
@@ -1338,13 +1380,11 @@ msgstr "Határozza meg, mi lesz látható más felhasználók számára a munkat
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete"
 msgstr "Törlés"
 
@@ -1372,7 +1412,7 @@ msgstr "API kulcs törlése"
 #~ msgstr "Rekord törlése"
 
 #. js-lingui-id: kf0A63
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete records"
 msgstr "Rekordok t\\u00f6rl\\u00e9se"
 
@@ -1399,12 +1439,12 @@ msgid "Delete webhook"
 msgstr "Webhook t\\u00f6rl\\u00e9se"
 
 #. js-lingui-id: UA2IpC
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Delete workflow"
 msgstr "Munkafolyamat t\\u00f6rl\\u00e9se"
 
 #. js-lingui-id: ABwG9x
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Delete workflows"
 msgstr "Munkafolyamatok t\\u00f6rl\\u00e9se"
 
@@ -1430,7 +1470,7 @@ msgstr "Törölve"
 #~ msgstr "Deleted {objectNamePlural}"
 
 #. js-lingui-id: WH/5rN
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Deleted records"
 msgstr "Törölt rekordok"
 
@@ -1464,8 +1504,8 @@ msgid "Description"
 msgstr "Le\\u00edr\\u00e1s"
 
 #. js-lingui-id: 2xxBws
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Destroy"
 msgstr "Elt\\u00e1vol\\u00edt\\u00e1s"
 
@@ -1480,8 +1520,8 @@ msgid "Developers"
 msgstr "Fejleszt\\u0151k"
 
 #. js-lingui-id: zAg2B9
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Discard Draft"
 msgstr "Piszkozat elvet\\u00e9se"
 
@@ -1711,6 +1751,7 @@ msgstr "\\u00dcres"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Array"
 msgstr "Üres tömb"
 
@@ -1718,6 +1759,7 @@ msgstr "Üres tömb"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Object"
 msgstr "Üres objektum"
 
@@ -1801,10 +1843,20 @@ msgstr "Hiba az api kulcs \\u00fajragener\\u00e1l\\u00e1sa sor\\u00e1n: {err}"
 msgid "Error resending invitation"
 msgstr "Hiba a meghívás újraküldése közben"
 
+#. js-lingui-id: QmR+2U
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "Error while ending trial period. Please contact Twenty team."
+msgstr ""
+
 #. js-lingui-id: VSQxWH
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Error while switching subscription {to}."
-msgstr "Hiba a {to} el\\u0151fizet\\u00e9sre val\\u00f3 v\\u00e1lt\\u00e1s sor\\u00e1n."
+#~ msgid "Error while switching subscription {to}."
+#~ msgstr "Hiba a {to} el\\u0151fizet\\u00e9sre val\\u00f3 v\\u00e1lt\\u00e1s sor\\u00e1n."
+
+#. js-lingui-id: k06M7e
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Error while switching subscription to yearly."
+msgstr ""
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -1860,8 +1912,8 @@ msgstr ""
 
 #. js-lingui-id: LFNXuj
 #: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
-msgid "Exit Full Screen"
-msgstr "Kilépés teljes képernyőből"
+#~ msgid "Exit Full Screen"
+#~ msgstr "Kilépés teljes képernyőből"
 
 #. js-lingui-id: XB4onr
 #: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
@@ -1869,7 +1921,7 @@ msgid "Exit import flow"
 msgstr ""
 
 #. js-lingui-id: IZ4o2e
-#: src/modules/navigation/components/AppNavigationDrawer.tsx
+#: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 msgid "Exit Settings"
 msgstr "Kilépés a beállításokból"
 
@@ -1877,6 +1929,7 @@ msgstr "Kilépés a beállításokból"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Expand"
 msgstr "Kibontás"
 
@@ -1915,12 +1968,13 @@ msgstr "Lejárat ideje"
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
-#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export"
 msgstr "Exportálás"
 
@@ -1930,49 +1984,49 @@ msgstr "Exportálás"
 #~ msgstr "Rekord exportálása"
 
 #. js-lingui-id: ep2rbf
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export records"
 msgstr "Rekordok exportálása"
 
 #. js-lingui-id: iHK6np
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "Export run"
 msgstr "Futtatás exportálása"
 
 #. js-lingui-id: vwtAUW
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "Export runs"
 msgstr "Futtatások exportálása"
 
 #. js-lingui-id: q46CjD
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export to PDF"
 msgstr "Exportálás PDF-be"
 
 #. js-lingui-id: BuprEs
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Export version"
 msgstr "Verzió exportálása"
 
 #. js-lingui-id: 4FLUle
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Export versions"
 msgstr "Verziók exportálása"
 
 #. js-lingui-id: DaGxE0
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export view"
 msgstr "Nézet exportálása"
 
 #. js-lingui-id: +FMXdE
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Export workflow"
 msgstr "Munkafolyamat exportálása"
 
 #. js-lingui-id: XcAij/
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Export workflows"
 msgstr "Munkafolyamatok exportálása"
 
@@ -1981,10 +2035,15 @@ msgstr "Munkafolyamatok exportálása"
 #~ msgid "Export Workflows"
 #~ msgstr "Export Workflows"
 
+#. js-lingui-id: uE7S0L
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Extra Credits Used"
+msgstr ""
+
 #. js-lingui-id: jARNNi
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
-msgid "Failed to validate API key. Please check your API key and try again."
-msgstr "Sikertelen az API-kulcs ellenőrzése. Kérlek, ellenőrizd az API-kulcsodat, és próbáld újra."
+#~ msgid "Failed to validate API key. Please check your API key and try again."
+#~ msgstr "Sikertelen az API-kulcs ellenőrzése. Kérlek, ellenőrizd az API-kulcsodat, és próbáld újra."
 
 #. js-lingui-id: ocUvR+
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
@@ -2080,6 +2139,11 @@ msgstr "Keresztnév"
 msgid "Forgot your password?"
 msgstr "Elfelejtette a jelszavát?"
 
+#. js-lingui-id: wjsFMQ
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Free Credits Used"
+msgstr ""
+
 #. js-lingui-id: nLC6tu
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "French"
@@ -2087,13 +2151,13 @@ msgstr "Francia"
 
 #. js-lingui-id: aTieE0
 #: src/pages/settings/SettingsBilling.tsx
-msgid "from monthly to yearly"
-msgstr "a havi előfizetéstől az éves előfizetésig"
+#~ msgid "from monthly to yearly"
+#~ msgstr "a havi előfizetéstől az éves előfizetésig"
 
 #. js-lingui-id: K04lE5
 #: src/pages/settings/SettingsBilling.tsx
-msgid "from yearly to monthly"
-msgstr "az éves előfizetéstől a havi előfizetésig"
+#~ msgid "from yearly to monthly"
+#~ msgstr "az éves előfizetéstől a havi előfizetésig"
 
 #. js-lingui-id: scmRyR
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -2136,41 +2200,44 @@ msgid "Global"
 msgstr "Globális"
 
 #. js-lingui-id: mUbv8L
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Companies"
 msgstr ""
 
+#. js-lingui-id: BQE4ob
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to Notes"
+msgstr ""
+
 #. js-lingui-id: buPcNi
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Opportunities"
 msgstr ""
 
 #. js-lingui-id: MrE/Qb
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to People"
 msgstr ""
 
 #. js-lingui-id: iS69s6
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Go to runs"
 msgstr "Ugrás a futásokhoz"
 
 #. js-lingui-id: mT57+Q
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Settings"
 msgstr "Ugrás a beállításokhoz"
 
 #. js-lingui-id: BM24SF
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Tasks"
 msgstr ""
 
 #. js-lingui-id: A5WHZY
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to workflows"
 msgstr "Munkafolyamatokhoz"
 
@@ -2244,17 +2311,17 @@ msgid "Hide"
 msgstr "Elrejtés"
 
 #. js-lingui-id: OlbYor
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Hide deleted"
 msgstr "Törlés elrejtése"
 
 #. js-lingui-id: FHhlye
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Hide deleted records"
 msgstr "Törölt rekordok elrejtése"
 
 #. js-lingui-id: 0dZtKR
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "Hide deleted runs"
 msgstr "Törölt futtatások elrejtése"
 
@@ -2264,7 +2331,7 @@ msgstr "Törölt futtatások elrejtése"
 #~ msgstr "Törölt verziók elrejtése"
 
 #. js-lingui-id: aOZAIB
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Hide deleted workflows"
 msgstr "Törölt munkafolyamatok elrejtése"
 
@@ -2331,17 +2398,17 @@ msgid "Impersonate"
 msgstr "Megszemélyesítés"
 
 #. js-lingui-id: l3s5ri
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Import"
 msgstr "Importálás"
 
 #. js-lingui-id: eECp4f
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Import records"
 msgstr "Rekordok importálása"
 
 #. js-lingui-id: ZsIcZZ
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Import workflows"
 msgstr "Munkafolyamatok importálása"
 
@@ -2383,6 +2450,11 @@ msgstr "Példányok"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
 msgstr "Integrációk"
+
+#. js-lingui-id: GNRDhm
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Invalid API key"
+msgstr ""
 
 #. js-lingui-id: NtFk/Z
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -2667,6 +2739,11 @@ msgstr "Listázások"
 msgid "Loading metrics data..."
 msgstr "Metrikai adatok betöltése..."
 
+#. js-lingui-id: Z3FXyt
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
+msgid "Loading..."
+msgstr ""
+
 #. js-lingui-id: FgAxTj
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
@@ -2732,8 +2809,8 @@ msgstr "Előfizetés kezelése"
 #. js-lingui-id: 3Sdni6
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-msgid "Mark as done"
-msgstr "Jelölje meg készként"
+#~ msgid "Mark as done"
+#~ msgstr "Jelölje meg készként"
 
 #. js-lingui-id: 7h8ch8
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -2798,6 +2875,11 @@ msgstr "Figyeld a naptári esemény szinkronizálási feladatának végrehajtás
 msgid "Monitor the execution of your emails sync job"
 msgstr "Figyeld az e-mail szinkronizálási feladatának végrehajtását"
 
+#. js-lingui-id: 1cOZuL
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Monthly Credits"
+msgstr ""
+
 #. js-lingui-id: 3Siwmw
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
@@ -2861,7 +2943,7 @@ msgid "Name of your workspace"
 msgstr "Az űrhelyed neve"
 
 #. js-lingui-id: 2T8KCk
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to next record"
 msgstr "Navigálás a következő rekordra"
 
@@ -2871,17 +2953,17 @@ msgstr "Navigálás a következő rekordra"
 #~ msgstr "Navigálás a következő futtatásra"
 
 #. js-lingui-id: veSA19
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Navigate to next version"
 msgstr "Navigálás a következő verzióra"
 
 #. js-lingui-id: ZTEho+
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Navigate to next workflow"
 msgstr "Navigálás a következő munkafolyamatra"
 
 #. js-lingui-id: 2tw9bo
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to previous record"
 msgstr "Navigálás az előző rekordra"
 
@@ -2891,12 +2973,12 @@ msgstr "Navigálás az előző rekordra"
 #~ msgstr "Navigálás az előző futtatásra"
 
 #. js-lingui-id: I+Pm5V
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Navigate to previous version"
 msgstr "Navigálás az előző verzióra"
 
 #. js-lingui-id: QVUN3K
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Navigate to previous workflow"
 msgstr "Navigálás az előző munkafolyamatra"
 
@@ -2948,7 +3030,7 @@ msgstr "Új Jelszó"
 #. js-lingui-id: BcCzLv
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "New record"
 msgstr "Új rekord"
 
@@ -3003,6 +3085,16 @@ msgstr ""
 msgid "No data found"
 msgstr ""
 
+#. js-lingui-id: xlUOps
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "No free workflow executions left. End trial period and activate your billing to continue."
+msgstr ""
+
+#. js-lingui-id: OcMef3
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+msgid "No latest version found"
+msgstr ""
+
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "No members"
@@ -3048,6 +3140,16 @@ msgstr "Nincs elérhető metrikai adat"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "Nincs több hozzárendelhető tag"
+
+#. js-lingui-id: tTItk7
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+msgid "No output available"
+msgstr ""
+
+#. js-lingui-id: 5pSj4j
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "No payment method found. Please update your billing details."
+msgstr ""
 
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -3133,6 +3235,11 @@ msgstr "Nem található"
 msgid "Not synced"
 msgstr "Nincs szinkronizálva"
 
+#. js-lingui-id: 1DBGsz
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Notes"
+msgstr ""
+
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number"
@@ -3201,7 +3308,7 @@ msgid "Opened"
 msgstr "Megnyitva"
 
 #. js-lingui-id: 4MyDFl
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Opportunities"
 msgstr ""
 
@@ -3271,7 +3378,7 @@ msgid "Password reset link has been sent to the email"
 msgstr "A jelszó visszaállítási linket elküldtük az e-mail címre"
 
 #. js-lingui-id: 1wdjme
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "People"
 msgstr ""
 
@@ -3308,22 +3415,22 @@ msgid "Percentage"
 msgstr "Százalék"
 
 #. js-lingui-id: Bv3y5w
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Permanently destroy record"
 msgstr "Rekord végleges megsemmisítése"
 
 #. js-lingui-id: xjWlSJ
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Permanently destroy records"
 msgstr "Rekordok végleges megsemmisítése"
 
 #. js-lingui-id: 0bQ5ba
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Permanently destroy workflow"
 msgstr ""
 
 #. js-lingui-id: uKWXhB
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Permanently destroy workflows"
 msgstr "Munkafolyamatok végleges megsemmisítése"
 
@@ -3557,8 +3664,8 @@ msgid "Remove as default"
 msgstr "Eltávolítás alapértelmezettként"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Remove from favorites"
 msgstr "Eltávolítás a kedvencek közül"
 
@@ -3589,18 +3696,18 @@ msgid "REST"
 msgstr "NYUGALOM"
 
 #. js-lingui-id: yKu/3Y
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore"
 msgstr "Visszaállítás"
 
 #. js-lingui-id: y4Ib1n
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore record"
 msgstr "Rekord visszaállítása"
 
 #. js-lingui-id: Vw369F
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore records"
 msgstr "Rekordok visszaállítása"
 
@@ -3663,10 +3770,10 @@ msgstr "Séma"
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-#: src/modules/navigation/components/MainNavigationDrawerItems.tsx
+#: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Search"
 msgstr "Keresés"
 
@@ -3724,8 +3831,8 @@ msgid "Search icon"
 msgstr "Keresési ikon"
 
 #. js-lingui-id: IMeaSJ
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Search records"
 msgstr "Rekordok keresése"
 
@@ -3745,18 +3852,18 @@ msgid "Security"
 msgstr "Biztonság"
 
 #. js-lingui-id: QREcJS
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See active version"
 msgstr "Aktív verzió megtekintése"
 
 #. js-lingui-id: BxIUpp
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "See deleted records"
 msgstr "Törölt rekordok megtekintése"
 
 #. js-lingui-id: Z+SGGW
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "See deleted runs"
 msgstr "Törölt futtatások megtekintése"
 
@@ -3766,7 +3873,7 @@ msgstr "Törölt futtatások megtekintése"
 #~ msgstr "Törölt verziók megtekintése"
 
 #. js-lingui-id: 5jZIe5
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See deleted workflows"
 msgstr "Törölt munkafolyamatok megtekintése"
 
@@ -3776,45 +3883,43 @@ msgid "See Records on All Objects"
 msgstr ""
 
 #. js-lingui-id: OpPn5Z
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See runs"
 msgstr "Futtatások megtekintése"
 
 #. js-lingui-id: gGEfj/
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "See version"
 msgstr "Verzió megtekintése"
 
 #. js-lingui-id: EtyY4+
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See versions"
 msgstr "Verziók megtekintése"
 
 #. js-lingui-id: lYhPN0
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See versions history"
 msgstr "Verziótörténet megtekintése"
 
 #. js-lingui-id: qEKLJV
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "See workflow"
 msgstr "Workflow megtekintése"
 
 #. js-lingui-id: XThiR2
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "See workflows"
 msgstr "Munkafolyamatok megtekintése"
 
@@ -3949,10 +4054,15 @@ msgstr "Adja meg az aldomain nevét"
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
-#: src/modules/navigation/components/MainNavigationDrawerItems.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Settings"
 msgstr "Beállítások"
+
+#. js-lingui-id: uXW4pg
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Settings All Access"
+msgstr ""
 
 #. js-lingui-id: p8fNBm
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
@@ -4105,10 +4215,20 @@ msgstr "A téma, a test és a mellékletek meg lesznek osztva a csapatával."
 msgid "Submit"
 msgstr ""
 
+#. js-lingui-id: uvY7Wk
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "Subscription activated."
+msgstr ""
+
 #. js-lingui-id: B5jRKH
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Subscription has been switched {to}"
-msgstr "Az előfizetés átváltva {to}"
+#~ msgid "Subscription has been switched {to}"
+#~ msgstr "Az előfizetés átváltva {to}"
+
+#. js-lingui-id: TXH0ad
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Subscription has been switched to yearly."
+msgstr ""
 
 #. js-lingui-id: AxQiPW
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -4128,23 +4248,43 @@ msgstr "Svéd"
 
 #. js-lingui-id: 9yk9d1
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch {from}"
-msgstr "Váltás {from}"
+#~ msgid "Switch {from}"
+#~ msgstr "Váltás {from}"
 
 #. js-lingui-id: qi74XZ
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch {to}"
-msgstr "Váltás {to}"
+#~ msgid "Switch {to}"
+#~ msgstr "Váltás {to}"
 
 #. js-lingui-id: L6Fg36
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch billing {to}"
-msgstr "Számlázás váltás {to}"
+#~ msgid "Switch billing {to}"
+#~ msgstr "Számlázás váltás {to}"
+
+#. js-lingui-id: o04bjR
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Switch billing to yearly"
+msgstr ""
+
+#. js-lingui-id: /IYUDq
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Switch from monthly to yearly"
+msgstr ""
+
+#. js-lingui-id: E4rPXj
+#: src/pages/onboarding/ChooseYourPlan.tsx
+#~ msgid "Switch Plan"
+#~ msgstr ""
 
 #. js-lingui-id: lz+f/E
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Switch to {alternatePlanName}"
-msgstr "Váltás {alternatePlanName} tervre"
+#~ msgid "Switch to {alternatePlanName}"
+#~ msgstr "Váltás {alternatePlanName} tervre"
+
+#. js-lingui-id: 1EwZPZ
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Switch to yearly"
+msgstr ""
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -4190,7 +4330,7 @@ msgid "Table"
 msgstr "Táblázat"
 
 #. js-lingui-id: GtycJ/
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Tasks"
 msgstr ""
 
@@ -4200,12 +4340,12 @@ msgid "Terms of Service"
 msgstr "Szolgáltatási feltételek"
 
 #. js-lingui-id: NnH3pK
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Test"
 msgstr "Teszt"
 
 #. js-lingui-id: bU9B27
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Test Workflow"
 msgstr "Teszt munkafolyamat"
 
@@ -4370,13 +4510,13 @@ msgstr "Időbélyeg és résztvevők meg lesznek osztva a csapatával."
 
 #. js-lingui-id: aqMzDX
 #: src/pages/settings/SettingsBilling.tsx
-msgid "to monthly"
-msgstr "havi"
+#~ msgid "to monthly"
+#~ msgstr "havi"
 
 #. js-lingui-id: WXXiXO
 #: src/pages/settings/SettingsBilling.tsx
-msgid "to yearly"
-msgstr "éves"
+#~ msgid "to yearly"
+#~ msgstr "éves"
 
 #. js-lingui-id: ecUA8p
 #: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
@@ -4392,6 +4532,11 @@ msgstr ""
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Total Users"
 #~ msgstr "Total Users"
+
+#. js-lingui-id: dshGKq
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Track your monthly workflow credit consumption."
+msgstr ""
 
 #. js-lingui-id: PiUt3N
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
@@ -4443,6 +4588,11 @@ msgstr "Ukrán"
 msgid "Unique"
 msgstr "Egyedi"
 
+#. js-lingui-id: Ef7StM
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+msgid "Unknown"
+msgstr ""
+
 #. js-lingui-id: 29VNqC
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Unknown error"
@@ -4486,8 +4636,8 @@ msgid "URL"
 msgstr "URL cím"
 
 #. js-lingui-id: 6dMpmz
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Use as draft"
 msgstr "Használja vázlatként"
 
@@ -4789,13 +4939,13 @@ msgstr "Nincs jogosultság rekord létrehozására ehhez az objektumhoz"
 
 #. js-lingui-id: zSkMV0
 #: src/pages/settings/SettingsBilling.tsx
-msgid "You will be charged immediately for the full year."
-msgstr "Az egész évre azonnal meg lesz terhelve."
+#~ msgid "You will be charged immediately for the full year."
+#~ msgstr "Az egész évre azonnal meg lesz terhelve."
 
 #. js-lingui-id: XVnj6K
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Your credit balance will be used to pay the monthly bills."
-msgstr "Hitel egyenlegét a havonta kiállított számlák kiegyenlítésére használjuk fel."
+#~ msgid "Your credit balance will be used to pay the monthly bills."
+#~ msgstr "Hitel egyenlegét a havonta kiállított számlák kiegyenlítésére használjuk fel."
 
 #. js-lingui-id: +5YqGH
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx

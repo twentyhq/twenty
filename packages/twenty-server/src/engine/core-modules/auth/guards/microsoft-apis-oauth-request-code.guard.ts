@@ -11,17 +11,17 @@ import {
 import { MicrosoftAPIsOauthRequestCodeStrategy } from 'src/engine/core-modules/auth/strategies/microsoft-apis-oauth-request-code.auth.strategy';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
   'microsoft-apis',
 ) {
   constructor(
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly transientTokenService: TransientTokenService,
     private readonly guardRedirectService: GuardRedirectService,
     @InjectRepository(Workspace, 'core')
@@ -38,8 +38,8 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
 
     try {
       if (
-        !this.environmentService.get('MESSAGING_PROVIDER_MICROSOFT_ENABLED') &&
-        !this.environmentService.get('CALENDAR_PROVIDER_MICROSOFT_ENABLED')
+        !this.twentyConfigService.get('MESSAGING_PROVIDER_MICROSOFT_ENABLED') &&
+        !this.twentyConfigService.get('CALENDAR_PROVIDER_MICROSOFT_ENABLED')
       ) {
         throw new AuthException(
           'Microsoft apis auth is not enabled',
@@ -58,7 +58,7 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
         id: workspaceId,
       });
 
-      new MicrosoftAPIsOauthRequestCodeStrategy(this.environmentService);
+      new MicrosoftAPIsOauthRequestCodeStrategy(this.twentyConfigService);
       setRequestExtraParams(request, {
         transientToken: request.query.transientToken,
         redirectLocation: request.query.redirectLocation,

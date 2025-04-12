@@ -8,6 +8,7 @@ export const billingCheckoutSessionState = createState<BillingCheckoutSession>({
   defaultValue: BILLING_CHECKOUT_SESSION_DEFAULT_VALUE,
   effects: [
     syncEffect({
+      itemKey: 'billingCheckoutSession',
       refine: (value: unknown) => {
         if (
           typeof value === 'object' &&

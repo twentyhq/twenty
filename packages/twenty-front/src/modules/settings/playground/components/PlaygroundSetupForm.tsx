@@ -10,7 +10,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
-import { IconApi, IconBrandGraphql } from 'twenty-ui/display';
+import {
+  IconApi,
+  IconBracketsAngle,
+  IconBrandGraphql,
+  IconFolderRoot,
+} from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { z } from 'zod';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -77,9 +82,7 @@ export const PlaygroundSetupForm = () => {
 
       return true;
     } catch (error) {
-      throw new Error(
-        t`Failed to validate API key. Please check your API key and try again.`,
-      );
+      throw new Error(t`Invalid API key`);
     }
   };
 

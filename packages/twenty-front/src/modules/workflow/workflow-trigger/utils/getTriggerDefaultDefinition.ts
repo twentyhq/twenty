@@ -64,6 +64,8 @@ export const getTriggerDefaultDefinition = ({
         name: defaultLabel,
         settings: {
           outputSchema: {},
+          httpMethod: 'GET',
+          authentication: null,
         },
       };
     }

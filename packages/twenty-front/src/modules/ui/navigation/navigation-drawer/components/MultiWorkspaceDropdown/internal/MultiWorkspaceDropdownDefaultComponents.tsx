@@ -1,30 +1,28 @@
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { Workspaces, workspacesState } from '@/auth/states/workspaces';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { useLingui } from '@lingui/react/macro';
-import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
-import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { SettingsPath } from '@/types/SettingsPath';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownId';
 import { useAuth } from '@/auth/hooks/useAuth';
+import { animateModalState } from '@/auth/states/animateModalState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { Workspaces, workspacesState } from '@/auth/states/workspaces';
+import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { AppPath } from '@/types/AppPath';
-import { useSignUpInNewWorkspaceMutation } from '~/generated/graphql';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownId';
+import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import styled from '@emotion/styled';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { useLingui } from '@lingui/react/macro';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   Avatar,
   IconDotsVertical,
@@ -39,6 +37,9 @@ import {
   MenuItemSelectAvatar,
   UndecoratedLink,
 } from 'twenty-ui/navigation';
+import { useSignUpInNewWorkspaceMutation } from '~/generated/graphql';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledDescription = styled.div`
   color: ${({ theme }) => theme.font.color.light};
@@ -66,6 +67,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const setMultiWorkspaceDropdownState = useSetRecoilState(
     multiWorkspaceDropdownState,
   );
+  const setAnimateModal = useSetRecoilState(animateModalState);
 
   const handleChange = async (workspace: Workspaces[0]) => {
     redirectToWorkspaceDomain(getWorkspaceUrl(workspace.workspaceUrls));
@@ -73,8 +75,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
 
   const createWorkspace = () => {
     signUpInNewWorkspaceMutation({
-      onCompleted: (data) => {
-        return redirectToWorkspaceDomain(
+      onCompleted: async (data) => {
+        setAnimateModal(false);
+        return await redirectToWorkspaceDomain(
           getWorkspaceUrl(data.signUpInNewWorkspace.workspace.workspaceUrls),
           AppPath.Verify,
           {
@@ -172,7 +175,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           <DropdownMenuSeparator />
         </>
       )}
-      <StyledDropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer>
         <MenuItem
           LeftIcon={colorSchemeList.find(({ id }) => id === colorScheme)?.icon}
           text={
@@ -191,7 +194,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           <MenuItem LeftIcon={IconUserPlus} text={t`Invite user`} />
         </UndecoratedLink>
         <MenuItem LeftIcon={IconLogout} text={t`Log out`} onClick={signOut} />
-      </StyledDropdownMenuItemsContainer>
+      </DropdownMenuItemsContainer>
     </>
   );
 };

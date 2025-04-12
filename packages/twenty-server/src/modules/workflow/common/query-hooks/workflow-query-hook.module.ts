@@ -5,6 +5,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkflowCreateManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-many.post-query.hook';
 import { WorkflowCreateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-many.pre-query.hook';
 import { WorkflowCreateOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-one.post-query.hook';
@@ -33,6 +34,7 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
     ServerlessFunctionModule,
     RecordPositionModule,
+    WorkspaceCacheStorageModule,
   ],
   providers: [
     WorkflowCreateOnePreQueryHook,
