@@ -86,6 +86,7 @@ const initialNodes: Node[] = [
       title: 'Mensagem Inicial',
       outgoingEdgeId: '',
     },
+    selected: false,
     position: { x: 0, y: 0 },
   },
   {
@@ -95,7 +96,10 @@ const initialNodes: Node[] = [
       logic: {
         logicNodes: [0, 1],
         logicNodeData: [
-          [{ comparison: '==', inputText: '', conditionValue: '' }],
+          [
+            { comparison: '==', inputText: '', conditionValue: '' },
+            { comparison: '==', inputText: '', conditionValue: '||' },
+          ],
           [{ comparison: '==', inputText: '', conditionValue: '' }],
         ],
       },
@@ -143,8 +147,8 @@ export const BotDiagramBase = ({
   chatbotId,
 }: BotDiagramBaseProps) => {
   const theme = useTheme();
-  const [nodes, setNodes] = useState<Node[]>(initialNodes);
-  const [edges, setEdges] = useState<Edge[]>(initialEdges);
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance<
     Node,
     Edge
@@ -152,11 +156,29 @@ export const BotDiagramBase = ({
 
   const { chatbotFlow } = useValidateChatbotFlow();
   const { updateFlow } = useUpdateChatbotFlow();
-  const { data: chatbotFlowData, refetch } = useGetChatbotFlowById(chatbotId);
+
+  const { chatbotFlowData, refetch } = useGetChatbotFlowById(chatbotId);
+
+  type FlowType = () => [Node[], Edge[]];
+
+  const defineFlow: FlowType = () => {
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+    if (chatbotFlowData) {
+      return [chatbotFlowData.nodes, chatbotFlowData.edges];
+    }
+    return [initialNodes, initialEdges];
+  };
 
   useEffect(() => {
-    const flow = { nodes, edges, chatbotId };
-    chatbotFlow(flow);
+    const [resNode, resEdges] = defineFlow();
+
+    setNodes(resNode);
+    setEdges(resEdges);
+  }, [chatbotFlowData]);
+
+  useEffect(() => {
+    const [resNode, resEdges] = defineFlow();
+    chatbotFlow({ nodes: resNode, edges: resEdges, chatbotId });
   }, []);
 
   const onSave = useCallback(() => {
@@ -165,20 +187,12 @@ export const BotDiagramBase = ({
       const flow = rfInstance.toObject();
       const newFlow = { ...flow, chatbotId };
 
+      console.log('flow: ', flow);
+
       updateFlow(newFlow);
       refetch();
     }
   }, [rfInstance]);
-
-  // useEffect(() => {
-  //   // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-  //   if (chatbotFlowData) {
-  //     const { nodes: storedNodes, edges: storedEdges } = JSON.parse(chatbotFlowData);
-
-  //     setNodes(storedNodes);
-  //     setEdges(storedEdges);
-  //   }
-  // }, [chatbotFlowData]);
 
   const onNodesChange = useCallback(
     (changes: any) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -218,7 +232,7 @@ export const BotDiagramBase = ({
 
     const viewportX =
       (containerRef.current.offsetWidth + visibleRightDrawerWidth) / 2 -
-      flowBounds.width / 2;
+      (flowBounds.width ?? 2) / 2;
 
     reactflow.setViewport(
       {

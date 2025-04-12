@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
 import { ChatbotFlowInput } from 'src/engine/core-modules/chatbot-flow/dtos/chatbot-flow.input';
 import { UpdateChatbotFlowInput } from 'src/engine/core-modules/chatbot-flow/dtos/update-chatbot-flow.input';
+import { sanitizeFlow } from 'src/engine/core-modules/chatbot-flow/utils/sanitizeChatbotFlow';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
@@ -37,14 +38,16 @@ export class ChatbotFlowService {
       throw new Error('Workspace not found');
     }
 
-    const createdFlow = this.chatbotFlowRepository.create({
-      ...flow,
-      workspace: workspace,
-    });
-
     if (chatbotFlow) {
       return { ...chatbotFlow, workspace };
     }
+
+    const newFlow = sanitizeFlow(flow);
+
+    const createdFlow = this.chatbotFlowRepository.create({
+      ...newFlow,
+      workspace: workspace,
+    });
 
     return await this.chatbotFlowRepository.save(createdFlow);
   }
@@ -68,9 +71,11 @@ export class ChatbotFlowService {
       throw new Error('Flow not found');
     }
 
+    const newFlow = sanitizeFlow(flow);
+
     const updateFlow = {
       ...chatbotFlow,
-      ...flow,
+      ...newFlow,
     };
 
     await this.chatbotFlowRepository.save(updateFlow);
