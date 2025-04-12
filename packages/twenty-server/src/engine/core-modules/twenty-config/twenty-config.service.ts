@@ -6,8 +6,6 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { ConfigKey } from 'src/engine/core-modules/twenty-config/interfaces/config-var-cache-entry.interface';
-
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_MASKING_CONFIG } from 'src/engine/core-modules/twenty-config/constants/config-variables-masking-config';
 import { ConfigVariablesMetadataOptions } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
@@ -175,13 +173,11 @@ export class TwentyConfigService
       let source = 'ENVIRONMENT';
 
       if (isUsingDatabaseDriver && !envMetadata.isEnvOnly) {
-        const valueCacheEntry = this.databaseConfigDriver.getFromValueCache(
-          key as ConfigKey,
-        );
+        const value = this.get(key as keyof ConfigVariables);
 
-        if (valueCacheEntry) {
+        if (value !== envVars[key as keyof ConfigVariables]) {
           source = 'DATABASE';
-        } else if (value === envVars[key as keyof ConfigVariables]) {
+        } else {
           source = 'DEFAULT';
         }
       } else if (value === envVars[key as keyof ConfigVariables]) {
