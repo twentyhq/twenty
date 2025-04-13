@@ -3,19 +3,19 @@ import { UpdateChatbotFlow } from '@/chatbot/types/chatbotFlow.type';
 import { useQuery } from '@apollo/client';
 
 type ChatbotFlowByIdReturn = {
-  data: UpdateChatbotFlow | null;
+  chatbotFlowData: UpdateChatbotFlow | null;
   refetch: () => void;
 };
 
 export const useGetChatbotFlowById = (
   chatbotId: string,
 ): ChatbotFlowByIdReturn => {
-  const { data: chatbotFlowData, refetch } = useQuery(GET_CHATBOT_FLOW_BY_ID, {
+  const { data, refetch } = useQuery(GET_CHATBOT_FLOW_BY_ID, {
     variables: { chatbotId },
   });
 
   return {
-    data: chatbotFlowData,
+    chatbotFlowData: data?.getChatbotFlowById || [],
     refetch,
   };
 };

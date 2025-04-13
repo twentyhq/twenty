@@ -88,6 +88,7 @@ function TextNode({
   };
 
   useEffect(() => {
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (isDefined(textareaRef.current)) {
       textareaRef.current.style.height = '30px';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;

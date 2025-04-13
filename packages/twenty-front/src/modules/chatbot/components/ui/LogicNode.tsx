@@ -4,10 +4,13 @@ import {
   comparisonOptions,
   conditionOptions,
 } from '@/chatbot/types/condicionalOptions';
-import { LogicNodeData } from '@/chatbot/types/LogicNodeDataType';
+import {
+  ExtendedLogicNodeData,
+  LogicNodeData,
+} from '@/chatbot/types/LogicNodeDataType';
 import { Select, SelectValue } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
-import { memo, ReactNode, useEffect, useState } from 'react';
+import { memo, ReactNode } from 'react';
 import { useIcons } from 'twenty-ui';
 
 const StyledLogicNodeWrapper = styled.div`
@@ -121,55 +124,56 @@ function LogicNode({
   dropdownId,
   onGroupsChange,
   children,
+  groupsData,
 }: {
   dropdownId: string;
-  onGroupsChange: (groups: LogicNodeData[]) => void;
+  onGroupsChange: (groups: ExtendedLogicNodeData[]) => void;
   children: ReactNode;
+  groupsData: LogicNodeData[];
 }) {
-  const [groups, setGroups] = useState<LogicNodeData[]>([
-    { conditionValue: '', comparison: '==', inputText: '', outgoingEdgeId: '' },
-  ]);
-
-  useEffect(() => {
-    onGroupsChange(groups);
-  }, [groups]);
-
-  const handleAddGroup = () => {
-    setGroups((prevGroups) => [
-      ...prevGroups,
-      { conditionValue: '&&', comparison: '==', inputText: '' },
-    ]);
-  };
-
-  const handleRemoveGroup = () => {
-    if (groups.length > 1) {
-      setGroups(groups.slice(0, -1));
-    }
-  };
-
   const handleConditionChange = (index: number, value: SelectValue) => {
-    const updatedGroups = [...groups];
-    updatedGroups[index].conditionValue = value ? String(value) : '';
-    setGroups(updatedGroups);
+    const updatedGroups = groupsData.map((group, i) =>
+      i === index
+        ? { ...group, conditionValue: value ? String(value) : '' }
+        : { ...group },
+    );
+    onGroupsChange(updatedGroups);
   };
 
   const handleComparisonChange = (index: number, value: string) => {
-    const updatedGroups = [...groups];
-    updatedGroups[index].comparison = value;
-    setGroups(updatedGroups);
+    const updatedGroups = groupsData.map((group, i) =>
+      i === index ? { ...group, comparison: value } : { ...group },
+    );
+    onGroupsChange(updatedGroups);
   };
 
   const handleInputTextChange = (index: number, value: string) => {
-    const updatedGroups = [...groups];
-    updatedGroups[index].inputText = value;
-    setGroups(updatedGroups);
+    const updatedGroups = groupsData.map((group, i) =>
+      i === index ? { ...group, inputText: value } : { ...group },
+    );
+    onGroupsChange(updatedGroups);
+  };
+
+  const handleAddGroup = () => {
+    const newGroup = {
+      conditionValue: '&&',
+      comparison: '==',
+      inputText: '',
+    };
+    onGroupsChange([...groupsData, newGroup]);
+  };
+
+  const handleRemoveGroup = () => {
+    if (groupsData.length > 1) {
+      onGroupsChange(groupsData.slice(0, -1));
+    }
   };
 
   return (
     <StyledLogicNodeWrapper>
       <p>A mensagem recebida deve ser</p>
 
-      {groups.map((group, index) => (
+      {groupsData.map((group, index) => (
         <div key={index}>
           {index > 0 && (
             <StyledSelect
@@ -204,7 +208,7 @@ function LogicNode({
           icon={'IconMinus'}
           size={18}
           onClick={handleRemoveGroup}
-          disabled={groups.length <= 1}
+          disabled={groupsData.length <= 1}
         />
       </StyledButtonWrapper>
 

@@ -1,9 +1,11 @@
+import { Edge, Node } from '@xyflow/react';
+
 export type ChatbotFlow = {
-  nodes: any[]; // create typing when defining flow
-  edges: any[]; // create typing when defining flow
+  nodes: Node[];
+  edges: Edge[];
   chatbotId: string;
   workspaceId: string;
-  viewport: { [key: string]: any }; // create typing when defining flow
+  viewport: { x: number; y: number; zoom: number };
 };
 
 export type ChatbotFlowInput = Omit<ChatbotFlow, 'workspaceId' | 'viewport'>;

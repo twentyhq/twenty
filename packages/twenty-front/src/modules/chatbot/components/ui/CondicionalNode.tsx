@@ -4,6 +4,7 @@ import BaseNode from '@/chatbot/components/ui/BaseNode';
 import LogicNode from '@/chatbot/components/ui/LogicNode';
 import {
   CondicionalState,
+  ExtendedLogicNodeData,
   LogicNodeData,
 } from '@/chatbot/types/LogicNodeDataType';
 import styled from '@emotion/styled';
@@ -81,7 +82,7 @@ function CondicionalNode({
   };
 
   const handleGroupsChange = useCallback(
-    (updatedGroups: LogicNodeData[], nodeIndex: number) => {
+    (updatedGroups: ExtendedLogicNodeData[], nodeIndex: number) => {
       setState((prevState) => {
         const updatedLogicNodeData = [...prevState.logicNodeData];
 
@@ -116,22 +117,33 @@ function CondicionalNode({
       <StyledDiv>
         {state.logicNodes.map((_, index) => {
           const conn = connections[index];
-          const nodeId = conn.target;
-          const sourceHandle = conn.sourceHandle;
+          const nodeId = conn.target ?? undefined;
+          const sourceHandle = conn.sourceHandle ?? undefined;
+
+          const rawGroup = state.logicNodeData[index];
+
+          const sanitizedGroup: ExtendedLogicNodeData[] = Array.isArray(
+            rawGroup,
+          )
+            ? rawGroup
+            : Object.entries(rawGroup)
+                .filter(([key]) => !isNaN(Number(key)))
+                .map(([, value]) => value as LogicNodeData);
 
           return (
             <LogicNode
               key={index}
               dropdownId={`logicSelect-${index}`}
+              groupsData={sanitizedGroup}
               onGroupsChange={(updatedGroups) => {
-                // console.log('updatedGroups CondicionalNode: ', updatedGroups);
+                const extendedGroups: ExtendedLogicNodeData[] =
+                  updatedGroups.map((group) => ({
+                    ...group,
+                    outgoingEdgeId: sourceHandle,
+                    outgoingNodeId: nodeId,
+                  }));
 
-                const newUpdatedGroups = {
-                  ...updatedGroups,
-                  outgoingEdgeId: sourceHandle,
-                  outgoingNodeId: nodeId,
-                };
-                handleGroupsChange(newUpdatedGroups, index);
+                handleGroupsChange(extendedGroups, index);
               }}
             >
               <Handle
