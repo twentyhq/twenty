@@ -5,7 +5,6 @@ export const UPDATE_LAB_PUBLIC_FEATURE_FLAG = gql`
     $input: UpdateLabPublicFeatureFlagInput!
   ) {
     updateLabPublicFeatureFlag(input: $input) {
-      id
       key
       value
     }

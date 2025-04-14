@@ -520,6 +520,33 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
+    description: 'Amount of money in cents to trigger a billing threshold',
+  })
+  @IsNumber()
+  @CastToPositiveNumber()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_SUBSCRIPTION_THRESHOLD_AMOUNT = 10000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BillingConfig,
+    description: 'Amount of credits for the free trial without credit card',
+  })
+  @IsNumber()
+  @CastToPositiveNumber()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD = 5000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BillingConfig,
+    description: 'Amount of credits for the free trial with credit card',
+  })
+  @IsNumber()
+  @CastToPositiveNumber()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD = 10000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BillingConfig,
     isSensitive: true,
     description: 'Stripe API key for billing',
   })
