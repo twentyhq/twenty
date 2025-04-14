@@ -1,34 +1,43 @@
 import { ReactNode, useEffect } from 'react';
 
 import { useSelectableListHotKeys } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListHotKeys';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { SelectableListScope } from '@/ui/layout/selectable-list/scopes/SelectableListScope';
-import { arrayToChunks } from '~/utils/array/arrayToChunks';
+import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
+import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
+import { selectableListOnEnterComponentState } from '@/ui/layout/selectable-list/states/selectableListOnEnterComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isDefined } from 'twenty-shared/utils';
+import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 type SelectableListProps = {
   children: ReactNode;
-  selectableListId: string;
   selectableItemIdArray?: string[];
   selectableItemIdMatrix?: string[][];
   onSelect?: (selected: string) => void;
   hotkeyScope: string;
   onEnter?: (itemId: string) => void;
+  selectableListInstanceId: string;
 };
 
 export const SelectableList = ({
   children,
-  selectableListId,
   hotkeyScope,
   selectableItemIdArray,
   selectableItemIdMatrix,
+  selectableListInstanceId,
   onEnter,
   onSelect,
 }: SelectableListProps) => {
-  useSelectableListHotKeys(selectableListId, hotkeyScope, onSelect);
+  useSelectableListHotKeys(selectableListInstanceId, hotkeyScope, onSelect);
 
-  const { setSelectableItemIds, setSelectableListOnEnter, setSelectedItemId } =
-    useSelectableList(selectableListId);
+  const setSelectableListOnEnter = useSetRecoilComponentStateV2(
+    selectableListOnEnterComponentState,
+    selectableListInstanceId,
+  );
+
+  const setSelectableItemIds = useSetRecoilComponentStateV2(
+    selectableItemIdsComponentState,
+    selectableListInstanceId,
+  );
 
   useEffect(() => {
     setSelectableListOnEnter(() => onEnter);
@@ -48,16 +57,15 @@ export const SelectableList = ({
     if (isDefined(selectableItemIdArray)) {
       setSelectableItemIds(arrayToChunks(selectableItemIdArray, 1));
     }
-  }, [
-    selectableItemIdArray,
-    selectableItemIdMatrix,
-    setSelectableItemIds,
-    setSelectedItemId,
-  ]);
+  }, [selectableItemIdArray, selectableItemIdMatrix, setSelectableItemIds]);
 
   return (
-    <SelectableListScope selectableListScopeId={selectableListId}>
+    <SelectableListComponentInstanceContext.Provider
+      value={{
+        instanceId: selectableListInstanceId,
+      }}
+    >
       {children}
-    </SelectableListScope>
+    </SelectableListComponentInstanceContext.Provider>
   );
 };
