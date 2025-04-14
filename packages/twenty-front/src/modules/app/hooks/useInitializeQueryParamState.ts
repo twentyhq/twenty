@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
@@ -6,7 +6,6 @@ import { animateModalState } from '@/auth/states/animateModalState';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/BillingCheckoutSessionDefaultValue';
-import { parseQueryParamsAndUpdateState } from '~/utils/url-query-params';
 
 // Initialize state that are hydrated from query parameters
 // We used to use recoil-sync to do this, but it was causing issues with Firefox
@@ -16,10 +15,9 @@ export const useInitializeQueryParamState = () => {
   const setBillingCheckoutSession = useSetRecoilState(
     billingCheckoutSessionState,
   );
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    let isInitialized = false;
-
     if (!isInitialized) {
       const handlers = {
         animateModal: (value: string) => {
@@ -41,6 +39,7 @@ export const useInitializeQueryParamState = () => {
               setBillingCheckoutSession(parsedValue as BillingCheckoutSession);
             }
           } catch (error) {
+            // eslint-disable-next-line no-console
             console.error(
               'Failed to parse billingCheckoutSession from URL',
               error,
@@ -50,10 +49,23 @@ export const useInitializeQueryParamState = () => {
         },
       };
 
-      parseQueryParamsAndUpdateState(location.search, handlers);
-      isInitialized = true;
+      const queryParams = new URLSearchParams(location.search);
+
+      for (const [paramName, handler] of Object.entries(handlers)) {
+        const value = queryParams.get(paramName);
+        if (value !== null) {
+          handler(value);
+        }
+      }
+
+      setIsInitialized(true);
     }
 
     return () => {};
-  }, [location.search, setAnimateModal, setBillingCheckoutSession]);
+  }, [
+    location.search,
+    setAnimateModal,
+    setBillingCheckoutSession,
+    isInitialized,
+  ]);
 };
