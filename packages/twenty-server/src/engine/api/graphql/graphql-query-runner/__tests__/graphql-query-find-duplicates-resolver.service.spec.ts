@@ -10,6 +10,7 @@ import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-r
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 describe('GraphqlQueryFindDuplicatesResolverService', () => {
@@ -27,6 +28,7 @@ describe('GraphqlQueryFindDuplicatesResolverService', () => {
         ProcessNestedRelationsHelper,
         FeatureFlagService,
         PermissionsService,
+        UserRoleService,
       ],
     })
       .overrideProvider(WorkspaceQueryHookService)
@@ -44,6 +46,8 @@ describe('GraphqlQueryFindDuplicatesResolverService', () => {
       .overrideProvider(FeatureFlagService)
       .useValue({})
       .overrideProvider(PermissionsService)
+      .useValue({})
+      .overrideProvider(UserRoleService)
       .useValue({})
       .compile();
 

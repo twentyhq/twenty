@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BillingController } from 'src/engine/core-modules/billing/billing.controller';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
+import { BillingAddWorkflowSubscriptionItemCommand } from 'src/engine/core-modules/billing/commands/billing-add-workflow-subscription-item.command';
 import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
 import { BillingSyncPlansDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-plans-data.command';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
@@ -82,6 +83,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingRestApiExceptionFilter,
     BillingSyncCustomerDataCommand,
     BillingSyncPlansDataCommand,
+    BillingAddWorkflowSubscriptionItemCommand,
     BillingUsageService,
   ],
   exports: [
