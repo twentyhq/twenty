@@ -38,8 +38,14 @@ export const useSignInUpForm = () => {
   const isDeveloperDefaultSignInPrefilled = useRecoilValue(
     isDeveloperDefaultSignInPrefilledState,
   );
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const prefilledEmail = searchParams.get('email');
+
+  if (isDefined(prefilledEmail)) {
+    // remove it after use it to prevent side effect
+    searchParams.delete('email');
+    setSearchParams(searchParams);
+  }
 
   const form = useForm<Form>({
     mode: 'onSubmit',
@@ -57,7 +63,10 @@ export const useSignInUpForm = () => {
       form.setValue('email', prefilledEmail);
     }
 
-    if (isDeveloperDefaultSignInPrefilled === true) {
+    if (
+      isDeveloperDefaultSignInPrefilled === true &&
+      form.getValues('email') === ''
+    ) {
       form.setValue('email', prefilledEmail ?? 'tim@apple.dev');
       form.setValue('password', 'Applecar2025');
     }
