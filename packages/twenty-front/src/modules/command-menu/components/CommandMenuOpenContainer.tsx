@@ -1,6 +1,5 @@
 import { COMMAND_MENU_ANIMATION_VARIANTS } from '@/command-menu/constants/CommandMenuAnimationVariants';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
@@ -44,8 +43,6 @@ export const CommandMenuOpenContainer = ({
   const { closeCommandMenu } = useCommandMenu();
 
   const commandMenuRef = useRef<HTMLDivElement>(null);
-
-  useCommandMenuHotKeys();
 
   const handleClickOutside = useRecoilCallback(
     ({ snapshot }) =>

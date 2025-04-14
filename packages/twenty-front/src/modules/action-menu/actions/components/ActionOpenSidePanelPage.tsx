@@ -44,5 +44,5 @@ export const ActionOpenSidePanelPage = ({
     }
   };
 
-  return <ActionDisplay action={actionConfig} onClick={handleClick} />;
+  return <ActionDisplay onClick={handleClick} />;
 };
