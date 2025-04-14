@@ -90,7 +90,10 @@ export const Avatar = ({
       })
     : null;
 
-  const placeholderChar = placeholder?.[0]?.toLocaleUpperCase();
+  const placeholderFirstChar = placeholder?.trim()?.charAt(0);
+  const isPlaceholderFirstCharEmpty =
+    !placeholderFirstChar || placeholderFirstChar === '';
+  const placeholderChar = placeholderFirstChar?.toUpperCase() || '-';
 
   const showPlaceholder =
     isNull(avatarImageURI) || invalidAvatarUrls.includes(avatarImageURI);
@@ -101,10 +104,12 @@ export const Avatar = ({
     }
   };
 
-  const fixedColor =
-    color ?? stringToHslColor(placeholderColorSeed ?? '', 75, 25);
-  const fixedBackgroundColor =
-    backgroundColor ?? stringToHslColor(placeholderColorSeed ?? '', 75, 85);
+  const fixedColor = isPlaceholderFirstCharEmpty
+    ? theme.font.color.tertiary
+    : (color ?? stringToHslColor(placeholderColorSeed ?? '', 75, 25));
+  const fixedBackgroundColor = isPlaceholderFirstCharEmpty
+    ? theme.background.transparent.light
+    : (backgroundColor ?? stringToHslColor(placeholderColorSeed ?? '', 75, 85));
 
   const showBackgroundColor = showPlaceholder;
 

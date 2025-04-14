@@ -10,6 +10,7 @@ import {
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
+import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 
 jest.mock(
   'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate',
@@ -27,6 +28,11 @@ describe('FeatureFlagService', () => {
     upsert: jest.fn(),
     findOne: jest.fn(),
     save: jest.fn(),
+  };
+
+  const mockWorkspaceFeatureFlagsMapCacheService = {
+    getWorkspaceFeatureFlagsMap: jest.fn(),
+    recomputeFeatureFlagsMapCache: jest.fn(),
   };
 
   const workspaceId = 'workspace-id';
@@ -47,6 +53,10 @@ describe('FeatureFlagService', () => {
           provide: getRepositoryToken(FeatureFlag, 'core'),
           useValue: mockFeatureFlagRepository,
         },
+        {
+          provide: WorkspaceFeatureFlagsMapCacheService,
+          useValue: mockWorkspaceFeatureFlagsMapCacheService,
+        },
       ],
     }).compile();
 
@@ -60,27 +70,29 @@ describe('FeatureFlagService', () => {
   describe('isFeatureEnabled', () => {
     it('should return true when feature flag is enabled', async () => {
       // Prepare
-      mockFeatureFlagRepository.findOneBy.mockResolvedValue({
-        key: featureFlag,
-        value: true,
-        workspaceId,
-      });
+      mockWorkspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap.mockResolvedValue(
+        {
+          [featureFlag]: true,
+        },
+      );
 
       // Act
       const result = await service.isFeatureEnabled(featureFlag, workspaceId);
 
       // Assert
       expect(result).toBe(true);
-      expect(mockFeatureFlagRepository.findOneBy).toHaveBeenCalledWith({
+      expect(
+        mockWorkspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap,
+      ).toHaveBeenCalledWith({
         workspaceId,
-        key: featureFlag,
-        value: true,
       });
     });
 
     it('should return false when feature flag is not found', async () => {
       // Prepare
-      mockFeatureFlagRepository.findOneBy.mockResolvedValue(null);
+      mockWorkspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap.mockResolvedValue(
+        {},
+      );
 
       // Act
       const result = await service.isFeatureEnabled(featureFlag, workspaceId);
@@ -94,7 +106,6 @@ describe('FeatureFlagService', () => {
       mockFeatureFlagRepository.findOneBy.mockResolvedValue({
         key: featureFlag,
         value: false,
-        workspaceId,
       });
 
       // Act
@@ -108,21 +119,25 @@ describe('FeatureFlagService', () => {
   describe('getWorkspaceFeatureFlags', () => {
     it('should return all feature flags for a workspace', async () => {
       // Prepare
+      mockWorkspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap.mockResolvedValue(
+        {
+          [FeatureFlagKey.IsWorkflowEnabled]: true,
+          [FeatureFlagKey.IsCopilotEnabled]: false,
+        },
+      );
       const mockFeatureFlags = [
-        { key: FeatureFlagKey.IsWorkflowEnabled, value: true, workspaceId },
-        { key: FeatureFlagKey.IsCopilotEnabled, value: false, workspaceId },
+        { key: FeatureFlagKey.IsWorkflowEnabled, value: true },
+        { key: FeatureFlagKey.IsCopilotEnabled, value: false },
       ];
-
-      mockFeatureFlagRepository.find.mockResolvedValue(mockFeatureFlags);
 
       // Act
       const result = await service.getWorkspaceFeatureFlags(workspaceId);
 
       // Assert
       expect(result).toEqual(mockFeatureFlags);
-      expect(mockFeatureFlagRepository.find).toHaveBeenCalledWith({
-        where: { workspaceId },
-      });
+      expect(
+        mockWorkspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap,
+      ).toHaveBeenCalledWith({ workspaceId });
     });
   });
 
