@@ -1,21 +1,24 @@
+import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-export const useListenToEnterHotkeyOnListItem = ({
+export const useSelectableListListenToEnterHotkeyOnItem = ({
   hotkeyScope,
-
   itemId,
   onEnter,
 }: {
   hotkeyScope: string;
-
   itemId: string;
   onEnter: () => void;
 }) => {
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    SelectableListComponentInstanceContext,
+  );
   useScopedHotkeys(
     Key.Enter,
     useRecoilCallback(
@@ -24,7 +27,7 @@ export const useListenToEnterHotkeyOnListItem = ({
           const selectedItemId = getSnapshotValue(
             snapshot,
             selectedItemIdComponentState.atomFamily({
-              instanceId: itemId,
+              instanceId,
             }),
           );
 
@@ -32,7 +35,7 @@ export const useListenToEnterHotkeyOnListItem = ({
             onEnter?.();
           }
         },
-      [itemId, onEnter],
+      [instanceId, itemId, onEnter],
     ),
     hotkeyScope,
     [itemId, onEnter],
