@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 export const TRACK = gql`
   mutation Track(
-    $type: String!
+    $type: AnalyticsType!
     $event: String
     $name: String
     $properties: JSON

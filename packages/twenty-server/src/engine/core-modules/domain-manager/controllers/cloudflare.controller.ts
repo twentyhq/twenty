@@ -91,7 +91,7 @@ export class CloudflareController {
         ...workspaceUpdated,
       });
 
-      await analytics.track(CUSTOM_DOMAIN_ACTIVATED_EVENT);
+      await analytics.track(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
     }
 
     return res.status(200).send();

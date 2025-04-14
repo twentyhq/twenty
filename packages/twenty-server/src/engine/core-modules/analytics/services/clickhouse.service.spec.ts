@@ -112,7 +112,7 @@ describe('ClickhouseService', () => {
       const result = await service.pushEvent(mockEvent);
 
       expect(result).toEqual({ success: true });
-      const { type, ...rest } = mockEvent;
+      const { type: _type, ...rest } = mockEvent;
 
       expect(mockClickhouseClient.insert).toHaveBeenCalledWith({
         table: 'events',
@@ -125,7 +125,7 @@ describe('ClickhouseService', () => {
       const result = await service.pushEvent(mockPageview);
 
       expect(result).toEqual({ success: true });
-      const { type, ...rest } = mockPageview;
+      const { type: _type, ...rest } = mockPageview;
 
       expect(mockClickhouseClient.insert).toHaveBeenCalledWith({
         table: 'pageview',

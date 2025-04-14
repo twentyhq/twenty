@@ -1,14 +1,8 @@
 import { useCallback } from 'react';
 import { v4 } from 'uuid';
-import { useTrackMutation } from '~/generated/graphql';
-export interface EventData {
-  pathname: string;
-  userAgent: string;
-  timeZone: string;
-  locale: string;
-  href: string;
-  referrer: string;
-}
+import { AnalyticsType, MutationTrackArgs, useTrackMutation } from '~/generated/graphql';
+
+
 export const ANALYTICS_COOKIE_NAME = 'analyticsCookie';
 export const getSessionId = (): string => {
   const cookie: { [key: string]: string } = {};
@@ -31,17 +25,11 @@ export const useEventTracker = () => {
   const [createEventMutation] = useTrackMutation();
 
   return useCallback(
-    (eventAction: string, eventPayload: EventData) => {
-      const isPageview = eventAction === 'pageview';
+    (type: AnalyticsType, payload: Omit<MutationTrackArgs, 'type'>) => {
       createEventMutation({
         variables: {
-          type: isPageview ? 'pageview' : 'track',
-          event: !isPageview ? eventAction : undefined,
-          name: isPageview ? eventPayload.pathname : undefined,
-          properties: {
-            sessionId: getSessionId(),
-            ...eventPayload,
-          },
+          type,
+          ...payload
         },
       });
     },

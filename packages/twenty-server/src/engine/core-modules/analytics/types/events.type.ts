@@ -55,4 +55,6 @@ export interface TrackEvents {
 }
 
 export type TrackEventProperties<T extends TrackEventName> =
-  T extends keyof TrackEvents ? TrackEvents[T]['properties'] : object;
+  T extends keyof TrackEvents
+    ? TrackEvents[T]['properties']
+    : Record<string, unknown>;

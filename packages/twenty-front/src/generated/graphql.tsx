@@ -55,6 +55,11 @@ export type Analytics = {
   success: Scalars['Boolean'];
 };
 
+export enum AnalyticsType {
+  PAGEVIEW = 'PAGEVIEW',
+  TRACK = 'TRACK'
+}
+
 export type ApiConfig = {
   __typename?: 'ApiConfig';
   mutationMaximumAffectedRecords: Scalars['Float'];
@@ -1127,7 +1132,7 @@ export type MutationTrackArgs = {
   event?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   properties?: InputMaybe<Scalars['JSON']>;
-  type: Scalars['String'];
+  type: AnalyticsType;
 };
 
 
@@ -2395,7 +2400,7 @@ export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
 export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type TrackMutationVariables = Exact<{
-  type: Scalars['String'];
+  type: AnalyticsType;
   event?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   properties?: InputMaybe<Scalars['JSON']>;
@@ -3309,7 +3314,7 @@ export type GetTimelineThreadsFromPersonIdQueryHookResult = ReturnType<typeof us
 export type GetTimelineThreadsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdLazyQuery>;
 export type GetTimelineThreadsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>;
 export const TrackDocument = gql`
-    mutation Track($type: String!, $event: String, $name: String, $properties: JSON) {
+    mutation Track($type: AnalyticsType!, $event: String, $name: String, $properties: JSON) {
   track(type: $type, event: $event, name: $name, properties: $properties) {
     success
   }

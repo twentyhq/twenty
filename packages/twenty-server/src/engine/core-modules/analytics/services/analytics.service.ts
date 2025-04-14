@@ -33,18 +33,20 @@ export class AnalyticsService {
     return {
       track: <T extends TrackEventName>(
         event: T,
-        properties: TrackEventProperties<T> = {} as TrackEventProperties<T>,
+        properties: TrackEventProperties<T>,
       ) =>
         this.preventAnalyticsIfDisabled(() =>
-          this.clickhouseService.pushEvent(
-            makeTrackEvent(event, { ...properties, ...userIdAndWorkspaceId }),
-          ),
+          this.clickhouseService.pushEvent({
+            ...userIdAndWorkspaceId,
+            ...makeTrackEvent(event, properties),
+          }),
         ),
-      pageview: (name: string, properties: Partial<PageviewProperties> = {}) =>
+      pageview: (name: string, properties?: Partial<PageviewProperties>) =>
         this.preventAnalyticsIfDisabled(() =>
-          this.clickhouseService.pushEvent(
-            makePageview(name, { ...properties, ...userIdAndWorkspaceId }),
-          ),
+          this.clickhouseService.pushEvent({
+            ...userIdAndWorkspaceId,
+            ...makePageview(name, properties ?? {}),
+          }),
         ),
     };
   }

@@ -426,6 +426,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         workspace.isCustomDomainEnabled
           ? CUSTOM_DOMAIN_ACTIVATED_EVENT
           : CUSTOM_DOMAIN_DEACTIVATED_EVENT,
+        {},
       );
     }
 

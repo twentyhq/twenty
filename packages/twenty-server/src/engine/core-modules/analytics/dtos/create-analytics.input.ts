@@ -1,13 +1,22 @@
-import { ArgsType, Field } from '@nestjs/graphql';
+import { ArgsType, Field, registerEnumType } from '@nestjs/graphql';
 
 import { IsObject, IsOptional, IsString } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
 import { TrackEventName } from 'src/engine/core-modules/analytics/types/events.type';
 
+enum AnalyticsType {
+  PAGEVIEW = 'pageview',
+  TRACK = 'track',
+}
+
+registerEnumType(AnalyticsType, {
+  name: 'AnalyticsType',
+});
+
 @ArgsType()
 export class CreateAnalyticsInput {
-  @Field(() => String)
+  @Field(() => AnalyticsType)
   @IsString()
   type: 'pageview' | 'track';
 

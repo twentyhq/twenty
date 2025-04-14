@@ -32,7 +32,10 @@ export class ClickhouseService {
   }
 
   async pushEvent(
-    data: ReturnType<typeof makeTrackEvent> | ReturnType<typeof makePageview>,
+    data: (
+      | ReturnType<typeof makeTrackEvent>
+      | ReturnType<typeof makePageview>
+    ) & { userId?: string | null; workspaceId?: string | null },
   ) {
     try {
       if (!this.clickhouseClient) {
