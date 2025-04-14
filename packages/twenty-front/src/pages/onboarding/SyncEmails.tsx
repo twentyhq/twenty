@@ -17,6 +17,7 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { AppPath } from '@/types/AppPath';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
@@ -104,7 +105,7 @@ export const SyncEmails = () => {
   );
 
   return (
-    <>
+    <Modal.Content isVerticalCentered isHorizontalCentered>
       <Title noMarginTop>Emails and Calendar</Title>
       <SubTitle>
         Sync your Emails and Calendar with Twenty. Choose your privacy settings.
@@ -147,6 +148,6 @@ export const SyncEmails = () => {
           Continue without sync
         </ClickToActionLink>
       </StyledActionLinkContainer>
-    </>
+    </Modal.Content>
   );
 };
