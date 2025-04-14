@@ -124,6 +124,7 @@ export class PermissionsService {
       return true;
     }
 
+    // TODO check flag
     const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
 
     return settingPermissions.some(

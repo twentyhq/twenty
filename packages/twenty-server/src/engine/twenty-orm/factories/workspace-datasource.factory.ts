@@ -12,7 +12,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
-import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/workspace-roles-permissions-cache/workspace-roles-permissions-cache.service';
+import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import {
   TwentyORMException,
@@ -29,6 +30,8 @@ type CacheResult<T, U> = {
   data: U;
 };
 
+type UserWorkspaceRoleMap = Record<string, string>;
+
 @Injectable()
 export class WorkspaceDatasourceFactory {
   private readonly logger = new Logger(WorkspaceDatasourceFactory.name);
@@ -40,7 +43,8 @@ export class WorkspaceDatasourceFactory {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly entitySchemaFactory: EntitySchemaFactory,
-    private readonly workspaceRolesPermissionsCacheService: WorkspaceRolesPermissionsCacheService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
   ) {}
 
@@ -70,6 +74,16 @@ export class WorkspaceDatasourceFactory {
       workspaceId,
       isPermissionsV2Enabled,
     });
+
+    const {
+      data: cachedUserWorkspaceRoleMap,
+      version: cachedUserWorkspaceRoleMapVersion,
+    } =
+      await this.workspacePermissionsCacheService.getUserWorkspaceRoleMapFromCache(
+        {
+          workspaceId,
+        },
+      );
 
     if (
       workspaceMetadataVersion !== null &&
@@ -171,6 +185,8 @@ export class WorkspaceDatasourceFactory {
             },
             cachedFeatureFlagMapVersion,
             cachedFeatureFlagMap,
+            cachedUserWorkspaceRoleMapVersion,
+            cachedUserWorkspaceRoleMap,
             cachedRolesPermissionsVersion,
             cachedRolesPermissions,
           );
@@ -204,6 +220,12 @@ export class WorkspaceDatasourceFactory {
       });
     }
 
+    await this.updateWorkspaceDataSourceUserWorkspaceRoleMapIfNeeded({
+      workspaceDataSource,
+      cachedUserWorkspaceRoleMapVersion,
+      cachedUserWorkspaceRoleMap,
+    });
+
     await this.updateWorkspaceDataSourceFeatureFlagsMapIfNeeded({
       workspaceDataSource,
       cachedFeatureFlagMapVersion,
@@ -235,13 +257,15 @@ export class WorkspaceDatasourceFactory {
     >({
       workspaceId,
       getCacheData: () =>
-        this.workspaceCacheStorageService.getRolesPermissions(workspaceId),
+        this.workspacePermissionsCacheStorageService.getRolesPermissions(
+          workspaceId,
+        ),
       getCacheVersion: () =>
-        this.workspaceCacheStorageService.getRolesPermissionsVersionFromCache(
+        this.workspacePermissionsCacheStorageService.getRolesPermissionsVersion(
           workspaceId,
         ),
       recomputeCache: (params) =>
-        this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
+        this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
           params,
         ),
       cachedEntityName: 'Roles permissions',
@@ -273,6 +297,26 @@ export class WorkspaceDatasourceFactory {
       setData(newData);
       setVersion(newVersion);
     }
+  }
+
+  private async updateWorkspaceDataSourceUserWorkspaceRoleMapIfNeeded({
+    workspaceDataSource,
+    cachedUserWorkspaceRoleMapVersion,
+    cachedUserWorkspaceRoleMap,
+  }: {
+    workspaceDataSource: WorkspaceDataSource;
+    cachedUserWorkspaceRoleMapVersion: string | undefined;
+    cachedUserWorkspaceRoleMap: UserWorkspaceRoleMap | undefined;
+  }): Promise<void> {
+    this.updateWorkspaceDataSourceIfNeeded({
+      workspaceDataSource,
+      currentVersion: workspaceDataSource.userWorkspaceRoleMapVersion,
+      newVersion: cachedUserWorkspaceRoleMapVersion,
+      newData: cachedUserWorkspaceRoleMap,
+      setData: (data) => workspaceDataSource.setUserWorkspaceRoleMap(data),
+      setVersion: (version) =>
+        workspaceDataSource.setUserWorkspaceRoleMapVersion(version),
+    });
   }
 
   private async updateWorkspaceDataSourceRolesPermissionsIfNeeded({

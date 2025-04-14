@@ -10,6 +10,7 @@ import {
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/workspace-permissions-cache/types/user-workspace-role-map.type';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/entity.manager';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
@@ -18,6 +19,8 @@ export class WorkspaceDataSource extends DataSource {
   readonly manager: WorkspaceEntityManager;
   featureFlagMapVersion: string;
   featureFlagMap: FeatureFlagMap;
+  userWorkspaceRoleMapVersion: string;
+  userWorkspaceRoleMap: UserWorkspaceRoleMap;
   rolesPermissionsVersion?: string;
   permissionsPerRoleId?: ObjectRecordsPermissionsByRoleId;
 
@@ -26,6 +29,8 @@ export class WorkspaceDataSource extends DataSource {
     options: DataSourceOptions,
     featureFlagMapVersion: string,
     featureFlagMap: FeatureFlagMap,
+    userWorkspaceRoleMapVersion: string,
+    userWorkspaceRoleMap: UserWorkspaceRoleMap,
     rolesPermissionsVersion?: string,
     permissionsPerRoleId?: ObjectRecordsPermissionsByRoleId,
   ) {
@@ -37,6 +42,8 @@ export class WorkspaceDataSource extends DataSource {
     this.featureFlagMapVersion = featureFlagMapVersion;
     this.rolesPermissionsVersion = rolesPermissionsVersion;
     this.permissionsPerRoleId = permissionsPerRoleId;
+    this.userWorkspaceRoleMapVersion = userWorkspaceRoleMapVersion;
+    this.userWorkspaceRoleMap = userWorkspaceRoleMap;
   }
 
   override getRepository<Entity extends ObjectLiteral>(
@@ -70,5 +77,13 @@ export class WorkspaceDataSource extends DataSource {
 
   setFeatureFlagsMapVersion(featureFlagMapVersion: string) {
     this.featureFlagMapVersion = featureFlagMapVersion;
+  }
+
+  setUserWorkspaceRoleMap(userWorkspaceRoleMap: UserWorkspaceRoleMap) {
+    this.userWorkspaceRoleMap = userWorkspaceRoleMap;
+  }
+
+  setUserWorkspaceRoleMapVersion(userWorkspaceRoleMapVersion: string) {
+    this.userWorkspaceRoleMapVersion = userWorkspaceRoleMapVersion;
   }
 }
