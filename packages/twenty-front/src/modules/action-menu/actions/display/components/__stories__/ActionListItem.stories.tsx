@@ -68,9 +68,9 @@ export const WithLink: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const menuItem = await canvas.findByText(
+    const listItem = await canvas.findByText(
       getActionLabel(goToPeopleAction?.label ?? ''),
     );
-    expect(menuItem).toBeVisible();
+    expect(listItem).toBeVisible();
   },
 };
