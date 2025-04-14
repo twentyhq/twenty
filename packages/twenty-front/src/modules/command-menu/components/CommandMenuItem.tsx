@@ -35,7 +35,7 @@ export const CommandMenuItem = ({
     Icon = IconArrowUpRight;
   }
 
-  const isSelectedItemIdSelector = useRecoilComponentFamilyValueV2(
+  const isSelectedItemId = useRecoilComponentFamilyValueV2(
     isSelectedItemIdComponentFamilySelector,
     id,
   );
@@ -52,7 +52,7 @@ export const CommandMenuItem = ({
           to,
         })
       }
-      isSelected={isSelectedItemIdSelector}
+      isSelected={isSelectedItemId}
       RightComponent={RightComponent}
     />
   );
