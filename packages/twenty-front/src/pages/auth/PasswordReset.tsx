@@ -10,6 +10,7 @@ import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -169,89 +170,91 @@ export const PasswordReset = () => {
 
   return (
     isTokenValid && (
-      <StyledMainContainer>
-        <AnimatedEaseIn>
-          <Logo secondaryLogo={workspacePublicData?.logo} />
-        </AnimatedEaseIn>
-        <Title animate>
-          <Trans>Reset Password</Trans>
-        </Title>
-        <StyledContentContainer>
-          {!email ? (
-            <SkeletonTheme
-              baseColor={theme.background.quaternary}
-              highlightColor={theme.background.secondary}
-            >
-              <Skeleton
-                height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-                count={2}
-                style={{ marginBottom: theme.spacing(2) }}
-              />
-            </SkeletonTheme>
-          ) : (
-            <StyledForm onSubmit={handleSubmit(onSubmit)}>
-              <StyledFullWidthMotionDiv
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 800,
-                  damping: 35,
-                }}
+      <Modal.Content isVerticalCentered isHorizontalCentered>
+        <StyledMainContainer>
+          <AnimatedEaseIn>
+            <Logo secondaryLogo={workspacePublicData?.logo} />
+          </AnimatedEaseIn>
+          <Title animate>
+            <Trans>Reset Password</Trans>
+          </Title>
+          <StyledContentContainer>
+            {!email ? (
+              <SkeletonTheme
+                baseColor={theme.background.quaternary}
+                highlightColor={theme.background.secondary}
               >
-                <StyledInputContainer>
-                  <TextInputV2
-                    autoFocus
-                    value={email}
-                    placeholder={t`Email`}
-                    fullWidth
-                    disabled
-                  />
-                </StyledInputContainer>
-              </StyledFullWidthMotionDiv>
-              <StyledFullWidthMotionDiv
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 800,
-                  damping: 35,
-                }}
-              >
-                <Controller
-                  name="newPassword"
-                  control={control}
-                  render={({
-                    field: { onChange, onBlur, value },
-                    fieldState: { error },
-                  }) => (
-                    <StyledInputContainer>
-                      <TextInputV2
-                        autoFocus
-                        value={value}
-                        type="password"
-                        placeholder={t`New Password`}
-                        onBlur={onBlur}
-                        onChange={onChange}
-                        error={error?.message}
-                        fullWidth
-                      />
-                    </StyledInputContainer>
-                  )}
+                <Skeleton
+                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
+                  count={2}
+                  style={{ marginBottom: theme.spacing(2) }}
                 />
-              </StyledFullWidthMotionDiv>
+              </SkeletonTheme>
+            ) : (
+              <StyledForm onSubmit={handleSubmit(onSubmit)}>
+                <StyledFullWidthMotionDiv
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 800,
+                    damping: 35,
+                  }}
+                >
+                  <StyledInputContainer>
+                    <TextInputV2
+                      autoFocus
+                      value={email}
+                      placeholder={t`Email`}
+                      fullWidth
+                      disabled
+                    />
+                  </StyledInputContainer>
+                </StyledFullWidthMotionDiv>
+                <StyledFullWidthMotionDiv
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 800,
+                    damping: 35,
+                  }}
+                >
+                  <Controller
+                    name="newPassword"
+                    control={control}
+                    render={({
+                      field: { onChange, onBlur, value },
+                      fieldState: { error },
+                    }) => (
+                      <StyledInputContainer>
+                        <TextInputV2
+                          autoFocus
+                          value={value}
+                          type="password"
+                          placeholder={t`New Password`}
+                          onBlur={onBlur}
+                          onChange={onChange}
+                          error={error?.message}
+                          fullWidth
+                        />
+                      </StyledInputContainer>
+                    )}
+                  />
+                </StyledFullWidthMotionDiv>
 
-              <StyledMainButton
-                variant="secondary"
-                title={t`Change Password`}
-                type="submit"
-                fullWidth
-                disabled={isUpdatingPassword}
-              />
-            </StyledForm>
-          )}
-        </StyledContentContainer>
-      </StyledMainContainer>
+                <StyledMainButton
+                  variant="secondary"
+                  title={t`Change Password`}
+                  type="submit"
+                  fullWidth
+                  disabled={isUpdatingPassword}
+                />
+              </StyledForm>
+            )}
+          </StyledContentContainer>
+        </StyledMainContainer>
+      </Modal.Content>
     )
   );
 };

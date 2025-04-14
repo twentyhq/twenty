@@ -17,6 +17,7 @@ import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -143,7 +144,7 @@ export const CreateProfile = () => {
   );
 
   return (
-    <>
+    <Modal.Content isVerticalCentered isHorizontalCentered>
       <Title noMarginTop>
         <Trans>Create profile</Trans>
       </Title>
@@ -218,6 +219,6 @@ export const CreateProfile = () => {
           fullWidth
         />
       </StyledButtonContainer>
-    </>
+    </Modal.Content>
   );
 };

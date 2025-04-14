@@ -14,6 +14,7 @@ import { WorkspaceLogoUploader } from '@/settings/workspace/components/Workspace
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
@@ -106,7 +107,7 @@ export const CreateWorkspace = () => {
   };
 
   return (
-    <>
+    <Modal.Content isVerticalCentered isHorizontalCentered>
       <Title noMarginTop>
         <Trans>Create your workspace</Trans>
       </Title>
@@ -156,6 +157,6 @@ export const CreateWorkspace = () => {
           fullWidth
         />
       </StyledButtonContainer>
-    </>
+    </Modal.Content>
   );
 };
