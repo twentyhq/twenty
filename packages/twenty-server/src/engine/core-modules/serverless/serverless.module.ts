@@ -8,6 +8,7 @@ import {
   ServerlessModuleAsyncOptions,
 } from 'src/engine/core-modules/serverless/serverless.interface';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
+import { AddPackagesCommand } from 'src/engine/core-modules/serverless/commands/add-packages.command';
 
 @Global()
 export class ServerlessModule {
@@ -27,7 +28,7 @@ export class ServerlessModule {
     return {
       module: ServerlessModule,
       imports: options.imports || [],
-      providers: [ServerlessService, provider],
+      providers: [ServerlessService, provider, AddPackagesCommand],
       exports: [ServerlessService],
     };
   }

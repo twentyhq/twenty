@@ -28,11 +28,7 @@ export const getTriggerStepName = (trigger: WorkflowTrigger): string => {
 const getDatabaseEventTriggerStepName = (
   trigger: WorkflowDatabaseEventTrigger,
 ): string => {
-  const [, action] = trigger.settings.eventName.split('.');
-  const defaultLabel = getTriggerDefaultLabel({
-    type: 'DATABASE_EVENT',
-    eventName: action,
-  });
+  const defaultLabel = getTriggerDefaultLabel(trigger);
 
   return defaultLabel ?? '';
 };

@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useContext, useRef } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
-import { Key } from 'ts-key-enum';
 
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
@@ -27,7 +26,6 @@ import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
@@ -136,8 +134,6 @@ export const RecordBoard = () => {
 
   useScopedHotkeys('ctrl+a,meta+a', selectAll, TableHotkeyScope.Table);
 
-  useScopedHotkeys(Key.Escape, resetRecordSelection, TableHotkeyScope.Table);
-
   const setIsRemoveSortingModalOpen = useSetRecoilState(
     isRemoveSortingModalOpenState,
   );
@@ -219,7 +215,7 @@ export const RecordBoard = () => {
 
   return (
     <RecordBoardScope
-      recordBoardScopeId={getScopeIdFromComponentId(recordBoardId)}
+      recordBoardScopeId={recordBoardId}
       onColumnsChange={() => {}}
       onFieldsChange={() => {}}
     >

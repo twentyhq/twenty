@@ -114,7 +114,7 @@ export const MultipleRecordPickerMenuItems = ({
   return (
     <DropdownMenuItemsContainer hasMaxHeight>
       <SelectableList
-        selectableListId={selectableListComponentInstanceId}
+        selectableListInstanceId={selectableListComponentInstanceId}
         selectableItemIdArray={pickableRecordIds}
         hotkeyScope={MultipleRecordPickerHotkeyScope.MultipleRecordPicker}
         onEnter={handleEnter}

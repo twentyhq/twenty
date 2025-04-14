@@ -343,8 +343,6 @@ export class ServerlessFunctionService {
       });
     }
 
-    await this.serverlessService.build(createdServerlessFunction);
-
     return this.serverlessFunctionRepository.findOneBy({
       id: createdServerlessFunction.id,
     });

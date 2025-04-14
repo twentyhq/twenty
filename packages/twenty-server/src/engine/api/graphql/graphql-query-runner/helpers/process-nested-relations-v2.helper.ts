@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
-  DataSource,
   FindOptionsRelations,
   ObjectLiteral,
   SelectQueryBuilder,
 } from 'typeorm';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -22,6 +21,7 @@ import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.typ
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { isFieldMetadataOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
@@ -41,6 +41,7 @@ export class ProcessNestedRelationsV2Helper {
     limit,
     authContext,
     dataSource,
+    roleId,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -50,7 +51,8 @@ export class ProcessNestedRelationsV2Helper {
     aggregate?: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    dataSource: DataSource;
+    dataSource: WorkspaceDataSource;
+    roleId?: string;
   }): Promise<void> {
     const processRelationTasks = Object.entries(relations).map(
       ([sourceFieldName, nestedRelations]) =>
@@ -65,6 +67,7 @@ export class ProcessNestedRelationsV2Helper {
           limit,
           authContext,
           dataSource,
+          roleId,
         }),
     );
 
@@ -82,6 +85,7 @@ export class ProcessNestedRelationsV2Helper {
     limit,
     authContext,
     dataSource,
+    roleId,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -92,7 +96,8 @@ export class ProcessNestedRelationsV2Helper {
     aggregate: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    dataSource: DataSource;
+    dataSource: WorkspaceDataSource;
+    roleId?: string;
   }): Promise<void> {
     const sourceFieldMetadata =
       parentObjectMetadataItem.fieldsByName[sourceFieldName];
@@ -121,7 +126,9 @@ export class ProcessNestedRelationsV2Helper {
 
     const targetObjectRepository = dataSource.getRepository(
       targetObjectMetadata.nameSingular,
+      roleId,
     );
+
     const targetObjectQueryBuilder = targetObjectRepository.createQueryBuilder(
       targetObjectMetadata.nameSingular,
     );

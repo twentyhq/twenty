@@ -41,6 +41,7 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
+import { animateModalState } from '@/auth/states/animateModalState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import {
   SignInUpStep,
@@ -63,6 +64,7 @@ import { useSearchParams } from 'react-router-dom';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { iconsState } from 'twenty-ui/display';
+import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
@@ -113,6 +115,7 @@ export const useAuth = () => {
   const goToRecoilSnapshot = useGotoRecoilSnapshot();
 
   const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
+  const setAnimateModal = useSetRecoilState(animateModalState);
 
   const [, setSearchParams] = useSearchParams();
 
@@ -348,6 +351,12 @@ export const useAuth = () => {
       setTokenPair(
         getAuthTokensResult.data?.getAuthTokensFromLoginToken.tokens,
       );
+      cookieStorage.setItem(
+        'tokenPair',
+        JSON.stringify(
+          getAuthTokensResult.data?.getAuthTokensFromLoginToken.tokens,
+        ),
+      );
 
       await refreshObjectMetadataItems();
       await loadCurrentUser();
@@ -413,14 +422,13 @@ export const useAuth = () => {
       }
 
       if (isMultiWorkspaceEnabled) {
-        return redirectToWorkspaceDomain(
+        setAnimateModal(false);
+        return await redirectToWorkspaceDomain(
           getWorkspaceUrl(signUpResult.data.signUp.workspace.workspaceUrls),
-
           isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
           {
             ...(!isEmailVerificationRequired && {
               loginToken: signUpResult.data.signUp.loginToken.token,
-              animateModal: false,
             }),
             email,
           },
@@ -438,6 +446,7 @@ export const useAuth = () => {
       handleGetAuthTokensFromLoginToken,
       setSignInUpStep,
       setSearchParams,
+      setAnimateModal,
       isEmailVerificationRequired,
       redirectToWorkspaceDomain,
     ],
