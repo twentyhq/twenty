@@ -1,21 +1,14 @@
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
+import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-actions.mock';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
-import { SelectableListScope } from '@/ui/layout/selectable-list/scopes/SelectableListScope';
+import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ActionDisplay } from '../ActionDisplay';
-
-const meta: Meta<typeof ActionDisplay> = {
-  title: 'Modules/ActionMenu/Actions/Display/ActionDisplay',
-  component: ActionDisplay,
-  decorators: [ComponentDecorator, RouterDecorator],
-};
-
-export default meta;
 
 type Story = StoryObj<typeof ActionDisplay>;
 
@@ -31,9 +24,28 @@ const addToFavoritesAction = mockActions.find(
   (action) => action.key === SingleRecordActionKeys.ADD_TO_FAVORITES,
 );
 
+if (!addToFavoritesAction) {
+  throw new Error('addToFavoritesAction not found');
+}
+
+const meta: Meta<typeof ActionDisplay> = {
+  title: 'Modules/ActionMenu/Actions/Display/ActionDisplay',
+  component: ActionDisplay,
+  decorators: [
+    (Story) => (
+      <ActionConfigContext.Provider value={addToFavoritesAction}>
+        <Story />
+      </ActionConfigContext.Provider>
+    ),
+    ComponentDecorator,
+    RouterDecorator,
+  ],
+};
+
+export default meta;
+
 export const AsButton: Story = {
   args: {
-    action: addToFavoritesAction,
     onClick: addToFavoritesMock,
   },
   decorators: [
@@ -61,10 +73,16 @@ export const AsButton: Story = {
 
 export const AsListItem: Story = {
   args: {
-    action: addToFavoritesAction,
     onClick: addToFavoritesMock,
   },
   decorators: [
+    (Story) => (
+      <SelectableListComponentInstanceContext.Provider
+        value={{ instanceId: 'story' }}
+      >
+        <Story />
+      </SelectableListComponentInstanceContext.Provider>
+    ),
     (Story) => (
       <ActionMenuContext.Provider
         value={{
@@ -74,9 +92,7 @@ export const AsListItem: Story = {
           actions: [],
         }}
       >
-        <SelectableListScope selectableListScopeId={'test'}>
-          <Story />
-        </SelectableListScope>
+        <Story />
       </ActionMenuContext.Provider>
     ),
   ],
@@ -91,7 +107,6 @@ export const AsListItem: Story = {
 
 export const AsDropdownItem: Story = {
   args: {
-    action: addToFavoritesAction,
     onClick: addToFavoritesMock,
   },
   decorators: [

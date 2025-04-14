@@ -56,7 +56,7 @@ export const WithLink: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const menuItem = canvas.getByText(
-      getActionLabel(goToPeopleAction?.label ?? ''),
+      getActionLabel(goToPeopleAction?.shortLabel ?? ''),
     );
     expect(menuItem).toBeInTheDocument();
     expect(canvas.getByRole('link')).toHaveAttribute('href', '/objects/people');
