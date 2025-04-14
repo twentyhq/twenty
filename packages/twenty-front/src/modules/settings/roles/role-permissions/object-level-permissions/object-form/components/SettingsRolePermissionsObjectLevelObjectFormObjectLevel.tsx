@@ -5,14 +5,8 @@ import { SettingsRolePermissionsObjectPermission } from '@/settings/roles/role-p
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useRecoilState } from 'recoil';
-import {
-  H2Title,
-  IconEye,
-  IconPencil,
-  IconTrash,
-  IconTrashX,
-} from 'twenty-ui/display';
+import { useRecoilValue } from 'recoil';
+import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 
 const StyledTable = styled.div`
@@ -31,59 +25,52 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
   roleId: string;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
+  const settingsDraftRole = useRecoilValue(
     settingsDraftRoleFamilyState(roleId),
   );
+
+  const settingsDraftRoleObjectPermissions =
+    settingsDraftRole.objectPermissions?.find(
+      (permission) => permission.objectMetadataId === objectMetadataItem.id,
+    );
+
+  if (!settingsDraftRoleObjectPermissions) {
+    return null;
+  }
 
   const objectLabel = objectMetadataItem.labelPlural;
 
   const objectPermissionsConfig: SettingsRolePermissionsObjectPermission[] = [
     {
-      key: 'seeRecords',
+      key: 'canReadObjectRecords',
       label: t`See Records on ${objectLabel}`,
-      Icon: IconEye,
-      value: settingsDraftRole.canReadAllObjectRecords,
-      setValue: (value: boolean) => {
-        setSettingsDraftRole({
-          ...settingsDraftRole,
-          canReadAllObjectRecords: value,
-        });
+      value: settingsDraftRoleObjectPermissions.canReadObjectRecords,
+      setValue: (_value: boolean) => {
+        // TODO: Implement
       },
     },
     {
-      key: 'editRecords',
+      key: 'canUpdateObjectRecords',
       label: t`Edit Records on ${objectLabel}`,
-      Icon: IconPencil,
-      value: settingsDraftRole.canUpdateAllObjectRecords,
-      setValue: (value: boolean) => {
-        setSettingsDraftRole({
-          ...settingsDraftRole,
-          canUpdateAllObjectRecords: value,
-        });
+      value: settingsDraftRoleObjectPermissions.canUpdateObjectRecords,
+      setValue: (_value: boolean) => {
+        // TODO: Implement
       },
     },
     {
-      key: 'deleteRecords',
+      key: 'canSoftDeleteObjectRecords',
       label: t`Delete Records on ${objectLabel}`,
-      Icon: IconTrash,
-      value: settingsDraftRole.canSoftDeleteAllObjectRecords,
-      setValue: (value: boolean) => {
-        setSettingsDraftRole({
-          ...settingsDraftRole,
-          canSoftDeleteAllObjectRecords: value,
-        });
+      value: settingsDraftRoleObjectPermissions.canSoftDeleteObjectRecords,
+      setValue: (_value: boolean) => {
+        // TODO: Implement
       },
     },
     {
-      key: 'destroyRecords',
+      key: 'canDestroyObjectRecords',
       label: t`Destroy Records on ${objectLabel}`,
-      Icon: IconTrashX,
-      value: settingsDraftRole.canDestroyAllObjectRecords,
-      setValue: (value: boolean) => {
-        setSettingsDraftRole({
-          ...settingsDraftRole,
-          canDestroyAllObjectRecords: value,
-        });
+      value: settingsDraftRoleObjectPermissions.canDestroyObjectRecords,
+      setValue: (_value: boolean) => {
+        // TODO: Implement
       },
     },
   ];

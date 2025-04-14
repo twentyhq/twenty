@@ -1,4 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { SettingsRolePermissionsObjectLevelOverrideCell } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -54,7 +55,11 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
           {objectMetadataItem.labelPlural}
         </StyledNameLabel>
       </StyledNameTableCell>
-      <TableCell>...</TableCell>
+      <TableCell>
+        <SettingsRolePermissionsObjectLevelOverrideCell
+          objectPermission={objectPermission}
+        />
+      </TableCell>
       <TableCell align={'right'}>
         <IconChevronRight
           size={theme.icon.size.md}

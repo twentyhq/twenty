@@ -1,11 +1,8 @@
 import { ReactNode } from 'react';
-import { IconComponent } from 'twenty-ui/display';
 export type SettingsRolePermissionsObjectPermission = {
   key: string;
   label: string | ReactNode;
-  value: boolean;
-  Icon: IconComponent;
+  value?: boolean | null;
   setValue: (value: boolean) => void;
   overridenBy?: number;
-  IconOverride?: IconComponent;
 };

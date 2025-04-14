@@ -1,16 +1,13 @@
 import { useObjectMetadataMapById } from '@/object-metadata/hooks/useObjectMetadataMapById';
-import { SettingsRolePermissionsObjectLevelObjectPickerDropdown } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPickerDropdown';
 import { SettingsRolePermissionsObjectLevelTableHeader } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader';
 import { SettingsRolePermissionsObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRow';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
-import { H2Title, IconPlus } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { v4 } from 'uuid';
 
@@ -82,10 +79,10 @@ export const SettingsRolePermissionsObjectLevelSection = ({
           )}
         </StyledTableRows>
       </Table>
-      <StyledCreateObjectOverrideSection>
+      {/* <StyledCreateObjectOverrideSection>
         <Dropdown
-          dropdownId="role-member-select"
-          dropdownHotkeyScope={{ scope: 'roleAssignment' }}
+          dropdownId="role-object-select"
+          dropdownHotkeyScope={{ scope: 'roleObject' }}
           clickableComponent={
             <Button
               Icon={IconPlus}
@@ -102,7 +99,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
             />
           }
         />
-      </StyledCreateObjectOverrideSection>
+      </StyledCreateObjectOverrideSection> */}
     </Section>
   );
 };

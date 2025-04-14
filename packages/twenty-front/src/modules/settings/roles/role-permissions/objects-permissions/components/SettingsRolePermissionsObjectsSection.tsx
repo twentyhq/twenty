@@ -7,16 +7,7 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
-import {
-  H2Title,
-  IconEye,
-  IconEyeOff,
-  IconPencil,
-  IconPencilOff,
-  IconTrash,
-  IconTrashOff,
-  IconTrashX,
-} from 'twenty-ui/display';
+import { H2Title } from 'twenty-ui/display';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -42,13 +33,13 @@ export const SettingsRolePermissionsObjectsSection = ({
 
   const objectPermissionsConfig: SettingsRolePermissionsObjectPermission[] = [
     {
-      key: 'seeRecords',
+      key: 'canReadObjectRecords',
       label: t`See Records on All Objects`,
-      Icon: IconEye,
-      IconOverride: IconEyeOff,
       overridenBy:
         objectPermissions?.filter(
-          (permission) => permission.canReadObjectRecords === false,
+          (permission) =>
+            permission.canReadObjectRecords !==
+            settingsDraftRole.canReadAllObjectRecords,
         )?.length ?? 0,
       value: settingsDraftRole.canReadAllObjectRecords,
       setValue: (value: boolean) => {
@@ -59,13 +50,13 @@ export const SettingsRolePermissionsObjectsSection = ({
       },
     },
     {
-      key: 'editRecords',
+      key: 'canUpdateObjectRecords',
       label: t`Edit Records on All Objects`,
-      Icon: IconPencil,
-      IconOverride: IconPencilOff,
       overridenBy:
         objectPermissions?.filter(
-          (permission) => permission.canUpdateObjectRecords === false,
+          (permission) =>
+            permission.canUpdateObjectRecords !==
+            settingsDraftRole.canUpdateAllObjectRecords,
         )?.length ?? 0,
       value: settingsDraftRole.canUpdateAllObjectRecords,
       setValue: (value: boolean) => {
@@ -76,13 +67,13 @@ export const SettingsRolePermissionsObjectsSection = ({
       },
     },
     {
-      key: 'deleteRecords',
+      key: 'canSoftDeleteObjectRecords',
       label: t`Delete Records on All Objects`,
-      Icon: IconTrash,
-      IconOverride: IconTrashOff,
       overridenBy:
         objectPermissions?.filter(
-          (permission) => permission.canSoftDeleteObjectRecords === false,
+          (permission) =>
+            permission.canSoftDeleteObjectRecords !==
+            settingsDraftRole.canSoftDeleteAllObjectRecords,
         )?.length ?? 0,
       value: settingsDraftRole.canSoftDeleteAllObjectRecords,
       setValue: (value: boolean) => {
@@ -93,13 +84,13 @@ export const SettingsRolePermissionsObjectsSection = ({
       },
     },
     {
-      key: 'destroyRecords',
+      key: 'canDestroyObjectRecords',
       label: t`Destroy Records on All Objects`,
-      Icon: IconTrashX,
-      IconOverride: IconTrashX,
       overridenBy:
         objectPermissions?.filter(
-          (permission) => permission.canDestroyObjectRecords === false,
+          (permission) =>
+            permission.canDestroyObjectRecords !==
+            settingsDraftRole.canDestroyAllObjectRecords,
         )?.length ?? 0,
       value: settingsDraftRole.canDestroyAllObjectRecords,
       setValue: (value: boolean) => {

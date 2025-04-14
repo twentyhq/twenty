@@ -1,3 +1,4 @@
+import { settingsRoleObjectPermissionIconConfig } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectPermissionIconConfig';
 import { SettingsRolePermissionsObjectPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -7,34 +8,15 @@ import { t } from '@lingui/core/macro';
 import pluralize from 'pluralize';
 import { Checkbox, CheckboxAccent } from 'twenty-ui/input';
 
-const StyledIconWrapper = styled.div<{ isOverriden?: boolean }>`
-  align-items: center;
-  background: ${({ theme, isOverriden }) =>
-    isOverriden ? theme.adaptiveColors.orange1 : theme.adaptiveColors.blue1};
-  border: 1px solid
-    ${({ theme, isOverriden }) =>
-      isOverriden ? theme.adaptiveColors.orange3 : theme.adaptiveColors.blue3};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  display: flex;
-  height: ${({ theme }) => theme.spacing(4)};
-  justify-content: center;
-  width: ${({ theme }) => theme.spacing(4)};
-`;
-
-const StyledIcon = styled.div<{ isOverriden?: boolean }>`
-  align-items: center;
-  display: flex;
-  color: ${({ theme, isOverriden }) =>
-    isOverriden ? theme.color.orange : theme.color.blue};
-  justify-content: center;
-`;
-
 const StyledLabel = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
 `;
 
 const StyledOverrideInfo = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  background: ${({ theme }) => theme.color.orange10};
+  border-radius: ${({ theme }) => theme.spacing(1)};
+  color: ${({ theme }) => theme.color.orange};
+  padding: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledPermissionCell = styled(TableCell)`
@@ -73,51 +55,27 @@ export const SettingsRolePermissionsObjectsTableRow = ({
   const label = permission.label;
   const pluralizedObject = pluralize('object', isOverridenBy);
 
+  const { Icon } = settingsRoleObjectPermissionIconConfig[permission.key];
+
   return (
     <StyledTableRow>
-      {isOverriden ? (
-        <>
-          <StyledPermissionCell>
-            <StyledIconWrapper isOverriden={isOverriden}>
-              <StyledIcon isOverriden={isOverriden}>
-                {permission.IconOverride && (
-                  <permission.IconOverride size={theme.icon.size.sm} />
-                )}
-              </StyledIcon>
-            </StyledIconWrapper>
-            <StyledLabel>{label}</StyledLabel>
-            <StyledOverrideInfo>
-              {t` · Overriden for ${isOverridenBy} ${pluralizedObject}`}
-            </StyledOverrideInfo>
-          </StyledPermissionCell>
-          <StyledCheckboxCell>
-            <Checkbox
-              checked={permission.value}
-              onChange={() => permission.setValue(!permission.value)}
-              disabled={!isEditable}
-              accent={CheckboxAccent.Orange}
-            />
-          </StyledCheckboxCell>
-        </>
-      ) : (
-        <>
-          <StyledPermissionCell>
-            <StyledIconWrapper>
-              <StyledIcon>
-                <permission.Icon size={theme.icon.size.sm} />
-              </StyledIcon>
-            </StyledIconWrapper>
-            <StyledLabel>{label}</StyledLabel>
-          </StyledPermissionCell>
-          <StyledCheckboxCell>
-            <Checkbox
-              checked={permission.value}
-              onChange={() => permission.setValue(!permission.value)}
-              disabled={!isEditable}
-            />
-          </StyledCheckboxCell>
-        </>
-      )}
+      <StyledPermissionCell>
+        <Icon size={theme.icon.size.sm} />
+        <StyledLabel>{label}</StyledLabel>
+        {isOverriden ? (
+          <StyledOverrideInfo>
+            {t` Overriden on ${isOverridenBy} ${pluralizedObject}`}
+          </StyledOverrideInfo>
+        ) : null}
+      </StyledPermissionCell>
+      <StyledCheckboxCell>
+        <Checkbox
+          checked={permission.value ?? false}
+          onChange={() => permission.setValue(!permission.value)}
+          disabled={!isEditable}
+          accent={isOverriden ? CheckboxAccent.Orange : CheckboxAccent.Blue}
+        />
+      </StyledCheckboxCell>
     </StyledTableRow>
   );
 };
