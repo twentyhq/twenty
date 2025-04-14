@@ -5,8 +5,14 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
-import { useEventTracker } from '../useEventTracker';
+import { ANALYTICS_COOKIE_NAME, useEventTracker } from '../useEventTracker';
 import { AnalyticsType } from '~/generated/graphql';
+
+// Mock document.cookie
+Object.defineProperty(document, 'cookie', {
+  writable: true,
+  value: `${ANALYTICS_COOKIE_NAME}=exampleId`,
+});
 
 const mocks: MockedResponse[] = [
   {

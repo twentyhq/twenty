@@ -35,8 +35,10 @@ export const useEventTracker = () => {
           ...payload,
           properties: {
             ...payload.properties,
-            sessionId: getSessionId(),
-          }
+            ...(type === AnalyticsType['PAGEVIEW']
+              ? { sessionId: getSessionId() }
+              : {}),
+          },
         },
       });
     },
