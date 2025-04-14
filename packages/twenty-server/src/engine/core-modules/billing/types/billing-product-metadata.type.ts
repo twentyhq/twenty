@@ -6,7 +6,7 @@ import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-pl
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 
-@ObjectType('BillingProductMetadata')
+@ObjectType()
 export class BillingProductMetadata {
   @Field(() => BillingPlanKey)
   planKey: BillingPlanKey;

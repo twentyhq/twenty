@@ -1,6 +1,6 @@
 {
   "name": "twenty-front",
-  "version": "0.51.0-canary",
+  "version": "0.52.0-canary",
   "private": true,
   "type": "module",
   "scripts": {

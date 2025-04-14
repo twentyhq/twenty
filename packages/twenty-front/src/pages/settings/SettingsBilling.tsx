@@ -11,7 +11,6 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -23,7 +22,6 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
-  FeatureFlagKey,
   SubscriptionInterval,
   SubscriptionStatus,
   useBillingPortalSessionQuery,
@@ -96,10 +94,6 @@ export const SettingsBilling = () => {
     }
   };
 
-  const isMeteredProductBillingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsMeteredProductBillingEnabled,
-  );
-
   return (
     <SubMenuTopBarContainer
       title={t`Billing`}
@@ -112,9 +106,7 @@ export const SettingsBilling = () => {
       ]}
     >
       <SettingsPageContainer>
-        {isMeteredProductBillingEnabled && (
-          <SettingsBillingMonthlyCreditsSection />
-        )}
+        <SettingsBillingMonthlyCreditsSection />
         <Section>
           <H2Title
             title={t`Manage your subscription`}
