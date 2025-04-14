@@ -10,9 +10,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { SignInUpLoading } from '~/pages/auth/SignInUpLoading';
 
-export const Verify = () => {
+export const VerifyEffect = () => {
   const [searchParams] = useSearchParams();
   const loginToken = searchParams.get('loginToken');
   const errorMessage = searchParams.get('errorMessage');
@@ -45,5 +44,5 @@ export const Verify = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientConfigLoaded]);
 
-  return <SignInUpLoading />;
+  return <></>;
 };
