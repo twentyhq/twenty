@@ -42,7 +42,9 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      canvas.getByText(getActionLabel(addToFavoritesAction?.label ?? '')),
+      await canvas.findByText(
+        getActionLabel(addToFavoritesAction?.label ?? ''),
+      ),
     );
     expect(addToFavoritesMock).toHaveBeenCalled();
   },
@@ -55,7 +57,7 @@ export const WithLink: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const menuItem = canvas.getByText(
+    const menuItem = await canvas.findByText(
       getActionLabel(goToPeopleAction?.label ?? ''),
     );
     expect(menuItem).toBeInTheDocument();

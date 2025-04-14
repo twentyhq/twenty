@@ -65,7 +65,9 @@ export const AsButton: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      canvas.getByText(getActionLabel(addToFavoritesAction?.shortLabel ?? '')),
+      await canvas.findByText(
+        getActionLabel(addToFavoritesAction?.shortLabel ?? ''),
+      ),
     );
     expect(addToFavoritesMock).toHaveBeenCalled();
   },
@@ -99,7 +101,9 @@ export const AsListItem: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      canvas.getByText(getActionLabel(addToFavoritesAction?.label ?? '')),
+      await canvas.findByText(
+        getActionLabel(addToFavoritesAction?.label ?? ''),
+      ),
     );
     expect(addToFavoritesMock).toHaveBeenCalled();
   },
@@ -126,7 +130,9 @@ export const AsDropdownItem: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      canvas.getByText(getActionLabel(addToFavoritesAction?.label ?? '')),
+      await canvas.findByText(
+        getActionLabel(addToFavoritesAction?.label ?? ''),
+      ),
     );
     expect(addToFavoritesMock).toHaveBeenCalled();
   },
