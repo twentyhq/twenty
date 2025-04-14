@@ -1,3 +1,4 @@
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 /* eslint-disable no-constant-condition */
 import { useGetChatbotFlowById } from '@/chatbot/hooks/useGetChatbotFlowById';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
@@ -162,27 +163,34 @@ export const BotDiagramBase = ({
   type FlowType = () => [Node[], Edge[]];
 
   const defineFlow: FlowType = () => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-    if (chatbotFlowData) {
+    if (
+      chatbotFlowData &&
+      Array.isArray(chatbotFlowData.nodes) &&
+      chatbotFlowData.nodes.length > 0 &&
+      Array.isArray(chatbotFlowData.edges) &&
+      chatbotFlowData.edges.length > 0
+    ) {
       return [chatbotFlowData.nodes, chatbotFlowData.edges];
     }
+
     return [initialNodes, initialEdges];
   };
 
   useEffect(() => {
     const [resNode, resEdges] = defineFlow();
-
     setNodes(resNode);
     setEdges(resEdges);
   }, [chatbotFlowData]);
 
   useEffect(() => {
     const [resNode, resEdges] = defineFlow();
-    chatbotFlow({ nodes: resNode, edges: resEdges, chatbotId });
-  }, []);
+
+    if (resNode.length > 0 && resEdges.length > 0) {
+      chatbotFlow({ nodes: resNode, edges: resEdges, chatbotId });
+    }
+  }, [chatbotFlowData, chatbotId]);
 
   const onSave = useCallback(() => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (rfInstance) {
       const flow = rfInstance.toObject();
       const newFlow = { ...flow, chatbotId };
