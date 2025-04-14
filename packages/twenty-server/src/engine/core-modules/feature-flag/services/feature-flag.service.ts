@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
+import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import {
@@ -34,8 +35,16 @@ export class FeatureFlagService {
 
   public async getWorkspaceFeatureFlags(
     workspaceId: string,
-  ): Promise<FeatureFlag[]> {
-    return this.featureFlagRepository.find({ where: { workspaceId } });
+  ): Promise<FeatureFlagDTO[]> {
+    const workspaceFeatureFlagsMap =
+      await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap(
+        { workspaceId },
+      );
+
+    return Object.entries(workspaceFeatureFlagsMap).map(([key, value]) => ({
+      key: key as FeatureFlagKey,
+      value,
+    }));
   }
 
   public async getWorkspaceFeatureFlagsMap(
