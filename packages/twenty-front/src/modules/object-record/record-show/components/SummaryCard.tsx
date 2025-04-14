@@ -2,7 +2,6 @@ import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandard
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
@@ -90,7 +89,6 @@ export const SummaryCard = ({
               defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
             },
             useUpdateRecord: useUpdateOneObjectRecordMutation,
-            hotkeyScope: InlineCellHotkeyScope.InlineCell,
             isCentered: !isMobile,
             isDisplayModeFixHeight: true,
             isReadOnly: isRecordReadOnly,

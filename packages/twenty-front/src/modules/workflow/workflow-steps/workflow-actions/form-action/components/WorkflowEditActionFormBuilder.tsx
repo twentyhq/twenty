@@ -1,5 +1,5 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowFormAction } from '@/workflow/types/Workflow';
@@ -100,6 +100,10 @@ const StyledAddFieldButtonContentContainer = styled.div`
   width: 100%;
 `;
 
+const StyledLabelContainer = styled.div`
+  min-height: 17px;
+`;
+
 export const WorkflowEditActionFormBuilder = ({
   action,
   actionOptions,
@@ -187,14 +191,16 @@ export const WorkflowEditActionFormBuilder = ({
       <WorkflowStepBody>
         {formData.map((field) => (
           <FormFieldInputContainer key={field.id}>
-            {field.label ? <InputLabel>{field.label}</InputLabel> : null}
+            <StyledLabelContainer>
+              <InputLabel>{field.label || ''}</InputLabel>
+            </StyledLabelContainer>
 
             <StyledRowContainer
               onMouseEnter={() => setHoveredField(field.id)}
               onMouseLeave={() => setHoveredField(null)}
             >
               <FormFieldInputRowContainer>
-                <FormFieldInputInputContainer
+                <FormFieldInputInnerContainer
                   hasRightElement={false}
                   onClick={() => {
                     handleFieldClick(field.id);
@@ -214,7 +220,7 @@ export const WorkflowEditActionFormBuilder = ({
                       />
                     )}
                   </StyledFieldContainer>
-                </FormFieldInputInputContainer>
+                </FormFieldInputInnerContainer>
               </FormFieldInputRowContainer>
               {!actionOptions.readonly &&
                 (isFieldSelected(field.id) || isFieldHovered(field.id)) && (
@@ -257,7 +263,7 @@ export const WorkflowEditActionFormBuilder = ({
             <StyledRowContainer>
               <FormFieldInputContainer>
                 <FormFieldInputRowContainer>
-                  <FormFieldInputInputContainer
+                  <FormFieldInputInnerContainer
                     hasRightElement={false}
                     onClick={() => {
                       const { label, name } = getDefaultFormFieldSettings(
@@ -290,7 +296,7 @@ export const WorkflowEditActionFormBuilder = ({
                         {t`Add Field`}
                       </StyledAddFieldButtonContentContainer>
                     </StyledFieldContainer>
-                  </FormFieldInputInputContainer>
+                  </FormFieldInputInnerContainer>
                 </FormFieldInputRowContainer>
               </FormFieldInputContainer>
             </StyledRowContainer>

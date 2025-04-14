@@ -11,15 +11,15 @@ import {
 import { GoogleAPIsOauthRequestCodeStrategy } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-request-code.auth.strategy';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
   constructor(
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly transientTokenService: TransientTokenService,
     private readonly guardRedirectService: GuardRedirectService,
     @InjectRepository(Workspace, 'core')
@@ -57,8 +57,8 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
       });
 
       if (
-        !this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED') &&
-        !this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED')
+        !this.twentyConfigService.get('MESSAGING_PROVIDER_GMAIL_ENABLED') &&
+        !this.twentyConfigService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED')
       ) {
         throw new AuthException(
           'Google apis auth is not enabled',
@@ -66,7 +66,7 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
         );
       }
 
-      new GoogleAPIsOauthRequestCodeStrategy(this.environmentService);
+      new GoogleAPIsOauthRequestCodeStrategy(this.twentyConfigService);
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {

@@ -209,9 +209,19 @@ export const workflowCronTriggerSchema = baseTriggerSchema.extend({
 
 export const workflowWebhookTriggerSchema = baseTriggerSchema.extend({
   type: z.literal('WEBHOOK'),
-  settings: z.object({
-    outputSchema: z.object({}).passthrough(),
-  }),
+  settings: z.discriminatedUnion('httpMethod', [
+    z.object({
+      outputSchema: z.object({}).passthrough(),
+      httpMethod: z.literal('GET'),
+      authentication: z.literal('API_KEY').nullable(),
+    }),
+    z.object({
+      outputSchema: z.object({}).passthrough(),
+      httpMethod: z.literal('POST'),
+      expectedBody: z.object({}).passthrough(),
+      authentication: z.literal('API_KEY').nullable(),
+    }),
+  ]),
 });
 
 // Combined trigger schema
@@ -223,7 +233,7 @@ export const workflowTriggerSchema = z.discriminatedUnion('type', [
 ]);
 
 // Step output schemas
-const workflowExecutorOutputSchema = z.object({
+export const workflowExecutorOutputSchema = z.object({
   result: z.any().optional(),
   error: z.string().optional(),
   pendingEvent: z.boolean().optional(),

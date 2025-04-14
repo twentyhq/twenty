@@ -6,7 +6,6 @@ import {
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { ReactNode } from 'react';
 
 export const FieldContextProvider = ({
@@ -72,7 +71,6 @@ export const FieldContextProvider = ({
         }),
         useUpdateRecord:
           customUseUpdateOneObjectHook ?? useUpdateOneObjectMutation,
-        hotkeyScope: InlineCellHotkeyScope.InlineCell,
         clearable,
         overridenIsFieldEmpty,
         isReadOnly: false,

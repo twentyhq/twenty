@@ -26,8 +26,6 @@ describe('useOptionsDropdown', () => {
       closeDropdown: mockCloseDropdown,
       toggleDropdown: jest.fn(),
       openDropdown: jest.fn(),
-      dropdownWidth: undefined,
-      setDropdownWidth: jest.fn(),
       dropdownPlacement: null,
       setDropdownPlacement: jest.fn(),
     });

@@ -39,7 +39,7 @@ export const LinkAvatarChip = ({
         : ChipVariant.Regular
     }
     size={size}
-    leftComponent={() => (
+    leftComponent={
       <AvatarChipsLeftComponent
         name={name}
         LeftIcon={LeftIcon}
@@ -49,7 +49,7 @@ export const LinkAvatarChip = ({
         isIconInverted={isIconInverted}
         placeholderColorSeed={placeholderColorSeed}
       />
-    )}
+    }
     className={className}
     maxWidth={maxWidth}
   />

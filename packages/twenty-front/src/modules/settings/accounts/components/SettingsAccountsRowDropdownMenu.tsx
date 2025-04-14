@@ -10,7 +10,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import {
   IconCalendarEvent,
   IconDotsVertical,
@@ -20,6 +19,7 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
@@ -55,7 +55,7 @@ export const SettingsAccountsRowDropdownMenu = ({
         clickableComponent={
           <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
         }
-        dropdownMenuWidth={160}
+        dropdownWidth={160}
         dropdownComponents={
           <DropdownMenuItemsContainer>
             <MenuItem

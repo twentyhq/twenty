@@ -8,7 +8,7 @@ type AsyncFactoryCallback<T> = () => Promise<T | null>;
 const ONE_HOUR_IN_MS = 3600_000;
 
 export class PromiseMemoizer<T> {
-  private cache = new Map<CacheKey, { value: T; ttl: number }>();
+  private cache = new Map<CacheKey, { value: T; lastUsed: number }>();
   private pending = new Map<CacheKey, Promise<T | null>>();
   private ttlMs: number;
 
@@ -21,13 +21,13 @@ export class PromiseMemoizer<T> {
     factory: AsyncFactoryCallback<T>,
     onDelete?: (value: T) => Promise<void> | void,
   ): Promise<T | null> {
-    const now = Date.now();
-
     await this.clearExpiredKeys(onDelete);
 
     const cachedEntry = this.cache.get(cacheKey);
 
     if (cachedEntry) {
+      cachedEntry.lastUsed = Date.now();
+
       return cachedEntry.value;
     }
 
@@ -47,7 +47,7 @@ export class PromiseMemoizer<T> {
         const value = await factory();
 
         if (value) {
-          this.cache.set(cacheKey, { value, ttl: now + this.ttlMs });
+          this.cache.set(cacheKey, { value, lastUsed: Date.now() });
         }
 
         return value;
@@ -65,7 +65,7 @@ export class PromiseMemoizer<T> {
     const now = Date.now();
 
     for (const [cacheKey, cachedEntry] of this.cache.entries()) {
-      if (cachedEntry.ttl < now) {
+      if (cachedEntry.lastUsed < now - this.ttlMs) {
         await this.clearKey(cacheKey, onDelete);
       }
     }

@@ -30,7 +30,7 @@ export type SelectProps<Value extends SelectValue> = {
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
   dropdownId: string;
-  dropdownWidth?: `${string}px` | 'auto' | number;
+  dropdownWidth?: number;
   dropdownWidthAuto?: boolean;
   emptyOption?: SelectOption<Value>;
   fullWidth?: boolean;
@@ -128,7 +128,7 @@ export const Select = <Value extends SelectValue>({
       ) : (
         <Dropdown
           dropdownId={dropdownId}
-          dropdownMenuWidth={dropDownMenuWidth}
+          dropdownWidth={dropDownMenuWidth}
           dropdownPlacement="bottom-start"
           dropdownOffset={dropdownOffset}
           clickableComponent={
@@ -152,7 +152,7 @@ export const Select = <Value extends SelectValue>({
                 <DropdownMenuSeparator />
               )}
               {!!filteredOptions.length && (
-                <DropdownMenuItemsContainer hasMaxHeight>
+                <DropdownMenuItemsContainer hasMaxHeight width={'auto'}>
                   {filteredOptions.map((option) => (
                     <MenuItemSelect
                       key={`${option.value}-${option.label}`}

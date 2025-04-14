@@ -6,7 +6,6 @@ import { Key } from 'ts-key-enum';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingSyncEmailsSettingsCard } from '@/onboarding/components/OnboardingSyncEmailsSettingsCard';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
@@ -18,16 +17,15 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { AppPath } from '@/types/AppPath';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { IconGoogle, IconMicrosoft } from 'twenty-ui/display';
+import { MainButton } from 'twenty-ui/input';
+import { ClickToActionLink } from 'twenty-ui/navigation';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
-  OnboardingStatus,
   useSkipSyncEmailOnboardingStepMutation,
 } from '~/generated/graphql';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { ActionLink } from 'twenty-ui/navigation';
-import { IconGoogle, IconMicrosoft } from 'twenty-ui/display';
-import { MainButton } from 'twenty-ui/input';
 
 const StyledSyncEmailsContainer = styled.div`
   display: flex;
@@ -54,7 +52,6 @@ export const SyncEmails = () => {
   const theme = useTheme();
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const currentUser = useRecoilValue(currentUserState);
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
     MessageChannelVisibility.SHARE_EVERYTHING,
   );
@@ -106,10 +103,6 @@ export const SyncEmails = () => {
     [continueWithoutSync],
   );
 
-  if (currentUser?.onboardingStatus !== OnboardingStatus.SYNC_EMAIL) {
-    return <></>;
-  }
-
   return (
     <>
       <Title noMarginTop>Emails and Calendar</Title>
@@ -150,9 +143,9 @@ export const SyncEmails = () => {
         )}
       </StyledProviderContainer>
       <StyledActionLinkContainer>
-        <ActionLink onClick={continueWithoutSync}>
+        <ClickToActionLink onClick={continueWithoutSync}>
           Continue without sync
-        </ActionLink>
+        </ClickToActionLink>
       </StyledActionLinkContainer>
     </>
   );

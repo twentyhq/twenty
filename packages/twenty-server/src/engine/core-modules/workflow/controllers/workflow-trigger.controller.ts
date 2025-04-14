@@ -1,6 +1,7 @@
-import { Controller, Get, Param, UseFilters } from '@nestjs/common';
+import { Controller, Get, Param, Post, Req, UseFilters } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { Request } from 'express';
 
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -22,11 +23,26 @@ export class WorkflowTriggerController {
     private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
   ) {}
 
-  @Get('workflows/:workspaceId/:workflowId')
-  async runWorkflow(
-    @Param('workspaceId') workspaceId: string,
+  @Post('workflows/:workspaceId/:workflowId')
+  async runWorkflowByPostRequest(
     @Param('workflowId') workflowId: string,
+    @Req() request: Request,
   ) {
+    return await this.runWorkflow({ workflowId, payload: request.body || {} });
+  }
+
+  @Get('workflows/:workspaceId/:workflowId')
+  async runWorkflowByGetRequest(@Param('workflowId') workflowId: string) {
+    return await this.runWorkflow({ workflowId });
+  }
+
+  private async runWorkflow({
+    workflowId,
+    payload,
+  }: {
+    workflowId: string;
+    payload?: object;
+  }) {
     const workflowRepository =
       await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
         'workflow',
@@ -78,7 +94,7 @@ export class WorkflowTriggerController {
     const { workflowRunId } =
       await this.workflowTriggerWorkspaceService.runWorkflowVersion({
         workflowVersionId: workflow.lastPublishedVersionId,
-        payload: {},
+        payload: payload || {},
         createdBy: {
           source: FieldActorSource.WEBHOOK,
           workspaceMemberId: null,

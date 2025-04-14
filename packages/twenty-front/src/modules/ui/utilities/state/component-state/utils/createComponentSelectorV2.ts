@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { selectorFamily } from 'recoil';
 

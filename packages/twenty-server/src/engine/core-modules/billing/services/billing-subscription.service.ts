@@ -145,14 +145,19 @@ export class BillingSubscriptionService {
     return entitlement.value;
   }
 
-  async applyBillingSubscription(workspace: Workspace) {
+  async switchToYearlyInterval(workspace: Workspace) {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
-    const newInterval =
-      billingSubscription?.interval === SubscriptionInterval.Year
-        ? SubscriptionInterval.Month
-        : SubscriptionInterval.Year;
+
+    if (billingSubscription.interval === SubscriptionInterval.Year) {
+      throw new BillingException(
+        'Cannot switch from yearly to monthly billing interval',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_INTERVAL_NOT_SWITCHABLE,
+      );
+    }
+
+    const newInterval = SubscriptionInterval.Year;
 
     const planKey = getPlanKeyFromSubscription(billingSubscription);
     const billingProductsByPlan =
