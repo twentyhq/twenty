@@ -8,4 +8,5 @@ export class AnalyticsException extends CustomException {
 
 export enum AnalyticsExceptionCode {
   INVALID_TYPE = 'INVALID_TYPE',
+  INVALID_INPUT = 'INVALID_INPUT',
 }

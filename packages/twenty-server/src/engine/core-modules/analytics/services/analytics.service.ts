@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  makeTrackEvent,
   makePageview,
+  makeTrackEvent,
 } from 'src/engine/core-modules/analytics/utils/analytics.utils';
 import { ClickhouseService } from 'src/engine/core-modules/analytics/services/clickhouse.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -11,6 +11,10 @@ import {
   TrackEventProperties,
 } from 'src/engine/core-modules/analytics/types/events.type';
 import { PageviewProperties } from 'src/engine/core-modules/analytics/utils/events/pageview/pageview';
+import {
+  AnalyticsException,
+  AnalyticsExceptionCode,
+} from 'src/engine/core-modules/analytics/analytics.exception';
 
 @Injectable()
 export class AnalyticsService {
@@ -57,7 +61,10 @@ export class AnalyticsService {
     if (!this.twentyConfigService.get('ANALYTICS_ENABLED')) {
       return { success: true };
     }
-
-    return sendEventOrPageviewFunction();
+    try {
+      return sendEventOrPageviewFunction();
+    } catch (err) {
+      return new AnalyticsException(err, AnalyticsExceptionCode.INVALID_INPUT);
+    }
   }
 }
