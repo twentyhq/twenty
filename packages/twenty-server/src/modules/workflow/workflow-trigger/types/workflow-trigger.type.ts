@@ -61,6 +61,16 @@ export type WorkflowCronTrigger = BaseTrigger & {
 
 export type WorkflowWebhookTrigger = BaseTrigger & {
   type: WorkflowTriggerType.WEBHOOK;
+  settings:
+    | {
+        httpMethod: 'GET';
+        authentication: 'API_KEY' | null;
+      }
+    | ({
+        httpMethod: 'POST';
+        authentication: 'API_KEY' | null;
+        expectedBody: object;
+      } & { outputSchema: object });
 };
 
 export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];

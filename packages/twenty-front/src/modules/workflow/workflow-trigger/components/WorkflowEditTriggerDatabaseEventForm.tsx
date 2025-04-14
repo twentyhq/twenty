@@ -12,6 +12,7 @@ import { WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
 import { useTheme } from '@emotion/react';
@@ -105,18 +106,9 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     [systemObjects, searchInputValue],
   );
 
-  const defaultLabel =
-    getTriggerDefaultLabel({
-      type: 'DATABASE_EVENT',
-      eventName: triggerEvent.event,
-    }) ?? '-';
-
-  const headerIcon = getTriggerIcon({
-    type: 'DATABASE_EVENT',
-    eventName: triggerEvent.event,
-  });
-
-  const headerType = `Trigger · ${defaultLabel}`;
+  const defaultLabel = trigger.name ?? getTriggerDefaultLabel(trigger);
+  const headerIcon = getTriggerIcon(trigger);
+  const headerType = getTriggerHeaderType(trigger);
 
   const handleOptionClick = (value: string) => {
     if (triggerOptions.readonly === true) {
@@ -174,7 +166,6 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
           <StyledLabel>Record Type</StyledLabel>
           <Dropdown
             dropdownId="workflow-edit-trigger-record-type"
-            dropdownWidth={300}
             dropdownPlacement="bottom-start"
             clickableComponent={
               <SelectControl

@@ -1,5 +1,5 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowFormAction } from '@/workflow/types/Workflow';
@@ -200,7 +200,7 @@ export const WorkflowEditActionFormBuilder = ({
               onMouseLeave={() => setHoveredField(null)}
             >
               <FormFieldInputRowContainer>
-                <FormFieldInputInputContainer
+                <FormFieldInputInnerContainer
                   hasRightElement={false}
                   onClick={() => {
                     handleFieldClick(field.id);
@@ -220,7 +220,7 @@ export const WorkflowEditActionFormBuilder = ({
                       />
                     )}
                   </StyledFieldContainer>
-                </FormFieldInputInputContainer>
+                </FormFieldInputInnerContainer>
               </FormFieldInputRowContainer>
               {!actionOptions.readonly &&
                 (isFieldSelected(field.id) || isFieldHovered(field.id)) && (
@@ -263,7 +263,7 @@ export const WorkflowEditActionFormBuilder = ({
             <StyledRowContainer>
               <FormFieldInputContainer>
                 <FormFieldInputRowContainer>
-                  <FormFieldInputInputContainer
+                  <FormFieldInputInnerContainer
                     hasRightElement={false}
                     onClick={() => {
                       const { label, name } = getDefaultFormFieldSettings(
@@ -296,7 +296,7 @@ export const WorkflowEditActionFormBuilder = ({
                         {t`Add Field`}
                       </StyledAddFieldButtonContentContainer>
                     </StyledFieldContainer>
-                  </FormFieldInputInputContainer>
+                  </FormFieldInputInnerContainer>
                 </FormFieldInputRowContainer>
               </FormFieldInputContainer>
             </StyledRowContainer>

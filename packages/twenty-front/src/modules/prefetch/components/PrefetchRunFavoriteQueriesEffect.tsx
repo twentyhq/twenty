@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
 import { Favorite } from '@/favorites/types/Favorite';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -13,17 +13,13 @@ import { prefetchFavoriteFoldersState } from '@/prefetch/states/prefetchFavorite
 import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState';
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { isDefined } from 'twenty-shared/utils';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const PrefetchRunFavoriteQueriesEffect = () => {
-  const currentUser = useRecoilValue(currentUserState);
-
-  const isWorkspaceActive = useIsWorkspaceActivationStatusEqualsTo(
-    WorkspaceActivationStatus.ACTIVE,
-  );
+  const showAuthModal = useShowAuthModal();
+  const isSettingsPage = useIsSettingsPage();
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -53,14 +49,14 @@ export const PrefetchRunFavoriteQueriesEffect = () => {
     objectNameSingular: CoreObjectNameSingular.Favorite,
     filter: findAllFavoritesOperationSignature.variables.filter,
     recordGqlFields: findAllFavoritesOperationSignature.fields,
-    skip: !currentUser || !isWorkspaceActive,
+    skip: showAuthModal || isSettingsPage,
   });
 
   const { records: favoriteFolders } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.FavoriteFolder,
     filter: findAllFavoriteFoldersOperationSignature.variables.filter,
     recordGqlFields: findAllFavoriteFoldersOperationSignature.fields,
-    skip: !currentUser || !isWorkspaceActive,
+    skip: showAuthModal || isSettingsPage,
   });
 
   const setPrefetchFavoritesState = useRecoilCallback(

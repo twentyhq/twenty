@@ -20,6 +20,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { isArgDefinedIfProvidedOrThrow } from 'src/engine/metadata-modules/utils/is-arg-defined-if-provided-or-throw.util';
+import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/workspace-roles-permissions-cache/workspace-roles-permissions-cache.service';
 
 export class RoleService {
   constructor(
@@ -30,6 +31,7 @@ export class RoleService {
     @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
     private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
     private readonly userRoleService: UserRoleService,
+    private readonly workspaceRolesPermissionsCacheService: WorkspaceRolesPermissionsCacheService,
   ) {}
 
   public async getWorkspaceRoles(workspaceId: string): Promise<RoleEntity[]> {
@@ -67,7 +69,7 @@ export class RoleService {
   }): Promise<RoleEntity> {
     await this.validateRoleInput({ input, workspaceId });
 
-    return this.roleRepository.save({
+    const role = this.roleRepository.save({
       label: input.label,
       description: input.description,
       icon: input.icon,
@@ -79,6 +81,14 @@ export class RoleService {
       isEditable: true,
       workspaceId,
     });
+
+    await this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
+      {
+        workspaceId,
+      },
+    );
+
+    return role;
   }
 
   public async updateRole({
@@ -117,6 +127,12 @@ export class RoleService {
       id: input.id,
       ...input.update,
     });
+
+    await this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
+      {
+        workspaceId,
+      },
+    );
 
     return { ...existingRole, ...updatedRole };
   }
@@ -179,6 +195,12 @@ export class RoleService {
       id: roleId,
       workspaceId,
     });
+
+    await this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
+      {
+        workspaceId,
+      },
+    );
 
     return roleId;
   }

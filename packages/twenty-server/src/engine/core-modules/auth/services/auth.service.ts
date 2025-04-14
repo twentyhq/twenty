@@ -13,7 +13,7 @@ import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import {
   AppToken,
@@ -51,7 +51,7 @@ import {
 import { WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -77,7 +77,7 @@ export class AuthService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly emailService: EmailService,
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
@@ -164,7 +164,7 @@ export class AuthService {
       );
     }
 
-    const isEmailVerificationRequired = this.environmentService.get(
+    const isEmailVerificationRequired = this.twentyConfigService.get(
       'IS_EMAIL_VERIFICATION_REQUIRED',
     );
 
@@ -323,10 +323,10 @@ export class AuthService {
         id: 'chrome',
         name: 'Chrome Extension',
         redirectUrl:
-          this.environmentService.get('NODE_ENV') ===
+          this.twentyConfigService.get('NODE_ENV') ===
           NodeEnvironment.development
             ? authorizeAppInput.redirectUrl
-            : `https://${this.environmentService.get(
+            : `https://${this.twentyConfigService.get(
                 'CHROME_EXTENSION_ID',
               )}.chromiumapp.org/`,
       },
@@ -448,9 +448,9 @@ export class AuthService {
     i18n.activate(locale);
 
     this.emailService.send({
-      from: `${this.environmentService.get(
+      from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
-      )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
+      )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
       to: user.email,
       subject: t`Your Password Has Been Successfully Changed`,
       text,

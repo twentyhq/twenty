@@ -1,9 +1,10 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { TextVariableEditor } from '@/object-record/record-field/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/form-types/hooks/useTextVariableEditor';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,8 +12,10 @@ import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmp
 
 type FormRawJsonFieldInputProps = {
   label?: string;
+  error?: string;
   defaultValue: string | null | undefined;
   onChange: (value: string | null) => void;
+  onBlur?: () => void;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
   placeholder?: string;
@@ -20,9 +23,11 @@ type FormRawJsonFieldInputProps = {
 
 export const FormRawJsonFieldInput = ({
   label,
+  error,
   defaultValue,
   placeholder,
   onChange,
+  onBlur,
   readonly,
   VariablePicker,
 }: FormRawJsonFieldInputProps) => {
@@ -65,12 +70,13 @@ export const FormRawJsonFieldInput = ({
       {label ? <InputLabel>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer multiline>
-        <FormFieldInputInputContainer
+        <FormFieldInputInnerContainer
           hasRightElement={isDefined(VariablePicker) && !readonly}
           multiline
+          onBlur={onBlur}
         >
           <TextVariableEditor editor={editor} multiline readonly={readonly} />
-        </FormFieldInputInputContainer>
+        </FormFieldInputInnerContainer>
 
         {VariablePicker && !readonly && (
           <VariablePicker
@@ -80,6 +86,7 @@ export const FormRawJsonFieldInput = ({
           />
         )}
       </FormFieldInputRowContainer>
+      <InputErrorHelper>{error}</InputErrorHelper>
     </FormFieldInputContainer>
   );
 };
