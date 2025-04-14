@@ -119,12 +119,16 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
         {
           provide: MessagingMessageService,
           useValue: {
-            saveMessagesWithinTransaction: jest.fn().mockResolvedValue(
-              new Map([
+            saveMessagesWithinTransaction: jest.fn().mockResolvedValue({
+              messageExternalIdsAndIdsMap: new Map([
                 ['message-1', 'db-message-id-1'],
                 ['message-2', 'db-message-id-2'],
               ]),
-            ),
+              createdMessages: [
+                { id: 'db-message-id-1' },
+                { id: 'db-message-id-2' },
+              ],
+            }),
           },
         },
         {
