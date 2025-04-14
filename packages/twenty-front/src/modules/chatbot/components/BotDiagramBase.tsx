@@ -160,6 +160,9 @@ export const BotDiagramBase = ({
 
   const { chatbotFlowData, refetch } = useGetChatbotFlowById(chatbotId);
 
+  // eslint-disable-next-line @nx/workspace-no-state-useref
+  const hasValidatedRef = useRef(false);
+
   type FlowType = () => [Node[], Edge[]];
 
   const defineFlow: FlowType = () => {
@@ -183,12 +186,16 @@ export const BotDiagramBase = ({
   }, [chatbotFlowData]);
 
   useEffect(() => {
-    const [resNode, resEdges] = defineFlow();
-
-    if (resNode.length > 0 && resEdges.length > 0) {
-      chatbotFlow({ nodes: resNode, edges: resEdges, chatbotId });
+    if (
+      nodes.length > 0 &&
+      edges.length > 0 &&
+      chatbotId &&
+      !hasValidatedRef.current
+    ) {
+      chatbotFlow({ nodes, edges, chatbotId });
+      hasValidatedRef.current = true;
     }
-  }, [chatbotFlowData, chatbotId]);
+  }, [nodes, edges, chatbotId]);
 
   const onSave = useCallback(() => {
     if (rfInstance) {
