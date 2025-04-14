@@ -6,6 +6,7 @@ import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/sin
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-actions.mock';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const mockActions = createMockActionMenuActions({});
@@ -57,6 +58,10 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(canvas.getByText('Add to favorites')).toBeInTheDocument();
+    expect(
+      await canvas.findByText(
+        getActionLabel(addToFavoritesAction?.shortLabel ?? ''),
+      ),
+    ).toBeInTheDocument();
   },
 };
