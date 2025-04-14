@@ -2,9 +2,9 @@ import { RecordTableComponentInstanceContext } from '@/object-record/record-tabl
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 import { TableCellPosition } from '../types/TableCellPosition';
 
-export const softFocusPositionComponentState =
+export const focusPositionComponentState =
   createComponentStateV2<TableCellPosition>({
-    key: 'softFocusPositionComponentState',
+    key: 'focusPositionComponentState',
     defaultValue: {
       row: 0,
       column: 1,

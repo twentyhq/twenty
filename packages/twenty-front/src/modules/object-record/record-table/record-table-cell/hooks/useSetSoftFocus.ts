@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useSetSoftFocusPosition } from '@/object-record/record-table/hooks/internal/useSetSoftFocusPosition';
+import { useSetSoftFocusPosition } from '@/object-record/record-table/hooks/internal/useSetFocusPosition';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 

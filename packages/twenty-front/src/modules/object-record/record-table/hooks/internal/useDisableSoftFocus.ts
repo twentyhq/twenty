@@ -1,14 +1,14 @@
 import { useRecoilCallback } from 'recoil';
 
+import { focusPositionComponentState } from '@/object-record/record-table/states/focusPositionComponentState';
 import { isSoftFocusActiveComponentState } from '@/object-record/record-table/states/isSoftFocusActiveComponentState';
 import { isSoftFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellComponentFamilyState';
-import { softFocusPositionComponentState } from '@/object-record/record-table/states/softFocusPositionComponentState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 
 export const useDisableSoftFocus = (recordTableId?: string) => {
-  const softFocusPositionState = useRecoilComponentCallbackStateV2(
-    softFocusPositionComponentState,
+  const focusPositionState = useRecoilComponentCallbackStateV2(
+    focusPositionComponentState,
     recordTableId,
   );
   const isSoftFocusActiveState = useRecoilComponentCallbackStateV2(
@@ -23,10 +23,7 @@ export const useDisableSoftFocus = (recordTableId?: string) => {
   return useRecoilCallback(
     ({ set, snapshot }) => {
       return () => {
-        const currentPosition = getSnapshotValue(
-          snapshot,
-          softFocusPositionState,
-        );
+        const currentPosition = getSnapshotValue(snapshot, focusPositionState);
 
         set(isSoftFocusActiveState, false);
 
@@ -35,7 +32,7 @@ export const useDisableSoftFocus = (recordTableId?: string) => {
     },
     [
       isSoftFocusActiveState,
-      softFocusPositionState,
+      focusPositionState,
       isSoftFocusOnTableCellFamilyState,
     ],
   );

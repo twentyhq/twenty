@@ -30,9 +30,9 @@ import { useDisableSoftFocus } from './internal/useDisableSoftFocus';
 import { useLeaveTableFocus } from './internal/useLeaveTableFocus';
 import { useResetTableRowSelection } from './internal/useResetTableRowSelection';
 import { useSelectAllRows } from './internal/useSelectAllRows';
+import { useSetSoftFocusPosition } from './internal/useSetFocusPosition';
 import { useSetRecordTableData } from './internal/useSetRecordTableData';
 import { useSetRowSelectedState } from './internal/useSetRowSelectedState';
-import { useSetSoftFocusPosition } from './internal/useSetSoftFocusPosition';
 
 type useRecordTableProps = {
   recordTableId?: string;
