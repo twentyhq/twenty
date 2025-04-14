@@ -2,23 +2,16 @@ import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
+import { FieldMetadataType } from '~/generated/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { RichTextFieldInput } from '../RichTextFieldInput';
-
-jest.mock('@/modules/command-menu/hooks/useRichTextCommandMenu', () => ({
-  useRichTextCommandMenu: () => ({
-    editRichText: jest.fn(),
-  }),
-}));
-
-jest.mock('@/modules/activities/components/ActivityRichTextEditor', () => ({
-  ActivityRichTextEditor: () => (
-    <div data-testid="activity-rich-text-editor">Rich Text Editor</div>
-  ),
-}));
 
 const clickOutsideJestFn = fn();
 const escapeJestFn = fn();
@@ -45,21 +38,43 @@ const RichTextFieldInputWithContext = ({
   const setHotKeyScope = useSetHotkeyScope();
 
   useEffect(() => {
-    setHotKeyScope('rich-text-field-input');
+    setHotKeyScope(DEFAULT_CELL_SCOPE.scope);
   }, [setHotKeyScope]);
 
   return (
-    <>
-      <RichTextFieldInput
-        targetableObject={{
-          id: targetableObjectId,
-          targetObjectNameSingular: CoreObjectNameSingular.Note,
+    <RecordFieldComponentInstanceContext.Provider
+      value={{
+        instanceId: 'record-field-component-instance-id',
+      }}
+    >
+      <FieldContext.Provider
+        value={{
+          recordId: targetableObjectId,
+          fieldDefinition: {
+            fieldMetadataId: 'richText',
+            label: 'Rich Text',
+            type: FieldMetadataType.RICH_TEXT,
+            iconName: 'IconRichText',
+            metadata: {
+              fieldName: 'richText',
+              objectMetadataNameSingular: 'note',
+            },
+          },
+          isLabelIdentifier: false,
+          isReadOnly: false,
         }}
-        onClickOutside={onClickOutside}
-        onEscape={onEscape}
-      />
+      >
+        <RichTextFieldInput
+          targetableObject={{
+            id: targetableObjectId,
+            targetObjectNameSingular: CoreObjectNameSingular.Note,
+          }}
+          onClickOutside={onClickOutside}
+          onEscape={onEscape}
+        />
+      </FieldContext.Provider>
       <div data-testid="click-outside-element" />
-    </>
+    </RecordFieldComponentInstanceContext.Provider>
   );
 };
 
@@ -75,7 +90,12 @@ const meta: Meta = {
     onClickOutside: { control: false },
     onEscape: { control: false },
   },
-  decorators: [clearMocksDecorator, SnackBarDecorator, I18nFrontDecorator],
+  decorators: [
+    clearMocksDecorator,
+    SnackBarDecorator,
+    I18nFrontDecorator,
+    ObjectMetadataItemsDecorator,
+  ],
   parameters: {
     clearMocks: true,
   },
