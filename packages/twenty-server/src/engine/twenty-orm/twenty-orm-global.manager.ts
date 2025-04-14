@@ -15,19 +15,19 @@ export class TwentyORMGlobalManager {
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     workspaceEntity: Type<T>,
-    failOnMetadataCacheMiss?: boolean,
+    shouldFailIfMetadataNotFound?: boolean,
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     objectMetadataName: string,
-    failOnMetadataCacheMiss?: boolean,
+    shouldFailIfMetadataNotFound?: boolean,
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     workspaceEntityOrobjectMetadataName: Type<T> | string,
-    failOnMetadataCacheMiss = true,
+    shouldFailIfMetadataNotFound = true,
   ): Promise<WorkspaceRepository<T>> {
     let objectMetadataName: string;
 
@@ -42,7 +42,7 @@ export class TwentyORMGlobalManager {
     const workspaceDataSource = await this.workspaceDataSourceFactory.create(
       workspaceId,
       null,
-      failOnMetadataCacheMiss,
+      shouldFailIfMetadataNotFound,
     );
 
     const repository = workspaceDataSource.getRepository<T>(objectMetadataName);
@@ -52,12 +52,12 @@ export class TwentyORMGlobalManager {
 
   async getDataSourceForWorkspace(
     workspaceId: string,
-    failOnMetadataCacheMiss = true,
+    shouldFailIfMetadataNotFound = true,
   ) {
     return await this.workspaceDataSourceFactory.create(
       workspaceId,
       null,
-      failOnMetadataCacheMiss,
+      shouldFailIfMetadataNotFound,
     );
   }
 

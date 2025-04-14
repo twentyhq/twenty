@@ -90,7 +90,7 @@ export const WorkflowStepHeader = ({
   };
 
   return (
-    <StyledHeader>
+    <StyledHeader data-testid="workflow-step-header">
       <StyledHeaderIconContainer>
         <Icon
           color={iconColor}

@@ -42,15 +42,14 @@ export const SettingsBillingMonthlyCreditsSection = () => {
     totalCostCents,
   } = useGetWorkflowNodeExecutionUsage();
 
-  const progressBarValue =
-    freeUsageQuantity === includedFreeQuantity
-      ? 0
-      : (freeUsageQuantity / includedFreeQuantity) * 100;
+  const isFreeCreditProgressBarCompleted =
+    freeUsageQuantity === includedFreeQuantity;
 
-  const formattedFreeUsageQuantity =
-    freeUsageQuantity === includedFreeQuantity
-      ? formatAmount(freeUsageQuantity)
-      : formatNumber(freeUsageQuantity);
+  const progressBarValue = (freeUsageQuantity / includedFreeQuantity) * 100;
+
+  const formattedFreeUsageQuantity = isFreeCreditProgressBarCompleted
+    ? formatAmount(freeUsageQuantity)
+    : formatNumber(freeUsageQuantity);
 
   return (
     <Section>
@@ -65,7 +64,11 @@ export const SettingsBillingMonthlyCreditsSection = () => {
         />
         <ProgressBar
           value={progressBarValue}
-          barColor={COLOR.blue}
+          barColor={
+            isFreeCreditProgressBarCompleted
+              ? BACKGROUND_LIGHT.quaternary
+              : COLOR.blue
+          }
           backgroundColor={BACKGROUND_LIGHT.tertiary}
           withBorderRadius={true}
         />

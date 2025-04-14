@@ -1,8 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import {
+  WorkflowCommonException,
+  WorkflowCommonExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-common.exception';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -17,6 +25,7 @@ export class WorkflowCommonWorkspaceService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly serverlessFunctionService: ServerlessFunctionService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
   async getWorkflowVersionOrFail(
@@ -62,6 +71,55 @@ export class WorkflowCommonWorkspaceService {
     // }
 
     return { ...workflowVersion, trigger: workflowVersion.trigger };
+  }
+
+  async getObjectMetadataItemWithFieldsMaps(
+    objectNameSingular: string,
+    workspaceId: string,
+  ): Promise<{
+    objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
+    objectMetadataMaps: ObjectMetadataMaps;
+  }> {
+    const currentCacheVersion =
+      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
+
+    if (currentCacheVersion === undefined) {
+      throw new WorkflowCommonException(
+        'Failed to read: Metadata cache version not found',
+        WorkflowCommonExceptionCode.INVALID_CACHE_VERSION,
+      );
+    }
+
+    const objectMetadataMaps =
+      await this.workspaceCacheStorageService.getObjectMetadataMaps(
+        workspaceId,
+        currentCacheVersion,
+      );
+
+    if (!objectMetadataMaps) {
+      throw new WorkflowCommonException(
+        'Failed to read: Object metadata collection not found',
+        WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+
+    const objectMetadataItemWithFieldsMaps =
+      getObjectMetadataMapItemByNameSingular(
+        objectMetadataMaps,
+        objectNameSingular,
+      );
+
+    if (!objectMetadataItemWithFieldsMaps) {
+      throw new WorkflowCommonException(
+        `Failed to read: Object ${objectNameSingular} not found`,
+        WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+
+    return {
+      objectMetadataItemWithFieldsMaps,
+      objectMetadataMaps,
+    };
   }
 
   async cleanWorkflowsSubEntities(

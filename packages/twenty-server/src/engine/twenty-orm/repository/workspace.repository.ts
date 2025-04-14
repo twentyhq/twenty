@@ -1,3 +1,4 @@
+import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import {
   DeepPartial,
   DeleteResult,
@@ -20,36 +21,70 @@ import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { WorkspaceQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-query-builder';
 import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 export class WorkspaceRepository<
-  Entity extends ObjectLiteral,
-> extends Repository<Entity> {
+  T extends ObjectLiteral,
+> extends Repository<T> {
   private readonly internalContext: WorkspaceInternalContext;
+  private featureFlagMap: FeatureFlagMap;
+  private objectRecordsPermissions?: ObjectRecordsPermissions;
 
   constructor(
     internalContext: WorkspaceInternalContext,
-    target: EntityTarget<Entity>,
+    target: EntityTarget<T>,
     manager: EntityManager,
+    featureFlagMap: FeatureFlagMap,
     queryRunner?: QueryRunner,
+    objectRecordsPermissions?: ObjectRecordsPermissions,
   ) {
     super(target, manager, queryRunner);
     this.internalContext = internalContext;
+    this.featureFlagMap = featureFlagMap;
+    this.objectRecordsPermissions = objectRecordsPermissions;
+  }
+
+  override createQueryBuilder<U extends T>(
+    alias?: string,
+    queryRunner?: QueryRunner,
+  ): WorkspaceQueryBuilder<U> {
+    const queryBuilder = super.createQueryBuilder(
+      alias,
+      queryRunner,
+    ) as unknown as WorkspaceQueryBuilder<U>;
+    const isPermissionsV2Enabled =
+      this.featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
+
+    if (!isPermissionsV2Enabled) {
+      return queryBuilder;
+    } else {
+      if (!this.objectRecordsPermissions) {
+        throw new Error('Object records permissions are required');
+      }
+
+      return new WorkspaceQueryBuilder(
+        queryBuilder,
+        this.objectRecordsPermissions,
+      );
+    }
   }
 
   /**
    * FIND METHODS
    */
   override async find(
-    options?: FindManyOptions<Entity>,
+    options?: FindManyOptions<T>,
     entityManager?: EntityManager,
-  ): Promise<Entity[]> {
+  ): Promise<T[]> {
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
     const result = await manager.find(this.target, computedOptions);
@@ -59,9 +94,9 @@ export class WorkspaceRepository<
   }
 
   override async findBy(
-    where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
+    where: FindOptionsWhere<T> | FindOptionsWhere<T>[],
     entityManager?: EntityManager,
-  ): Promise<Entity[]> {
+  ): Promise<T[]> {
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
     const result = await manager.findBy(this.target, computedOptions.where);
@@ -71,9 +106,9 @@ export class WorkspaceRepository<
   }
 
   override async findAndCount(
-    options?: FindManyOptions<Entity>,
+    options?: FindManyOptions<T>,
     entityManager?: EntityManager,
-  ): Promise<[Entity[], number]> {
+  ): Promise<[T[], number]> {
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
     const result = await manager.findAndCount(this.target, computedOptions);
@@ -83,9 +118,9 @@ export class WorkspaceRepository<
   }
 
   override async findAndCountBy(
-    where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
+    where: FindOptionsWhere<T> | FindOptionsWhere<T>[],
     entityManager?: EntityManager,
-  ): Promise<[Entity[], number]> {
+  ): Promise<[T[], number]> {
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
     const result = await manager.findAndCountBy(
@@ -98,9 +133,9 @@ export class WorkspaceRepository<
   }
 
   override async findOne(
-    options: FindOneOptions<Entity>,
+    options: FindOneOptions<T>,
     entityManager?: EntityManager,
-  ): Promise<Entity | null> {
+  ): Promise<T | null> {
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
     const result = await manager.findOne(this.target, computedOptions);
@@ -110,9 +145,9 @@ export class WorkspaceRepository<
   }
 
   override async findOneBy(
-    where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
+    where: FindOptionsWhere<T> | FindOptionsWhere<T>[],
     entityManager?: EntityManager,
-  ): Promise<Entity | null> {
+  ): Promise<T | null> {
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
     const result = await manager.findOneBy(this.target, computedOptions.where);
@@ -122,9 +157,9 @@ export class WorkspaceRepository<
   }
 
   override async findOneOrFail(
-    options: FindOneOptions<Entity>,
+    options: FindOneOptions<T>,
     entityManager?: EntityManager,
-  ): Promise<Entity> {
+  ): Promise<T> {
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
     const result = await manager.findOneOrFail(this.target, computedOptions);
@@ -134,9 +169,9 @@ export class WorkspaceRepository<
   }
 
   override async findOneByOrFail(
-    where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
+    where: FindOptionsWhere<T> | FindOptionsWhere<T>[],
     entityManager?: EntityManager,
-  ): Promise<Entity> {
+  ): Promise<T> {
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
     const result = await manager.findOneByOrFail(
@@ -151,38 +186,38 @@ export class WorkspaceRepository<
   /**
    * SAVE METHODS
    */
-  override save<T extends DeepPartial<Entity>>(
-    entities: T[],
+  override save<U extends DeepPartial<T>>(
+    entities: U[],
     options: SaveOptions & { reload: false },
     entityManager?: EntityManager,
   ): Promise<T[]>;
 
-  override save<T extends DeepPartial<Entity>>(
-    entities: T[],
+  override save<U extends DeepPartial<T>>(
+    entities: U[],
     options?: SaveOptions,
     entityManager?: EntityManager,
-  ): Promise<(T & Entity)[]>;
+  ): Promise<(U & T)[]>;
 
-  override save<T extends DeepPartial<Entity>>(
-    entity: T,
+  override save<U extends DeepPartial<T>>(
+    entity: U,
     options: SaveOptions & { reload: false },
     entityManager?: EntityManager,
   ): Promise<T>;
 
-  override save<T extends DeepPartial<Entity>>(
-    entity: T,
+  override save<U extends DeepPartial<T>>(
+    entity: U,
     options?: SaveOptions,
     entityManager?: EntityManager,
-  ): Promise<T & Entity>;
+  ): Promise<U & T>;
 
-  override async save<T extends DeepPartial<Entity>>(
-    entityOrEntities: T | T[],
+  override async save<U extends DeepPartial<T>>(
+    entityOrEntities: U | U[],
     options?: SaveOptions,
     entityManager?: EntityManager,
-  ): Promise<T | T[]> {
+  ): Promise<U | U[]> {
     const manager = entityManager || this.manager;
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
-    let result: T | T[];
+    let result: U | U[];
 
     // Needed becasuse save method has multiple signature, otherwise we will need to do a type assertion
     if (Array.isArray(formattedEntityOrEntities)) {
@@ -208,22 +243,22 @@ export class WorkspaceRepository<
    * REMOVE METHODS
    */
   override remove(
-    entities: Entity[],
+    entities: T[],
     options?: RemoveOptions,
     entityManager?: EntityManager,
-  ): Promise<Entity[]>;
+  ): Promise<T[]>;
 
   override remove(
-    entity: Entity,
+    entity: T,
     options?: RemoveOptions,
     entityManager?: EntityManager,
-  ): Promise<Entity>;
+  ): Promise<T>;
 
   override async remove(
-    entityOrEntities: Entity | Entity[],
+    entityOrEntities: T | T[],
     options?: RemoveOptions,
     entityManager?: EntityManager,
-  ): Promise<Entity | Entity[]> {
+  ): Promise<T | T[]> {
     const manager = entityManager || this.manager;
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
     const result = await manager.remove(
@@ -247,7 +282,7 @@ export class WorkspaceRepository<
       | Date[]
       | ObjectId
       | ObjectId[]
-      | FindOptionsWhere<Entity>,
+      | FindOptionsWhere<T>,
     entityManager?: EntityManager,
   ): Promise<DeleteResult> {
     const manager = entityManager || this.manager;
@@ -259,38 +294,38 @@ export class WorkspaceRepository<
     return manager.delete(this.target, criteria);
   }
 
-  override softRemove<T extends DeepPartial<Entity>>(
-    entities: T[],
+  override softRemove<U extends DeepPartial<T>>(
+    entities: U[],
     options: SaveOptions & { reload: false },
     entityManager?: EntityManager,
   ): Promise<T[]>;
 
-  override softRemove<T extends DeepPartial<Entity>>(
-    entities: T[],
+  override softRemove<U extends DeepPartial<T>>(
+    entities: U[],
     options?: SaveOptions,
     entityManager?: EntityManager,
-  ): Promise<(T & Entity)[]>;
+  ): Promise<(U & T)[]>;
 
-  override softRemove<T extends DeepPartial<Entity>>(
-    entity: T,
+  override softRemove<U extends DeepPartial<T>>(
+    entity: U,
     options: SaveOptions & { reload: false },
     entityManager?: EntityManager,
-  ): Promise<T>;
+  ): Promise<U>;
 
-  override softRemove<T extends DeepPartial<Entity>>(
+  override softRemove<U extends DeepPartial<T>>(
     entity: T,
     options?: SaveOptions,
     entityManager?: EntityManager,
-  ): Promise<T & Entity>;
+  ): Promise<U & T>;
 
-  override async softRemove<T extends DeepPartial<Entity>>(
-    entityOrEntities: T | T[],
+  override async softRemove<U extends DeepPartial<T>>(
+    entityOrEntities: U | U[],
     options?: SaveOptions,
     entityManager?: EntityManager,
-  ): Promise<T | T[]> {
+  ): Promise<U | U[]> {
     const manager = entityManager || this.manager;
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
-    let result: T | T[];
+    let result: U | U[];
 
     // Needed becasuse save method has multiple signature, otherwise we will need to do a type assertion
     if (Array.isArray(formattedEntityOrEntities)) {
@@ -322,7 +357,7 @@ export class WorkspaceRepository<
       | Date[]
       | ObjectId
       | ObjectId[]
-      | FindOptionsWhere<Entity>,
+      | FindOptionsWhere<T>,
     entityManager?: EntityManager,
   ): Promise<UpdateResult> {
     const manager = entityManager || this.manager;
@@ -337,38 +372,38 @@ export class WorkspaceRepository<
   /**
    * RECOVERY METHODS
    */
-  override recover<T extends DeepPartial<Entity>>(
-    entities: T[],
+  override recover<U extends DeepPartial<T>>(
+    entities: U,
     options: SaveOptions & { reload: false },
     entityManager?: EntityManager,
-  ): Promise<T[]>;
+  ): Promise<U>;
 
-  override recover<T extends DeepPartial<Entity>>(
-    entities: T[],
+  override recover<U extends DeepPartial<T>>(
+    entities: U,
     options?: SaveOptions,
     entityManager?: EntityManager,
-  ): Promise<(T & Entity)[]>;
+  ): Promise<(U & T)[]>;
 
-  override recover<T extends DeepPartial<Entity>>(
-    entity: T,
+  override recover<U extends DeepPartial<T>>(
+    entity: U,
     options: SaveOptions & { reload: false },
     entityManager?: EntityManager,
-  ): Promise<T>;
+  ): Promise<U>;
 
-  override recover<T extends DeepPartial<Entity>>(
-    entity: T,
+  override recover<U extends DeepPartial<T>>(
+    entity: U,
     options?: SaveOptions,
     entityManager?: EntityManager,
-  ): Promise<T & Entity>;
+  ): Promise<U & T>;
 
-  override async recover<T extends DeepPartial<Entity>>(
-    entityOrEntities: T | T[],
+  override async recover<U extends DeepPartial<T>>(
+    entityOrEntities: U | U[],
     options?: SaveOptions,
     entityManager?: EntityManager,
-  ): Promise<T | T[]> {
+  ): Promise<U | U[]> {
     const manager = entityManager || this.manager;
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
-    let result: T | T[];
+    let result: U | U[];
 
     // Needed becasuse save method has multiple signature, otherwise we will need to do a type assertion
     if (Array.isArray(formattedEntityOrEntities)) {
@@ -400,7 +435,7 @@ export class WorkspaceRepository<
       | Date[]
       | ObjectId
       | ObjectId[]
-      | FindOptionsWhere<Entity>,
+      | FindOptionsWhere<T>,
     entityManager?: EntityManager,
   ): Promise<UpdateResult> {
     const manager = entityManager || this.manager;
@@ -416,7 +451,7 @@ export class WorkspaceRepository<
    * INSERT METHODS
    */
   override async insert(
-    entity: QueryDeepPartialEntity<Entity> | QueryDeepPartialEntity<Entity>[],
+    entity: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
     entityManager?: EntityManager,
   ): Promise<InsertResult> {
     const manager = entityManager || this.manager;
@@ -445,8 +480,8 @@ export class WorkspaceRepository<
       | Date[]
       | ObjectId
       | ObjectId[]
-      | FindOptionsWhere<Entity>,
-    partialEntity: QueryDeepPartialEntity<Entity>,
+      | FindOptionsWhere<T>,
+    partialEntity: QueryDeepPartialEntity<T>,
     entityManager?: EntityManager,
   ): Promise<UpdateResult> {
     const manager = entityManager || this.manager;
@@ -459,10 +494,8 @@ export class WorkspaceRepository<
   }
 
   override async upsert(
-    entityOrEntities:
-      | QueryDeepPartialEntity<Entity>
-      | QueryDeepPartialEntity<Entity>[],
-    conflictPathsOrOptions: string[] | UpsertOptions<Entity>,
+    entityOrEntities: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
+    conflictPathsOrOptions: string[] | UpsertOptions<T>,
     entityManager?: EntityManager,
   ): Promise<InsertResult> {
     const manager = entityManager || this.manager;
@@ -488,7 +521,7 @@ export class WorkspaceRepository<
    * EXIST METHODS
    */
   override async exists(
-    options?: FindManyOptions<Entity>,
+    options?: FindManyOptions<T>,
     entityManager?: EntityManager,
   ): Promise<boolean> {
     const manager = entityManager || this.manager;
@@ -498,7 +531,7 @@ export class WorkspaceRepository<
   }
 
   override async existsBy(
-    where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
+    where: FindOptionsWhere<T> | FindOptionsWhere<T>[],
     entityManager?: EntityManager,
   ): Promise<boolean> {
     const manager = entityManager || this.manager;
@@ -511,7 +544,7 @@ export class WorkspaceRepository<
    * COUNT METHODS
    */
   override async count(
-    options?: FindManyOptions<Entity>,
+    options?: FindManyOptions<T>,
     entityManager?: EntityManager,
   ): Promise<number> {
     const manager = entityManager || this.manager;
@@ -521,7 +554,7 @@ export class WorkspaceRepository<
   }
 
   override async countBy(
-    where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
+    where: FindOptionsWhere<T> | FindOptionsWhere<T>[],
     entityManager?: EntityManager,
   ): Promise<number> {
     const manager = entityManager || this.manager;
@@ -534,8 +567,8 @@ export class WorkspaceRepository<
    * MATH METHODS
    */
   override async sum(
-    columnName: PickKeysByType<Entity, number>,
-    where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
+    columnName: PickKeysByType<T, number>,
+    where?: FindOptionsWhere<T> | FindOptionsWhere<T>[],
     entityManager?: EntityManager,
   ): Promise<number | null> {
     const manager = entityManager || this.manager;
@@ -545,8 +578,8 @@ export class WorkspaceRepository<
   }
 
   override async average(
-    columnName: PickKeysByType<Entity, number>,
-    where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
+    columnName: PickKeysByType<T, number>,
+    where?: FindOptionsWhere<T> | FindOptionsWhere<T>[],
     entityManager?: EntityManager,
   ): Promise<number | null> {
     const manager = entityManager || this.manager;
@@ -556,8 +589,8 @@ export class WorkspaceRepository<
   }
 
   override async minimum(
-    columnName: PickKeysByType<Entity, number>,
-    where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
+    columnName: PickKeysByType<T, number>,
+    where?: FindOptionsWhere<T> | FindOptionsWhere<T>[],
     entityManager?: EntityManager,
   ): Promise<number | null> {
     const manager = entityManager || this.manager;
@@ -567,8 +600,8 @@ export class WorkspaceRepository<
   }
 
   override async maximum(
-    columnName: PickKeysByType<Entity, number>,
-    where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
+    columnName: PickKeysByType<T, number>,
+    where?: FindOptionsWhere<T> | FindOptionsWhere<T>[],
     entityManager?: EntityManager,
   ): Promise<number | null> {
     const manager = entityManager || this.manager;
@@ -578,7 +611,7 @@ export class WorkspaceRepository<
   }
 
   override async increment(
-    conditions: FindOptionsWhere<Entity>,
+    conditions: FindOptionsWhere<T>,
     propertyPath: string,
     value: number | string,
     entityManager?: EntityManager,
@@ -597,7 +630,7 @@ export class WorkspaceRepository<
   }
 
   override async decrement(
-    conditions: FindOptionsWhere<Entity>,
+    conditions: FindOptionsWhere<T>,
     propertyPath: string,
     value: number | string,
     entityManager?: EntityManager,
@@ -652,8 +685,8 @@ export class WorkspaceRepository<
   }
 
   private async transformOptions<
-    T extends FindManyOptions<Entity> | FindOneOptions<Entity> | undefined,
-  >(options: T): Promise<T> {
+    U extends FindManyOptions<T> | FindOneOptions<T> | undefined,
+  >(options: U): Promise<U> {
     if (!options) {
       return options;
     }

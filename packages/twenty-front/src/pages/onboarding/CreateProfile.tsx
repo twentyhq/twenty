@@ -13,7 +13,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FormPhoneFieldInput } from '@/object-record/record-field/form-types/components/FormPhoneFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
-import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { PERSON_TYPE_OPTIONS } from '@/settings/constants/PersonTypeOptions';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
@@ -21,13 +20,13 @@ import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
-import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { formatCnpj } from '~/utils/formatCnpj';
 import { formatCpf } from '~/utils/formatCpf';
 import isCnpj from '~/utils/isCnpj';
@@ -79,7 +78,6 @@ type Form = z.infer<typeof validationSchema>;
 
 export const CreateProfile = () => {
   const { t } = useLingui();
-  const onboardingStatus = useOnboardingStatus();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { enqueueSnackBar } = useSnackBar();
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
@@ -181,12 +179,8 @@ export const CreateProfile = () => {
     PageHotkeyScope.CreateProfile,
   );
 
-  if (onboardingStatus !== OnboardingStatus.PROFILE_CREATION) {
-    return null;
-  }
-
   return (
-    <>
+    <Modal.Content isVerticalCentered isHorizontalCentered>
       <Title noMarginTop>
         <Trans>Create profile</Trans>
       </Title>
@@ -322,6 +316,6 @@ export const CreateProfile = () => {
           fullWidth
         />
       </StyledButtonContainer>
-    </>
+    </Modal.Content>
   );
 };

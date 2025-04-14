@@ -1,12 +1,12 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -26,7 +26,6 @@ import { IconCopy, SeparatorLineText } from 'twenty-ui/display';
 import { LightButton, MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { z } from 'zod';
-import { OnboardingStatus } from '~/generated/graphql';
 import { useCreateWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
 const StyledAnimatedContainer = styled.div`
@@ -69,7 +68,6 @@ export const InviteTeam = () => {
   const { sendInvitation } = useCreateWorkspaceInvitation();
 
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const currentUser = useRecoilValue(currentUserState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const {
     control,
@@ -166,12 +164,8 @@ export const InviteTeam = () => {
     [handleSubmit],
   );
 
-  if (currentUser?.onboardingStatus !== OnboardingStatus.INVITE_TEAM) {
-    return <></>;
-  }
-
   return (
-    <>
+    <Modal.Content isVerticalCentered isHorizontalCentered>
       <Title>
         <Trans>Invite your team</Trans>
       </Title>
@@ -231,6 +225,6 @@ export const InviteTeam = () => {
           <Trans>Skip</Trans>
         </ClickToActionLink>
       </StyledActionSkipLinkContainer>
-    </>
+    </Modal.Content>
   );
 };

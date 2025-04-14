@@ -1,5 +1,5 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
@@ -32,7 +32,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { Nullable } from 'twenty-ui/utilities';
 
-const StyledInputContainer = styled(FormFieldInputInputContainer)`
+const StyledInputContainer = styled(FormFieldInputInnerContainer)`
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 0px;
