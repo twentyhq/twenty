@@ -1,60 +1,89 @@
-import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useRichTextField } from '@/object-record/record-field/meta-types/hooks/useRichTextField';
+import { ActivityRichTextEditor } from '@/activities/components/ActivityRichTextEditor';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { useRichTextCommandMenu } from '@/command-menu/hooks/useRichTextCommandMenu';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import {
+  FieldInputClickOutsideEvent,
+  FieldInputEvent,
+} from '@/object-record/record-field/types/FieldInputEvent';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
-import { BlockEditorComponentInstanceContext } from '@/ui/input/editor/contexts/BlockEditorCompoponeInstanceContext';
-import { PartialBlock } from '@blocknote/core';
-import { useCreateBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
-
-import { useContext, useRef } from 'react';
-
-const StyledRichTextContainer = styled.div`
-  height: 400px;
-  width: 500px;
-
-  overflow: auto;
-`;
+import { useRef } from 'react';
+import { IconLayoutSidebarLeftCollapse } from 'twenty-ui/display';
+import { FloatingIconButton } from 'twenty-ui/input';
 
 export type RichTextFieldInputProps = {
   onClickOutside?: FieldInputClickOutsideEvent;
+  onCancel?: () => void;
+  onEnter?: FieldInputEvent;
+  onEscape?: FieldInputEvent;
 };
 
-export const RichTextFieldInput = ({
-  onClickOutside,
-}: RichTextFieldInputProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { recordId } = useContext(FieldContext);
-  const { draftValue, persistRichTextField, fieldDefinition } =
-    useRichTextField();
+const StyledContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.primary};
+  width: 480px;
+  padding: ${({ theme }) => theme.spacing(2)};
+  margin: 0 0 0 ${({ theme }) => theme.spacing(-6)};
+  display: flex;
+`;
 
-  const editor = useCreateBlockNote({
-    initialContent: draftValue,
-    domAttributes: { editor: { class: 'editor' } },
-    schema: BLOCK_SCHEMA,
-  });
+const StyledCollapseButton = styled.div`
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  color: ${({ theme }) => theme.font.color.light};
+  cursor: pointer;
+  display: flex;
+`;
+
+export const RichTextFieldInput = ({
+  targetableObject,
+  onClickOutside,
+  onEscape,
+}: {
+  targetableObject: Pick<ActivityTargetableObject, 'id'> & {
+    targetObjectNameSingular:
+      | CoreObjectNameSingular.Note
+      | CoreObjectNameSingular.Task;
+  };
+} & RichTextFieldInputProps) => {
+  const { editRichText } = useRichTextCommandMenu();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-    onClickOutside?.(() => persistRichTextField(editor.document), event);
+    onClickOutside?.(() => {}, event);
   };
 
-  useRegisterInputEvents<PartialBlock[]>({
+  const handleEscape = () => {
+    onEscape?.(() => {});
+  };
+
+  useRegisterInputEvents({
     inputRef: containerRef,
-    inputValue: draftValue,
+    inputValue: null,
     onClickOutside: handleClickOutside,
+    onEscape: handleEscape,
     hotkeyScope: DEFAULT_CELL_SCOPE.scope,
   });
 
   return (
-    <StyledRichTextContainer ref={containerRef}>
-      <BlockEditorComponentInstanceContext.Provider
-        value={{ instanceId: `${recordId}-${fieldDefinition.fieldMetadataId}` }}
-      >
-        <BlockEditor editor={editor} />
-      </BlockEditorComponentInstanceContext.Provider>
-    </StyledRichTextContainer>
+    <StyledContainer ref={containerRef}>
+      <ActivityRichTextEditor
+        activityId={targetableObject.id}
+        activityObjectNameSingular={targetableObject.targetObjectNameSingular}
+      />
+      <StyledCollapseButton>
+        <FloatingIconButton
+          Icon={IconLayoutSidebarLeftCollapse}
+          size="small"
+          onClick={() => {
+            onEscape?.(() => {});
+            editRichText(
+              targetableObject.id,
+              targetableObject.targetObjectNameSingular,
+            );
+          }}
+        />
+      </StyledCollapseButton>
+    </StyledContainer>
   );
 };

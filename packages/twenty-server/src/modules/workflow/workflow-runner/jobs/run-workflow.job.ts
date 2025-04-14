@@ -97,6 +97,11 @@ export class RunWorkflowJob {
           trigger: workflowVersion.trigger,
           steps: workflowVersion.steps,
         },
+        stepsOutput: {
+          trigger: {
+            result: payload,
+          },
+        },
       },
     });
 

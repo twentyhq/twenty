@@ -4,9 +4,9 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { RecordTitleCellTextFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellTextFieldInput';
 import { RecordTitleFullNameFieldInput } from '@/object-record/record-title-cell/components/RecordTitleFullNameFieldInput';
+import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
 
 type RecordTitleCellFieldInputProps = {
   onClickOutside?: (
@@ -44,7 +44,7 @@ export const RecordTitleCellFieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
           sizeVariant={sizeVariant}
-          hotkeyScope={DEFAULT_CELL_SCOPE.scope}
+          hotkeyScope={TitleInputHotkeyScope.TitleInput}
         />
       ) : isFieldFullName(fieldDefinition) ? (
         <RecordTitleFullNameFieldInput
@@ -54,7 +54,7 @@ export const RecordTitleCellFieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
           sizeVariant={sizeVariant}
-          hotkeyScope={DEFAULT_CELL_SCOPE.scope}
+          hotkeyScope={TitleInputHotkeyScope.TitleInput}
         />
       ) : null}
     </>

@@ -41,6 +41,13 @@ export type WorkflowDiagramStepNodeData =
       runStatus?: WorkflowDiagramRunStatus;
     };
 
+export type WorkflowRunDiagramStepNodeData = Exclude<
+  WorkflowDiagramStepNodeData,
+  'runStatus'
+> & {
+  runStatus: WorkflowDiagramRunStatus;
+};
+
 export type WorkflowDiagramCreateStepNodeData = {
   nodeType: 'create-step';
   parentNodeId: string;

@@ -1,5 +1,5 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { TextVariableEditor } from '@/object-record/record-field/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/form-types/hooks/useTextVariableEditor';
@@ -70,7 +70,7 @@ export const FormTextFieldInput = ({
       {label ? <InputLabel>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer multiline={multiline}>
-        <FormFieldInputInputContainer
+        <FormFieldInputInnerContainer
           hasRightElement={isDefined(VariablePicker) && !readonly}
           multiline={multiline}
           onBlur={onBlur}
@@ -80,7 +80,7 @@ export const FormTextFieldInput = ({
             multiline={multiline}
             readonly={readonly}
           />
-        </FormFieldInputInputContainer>
+        </FormFieldInputInnerContainer>
 
         {VariablePicker && !readonly ? (
           <VariablePicker

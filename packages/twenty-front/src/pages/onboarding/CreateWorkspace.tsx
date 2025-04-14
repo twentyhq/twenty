@@ -9,7 +9,6 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
-import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -20,10 +19,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
-import {
-  OnboardingStatus,
-  useActivateWorkspaceMutation,
-} from '~/generated/graphql';
+import { useActivateWorkspaceMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -41,7 +37,6 @@ const StyledButtonContainer = styled.div`
 export const CreateWorkspace = () => {
   const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
-  const onboardingStatus = useOnboardingStatus();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
 
@@ -109,10 +104,6 @@ export const CreateWorkspace = () => {
       handleSubmit(onSubmit)();
     }
   };
-
-  if (onboardingStatus !== OnboardingStatus.WORKSPACE_ACTIVATION) {
-    return null;
-  }
 
   return (
     <>

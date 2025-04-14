@@ -20,7 +20,6 @@ import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getSh
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
-import { WorkflowRunTabId } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
 import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowServerlessFunctionTabListComponentId';
 import { WorkflowServerlessFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowServerlessFunctionTabId';
 import { useRecoilCallback } from 'recoil';
@@ -66,7 +65,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
           activeTabIdComponentState.atomFamily({
             instanceId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
           }),
-          WorkflowRunTabId.NODE,
+          null,
         );
         set(
           activeTabIdComponentState.atomFamily({

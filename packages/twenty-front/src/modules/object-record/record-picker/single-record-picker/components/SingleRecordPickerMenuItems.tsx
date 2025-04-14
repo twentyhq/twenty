@@ -1,6 +1,5 @@
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { useRef } from 'react';
-import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
@@ -15,7 +14,9 @@ import { singleRecordPickerSelectedIdComponentState } from '@/object-record/reco
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
+import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
@@ -76,12 +77,14 @@ export const SingleRecordPickerMenuItems = ({
   const selectableListComponentInstanceId =
     getSingleRecordPickerSelectableListId(recordPickerComponentInstanceId);
 
-  const { isSelectedItemIdSelector, resetSelectedItem } = useSelectableList(
+  const { resetSelectedItem } = useSelectableList(
     selectableListComponentInstanceId,
   );
 
-  const isSelectedSelectNoneButton = useRecoilValue(
-    isSelectedItemIdSelector('select-none'),
+  const isSelectedSelectNoneButton = useRecoilComponentFamilyValueV2(
+    isSelectedItemIdComponentFamilySelector,
+    selectableListComponentInstanceId,
+    'select-none',
   );
 
   useScopedHotkeys(
@@ -102,7 +105,7 @@ export const SingleRecordPickerMenuItems = ({
   return (
     <StyledContainer ref={containerRef}>
       <SelectableList
-        selectableListId={selectableListComponentInstanceId}
+        selectableListInstanceId={selectableListComponentInstanceId}
         selectableItemIdArray={selectableItemIds}
         hotkeyScope={hotkeyScope}
         onEnter={(itemId) => {

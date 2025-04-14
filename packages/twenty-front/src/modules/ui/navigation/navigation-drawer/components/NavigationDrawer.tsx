@@ -4,26 +4,24 @@ import { motion } from 'framer-motion';
 import { ReactNode, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
-import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { isNavigationDrawerExpandedState } from '../../states/isNavigationDrawerExpanded';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 export type NavigationDrawerProps = {
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
-  footer?: ReactNode;
   title: string;
 };
 
-const StyledAnimatedContainer = styled(motion.div)<{ isSettings?: boolean }>`
+const StyledAnimatedContainer = styled(motion.div)`
   max-height: 100vh;
-  overflow: ${({ isSettings }) => (isSettings ? 'visible' : 'hidden')};
+  overflow: hidden;
 `;
 
 const StyledContainer = styled.div<{
@@ -33,35 +31,26 @@ const StyledContainer = styled.div<{
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  width: ${NAV_DRAWER_WIDTHS.menu.desktop.expanded}px;
+  width: ${({ isSettings }) =>
+    isSettings ? '100%' : NAV_DRAWER_WIDTHS.menu.desktop.expanded + 'px'};
   gap: ${({ theme }) => theme.spacing(3)};
   height: 100%;
   padding: ${({ theme, isSettings, isMobile }) =>
     isSettings
       ? isMobile
-        ? theme.spacing(3, 8)
-        : theme.spacing(3, 8, 4, 0)
-      : theme.spacing(3, 2, 4)};
-  padding-right: 0px;
+        ? theme.spacing(3, 0, 0, 8)
+        : theme.spacing(3, 0, 4, 0)
+      : theme.spacing(3, 0, 4, 2)};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: ${({ theme }) => theme.spacing(5)};
+    padding-right: ${({ theme }) => theme.spacing(5)};
   }
-`;
-
-const StyledItemsContainer = styled.div<{ isSettings?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: auto;
-  overflow: hidden;
-  flex: 1;
 `;
 
 export const NavigationDrawer = ({
   children,
   className,
-  footer,
   title,
 }: NavigationDrawerProps) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -99,7 +88,6 @@ export const NavigationDrawer = ({
       initial={false}
       animate={navigationDrawerAnimate}
       transition={{ duration: theme.animation.duration.normal }}
-      isSettings={isSettingsDrawer}
     >
       <StyledContainer
         isSettings={isSettingsDrawer}
@@ -112,10 +100,8 @@ export const NavigationDrawer = ({
         ) : (
           <NavigationDrawerHeader showCollapseButton={isHovered} />
         )}
-        <StyledItemsContainer isSettings={isSettingsDrawer}>
-          {children}
-        </StyledItemsContainer>
-        <NavigationDrawerSection>{footer}</NavigationDrawerSection>
+
+        {children}
       </StyledContainer>
     </StyledAnimatedContainer>
   );

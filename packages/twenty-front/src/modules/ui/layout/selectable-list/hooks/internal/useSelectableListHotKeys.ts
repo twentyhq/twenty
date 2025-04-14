@@ -2,14 +2,17 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListStates';
+import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
+import { selectableListOnEnterComponentState } from '@/ui/layout/selectable-list/states/selectableListOnEnterComponentState';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 type Direction = 'up' | 'down' | 'left' | 'right';
 
 export const useSelectableListHotKeys = (
-  scopeId: string,
+  instanceId: string,
   hotkeyScope: string,
   onSelect?: (itemId: string) => void,
 ) => {
@@ -29,22 +32,20 @@ export const useSelectableListHotKeys = (
     }
   };
 
-  const {
-    selectedItemIdState,
-    selectableItemIdsState,
-    isSelectedItemIdSelector,
-    selectableListOnEnterState,
-  } = useSelectableListStates({
-    selectableListScopeId: scopeId,
-  });
-
   const handleSelect = useRecoilCallback(
     ({ snapshot, set }) =>
       (direction: Direction) => {
-        const selectedItemId = getSnapshotValue(snapshot, selectedItemIdState);
+        const selectedItemId = getSnapshotValue(
+          snapshot,
+          selectedItemIdComponentState.atomFamily({
+            instanceId: instanceId,
+          }),
+        );
         const selectableItemIds = getSnapshotValue(
           snapshot,
-          selectableItemIdsState,
+          selectableItemIdsComponentState.atomFamily({
+            instanceId: instanceId,
+          }),
         );
 
         const currentPosition = findPosition(selectableItemIds, selectedItemId);
@@ -104,22 +105,34 @@ export const useSelectableListHotKeys = (
 
         if (selectedItemId !== nextId) {
           if (isNonEmptyString(nextId)) {
-            set(isSelectedItemIdSelector(nextId), true);
-            set(selectedItemIdState, nextId);
+            set(
+              isSelectedItemIdComponentFamilySelector.selectorFamily({
+                instanceId: instanceId,
+                familyKey: nextId,
+              }),
+              true,
+            );
+            set(
+              selectedItemIdComponentState.atomFamily({
+                instanceId: instanceId,
+              }),
+              nextId,
+            );
             onSelect?.(nextId);
           }
 
           if (isNonEmptyString(selectedItemId)) {
-            set(isSelectedItemIdSelector(selectedItemId), false);
+            set(
+              isSelectedItemIdComponentFamilySelector.selectorFamily({
+                instanceId: instanceId,
+                familyKey: selectedItemId,
+              }),
+              false,
+            );
           }
         }
       },
-    [
-      isSelectedItemIdSelector,
-      onSelect,
-      selectableItemIdsState,
-      selectedItemIdState,
-    ],
+    [instanceId, onSelect],
   );
 
   useScopedHotkeys(Key.ArrowUp, () => handleSelect('up'), hotkeyScope, []);
@@ -142,18 +155,22 @@ export const useSelectableListHotKeys = (
         () => {
           const selectedItemId = getSnapshotValue(
             snapshot,
-            selectedItemIdState,
+            selectedItemIdComponentState.atomFamily({
+              instanceId: instanceId,
+            }),
           );
           const onEnter = getSnapshotValue(
             snapshot,
-            selectableListOnEnterState,
+            selectableListOnEnterComponentState.atomFamily({
+              instanceId: instanceId,
+            }),
           );
 
           if (isNonEmptyString(selectedItemId)) {
             onEnter?.(selectedItemId);
           }
         },
-      [selectableListOnEnterState, selectedItemIdState],
+      [instanceId],
     ),
     hotkeyScope,
     [],
