@@ -4,6 +4,7 @@ import { IsObject, IsOptional, IsString } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
 import { TrackEventName } from 'src/engine/core-modules/analytics/types/events.type';
+import { PageviewProperties } from 'src/engine/core-modules/analytics/utils/events/pageview/pageview';
 
 enum AnalyticsType {
   PAGEVIEW = 'pageview',
@@ -33,7 +34,7 @@ export class CreateAnalyticsInput {
   @Field(() => GraphQLJSON, { nullable: true })
   @IsOptional()
   @IsObject()
-  properties: JSON;
+  properties: PageviewProperties | Record<string, unknown>;
 }
 
 export function isPageviewAnalyticsInput(

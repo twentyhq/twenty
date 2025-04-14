@@ -41,7 +41,7 @@ export class AnalyticsService {
             ...makeTrackEvent(event, properties),
           }),
         ),
-      pageview: (name: string, properties?: Partial<PageviewProperties>) =>
+      pageview: (name: string, properties: Partial<PageviewProperties>) =>
         this.preventAnalyticsIfDisabled(() =>
           this.clickhouseService.pushEvent({
             ...userIdAndWorkspaceId,

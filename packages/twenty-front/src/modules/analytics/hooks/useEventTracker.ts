@@ -33,6 +33,10 @@ export const useEventTracker = () => {
         variables: {
           type,
           ...payload,
+          properties: {
+            ...payload.properties,
+            sessionId: getSessionId(),
+          }
         },
       });
     },
