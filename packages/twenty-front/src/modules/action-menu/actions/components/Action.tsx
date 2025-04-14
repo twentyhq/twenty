@@ -23,5 +23,5 @@ export const Action = ({
     onClick();
   };
 
-  return <ActionDisplay action={actionConfig} onClick={handleClick} />;
+  return <ActionDisplay onClick={handleClick} />;
 };
