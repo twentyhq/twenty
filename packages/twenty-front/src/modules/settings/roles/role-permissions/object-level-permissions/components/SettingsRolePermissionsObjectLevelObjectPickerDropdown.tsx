@@ -31,7 +31,8 @@ export const SettingsRolePermissionsObjectLevelObjectPickerDropdown = ({
     (objectMetadataItem) =>
       objectMetadataItem.labelSingular
         .toLowerCase()
-        .includes(searchFilter.toLowerCase()),
+        .includes(searchFilter.toLowerCase()) &&
+      !excludedObjectMetadataIds.includes(objectMetadataItem.id),
   );
 
   return (

@@ -27,7 +27,7 @@ const StyledIcon = styled.div<{ isForbidden?: boolean }>`
   justify-content: center;
 `;
 
-const StyledSettingsRolePermissionObjectLevelOverrideCell = styled.div`
+const StyledSettingsRolePermissionsObjectLevelOverrideCell = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
 `;
@@ -61,7 +61,7 @@ export const SettingsRolePermissionsObjectLevelOverrideCell = ({
   };
 
   return (
-    <StyledSettingsRolePermissionObjectLevelOverrideCell>
+    <StyledSettingsRolePermissionsObjectLevelOverrideCell>
       {(Object.keys(permissionMappings) as ObjectPermissionKey[]).map(
         (permission) => {
           const { Icon, IconForbidden: IconOverride } =
@@ -87,6 +87,6 @@ export const SettingsRolePermissionsObjectLevelOverrideCell = ({
           );
         },
       )}
-    </StyledSettingsRolePermissionObjectLevelOverrideCell>
+    </StyledSettingsRolePermissionsObjectLevelOverrideCell>
   );
 };

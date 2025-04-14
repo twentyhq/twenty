@@ -50,7 +50,7 @@ export const SettingsRolePermissionsObjectsTableRow = ({
 }: SettingsRolePermissionsObjectsTableRowProps) => {
   const theme = useTheme();
 
-  const isOverridenBy = permission.overridenBy;
+  const isOverridenBy = permission.overriddenBy;
   const isOverriden = isOverridenBy && isOverridenBy > 0;
   const label = permission.label;
   const pluralizedObject = pluralize('object', isOverridenBy);
@@ -64,7 +64,7 @@ export const SettingsRolePermissionsObjectsTableRow = ({
         <StyledLabel>{label}</StyledLabel>
         {isOverriden ? (
           <StyledOverrideInfo>
-            {t` Overriden on ${isOverridenBy} ${pluralizedObject}`}
+            {t`Overriden on ${isOverridenBy} ${pluralizedObject}`}
           </StyledOverrideInfo>
         ) : null}
       </StyledPermissionCell>

@@ -4,5 +4,5 @@ export type SettingsRolePermissionsObjectPermission = {
   label: string | ReactNode;
   value?: boolean | null;
   setValue: (value: boolean) => void;
-  overridenBy?: number;
+  overriddenBy?: number;
 };

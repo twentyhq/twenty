@@ -46,7 +46,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
     <SubMenuTopBarContainer
       title={
         <StyledTitleContainer>
-          <H3Title title={objectMetadata.objectMetadataItem.labelPlural} />
+          <H3Title title={objectMetadataItem.labelPlural} />
           <StyledObjectTypeTag objectTypeLabel={objectTypeLabel} />
         </StyledTitleContainer>
       }
@@ -66,7 +66,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           }),
         },
         {
-          children: `Permissions · ${objectMetadata.objectMetadataItem.labelSingular}`,
+          children: `Permissions · ${objectMetadataItem.labelSingular}`,
         },
       ]}
       actionButton={

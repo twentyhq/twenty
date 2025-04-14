@@ -1,5 +1,3 @@
-import { Section } from '@react-email/components';
-
 import { SettingsRolePermissionsObjectsTableHeader } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader';
 import { SettingsRolePermissionsObjectsTableRow } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow';
 import { SettingsRolePermissionsObjectPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
@@ -8,6 +6,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
 import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -35,7 +34,7 @@ export const SettingsRolePermissionsObjectsSection = ({
     {
       key: 'canReadObjectRecords',
       label: t`See Records on All Objects`,
-      overridenBy:
+      overriddenBy:
         objectPermissions?.filter(
           (permission) =>
             permission.canReadObjectRecords !==
@@ -52,7 +51,7 @@ export const SettingsRolePermissionsObjectsSection = ({
     {
       key: 'canUpdateObjectRecords',
       label: t`Edit Records on All Objects`,
-      overridenBy:
+      overriddenBy:
         objectPermissions?.filter(
           (permission) =>
             permission.canUpdateObjectRecords !==
@@ -69,7 +68,7 @@ export const SettingsRolePermissionsObjectsSection = ({
     {
       key: 'canSoftDeleteObjectRecords',
       label: t`Delete Records on All Objects`,
-      overridenBy:
+      overriddenBy:
         objectPermissions?.filter(
           (permission) =>
             permission.canSoftDeleteObjectRecords !==
@@ -86,7 +85,7 @@ export const SettingsRolePermissionsObjectsSection = ({
     {
       key: 'canDestroyObjectRecords',
       label: t`Destroy Records on All Objects`,
-      overridenBy:
+      overriddenBy:
         objectPermissions?.filter(
           (permission) =>
             permission.canDestroyObjectRecords !==
