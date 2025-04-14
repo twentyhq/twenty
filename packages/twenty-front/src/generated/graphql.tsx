@@ -544,7 +544,6 @@ export enum FeatureFlagKey {
   IsCustomDomainEnabled = 'IsCustomDomainEnabled',
   IsEventObjectEnabled = 'IsEventObjectEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
-  IsMeteredProductBillingEnabled = 'IsMeteredProductBillingEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPermissionsV2Enabled = 'IsPermissionsV2Enabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
