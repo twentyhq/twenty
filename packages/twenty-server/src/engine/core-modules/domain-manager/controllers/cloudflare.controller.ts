@@ -25,6 +25,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { CloudflareSecretMatchGuard } from 'src/engine/core-modules/domain-manager/guards/cloudflare-secret.guard';
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/custom-domain/custom-domain-activated';
 
 @Controller('cloudflare')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -90,9 +91,7 @@ export class CloudflareController {
         ...workspaceUpdated,
       });
 
-      await analytics.track({
-        action: 'customDomain.activated',
-      });
+      await analytics.track(CUSTOM_DOMAIN_ACTIVATED_EVENT);
     }
 
     return res.status(200).send();

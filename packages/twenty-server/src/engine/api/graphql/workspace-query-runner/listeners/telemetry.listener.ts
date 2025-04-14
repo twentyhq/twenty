@@ -6,8 +6,10 @@ import { AnalyticsService } from 'src/engine/core-modules/analytics/services/ana
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { TelemetryService } from 'src/engine/core-modules/telemetry/telemetry.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
-import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
+import { WORKSPACE_ENTITY_CREATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/workspace-entity/workspace-entity-created';
+import { USER_SIGNUP_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/user/user-signup';
+import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 
 @Injectable()
 export class TelemetryListener {
@@ -25,9 +27,8 @@ export class TelemetryListener {
             userId: eventPayload.userId,
             workspaceId: payload.workspaceId,
           })
-          .track({
-            action: payload.name,
-            payload: {},
+          .track(WORKSPACE_ENTITY_CREATED_EVENT, {
+            name: payload.name,
           }),
       ),
     );
@@ -44,10 +45,7 @@ export class TelemetryListener {
             userId: eventPayload.userId,
             workspaceId: payload.workspaceId,
           })
-          .track({
-            action: USER_SIGNUP_EVENT_NAME,
-            payload: {},
-          });
+          .track(USER_SIGNUP_EVENT);
 
         this.telemetryService.create(
           {

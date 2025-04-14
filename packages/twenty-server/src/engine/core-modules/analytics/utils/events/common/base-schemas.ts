@@ -5,5 +5,6 @@ export const baseEventSchema = z
     timestamp: z.string(),
     userId: z.string().nullish(),
     workspaceId: z.string().nullish(),
+    version: z.string(),
   })
   .strict();

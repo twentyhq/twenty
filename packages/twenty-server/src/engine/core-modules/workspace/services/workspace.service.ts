@@ -45,6 +45,8 @@ import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/custom-domain/custom-domain-activated';
+import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/custom-domain/custom-domain-deactivated';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -420,11 +422,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         workspaceId: workspace.id,
       });
 
-      analytics.track({
-        action: workspace.isCustomDomainEnabled
-          ? 'customDomain.activated'
-          : 'customDomain.deactivated',
-      });
+      analytics.track(
+        workspace.isCustomDomainEnabled
+          ? CUSTOM_DOMAIN_ACTIVATED_EVENT
+          : CUSTOM_DOMAIN_DEACTIVATED_EVENT,
+      );
     }
 
     return customDomainDetails;

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
+import { MONITORING_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/monitoring/monitoring';
 
 type MessagingTelemetryTrackInput = {
   eventName: string;
@@ -28,16 +29,11 @@ export class MessagingTelemetryService {
         userId,
         workspaceId,
       })
-      .track({
-        action: 'monitoring',
-        payload: {
-          eventName: `messaging.${eventName}`,
-          workspaceId,
-          userId,
-          connectedAccountId,
-          messageChannelId,
-          message,
-        },
+      .track(MONITORING_EVENT, {
+        eventName: `messaging.${eventName}`,
+        connectedAccountId,
+        messageChannelId,
+        message,
       });
   }
 }

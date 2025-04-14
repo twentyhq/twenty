@@ -3,7 +3,7 @@ import process from 'process';
 import request from 'supertest';
 import { createClient, ClickHouseClient } from '@clickhouse/client';
 
-import { AnalyticsEvent } from 'src/engine/core-modules/analytics/types/event.type';
+import { GenericTrackEvent } from 'src/engine/core-modules/analytics/utils/events/track/track';
 describe('ClickHouse Event Registration (integration)', () => {
   let clickhouseClient: ClickHouseClient;
 
@@ -59,16 +59,16 @@ describe('ClickHouse Event Registration (integration)', () => {
       query: `
         SELECT *
         FROM events
-        WHERE action = '${variables.action}'
+        WHERE event = '${variables.action}'
       `,
       format: 'JSONEachRow',
     });
 
-    const rows = await queryResult.json<AnalyticsEvent>();
+    const rows = await queryResult.json<GenericTrackEvent>();
 
     expect(rows.length).toBe(1);
-    expect(rows[0].payload).toEqual(JSON.stringify(variables.payload));
-    expect(rows[0].action).toEqual(variables.action);
+    expect(rows[0].properties).toEqual(JSON.stringify(variables.payload));
+    expect(rows[0].event).toEqual(variables.action);
     expect(rows[0].workspaceId).toEqual('');
     expect(rows[0].userId).toEqual('');
     expect(rows[0].timestamp).toHaveLength(23);

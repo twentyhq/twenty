@@ -1,7 +1,18 @@
 import { z } from 'zod';
 
-import { baseEventSchema } from 'src/engine/core-modules/analytics/utils/events/common/base-schemas';
+import { registerEvent } from 'src/engine/core-modules/analytics/utils/events/track/track';
 
-export const customDomainDeactivatedSchema = baseEventSchema.extend({
-  action: z.literal('customDomain.deactivated'),
-});
+export const CUSTOM_DOMAIN_DEACTIVATED_EVENT =
+  'Custom Domain Deactivated' as const;
+export const customDomainDeactivatedSchema = z
+  .object({
+    event: z.literal(CUSTOM_DOMAIN_DEACTIVATED_EVENT),
+    properties: z.object({}).strict(),
+  })
+  .strict();
+
+export type CustomDomainDeactivatedTrackEvent = z.infer<
+  typeof customDomainDeactivatedSchema
+>;
+
+registerEvent(CUSTOM_DOMAIN_DEACTIVATED_EVENT, customDomainDeactivatedSchema);

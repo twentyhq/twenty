@@ -6,7 +6,11 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 
 import { AnalyticsService } from './services/analytics.service';
-import { CreateAnalyticsInput } from './dtos/create-analytics.input';
+import {
+  CreateAnalyticsInput,
+  PageviewAnalyticsInput,
+  TrackAnalyticsInput,
+} from './dtos/create-analytics.input';
 import { Analytics } from './entities/analytics.entity';
 
 @Resolver(() => Analytics)
@@ -15,7 +19,8 @@ export class AnalyticsResolver {
 
   @Mutation(() => Analytics)
   async track(
-    @Args() createAnalyticsInput: CreateAnalyticsInput,
+    @Args({ type: () => CreateAnalyticsInput })
+    createAnalyticsInput: PageviewAnalyticsInput | TrackAnalyticsInput,
     @AuthWorkspace() workspace: Workspace | undefined,
     @AuthUser({ allowUndefined: true }) user: User | undefined,
   ) {
@@ -24,10 +29,16 @@ export class AnalyticsResolver {
       userId: user?.id,
     });
 
-    if (createAnalyticsInput.action === 'pageview') {
-      return analyticsContext.pageview(createAnalyticsInput.payload);
+    if (createAnalyticsInput.type === 'pageview') {
+      return analyticsContext.pageview(
+        createAnalyticsInput.name,
+        createAnalyticsInput.properties,
+      );
     }
 
-    return analyticsContext.track(createAnalyticsInput);
+    return analyticsContext.track(
+      createAnalyticsInput.event,
+      createAnalyticsInput.properties,
+    );
   }
 }

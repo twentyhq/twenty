@@ -9,6 +9,7 @@ import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/a
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
+import { OBJECT_RECORD_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record';
 
 @Processor(MessageQueue.entityEventsToDbQueue)
 export class CreateAuditLogFromInternalEvent {
@@ -55,10 +56,7 @@ export class CreateAuditLogFromInternalEvent {
         .createAnalyticsContext({
           workspaceId: workspaceEventBatch.workspaceId,
         })
-        .track({
-          action: workspaceEventBatch.name,
-          payload: eventData.properties,
-        });
+        .track(OBJECT_RECORD_EVENT, eventData.properties);
     }
   }
 }

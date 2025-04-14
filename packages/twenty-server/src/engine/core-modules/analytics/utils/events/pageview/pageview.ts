@@ -15,3 +15,5 @@ export const pageviewSchema = baseEventSchema.extend({
     userAgent: z.string(),
   }),
 });
+
+export type PageviewProperties = z.infer<typeof pageviewSchema>['properties'];

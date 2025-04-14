@@ -6,6 +6,11 @@ import {
 } from 'src/engine/core-modules/analytics/utils/analytics.utils';
 import { ClickhouseService } from 'src/engine/core-modules/analytics/services/clickhouse.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import {
+  TrackEventName,
+  TrackEventProperties,
+} from 'src/engine/core-modules/analytics/types/events.type';
+import { PageviewProperties } from 'src/engine/core-modules/analytics/utils/events/pageview/pageview';
 
 @Injectable()
 export class AnalyticsService {
@@ -26,15 +31,18 @@ export class AnalyticsService {
       : {};
 
     return {
-      track: (event: string, properties: object) =>
+      track: <T extends TrackEventName>(
+        event: T,
+        properties: TrackEventProperties<T> = {} as TrackEventProperties<T>,
+      ) =>
         this.preventAnalyticsIfDisabled(() =>
-          this.trackEvent(
+          this.clickhouseService.pushEvent(
             makeTrackEvent(event, { ...properties, ...userIdAndWorkspaceId }),
           ),
         ),
-      pageview: (name: string, properties: object) =>
+      pageview: (name: string, properties: Partial<PageviewProperties> = {}) =>
         this.preventAnalyticsIfDisabled(() =>
-          this.trackPageview(
+          this.clickhouseService.pushEvent(
             makePageview(name, { ...properties, ...userIdAndWorkspaceId }),
           ),
         ),
@@ -49,13 +57,5 @@ export class AnalyticsService {
     }
 
     return sendEventOrPageviewFunction();
-  }
-
-  private async trackEvent(data: ReturnType<typeof makeTrackEvent>) {
-    return this.clickhouseService.pushEvent(data);
-  }
-
-  private async trackPageview(data: ReturnType<typeof makePageview>) {
-    return this.clickhouseService.pushEvent(data);
   }
 }

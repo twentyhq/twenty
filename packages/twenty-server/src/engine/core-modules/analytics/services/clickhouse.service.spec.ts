@@ -2,8 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { AnalyticsPageview } from 'src/engine/core-modules/analytics/types/pageview.type';
-import { AnalyticsEvent } from 'src/engine/core-modules/analytics/types/event.type';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/custom-domain/custom-domain-activated';
+import {
+  makePageview,
+  makeTrackEvent,
+} from 'src/engine/core-modules/analytics/utils/analytics.utils';
 
 import { ClickhouseService } from './clickhouse.service';
 
@@ -20,28 +23,17 @@ describe('ClickhouseService', () => {
   let exceptionHandlerService: ExceptionHandlerService;
   let mockClickhouseClient: { insert: jest.Mock };
 
-  const mockPageview: AnalyticsPageview = {
+  const mockPageview = makePageview('Home', {
     href: 'https://example.com/test',
     locale: 'en-US',
     pathname: '/test',
     referrer: 'https://example.com',
     sessionId: 'test-session-id',
     timeZone: 'UTC',
-    timestamp: new Date().toISOString(),
     userAgent: 'test-user-agent',
-    version: '1.0.0',
-    userId: 'test-user-id',
-    workspaceId: 'test-workspace-id',
-  };
+  });
 
-  const mockEvent: AnalyticsEvent = {
-    action: 'test.action',
-    timestamp: new Date().toISOString(),
-    version: '1.0.0',
-    userId: 'test-user-id',
-    workspaceId: 'test-workspace-id',
-    payload: { test: 'data' },
-  };
+  const mockEvent = makeTrackEvent(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -120,14 +112,11 @@ describe('ClickhouseService', () => {
       const result = await service.pushEvent(mockEvent);
 
       expect(result).toEqual({ success: true });
+      const { type, ...rest } = mockEvent;
+
       expect(mockClickhouseClient.insert).toHaveBeenCalledWith({
         table: 'events',
-        values: [
-          {
-            ...mockEvent,
-            payload: JSON.stringify(mockEvent.payload),
-          },
-        ],
+        values: [rest],
         format: 'JSONEachRow',
       });
     });
@@ -136,9 +125,11 @@ describe('ClickhouseService', () => {
       const result = await service.pushEvent(mockPageview);
 
       expect(result).toEqual({ success: true });
+      const { type, ...rest } = mockPageview;
+
       expect(mockClickhouseClient.insert).toHaveBeenCalledWith({
         table: 'pageview',
-        values: [mockPageview],
+        values: [rest],
         format: 'JSONEachRow',
       });
     });

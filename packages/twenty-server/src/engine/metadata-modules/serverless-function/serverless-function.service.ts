@@ -35,6 +35,7 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/serverless-function/serverless-function-executed';
 
 @Injectable()
 export class ServerlessFunctionService {
@@ -147,17 +148,14 @@ export class ServerlessFunctionService {
       .createAnalyticsContext({
         workspaceId,
       })
-      .track({
-        action: 'serverlessFunction.executed',
-        payload: {
-          duration: resultServerlessFunction.duration,
-          status: resultServerlessFunction.status,
-          ...(resultServerlessFunction.error && {
-            errorType: resultServerlessFunction.error.errorType,
-          }),
-          functionId: functionToExecute.id,
-          functionName: functionToExecute.name,
-        },
+      .track(SERVERLESS_FUNCTION_EXECUTED_EVENT, {
+        duration: resultServerlessFunction.duration,
+        status: resultServerlessFunction.status,
+        ...(resultServerlessFunction.error && {
+          errorType: resultServerlessFunction.error.errorType,
+        }),
+        functionId: functionToExecute.id,
+        functionName: functionToExecute.name,
       });
 
     return resultServerlessFunction;

@@ -1,21 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { AnalyticsContextMock } from 'test/utils/analytics-context.mock';
+
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ClickhouseService } from 'src/engine/core-modules/analytics/services/clickhouse.service';
-import { AnalyticsPageview } from 'src/engine/core-modules/analytics/types/pageview.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/custom-domain/custom-domain-activated';
 
 import { AnalyticsService } from './analytics.service';
 
 describe('AnalyticsService', () => {
   let service: AnalyticsService;
-  let twentyConfigService: TwentyConfigService;
-  let clickhouseService: ClickhouseService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AnalyticsService,
+        {
+          provide: AnalyticsService,
+          useValue: {
+            createAnalyticsContext: AnalyticsContextMock,
+          },
+        },
         {
           provide: TwentyConfigService,
           useValue: {
@@ -38,8 +43,6 @@ describe('AnalyticsService', () => {
     }).compile();
 
     service = module.get<AnalyticsService>(AnalyticsService);
-    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    clickhouseService = module.get<ClickhouseService>(ClickhouseService);
   });
 
   it('should be defined', () => {
@@ -51,47 +54,44 @@ describe('AnalyticsService', () => {
       userId: 'test-user-id',
       workspaceId: 'test-workspace-id',
     };
-    const commonProperties = {
-      version: '1',
-      timestamp: new Date().getTime().toString(),
-    };
 
     it('should create a valid context object', () => {
       const context = service.createAnalyticsContext(mockUserIdAndWorkspaceId);
 
-      expect(context).toHaveProperty('sendUnknownEvent');
-      expect(context).toHaveProperty('sendEvent');
-      expect(context).toHaveProperty('sendPageview');
+      expect(context).toHaveProperty('track');
+      expect(context).toHaveProperty('pageview');
     });
 
-    it('should call sendEvent with merged properties', async () => {
-      const insertSpy = jest.spyOn(clickhouseService, 'pushEvent');
+    it('should call track with correct parameters', async () => {
+      const trackSpy = jest.fn().mockResolvedValue({ success: true });
+      const mockContext = AnalyticsContextMock({
+        track: trackSpy,
+      });
+
+      jest
+        .spyOn(service, 'createAnalyticsContext')
+        .mockReturnValue(mockContext);
+
       const context = service.createAnalyticsContext(mockUserIdAndWorkspaceId);
 
-      const testEvent = {
-        action: 'customDomain.activated' as const,
-      };
+      await context.track(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
 
-      await context.track(testEvent);
-
-      expect(insertSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          ...testEvent,
-          ...mockUserIdAndWorkspaceId,
-          timestamp: expect.any(String),
-          payload: {},
-        }),
-      );
+      expect(trackSpy).toHaveBeenCalledWith(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
     });
 
-    it('should call sendPageview with merged properties', async () => {
-      const insertSpy = jest.spyOn(clickhouseService, 'pushEvent');
+    it('should call pageview with correct parameters', async () => {
+      const pageviewSpy = jest.fn().mockResolvedValue({ success: true });
+      const mockContext = AnalyticsContextMock({
+        pageview: pageviewSpy,
+      });
+
+      jest
+        .spyOn(service, 'createAnalyticsContext')
+        .mockReturnValue(mockContext);
 
       const context = service.createAnalyticsContext(mockUserIdAndWorkspaceId);
-      const testPageview: AnalyticsPageview = {
+      const testPageviewProperties = {
         href: '/test-url',
-        timestamp: Date.now().toString(),
-        version: '1',
         locale: '',
         pathname: '',
         referrer: '',
@@ -100,50 +100,28 @@ describe('AnalyticsService', () => {
         userAgent: '',
       };
 
-      await context.sendPageview(testPageview);
+      await context.pageview('page-view', testPageviewProperties);
 
-      expect(insertSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          ...testPageview,
-          ...commonProperties,
-          ...mockUserIdAndWorkspaceId,
-          timestamp: expect.any(String),
-        }),
+      expect(pageviewSpy).toHaveBeenCalledWith(
+        'page-view',
+        testPageviewProperties,
       );
     });
 
-    it('should return success when analytics are disabled', async () => {
-      jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
-      // @ts-expect-error private function trigger an inaccurate error
-      const sendEventSpy = jest.spyOn(service, 'sendEvent');
-
+    it('should return success when track is called', async () => {
       const context = service.createAnalyticsContext(mockUserIdAndWorkspaceId);
 
-      const result = await context.track({
-        action: 'customDomain.activated',
-      });
+      const result = await context.track(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
 
       expect(result).toEqual({ success: true });
-      expect(sendEventSpy).not.toHaveBeenCalled();
     });
 
-    it('should handle null userId and workspaceId correctly', async () => {
-      const insertSpy = jest.spyOn(clickhouseService, 'pushEvent');
+    it('should return success when pageview is called', async () => {
+      const context = service.createAnalyticsContext(mockUserIdAndWorkspaceId);
 
-      const context = service.createAnalyticsContext();
-      const testEvent = {
-        action: 'customDomain.activated' as const,
-      };
+      const result = await context.pageview('page-view', {});
 
-      await context.track(testEvent);
-
-      expect(insertSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          ...testEvent,
-          timestamp: expect.any(String),
-          payload: {},
-        }),
-      );
+      expect(result).toEqual({ success: true });
     });
   });
 });

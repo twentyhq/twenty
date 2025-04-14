@@ -1,54 +1,50 @@
 import { format } from 'date-fns';
 
 import { AnalyticsCommonPropertiesType } from 'src/engine/core-modules/analytics/types/common.type';
-import { pageviewSchema } from 'src/engine/core-modules/analytics/utils/events/pageview/pageview';
 import {
-  WEBHOOK_RESPONSE_EVENT,
-  WebhookResponseTrackEvent,
-} from 'src/engine/core-modules/analytics/utils/events/track/webhook/webhook-response';
+  PageviewProperties,
+  pageviewSchema,
+} from 'src/engine/core-modules/analytics/utils/events/pageview/pageview';
+import {
+  TrackEventName,
+  TrackEventProperties,
+} from 'src/engine/core-modules/analytics/types/events.type';
 import {
   eventsRegistry,
   GenericTrackEvent,
-  genericTrackSchema,
 } from 'src/engine/core-modules/analytics/utils/events/track/track';
 
 const common = (): Record<AnalyticsCommonPropertiesType, string> => ({
   timestamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+  version: '1',
 });
 
-export function makePageview(name: string, properties: object) {
+export function makePageview(
+  name: string,
+  properties: Partial<PageviewProperties> = {},
+) {
   return pageviewSchema.parse({
-    type: 'pageview',
+    type: 'page',
     name,
     ...common(),
-    ...properties,
+    properties,
   });
 }
 
-type SpecificTrackEvents = {
-  [WEBHOOK_RESPONSE_EVENT]: WebhookResponseTrackEvent;
-};
+export function makeTrackEvent<T extends TrackEventName>(
+  event: T,
+  properties: TrackEventProperties<T>,
+): GenericTrackEvent<T> {
+  const schema = eventsRegistry.get(event);
 
-export function makeTrackEvent<E extends keyof SpecificTrackEvents>(
-  event: E,
-  properties: SpecificTrackEvents[E]['properties'],
-): SpecificTrackEvents[E];
-export function makeTrackEvent<E extends string>(
-  event: E,
-  properties: object,
-): GenericTrackEvent<E>;
-export function makeTrackEvent(event: string, properties: object) {
-  const eventData = {
+  if (!schema) {
+    throw new Error(`Schema for event ${event} is not implemented`);
+  }
+
+  return schema.parse({
     type: 'track',
     event,
     ...common(),
     properties,
-  };
-  const schema = eventsRegistry.get(event);
-
-  if (schema) {
-    return schema.parse(eventData);
-  }
-
-  return genericTrackSchema.parse(eventData);
+  });
 }

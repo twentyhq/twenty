@@ -32,10 +32,13 @@ export const useEventTracker = () => {
 
   return useCallback(
     (eventAction: string, eventPayload: EventData) => {
+      const isPageview = eventAction === 'pageview';
       createEventMutation({
         variables: {
-          action: eventAction,
-          payload: {
+          type: isPageview ? 'pageview' : 'track',
+          event: !isPageview ? eventAction : undefined,
+          name: isPageview ? eventPayload.pathname : undefined,
+          properties: {
             sessionId: getSessionId(),
             ...eventPayload,
           },
