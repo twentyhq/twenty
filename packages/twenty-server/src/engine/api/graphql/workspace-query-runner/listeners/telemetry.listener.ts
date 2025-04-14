@@ -45,7 +45,7 @@ export class TelemetryListener {
             userId: eventPayload.userId,
             workspaceId: payload.workspaceId,
           })
-          .track(USER_SIGNUP_EVENT);
+          .track(USER_SIGNUP_EVENT, {});
 
         this.telemetryService.create(
           {
