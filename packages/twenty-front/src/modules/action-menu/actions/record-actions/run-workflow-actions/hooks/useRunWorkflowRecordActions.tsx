@@ -13,10 +13,12 @@ import { useRecoilValue } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { IconSettingsAutomation } from 'twenty-ui/display';
 
-export const useWorkflowRunRecordActions = ({
+export const useRunWorkflowRecordActions = ({
   objectMetadataItem,
+  skip,
 }: {
   objectMetadataItem: ObjectMetadataItem;
+  skip?: boolean;
 }) => {
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
@@ -27,17 +29,14 @@ export const useWorkflowRunRecordActions = ({
       ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
       : undefined;
 
-  if (!isDefined(selectedRecordId)) {
-    throw new Error('Selected record ID is required');
-  }
-
   const selectedRecord = useRecoilValue(
-    recordStoreFamilyState(selectedRecordId),
+    recordStoreFamilyState(selectedRecordId ?? ''),
   );
 
   const { records: activeWorkflowVersions } =
     useActiveWorkflowVersionsWithManualTrigger({
       objectMetadataItem,
+      skip,
     });
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
