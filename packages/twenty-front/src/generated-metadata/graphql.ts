@@ -170,7 +170,8 @@ export type BillingEndTrialPeriodOutput = {
 
 export type BillingMeteredProductUsageOutput = {
   __typename?: 'BillingMeteredProductUsageOutput';
-  includedFreeQuantity: Scalars['Float']['output'];
+  freeTierQuantity: Scalars['Float']['output'];
+  freeTrialQuantity: Scalars['Float']['output'];
   periodEnd: Scalars['DateTime']['output'];
   periodStart: Scalars['DateTime']['output'];
   productKey: BillingProductKey;
@@ -703,6 +704,12 @@ export type FeatureFlag = {
   workspaceId: Scalars['String']['output'];
 };
 
+export type FeatureFlagDto = {
+  __typename?: 'FeatureFlagDTO';
+  key: FeatureFlagKey;
+  value: Scalars['Boolean']['output'];
+};
+
 export enum FeatureFlagKey {
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
@@ -711,6 +718,7 @@ export enum FeatureFlagKey {
   IsCustomDomainEnabled = 'IsCustomDomainEnabled',
   IsEventObjectEnabled = 'IsEventObjectEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
+  IsMeteredProductBillingEnabled = 'IsMeteredProductBillingEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPermissionsV2Enabled = 'IsPermissionsV2Enabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
@@ -1130,7 +1138,7 @@ export type Mutation = {
   track: Analytics;
   unsyncRemoteTable: RemoteTable;
   updateAgent: Agent;
-  updateLabPublicFeatureFlag: FeatureFlag;
+  updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRemoteServer: RemoteServer;
@@ -3083,7 +3091,7 @@ export type Workspace = {
   defaultRole?: Maybe<Role>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;
-  featureFlags?: Maybe<Array<FeatureFlag>>;
+  featureFlags?: Maybe<Array<FeatureFlagDto>>;
   hasValidEnterpriseKey: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
   inviteHash?: Maybe<Scalars['String']['output']>;
