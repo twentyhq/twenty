@@ -1,7 +1,10 @@
 import { useCallback } from 'react';
 import { v4 } from 'uuid';
-import { AnalyticsType, MutationTrackArgs, useTrackMutation } from '~/generated/graphql';
-
+import {
+  AnalyticsType,
+  MutationTrackArgs,
+  useTrackMutation,
+} from '~/generated/graphql';
 
 export const ANALYTICS_COOKIE_NAME = 'analyticsCookie';
 export const getSessionId = (): string => {
@@ -29,7 +32,7 @@ export const useEventTracker = () => {
       createEventMutation({
         variables: {
           type,
-          ...payload
+          ...payload,
         },
       });
     },
