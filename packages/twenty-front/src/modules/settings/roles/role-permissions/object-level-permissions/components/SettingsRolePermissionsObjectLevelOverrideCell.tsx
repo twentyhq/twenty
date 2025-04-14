@@ -3,6 +3,7 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { ObjectPermission } from '~/generated/graphql';
 
 const StyledIconWrapper = styled.div<{ isForbidden?: boolean }>`
@@ -52,11 +53,12 @@ export const SettingsRolePermissionsObjectLevelOverrideCell = ({
 
   type ObjectPermissionKey = keyof typeof permissionMappings;
 
-  const isOverriden = (permission: ObjectPermissionKey) => {
+  const isOverridden = (permission: ObjectPermissionKey) => {
     const rolePermission = permissionMappings[permission];
     return (
+      isDefined(objectPermission[permission]) &&
       !!settingsDraftRole[rolePermission as keyof typeof settingsDraftRole] !==
-      !!objectPermission[permission]
+        !!objectPermission[permission]
     );
   };
 
@@ -68,7 +70,7 @@ export const SettingsRolePermissionsObjectLevelOverrideCell = ({
             settingsRoleObjectPermissionIconConfig[permission];
           const permissionValue = objectPermission[permission];
 
-          if (!isOverriden(permission)) {
+          if (!isOverridden(permission)) {
             return null;
           }
 
