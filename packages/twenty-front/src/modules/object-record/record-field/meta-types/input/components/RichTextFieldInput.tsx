@@ -22,7 +22,7 @@ export type RichTextFieldInputProps = {
 
 const StyledContainer = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
-  width: ${({ theme }) => theme.spacing(120)};
+  width: 480px;
   padding: ${({ theme }) => theme.spacing(2)};
   margin: 0 0 0 ${({ theme }) => theme.spacing(-6)};
   display: flex;
