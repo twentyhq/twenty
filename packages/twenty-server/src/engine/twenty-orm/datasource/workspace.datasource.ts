@@ -1,10 +1,10 @@
 import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import {
-    DataSource,
-    DataSourceOptions,
-    EntityTarget,
-    ObjectLiteral,
-    QueryRunner,
+  DataSource,
+  DataSourceOptions,
+  EntityTarget,
+  ObjectLiteral,
+  QueryRunner,
 } from 'typeorm';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
