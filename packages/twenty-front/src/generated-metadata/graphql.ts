@@ -1248,8 +1248,10 @@ export type MutationSyncRemoteTableSchemaChangesArgs = {
 
 
 export type MutationTrackArgs = {
-  action: Scalars['String']['input'];
-  payload: Scalars['JSON']['input'];
+  event?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  properties?: InputMaybe<Scalars['JSON']['input']>;
+  type: Scalars['String']['input'];
 };
 
 

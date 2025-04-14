@@ -4,12 +4,16 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import {
+  AnalyticsException,
+  AnalyticsExceptionCode,
+} from 'src/engine/core-modules/analytics/analytics.exception';
 
 import { AnalyticsService } from './services/analytics.service';
 import {
   CreateAnalyticsInput,
-  PageviewAnalyticsInput,
-  TrackAnalyticsInput,
+  isPageviewAnalyticsInput,
+  isTrackAnalyticsInput,
 } from './dtos/create-analytics.input';
 import { Analytics } from './entities/analytics.entity';
 
@@ -19,8 +23,8 @@ export class AnalyticsResolver {
 
   @Mutation(() => Analytics)
   async track(
-    @Args({ type: () => CreateAnalyticsInput })
-    createAnalyticsInput: PageviewAnalyticsInput | TrackAnalyticsInput,
+    @Args()
+    createAnalyticsInput: CreateAnalyticsInput,
     @AuthWorkspace() workspace: Workspace | undefined,
     @AuthUser({ allowUndefined: true }) user: User | undefined,
   ) {
@@ -29,16 +33,23 @@ export class AnalyticsResolver {
       userId: user?.id,
     });
 
-    if (createAnalyticsInput.type === 'pageview') {
+    if (isPageviewAnalyticsInput(createAnalyticsInput)) {
       return analyticsContext.pageview(
         createAnalyticsInput.name,
         createAnalyticsInput.properties,
       );
     }
 
-    return analyticsContext.track(
-      createAnalyticsInput.event,
-      createAnalyticsInput.properties,
+    if (isTrackAnalyticsInput(createAnalyticsInput)) {
+      return analyticsContext.track(
+        createAnalyticsInput.event,
+        createAnalyticsInput.properties,
+      );
+    }
+
+    throw new AnalyticsException(
+      'Invalid analytics input',
+      AnalyticsExceptionCode.INVALID_TYPE,
     );
   }
 }

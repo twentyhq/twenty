@@ -1,50 +1,40 @@
-import { ArgsType, Field, createUnionType } from '@nestjs/graphql';
+import { ArgsType, Field } from '@nestjs/graphql';
 
-import { IsObject, IsString } from 'class-validator';
+import { IsObject, IsOptional, IsString } from 'class-validator';
+import GraphQLJSON from 'graphql-type-json';
 
 import { TrackEventName } from 'src/engine/core-modules/analytics/types/events.type';
 
 @ArgsType()
-export class PageviewAnalyticsInput {
+export class CreateAnalyticsInput {
   @Field(() => String)
   @IsString()
-  type: 'pageview';
+  type: 'pageview' | 'track';
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsString()
-  name: string;
+  name?: string;
 
-  @Field(() => Object)
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  event?: TrackEventName;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsOptional()
   @IsObject()
-  properties: object;
+  properties: JSON;
 }
 
-@ArgsType()
-export class TrackAnalyticsInput {
-  @Field(() => String)
-  @IsString()
-  type: 'track';
-
-  @Field(() => String)
-  @IsString()
-  event: TrackEventName;
-
-  @Field(() => Object)
-  @IsObject()
-  properties: object;
+export function isPageviewAnalyticsInput(
+  input: CreateAnalyticsInput,
+): input is CreateAnalyticsInput & { name: string } {
+  return input.type === 'pageview' && !!input.name;
 }
 
-export const CreateAnalyticsInput = createUnionType({
-  name: 'CreateAnalyticsInput',
-  types: () => [PageviewAnalyticsInput, TrackAnalyticsInput] as const,
-  resolveType(value) {
-    if (value.type === 'pageview') {
-      return PageviewAnalyticsInput;
-    }
-    if (value.type === 'track') {
-      return TrackAnalyticsInput;
-    }
-
-    return null;
-  },
-});
+export function isTrackAnalyticsInput(
+  input: CreateAnalyticsInput,
+): input is CreateAnalyticsInput & { event: TrackEventName } {
+  return input.type === 'track' && !!input.event;
+}

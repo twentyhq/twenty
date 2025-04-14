@@ -11,8 +11,18 @@ const mocks: MockedResponse[] = [
   {
     request: {
       query: gql`
-        mutation Track($type: String!, $event: String, $name: String, $properties: JSON!) {
-          track(type: $type, event: $event, name: $name, properties: $properties) {
+        mutation Track(
+          $type: String!
+          $event: String
+          $name: String
+          $properties: JSON!
+        ) {
+          track(
+            type: $type
+            event: $event
+            name: $name
+            properties: $properties
+          ) {
             success
           }
         }
@@ -20,7 +30,6 @@ const mocks: MockedResponse[] = [
       variables: {
         type: 'track',
         event: 'exampleType',
-        name: undefined,
         properties: {
           sessionId: 'exampleId',
           pathname: '',
