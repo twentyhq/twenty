@@ -60,7 +60,7 @@ export const WithLink: Story = {
     const menuItem = await canvas.findByText(
       getActionLabel(goToPeopleAction?.shortLabel ?? ''),
     );
-    expect(menuItem).toBeInTheDocument();
+    expect(menuItem).toBeVisible();
     expect(canvas.getByRole('link')).toHaveAttribute('href', '/objects/people');
   },
 };

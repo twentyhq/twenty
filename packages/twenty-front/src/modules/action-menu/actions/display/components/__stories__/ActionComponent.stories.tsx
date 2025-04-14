@@ -62,6 +62,6 @@ export const Default: Story = {
       await canvas.findByText(
         getActionLabel(addToFavoritesAction?.shortLabel ?? ''),
       ),
-    ).toBeInTheDocument();
+    ).toBeVisible();
   },
 };

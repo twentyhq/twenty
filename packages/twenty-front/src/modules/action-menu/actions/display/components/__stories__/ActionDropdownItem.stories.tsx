@@ -60,6 +60,6 @@ export const WithLink: Story = {
     const menuItem = await canvas.findByText(
       getActionLabel(goToPeopleAction?.label ?? ''),
     );
-    expect(menuItem).toBeInTheDocument();
+    expect(menuItem).toBeVisible();
   },
 };
