@@ -5,12 +5,16 @@ import { JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighligh
 const StyledText = styled.span<{
   highlighting: JsonNodeHighlighting | undefined;
 }>`
+  align-items: center;
+  box-sizing: border-box;
   color: ${({ theme, highlighting }) =>
     highlighting === 'blue'
       ? theme.adaptiveColors.blue4
       : highlighting === 'red'
         ? theme.adaptiveColors.red4
         : theme.font.color.tertiary};
+  display: inline-flex;
+  height: 24px;
 `;
 
 export const JsonNodeValue = ({

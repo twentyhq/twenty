@@ -4,6 +4,7 @@ import { IconComponent } from '@ui/display';
 import { JsonArrow } from '@ui/json-visualizer/components/internal/JsonArrow';
 import { JsonList } from '@ui/json-visualizer/components/internal/JsonList';
 import { JsonNodeLabel } from '@ui/json-visualizer/components/internal/JsonNodeLabel';
+import { JsonNodeValue } from '@ui/json-visualizer/components/internal/JsonNodeValue';
 import { JsonNode } from '@ui/json-visualizer/components/JsonNode';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
@@ -82,7 +83,7 @@ export const JsonNestedNode = ({
       depth={depth}
     >
       {elements.length === 0 ? (
-        <StyledEmptyState>{emptyElementsText}</StyledEmptyState>
+        <JsonNodeValue valueAsString={emptyElementsText} />
       ) : (
         elements.map(({ id, label, value }) => {
           const nextKeyPath = isNonEmptyString(keyPath)
