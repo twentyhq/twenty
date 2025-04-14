@@ -2210,6 +2210,7 @@ msgid "Go to Opportunities"
 msgstr "Go to Opportunities"
 
 #. js-lingui-id: MrE/Qb
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to People"
 msgstr "Go to People"
@@ -3373,6 +3374,7 @@ msgid "Password reset link has been sent to the email"
 msgstr "Password reset link has been sent to the email"
 
 #. js-lingui-id: 1wdjme
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "People"
 msgstr "People"
