@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { ProcessNestedRelationsV2Helper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations-v2.helper';
@@ -19,8 +20,9 @@ import { GraphqlQueryUpdateOneResolverService } from 'src/engine/api/graphql/gra
 import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
+import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 
 const graphqlQueryResolvers = [
   GraphqlQueryCreateManyResolverService,
@@ -42,8 +44,9 @@ const graphqlQueryResolvers = [
   imports: [
     WorkspaceQueryHookModule,
     WorkspaceQueryRunnerModule,
-    FeatureFlagModule,
     PermissionsModule,
+    TypeOrmModule.forFeature([UserWorkspaceRoleEntity], 'metadata'),
+    UserRoleModule,
   ],
   providers: [
     ApiEventEmitterService,
