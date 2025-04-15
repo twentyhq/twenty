@@ -34,10 +34,11 @@ const StyledIconContainer = styled.div`
 
 const StyledLabelAndIconContainer = styled.div`
   align-items: center;
+  align-self: flex-start;
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  height: 18px;
+  height: 24px;
 `;
 
 const StyledValueContainer = styled.div`
@@ -58,7 +59,6 @@ const StyledInlineCellBaseContainer = styled.div`
   width: 100%;
   display: flex;
   height: fit-content;
-  min-height: 24px;
   gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   align-items: center;
