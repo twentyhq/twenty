@@ -11,7 +11,6 @@ import { FieldMetadataType } from '~/generated/graphql';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { sleep } from '~/utils/sleep';
 import { useTextField } from '../../../hooks/useTextField';
 import { TextFieldInput, TextFieldInputProps } from '../TextFieldInput';
 const TextFieldValueSetterEffect = ({ value }: { value: string }) => {
@@ -61,6 +60,7 @@ const TextFieldInputWithContext = ({
             metadata: {
               fieldName: 'text',
               objectMetadataNameSingular: 'person',
+              placeHolder: 'Enter text',
             },
           },
           isLabelIdentifier: false,
@@ -130,10 +130,12 @@ type Story = StoryObj<typeof TextFieldInputWithContext>;
 export const Default: Story = {};
 
 export const Enter: Story = {
-  play: async () => {
-    expect(enterJestFn).toHaveBeenCalledTimes(0);
-    await sleep(100);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
+    expect(enterJestFn).toHaveBeenCalledTimes(0);
+
+    await canvas.findByPlaceholderText('Enter text');
     await userEvent.keyboard('{enter}');
 
     await waitFor(() => {
@@ -143,10 +145,12 @@ export const Enter: Story = {
 };
 
 export const Escape: Story = {
-  play: async () => {
-    expect(escapeJestfn).toHaveBeenCalledTimes(0);
-    await sleep(100);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
+    expect(escapeJestfn).toHaveBeenCalledTimes(0);
+
+    await canvas.findByPlaceholderText('Enter text');
     await userEvent.keyboard('{esc}');
 
     await waitFor(() => {
@@ -158,7 +162,7 @@ export const Escape: Story = {
 export const ClickOutside: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await sleep(100);
+    await canvas.findByPlaceholderText('Enter text');
 
     expect(clickOutsideJestFn).toHaveBeenCalledTimes(0);
 
@@ -173,9 +177,12 @@ export const ClickOutside: Story = {
 };
 
 export const Tab: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByPlaceholderText('Enter text');
+
     expect(tabJestFn).toHaveBeenCalledTimes(0);
-    await sleep(100);
 
     await userEvent.keyboard('{tab}');
 
@@ -186,9 +193,12 @@ export const Tab: Story = {
 };
 
 export const ShiftTab: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByPlaceholderText('Enter text');
+
     expect(shiftTabJestFn).toHaveBeenCalledTimes(0);
-    await sleep(100);
 
     await userEvent.keyboard('{shift>}{tab}');
 
