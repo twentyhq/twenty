@@ -13,6 +13,7 @@ import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { useTextField } from '../../../hooks/useTextField';
 import { TextFieldInput, TextFieldInputProps } from '../TextFieldInput';
+import { sleep } from '~/utils/sleep';
 const TextFieldValueSetterEffect = ({ value }: { value: string }) => {
   const { setFieldValue } = useTextField();
 
@@ -136,6 +137,7 @@ export const Enter: Story = {
     expect(enterJestFn).toHaveBeenCalledTimes(0);
 
     await canvas.findByPlaceholderText('Enter text');
+    await sleep(50);
     await userEvent.keyboard('{enter}');
 
     await waitFor(() => {
