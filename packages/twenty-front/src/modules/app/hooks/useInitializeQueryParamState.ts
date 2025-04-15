@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
+import { isQueryParamInitializedState } from '@/app/states/isQueryParamInitializedState';
 import { animateModalState } from '@/auth/states/animateModalState';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
@@ -10,62 +9,64 @@ import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/Bill
 // Initialize state that are hydrated from query parameters
 // We used to use recoil-sync to do this, but it was causing issues with Firefox
 export const useInitializeQueryParamState = () => {
-  const location = useLocation();
-  const setAnimateModal = useSetRecoilState(animateModalState);
-  const setBillingCheckoutSession = useSetRecoilState(
-    billingCheckoutSessionState,
-  );
-  const [isInitialized, setIsInitialized] = useState(false);
+  const initializeQueryParamState = useRecoilCallback(
+    ({ set, snapshot }) =>
+      () => {
+        const isInitialized = snapshot
+          .getLoadable(isQueryParamInitializedState)
+          .getValue();
 
-  useEffect(() => {
-    if (!isInitialized) {
-      const handlers = {
-        animateModal: (value: string) => {
-          const boolValue = value.toLowerCase() === 'true';
-          setAnimateModal(boolValue);
-        },
+        if (!isInitialized) {
+          const handlers = {
+            billingCheckoutSession: (value: string) => {
+              try {
+                const parsedValue = JSON.parse(decodeURIComponent(value));
 
-        billingCheckoutSession: (value: string) => {
-          try {
-            const parsedValue = JSON.parse(decodeURIComponent(value));
+                if (
+                  typeof parsedValue === 'object' &&
+                  parsedValue !== null &&
+                  'plan' in parsedValue &&
+                  'interval' in parsedValue &&
+                  'requirePaymentMethod' in parsedValue
+                ) {
+                  set(
+                    billingCheckoutSessionState,
+                    parsedValue as BillingCheckoutSession,
+                  );
+                }
+              } catch (error) {
+                // eslint-disable-next-line no-console
+                console.error(
+                  'Failed to parse billingCheckoutSession from URL',
+                  error,
+                );
+                set(
+                  billingCheckoutSessionState,
+                  BILLING_CHECKOUT_SESSION_DEFAULT_VALUE,
+                );
+              }
+            },
 
-            if (
-              typeof parsedValue === 'object' &&
-              parsedValue !== null &&
-              'plan' in parsedValue &&
-              'interval' in parsedValue &&
-              'requirePaymentMethod' in parsedValue
-            ) {
-              setBillingCheckoutSession(parsedValue as BillingCheckoutSession);
+            animateModal: (value: string) => {
+              const boolValue = value.toLowerCase() === 'true';
+              set(animateModalState, boolValue);
+            },
+          };
+
+          const queryParams = new URLSearchParams(window.location.search);
+
+          for (const [paramName, handler] of Object.entries(handlers)) {
+            const value = queryParams.get(paramName);
+            if (value !== null) {
+              handler(value);
             }
-          } catch (error) {
-            // eslint-disable-next-line no-console
-            console.error(
-              'Failed to parse billingCheckoutSession from URL',
-              error,
-            );
-            setBillingCheckoutSession(BILLING_CHECKOUT_SESSION_DEFAULT_VALUE);
           }
-        },
-      };
 
-      const queryParams = new URLSearchParams(location.search);
-
-      for (const [paramName, handler] of Object.entries(handlers)) {
-        const value = queryParams.get(paramName);
-        if (value !== null) {
-          handler(value);
+          set(isQueryParamInitializedState, true);
         }
-      }
+      },
+    [],
+  );
 
-      setIsInitialized(true);
-    }
-
-    return () => {};
-  }, [
-    location.search,
-    setAnimateModal,
-    setBillingCheckoutSession,
-    isInitialized,
-  ]);
+  return { initializeQueryParamState };
 };

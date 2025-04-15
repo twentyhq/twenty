@@ -45,7 +45,7 @@ export const PageChangeEffect = () => {
 
   const eventTracker = useEventTracker();
 
-  useInitializeQueryParamState();
+  const { initializeQueryParamState } = useInitializeQueryParamState();
 
   //TODO: refactor useResetTableRowSelection hook to not throw when the argument `recordTableId` is an empty string
   // - replace CoreObjectNamePlural.Person
@@ -67,10 +67,12 @@ export const PageChangeEffect = () => {
   }, [location, previousLocation, executeTasksOnAnyLocationChange]);
 
   useEffect(() => {
+    initializeQueryParamState();
+
     if (isDefined(pageChangeEffectNavigateLocation)) {
       navigate(pageChangeEffectNavigateLocation);
     }
-  }, [navigate, pageChangeEffectNavigateLocation]);
+  }, [navigate, pageChangeEffectNavigateLocation, initializeQueryParamState]);
 
   useEffect(() => {
     const isLeavingRecordIndexPage = !!matchPath(
