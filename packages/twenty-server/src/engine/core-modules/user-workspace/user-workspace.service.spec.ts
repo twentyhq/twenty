@@ -20,7 +20,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { USER_SIGNUP_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/user/user-signup';
+import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 
 describe('UserWorkspaceService', () => {
   let service: UserWorkspaceService;
@@ -160,7 +160,7 @@ describe('UserWorkspaceService', () => {
       });
       expect(userWorkspaceRepository.save).toHaveBeenCalledWith(userWorkspace);
       expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
-        USER_SIGNUP_EVENT,
+        USER_SIGNUP_EVENT_NAME,
         [{ userId }],
         workspaceId,
       );
