@@ -9,6 +9,7 @@ import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 
 type FullNameFieldInputProps = {
   onClickOutside?: FieldInputClickOutsideEvent;
@@ -25,7 +26,7 @@ export const FullNameFieldInput = ({
   onTab,
   onShiftTab,
 }: FullNameFieldInputProps) => {
-  const { draftValue, setDraftValue, persistFullNameField, fieldDefinition } =
+  const { draftValue, setDraftValue, persistFullNameField } =
     useFullNameField();
 
   const convertToFullName = (newDoubleText: FieldDoubleText) => {
@@ -93,7 +94,7 @@ export const FullNameFieldInput = ({
       onShiftTab={handleShiftTab}
       onTab={handleTab}
       onPaste={handlePaste}
-      hotkeyScope={`full-name-field-input-${fieldDefinition.metadata.fieldName}`}
+      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
       onChange={handleChange}
     />
   );

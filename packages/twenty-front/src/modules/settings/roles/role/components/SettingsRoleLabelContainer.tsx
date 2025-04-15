@@ -4,10 +4,6 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import styled from '@emotion/styled';
 
-type SettingsRoleLabelContainerProps = {
-  roleId: string;
-};
-
 const ROLE_LABEL_EDIT_HOTKEY_SCOPE = 'role-label-edit';
 
 const StyledHeaderTitle = styled.div`
@@ -20,6 +16,10 @@ const StyledHeaderTitle = styled.div`
     color: ${({ theme }) => theme.font.color.primary};
   }
 `;
+
+type SettingsRoleLabelContainerProps = {
+  roleId: string;
+};
 
 export const SettingsRoleLabelContainer = ({
   roleId,

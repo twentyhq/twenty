@@ -13,24 +13,21 @@ import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billin
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class BillingService {
   protected readonly logger = new Logger(BillingService.name);
   constructor(
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingProductService: BillingProductService,
-    private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
 
   isBillingEnabled() {
-    return this.environmentService.get('IS_BILLING_ENABLED');
+    return this.twentyConfigService.get('IS_BILLING_ENABLED');
   }
 
   async hasWorkspaceAnySubscription(workspaceId: string) {
@@ -74,16 +71,6 @@ export class BillingService {
     workspaceId: string,
     productKey: BillingProductKey,
   ) {
-    const isMeteredProductBillingEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsMeteredProductBillingEnabled,
-        workspaceId,
-      );
-
-    if (!isMeteredProductBillingEnabled) {
-      return true;
-    }
-
     const subscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         { workspaceId },

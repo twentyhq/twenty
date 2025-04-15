@@ -73,13 +73,12 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
 
   const createWorkspace = () => {
     signUpInNewWorkspaceMutation({
-      onCompleted: (data) => {
-        return redirectToWorkspaceDomain(
+      onCompleted: async (data) => {
+        return await redirectToWorkspaceDomain(
           getWorkspaceUrl(data.signUpInNewWorkspace.workspace.workspaceUrls),
           AppPath.Verify,
           {
             loginToken: data.signUpInNewWorkspace.loginToken.token,
-            animateModal: false,
           },
           '_blank',
         );
@@ -173,7 +172,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           <DropdownMenuSeparator />
         </>
       )}
-      <StyledDropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer>
         <MenuItem
           LeftIcon={colorSchemeList.find(({ id }) => id === colorScheme)?.icon}
           text={
@@ -192,7 +191,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           <MenuItem LeftIcon={IconUserPlus} text={t`Invite user`} />
         </UndecoratedLink>
         <MenuItem LeftIcon={IconLogout} text={t`Log out`} onClick={signOut} />
-      </StyledDropdownMenuItemsContainer>
+      </DropdownMenuItemsContainer>
     </>
   );
 };

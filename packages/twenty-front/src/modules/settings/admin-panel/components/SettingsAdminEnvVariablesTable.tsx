@@ -15,7 +15,7 @@ type SettingsAdminEnvVariablesTableProps = {
     name: string;
     description: string;
     value: string;
-    sensitive: boolean;
+    isSensitive: boolean;
   }>;
 };
 

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   Chip,
   ChipAccent,
@@ -17,8 +17,6 @@ export type LinkChipProps = Omit<
   onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
 };
 
-// Ideally we would use the UndecoratedLink component from @ui/navigation
-// but it led to a bug probably linked to circular dependencies, which was hard to solve
 const StyledLink = styled(Link)`
   text-decoration: none;
 `;

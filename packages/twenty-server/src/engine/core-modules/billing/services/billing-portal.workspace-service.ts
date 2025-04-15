@@ -3,14 +3,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'class-validator';
 import Stripe from 'stripe';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
@@ -30,6 +31,8 @@ export class BillingPortalWorkspaceService {
     private readonly domainManagerService: DomainManagerService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectRepository(BillingCustomer, 'core')
+    private readonly billingCustomerRepository: Repository<BillingCustomer>,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
   ) {}
@@ -56,11 +59,10 @@ export class BillingPortalWorkspaceService {
       workspaceId: workspace.id,
     });
 
-    const subscription = await this.billingSubscriptionRepository.findOneBy({
-      workspaceId: workspace.id,
+    const customer = await this.billingCustomerRepository.findOne({
+      where: { workspaceId: workspace.id },
+      relations: ['billingSubscriptions'],
     });
-
-    const stripeCustomerId = subscription?.stripeCustomerId;
 
     const stripeSubscriptionLineItems = this.getStripeSubscriptionLineItems({
       quantity,
@@ -74,10 +76,11 @@ export class BillingPortalWorkspaceService {
         stripeSubscriptionLineItems,
         successUrl,
         cancelUrl,
-        stripeCustomerId,
+        stripeCustomerId: customer?.stripeCustomerId,
         plan,
         requirePaymentMethod,
-        withTrialPeriod: !isDefined(subscription),
+        withTrialPeriod:
+          !isDefined(customer) || customer.billingSubscriptions.length === 0,
       });
 
     assert(checkoutSession.url, 'Error: missing checkout.session.url');

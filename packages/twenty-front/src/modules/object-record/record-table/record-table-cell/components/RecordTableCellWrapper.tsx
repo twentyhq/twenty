@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -9,6 +7,7 @@ import { isTableCellInEditModeComponentFamilyState } from '@/object-record/recor
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useMemo } from 'react';
 
 export const RecordTableCellWrapper = ({
   children,

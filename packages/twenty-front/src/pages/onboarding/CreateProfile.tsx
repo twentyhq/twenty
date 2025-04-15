@@ -11,17 +11,16 @@ import { Title } from '@/auth/components/Title';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { OnboardingStatus } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
@@ -58,7 +57,6 @@ type Form = z.infer<typeof validationSchema>;
 
 export const CreateProfile = () => {
   const { t } = useLingui();
-  const onboardingStatus = useOnboardingStatus();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { enqueueSnackBar } = useSnackBar();
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
@@ -145,12 +143,8 @@ export const CreateProfile = () => {
     PageHotkeyScope.CreateProfile,
   );
 
-  if (onboardingStatus !== OnboardingStatus.PROFILE_CREATION) {
-    return null;
-  }
-
   return (
-    <>
+    <Modal.Content isVerticalCentered isHorizontalCentered>
       <Title noMarginTop>
         <Trans>Create profile</Trans>
       </Title>
@@ -225,6 +219,6 @@ export const CreateProfile = () => {
           fullWidth
         />
       </StyledButtonContainer>
-    </>
+    </Modal.Content>
   );
 };

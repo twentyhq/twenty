@@ -20,10 +20,14 @@ export type IconButtonProps = {
   dataTestId?: string;
   ariaLabel?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  to?: string;
 };
 
 const StyledButton = styled.button<
-  Pick<IconButtonProps, 'variant' | 'size' | 'position' | 'accent' | 'focus'>
+  Pick<
+    IconButtonProps,
+    'variant' | 'size' | 'position' | 'accent' | 'focus' | 'to'
+  >
 >`
   align-items: center;
   ${({ theme, variant, accent, disabled, focus }) => {
@@ -252,6 +256,7 @@ export const IconButton = ({
   dataTestId,
   ariaLabel,
   onClick,
+  to,
 }: IconButtonProps) => {
   const theme = useTheme();
   return (
@@ -266,6 +271,7 @@ export const IconButton = ({
       className={className}
       onClick={onClick}
       aria-label={ariaLabel}
+      to={to}
     >
       {Icon && <Icon size={theme.icon.size.md} />}
     </StyledButton>

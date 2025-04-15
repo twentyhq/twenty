@@ -1,26 +1,28 @@
-import { WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
-import { useTheme } from '@emotion/react';
-import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useDebouncedCallback } from 'use-debounce';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { isDefined } from 'twenty-shared/utils';
-import { useIcons, IconCopy } from 'twenty-ui/display';
-import { Select } from '@/ui/input/components/Select';
-import { WEBHOOK_TRIGGER_HTTP_METHOD_OPTIONS } from '@/workflow/workflow-trigger/constants/WebhookTriggerHttpMethodOptions';
-import { getWebhookTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getWebhookTriggerDefaultSettings';
-import { WEBHOOK_TRIGGER_AUTHENTICATION_OPTIONS } from '@/workflow/workflow-trigger/constants/WebhookTriggerAuthenticationOptions';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/form-types/components/FormRawJsonFieldInput';
-import { useState } from 'react';
 import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctionOutputSchema';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { Select } from '@/ui/input/components/Select';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { workflowIdState } from '@/workflow/states/workflowIdState';
+import { WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
+import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { WEBHOOK_TRIGGER_AUTHENTICATION_OPTIONS } from '@/workflow/workflow-trigger/constants/WebhookTriggerAuthenticationOptions';
+import { WEBHOOK_TRIGGER_HTTP_METHOD_OPTIONS } from '@/workflow/workflow-trigger/constants/WebhookTriggerHttpMethodOptions';
+import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
+import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
+import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
+import { getWebhookTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getWebhookTriggerDefaultSettings';
+import { useTheme } from '@emotion/react';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { IconCopy, useIcons } from 'twenty-ui/display';
+import { useDebouncedCallback } from 'use-debounce';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 type WorkflowEditTriggerWebhookFormProps = {
   trigger: WorkflowWebhookTrigger;
@@ -59,11 +61,10 @@ export const WorkflowEditTriggerWebhookForm = ({
     setErrorMessagesVisible(true);
   };
 
-  const headerTitle = isDefined(trigger.name) ? trigger.name : 'Webhook';
+  const headerTitle = trigger.name ?? getTriggerDefaultLabel(trigger);
 
-  const headerIcon = getTriggerIcon({
-    type: 'WEBHOOK',
-  });
+  const headerIcon = getTriggerIcon(trigger);
+  const headerType = getTriggerHeaderType(trigger);
 
   const webhookUrl = `${REACT_APP_SERVER_BASE_URL}/webhooks/workflows/${currentWorkspace?.id}/${workflowId}`;
   const displayWebhookUrl = webhookUrl.replace(/^(https?:\/\/)?(www\.)?/, '');
@@ -98,7 +99,7 @@ export const WorkflowEditTriggerWebhookForm = ({
         Icon={getIcon(headerIcon)}
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
-        headerType="Trigger · Webhook"
+        headerType={headerType}
         disabled={triggerOptions.readonly}
       />
       <WorkflowStepBody>

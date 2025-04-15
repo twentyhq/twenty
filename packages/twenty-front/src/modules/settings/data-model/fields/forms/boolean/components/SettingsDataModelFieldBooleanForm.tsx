@@ -6,7 +6,8 @@ import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsO
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
-import { IconCheck, IconX } from 'twenty-ui/display';
+import { IconCheck } from 'twenty-ui/display';
+import { BOOLEAN_DATA_MODEL_SELECT_OPTIONS } from '@/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions';
 
 export const settingsDataModelFieldBooleanFormSchema = z.object({
   defaultValue: z.boolean(),
@@ -47,18 +48,10 @@ export const SettingsDataModelFieldBooleanForm = ({
             dropdownId="object-field-default-value-select-boolean"
             dropdownWidth={120}
             needIconCheck={false}
-            options={[
-              {
-                value: true,
-                label: t`True`,
-                Icon: IconCheck,
-              },
-              {
-                value: false,
-                label: t`False`,
-                Icon: IconX,
-              },
-            ]}
+            options={BOOLEAN_DATA_MODEL_SELECT_OPTIONS.map((option) => ({
+              ...option,
+              label: t(option.label),
+            }))}
             selectSizeVariant="small"
           />
         </SettingsOptionCardContentSelect>

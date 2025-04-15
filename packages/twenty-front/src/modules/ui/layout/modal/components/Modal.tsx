@@ -7,7 +7,7 @@ import {
   useListenClickOutside,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useTheme } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import React, { useEffect, useRef } from 'react';
@@ -77,12 +77,25 @@ const StyledHeader = styled.div`
   padding: ${({ theme }) => theme.spacing(5)};
 `;
 
-const StyledContent = styled.div`
+const StyledContent = styled.div<{
+  isVerticalCentered?: boolean;
+  isHorizontalCentered?: boolean;
+}>`
   display: flex;
   flex: 1;
   flex: 1 1 0%;
   flex-direction: column;
   padding: ${({ theme }) => theme.spacing(10)};
+  ${({ isVerticalCentered }) =>
+    isVerticalCentered &&
+    css`
+      align-items: center;
+    `}
+  ${({ isHorizontalCentered }) =>
+    isHorizontalCentered &&
+    css`
+      justify-content: center;
+    `}
 `;
 
 const StyledFooter = styled.div`
@@ -125,12 +138,24 @@ const ModalHeader = ({ children, className }: ModalHeaderProps) => (
 
 type ModalContentProps = React.PropsWithChildren & {
   className?: string;
+  isVerticalCentered?: boolean;
+  isHorizontalCentered?: boolean;
 };
 
-const ModalContent = ({ children, className }: ModalContentProps) => (
-  <StyledContent className={className}>{children}</StyledContent>
+const ModalContent = ({
+  children,
+  className,
+  isVerticalCentered,
+  isHorizontalCentered,
+}: ModalContentProps) => (
+  <StyledContent
+    className={className}
+    isVerticalCentered={isVerticalCentered}
+    isHorizontalCentered={isHorizontalCentered}
+  >
+    {children}
+  </StyledContent>
 );
-
 type ModalFooterProps = React.PropsWithChildren & {
   className?: string;
 };
@@ -149,7 +174,6 @@ export type ModalProps = React.PropsWithChildren & {
   className?: string;
   hotkeyScope?: ModalHotkeyScope;
   onEnter?: () => void;
-  isOpenAnimated?: boolean;
   modalVariant?: ModalVariants;
 } & (
     | { isClosable: true; onClose: () => void }
@@ -172,7 +196,6 @@ export const Modal = ({
   isClosable = false,
   onClose,
   modalVariant = 'primary',
-  isOpenAnimated = true,
 }: ModalProps) => {
   const isMobile = useIsMobile();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -238,7 +261,7 @@ export const Modal = ({
         ref={modalRef}
         size={size}
         padding={padding}
-        initial={isOpenAnimated ? 'hidden' : 'visible'}
+        initial="hidden"
         animate="visible"
         exit="exit"
         layout

@@ -1,8 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilValue } from 'recoil';
 
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { ReactNode } from 'react';
 import { IconArrowUpRight, IconComponent } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
@@ -27,7 +27,6 @@ export const CommandMenuItem = ({
   onClick,
   Icon,
   hotKeys,
-  shouldCloseCommandMenuOnClick,
   RightComponent,
 }: CommandMenuItemProps) => {
   const { onItemClick } = useCommandMenuOnItemClick();
@@ -36,8 +35,10 @@ export const CommandMenuItem = ({
     Icon = IconArrowUpRight;
   }
 
-  const { isSelectedItemIdSelector } = useSelectableList();
-  const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector(id));
+  const isSelectedItemId = useRecoilComponentFamilyValueV2(
+    isSelectedItemIdComponentFamilySelector,
+    id,
+  );
 
   return (
     <MenuItemCommand
@@ -47,7 +48,6 @@ export const CommandMenuItem = ({
       hotKeys={hotKeys}
       onClick={() =>
         onItemClick({
-          shouldCloseCommandMenuOnClick,
           onClick,
           to,
         })

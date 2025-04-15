@@ -23,6 +23,7 @@ import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/f
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeWebhookService } from 'src/engine/core-modules/billing/stripe/services/stripe-webhook.service';
 import { BillingWebhookAlertService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-alert.service';
+import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-customer.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-entitlement.service';
 import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-invoice.service';
 import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-price.service';
@@ -42,6 +43,7 @@ export class BillingController {
     private readonly billingWebhookPriceService: BillingWebhookPriceService,
     private readonly billingWebhookAlertService: BillingWebhookAlertService,
     private readonly billingWebhookInvoiceService: BillingWebhookInvoiceService,
+    private readonly billingWebhookCustomerService: BillingWebhookCustomerService,
   ) {}
 
   @Post('/webhooks')
@@ -111,6 +113,11 @@ export class BillingController {
 
       case BillingWebhookEvent.INVOICE_FINALIZED:
         return await this.billingWebhookInvoiceService.processStripeEvent(
+          event.data,
+        );
+
+      case BillingWebhookEvent.CUSTOMER_CREATED:
+        return await this.billingWebhookCustomerService.processStripeEvent(
           event.data,
         );
 

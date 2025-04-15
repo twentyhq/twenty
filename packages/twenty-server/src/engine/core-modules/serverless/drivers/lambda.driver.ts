@@ -217,7 +217,7 @@ export class LambdaDriver implements ServerlessDriver {
     }
   }
 
-  async build(serverlessFunction: ServerlessFunctionEntity) {
+  private async build(serverlessFunction: ServerlessFunctionEntity) {
     const lambdaExecutor = await this.getLambdaExecutor(serverlessFunction);
 
     if (isDefined(lambdaExecutor)) {
