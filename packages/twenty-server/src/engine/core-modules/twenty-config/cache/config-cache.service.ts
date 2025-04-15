@@ -1,6 +1,5 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 
-import { CONFIG_VARIABLES_CACHE_MAX_ENTRIES } from 'src/engine/core-modules/twenty-config/constants/config-variables-cache-max-entries';
 import { CONFIG_VARIABLES_CACHE_SCAVENGE_INTERVAL } from 'src/engine/core-modules/twenty-config/constants/config-variables-cache-scavenge-interval';
 import { CONFIG_VARIABLES_CACHE_TTL } from 'src/engine/core-modules/twenty-config/constants/config-variables-cache-ttl';
 
@@ -124,7 +123,6 @@ export class ConfigCacheService implements OnModuleDestroy {
   private scavengeCache(): void {
     const now = Date.now();
     let expiredCount = 0;
-    let sizeLimitedCount = 0;
 
     for (const [key, entry] of this.valueCache.entries()) {
       if (now - entry.timestamp > entry.ttl) {
@@ -140,33 +138,9 @@ export class ConfigCacheService implements OnModuleDestroy {
       }
     }
 
-    if (this.valueCache.size > CONFIG_VARIABLES_CACHE_MAX_ENTRIES) {
-      const entriesToDelete =
-        this.valueCache.size - CONFIG_VARIABLES_CACHE_MAX_ENTRIES;
-      const keysToDelete = Array.from(this.valueCache.keys()).slice(
-        0,
-        entriesToDelete,
-      );
-
-      keysToDelete.forEach((key) => this.valueCache.delete(key));
-      sizeLimitedCount += entriesToDelete;
-    }
-
-    if (this.negativeLookupCache.size > CONFIG_VARIABLES_CACHE_MAX_ENTRIES) {
-      const entriesToDelete =
-        this.negativeLookupCache.size - CONFIG_VARIABLES_CACHE_MAX_ENTRIES;
-      const keysToDelete = Array.from(this.negativeLookupCache.keys()).slice(
-        0,
-        entriesToDelete,
-      );
-
-      keysToDelete.forEach((key) => this.negativeLookupCache.delete(key));
-      sizeLimitedCount += entriesToDelete;
-    }
-
-    if (expiredCount > 0 || sizeLimitedCount > 0) {
+    if (expiredCount > 0) {
       this.logger.debug(
-        `🧹 Cache scavenging completed: ${expiredCount} expired entries removed, ${sizeLimitedCount} entries removed due to size limits`,
+        `🧹 Cache scavenging completed: ${expiredCount} expired entries removed`,
       );
     }
   }
