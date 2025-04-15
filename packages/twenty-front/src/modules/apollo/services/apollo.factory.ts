@@ -183,7 +183,8 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           ...(extraLinks || []),
           isDebugMode ? logger : null,
           retryLink,
-          isDefined(splitLink) ? splitLink : httpLink,
+          httpLink,
+          wsLink,
         ].filter(isDefined),
       );
     };

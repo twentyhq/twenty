@@ -8287,6 +8287,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-yoga/plugin-graphql-sse@npm:^3.13.5":
+  version: 3.13.5
+  resolution: "@graphql-yoga/plugin-graphql-sse@npm:3.13.5"
+  dependencies:
+    "@whatwg-node/promise-helpers": "npm:^1.2.4"
+    graphql-sse: "npm:^2.0.0"
+  peerDependencies:
+    graphql: ^15.2.0 || ^16.0.0
+    graphql-yoga: ^5.13.4
+  checksum: 10c0/907e0047541b8b6264fc89da8f3cdd5a2fabf822e29d1b7118443ff80a8985efb590677e793258f19d475305a9d93e0becc44f9b8bc85ef9d18d3af5552dc353
+  languageName: node
+  linkType: hard
+
 "@graphql-yoga/subscription@npm:^4.0.0":
   version: 4.0.0
   resolution: "@graphql-yoga/subscription@npm:4.0.0"
@@ -24533,6 +24546,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@whatwg-node/promise-helpers@npm:^1.2.4":
+  version: 1.3.1
+  resolution: "@whatwg-node/promise-helpers@npm:1.3.1"
+  dependencies:
+    tslib: "npm:^2.6.3"
+  checksum: 10c0/bb47e71cb588c2bdc45cc78044f8e472b1600d3022f10d59bb70a68bd6a2d2f749f5bbe5858a9b0dccbc93c4c96092acc28e870ace1174d328e14fa8e8db14fa
+  languageName: node
+  linkType: hard
+
 "@whatwg-node/server@npm:^0.9.1":
   version: 0.9.46
   resolution: "@whatwg-node/server@npm:0.9.46"
@@ -36179,6 +36201,15 @@ __metadata:
     graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     graphql-middleware: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^6.0.0
   checksum: 10c0/aed5783f2b632a31d93c5b3dc2cd8d62d99a471db397aad8d8db58487b4fbce3ae431129369de711500795ac9b5f5aaa2bdef48c4650ac81a9ff8bd8840a3605
+  languageName: node
+  linkType: hard
+
+"graphql-sse@npm:^2.0.0":
+  version: 2.5.4
+  resolution: "graphql-sse@npm:2.5.4"
+  peerDependencies:
+    graphql: ">=0.11 <=16"
+  checksum: 10c0/b2635a4098b86492ecb04e7aab7efb715847ad11b785591cf90cf1f342ba78a03db0c6cf903975a7ad9e2c278dee55cd9e2e9d7edb560f334528bb8ee926ed95
   languageName: node
   linkType: hard
 
@@ -55241,6 +55272,7 @@ __metadata:
     "@graphql-codegen/typescript-operations": "npm:^3.0.4"
     "@graphql-codegen/typescript-react-apollo": "npm:^3.3.7"
     "@graphql-tools/schema": "npm:^10.0.0"
+    "@graphql-yoga/plugin-graphql-sse": "npm:^3.13.5"
     "@hello-pangea/dnd": "npm:^16.2.0"
     "@hookform/resolvers": "npm:^3.1.1"
     "@jsdevtools/rehype-toc": "npm:^3.0.2"

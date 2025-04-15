@@ -49,6 +49,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
+import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -83,6 +84,7 @@ import { FileModule } from './file/file.module';
     EnvironmentModule.forRoot({}),
     RedisClientModule,
     WorkspaceQueryRunnerModule,
+    SubscriptionsModule,
     FileStorageModule.forRootAsync({
       useFactory: fileStorageModuleFactory,
       inject: [EnvironmentService],

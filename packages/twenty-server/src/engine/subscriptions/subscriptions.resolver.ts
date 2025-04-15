@@ -1,15 +1,13 @@
 import { Args, Resolver, Subscription } from '@nestjs/graphql';
-import { Inject, UseGuards } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { isDefined } from 'twenty-shared/utils';
 
 import { OnDbEventDTO } from 'src/engine/subscriptions/dtos/on-db-event.dto';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { OnDbEventInput } from 'src/engine/subscriptions/dtos/on-db-event.input';
 
 @Resolver()
-@UseGuards(WorkspaceAuthGuard)
 export class SubscriptionsResolver {
   constructor(@Inject('PUB_SUB') private readonly pubSub: RedisPubSub) {}
 
