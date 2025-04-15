@@ -1,4 +1,4 @@
-import { PLAYGROUND_SETUP_SELECT_OPTIONS } from '@/settings/playground/constants/PlaygroundSetupSelectOptions';
+import { SETTINGS_PLAYGROUND_FORM_SCHEMA_SELECT_OPTIONS } from '@/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions';
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { PlaygroundTypes } from '@/settings/playground/types/PlaygroundTypes';
@@ -133,10 +133,12 @@ export const PlaygroundSetupForm = () => {
           <Select
             dropdownId="schema"
             label={t`Schema`}
-            options={PLAYGROUND_SETUP_SELECT_OPTIONS.map((option) => ({
-              ...option,
-              label: t(option.label),
-            }))}
+            options={SETTINGS_PLAYGROUND_FORM_SCHEMA_SELECT_OPTIONS.map(
+              (option) => ({
+                ...option,
+                label: t(option.label),
+              }),
+            )}
             value={value}
             onChange={onChange}
           />

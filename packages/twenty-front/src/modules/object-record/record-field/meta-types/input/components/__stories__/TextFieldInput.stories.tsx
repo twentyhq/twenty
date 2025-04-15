@@ -1,5 +1,5 @@
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
@@ -8,12 +8,11 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { FieldMetadataType } from '~/generated/graphql';
-import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { useTextField } from '../../../hooks/useTextField';
 import { TextFieldInput, TextFieldInputProps } from '../TextFieldInput';
-import { sleep } from '~/utils/sleep';
+
 const TextFieldValueSetterEffect = ({ value }: { value: string }) => {
   const { setFieldValue } = useTextField();
 
@@ -40,9 +39,14 @@ const TextFieldInputWithContext = ({
 }: TextFieldInputWithContextProps) => {
   const setHotKeyScope = useSetHotkeyScope();
 
+  const [isReady, setIsReady] = useState(false);
+
   useEffect(() => {
-    setHotKeyScope(DEFAULT_CELL_SCOPE.scope);
-  }, [setHotKeyScope]);
+    if (!isReady) {
+      setHotKeyScope(DEFAULT_CELL_SCOPE.scope);
+      setIsReady(true);
+    }
+  }, [isReady, setHotKeyScope]);
 
   return (
     <RecordFieldComponentInstanceContext.Provider
@@ -68,7 +72,6 @@ const TextFieldInputWithContext = ({
           isReadOnly: false,
         }}
       >
-        <StorybookFieldInputDropdownFocusIdSetterEffect />
         <TextFieldValueSetterEffect value={value} />
         <TextFieldInput
           onEnter={onEnter}
@@ -78,6 +81,7 @@ const TextFieldInputWithContext = ({
           onShiftTab={onShiftTab}
         />
       </FieldContext.Provider>
+      {isReady && <div data-testid="is-ready-marker" />}
       <div data-testid="data-field-input-click-outside-div" />
     </RecordFieldComponentInstanceContext.Provider>
   );
@@ -136,8 +140,7 @@ export const Enter: Story = {
 
     expect(enterJestFn).toHaveBeenCalledTimes(0);
 
-    await canvas.findByPlaceholderText('Enter text');
-    await sleep(50);
+    await canvas.findByTestId('is-ready-marker');
     await userEvent.keyboard('{enter}');
 
     await waitFor(() => {
@@ -152,7 +155,7 @@ export const Escape: Story = {
 
     expect(escapeJestfn).toHaveBeenCalledTimes(0);
 
-    await canvas.findByPlaceholderText('Enter text');
+    await canvas.findByTestId('is-ready-marker');
     await userEvent.keyboard('{esc}');
 
     await waitFor(() => {
@@ -164,11 +167,11 @@ export const Escape: Story = {
 export const ClickOutside: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByPlaceholderText('Enter text');
 
     expect(clickOutsideJestFn).toHaveBeenCalledTimes(0);
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
+    await canvas.findByTestId('is-ready-marker');
 
     await userEvent.click(emptyDiv);
 
@@ -182,7 +185,7 @@ export const Tab: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByPlaceholderText('Enter text');
+    await canvas.findByTestId('is-ready-marker');
 
     expect(tabJestFn).toHaveBeenCalledTimes(0);
 
@@ -198,7 +201,7 @@ export const ShiftTab: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByPlaceholderText('Enter text');
+    await canvas.findByTestId('is-ready-marker');
 
     expect(shiftTabJestFn).toHaveBeenCalledTimes(0);
 
