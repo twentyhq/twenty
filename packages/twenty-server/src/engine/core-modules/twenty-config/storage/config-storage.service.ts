@@ -35,7 +35,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
         },
       });
 
-      if (!result?.value) {
+      if (result === null) {
         return undefined;
       }
 
@@ -114,7 +114,9 @@ export class ConfigStorageService implements ConfigStorageInterface {
     }
   }
 
-  async loadAll(): Promise<Map<keyof ConfigVariables, any>> {
+  async loadAll(): Promise<
+    Map<keyof ConfigVariables, ConfigVariables[keyof ConfigVariables]>
+  > {
     try {
       const configVars = await this.keyValuePairRepository.find({
         where: {
@@ -124,7 +126,10 @@ export class ConfigStorageService implements ConfigStorageInterface {
         },
       });
 
-      const result = new Map<keyof ConfigVariables, any>();
+      const result = new Map<
+        keyof ConfigVariables,
+        ConfigVariables[keyof ConfigVariables]
+      >();
 
       for (const configVar of configVars) {
         if (configVar.value !== null) {

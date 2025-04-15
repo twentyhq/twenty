@@ -12,5 +12,7 @@ export interface ConfigStorageInterface {
 
   delete<T extends keyof ConfigVariables>(key: T): Promise<void>;
 
-  loadAll(): Promise<Map<keyof ConfigVariables, any>>;
+  loadAll(): Promise<
+    Map<keyof ConfigVariables, ConfigVariables[keyof ConfigVariables]>
+  >;
 }

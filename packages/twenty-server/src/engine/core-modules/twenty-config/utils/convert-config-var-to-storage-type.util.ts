@@ -20,7 +20,11 @@ export const convertConfigVarToStorageType = <T extends keyof ConfigVariables>(
   }
 
   if (Array.isArray(appValue)) {
-    return appValue.map((item) => convertConfigVarToStorageType(item));
+    return appValue.map((item) =>
+      convertConfigVarToStorageType<keyof ConfigVariables>(
+        item as ConfigVariables[keyof ConfigVariables],
+      ),
+    );
   }
 
   if (typeof appValue === 'object') {

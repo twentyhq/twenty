@@ -20,11 +20,24 @@ export const convertConfigVarToAppType = <T extends keyof ConfigVariables>(
   }
 
   if (valueType === 'number' && typeof dbValue === 'string') {
-    return Number(dbValue) as unknown as ConfigVariables[T];
+    const parsedNumber = parseFloat(dbValue);
+
+    if (isNaN(parsedNumber)) {
+      throw new Error(
+        `Invalid number value for config variable ${key}: ${dbValue}`,
+      );
+    }
+
+    return parsedNumber as unknown as ConfigVariables[T];
   }
 
-  // Handle arrays and other complex types
-  if (Array.isArray(defaultValue) && typeof dbValue === 'object') {
+  if (Array.isArray(defaultValue)) {
+    if (!Array.isArray(dbValue)) {
+      throw new Error(
+        `Expected array value for config variable ${key}, got ${typeof dbValue}`,
+      );
+    }
+
     return dbValue as ConfigVariables[T];
   }
 

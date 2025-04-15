@@ -110,7 +110,7 @@ export class TwentyConfigService
 
     if (this.initializationState !== InitializationState.INITIALIZED) {
       throw new Error(
-        'Environment service not initialized, cannot update configuration',
+        'TwentyConfigService not initialized, cannot update configuration',
       );
     }
 
@@ -128,7 +128,7 @@ export class TwentyConfigService
       await this.databaseConfigDriver.update(key, value);
     } else {
       throw new Error(
-        'Database driver not active, cannot update configuration',
+        'Database driver not initialized, cannot update configuration',
       );
     }
   }
@@ -173,9 +173,9 @@ export class TwentyConfigService
       let source = 'ENVIRONMENT';
 
       if (isUsingDatabaseDriver && !envMetadata.isEnvOnly) {
-        const value = this.get(key as keyof ConfigVariables);
+        const dbValue = this.get(key as keyof ConfigVariables);
 
-        if (value !== envVars[key as keyof ConfigVariables]) {
+        if (dbValue !== envVars[key as keyof ConfigVariables]) {
           source = 'DATABASE';
         } else {
           source = 'DEFAULT';

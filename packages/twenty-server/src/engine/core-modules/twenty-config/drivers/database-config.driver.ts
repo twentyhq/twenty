@@ -40,6 +40,7 @@ export class DatabaseConfigDriver
 
   private async doInitialize(): Promise<void> {
     try {
+      this.initializationState = InitializationState.INITIALIZING;
       await this.loadAllConfigVarsFromDb();
       this.initializationState = InitializationState.INITIALIZED;
     } catch (error) {
@@ -158,9 +159,11 @@ export class DatabaseConfigDriver
     this.logger.debug(`🕒 [Config:${key}] Scheduling background refresh`);
 
     try {
-      await Promise.resolve().then(async () => {
-        this.logger.debug(`⏳ [Config:${key}] Executing background refresh`);
-        await this.refreshConfig(key);
+      await new Promise<void>((resolve, reject) => {
+        setImmediate(async () => {
+          this.logger.debug(`⏳ [Config:${key}] Executing background refresh`);
+          await this.refreshConfig(key).then(resolve).catch(reject);
+        });
       });
     } catch (error) {
       this.logger.error(`Failed to refresh config for ${key as string}`, error);
@@ -168,8 +171,10 @@ export class DatabaseConfigDriver
   }
 
   private scheduleRetry(): void {
+    this.retryAttempts++;
+
     if (
-      this.retryAttempts >= DATABASE_CONFIG_DRIVER_INITIALIZATION_MAX_RETRIES
+      this.retryAttempts > DATABASE_CONFIG_DRIVER_INITIALIZATION_MAX_RETRIES
     ) {
       this.logger.error('Max retry attempts reached, giving up initialization');
 
@@ -178,9 +183,7 @@ export class DatabaseConfigDriver
 
     const delay =
       DATABASE_CONFIG_DRIVER_INITIAL_RETRY_DELAY *
-      Math.pow(2, this.retryAttempts);
-
-    this.retryAttempts++;
+      Math.pow(2, this.retryAttempts - 1);
 
     if (this.retryTimer) {
       clearTimeout(this.retryTimer);
