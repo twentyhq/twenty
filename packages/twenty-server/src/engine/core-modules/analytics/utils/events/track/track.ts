@@ -17,7 +17,7 @@ export type GenericTrackEvent<E extends string = string> = {
   workspaceId?: string;
 };
 
-export const eventsRegistry = new Map<string, z.ZodObject<any>>();
+export const eventsRegistry = new Map<string, z.ZodSchema<any>>();
 
 export function registerEvent<E extends string, S extends z.ZodObject<any>>(
   event: E,

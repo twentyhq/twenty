@@ -44,7 +44,7 @@ export function makeTrackEvent<T extends TrackEventName>(
   return schema.parse({
     type: 'track',
     event,
-    ...common(),
     properties,
+    ...common(),
   });
 }
