@@ -79,7 +79,7 @@ export class BackfillWorkflowNextStepIdsCommand extends ActiveOrSuspendedWorkspa
       for (const workflowRun of workflowRuns) {
         const flow = workflowRun.output?.flow;
 
-        if (!flow) {
+        if (!flow?.steps) {
           continue;
         }
 
