@@ -1,7 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
 import { isQueryParamInitializedState } from '@/app/states/isQueryParamInitializedState';
-import { animateModalState } from '@/auth/states/animateModalState';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/BillingCheckoutSessionDefaultValue';
@@ -45,11 +44,6 @@ export const useInitializeQueryParamState = () => {
                   BILLING_CHECKOUT_SESSION_DEFAULT_VALUE,
                 );
               }
-            },
-
-            animateModal: (value: string) => {
-              const boolValue = value.toLowerCase() === 'true';
-              set(animateModalState, boolValue);
             },
           };
 

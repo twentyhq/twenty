@@ -1,7 +1,6 @@
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { animateModalState } from '@/auth/states/animateModalState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Workspaces, workspacesState } from '@/auth/states/workspaces';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
@@ -67,7 +66,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const setMultiWorkspaceDropdownState = useSetRecoilState(
     multiWorkspaceDropdownState,
   );
-  const setAnimateModal = useSetRecoilState(animateModalState);
 
   const handleChange = async (workspace: Workspaces[0]) => {
     redirectToWorkspaceDomain(getWorkspaceUrl(workspace.workspaceUrls));
@@ -76,7 +74,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const createWorkspace = () => {
     signUpInNewWorkspaceMutation({
       onCompleted: async (data) => {
-        setAnimateModal(false);
         return await redirectToWorkspaceDomain(
           getWorkspaceUrl(data.signUpInNewWorkspace.workspace.workspaceUrls),
           AppPath.Verify,
