@@ -10,6 +10,7 @@ type OnDbEventArgs = {
     objectNameSingular?: string;
     recordId?: string;
   };
+  skip?: boolean;
   onData?: (data: any) => void;
   onError?: (err: any) => void;
   onComplete?: () => void;
@@ -20,8 +21,12 @@ export const useOnDbEvent = ({
   onError,
   onComplete,
   input,
+  skip = false,
 }: OnDbEventArgs) => {
   useEffect(() => {
+    if (skip) {
+      return;
+    }
     const next = (data: any) => onData?.(data);
     const error = (err: any) => onError?.(err);
     const complete = () => onComplete?.();
@@ -43,5 +48,5 @@ export const useOnDbEvent = ({
     return () => {
       unsubscribe();
     };
-  }, [input, onComplete, onData, onError]);
+  }, [input, onComplete, onData, onError, skip]);
 };

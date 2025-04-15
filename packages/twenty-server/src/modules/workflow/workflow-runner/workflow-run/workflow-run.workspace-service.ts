@@ -195,7 +195,7 @@ export class WorkflowRunWorkspaceService {
     await this.emitWorkflowRunUpdatedEvent({
       workflowRunBefore: workflowRunToUpdate,
       diff: partialUpdate,
-      updatedFields: ['status', 'startedAt', 'context', 'output'],
+      updatedFields: ['status', 'endedAt', 'output'],
     });
   }
 
@@ -243,7 +243,7 @@ export class WorkflowRunWorkspaceService {
     await this.emitWorkflowRunUpdatedEvent({
       workflowRunBefore: workflowRunToUpdate,
       diff: partialUpdate,
-      updatedFields: ['status', 'startedAt', 'context', 'output'],
+      updatedFields: ['context', 'output'],
     });
   }
 
@@ -284,7 +284,7 @@ export class WorkflowRunWorkspaceService {
       (existingStep) => (step.id === existingStep.id ? step : existingStep),
     );
 
-    return workflowRunRepository.update(workflowRunToUpdate.id, {
+    const partialUpdate = {
       output: {
         ...(workflowRunToUpdate.output ?? {}),
         flow: {
@@ -292,6 +292,14 @@ export class WorkflowRunWorkspaceService {
           steps: updatedSteps,
         },
       },
+    };
+
+    await workflowRunRepository.update(workflowRunToUpdate.id, partialUpdate);
+
+    await this.emitWorkflowRunUpdatedEvent({
+      workflowRunBefore: workflowRunToUpdate,
+      diff: partialUpdate,
+      updatedFields: ['output'],
     });
   }
 

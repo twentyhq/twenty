@@ -12,7 +12,7 @@ export const WorkflowRunVisualizer = ({
 }: {
   workflowRunId: string;
 }) => {
-  const workflowRun = useWorkflowRun({ workflowRunId });
+  const workflowRun = useWorkflowRun({ workflowRunId, trackUpdates: true });
 
   if (!isDefined(workflowRun)) {
     return null;
