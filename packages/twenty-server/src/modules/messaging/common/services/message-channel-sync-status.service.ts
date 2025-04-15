@@ -177,7 +177,9 @@ export class MessageChannelSyncStatusService {
   public async markAsFailedAndFlushMessagesToImport(
     messageChannelIds: string[],
     workspaceId: string,
-    syncStatus: MessageChannelSyncStatus,
+    syncStatus:
+      | MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS
+      | MessageChannelSyncStatus.FAILED_UNKNOWN,
   ) {
     if (!messageChannelIds.length) {
       return;
