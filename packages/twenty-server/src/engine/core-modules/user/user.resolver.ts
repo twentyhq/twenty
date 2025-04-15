@@ -222,6 +222,7 @@ export class UserResolver {
       ]),
     );
 
+    // We could also use the cache here
     rolesByUserWorkspaces = await this.userRoleService.getRolesByUserWorkspaces(
       {
         userWorkspaceIds: userWorkspaces.map(

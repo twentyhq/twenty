@@ -21,8 +21,8 @@ export class WorkspaceDataSource extends DataSource {
   featureFlagMap: FeatureFlagMap;
   userWorkspaceRoleMapVersion: string;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
-  rolesPermissionsVersion?: string;
-  permissionsPerRoleId?: ObjectRecordsPermissionsByRoleId;
+  rolesPermissionsVersion: string;
+  permissionsPerRoleId: ObjectRecordsPermissionsByRoleId;
 
   constructor(
     internalContext: WorkspaceInternalContext,
@@ -31,8 +31,8 @@ export class WorkspaceDataSource extends DataSource {
     featureFlagMap: FeatureFlagMap,
     userWorkspaceRoleMapVersion: string,
     userWorkspaceRoleMap: UserWorkspaceRoleMap,
-    rolesPermissionsVersion?: string,
-    permissionsPerRoleId?: ObjectRecordsPermissionsByRoleId,
+    rolesPermissionsVersion: string,
+    permissionsPerRoleId: ObjectRecordsPermissionsByRoleId,
   ) {
     super(options);
     this.internalContext = internalContext;

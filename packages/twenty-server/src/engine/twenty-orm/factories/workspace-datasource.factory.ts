@@ -7,7 +7,6 @@ import { EntitySchema } from 'typeorm';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
@@ -64,15 +63,11 @@ export class WorkspaceDatasourceFactory {
         { workspaceId },
       );
 
-    const isPermissionsV2Enabled =
-      cachedFeatureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
-
     const {
       data: cachedRolesPermissions,
       version: cachedRolesPermissionsVersion,
     } = await this.getRolesPermissionsFromCache({
       workspaceId,
-      isPermissionsV2Enabled,
     });
 
     const {
@@ -212,13 +207,11 @@ export class WorkspaceDatasourceFactory {
       throw new Error(`Failed to create WorkspaceDataSource for ${cacheKey}`);
     }
 
-    if (isPermissionsV2Enabled) {
-      await this.updateWorkspaceDataSourceRolesPermissionsIfNeeded({
-        workspaceDataSource,
-        cachedRolesPermissionsVersion,
-        cachedRolesPermissions,
-      });
-    }
+    await this.updateWorkspaceDataSourceRolesPermissionsIfNeeded({
+      workspaceDataSource,
+      cachedRolesPermissionsVersion,
+      cachedRolesPermissions,
+    });
 
     await this.updateWorkspaceDataSourceUserWorkspaceRoleMapIfNeeded({
       workspaceDataSource,
@@ -237,24 +230,10 @@ export class WorkspaceDatasourceFactory {
 
   private async getRolesPermissionsFromCache({
     workspaceId,
-    isPermissionsV2Enabled,
   }: {
     workspaceId: string;
-    isPermissionsV2Enabled?: boolean;
-  }): Promise<
-    CacheResult<
-      string | undefined,
-      ObjectRecordsPermissionsByRoleId | undefined
-    >
-  > {
-    if (!isPermissionsV2Enabled) {
-      return { version: undefined, data: undefined };
-    }
-
-    return getFromCacheWithRecompute<
-      string | undefined,
-      ObjectRecordsPermissionsByRoleId | undefined
-    >({
+  }): Promise<CacheResult<string, ObjectRecordsPermissionsByRoleId>> {
+    return getFromCacheWithRecompute<string, ObjectRecordsPermissionsByRoleId>({
       workspaceId,
       getCacheData: () =>
         this.workspacePermissionsCacheStorageService.getRolesPermissions(
@@ -325,8 +304,8 @@ export class WorkspaceDatasourceFactory {
     cachedRolesPermissions,
   }: {
     workspaceDataSource: WorkspaceDataSource;
-    cachedRolesPermissionsVersion: string | undefined;
-    cachedRolesPermissions: ObjectRecordsPermissionsByRoleId | undefined;
+    cachedRolesPermissionsVersion: string;
+    cachedRolesPermissions: ObjectRecordsPermissionsByRoleId;
   }): Promise<void> {
     this.updateWorkspaceDataSourceIfNeeded({
       workspaceDataSource,

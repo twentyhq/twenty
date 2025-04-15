@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -18,6 +19,7 @@ import { WorkspacePermissionsCacheService } from './workspace-permissions-cache.
       'metadata',
     ),
     WorkspaceCacheStorageModule,
+    FeatureFlagModule,
   ],
   providers: [
     WorkspacePermissionsCacheService,

@@ -307,10 +307,11 @@ export class RoleService {
     workspaceId: string;
     defaultRoleId: string;
   }): Promise<void> {
-    const userWorkspaceIds = await this.getUserWorkspaceIdsForRole(
-      roleId,
-      workspaceId,
-    );
+    const userWorkspaceIds =
+      await this.userRoleService.getUserWorkspaceIdsAssignedToRole(
+        roleId,
+        workspaceId,
+      );
 
     await Promise.all(
       userWorkspaceIds.map((userWorkspaceId) =>
@@ -321,24 +322,6 @@ export class RoleService {
         }),
       ),
     );
-  }
-
-  private async getUserWorkspaceIdsForRole(
-    roleId: string,
-    workspaceId: string,
-  ): Promise<string[]> {
-    return this.userWorkspaceRoleRepository
-      .find({
-        where: {
-          roleId: roleId,
-          workspaceId,
-        },
-      })
-      .then((userWorkspaceRoles) =>
-        userWorkspaceRoles.map(
-          (userWorkspaceRole) => userWorkspaceRole.userWorkspaceId,
-        ),
-      );
   }
 
   private async getRole(
