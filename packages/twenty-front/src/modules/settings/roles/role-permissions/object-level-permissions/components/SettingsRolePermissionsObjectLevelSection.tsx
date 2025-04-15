@@ -8,6 +8,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 
@@ -71,9 +72,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
       <Table>
         <SettingsRolePermissionsObjectLevelTableHeader />
         <StyledTableRows>
-          {objectPermissions?.length === 0 ? (
-            <StyledNoOverride>{t`No overrides found`}</StyledNoOverride>
-          ) : (
+          {isDefined(objectPermissions) && objectPermissions?.length > 0 ? (
             objectPermissions?.map((objectPermission) => (
               <SettingsRolePermissionsObjectLevelTableRow
                 key={objectPermission.id}
@@ -83,6 +82,8 @@ export const SettingsRolePermissionsObjectLevelSection = ({
                 }
               />
             ))
+          ) : (
+            <StyledNoOverride>{t`No overrides found`}</StyledNoOverride>
           )}
         </StyledTableRows>
       </Table>
