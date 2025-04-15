@@ -7,10 +7,10 @@ import { Separator } from '@/settings/components/Separator';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { Select } from '@/ui/input/components/Select';
-import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
 import { useLingui } from '@lingui/react/macro';
-import { getNumberDataModelSelectOptions } from '@/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions';
 import { IconDecimal, IconEye } from 'twenty-ui/display';
+import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
+import { NUMBER_DATA_MODEL_SELECT_OPTIONS } from '@/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions';
 
 export const settingsDataModelFieldNumberFormSchema = z.object({
   settings: numberFieldDefaultValueSchema,
@@ -63,7 +63,10 @@ export const SettingsDataModelFieldNumberForm = ({
                 onChange={(value) => onChange({ type: value, decimals: count })}
                 disabled={disabled}
                 needIconCheck={false}
-                options={getNumberDataModelSelectOptions(t)}
+                options={NUMBER_DATA_MODEL_SELECT_OPTIONS.map((option) => ({
+                  ...option,
+                  label: t(option.label),
+                }))}
               />
             </SettingsOptionCardContentSelect>
             <Separator />

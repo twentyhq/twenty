@@ -1,14 +1,15 @@
+import { msg } from '@lingui/core/macro';
 import { IconCheck, IconX } from 'twenty-ui/display';
 
-export const getBooleanDataModelSelectOptions = (t: (key: TemplateStringsArray) => string) => [
-    {
+export const BOOLEAN_DATA_MODEL_SELECT_OPTIONS = [
+  {
     value: true,
-    label: t`True`,
+    label: msg`True`,
     Icon: IconCheck,
-    },
-    {
+  },
+  {
     value: false,
-    label: t`False`,
+    label: msg`False`,
     Icon: IconX,
-    },
+  },
 ];

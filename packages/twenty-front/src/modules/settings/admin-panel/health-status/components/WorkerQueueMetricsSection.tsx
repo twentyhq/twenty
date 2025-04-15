@@ -1,6 +1,7 @@
+import { WORKER_QUEUE_METRICS_SELECT_OPTIONS } from '@/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions';
 import { Select } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
@@ -9,7 +10,6 @@ import {
   QueueMetricsTimeRange,
 } from '~/generated/graphql';
 import { WorkerMetricsGraph } from './WorkerMetricsGraph';
-import { getWorkerQueueMetricsSelectOptions } from '@/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions';
 
 type WorkerQueueMetricsSectionProps = {
   queue: AdminPanelWorkerQueueHealth;
@@ -30,7 +30,6 @@ const StyledContainer = styled.div`
 export const WorkerQueueMetricsSection = ({
   queue,
 }: WorkerQueueMetricsSectionProps) => {
-  const { t } = useLingui();
   const [timeRange, setTimeRange] = useState(QueueMetricsTimeRange.OneHour);
 
   return (
@@ -41,7 +40,10 @@ export const WorkerQueueMetricsSection = ({
           <Select
             dropdownId={`timerange-${queue.queueName}`}
             value={timeRange}
-            options={getWorkerQueueMetricsSelectOptions(t)}
+            options={WORKER_QUEUE_METRICS_SELECT_OPTIONS.map((option) => ({
+              ...option,
+              label: t(option.label),
+            }))}
             onChange={setTimeRange}
             needIconCheck
             selectSizeVariant="small"

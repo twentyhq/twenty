@@ -1,14 +1,15 @@
+import { msg } from '@lingui/core/macro';
 import { IconNumber9, IconPercentage } from 'twenty-ui/display';
 
-export const getNumberDataModelSelectOptions = (t: (key: TemplateStringsArray) => string) => [
-    {
+export const NUMBER_DATA_MODEL_SELECT_OPTIONS = [
+  {
     Icon: IconNumber9,
-    label: t`Number`,
+    label: msg`Number`,
     value: 'number',
-    },
-    {
+  },
+  {
     Icon: IconPercentage,
-    label: t`Percentage`,
+    label: msg`Percentage`,
     value: 'percentage',
-    },
+  },
 ];

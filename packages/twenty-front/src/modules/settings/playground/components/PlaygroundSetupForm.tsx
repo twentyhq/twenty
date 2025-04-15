@@ -1,4 +1,4 @@
-import { getPlaygroundSetupSelectOptions } from '@/settings/playground/constants/PlaygroundSetupSelectOptions';
+import { PLAYGROUND_SETUP_SELECT_OPTIONS } from '@/settings/playground/constants/PlaygroundSetupSelectOptions';
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { PlaygroundTypes } from '@/settings/playground/types/PlaygroundTypes';
@@ -10,12 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
-import {
-  IconApi,
-  IconBracketsAngle,
-  IconBrandGraphql,
-  IconFolderRoot,
-} from 'twenty-ui/display';
+import { IconApi, IconBrandGraphql } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { z } from 'zod';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -138,7 +133,10 @@ export const PlaygroundSetupForm = () => {
           <Select
             dropdownId="schema"
             label={t`Schema`}
-            options={getPlaygroundSetupSelectOptions(t)}
+            options={PLAYGROUND_SETUP_SELECT_OPTIONS.map((option) => ({
+              ...option,
+              label: t(option.label),
+            }))}
             value={value}
             onChange={onChange}
           />

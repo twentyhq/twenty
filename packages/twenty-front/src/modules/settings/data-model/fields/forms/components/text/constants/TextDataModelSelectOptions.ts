@@ -1,22 +1,24 @@
-export const getTextDataModelSelectOptions = (t: (key: TemplateStringsArray) => string) => [
-    {
-    label: t`Deactivated`,
+import { msg } from '@lingui/core/macro';
+
+export const TEXT_DATA_MODEL_SELECT_OPTIONS = [
+  {
+    label: msg`Deactivated`,
     value: 0,
-    },
-    {
-    label: t`First 2 lines`,
+  },
+  {
+    label: msg`First 2 lines`,
     value: 2,
-    },
-    {
-    label: t`First 5 lines`,
+  },
+  {
+    label: msg`First 5 lines`,
     value: 5,
-    },
-    {
-    label: t`First 10 lines`,
+  },
+  {
+    label: msg`First 10 lines`,
     value: 10,
-    },
-    {
-    label: t`All lines`,
+  },
+  {
+    label: msg`All lines`,
     value: 99,
-    },
+  },
 ];

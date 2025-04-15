@@ -2,11 +2,11 @@ import { Controller, useFormContext } from 'react-hook-form';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
+import { TEXT_DATA_MODEL_SELECT_OPTIONS } from '@/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions';
 import { Select } from '@/ui/input/components/Select';
-import { z } from 'zod';
-import { IconTextWrap } from 'twenty-ui/display';
-import { getTextDataModelSelectOptions } from '@/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions';
 import { useLingui } from '@lingui/react/macro';
+import { IconTextWrap } from 'twenty-ui/display';
+import { z } from 'zod';
 
 type SettingsDataModelFieldTextFormProps = {
   disabled?: boolean;
@@ -57,7 +57,10 @@ export const SettingsDataModelFieldTextForm = ({
                 value={displayedMaxRows}
                 onChange={(value) => onChange({ displayedMaxRows: value })}
                 disabled={disabled}
-                options={getTextDataModelSelectOptions(t)}
+                options={TEXT_DATA_MODEL_SELECT_OPTIONS.map((option) => ({
+                  ...option,
+                  label: t(option.label),
+                }))}
                 selectSizeVariant="small"
               />
             </SettingsOptionCardContentSelect>
