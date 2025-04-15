@@ -1,11 +1,10 @@
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useGetIsSomeCellInEditModeState } from '@/object-record/record-table/hooks/internal/useGetIsSomeCellInEditMode';
 import { useSetHasUserSelectedAllRows } from '@/object-record/record-table/hooks/internal/useSetAllRowSelectedState';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
-import { isFocusUsingMouseState } from '@/object-record/record-table/states/isFocusUsingMouseState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -154,8 +153,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     const disableFocus = useDisableFocus(recordTableId);
     const setHotkeyScope = useSetHotkeyScope();
 
-    const setIsFocusUsingMouseState = useSetRecoilState(isFocusUsingMouseState);
-
     useScopedHotkeys(
       [Key.ArrowUp, `${Key.Shift}+${Key.Enter}`],
       () => {
@@ -178,7 +175,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       [Key.ArrowLeft, `${Key.Shift}+${Key.Tab}`],
       () => {
         moveLeft();
-        setIsFocusUsingMouseState(false);
       },
       TableHotkeyScope.TableFocus,
       [moveLeft],
@@ -188,7 +184,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       [Key.ArrowRight, Key.Tab],
       () => {
         moveRight();
-        setIsFocusUsingMouseState(false);
       },
       TableHotkeyScope.TableFocus,
       [moveRight],

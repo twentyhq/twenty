@@ -7,7 +7,6 @@ import { useIsFieldClearable } from '@/object-record/record-field/hooks/useIsFie
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
-import { isFocusUsingMouseState } from '@/object-record/record-table/states/isFocusUsingMouseState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 
@@ -28,7 +27,6 @@ export const RecordTableCellFocusModeHotkeysSetterEffect = () => {
   const toggleEditOnlyInput = useToggleEditOnlyInput();
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const isFocusUsingMouse = useRecoilValue(isFocusUsingMouseState);
   const clearField = useClearField();
 
   useEffect(() => {
@@ -36,10 +34,8 @@ export const RecordTableCellFocusModeHotkeysSetterEffect = () => {
       return;
     }
 
-    if (!isFocusUsingMouse) {
-      scrollRef.current?.scrollIntoView({ block: 'nearest' });
-    }
-  }, [currentHotkeyScope.scope, isFocusUsingMouse]);
+    scrollRef.current?.scrollIntoView({ block: 'nearest' });
+  }, [currentHotkeyScope.scope]);
 
   useScopedHotkeys(
     [Key.Backspace, Key.Delete],

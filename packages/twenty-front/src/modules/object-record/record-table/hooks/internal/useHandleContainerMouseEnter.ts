@@ -3,7 +3,6 @@ import { useRecoilCallback } from 'recoil';
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
 import { isFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isFocusOnTableCellComponentFamilyState';
-import { isFocusUsingMouseState } from '@/object-record/record-table/states/isFocusUsingMouseState';
 import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -37,7 +36,7 @@ export const useHandleContainerMouseEnter = ({
   );
 
   const handleContainerMouseEnter = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ snapshot }) =>
       ({ cellPosition }: HandleContainerMouseEnterArgs) => {
         const isFocusOnTableCell = getSnapshotValue(
           snapshot,
@@ -56,7 +55,6 @@ export const useHandleContainerMouseEnter = ({
 
         if (!isSomeCellInEditMode && !isFocusOnTableCell) {
           moveFocusToCurrentCell(cellPosition);
-          set(isFocusUsingMouseState, true);
         }
       },
     [
