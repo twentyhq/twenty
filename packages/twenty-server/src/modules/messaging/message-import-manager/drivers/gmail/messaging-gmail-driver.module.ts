@@ -18,6 +18,7 @@ import { GmailGetMessageListService } from 'src/modules/messaging/message-import
 import { GmailGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-messages.service';
 import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
+import { OAuth2ClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/oauth2-client.provider';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
   ],
   providers: [
     GmailClientProvider,
+    OAuth2ClientProvider,
     GmailGetHistoryService,
     GmailFetchByBatchService,
     GmailGetMessagesService,
@@ -46,6 +48,7 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     GmailGetMessagesService,
     GmailGetMessageListService,
     GmailClientProvider,
+    OAuth2ClientProvider,
   ],
 })
 export class MessagingGmailDriverModule {}
