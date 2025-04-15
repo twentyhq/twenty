@@ -137,8 +137,12 @@ type Story = StoryObj<typeof NumberFieldInputWithContext>;
 export const Default: Story = {};
 
 export const Enter: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
     expect(enterJestFn).toHaveBeenCalledTimes(0);
+
+    await canvas.findByPlaceholderText('Enter number');
     await userEvent.keyboard('{enter}');
 
     await waitFor(() => {
@@ -148,9 +152,12 @@ export const Enter: Story = {
 };
 
 export const Escape: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
     expect(escapeJestfn).toHaveBeenCalledTimes(0);
 
+    await canvas.findByPlaceholderText('Enter number');
     await userEvent.keyboard('{esc}');
 
     await waitFor(() => {
@@ -167,6 +174,7 @@ export const ClickOutside: Story = {
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
 
+    await canvas.findByPlaceholderText('Enter number');
     await userEvent.click(emptyDiv);
 
     await waitFor(() => {
@@ -176,9 +184,12 @@ export const ClickOutside: Story = {
 };
 
 export const Tab: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
     expect(tabJestFn).toHaveBeenCalledTimes(0);
 
+    await canvas.findByPlaceholderText('Enter number');
     await userEvent.keyboard('{tab}');
 
     await waitFor(() => {
@@ -188,9 +199,12 @@ export const Tab: Story = {
 };
 
 export const ShiftTab: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
     expect(shiftTabJestFn).toHaveBeenCalledTimes(0);
 
+    await canvas.findByPlaceholderText('Enter number');
     await userEvent.keyboard('{shift>}{tab}');
 
     await waitFor(() => {
