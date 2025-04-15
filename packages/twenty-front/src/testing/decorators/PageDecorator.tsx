@@ -20,6 +20,7 @@ import { ClientConfigProvider } from '~/modules/client-config/components/ClientC
 import { UserProvider } from '~/modules/users/components/UserProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
+import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
@@ -118,6 +119,7 @@ const Providers = () => {
                       </HelmetProvider>
                     </FullHeightStorybookLayout>
                   </ObjectMetadataItemsProvider>
+                  <MainContextStoreProvider />
                 </ApolloMetadataClientMockedProvider>
               </UserProvider>
             </ClientConfigProvider>
