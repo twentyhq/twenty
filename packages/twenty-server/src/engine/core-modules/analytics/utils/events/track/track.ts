@@ -17,11 +17,11 @@ export type GenericTrackEvent<E extends string = string> = {
   workspaceId?: string;
 };
 
-export const eventsRegistry = new Map<string, z.ZodSchema<any>>();
+export const eventsRegistry = new Map<string, z.ZodObject<any>>();
 
-export function registerEvent<E extends string, S extends z.ZodSchema<any>>(
+export function registerEvent<E extends string, S extends z.ZodObject<any>>(
   event: E,
   schema: S,
 ): void {
-  eventsRegistry.set(event, schema);
+  eventsRegistry.set(event, genericTrackSchema.merge(schema));
 }
