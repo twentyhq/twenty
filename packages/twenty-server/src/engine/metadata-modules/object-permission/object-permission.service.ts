@@ -22,7 +22,7 @@ export class ObjectPermissionService {
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly WorkspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   public async upsertObjectPermission({
@@ -54,7 +54,7 @@ export class ObjectPermissionService {
         throw new Error('Failed to upsert object permission');
       }
 
-      await this.WorkspacePermissionsCacheService.recomputeRolesPermissionsCache(
+      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
         {
           workspaceId,
         },
