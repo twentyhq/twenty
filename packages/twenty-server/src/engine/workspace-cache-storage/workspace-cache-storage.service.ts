@@ -286,6 +286,18 @@ export class WorkspaceCacheStorageService {
     );
 
     await this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMap}:${workspaceId}`,
+    );
+
+    await this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMapVersion}:${workspaceId}`,
+    );
+
+    await this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMapOngoingCachingLock}:${workspaceId}`,
+    );
+
+    await this.cacheStorageService.del(
       `${WorkspaceCacheKeys.FeatureFlagMap}:${workspaceId}`,
     );
 

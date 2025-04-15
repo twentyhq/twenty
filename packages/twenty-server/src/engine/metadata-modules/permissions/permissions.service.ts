@@ -130,12 +130,21 @@ export class PermissionsService {
       return true;
     }
 
-    // TODO check flag
-    const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
+    const isPermissionsV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsPermissionsV2Enabled,
+        workspaceId,
+      );
 
-    return settingPermissions.some(
-      (settingPermission) => settingPermission.setting === setting,
-    );
+    if (isPermissionsV2Enabled) {
+      const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
+
+      return settingPermissions.some(
+        (settingPermission) => settingPermission.setting === setting,
+      );
+    } else {
+      return false;
+    }
   }
 
   public async userHasObjectRecordsPermission({
