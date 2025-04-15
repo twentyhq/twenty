@@ -10,7 +10,6 @@ import { visibleTableColumnsComponentSelector } from '@/object-record/record-tab
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import ReactDOM from 'react-dom';
-import { BORDER_COMMON } from 'twenty-ui/theme';
 
 const StyledRecordTableCellHoveredPortal = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
@@ -19,18 +18,6 @@ const StyledRecordTableCellHoveredPortal = styled.div`
   position: absolute;
   top: 0;
   width: 100%;
-`;
-
-const StyledRecordTableCellHoveredPortalContent = styled.div`
-  align-items: center;
-  box-sizing: border-box;
-  cursor: pointer;
-  display: flex;
-  height: 32px;
-  position: relative;
-  user-select: none;
-
-  border-radius: ${BORDER_COMMON.radius.sm};
 `;
 
 export const RecordTableCellHoveredPortal = () => {
@@ -75,9 +62,7 @@ export const RecordTableCellHoveredPortal = () => {
             }}
           >
             <RecordTableCellFieldContextWrapper>
-              <StyledRecordTableCellHoveredPortalContent>
-                <RecordTableCellHoveredPortalContent />
-              </StyledRecordTableCellHoveredPortalContent>
+              <RecordTableCellHoveredPortalContent />
             </RecordTableCellFieldContextWrapper>
           </RecordTableCellContext.Provider>
         </RecordTableRowContextProvider>

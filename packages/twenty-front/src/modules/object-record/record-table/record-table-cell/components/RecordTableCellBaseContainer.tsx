@@ -6,7 +6,7 @@ import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus'
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
-import { BORDER_COMMON, ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledBaseContainer = styled.div<{
   fontColorExtraLight: string;
@@ -21,9 +21,6 @@ const StyledBaseContainer = styled.div<{
   height: 32px;
   position: relative;
   user-select: none;
-
-  border-radius: ${({ isReadOnly }) =>
-    isReadOnly ? 'none' : BORDER_COMMON.radius.sm};
 `;
 
 export const RecordTableCellBaseContainer = ({
