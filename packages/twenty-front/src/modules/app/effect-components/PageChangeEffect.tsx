@@ -26,6 +26,7 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
+import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
 import { AnalyticsType } from '~/generated/graphql';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
@@ -45,6 +46,8 @@ export const PageChangeEffect = () => {
     usePageChangeEffectNavigateLocation();
 
   const eventTracker = useEventTracker();
+
+  const { initializeQueryParamState } = useInitializeQueryParamState();
 
   //TODO: refactor useResetTableRowSelection hook to not throw when the argument `recordTableId` is an empty string
   // - replace CoreObjectNamePlural.Person
@@ -66,10 +69,12 @@ export const PageChangeEffect = () => {
   }, [location, previousLocation, executeTasksOnAnyLocationChange]);
 
   useEffect(() => {
+    initializeQueryParamState();
+
     if (isDefined(pageChangeEffectNavigateLocation)) {
       navigate(pageChangeEffectNavigateLocation);
     }
-  }, [navigate, pageChangeEffectNavigateLocation]);
+  }, [navigate, pageChangeEffectNavigateLocation, initializeQueryParamState]);
 
   useEffect(() => {
     const isLeavingRecordIndexPage = !!matchPath(
