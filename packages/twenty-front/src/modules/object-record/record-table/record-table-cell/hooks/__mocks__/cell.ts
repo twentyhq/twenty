@@ -35,6 +35,5 @@ export const recordTableCellContextValue: RecordTableCellContextValue = {
     row: 2,
     column: 3,
   },
-  hasFocus: false,
   isInEditMode: false,
 };

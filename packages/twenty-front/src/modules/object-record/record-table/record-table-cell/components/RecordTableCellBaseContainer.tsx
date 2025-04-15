@@ -9,7 +9,6 @@ import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/rec
 import { BORDER_COMMON, ThemeContext } from 'twenty-ui/theme';
 
 const StyledBaseContainer = styled.div<{
-  hasFocus: boolean;
   fontColorExtraLight: string;
   fontColorMedium: string;
   backgroundColorTransparentSecondary: string;
@@ -23,23 +22,8 @@ const StyledBaseContainer = styled.div<{
   position: relative;
   user-select: none;
 
-  background: ${({ hasFocus, backgroundColorTransparentSecondary }) =>
-    hasFocus ? backgroundColorTransparentSecondary : 'none'};
-
-  border-radius: ${({ hasFocus, isReadOnly }) =>
-    hasFocus && !isReadOnly ? BORDER_COMMON.radius.sm : 'none'};
-
-  outline: ${({
-    hasFocus,
-    fontColorExtraLight,
-    fontColorMedium,
-    isReadOnly,
-  }) =>
-    hasFocus
-      ? isReadOnly
-        ? `1px solid ${fontColorMedium}`
-        : `1px solid ${fontColorExtraLight}`
-      : 'none'};
+  border-radius: ${({ isReadOnly }) =>
+    isReadOnly ? 'none' : BORDER_COMMON.radius.sm};
 `;
 
 export const RecordTableCellBaseContainer = ({
@@ -52,18 +36,16 @@ export const RecordTableCellBaseContainer = ({
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const { theme } = useContext(ThemeContext);
 
-  const { hasFocus, cellPosition } = useContext(RecordTableCellContext);
+  const { cellPosition } = useContext(RecordTableCellContext);
 
   const { onMoveFocusToCurrentCell, onCellMouseEnter } =
     useRecordTableBodyContextOrThrow();
 
   const handleContainerMouseMove = () => {
     setIsFocused(true);
-    if (!hasFocus) {
-      onCellMouseEnter({
-        cellPosition,
-      });
-    }
+    onCellMouseEnter({
+      cellPosition,
+    });
   };
 
   const handleContainerMouseLeave = () => {
@@ -71,10 +53,8 @@ export const RecordTableCellBaseContainer = ({
   };
 
   const handleContainerClick = () => {
-    if (!hasFocus) {
-      onMoveFocusToCurrentCell(cellPosition);
-      openTableCell();
-    }
+    onMoveFocusToCurrentCell(cellPosition);
+    openTableCell();
   };
 
   return (
@@ -87,7 +67,6 @@ export const RecordTableCellBaseContainer = ({
       }
       fontColorExtraLight={theme.font.color.extraLight}
       fontColorMedium={theme.border.color.medium}
-      hasFocus={hasFocus}
       isReadOnly={isReadOnly ?? false}
     >
       {children}

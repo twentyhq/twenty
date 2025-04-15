@@ -8,7 +8,6 @@ export type RecordTableCellContextValue = {
   columnDefinition: ColumnDefinition<FieldMetadata>;
   columnIndex: number;
   isInEditMode: boolean;
-  hasFocus: boolean;
   cellPosition: TableCellPosition;
 };
 

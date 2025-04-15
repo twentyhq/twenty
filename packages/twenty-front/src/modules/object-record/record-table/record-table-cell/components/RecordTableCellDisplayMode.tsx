@@ -13,7 +13,7 @@ export const RecordTableCellDisplayMode = ({
 }: React.PropsWithChildren) => {
   const { recordId, isReadOnly } = useContext(FieldContext);
 
-  const { columnIndex, hasFocus } = useContext(RecordTableCellContext);
+  const { columnIndex } = useContext(RecordTableCellContext);
 
   const isMobile = useIsMobile();
 
@@ -25,10 +25,7 @@ export const RecordTableCellDisplayMode = ({
   const isFirstColumn = columnIndex === 0;
 
   const showButton =
-    hasFocus &&
-    !isFieldInputOnly &&
-    !isReadOnly &&
-    !(isMobile && isFirstColumn);
+    false && !isFieldInputOnly && !isReadOnly && !(isMobile && isFirstColumn);
 
   const handleActionMenuDropdown = (event: React.MouseEvent) => {
     onActionMenuDropdownOpened(event, recordId);
@@ -43,7 +40,6 @@ export const RecordTableCellDisplayMode = ({
   return (
     <>
       <RecordTableCellDisplayContainer
-        focus={hasFocus}
         onContextMenu={handleActionMenuDropdown}
         onClick={handleClick}
       >
