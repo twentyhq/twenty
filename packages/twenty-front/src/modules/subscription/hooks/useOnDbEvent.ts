@@ -1,20 +1,47 @@
-import { useApolloClient, useSubscription } from '@apollo/client';
-import { DatabaseEventAction } from '~/generated/graphql';
+import { useEffect } from 'react';
+import { createClient, Client } from 'graphql-sse';
 import { ON_DB_EVENT } from '@/subscription/graphql/subscriptions/onDbEvent';
+import { DatabaseEventAction } from '~/generated/graphql';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 type OnDbEventArgs = {
-  action?: DatabaseEventAction;
-  objectNameSingular?: string;
-  recordId?: string;
-  onData: (data: any) => void;
+  input: {
+    action?: DatabaseEventAction;
+    objectNameSingular?: string;
+    recordId?: string;
+  };
+  onData?: (data: any) => void;
+  onError?: (err: any) => void;
+  onComplete?: () => void;
 };
 
-export const useOnDbEvent = ({ onData, ...input }: OnDbEventArgs) => {
-  const apolloClient = useApolloClient();
+export const useOnDbEvent = ({
+  onData,
+  onError,
+  onComplete,
+  input,
+}: OnDbEventArgs) => {
+  useEffect(() => {
+    const next = (data: any) => onData?.(data);
+    const error = (err: any) => onError?.(err);
+    const complete = () => onComplete?.();
+    const sseClient: Client = createClient({
+      url: `${REACT_APP_SERVER_BASE_URL}/graphql`,
+    });
+    const unsubscribe = sseClient.subscribe(
+      {
+        query: ON_DB_EVENT.loc?.source.body || '',
+        variables: { input },
+      },
+      {
+        next,
+        error,
+        complete,
+      },
+    );
 
-  useSubscription(ON_DB_EVENT, {
-    client: apolloClient,
-    onData,
-    variables: { input },
-  });
+    return () => {
+      unsubscribe();
+    };
+  }, [input, onComplete, onData, onError]);
 };
