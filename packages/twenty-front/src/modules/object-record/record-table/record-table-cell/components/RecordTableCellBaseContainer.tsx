@@ -6,13 +6,14 @@ import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus'
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
-import { ThemeContext } from 'twenty-ui/theme';
+import { BORDER_COMMON, ThemeContext } from 'twenty-ui/theme';
 
 const StyledBaseContainer = styled.div<{
   fontColorExtraLight: string;
   fontColorMedium: string;
   backgroundColorTransparentSecondary: string;
   isReadOnly: boolean;
+  borderColorBlue: string;
 }>`
   align-items: center;
   box-sizing: border-box;
@@ -21,6 +22,11 @@ const StyledBaseContainer = styled.div<{
   height: 32px;
   position: relative;
   user-select: none;
+
+  &.focus-mode {
+    border-radius: ${BORDER_COMMON.radius.sm};
+    outline: 1px solid ${({ borderColorBlue }) => borderColorBlue};
+  }
 `;
 
 export const RecordTableCellBaseContainer = ({
@@ -64,6 +70,7 @@ export const RecordTableCellBaseContainer = ({
       }
       fontColorExtraLight={theme.font.color.extraLight}
       fontColorMedium={theme.border.color.medium}
+      borderColorBlue={theme.adaptiveColors.blue4}
       isReadOnly={isReadOnly ?? false}
       id={`record-table-cell-${cellPosition.column}-${cellPosition.row}`}
     >

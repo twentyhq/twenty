@@ -34,6 +34,18 @@ export const useSetFocusPosition = (recordTableId?: string) => {
         set(focusPositionState, newPosition);
 
         set(isFocusOnTableCellFamilyState(newPosition), true);
+
+        document
+          .getElementById(
+            `record-table-cell-${newPosition.column}-${newPosition.row}`,
+          )
+          ?.classList.add('focus-mode');
+
+        document
+          .getElementById(
+            `record-table-cell-${currentPosition.column}-${currentPosition.row}`,
+          )
+          ?.classList.remove('focus-mode');
       };
     },
     [focusPositionState, isFocusActiveState, isFocusOnTableCellFamilyState],

@@ -9,6 +9,9 @@ import { TableCellPosition } from '@/object-record/record-table/types/TableCellP
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
+import { useSetFocusPosition } from '@/object-record/record-table/hooks/internal/useSetFocusPosition';
+import { isFocusActiveComponentState } from '@/object-record/record-table/states/isFocusActiveComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 export const DEFAULT_CELL_SCOPE: HotkeyScope = {
@@ -35,6 +38,12 @@ export const useOpenRecordTableCellFromCell = () => {
 
   const cellPosition = useCurrentTableCellPosition();
 
+  const setIsFocusActive = useSetRecoilComponentStateV2(
+    isFocusActiveComponentState,
+  );
+
+  const setFocusPosition = useSetFocusPosition();
+
   const openTableCell = (
     initialValue?: string,
     isActionButtonClick = false,
@@ -51,6 +60,10 @@ export const useOpenRecordTableCellFromCell = () => {
       isActionButtonClick,
       isNavigating,
     });
+
+    setIsFocusActive(true);
+
+    setFocusPosition(cellPosition);
   };
 
   return {
