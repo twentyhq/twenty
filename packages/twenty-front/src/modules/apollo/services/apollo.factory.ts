@@ -33,7 +33,6 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   currentWorkspaceMember: CurrentWorkspaceMember | null;
   extraLinks?: ApolloLink[];
   isDebugMode?: boolean;
-  wsUri?: string;
 }
 
 export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
