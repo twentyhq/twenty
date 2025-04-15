@@ -154,9 +154,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     const disableFocus = useDisableFocus(recordTableId);
     const setHotkeyScope = useSetHotkeyScope();
 
-    const setIsFocusUsingMouseState = useSetRecoilState(
-      isFocusUsingMouseState,
-    );
+    const setIsFocusUsingMouseState = useSetRecoilState(isFocusUsingMouseState);
 
     useScopedHotkeys(
       [Key.ArrowUp, `${Key.Shift}+${Key.Enter}`],

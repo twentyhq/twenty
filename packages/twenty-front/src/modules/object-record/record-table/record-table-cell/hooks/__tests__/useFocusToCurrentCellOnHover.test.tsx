@@ -11,7 +11,7 @@ import {
   recordTableRowContextValue,
   recordTableRowDraggableContextValue,
 } from '@/object-record/record-table/record-table-cell/hooks/__mocks__/cell';
-import { useMoveFocusToCurrentCellOnHover } from '@/object-record/record-table/record-table-cell/hooks/useMoveFocusToCurrentCellOnHover';
+import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 
@@ -98,10 +98,9 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 
 describe('useMoveFocusToCurrentCellOnHover', () => {
   it('should work as expected', () => {
-    const { result } = renderHook(
-      () => useMoveFocusToCurrentCellOnHover('scopeId'),
-      { wrapper: Wrapper },
-    );
+    const { result } = renderHook(() => useMoveHoverToCurrentCell('scopeId'), {
+      wrapper: Wrapper,
+    });
 
     act(() => {
       result.current.moveFocusToCurrentCell({

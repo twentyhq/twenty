@@ -3,7 +3,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useHandleContainerMouseEnter } from '@/object-record/record-table/hooks/internal/useHandleContainerMouseEnter';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { useCloseRecordTableCellInGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellInGroup';
-import { useMoveFocusToCurrentCellOnHover } from '@/object-record/record-table/record-table-cell/hooks/useMoveFocusToCurrentCellOnHover';
+import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import {
   OpenTableCellArgs,
   useOpenRecordTableCellV2,
@@ -41,12 +41,9 @@ export const RecordTableRecordGroupBodyContextProvider = ({
     closeTableCellInGroup();
   };
 
-  const { moveFocusToCurrentCell } =
-    useMoveFocusToCurrentCellOnHover(recordTableId);
+  const { moveFocusToCurrentCell } = useMoveHoverToCurrentCell(recordTableId);
 
-  const handleMoveFocusToCurrentCell = (
-    cellPosition: TableCellPosition,
-  ) => {
+  const handleMoveFocusToCurrentCell = (cellPosition: TableCellPosition) => {
     moveFocusToCurrentCell(cellPosition);
   };
 

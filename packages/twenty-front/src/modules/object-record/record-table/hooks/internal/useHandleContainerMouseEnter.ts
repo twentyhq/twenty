@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useMoveFocusToCurrentCellOnHover } from '@/object-record/record-table/record-table-cell/hooks/useMoveFocusToCurrentCellOnHover';
+import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
 import { isFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isFocusOnTableCellComponentFamilyState';
 import { isFocusUsingMouseState } from '@/object-record/record-table/states/isFocusUsingMouseState';
@@ -18,8 +18,7 @@ export const useHandleContainerMouseEnter = ({
 }: {
   recordTableId: string;
 }) => {
-  const { moveFocusToCurrentCell } =
-    useMoveFocusToCurrentCellOnHover(recordTableId);
+  const { moveFocusToCurrentCell } = useMoveHoverToCurrentCell(recordTableId);
 
   const currentTableCellInEditModePositionState =
     useRecoilComponentCallbackStateV2(

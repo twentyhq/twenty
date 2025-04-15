@@ -1,18 +1,22 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useSetFocus } from '@/object-record/record-table/record-table-cell/hooks/useSetFocus';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
+import { hoverPositionComponentState } from '@/object-record/record-table/states/hoverPositionComponentState';
 import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
-export const useMoveFocusToCurrentCellOnHover = (recordTableId: string) => {
-  const setFocus = useSetFocus(recordTableId);
+export const useMoveHoverToCurrentCell = (recordTableId: string) => {
+  const setHoverPosition = useSetRecoilComponentStateV2(
+    hoverPositionComponentState,
+    recordTableId,
+  );
 
   const currentTableCellInEditModePositionState =
     useRecoilComponentCallbackStateV2(
@@ -54,13 +58,13 @@ export const useMoveFocusToCurrentCellOnHover = (recordTableId: string) => {
         }
 
         if (!isSomeCellInEditMode) {
-          setFocus(cellPosition);
+          setHoverPosition(cellPosition);
         }
       },
     [
       currentTableCellInEditModePositionState,
       isTableCellInEditModeFamilyState,
-      setFocus,
+      setHoverPosition,
     ],
   );
 

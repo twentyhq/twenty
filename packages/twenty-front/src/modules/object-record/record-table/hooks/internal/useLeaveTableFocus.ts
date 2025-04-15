@@ -29,10 +29,7 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
   return useRecoilCallback(
     ({ snapshot }) =>
       () => {
-        const isFocusActive = getSnapshotValue(
-          snapshot,
-          isFocusActiveState,
-        );
+        const isFocusActive = getSnapshotValue(snapshot, isFocusActiveState);
 
         resetTableRowSelection();
 
