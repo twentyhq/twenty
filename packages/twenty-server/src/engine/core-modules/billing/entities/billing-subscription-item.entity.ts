@@ -15,6 +15,7 @@ import {
 
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionItemMetadata } from 'src/engine/core-modules/billing/types/billing-subscription-item-metadata.type';
 @Entity({ name: 'billingSubscriptionItem', schema: 'core' })
 @Unique('IndexOnBillingSubscriptionIdAndStripeProductIdUnique', [
   'billingSubscriptionId',
@@ -40,7 +41,7 @@ export class BillingSubscriptionItem {
   stripeSubscriptionId: string;
 
   @Column({ nullable: false, type: 'jsonb', default: {} })
-  metadata: Stripe.Metadata;
+  metadata: BillingSubscriptionItemMetadata;
 
   @Column({ nullable: true, type: 'jsonb' })
   billingThresholds: Stripe.SubscriptionItem.BillingThresholds;

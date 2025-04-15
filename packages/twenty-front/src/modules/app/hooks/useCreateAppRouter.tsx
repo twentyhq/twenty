@@ -1,6 +1,6 @@
 import { AppRouterProviders } from '@/app/components/AppRouterProviders';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
-import { Verify } from '@/auth/components/Verify';
+import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect';
 
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import indexAppPath from '@/navigation/utils/indexAppPath';
@@ -39,7 +39,7 @@ export const useCreateAppRouter = (
         loader={async () => Promise.resolve(null)}
       >
         <Route element={<DefaultLayout />}>
-          <Route path={AppPath.Verify} element={<Verify />} />
+          <Route path={AppPath.Verify} element={<VerifyLoginTokenEffect />} />
           <Route path={AppPath.VerifyEmail} element={<VerifyEmailEffect />} />
           <Route path={AppPath.SignInUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<SignInUp />} />

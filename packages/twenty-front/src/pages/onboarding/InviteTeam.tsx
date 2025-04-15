@@ -6,6 +6,7 @@ import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -164,7 +165,7 @@ export const InviteTeam = () => {
   );
 
   return (
-    <>
+    <Modal.Content isVerticalCentered isHorizontalCentered>
       <Title>
         <Trans>Invite your team</Trans>
       </Title>
@@ -224,6 +225,6 @@ export const InviteTeam = () => {
           <Trans>Skip</Trans>
         </ClickToActionLink>
       </StyledActionSkipLinkContainer>
-    </>
+    </Modal.Content>
   );
 };

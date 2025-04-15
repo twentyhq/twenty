@@ -2,6 +2,7 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { AppPath } from '@/types/AppPath';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -64,7 +65,7 @@ export const PaymentSuccess = () => {
   };
 
   return (
-    <>
+    <Modal.Content isVerticalCentered isHorizontalCentered>
       <AnimatedEaseIn>
         <StyledCheckContainer color={color}>
           <IconCheck color={color} size={24} stroke={3} />
@@ -79,6 +80,6 @@ export const PaymentSuccess = () => {
           onClick={navigateWithSubscriptionCheck}
         />
       </StyledButtonContainer>
-    </>
+    </Modal.Content>
   );
 };
