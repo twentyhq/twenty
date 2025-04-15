@@ -174,7 +174,6 @@ export type ModalProps = React.PropsWithChildren & {
   className?: string;
   hotkeyScope?: ModalHotkeyScope;
   onEnter?: () => void;
-  isOpenAnimated?: boolean;
   modalVariant?: ModalVariants;
 } & (
     | { isClosable: true; onClose: () => void }
@@ -197,7 +196,6 @@ export const Modal = ({
   isClosable = false,
   onClose,
   modalVariant = 'primary',
-  isOpenAnimated = true,
 }: ModalProps) => {
   const isMobile = useIsMobile();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -263,7 +261,7 @@ export const Modal = ({
         ref={modalRef}
         size={size}
         padding={padding}
-        initial={isOpenAnimated ? 'hidden' : 'visible'}
+        initial="hidden"
         animate="visible"
         exit="exit"
         layout
