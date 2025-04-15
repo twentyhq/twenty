@@ -111,7 +111,7 @@ export const Escape: Story = {
   play: async () => {
     expect(escapeJestFn).toHaveBeenCalledTimes(0);
 
-    userEvent.keyboard('{esc}');
+    await userEvent.keyboard('{esc}');
 
     await waitFor(() => {
       expect(escapeJestFn).toHaveBeenCalledTimes(1);
@@ -126,7 +126,7 @@ export const ClickOutside: Story = {
 
     const outsideElement = await canvas.findByTestId('click-outside-element');
 
-    userEvent.click(outsideElement);
+    await userEvent.click(outsideElement);
 
     await waitFor(() => {
       expect(clickOutsideJestFn).toHaveBeenCalledTimes(1);

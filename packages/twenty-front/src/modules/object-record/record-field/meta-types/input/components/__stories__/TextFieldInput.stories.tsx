@@ -132,7 +132,7 @@ export const Enter: Story = {
   play: async () => {
     expect(enterJestFn).toHaveBeenCalledTimes(0);
 
-    userEvent.keyboard('{enter}');
+    await userEvent.keyboard('{enter}');
 
     await waitFor(() => {
       expect(enterJestFn).toHaveBeenCalledTimes(1);
@@ -144,7 +144,7 @@ export const Escape: Story = {
   play: async () => {
     expect(escapeJestfn).toHaveBeenCalledTimes(0);
 
-    userEvent.keyboard('{esc}');
+    await userEvent.keyboard('{esc}');
 
     await waitFor(() => {
       expect(escapeJestfn).toHaveBeenCalledTimes(1);
@@ -160,7 +160,7 @@ export const ClickOutside: Story = {
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
 
-    userEvent.click(emptyDiv);
+    await userEvent.click(emptyDiv);
 
     await waitFor(() => {
       expect(clickOutsideJestFn).toHaveBeenCalled();
@@ -172,7 +172,7 @@ export const Tab: Story = {
   play: async () => {
     expect(tabJestFn).toHaveBeenCalledTimes(0);
 
-    userEvent.keyboard('{tab}');
+    await userEvent.keyboard('{tab}');
 
     await waitFor(() => {
       expect(tabJestFn).toHaveBeenCalledTimes(1);
@@ -184,7 +184,7 @@ export const ShiftTab: Story = {
   play: async () => {
     expect(shiftTabJestFn).toHaveBeenCalledTimes(0);
 
-    userEvent.keyboard('{shift>}{tab}');
+    await userEvent.keyboard('{shift>}{tab}');
 
     await waitFor(() => {
       expect(shiftTabJestFn).toHaveBeenCalledTimes(1);

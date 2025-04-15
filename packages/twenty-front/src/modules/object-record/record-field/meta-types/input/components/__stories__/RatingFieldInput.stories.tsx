@@ -117,7 +117,7 @@ export const Submit: Story = {
     const input = canvas.getByRole('slider', { name: 'Rating' });
     const firstStar = input.firstElementChild;
 
-    userEvent.click(firstStar);
+    await userEvent.click(firstStar);
 
     await waitFor(() => {
       expect(submitJestFn).toHaveBeenCalledTimes(1);
