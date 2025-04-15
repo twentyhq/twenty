@@ -172,7 +172,7 @@ export const ChooseYourPlan = () => {
     ?.baseProduct.name;
 
   return (
-    <Modal.Content>
+    <Modal.Content isVerticalCentered>
       {isDefined(baseProductPrice) && isDefined(billing) ? (
         <>
           <Title noMarginTop>
