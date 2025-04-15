@@ -18,13 +18,15 @@ const StyledTableRows = styled.div`
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
 
+type SettingsRolePermissionsObjectLevelObjectFormObjectLevelProps = {
+  roleId: string;
+  objectMetadataItem: ObjectMetadataItem;
+};
+
 export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
   roleId,
   objectMetadataItem,
-}: {
-  roleId: string;
-  objectMetadataItem: ObjectMetadataItem;
-}) => {
+}: SettingsRolePermissionsObjectLevelObjectFormObjectLevelProps) => {
   const settingsDraftRole = useRecoilValue(
     settingsDraftRoleFamilyState(roleId),
   );

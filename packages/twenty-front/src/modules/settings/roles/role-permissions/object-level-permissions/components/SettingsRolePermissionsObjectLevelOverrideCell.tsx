@@ -1,4 +1,4 @@
-import { settingsRoleObjectPermissionIconConfig } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectPermissionIconConfig';
+import { SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectPermissionIconConfig';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -33,11 +33,13 @@ const StyledSettingsRolePermissionsObjectLevelOverrideCell = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
+type SettingsRolePermissionsObjectLevelOverrideCellProps = {
+  objectPermission: ObjectPermission;
+};
+
 export const SettingsRolePermissionsObjectLevelOverrideCell = ({
   objectPermission,
-}: {
-  objectPermission: ObjectPermission;
-}) => {
+}: SettingsRolePermissionsObjectLevelOverrideCellProps) => {
   const theme = useTheme();
 
   const settingsDraftRole = useRecoilValue(
@@ -67,7 +69,7 @@ export const SettingsRolePermissionsObjectLevelOverrideCell = ({
       {(Object.keys(permissionMappings) as ObjectPermissionKey[]).map(
         (permission) => {
           const { Icon, IconForbidden: IconOverride } =
-            settingsRoleObjectPermissionIconConfig[permission];
+            SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[permission];
           const permissionValue = objectPermission[permission];
 
           if (!isOverridden(permission)) {

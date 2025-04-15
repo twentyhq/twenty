@@ -20,13 +20,15 @@ const StyledNameLabel = styled.div`
   overflow: hidden;
 `;
 
+type SettingsRolePermissionsObjectLevelTableRowProps = {
+  objectPermission: ObjectPermission;
+  objectMetadataItem: ObjectMetadataItem;
+};
+
 export const SettingsRolePermissionsObjectLevelTableRow = ({
   objectPermission,
   objectMetadataItem,
-}: {
-  objectPermission: ObjectPermission;
-  objectMetadataItem?: ObjectMetadataItem;
-}) => {
+}: SettingsRolePermissionsObjectLevelTableRowProps) => {
   const { getIcon } = useIcons();
   const theme = useTheme();
 

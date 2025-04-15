@@ -23,13 +23,15 @@ const StyledTitleContainer = styled.div`
   display: flex;
 `;
 
+type SettingsRolePermissionsObjectLevelObjectFormProps = {
+  roleId: string;
+  objectMetadataId: string;
+};
+
 export const SettingsRolePermissionsObjectLevelObjectForm = ({
   roleId,
   objectMetadataId,
-}: {
-  roleId: string;
-  objectMetadataId: string;
-}) => {
+}: SettingsRolePermissionsObjectLevelObjectFormProps) => {
   const settingsDraftRole = useRecoilValue(
     settingsDraftRoleFamilyState(roleId),
   );

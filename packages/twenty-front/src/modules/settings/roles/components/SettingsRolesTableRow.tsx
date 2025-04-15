@@ -52,7 +52,11 @@ const StyledTableRow = styled(TableRow)`
   }
 `;
 
-export const SettingsRolesTableRow = ({ role }: { role: Role }) => {
+type SettingsRolesTableRowProps = {
+  role: Role;
+};
+
+export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
   const theme = useTheme();
 
   const { getIcon } = useIcons();

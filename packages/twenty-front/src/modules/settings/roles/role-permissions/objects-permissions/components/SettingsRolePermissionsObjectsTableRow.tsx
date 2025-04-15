@@ -1,4 +1,4 @@
-import { settingsRoleObjectPermissionIconConfig } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectPermissionIconConfig';
+import { SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectPermissionIconConfig';
 import { SettingsRolePermissionsObjectPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -13,7 +13,7 @@ const StyledLabel = styled.span`
 `;
 
 const StyledOverrideInfo = styled.span`
-  background: ${({ theme }) => theme.color.orange10};
+  background: ${({ theme }) => theme.adaptiveColors.orange1};
   border-radius: ${({ theme }) => theme.spacing(1)};
   color: ${({ theme }) => theme.color.orange};
   padding: ${({ theme }) => theme.spacing(1)};
@@ -55,7 +55,7 @@ export const SettingsRolePermissionsObjectsTableRow = ({
   const label = permission.label;
   const pluralizedObject = pluralize('object', isOverriddenBy);
 
-  const { Icon } = settingsRoleObjectPermissionIconConfig[permission.key];
+  const { Icon } = SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[permission.key];
 
   return (
     <StyledTableRow>

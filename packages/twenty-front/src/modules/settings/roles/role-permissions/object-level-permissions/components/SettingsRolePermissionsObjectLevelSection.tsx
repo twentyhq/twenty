@@ -101,7 +101,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
             />
           }
           dropdownComponents={
-            <SettingsRolePermissionsObjectLevelObjectPickerDropdown
+            <SettingsRolePermissionsObjectLevelObjectPickerDropdownContent
               excludedObjectMetadataIds={[]}
               onSelect={handleSelectObjectMetadata}
             />

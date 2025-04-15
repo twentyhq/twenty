@@ -8,15 +8,15 @@ import { ChangeEvent, useState } from 'react';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
-type SettingsRolePermissionsObjectLevelObjectPickerDropdownProps = {
+type SettingsRolePermissionsObjectLevelObjectPickerDropdownContentProps = {
   excludedObjectMetadataIds: string[];
   onSelect: (objectMetadataId: string) => void;
 };
 
-export const SettingsRolePermissionsObjectLevelObjectPickerDropdown = ({
+export const SettingsRolePermissionsObjectLevelObjectPickerDropdownContent = ({
   excludedObjectMetadataIds,
   onSelect,
-}: SettingsRolePermissionsObjectLevelObjectPickerDropdownProps) => {
+}: SettingsRolePermissionsObjectLevelObjectPickerDropdownContentProps) => {
   const [searchFilter, setSearchFilter] = useState('');
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();

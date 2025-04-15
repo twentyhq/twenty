@@ -14,7 +14,7 @@ type SettingsRoleObjectPermissionIconConfig = {
   IconForbidden: IconComponent;
 };
 
-export const settingsRoleObjectPermissionIconConfig: Record<
+export const SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG: Record<
   string,
   SettingsRoleObjectPermissionIconConfig
 > = {

@@ -18,13 +18,15 @@ const StyledTableRows = styled.div`
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
 
+type SettingsRolePermissionsObjectsSectionProps = {
+  roleId: string;
+  isEditable: boolean;
+};
+
 export const SettingsRolePermissionsObjectsSection = ({
   roleId,
   isEditable,
-}: {
-  roleId: string;
-  isEditable: boolean;
-}) => {
+}: SettingsRolePermissionsObjectsSectionProps) => {
   const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );
