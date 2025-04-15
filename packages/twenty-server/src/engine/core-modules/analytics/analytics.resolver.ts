@@ -25,9 +25,9 @@ export class AnalyticsResolver {
   // deprecated
   @Mutation(() => Analytics)
   track(
-    @Args() createAnalyticsInput: CreateAnalyticsInput,
-    @AuthWorkspace() workspace: Workspace | undefined,
-    @AuthUser({ allowUndefined: true }) user: User | undefined,
+    @Args() _createAnalyticsInput: CreateAnalyticsInput,
+    @AuthWorkspace() _workspace: Workspace | undefined,
+    @AuthUser({ allowUndefined: true }) _user: User | undefined,
   ) {
     return { success: true };
   }
