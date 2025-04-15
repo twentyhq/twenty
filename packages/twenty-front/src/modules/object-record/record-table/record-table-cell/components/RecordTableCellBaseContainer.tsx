@@ -68,6 +68,7 @@ export const RecordTableCellBaseContainer = ({
       fontColorExtraLight={theme.font.color.extraLight}
       fontColorMedium={theme.border.color.medium}
       isReadOnly={isReadOnly ?? false}
+      id={`record-table-cell-${cellPosition.column}-${cellPosition.row}`}
     >
       {children}
     </StyledBaseContainer>

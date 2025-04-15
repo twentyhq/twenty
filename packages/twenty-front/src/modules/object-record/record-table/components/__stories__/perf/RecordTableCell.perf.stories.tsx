@@ -124,7 +124,6 @@ const meta: Meta = {
                           columnDefinition: mockPerformance.fieldDefinition,
                           columnIndex: 0,
                           cellPosition: { row: 0, column: 0 },
-                          isInEditMode: false,
                         }}
                       >
                         <FieldContext.Provider

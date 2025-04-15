@@ -2,10 +2,8 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
-import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useMemo } from 'react';
 
 export const RecordTableCellWrapper = ({
@@ -27,17 +25,11 @@ export const RecordTableCellWrapper = ({
     [columnIndex, rowIndex],
   );
 
-  const isInEditMode = useRecoilComponentFamilyValueV2(
-    isTableCellInEditModeComponentFamilyState,
-    currentTableCellPosition,
-  );
-
   return (
     <RecordTableCellContext.Provider
       value={{
         columnDefinition: column,
         columnIndex,
-        isInEditMode,
         cellPosition: currentTableCellPosition,
       }}
       key={column.fieldMetadataId}
