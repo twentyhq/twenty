@@ -1,20 +1,20 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useSetSoftFocusPosition } from '@/object-record/record-table/hooks/internal/useSetFocusPosition';
+import { useSetFocusPosition } from '@/object-record/record-table/hooks/internal/useSetFocusPosition';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
-import { isSoftFocusActiveComponentState } from '@/object-record/record-table/states/isSoftFocusActiveComponentState';
+import { isFocusActiveComponentState } from '@/object-record/record-table/states/isFocusActiveComponentState';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
-export const useSetSoftFocus = (recordTableId?: string) => {
-  const setSoftFocusPosition = useSetSoftFocusPosition(recordTableId);
+export const useSetFocus = (recordTableId?: string) => {
+  const setFocusPosition = useSetFocusPosition(recordTableId);
 
-  const isSoftFocusActiveState = useRecoilComponentCallbackStateV2(
-    isSoftFocusActiveComponentState,
+  const isFocusActiveState = useRecoilComponentCallbackStateV2(
+    isFocusActiveComponentState,
     recordTableId,
   );
 
@@ -23,17 +23,17 @@ export const useSetSoftFocus = (recordTableId?: string) => {
   return useRecoilCallback(
     ({ snapshot, set }) =>
       (newPosition: TableCellPosition) => {
-        setSoftFocusPosition(newPosition);
+        setFocusPosition(newPosition);
 
-        set(isSoftFocusActiveState, true);
+        set(isFocusActiveState, true);
 
         if (
           snapshot.getLoadable(currentHotkeyScopeState).getValue().scope !==
           AppHotkeyScope.CommandMenuOpen
         ) {
-          setHotkeyScope(TableHotkeyScope.TableSoftFocus);
+          setHotkeyScope(TableHotkeyScope.TableFocus);
         }
       },
-    [setSoftFocusPosition, isSoftFocusActiveState, setHotkeyScope],
+    [setFocusPosition, isFocusActiveState, setHotkeyScope],
   );
 };

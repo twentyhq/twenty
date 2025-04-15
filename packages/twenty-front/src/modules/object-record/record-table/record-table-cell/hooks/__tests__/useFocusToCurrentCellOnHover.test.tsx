@@ -11,21 +11,21 @@ import {
   recordTableRowContextValue,
   recordTableRowDraggableContextValue,
 } from '@/object-record/record-table/record-table-cell/hooks/__mocks__/cell';
-import { useMoveSoftFocusToCurrentCellOnHover } from '@/object-record/record-table/record-table-cell/hooks/useMoveSoftFocusToCurrentCellOnHover';
+import { useMoveFocusToCurrentCellOnHover } from '@/object-record/record-table/record-table-cell/hooks/useMoveFocusToCurrentCellOnHover';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 
-const mockSoftFocusPositionState = {
-  key: 'softFocusPositionComponentState__{"instanceId":"scopeId"}',
+const mockFocusPositionState = {
+  key: 'focusPositionComponentState__{"instanceId":"scopeId"}',
 };
-const mockSoftFocusActiveState = {
-  key: 'isSoftFocusActiveComponentState__{"instanceId":"scopeId"}',
+const mockFocusActiveState = {
+  key: 'isFocusActiveComponentState__{"instanceId":"scopeId"}',
 };
-const mockIsSoftFocusOnTableCellFamilyStateCurrentPosition = {
-  key: 'isSoftFocusOnTableCellComponentFamilyState__{"familyKey":{"column":1,"row":0},"instanceId":"scopeId"}',
+const mockIsFocusOnTableCellFamilyStateCurrentPosition = {
+  key: 'isFocusOnTableCellComponentFamilyState__{"familyKey":{"column":1,"row":0},"instanceId":"scopeId"}',
 };
-const mockIsSoftFocusOnTableCellFamilyStateNewPosition = {
-  key: 'isSoftFocusOnTableCellComponentFamilyState__{"familyKey":{"column":3,"row":2},"instanceId":"scopeId"}',
+const mockIsFocusOnTableCellFamilyStateNewPosition = {
+  key: 'isFocusOnTableCellComponentFamilyState__{"familyKey":{"column":3,"row":2},"instanceId":"scopeId"}',
 };
 const mockCurrentTableCellInEditModePositionState = {
   key: 'currentTableCellInEditModePositionComponentState__{"instanceId":"scopeId"}',
@@ -42,7 +42,7 @@ const mockCallbackInterface = {
   snapshot: {
     getLoadable: (recoilValue: { key: string }) => ({
       getValue: () => {
-        if (recoilValue.key === mockSoftFocusPositionState.key)
+        if (recoilValue.key === mockFocusPositionState.key)
           return { column: 1, row: 0 };
         if (recoilValue.key === mockCurrentTableCellInEditModePositionState.key)
           return { column: 1, row: 0 };
@@ -55,7 +55,7 @@ const mockCallbackInterface = {
   },
 } as unknown as CallbackInterface;
 
-const setSoftFocusPosition = jest.fn();
+const setFocusPosition = jest.fn();
 const setOnColumnsChange = jest.fn();
 const setHotkeyScope = jest.fn();
 
@@ -69,7 +69,7 @@ jest.mock('recoil', () => ({
 }));
 jest.mock('@/object-record/record-table/hooks/useRecordTable', () => ({
   useRecordTable: () => ({
-    setSoftFocusPosition,
+    setFocusPosition,
     setOnColumnsChange,
   }),
 }));
@@ -96,15 +96,15 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
   </RecoilRoot>
 );
 
-describe('useMoveSoftFocusToCurrentCellOnHover', () => {
+describe('useMoveFocusToCurrentCellOnHover', () => {
   it('should work as expected', () => {
     const { result } = renderHook(
-      () => useMoveSoftFocusToCurrentCellOnHover('scopeId'),
+      () => useMoveFocusToCurrentCellOnHover('scopeId'),
       { wrapper: Wrapper },
     );
 
     act(() => {
-      result.current.moveSoftFocusToCurrentCell({
+      result.current.moveFocusToCurrentCell({
         column: 3,
         row: 2,
       });
@@ -112,36 +112,34 @@ describe('useMoveSoftFocusToCurrentCellOnHover', () => {
 
     expect(mockCallbackInterface.set).toHaveBeenNthCalledWith(
       1,
-      mockSoftFocusActiveState,
+      mockFocusActiveState,
       true,
     );
 
     expect(mockCallbackInterface.set).toHaveBeenNthCalledWith(
       2,
-      mockIsSoftFocusOnTableCellFamilyStateCurrentPosition,
+      mockIsFocusOnTableCellFamilyStateCurrentPosition,
       false,
     );
 
     expect(mockCallbackInterface.set).toHaveBeenNthCalledWith(
       3,
-      mockSoftFocusPositionState,
+      mockFocusPositionState,
       { column: 3, row: 2 },
     );
 
     expect(mockCallbackInterface.set).toHaveBeenNthCalledWith(
       4,
-      mockIsSoftFocusOnTableCellFamilyStateNewPosition,
+      mockIsFocusOnTableCellFamilyStateNewPosition,
       true,
     );
 
     expect(mockCallbackInterface.set).toHaveBeenNthCalledWith(
       5,
-      mockSoftFocusActiveState,
+      mockFocusActiveState,
       true,
     );
 
-    expect(setHotkeyScope).toHaveBeenCalledWith(
-      TableHotkeyScope.TableSoftFocus,
-    );
+    expect(setHotkeyScope).toHaveBeenCalledWith(TableHotkeyScope.TableFocus);
   });
 });

@@ -2,9 +2,9 @@ import { RecordTableComponentInstanceContext } from '@/object-record/record-tabl
 import { createComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentFamilyStateV2';
 import { TableCellPosition } from '../types/TableCellPosition';
 
-export const isSoftFocusOnTableCellComponentFamilyState =
+export const isFocusOnTableCellComponentFamilyState =
   createComponentFamilyStateV2<boolean, TableCellPosition>({
-    key: 'isSoftFocusOnTableCellComponentFamilyState',
+    key: 'isFocusOnTableCellComponentFamilyState',
     defaultValue: false,
     componentInstanceContext: RecordTableComponentInstanceContext,
   });

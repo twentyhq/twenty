@@ -6,7 +6,7 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { SOFT_FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/SoftFocusClickOutsideListenerId';
+import { FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/FocusClickOutsideListenerId';
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
 import { useMoveEditModeToTableCellPosition } from '@/object-record/record-table/hooks/internal/useMoveEditModeToCellPosition';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
@@ -57,7 +57,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
 
   const leaveTableFocus = useLeaveTableFocus(tableScopeId);
   const { toggleClickOutsideListener } = useClickOutsideListener(
-    SOFT_FOCUS_CLICK_OUTSIDE_LISTENER_ID,
+    FOCUS_CLICK_OUTSIDE_LISTENER_ID,
   );
 
   const initDraftValue = useInitDraftValueV2();

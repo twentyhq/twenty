@@ -2,7 +2,7 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
-import { isSoftFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellComponentFamilyState';
+import { isFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isFocusOnTableCellComponentFamilyState';
 import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
@@ -33,8 +33,8 @@ export const RecordTableCellWrapper = ({
     currentTableCellPosition,
   );
 
-  const hasSoftFocus = useRecoilComponentFamilyValueV2(
-    isSoftFocusOnTableCellComponentFamilyState,
+  const hasFocus = useRecoilComponentFamilyValueV2(
+    isFocusOnTableCellComponentFamilyState,
     currentTableCellPosition,
   );
 
@@ -44,7 +44,7 @@ export const RecordTableCellWrapper = ({
         columnDefinition: column,
         columnIndex,
         isInEditMode,
-        hasSoftFocus,
+        hasFocus,
         cellPosition: currentTableCellPosition,
       }}
       key={column.fieldMetadataId}

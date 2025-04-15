@@ -10,8 +10,7 @@ import {
   recordTableRowContextValue,
   recordTableRowDraggableContextValue,
 } from '@/object-record/record-table/record-table-cell/hooks/__mocks__/cell';
-import { useIsSoftFocusOnCurrentTableCell } from '@/object-record/record-table/record-table-cell/hooks/useIsSoftFocusOnCurrentTableCell';
-
+import { useIsFocusOnCurrentTableCell } from '@/object-record/record-table/record-table-cell/hooks/useIsFocusOnCurrentTableCell';
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
     <RecordTableComponentInstance
@@ -31,9 +30,9 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
   </RecoilRoot>
 );
 
-describe('useIsSoftFocusOnCurrentTableCell', () => {
+describe('useIsFocusOnCurrentTableCell', () => {
   it('should work as expected', () => {
-    const { result } = renderHook(() => useIsSoftFocusOnCurrentTableCell(), {
+    const { result } = renderHook(() => useIsFocusOnCurrentTableCell(), {
       wrapper: Wrapper,
     });
 

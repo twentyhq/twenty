@@ -4,10 +4,10 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { isSoftFocusActiveComponentState } from '@/object-record/record-table/states/isSoftFocusActiveComponentState';
+import { isFocusActiveComponentState } from '@/object-record/record-table/states/isFocusActiveComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useDisableSoftFocus } from './useDisableSoftFocus';
+import { useDisableFocus } from './useDisableFocus';
 
 export const useLeaveTableFocus = (recordTableId?: string) => {
   const recordTableIdFromContext = useAvailableComponentInstanceIdOrThrow(
@@ -15,10 +15,10 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const disableSoftFocus = useDisableSoftFocus(recordTableIdFromContext);
+  const disableFocus = useDisableFocus(recordTableIdFromContext);
 
-  const isSoftFocusActiveState = useRecoilComponentCallbackStateV2(
-    isSoftFocusActiveComponentState,
+  const isFocusActiveState = useRecoilComponentCallbackStateV2(
+    isFocusActiveComponentState,
     recordTableIdFromContext,
   );
 
@@ -29,19 +29,19 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
   return useRecoilCallback(
     ({ snapshot }) =>
       () => {
-        const isSoftFocusActive = getSnapshotValue(
+        const isFocusActive = getSnapshotValue(
           snapshot,
-          isSoftFocusActiveState,
+          isFocusActiveState,
         );
 
         resetTableRowSelection();
 
-        if (!isSoftFocusActive) {
+        if (!isFocusActive) {
           return;
         }
 
-        disableSoftFocus();
+        disableFocus();
       },
-    [disableSoftFocus, isSoftFocusActiveState, resetTableRowSelection],
+    [disableFocus, isFocusActiveState, resetTableRowSelection],
   );
 };

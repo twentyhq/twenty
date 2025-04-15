@@ -7,7 +7,7 @@ import { useIsFieldClearable } from '@/object-record/record-field/hooks/useIsFie
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
-import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
+import { isFocusUsingMouseState } from '@/object-record/record-table/states/isFocusUsingMouseState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 
@@ -15,7 +15,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
-export const RecordTableCellSoftFocusModeHotkeysSetterEffect = () => {
+export const RecordTableCellFocusModeHotkeysSetterEffect = () => {
   const currentHotkeyScope = useRecoilValue(currentHotkeyScopeState);
 
   const { openTableCell } = useOpenRecordTableCellFromCell();
@@ -28,18 +28,18 @@ export const RecordTableCellSoftFocusModeHotkeysSetterEffect = () => {
   const toggleEditOnlyInput = useToggleEditOnlyInput();
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const isSoftFocusUsingMouse = useRecoilValue(isSoftFocusUsingMouseState);
+  const isFocusUsingMouse = useRecoilValue(isFocusUsingMouseState);
   const clearField = useClearField();
 
   useEffect(() => {
-    if (currentHotkeyScope.scope !== TableHotkeyScope.TableSoftFocus) {
+    if (currentHotkeyScope.scope !== TableHotkeyScope.TableFocus) {
       return;
     }
 
-    if (!isSoftFocusUsingMouse) {
+    if (!isFocusUsingMouse) {
       scrollRef.current?.scrollIntoView({ block: 'nearest' });
     }
-  }, [currentHotkeyScope.scope, isSoftFocusUsingMouse]);
+  }, [currentHotkeyScope.scope, isFocusUsingMouse]);
 
   useScopedHotkeys(
     [Key.Backspace, Key.Delete],
@@ -48,7 +48,7 @@ export const RecordTableCellSoftFocusModeHotkeysSetterEffect = () => {
         clearField();
       }
     },
-    TableHotkeyScope.TableSoftFocus,
+    TableHotkeyScope.TableFocus,
     [clearField, isFieldClearable, isFieldInputOnly],
   );
 
@@ -65,7 +65,7 @@ export const RecordTableCellSoftFocusModeHotkeysSetterEffect = () => {
         toggleEditOnlyInput();
       }
     },
-    TableHotkeyScope.TableSoftFocus,
+    TableHotkeyScope.TableFocus,
     [openTableCell],
   );
 
@@ -93,7 +93,7 @@ export const RecordTableCellSoftFocusModeHotkeysSetterEffect = () => {
         openTableCell(keyboardEvent.key);
       }
     },
-    TableHotkeyScope.TableSoftFocus,
+    TableHotkeyScope.TableFocus,
     [openTableCell],
     {
       preventDefault: false,

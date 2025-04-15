@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useSetSoftFocus } from '@/object-record/record-table/record-table-cell/hooks/useSetSoftFocus';
+import { useSetFocus } from '@/object-record/record-table/record-table-cell/hooks/useSetFocus';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -11,8 +11,8 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
-export const useMoveSoftFocusToCurrentCellOnHover = (recordTableId: string) => {
-  const setSoftFocus = useSetSoftFocus(recordTableId);
+export const useMoveFocusToCurrentCellOnHover = (recordTableId: string) => {
+  const setFocus = useSetFocus(recordTableId);
 
   const currentTableCellInEditModePositionState =
     useRecoilComponentCallbackStateV2(
@@ -24,7 +24,7 @@ export const useMoveSoftFocusToCurrentCellOnHover = (recordTableId: string) => {
     recordTableId,
   );
 
-  const moveSoftFocusToCurrentCell = useRecoilCallback(
+  const moveFocusToCurrentCell = useRecoilCallback(
     ({ snapshot }) =>
       (cellPosition: TableCellPosition) => {
         const currentTableCellInEditModePosition = getSnapshotValue(
@@ -45,7 +45,7 @@ export const useMoveSoftFocusToCurrentCellOnHover = (recordTableId: string) => {
           .getValue();
 
         if (
-          currentHotkeyScope.scope !== TableHotkeyScope.TableSoftFocus &&
+          currentHotkeyScope.scope !== TableHotkeyScope.TableFocus &&
           currentHotkeyScope.scope !== TableHotkeyScope.CellEditMode &&
           currentHotkeyScope.scope !== TableHotkeyScope.Table &&
           currentHotkeyScope.scope !== AppHotkeyScope.CommandMenuOpen
@@ -54,15 +54,15 @@ export const useMoveSoftFocusToCurrentCellOnHover = (recordTableId: string) => {
         }
 
         if (!isSomeCellInEditMode) {
-          setSoftFocus(cellPosition);
+          setFocus(cellPosition);
         }
       },
     [
       currentTableCellInEditModePositionState,
       isTableCellInEditModeFamilyState,
-      setSoftFocus,
+      setFocus,
     ],
   );
 
-  return { moveSoftFocusToCurrentCell };
+  return { moveFocusToCurrentCell };
 };

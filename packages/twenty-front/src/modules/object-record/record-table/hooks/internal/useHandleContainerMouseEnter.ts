@@ -1,9 +1,9 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useMoveSoftFocusToCurrentCellOnHover } from '@/object-record/record-table/record-table-cell/hooks/useMoveSoftFocusToCurrentCellOnHover';
+import { useMoveFocusToCurrentCellOnHover } from '@/object-record/record-table/record-table-cell/hooks/useMoveFocusToCurrentCellOnHover';
 import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
-import { isSoftFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellComponentFamilyState';
-import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
+import { isFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isFocusOnTableCellComponentFamilyState';
+import { isFocusUsingMouseState } from '@/object-record/record-table/states/isFocusUsingMouseState';
 import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -18,8 +18,8 @@ export const useHandleContainerMouseEnter = ({
 }: {
   recordTableId: string;
 }) => {
-  const { moveSoftFocusToCurrentCell } =
-    useMoveSoftFocusToCurrentCellOnHover(recordTableId);
+  const { moveFocusToCurrentCell } =
+    useMoveFocusToCurrentCellOnHover(recordTableId);
 
   const currentTableCellInEditModePositionState =
     useRecoilComponentCallbackStateV2(
@@ -27,8 +27,8 @@ export const useHandleContainerMouseEnter = ({
       recordTableId,
     );
 
-  const isSoftFocusOnTableCellFamilyState = useRecoilComponentCallbackStateV2(
-    isSoftFocusOnTableCellComponentFamilyState,
+  const isFocusOnTableCellFamilyState = useRecoilComponentCallbackStateV2(
+    isFocusOnTableCellComponentFamilyState,
     recordTableId,
   );
 
@@ -40,9 +40,9 @@ export const useHandleContainerMouseEnter = ({
   const handleContainerMouseEnter = useRecoilCallback(
     ({ snapshot, set }) =>
       ({ cellPosition }: HandleContainerMouseEnterArgs) => {
-        const isSoftFocusOnTableCell = getSnapshotValue(
+        const isFocusOnTableCell = getSnapshotValue(
           snapshot,
-          isSoftFocusOnTableCellFamilyState(cellPosition),
+          isFocusOnTableCellFamilyState(cellPosition),
         );
 
         const currentTableCellInEditModePosition = getSnapshotValue(
@@ -55,16 +55,16 @@ export const useHandleContainerMouseEnter = ({
           isTableCellInEditModeFamilyState(currentTableCellInEditModePosition),
         );
 
-        if (!isSomeCellInEditMode && !isSoftFocusOnTableCell) {
-          moveSoftFocusToCurrentCell(cellPosition);
-          set(isSoftFocusUsingMouseState, true);
+        if (!isSomeCellInEditMode && !isFocusOnTableCell) {
+          moveFocusToCurrentCell(cellPosition);
+          set(isFocusUsingMouseState, true);
         }
       },
     [
-      isSoftFocusOnTableCellFamilyState,
+      isFocusOnTableCellFamilyState,
       currentTableCellInEditModePositionState,
       isTableCellInEditModeFamilyState,
-      moveSoftFocusToCurrentCell,
+      moveFocusToCurrentCell,
     ],
   );
 

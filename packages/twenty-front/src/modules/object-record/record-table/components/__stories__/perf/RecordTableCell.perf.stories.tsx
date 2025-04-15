@@ -93,7 +93,7 @@ const meta: Meta = {
                     onOpenTableCell: () => {},
                     onMoveFocus: () => {},
                     onCloseTableCell: () => {},
-                    onMoveSoftFocusToCurrentCell: () => {},
+                    onMoveFocusToCurrentCell: () => {},
                     onActionMenuDropdownOpened: () => {},
                     onCellMouseEnter: () => {},
                   }}
@@ -124,7 +124,7 @@ const meta: Meta = {
                           columnDefinition: mockPerformance.fieldDefinition,
                           columnIndex: 0,
                           cellPosition: { row: 0, column: 0 },
-                          hasSoftFocus: false,
+                          hasFocus: false,
                           isInEditMode: false,
                         }}
                       >

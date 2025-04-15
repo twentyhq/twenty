@@ -3,7 +3,7 @@ import { ReactElement, useContext } from 'react';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableCellBaseContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellBaseContainer';
 
-import { RecordTableCellSoftFocusModeHotkeysSetterEffect } from '@/object-record/record-table/record-table-cell/components/RecordTableCellSoftFocusModeHotkeysSetterEffect';
+import { RecordTableCellFocusModeHotkeysSetterEffect } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFocusModeHotkeysSetterEffect';
 import { RecordTableCellDisplayMode } from './RecordTableCellDisplayMode';
 import { RecordTableCellEditMode } from './RecordTableCellEditMode';
 
@@ -20,7 +20,7 @@ export const RecordTableCellContainer = ({
   editModeContent,
   nonEditModeContent,
 }: RecordTableCellContainerProps) => {
-  const { hasSoftFocus, isInEditMode } = useContext(RecordTableCellContext);
+  const { hasFocus, isInEditMode } = useContext(RecordTableCellContext);
 
   return (
     <RecordTableCellBaseContainer>
@@ -31,9 +31,7 @@ export const RecordTableCellContainer = ({
           {nonEditModeContent}
         </RecordTableCellDisplayMode>
       )}
-      {hasSoftFocus ? (
-        <RecordTableCellSoftFocusModeHotkeysSetterEffect />
-      ) : null}
+      {hasFocus ? <RecordTableCellFocusModeHotkeysSetterEffect /> : null}
     </RecordTableCellBaseContainer>
   );
 };
