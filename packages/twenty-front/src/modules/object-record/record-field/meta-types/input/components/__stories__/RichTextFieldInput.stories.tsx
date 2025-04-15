@@ -123,8 +123,8 @@ export const ClickOutside: Story = {
     const canvas = within(canvasElement);
     expect(clickOutsideJestFn).toHaveBeenCalledTimes(0);
 
-    await waitFor(() => {
-      const outsideElement = canvas.getByTestId('click-outside-element');
+    await waitFor(async () => {
+      const outsideElement = await canvas.findByTestId('click-outside-element');
       userEvent.click(outsideElement);
       expect(clickOutsideJestFn).toHaveBeenCalledTimes(1);
     });
