@@ -27,7 +27,7 @@ export class BillingWebhookCustomerService {
 
     if (!workspaceId) {
       throw new BillingException(
-        'Workspace ID is required for subscription events',
+        'Workspace ID is required for customer events',
         BillingExceptionCode.BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND,
       );
     }
