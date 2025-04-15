@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Favorite } from '@/favorites/types/Favorite';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
@@ -15,11 +16,15 @@ import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedF
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const PrefetchRunFavoriteQueriesEffect = () => {
   const showAuthModal = useShowAuthModal();
   const isSettingsPage = useIsSettingsPage();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const isWorkspaceActive =
+    currentWorkspace?.activationStatus === WorkspaceActivationStatus.ACTIVE;
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -49,14 +54,14 @@ export const PrefetchRunFavoriteQueriesEffect = () => {
     objectNameSingular: CoreObjectNameSingular.Favorite,
     filter: findAllFavoritesOperationSignature.variables.filter,
     recordGqlFields: findAllFavoritesOperationSignature.fields,
-    skip: showAuthModal || isSettingsPage,
+    skip: showAuthModal || isSettingsPage || !isWorkspaceActive,
   });
 
   const { records: favoriteFolders } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.FavoriteFolder,
     filter: findAllFavoriteFoldersOperationSignature.variables.filter,
     recordGqlFields: findAllFavoriteFoldersOperationSignature.fields,
-    skip: showAuthModal || isSettingsPage,
+    skip: showAuthModal || isSettingsPage || !isWorkspaceActive,
   });
 
   const setPrefetchFavoritesState = useRecoilCallback(

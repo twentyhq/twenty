@@ -1,6 +1,7 @@
 import { ActionButton } from '@/action-menu/actions/display/components/ActionButton';
 import { ActionDropdownItem } from '@/action-menu/actions/display/components/ActionDropdownItem';
 import { ActionListItem } from '@/action-menu/actions/display/components/ActionListItem';
+import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { MessageDescriptor } from '@lingui/core';
 import { useContext } from 'react';
@@ -19,14 +20,13 @@ export type ActionDisplayProps = {
 };
 
 export const ActionDisplay = ({
-  action,
   onClick,
   to,
 }: {
-  action: ActionDisplayProps;
   onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
   to?: string;
 }) => {
+  const action = useContext(ActionConfigContext);
   const { displayType } = useContext(ActionMenuContext);
 
   if (!action) {

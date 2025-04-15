@@ -3,7 +3,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import React from 'react';
 
-const StyledContent = styled(Modal.Content)`
+const StyledContent = styled.div`
   align-items: center;
   justify-content: center;
 `;

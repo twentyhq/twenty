@@ -15,14 +15,15 @@ import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-re
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSelect } from 'twenty-ui/navigation';
 import { useIcons } from 'twenty-ui/display';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 
 export type ObjectFilterDropdownFilterSelectMenuItemProps = {
   fieldMetadataItemToSelect: FieldMetadataItem;
@@ -48,12 +49,11 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     objectFilterDropdownFilterIsSelectedComponentState,
   );
 
-  const { isSelectedItemIdSelector, resetSelectedItem } = useSelectableList(
-    OBJECT_FILTER_DROPDOWN_ID,
-  );
+  const { resetSelectedItem } = useSelectableList(OBJECT_FILTER_DROPDOWN_ID);
 
-  const isSelectedItem = useRecoilValue(
-    isSelectedItemIdSelector(fieldMetadataItemToSelect.id),
+  const isSelectedItem = useRecoilComponentFamilyValueV2(
+    isSelectedItemIdComponentFamilySelector,
+    fieldMetadataItemToSelect.id,
   );
 
   const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(

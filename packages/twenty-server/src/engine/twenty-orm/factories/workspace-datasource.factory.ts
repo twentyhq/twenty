@@ -10,7 +10,7 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { WorkspaceFeatureFlagMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flag-map-cache.service.ts/workspace-feature-flag-map-cache.service';
+import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/workspace-roles-permissions-cache/workspace-roles-permissions-cache.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
@@ -21,6 +21,7 @@ import {
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import { CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
+import { getFromCacheWithRecompute } from 'src/engine/utils/get-data-from-cache-with-recompute.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 type CacheResult<T, U> = {
@@ -40,7 +41,7 @@ export class WorkspaceDatasourceFactory {
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly entitySchemaFactory: EntitySchemaFactory,
     private readonly workspaceRolesPermissionsCacheService: WorkspaceRolesPermissionsCacheService,
-    private readonly workspaceFeatureFlagMapCacheService: WorkspaceFeatureFlagMapCacheService,
+    private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
   ) {}
 
   public async create(
@@ -55,7 +56,9 @@ export class WorkspaceDatasourceFactory {
       );
 
     const { data: cachedFeatureFlagMap, version: cachedFeatureFlagMapVersion } =
-      await this.getFeatureFlagMapFromCache({ workspaceId });
+      await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMapAndVersion(
+        { workspaceId },
+      );
 
     const isPermissionsV2Enabled =
       cachedFeatureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
@@ -201,54 +204,13 @@ export class WorkspaceDatasourceFactory {
       });
     }
 
-    await this.updateWorkspaceDataSourceFeatureFlagMapIfNeeded({
+    await this.updateWorkspaceDataSourceFeatureFlagsMapIfNeeded({
       workspaceDataSource,
       cachedFeatureFlagMapVersion,
       cachedFeatureFlagMap,
     });
 
     return workspaceDataSource;
-  }
-
-  private async getFromCacheWithRecompute<T, U>({
-    workspaceId,
-    getCacheData,
-    getCacheVersion,
-    recomputeCache,
-    cachedEntityName,
-    exceptionCode,
-  }: {
-    workspaceId: string;
-    getCacheData: (workspaceId: string) => Promise<U | undefined>;
-    getCacheVersion: (workspaceId: string) => Promise<T | undefined>;
-    recomputeCache: (params: { workspaceId: string }) => Promise<void>;
-    cachedEntityName: string;
-    exceptionCode: TwentyORMExceptionCode;
-  }): Promise<CacheResult<T, U>> {
-    let cachedVersion: T | undefined;
-    let cachedData: U | undefined;
-
-    cachedVersion = await getCacheVersion(workspaceId);
-    cachedData = await getCacheData(workspaceId);
-
-    if (!isDefined(cachedData) || !isDefined(cachedVersion)) {
-      await recomputeCache({ workspaceId });
-
-      cachedData = await getCacheData(workspaceId);
-      cachedVersion = await getCacheVersion(workspaceId);
-
-      if (!isDefined(cachedData) || !isDefined(cachedVersion)) {
-        throw new TwentyORMException(
-          `${cachedEntityName} not found after recompute for workspace ${workspaceId}`,
-          exceptionCode,
-        );
-      }
-    }
-
-    return {
-      version: cachedVersion,
-      data: cachedData,
-    };
   }
 
   private async getRolesPermissionsFromCache({
@@ -267,7 +229,7 @@ export class WorkspaceDatasourceFactory {
       return { version: undefined, data: undefined };
     }
 
-    return this.getFromCacheWithRecompute<
+    return getFromCacheWithRecompute<
       string | undefined,
       ObjectRecordsPermissionsByRoleId | undefined
     >({
@@ -284,28 +246,6 @@ export class WorkspaceDatasourceFactory {
         ),
       cachedEntityName: 'Roles permissions',
       exceptionCode: TwentyORMExceptionCode.ROLES_PERMISSIONS_VERSION_NOT_FOUND,
-    });
-  }
-
-  private async getFeatureFlagMapFromCache({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<CacheResult<string, FeatureFlagMap>> {
-    return this.getFromCacheWithRecompute<string, FeatureFlagMap>({
-      workspaceId,
-      getCacheData: () =>
-        this.workspaceCacheStorageService.getFeatureFlagMap(workspaceId),
-      getCacheVersion: () =>
-        this.workspaceCacheStorageService.getFeatureFlagMapVersionFromCache(
-          workspaceId,
-        ),
-      recomputeCache: (params) =>
-        this.workspaceFeatureFlagMapCacheService.recomputeFeatureFlagMapCache(
-          params,
-        ),
-      cachedEntityName: 'Feature flag map',
-      exceptionCode: TwentyORMExceptionCode.FEATURE_FLAG_MAP_VERSION_NOT_FOUND,
     });
   }
 
@@ -355,7 +295,7 @@ export class WorkspaceDatasourceFactory {
     });
   }
 
-  private async updateWorkspaceDataSourceFeatureFlagMapIfNeeded({
+  private async updateWorkspaceDataSourceFeatureFlagsMapIfNeeded({
     workspaceDataSource,
     cachedFeatureFlagMapVersion,
     cachedFeatureFlagMap,
@@ -369,9 +309,9 @@ export class WorkspaceDatasourceFactory {
       currentVersion: workspaceDataSource.featureFlagMapVersion,
       newVersion: cachedFeatureFlagMapVersion,
       newData: cachedFeatureFlagMap,
-      setData: (data) => workspaceDataSource.setFeatureFlagMap(data),
+      setData: (data) => workspaceDataSource.setFeatureFlagsMap(data),
       setVersion: (version) =>
-        workspaceDataSource.setFeatureFlagMapVersion(version),
+        workspaceDataSource.setFeatureFlagsMapVersion(version),
     });
   }
 

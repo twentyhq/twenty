@@ -1,4 +1,5 @@
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
+
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import {
   FieldInputClickOutsideEvent,
@@ -12,7 +13,6 @@ import { useRecoilCallback } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
   const { onMoveFocus, onCloseTableCell } = useRecordTableBodyContextOrThrow();
-
   const { isReadOnly } = useContext(FieldContext);
 
   const handleEnter: FieldInputEvent = (persistField) => {
