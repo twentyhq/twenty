@@ -48,6 +48,9 @@ const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  padding-top: 2px;
+  padding-bottom: 2px;
 `;
 
 const StyledEmptyField = styled.div`

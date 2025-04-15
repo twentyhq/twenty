@@ -148,6 +148,7 @@ export const SettingsDataModelFieldPreview = ({
               isReadOnly: false,
             }}
           >
+            {/* tododo why it is still necessary */}
             {fieldMetadataItem.type === FieldMetadataType.BOOLEAN ? (
               <BooleanFieldInput readonly />
             ) : fieldMetadataItem.type === FieldMetadataType.RATING ? (

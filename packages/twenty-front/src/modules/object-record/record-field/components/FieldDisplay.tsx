@@ -69,12 +69,15 @@ export const FieldDisplay = () => {
   ) : isFieldDateTime(fieldDefinition) ? (
     <DateTimeFieldDisplay />
   ) : isFieldDate(fieldDefinition) ? (
+    //done
     <DateFieldDisplay />
   ) : isFieldNumber(fieldDefinition) ? (
+    //done
     <NumberFieldDisplay />
   ) : isFieldLinks(fieldDefinition) ? (
     <LinksFieldDisplay />
   ) : isFieldCurrency(fieldDefinition) ? (
+    //done
     <CurrencyFieldDisplay />
   ) : isFieldFullName(fieldDefinition) ? (
     <FullNameFieldDisplay />
@@ -87,8 +90,10 @@ export const FieldDisplay = () => {
   ) : isFieldRawJson(fieldDefinition) ? (
     <JsonFieldDisplay />
   ) : isFieldBoolean(fieldDefinition) ? (
+    //done
     <BooleanFieldDisplay />
   ) : isFieldRating(fieldDefinition) ? (
+    //ok
     <RatingFieldDisplay />
   ) : isFieldRichText(fieldDefinition) ? (
     <RichTextFieldDisplay />
@@ -99,8 +104,10 @@ export const FieldDisplay = () => {
   ) : isFieldArray(fieldDefinition) ? (
     <ArrayFieldDisplay />
   ) : isFieldEmails(fieldDefinition) ? (
+    //ok
     <EmailsFieldDisplay />
   ) : isFieldPhones(fieldDefinition) ? (
+    //ok
     <PhonesFieldDisplay />
   ) : null;
 };

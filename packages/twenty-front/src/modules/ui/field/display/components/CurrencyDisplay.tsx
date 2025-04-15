@@ -3,9 +3,9 @@ import { styled } from '@linaria/react';
 
 import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
+import { isDefined } from 'twenty-shared/utils';
 import { formatAmount } from '~/utils/format/formatAmount';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { isDefined } from 'twenty-shared/utils';
 
 type CurrencyDisplayProps = {
   currencyValue: FieldCurrencyValue | null | undefined;
@@ -19,6 +19,7 @@ const StyledEllipsisDisplay = styled.div`
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
+  height: 20px;
 `;
 
 export const CurrencyDisplay = ({ currencyValue }: CurrencyDisplayProps) => {
