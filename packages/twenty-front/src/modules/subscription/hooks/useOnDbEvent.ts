@@ -13,8 +13,8 @@ export const useOnDbEvent = ({ onData, ...input }: OnDbEventArgs) => {
   const apolloClient = useApolloClient();
 
   useSubscription(ON_DB_EVENT, {
-    variables: { input },
-    onData,
     client: apolloClient,
+    onData,
+    variables: { input },
   });
 };
