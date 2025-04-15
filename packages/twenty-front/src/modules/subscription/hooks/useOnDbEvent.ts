@@ -1,7 +1,6 @@
-import { useSubscription } from '@apollo/client';
+import { useApolloClient, useSubscription } from '@apollo/client';
 import { DatabaseEventAction } from '~/generated/graphql';
 import { ON_DB_EVENT } from '@/subscription/graphql/subscriptions/onDbEvent';
-import { useApolloSubscriptionClient } from '@/subscription/hooks/useApolloSubscriptionClient';
 
 type OnDbEventArgs = {
   action?: DatabaseEventAction;
@@ -11,11 +10,11 @@ type OnDbEventArgs = {
 };
 
 export const useOnDbEvent = ({ onData, ...input }: OnDbEventArgs) => {
-  const apolloSubscriptionClient = useApolloSubscriptionClient();
+  const apolloClient = useApolloClient();
 
   useSubscription(ON_DB_EVENT, {
     variables: { input },
     onData,
-    client: apolloSubscriptionClient,
+    client: apolloClient,
   });
 };

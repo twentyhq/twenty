@@ -5,7 +5,6 @@ import {
   fromPromise,
   ServerError,
   ServerParseError,
-  split,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
@@ -22,9 +21,6 @@ import { GraphQLFormattedError } from 'graphql';
 import { ApolloManager } from '../types/apolloManager.interface';
 import { loggerLink } from '../utils/loggerLink';
 import { isDefined } from 'twenty-shared/utils';
-import { createClient } from 'graphql-ws';
-import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
-import { getMainDefinition } from '@apollo/client/utilities';
 
 const logger = loggerLink(() => 'Twenty');
 
@@ -48,7 +44,6 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
   constructor(opts: Options<TCacheShape>) {
     const {
       uri,
-      wsUri,
       onError: onErrorCb,
       onNetworkError,
       onTokenPairChange,
@@ -67,32 +62,6 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       const httpLink = createUploadLink({
         uri,
       });
-
-      const wsLink = isDefined(wsUri)
-        ? new GraphQLWsLink(
-            createClient({
-              url: wsUri,
-              connectionParams: {
-                authorization: this.tokenPair?.accessToken.token || '',
-              },
-            }),
-          )
-        : undefined;
-
-      const splitLink =
-        isDefined(httpLink) && isDefined(wsLink)
-          ? split(
-              ({ query }) => {
-                const definition = getMainDefinition(query);
-                return (
-                  definition.kind === 'OperationDefinition' &&
-                  definition.operation === 'subscription'
-                );
-              },
-              wsLink,
-              httpLink,
-            )
-          : undefined;
 
       const authLink = setContext(async (_, { headers }) => {
         return {
@@ -184,7 +153,6 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           isDebugMode ? logger : null,
           retryLink,
           httpLink,
-          wsLink,
         ].filter(isDefined),
       );
     };

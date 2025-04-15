@@ -27,7 +27,6 @@ import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProvide
 import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { getPageTitleFromPath } from '~/utils/title-utils';
-import { ApolloSubscriptionClientProvider } from '@/subscription/components/ApolloSubscriptionClientProvider';
 
 export const AppRouterProviders = () => {
   const { pathname } = useLocation();
@@ -46,30 +45,28 @@ export const AppRouterProviders = () => {
               <UserProvider>
                 <AuthProvider>
                   <ApolloMetadataClientProvider>
-                    <ApolloSubscriptionClientProvider>
-                      <ObjectMetadataItemsLoadEffect />
-                      <ObjectMetadataItemsProvider>
-                        <PrefetchDataProvider>
-                          <UserThemeProviderEffect />
-                          <SnackBarProvider>
-                            <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                              <DialogManager>
-                                <StrictMode>
-                                  <PromiseRejectionEffect />
-                                  <GotoHotkeysEffectsProvider />
-                                  <ServerPreconnect />
-                                  <PageTitle title={pageTitle} />
-                                  <PageFavicon />
-                                  <Outlet />
-                                </StrictMode>
-                              </DialogManager>
-                            </DialogManagerScope>
-                          </SnackBarProvider>
-                          <MainContextStoreProvider />
-                        </PrefetchDataProvider>
-                        <PageChangeEffect />
-                      </ObjectMetadataItemsProvider>
-                    </ApolloSubscriptionClientProvider>
+                    <ObjectMetadataItemsLoadEffect />
+                    <ObjectMetadataItemsProvider>
+                      <PrefetchDataProvider>
+                        <UserThemeProviderEffect />
+                        <SnackBarProvider>
+                          <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                            <DialogManager>
+                              <StrictMode>
+                                <PromiseRejectionEffect />
+                                <GotoHotkeysEffectsProvider />
+                                <ServerPreconnect />
+                                <PageTitle title={pageTitle} />
+                                <PageFavicon />
+                                <Outlet />
+                              </StrictMode>
+                            </DialogManager>
+                          </DialogManagerScope>
+                        </SnackBarProvider>
+                        <MainContextStoreProvider />
+                      </PrefetchDataProvider>
+                      <PageChangeEffect />
+                    </ObjectMetadataItemsProvider>
                   </ApolloMetadataClientProvider>
                 </AuthProvider>
               </UserProvider>
