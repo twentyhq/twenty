@@ -43,10 +43,8 @@ export const USER_QUERY_FRAGMENT = gql`
         customUrl
       }
       featureFlags {
-        id
         key
         value
-        workspaceId
       }
       metadataVersion
       currentBillingSubscription {

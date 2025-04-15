@@ -64,11 +64,11 @@ export class WorkspaceDataSource extends DataSource {
     this.permissionsPerRoleId = permissionsPerRoleId;
   }
 
-  setFeatureFlagMap(featureFlagMap: FeatureFlagMap) {
+  setFeatureFlagsMap(featureFlagMap: FeatureFlagMap) {
     this.featureFlagMap = featureFlagMap;
   }
 
-  setFeatureFlagMapVersion(featureFlagMapVersion: string) {
+  setFeatureFlagsMapVersion(featureFlagMapVersion: string) {
     this.featureFlagMapVersion = featureFlagMapVersion;
   }
 }

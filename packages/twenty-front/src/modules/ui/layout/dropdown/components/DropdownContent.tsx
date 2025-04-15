@@ -10,7 +10,6 @@ import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import {
@@ -98,7 +97,7 @@ export const DropdownContent = ({
   });
 
   useInternalHotkeyScopeManagement({
-    dropdownScopeId: getScopeIdFromComponentId(dropdownId),
+    dropdownScopeId: dropdownId,
     dropdownHotkeyScopeFromParent: hotkeyScope,
   });
 

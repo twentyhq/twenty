@@ -79,7 +79,7 @@ export const CommandMenuList = ({
       <ScrollWrapper componentInstanceId={`scroll-wrapper-command-menu`}>
         <StyledInnerList>
           <SelectableList
-            selectableListId="command-menu-list"
+            selectableListInstanceId="command-menu-list"
             hotkeyScope={AppHotkeyScope.CommandMenuOpen}
             selectableItemIdArray={selectableItemIds}
             onEnter={(itemId) => {
