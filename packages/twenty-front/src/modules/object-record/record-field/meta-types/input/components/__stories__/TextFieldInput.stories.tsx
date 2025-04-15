@@ -60,6 +60,7 @@ const TextFieldInputWithContext = ({
             metadata: {
               fieldName: 'text',
               objectMetadataNameSingular: 'person',
+              placeHolder: 'Enter text',
             },
           },
           isLabelIdentifier: false,
@@ -129,22 +130,30 @@ type Story = StoryObj<typeof TextFieldInputWithContext>;
 export const Default: Story = {};
 
 export const Enter: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
     expect(enterJestFn).toHaveBeenCalledTimes(0);
 
+    await canvas.findByPlaceholderText('Enter text');
+    await userEvent.keyboard('{enter}');
+
     await waitFor(() => {
-      userEvent.keyboard('{enter}');
       expect(enterJestFn).toHaveBeenCalledTimes(1);
     });
   },
 };
 
 export const Escape: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
     expect(escapeJestfn).toHaveBeenCalledTimes(0);
 
+    await canvas.findByPlaceholderText('Enter text');
+    await userEvent.keyboard('{esc}');
+
     await waitFor(() => {
-      userEvent.keyboard('{esc}');
       expect(escapeJestfn).toHaveBeenCalledTimes(1);
     });
   },
@@ -153,35 +162,47 @@ export const Escape: Story = {
 export const ClickOutside: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    await canvas.findByPlaceholderText('Enter text');
 
     expect(clickOutsideJestFn).toHaveBeenCalledTimes(0);
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
 
+    await userEvent.click(emptyDiv);
+
     await waitFor(() => {
-      userEvent.click(emptyDiv);
       expect(clickOutsideJestFn).toHaveBeenCalled();
     });
   },
 };
 
 export const Tab: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByPlaceholderText('Enter text');
+
     expect(tabJestFn).toHaveBeenCalledTimes(0);
 
+    await userEvent.keyboard('{tab}');
+
     await waitFor(() => {
-      userEvent.keyboard('{tab}');
       expect(tabJestFn).toHaveBeenCalledTimes(1);
     });
   },
 };
 
 export const ShiftTab: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByPlaceholderText('Enter text');
+
     expect(shiftTabJestFn).toHaveBeenCalledTimes(0);
 
+    await userEvent.keyboard('{shift>}{tab}');
+
     await waitFor(() => {
-      userEvent.keyboard('{shift>}{tab}');
       expect(shiftTabJestFn).toHaveBeenCalledTimes(1);
     });
   },

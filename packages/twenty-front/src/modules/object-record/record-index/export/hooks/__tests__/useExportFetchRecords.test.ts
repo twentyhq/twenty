@@ -206,7 +206,7 @@ describe('useRecordData', () => {
         result.current.tableData.getTableData();
       });
 
-      await waitFor(async () => {
+      await waitFor(() => {
         expect(callback).toHaveBeenCalledWith(
           [mockPerson],
           [
@@ -297,7 +297,7 @@ describe('useRecordData', () => {
         result.current.tableData.getTableData();
       });
 
-      await waitFor(async () => {
+      await waitFor(() => {
         expect(callback).toHaveBeenCalledWith([mockPerson], []);
       });
     });
