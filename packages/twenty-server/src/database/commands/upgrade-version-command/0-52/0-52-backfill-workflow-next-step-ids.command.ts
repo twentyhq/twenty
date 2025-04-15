@@ -60,10 +60,10 @@ export class BackfillWorkflowNextStepIdsCommand extends ActiveOrSuspendedWorkspa
       for (let i = 0; i < workflowSteps.length; i++) {
         const updatedStep = {
           ...workflowSteps[i],
-          nextStepId:
-            i === workflowSteps.length - 1
-              ? undefined
-              : workflowSteps[i + 1]?.id,
+          nextStepIds:
+            i < workflowSteps.length - 1 && workflowSteps[i + 1]?.id
+              ? [workflowSteps[i + 1].id]
+              : undefined,
         };
 
         updatedSteps.push(updatedStep);
@@ -88,7 +88,7 @@ export class BackfillWorkflowNextStepIdsCommand extends ActiveOrSuspendedWorkspa
 
           return {
             ...step,
-            nextStepId: updatedStep?.nextStepId,
+            nextStepIds: updatedStep?.nextStepIds,
           };
         });
 
