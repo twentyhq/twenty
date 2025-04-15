@@ -11,6 +11,7 @@ import { FieldMetadataType } from '~/generated/graphql';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { sleep } from '~/utils/sleep';
 import { useTextField } from '../../../hooks/useTextField';
 import { TextFieldInput, TextFieldInputProps } from '../TextFieldInput';
 const TextFieldValueSetterEffect = ({ value }: { value: string }) => {
@@ -131,6 +132,7 @@ export const Default: Story = {};
 export const Enter: Story = {
   play: async () => {
     expect(enterJestFn).toHaveBeenCalledTimes(0);
+    await sleep(100);
 
     await userEvent.keyboard('{enter}');
 
@@ -143,6 +145,7 @@ export const Enter: Story = {
 export const Escape: Story = {
   play: async () => {
     expect(escapeJestfn).toHaveBeenCalledTimes(0);
+    await sleep(100);
 
     await userEvent.keyboard('{esc}');
 
@@ -155,6 +158,7 @@ export const Escape: Story = {
 export const ClickOutside: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    await sleep(100);
 
     expect(clickOutsideJestFn).toHaveBeenCalledTimes(0);
 
@@ -171,6 +175,7 @@ export const ClickOutside: Story = {
 export const Tab: Story = {
   play: async () => {
     expect(tabJestFn).toHaveBeenCalledTimes(0);
+    await sleep(100);
 
     await userEvent.keyboard('{tab}');
 
@@ -183,6 +188,7 @@ export const Tab: Story = {
 export const ShiftTab: Story = {
   play: async () => {
     expect(shiftTabJestFn).toHaveBeenCalledTimes(0);
+    await sleep(100);
 
     await userEvent.keyboard('{shift>}{tab}');
 
