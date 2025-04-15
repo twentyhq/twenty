@@ -12,7 +12,6 @@ import { isDefined } from 'twenty-shared/utils';
 export const SINGLE_RECORD_PICKER_LISTENER_ID = 'single-record-select';
 
 export type SingleRecordPickerProps = {
-  width?: number;
   componentInstanceId: string;
 } & SingleRecordPickerMenuItemsWithSearchProps;
 
@@ -24,7 +23,6 @@ export const SingleRecordPicker = ({
   onCreate,
   onRecordSelected,
   objectNameSingular,
-  width = 200,
   componentInstanceId,
   layoutDirection,
 }: SingleRecordPickerProps) => {
@@ -51,7 +49,7 @@ export const SingleRecordPicker = ({
     <SingleRecordPickerComponentInstanceContext.Provider
       value={{ instanceId: componentInstanceId }}
     >
-      <DropdownMenu ref={containerRef} width={width} data-select-disable>
+      <DropdownMenu ref={containerRef} data-select-disable>
         <SingleRecordPickerMenuItemsWithSearch
           {...{
             EmptyIcon,

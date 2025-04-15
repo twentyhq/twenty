@@ -8,6 +8,7 @@ import { TrialCard } from '@/billing/components/TrialCard';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
 import { isBillingPriceLicensed } from '@/billing/utils/isBillingPriceLicensed';
 import { billingState } from '@/client-config/states/billingState';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -171,7 +172,7 @@ export const ChooseYourPlan = () => {
     ?.baseProduct.name;
 
   return (
-    <>
+    <Modal.Content isVerticalCentered>
       {isDefined(baseProductPrice) && isDefined(billing) ? (
         <>
           <Title noMarginTop>
@@ -250,6 +251,6 @@ export const ChooseYourPlan = () => {
       ) : (
         <StyledChooseYourPlanPlaceholder />
       )}
-    </>
+    </Modal.Content>
   );
 };

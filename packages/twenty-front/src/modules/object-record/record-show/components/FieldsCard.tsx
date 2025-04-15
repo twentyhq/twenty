@@ -55,11 +55,16 @@ export const FieldsCard = ({
     );
 
   const { inlineFieldMetadataItems, relationFieldMetadataItems } = groupBy(
-    availableFieldMetadataItems.filter(
-      (fieldMetadataItem) =>
-        fieldMetadataItem.name !== 'createdAt' &&
-        fieldMetadataItem.name !== 'deletedAt',
-    ),
+    availableFieldMetadataItems
+      .filter(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.name !== 'createdAt' &&
+          fieldMetadataItem.name !== 'deletedAt',
+      )
+      .filter(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.type !== FieldMetadataType.RICH_TEXT_V2,
+      ),
     (fieldMetadataItem) =>
       fieldMetadataItem.type === FieldMetadataType.RELATION
         ? 'relationFieldMetadataItems'

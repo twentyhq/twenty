@@ -34,10 +34,11 @@ const StyledIconContainer = styled.div`
 
 const StyledLabelAndIconContainer = styled.div`
   align-items: center;
+  align-self: flex-start;
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  height: 18px;
+  height: 24px;
 `;
 
 const StyledValueContainer = styled.div`

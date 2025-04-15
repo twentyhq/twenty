@@ -41,7 +41,6 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
-import { animateModalState } from '@/auth/states/animateModalState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import {
   SignInUpStep,
@@ -115,7 +114,6 @@ export const useAuth = () => {
   const goToRecoilSnapshot = useGotoRecoilSnapshot();
 
   const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
-  const setAnimateModal = useSetRecoilState(animateModalState);
 
   const [, setSearchParams] = useSearchParams();
 
@@ -422,7 +420,6 @@ export const useAuth = () => {
       }
 
       if (isMultiWorkspaceEnabled) {
-        setAnimateModal(false);
         return await redirectToWorkspaceDomain(
           getWorkspaceUrl(signUpResult.data.signUp.workspace.workspaceUrls),
           isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
@@ -446,7 +443,6 @@ export const useAuth = () => {
       handleGetAuthTokensFromLoginToken,
       setSignInUpStep,
       setSearchParams,
-      setAnimateModal,
       isEmailVerificationRequired,
       redirectToWorkspaceDomain,
     ],

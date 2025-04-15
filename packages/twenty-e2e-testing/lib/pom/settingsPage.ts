@@ -110,6 +110,10 @@ export class SettingsPage {
     await this.releasesLink.click();
   }
 
+  async logout() {
+    await this.page.getByText('Logout').click();
+  }
+
   async toggleAdvancedSettings() {
     await this.advancedToggle.click();
   }

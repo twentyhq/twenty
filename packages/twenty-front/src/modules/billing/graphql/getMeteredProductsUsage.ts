@@ -5,7 +5,8 @@ export const GET_METERED_PRODUCTS_USAGE = gql`
     getMeteredProductsUsage {
       productKey
       usageQuantity
-      includedFreeQuantity
+      freeTierQuantity
+      freeTrialQuantity
       unitPriceCents
       totalCostCents
     }
