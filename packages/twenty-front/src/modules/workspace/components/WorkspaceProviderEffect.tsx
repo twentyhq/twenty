@@ -1,16 +1,17 @@
 import { useRecoilValue } from 'recoil';
 
-import { useEffect } from 'react';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { useReadWorkspaceUrlFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceUrlFromCurrentLocation';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { lastAuthenticatedWorkspaceDomainState } from '@/domain-manager/states/lastAuthenticatedWorkspaceDomainState';
-import { useReadWorkspaceUrlFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceUrlFromCurrentLocation';
+import { useEffect } from 'react';
 
-import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
+import { useInitializeQueryParamState } from '@/app/hooks/useInitializeQueryParamState';
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
+import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceUrls } from '~/generated/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { isDefined } from 'twenty-shared/utils';
 
 export const WorkspaceProviderEffect = () => {
   const { data: getPublicWorkspaceData } = useGetPublicWorkspaceDataByDomain();
@@ -34,6 +35,8 @@ export const WorkspaceProviderEffect = () => {
       subdomainUrlHostname: new URL(workspaceUrls.subdomainUrl).hostname,
     };
   };
+
+  const { initializeQueryParamState } = useInitializeQueryParamState();
 
   useEffect(() => {
     const hostnames = getPublicWorkspaceData
@@ -64,6 +67,7 @@ export const WorkspaceProviderEffect = () => {
       'workspaceUrl' in lastAuthenticatedWorkspaceDomain &&
       isDefined(lastAuthenticatedWorkspaceDomain?.workspaceUrl)
     ) {
+      initializeQueryParamState();
       redirectToWorkspaceDomain(lastAuthenticatedWorkspaceDomain.workspaceUrl);
     }
   }, [
@@ -71,6 +75,7 @@ export const WorkspaceProviderEffect = () => {
     isDefaultDomain,
     lastAuthenticatedWorkspaceDomain,
     redirectToWorkspaceDomain,
+    initializeQueryParamState,
   ]);
 
   return <></>;
