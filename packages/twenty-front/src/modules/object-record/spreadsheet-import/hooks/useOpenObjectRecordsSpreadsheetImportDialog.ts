@@ -74,6 +74,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
         }
       },
       fields: availableFields,
+      availableFieldMetadataItems,
     });
   };
 
