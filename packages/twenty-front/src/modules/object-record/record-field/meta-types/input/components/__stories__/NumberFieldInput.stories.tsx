@@ -139,9 +139,9 @@ export const Default: Story = {};
 export const Enter: Story = {
   play: async () => {
     expect(enterJestFn).toHaveBeenCalledTimes(0);
+    userEvent.keyboard('{enter}');
 
     await waitFor(() => {
-      userEvent.keyboard('{enter}');
       expect(enterJestFn).toHaveBeenCalledTimes(1);
     });
   },
@@ -151,8 +151,9 @@ export const Escape: Story = {
   play: async () => {
     expect(escapeJestfn).toHaveBeenCalledTimes(0);
 
+    userEvent.keyboard('{esc}');
+
     await waitFor(() => {
-      userEvent.keyboard('{esc}');
       expect(escapeJestfn).toHaveBeenCalledTimes(1);
     });
   },
@@ -166,8 +167,9 @@ export const ClickOutside: Story = {
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
 
+    userEvent.click(emptyDiv);
+
     await waitFor(() => {
-      userEvent.click(emptyDiv);
       expect(clickOutsideJestFn).toHaveBeenCalledTimes(1);
     });
   },
@@ -177,8 +179,8 @@ export const Tab: Story = {
   play: async () => {
     expect(tabJestFn).toHaveBeenCalledTimes(0);
 
+    userEvent.keyboard('{tab}');
     await waitFor(() => {
-      userEvent.keyboard('{tab}');
       expect(tabJestFn).toHaveBeenCalledTimes(1);
     });
   },
@@ -188,8 +190,9 @@ export const ShiftTab: Story = {
   play: async () => {
     expect(shiftTabJestFn).toHaveBeenCalledTimes(0);
 
+    userEvent.keyboard('{shift>}{tab}');
+
     await waitFor(() => {
-      userEvent.keyboard('{shift>}{tab}');
       expect(shiftTabJestFn).toHaveBeenCalledTimes(1);
     });
   },

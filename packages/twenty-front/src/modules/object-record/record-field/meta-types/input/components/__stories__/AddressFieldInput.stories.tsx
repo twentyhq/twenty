@@ -146,8 +146,9 @@ export const Enter: Story = {
   play: async () => {
     expect(enterJestFn).toHaveBeenCalledTimes(0);
 
+    userEvent.keyboard('{enter}');
+
     await waitFor(() => {
-      userEvent.keyboard('{enter}');
       expect(enterJestFn).toHaveBeenCalledTimes(1);
     });
   },
