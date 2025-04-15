@@ -50,7 +50,7 @@ describe('AnalyticsResolver', () => {
       name: 'Test Page',
       properties: {},
     };
-    const result = await resolver.track(
+    const result = await resolver.trackV2(
       input,
       { id: 'workspace-1' } as Workspace,
       { id: 'user-1' } as User,
@@ -77,7 +77,7 @@ describe('AnalyticsResolver', () => {
       event: 'Custom Domain Activated' as const,
       properties: {},
     };
-    const result = await resolver.track(
+    const result = await resolver.trackV2(
       input,
       { id: 'workspace-2' } as Workspace,
       { id: 'user-2' } as User,

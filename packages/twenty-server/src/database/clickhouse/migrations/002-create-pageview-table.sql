@@ -1,7 +1,8 @@
 CREATE TABLE IF NOT EXISTS pageview
 (
-    `name` LowCardinality(String)
-    `properties`  JSON
+    `name` LowCardinality(String),
+    `timestamp` DateTime64(3),
+    `properties`  JSON,
     `userId`      String DEFAULT '',
     `workspaceId` String DEFAULT ''
 )

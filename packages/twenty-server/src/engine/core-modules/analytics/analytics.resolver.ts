@@ -12,6 +12,7 @@ import {
 import { AnalyticsService } from './services/analytics.service';
 import {
   CreateAnalyticsInput,
+  CreateAnalyticsInputV2,
   isPageviewAnalyticsInput,
   isTrackAnalyticsInput,
 } from './dtos/create-analytics.input';
@@ -21,10 +22,20 @@ import { Analytics } from './entities/analytics.entity';
 export class AnalyticsResolver {
   constructor(private readonly analyticsService: AnalyticsService) {}
 
+  // deprecated
   @Mutation(() => Analytics)
-  async track(
+  track(
+    @Args() createAnalyticsInput: CreateAnalyticsInput,
+    @AuthWorkspace() workspace: Workspace | undefined,
+    @AuthUser({ allowUndefined: true }) user: User | undefined,
+  ) {
+    return { success: true };
+  }
+
+  @Mutation(() => Analytics)
+  async trackV2(
     @Args()
-    createAnalyticsInput: CreateAnalyticsInput,
+    createAnalyticsInput: CreateAnalyticsInputV2,
     @AuthWorkspace() workspace: Workspace | undefined,
     @AuthUser({ allowUndefined: true }) user: User | undefined,
   ) {

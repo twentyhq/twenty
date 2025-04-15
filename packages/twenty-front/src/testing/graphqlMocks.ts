@@ -1,7 +1,7 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { graphql, GraphQLQuery, http, HttpResponse } from 'msw';
 
-import { TRACK } from '@/analytics/graphql/queries/track';
+import { TRACKV2 } from '@/analytics/graphql/queries/track';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
@@ -110,10 +110,10 @@ export const graphqlMocks = {
         });
       },
     ),
-    graphql.mutation(getOperationName(TRACK) ?? '', () => {
+    graphql.mutation(getOperationName(TRACKV2) ?? '', () => {
       return HttpResponse.json({
         data: {
-          track: { success: 1, __typename: 'TRACK' },
+          track: { success: 1, __typename: 'TRACKV2' },
         },
       });
     }),

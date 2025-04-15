@@ -2,8 +2,8 @@ import { useCallback } from 'react';
 import { v4 } from 'uuid';
 import {
   AnalyticsType,
-  MutationTrackArgs,
-  useTrackMutation,
+  MutationTrackV2Args,
+  useTrackV2Mutation,
 } from '~/generated/graphql';
 
 export const ANALYTICS_COOKIE_NAME = 'analyticsCookie';
@@ -25,10 +25,10 @@ export const setSessionId = (domain?: string): void => {
 };
 
 export const useEventTracker = () => {
-  const [createEventMutation] = useTrackMutation();
+  const [createEventMutation] = useTrackV2Mutation();
 
   return useCallback(
-    (type: AnalyticsType, payload: Omit<MutationTrackArgs, 'type'>) => {
+    (type: AnalyticsType, payload: Omit<MutationTrackV2Args, 'type'>) => {
       createEventMutation({
         variables: {
           type,

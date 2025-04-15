@@ -18,13 +18,13 @@ const mocks: MockedResponse[] = [
   {
     request: {
       query: gql`
-        mutation Track(
+        mutation TrackV2(
           $type: AnalyticsType!
           $event: String
           $name: String
           $properties: JSON
         ) {
-          track(
+          trackV2(
             type: $type
             event: $event
             name: $name
@@ -53,13 +53,13 @@ const mocks: MockedResponse[] = [
   {
     request: {
       query: gql`
-        mutation Track(
+        mutation TrackV2(
           $type: AnalyticsType!
           $event: String
           $name: String
           $properties: JSON
         ) {
-          track(
+          trackV2(
             type: $type
             event: $event
             name: $name
