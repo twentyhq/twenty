@@ -23,7 +23,7 @@ export class UserVarsService<
 
     if (workspaceId) {
       userVarWorkspaceLevel = await this.keyValuePairService.get({
-        type: KeyValuePairType.USER_VAR,
+        type: KeyValuePairType.USER_VARIABLE,
         userId: null,
         workspaceId,
         key,
@@ -40,7 +40,7 @@ export class UserVarsService<
 
     if (userId) {
       userVarUserLevel = await this.keyValuePairService.get({
-        type: KeyValuePairType.USER_VAR,
+        type: KeyValuePairType.USER_VARIABLE,
         userId,
         workspaceId: null,
         key,
@@ -55,7 +55,7 @@ export class UserVarsService<
 
     if (userId && workspaceId) {
       userVarWorkspaceAndUserLevel = await this.keyValuePairService.get({
-        type: KeyValuePairType.USER_VAR,
+        type: KeyValuePairType.USER_VARIABLE,
         userId,
         workspaceId,
         key,
@@ -88,7 +88,7 @@ export class UserVarsService<
       result = [
         ...result,
         ...(await this.keyValuePairService.get({
-          type: KeyValuePairType.USER_VAR,
+          type: KeyValuePairType.USER_VARIABLE,
           userId,
           workspaceId: null,
         })),
@@ -99,7 +99,7 @@ export class UserVarsService<
       result = [
         ...result,
         ...(await this.keyValuePairService.get({
-          type: KeyValuePairType.USER_VAR,
+          type: KeyValuePairType.USER_VARIABLE,
           userId: null,
           workspaceId,
         })),
@@ -110,7 +110,7 @@ export class UserVarsService<
       result = [
         ...result,
         ...(await this.keyValuePairService.get({
-          type: KeyValuePairType.USER_VAR,
+          type: KeyValuePairType.USER_VARIABLE,
           userId,
           workspaceId,
         })),
@@ -136,7 +136,7 @@ export class UserVarsService<
       workspaceId,
       key: key,
       value,
-      type: KeyValuePairType.USER_VAR,
+      type: KeyValuePairType.USER_VARIABLE,
     });
   }
 
@@ -153,7 +153,7 @@ export class UserVarsService<
       userId,
       workspaceId,
       key,
-      type: KeyValuePairType.USER_VAR,
+      type: KeyValuePairType.USER_VARIABLE,
     });
   }
 }

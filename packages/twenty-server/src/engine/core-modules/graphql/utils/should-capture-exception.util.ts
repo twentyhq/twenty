@@ -15,11 +15,10 @@ export const graphQLErrorCodesToFilterOut = [
 ];
 
 export const shouldCaptureException = (exception: Error): boolean => {
-  if (!(exception instanceof BaseGraphQLError)) {
-    return true;
-  }
-
-  if (graphQLErrorCodesToFilterOut.includes(exception?.extensions?.code)) {
+  if (
+    exception instanceof BaseGraphQLError &&
+    graphQLErrorCodesToFilterOut.includes(exception?.extensions?.code)
+  ) {
     return false;
   }
 
