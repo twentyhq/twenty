@@ -39,7 +39,7 @@ export const CommandMenuWorkflowRunViewStep = () => {
   const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
   const workflowRunId = useWorkflowRunIdOrThrow();
 
-  const workflowRun = useWorkflowRun({ workflowRunId, trackUpdates: true });
+  const workflowRun = useWorkflowRun({ workflowRunId });
 
   const activeTabId = useRecoilComponentValueV2(
     activeTabIdComponentState,
