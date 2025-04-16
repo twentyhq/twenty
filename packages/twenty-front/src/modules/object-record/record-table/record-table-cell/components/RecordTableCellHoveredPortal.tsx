@@ -8,6 +8,8 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { RecordTableCellDisplayMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDisplayMode';
 import { RecordTableCellEditButton } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditButton';
+import { RecordTableCellEditMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditMode';
+import { RecordTableCellFieldInput } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldInput';
 import { useContext } from 'react';
 import { BORDER_COMMON } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -54,9 +56,15 @@ const RecordTableCellHoveredPortalContent = () => {
 
   return (
     <StyledRecordTableCellHoveredPortalContent isReadOnly={isReadOnly}>
-      <RecordTableCellDisplayMode>
-        <FieldDisplay />
-      </RecordTableCellDisplayMode>
+      {isFieldInputOnly ? (
+        <RecordTableCellEditMode>
+          <RecordTableCellFieldInput />
+        </RecordTableCellEditMode>
+      ) : (
+        <RecordTableCellDisplayMode>
+          <FieldDisplay />
+        </RecordTableCellDisplayMode>
+      )}
       {showButton && <RecordTableCellEditButton />}
     </StyledRecordTableCellHoveredPortalContent>
   );
