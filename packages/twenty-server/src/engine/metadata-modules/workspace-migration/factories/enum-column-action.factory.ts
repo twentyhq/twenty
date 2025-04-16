@@ -39,6 +39,13 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
       ? [...fieldMetadata.options.map((option) => option.value)]
       : undefined;
 
+    const validatedDefaultValue =
+      this.validateDefaultValueOrFallbackToNullIfNullable(
+        serializedDefaultValue,
+        enumOptions,
+        fieldMetadata.isNullable ?? true,
+      );
+
     return [
       {
         action: WorkspaceMigrationColumnActionType.CREATE,
@@ -48,9 +55,31 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
         isArray: fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
         isNullable: fieldMetadata.isNullable ?? true,
         isUnique: fieldMetadata.isUnique ?? false,
-        defaultValue: serializedDefaultValue,
+        defaultValue: validatedDefaultValue,
       },
     ];
+  }
+
+  private validateDefaultValueOrFallbackToNullIfNullable(
+    defaultValue: string | number | boolean | null,
+    enumOptions: string[] | undefined,
+    isNullable: boolean,
+  ) {
+    if (
+      typeof defaultValue === 'string' &&
+      enumOptions?.includes(defaultValue)
+    ) {
+      return defaultValue;
+    }
+
+    if (isNullable) {
+      return null;
+    }
+
+    throw new WorkspaceMigrationException(
+      `Invalid default value "${defaultValue}"`,
+      WorkspaceMigrationExceptionCode.INVALID_FIELD_METADATA,
+    );
   }
 
   protected handleAlterAction(
@@ -94,6 +123,13 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
       );
     }
 
+    const validatedDefaultValue =
+      this.validateDefaultValueOrFallbackToNullIfNullable(
+        serializedDefaultValue,
+        enumOptions,
+        alteredFieldMetadata.isNullable ?? true,
+      );
+
     return [
       {
         action: WorkspaceMigrationColumnActionType.ALTER,
@@ -117,7 +153,7 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
           isArray: alteredFieldMetadata.type === FieldMetadataType.MULTI_SELECT,
           isNullable: alteredFieldMetadata.isNullable ?? true,
           isUnique: alteredFieldMetadata.isUnique ?? false,
-          defaultValue: serializedDefaultValue,
+          defaultValue: validatedDefaultValue,
         },
       },
     ];
