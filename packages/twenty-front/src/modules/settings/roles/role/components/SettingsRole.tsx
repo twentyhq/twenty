@@ -10,6 +10,8 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
 import { SettingsPath } from '@/types/SettingsPath';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
@@ -78,6 +80,8 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     settingsPersistedRoleFamilyState(roleId),
   );
 
+  const { enqueueSnackBar } = useSnackBar();
+
   if (!isDefined(settingsRolesIsLoading)) {
     return <></>;
   }
@@ -109,6 +113,13 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
       settingsDraftRole,
       settingsPersistedRole,
     );
+
+    if (isDefined(dirtyFields.label) && dirtyFields.label === '') {
+      enqueueSnackBar(t`Role name cannot be empty`, {
+        variant: SnackBarVariant.Error,
+      });
+      return;
+    }
 
     if (isCreateMode) {
       const roleId = v4();

@@ -46,11 +46,11 @@ export const DateTimeSettingsTimeFormat: Story = {
 
     const timeFormatSelect = await canvas.findByText('24h (08:33)');
 
-    userEvent.click(timeFormatSelect);
+    await userEvent.click(timeFormatSelect);
 
     const timeFormatOptions = await canvas.findByText('12h (8:33 AM)');
 
-    userEvent.click(timeFormatOptions);
+    await userEvent.click(timeFormatOptions);
 
     await canvas.findByText('12h (8:33 AM)');
   },
@@ -66,13 +66,13 @@ export const DateTimeSettingsTimezone: Story = {
       '(GMT-04:00) Eastern Daylight Time - New York',
     );
 
-    userEvent.click(timezoneSelect);
+    await userEvent.click(timezoneSelect);
 
     const systemSettingsOptions = await canvas.findByText(
       '(GMT-11:00) Niue Time',
     );
 
-    userEvent.click(systemSettingsOptions);
+    await userEvent.click(systemSettingsOptions);
 
     await canvas.findByText('(GMT-11:00) Niue Time');
   },
@@ -86,11 +86,11 @@ export const DateTimeSettingsDateFormat: Story = {
 
     const timeFormatSelect = await canvas.findByText('13 Jun, 2022');
 
-    userEvent.click(timeFormatSelect);
+    await userEvent.click(timeFormatSelect);
 
     const timeFormatOptions = await canvas.findByText('Jun 13, 2022');
 
-    userEvent.click(timeFormatOptions);
+    await userEvent.click(timeFormatOptions);
 
     await canvas.findByText('Jun 13, 2022');
   },
