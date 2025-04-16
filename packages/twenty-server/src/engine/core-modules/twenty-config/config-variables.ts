@@ -727,7 +727,7 @@ export class ConfigVariables {
   @CastToBoolean()
   @IsBoolean()
   @IsOptional()
-  IS_CONFIG_VAR_IN_DB_ENABLED = false;
+  IS_CONFIG_VARIABLES_IN_DB_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
