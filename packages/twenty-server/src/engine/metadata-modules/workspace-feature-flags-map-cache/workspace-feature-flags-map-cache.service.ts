@@ -10,6 +10,8 @@ import { TwentyORMExceptionCode } from 'src/engine/twenty-orm/exceptions/twenty-
 import { getFromCacheWithRecompute } from 'src/engine/utils/get-data-from-cache-with-recompute.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
+const FEATURE_FLAG_MAP = 'Feature flag map';
+
 @Injectable()
 export class WorkspaceFeatureFlagsMapCacheService {
   logger = new Logger(WorkspaceFeatureFlagsMapCacheService.name);
@@ -45,7 +47,7 @@ export class WorkspaceFeatureFlagsMapCacheService {
           workspaceId,
         ),
       recomputeCache: (params) => this.recomputeFeatureFlagsMapCache(params),
-      cachedEntityName: 'Feature flag map',
+      cachedEntityName: FEATURE_FLAG_MAP,
       exceptionCode: TwentyORMExceptionCode.FEATURE_FLAG_MAP_VERSION_NOT_FOUND,
     });
   }

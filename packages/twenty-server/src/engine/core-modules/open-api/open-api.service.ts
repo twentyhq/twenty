@@ -82,18 +82,24 @@ export class OpenApiService {
 
     schema.webhooks = objectMetadataItems.reduce(
       (paths, item) => {
-        paths[`Create ${item.nameSingular}`] = computeWebhooks(
-          DatabaseEventAction.CREATED,
-          item,
-        );
-        paths[`Update ${item.nameSingular}`] = computeWebhooks(
-          DatabaseEventAction.UPDATED,
-          item,
-        );
-        paths[`Delete ${item.nameSingular}`] = computeWebhooks(
-          DatabaseEventAction.DELETED,
-          item,
-        );
+        paths[
+          this.createWebhookEventName(
+            DatabaseEventAction.CREATED,
+            item.nameSingular,
+          )
+        ] = computeWebhooks(DatabaseEventAction.CREATED, item);
+        paths[
+          this.createWebhookEventName(
+            DatabaseEventAction.UPDATED,
+            item.nameSingular,
+          )
+        ] = computeWebhooks(DatabaseEventAction.UPDATED, item);
+        paths[
+          this.createWebhookEventName(
+            DatabaseEventAction.DELETED,
+            item.nameSingular,
+          )
+        ] = computeWebhooks(DatabaseEventAction.DELETED, item);
 
         return paths;
       },
@@ -225,5 +231,12 @@ export class OpenApiService {
     };
 
     return schema;
+  }
+
+  createWebhookEventName(
+    action: DatabaseEventAction,
+    objectName: string,
+  ): string {
+    return `${capitalize(objectName)} ${capitalize(action)}`;
   }
 }

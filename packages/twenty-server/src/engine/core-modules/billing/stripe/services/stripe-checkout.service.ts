@@ -2,6 +2,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
 import Stripe from 'stripe';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
@@ -47,6 +48,17 @@ export class StripeCheckoutService {
     requirePaymentMethod?: boolean;
     withTrialPeriod: boolean;
   }): Promise<Stripe.Checkout.Session> {
+    if (!isDefined(stripeCustomerId)) {
+      const customer = await this.stripe.customers.create({
+        email: user.email,
+        metadata: {
+          workspaceId,
+        },
+      });
+
+      stripeCustomerId = customer.id;
+    }
+
     return await this.stripe.checkout.sessions.create({
       line_items: stripeSubscriptionLineItems,
       mode: 'subscription',
@@ -73,10 +85,7 @@ export class StripeCheckoutService {
       automatic_tax: { enabled: !!requirePaymentMethod },
       tax_id_collection: { enabled: !!requirePaymentMethod },
       customer: stripeCustomerId,
-      customer_update: stripeCustomerId
-        ? { name: 'auto', address: 'auto' }
-        : undefined,
-      customer_email: stripeCustomerId ? undefined : user.email,
+      customer_update: { name: 'auto', address: 'auto' },
       success_url: successUrl,
       cancel_url: cancelUrl,
       payment_method_collection: requirePaymentMethod

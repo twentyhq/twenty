@@ -730,6 +730,15 @@ export class ConfigVariables {
   PG_SSL_ALLOW_SELF_SIGNED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
+    description: 'Enable configuration variables to be stored in the database',
+  })
+  @CastToBoolean()
+  @IsBoolean()
+  @IsOptional()
+  IS_CONFIG_VARIABLES_IN_DB_ENABLED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
     description: 'Time-to-live for cache storage in seconds',
   })
