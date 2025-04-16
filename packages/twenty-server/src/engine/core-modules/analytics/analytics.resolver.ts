@@ -47,14 +47,14 @@ export class AnalyticsResolver {
     if (isPageviewAnalyticsInput(createAnalyticsInput)) {
       return analyticsContext.pageview(
         createAnalyticsInput.name,
-        createAnalyticsInput.properties,
+        createAnalyticsInput.properties ?? {},
       );
     }
 
     if (isTrackAnalyticsInput(createAnalyticsInput)) {
       return analyticsContext.track(
         createAnalyticsInput.event,
-        createAnalyticsInput.properties,
+        createAnalyticsInput.properties ?? {},
       );
     }
 
