@@ -5,7 +5,7 @@ import { registerEvent } from 'src/engine/core-modules/analytics/utils/events/tr
 export const OBJECT_RECORD_UPDATED_EVENT = 'Object Record Updated' as const;
 export const objectRecordUpdatedSchema = z.object({
   event: z.literal(OBJECT_RECORD_UPDATED_EVENT),
-  properties: z.object({}),
+  properties: z.object({}).passthrough(),
 });
 
 export type ObjectRecordUpdatedTrackEvent = z.infer<

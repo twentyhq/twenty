@@ -9,11 +9,8 @@ import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/a
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
-import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { OBJECT_RECORD_UPDATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-updated';
-import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-created';
-import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
 import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-delete';
 
 @Processor(MessageQueue.entityEventsToDbQueue)
@@ -59,13 +56,16 @@ export class CreateAuditLogFromInternalEvent {
 
       const analytics = this.analyticsService.createAnalyticsContext({
         workspaceId: workspaceEventBatch.workspaceId,
+        userId: eventData.userId,
       });
 
-      if (eventData instanceof ObjectRecordUpdateEvent) {
+      console.log('>>>>>>>>>>>>>>', workspaceEventBatch);
+
+      if (workspaceEventBatch.name.endsWith('.updated')) {
         analytics.track(OBJECT_RECORD_UPDATED_EVENT, eventData.properties);
-      } else if (eventData instanceof ObjectRecordCreateEvent) {
+      } else if (workspaceEventBatch.name.endsWith('.created')) {
         analytics.track(OBJECT_RECORD_CREATED_EVENT, eventData.properties);
-      } else if (eventData instanceof ObjectRecordDeleteEvent) {
+      } else if (workspaceEventBatch.name.endsWith('.deleted')) {
         analytics.track(OBJECT_RECORD_DELETED_EVENT, eventData.properties);
       }
     }

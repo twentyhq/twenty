@@ -5,7 +5,7 @@ import { registerEvent } from 'src/engine/core-modules/analytics/utils/events/tr
 export const OBJECT_RECORD_DELETED_EVENT = 'Object Record Deleted' as const;
 export const objectRecordDeletedSchema = z.object({
   event: z.literal(OBJECT_RECORD_DELETED_EVENT),
-  properties: z.object({}),
+  properties: z.object({}).passthrough(),
 });
 
 export type ObjectRecordDeletedTrackEvent = z.infer<

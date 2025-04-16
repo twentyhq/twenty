@@ -22,6 +22,9 @@ export class TelemetryListener {
   async handleAllCreate(payload: WorkspaceEventBatch<ObjectRecordCreateEvent>) {
     await Promise.all(
       payload.events.map((eventPayload) =>
+        // @Felix: this code duplicate the Object Record Created.
+        // I don't understand the behavior of telemetry vs audit.
+        // Do we want to keep it?
         this.analyticsService
           .createAnalyticsContext({
             userId: eventPayload.userId,
