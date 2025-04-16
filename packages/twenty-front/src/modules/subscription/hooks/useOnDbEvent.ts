@@ -54,5 +54,5 @@ export const useOnDbEvent = ({
     return () => {
       unsubscribe();
     };
-  }, [input, onComplete, onData, onError, skip]);
+  }, [input, onComplete, onData, onError, skip, sseClient]);
 };
