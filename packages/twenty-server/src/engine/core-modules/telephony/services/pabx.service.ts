@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import https from 'https';
 
@@ -8,12 +8,14 @@ import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/
 import { PabxServiceInterface } from 'src/engine/core-modules/telephony/interfaces/pabx.interface';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { InsereEmpresa } from 'src/engine/core-modules/telephony/types/Create/InsereEmpresa.type';
 import { ExtetionBody } from 'src/engine/core-modules/telephony/types/Extention.type';
 import { ListExtentionsArgs } from 'src/engine/core-modules/telephony/types/pabx.type';
 
 @Injectable()
 export class PabxService implements PabxServiceInterface {
   private pabxAxiosInstance: AxiosInstance;
+  private readonly logger = new Logger(PabxService.name);
 
   public readonly LIST_BODY = {
     pos_registro_inicial: 0,
@@ -122,5 +124,28 @@ export class PabxService implements PabxServiceInterface {
     );
 
     return integrationFlowsResponse;
+  };
+
+  createCompany: (data: InsereEmpresa) => Promise<AxiosResponse> = async (
+    data,
+  ) => {
+    try {
+      this.logger.log(`Creating company with name: ${data.nome}`);
+
+      const createCompanyResponse = await this.pabxAxiosInstance.post(
+        '/empresas',
+        data,
+      );
+
+      this.logger.log(`Company created successfully: ${data.nome}`);
+
+      return createCompanyResponse;
+    } catch (error) {
+      this.logger.error(
+        `Failed to create company: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
   };
 }

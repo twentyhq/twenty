@@ -5,6 +5,7 @@ import { User } from '@sentry/types';
 import { Repository } from 'typeorm';
 
 import {
+  CreatePabxCompanyInput,
   CreateTelephonyInput,
   UpdateTelephonyInput,
 } from 'src/engine/core-modules/telephony/inputs';
@@ -20,6 +21,8 @@ import {
   TelephonyDids,
   TelephonyExtension,
 } from './telephony.entity';
+
+import { PabxCompanyResponseType } from './types/Create/PabxCompanyResponse.type';
 
 @Resolver(() => Telephony)
 export class TelephonyResolver {
@@ -325,5 +328,31 @@ export class TelephonyResolver {
     const result = await this.telephonyService.delete({ id: telephonyId });
 
     return result;
+  }
+
+  @Mutation(() => PabxCompanyResponseType, { name: 'createPabxCompany' })
+  async createPabxCompany(
+    @AuthUser() { id: userId }: User,
+    @Args('input') input: CreatePabxCompanyInput,
+  ): Promise<PabxCompanyResponseType> {
+    if (!userId) {
+      throw new Error('User id not found');
+    }
+
+    try {
+      const result = await this.pabxService.createCompany(input);
+
+      return {
+        success: true,
+        message: `Company created successfully: ${input.nome}`,
+      };
+    } catch (error) {
+      console.error('Error creating PABX company:', error);
+
+      return {
+        success: false,
+        message: `Failed to create company: ${error.message}`,
+      };
+    }
   }
 }

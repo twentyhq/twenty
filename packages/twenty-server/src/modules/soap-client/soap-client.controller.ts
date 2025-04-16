@@ -5,6 +5,7 @@ import { ClienteEstrutura } from 'src/modules/soap-client/interfaces/cliente.int
 
 import { SoapClientService } from './soap-client.service';
 
+import { CriarClienteCompletoDto } from './dtos/criar-cliente-completo.dto';
 import { InsereContaVoipDto } from './dtos/insere-conta-voip.dto';
 import { IpDeOrigemEstrutura } from './interfaces/ip-de-origem.interface';
 import { RetornoEstrutura } from './interfaces/return.interface';
@@ -75,6 +76,30 @@ export class SoapClientController {
 
     return this.soapClientService.insereContaVoip(
       contaVoipData,
+      tabela_roteamento_id,
+      tabela_preco_id,
+      ddd_local,
+    );
+  }
+
+  /**
+   * Endpoint to create a complete client with VoIP account and IP origin in one call
+   */
+  @Post('criar-cliente-completo')
+  async criarClienteCompleto(@Body() dto: CriarClienteCompletoDto) {
+    const {
+      cliente,
+      contaVoip,
+      ipDeOrigem,
+      tabela_roteamento_id,
+      tabela_preco_id,
+      ddd_local,
+    } = dto;
+
+    return this.soapClientService.criarClienteCompleto(
+      cliente,
+      contaVoip,
+      ipDeOrigem,
       tabela_roteamento_id,
       tabela_preco_id,
       ddd_local,

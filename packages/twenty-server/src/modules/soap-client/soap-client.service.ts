@@ -108,4 +108,74 @@ export class SoapClientService {
       throw error;
     }
   }
+
+  /**
+   * Create a complete client setup with client, VoIP account, and IP origin
+   */
+  async criarClienteCompleto(
+    clienteData: ClienteEstrutura,
+    contaVoipData: Omit<ContaVoipEstrutura, 'cliente_id'>,
+    ipData: Omit<IpDeOrigemEstrutura, 'cliente_id'>,
+    tabela_roteamento_id: number,
+    tabela_preco_id: number,
+    ddd_local: number,
+  ): Promise<{
+    cliente: RetornoEstrutura & { id?: number };
+    contaVoip: RetornoEstrutura;
+    ipDeOrigem: RetornoEstrutura;
+  }> {
+    try {
+      // Step 1: Create client
+      const clienteResult = await this.insereCliente(clienteData);
+
+      if (!clienteResult.status) {
+        throw new Error(`Failed to create client: ${clienteResult.erro}`);
+      }
+
+      // Extract client ID from result
+      const clienteId = clienteResult['id'] as number;
+
+      this.logger.log(`Client created with ID: ${clienteId}`);
+
+      // Step 2: Create VoIP account
+      const fullContaVoipData = {
+        ...contaVoipData,
+        cliente_id: clienteId,
+      };
+
+      const contaVoipResult = await this.insereContaVoip(
+        fullContaVoipData,
+        tabela_roteamento_id,
+        tabela_preco_id,
+        ddd_local,
+      );
+
+      if (!contaVoipResult.status) {
+        throw new Error(
+          `Failed to create VoIP account: ${contaVoipResult.erro}`,
+        );
+      }
+
+      // Step 3: Create IP origin
+      const fullIpData = {
+        ...ipData,
+        cliente_id: clienteId,
+      };
+
+      const ipResult = await this.insereIpDeOrigem(fullIpData);
+
+      if (!ipResult.status) {
+        throw new Error(`Failed to create IP origin: ${ipResult.erro}`);
+      }
+
+      return {
+        cliente: { ...clienteResult, id: clienteId },
+        contaVoip: contaVoipResult,
+        ipDeOrigem: ipResult,
+      };
+    } catch (error) {
+      this.logger.error('Error in criarClienteCompleto:', error);
+      throw error;
+    }
+  }
 }
