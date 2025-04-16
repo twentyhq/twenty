@@ -28,8 +28,8 @@ import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { THEME_COMMON } from 'twenty-ui/theme';
 import { Tag, TagColor } from 'twenty-ui/components';
+import { THEME_COMMON } from 'twenty-ui/theme';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -72,7 +72,7 @@ const StyledStatusTagContainer = styled.div`
   left: 0;
   top: 0;
   position: absolute;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(4)};
 `;
 
 const defaultFitViewOptions = {
