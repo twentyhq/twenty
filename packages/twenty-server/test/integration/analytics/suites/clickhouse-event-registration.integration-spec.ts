@@ -4,12 +4,14 @@ import request from 'supertest';
 import { createClient, ClickHouseClient } from '@clickhouse/client';
 
 import { GenericTrackEvent } from 'src/engine/core-modules/analytics/utils/events/track/track';
+import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-created';
 describe('ClickHouse Event Registration (integration)', () => {
   let clickhouseClient: ClickHouseClient;
 
   beforeAll(async () => {
     jest.useRealTimers();
 
+    console.log('>>>>>>>>>>>>>>', process.env.CLICKHOUSE_URL);
     clickhouseClient = createClient({
       // use variable
       url: process.env.CLICKHOUSE_URL,
@@ -29,18 +31,17 @@ describe('ClickHouse Event Registration (integration)', () => {
 
   it('should register events in ClickHouse when sending an event', async () => {
     const mutation = `
-      mutation Track($action: String!, $payload: JSON!) {
-        track(action: $action, payload: $payload) {
+      mutation TrackV2($type: AnalyticsType!, $event: String, $name: String, $properties: JSON) {
+        trackV2(type: $type, event: $event, name: $name, properties: $properties) {
           success
         }
       }
     `;
 
     const variables = {
-      action: 'random.event',
-      payload: {
-        foo: 'bar',
-      },
+      type: 'TRACK',
+      event: OBJECT_RECORD_CREATED_EVENT,
+      properties: {},
     };
 
     const response = await request(`http://localhost:${APP_PORT}`)
@@ -51,24 +52,23 @@ describe('ClickHouse Event Registration (integration)', () => {
       });
 
     expect(response.status).toBe(200);
-    expect(response.body.data.track.success).toBe(true);
-
-    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(response.body.data.trackV2.success).toBe(true);
 
     const queryResult = await clickhouseClient.query({
       query: `
         SELECT *
         FROM events
-        WHERE event = '${variables.action}'
+        WHERE event = '${OBJECT_RECORD_CREATED_EVENT}' AND timestamp >= now() - INTERVAL 1 SECOND
+
       `,
       format: 'JSONEachRow',
     });
 
     const rows = await queryResult.json<GenericTrackEvent>();
 
-    expect(rows.length).toBe(1);
-    expect(rows[0].properties).toEqual(JSON.stringify(variables.payload));
-    expect(rows[0].event).toEqual(variables.action);
+    expect(rows.length).toEqual(1);
+    expect(rows[0].properties).toEqual(variables.properties);
+    expect(rows[0].event).toEqual(variables.event);
     expect(rows[0].workspaceId).toEqual('');
     expect(rows[0].userId).toEqual('');
     expect(rows[0].timestamp).toHaveLength(23);

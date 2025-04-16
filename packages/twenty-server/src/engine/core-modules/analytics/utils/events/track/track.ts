@@ -13,6 +13,7 @@ export type GenericTrackEvent<E extends string = string> = {
   event: E;
   properties: any;
   timestamp: string;
+  version: string;
   userId?: string;
   workspaceId?: string;
 };

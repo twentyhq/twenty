@@ -27,9 +27,17 @@ import {
   MonitoringTrackEvent,
 } from 'src/engine/core-modules/analytics/utils/events/track/monitoring/monitoring';
 import {
-  OBJECT_RECORD_EVENT,
-  ObjectRecordTrackEvent,
-} from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record';
+  OBJECT_RECORD_CREATED_EVENT,
+  ObjectRecordCreatedTrackEvent,
+} from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-created';
+import {
+  OBJECT_RECORD_UPDATED_EVENT,
+  ObjectRecordUpdatedTrackEvent,
+} from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-updated';
+import {
+  OBJECT_RECORD_DELETED_EVENT,
+  ObjectRecordDeletedTrackEvent,
+} from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-delete';
 
 // Define all track event names
 export type TrackEventName =
@@ -39,7 +47,9 @@ export type TrackEventName =
   | typeof WEBHOOK_RESPONSE_EVENT
   | typeof WORKSPACE_ENTITY_CREATED_EVENT
   | typeof MONITORING_EVENT
-  | typeof OBJECT_RECORD_EVENT
+  | typeof OBJECT_RECORD_CREATED_EVENT
+  | typeof OBJECT_RECORD_UPDATED_EVENT
+  | typeof OBJECT_RECORD_DELETED_EVENT
   | typeof USER_SIGNUP_EVENT;
 
 // Map event names to their corresponding event types
@@ -51,7 +61,9 @@ export interface TrackEvents {
   [WORKSPACE_ENTITY_CREATED_EVENT]: WorkspaceEntityCreatedTrackEvent;
   [USER_SIGNUP_EVENT]: UserSignupTrackEvent;
   [MONITORING_EVENT]: MonitoringTrackEvent;
-  [OBJECT_RECORD_EVENT]: ObjectRecordTrackEvent;
+  [OBJECT_RECORD_DELETED_EVENT]: ObjectRecordDeletedTrackEvent;
+  [OBJECT_RECORD_CREATED_EVENT]: ObjectRecordCreatedTrackEvent;
+  [OBJECT_RECORD_UPDATED_EVENT]: ObjectRecordUpdatedTrackEvent;
 }
 
 export type TrackEventProperties<T extends TrackEventName> =

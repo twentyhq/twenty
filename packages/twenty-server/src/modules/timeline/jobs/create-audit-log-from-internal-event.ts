@@ -9,7 +9,12 @@ import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/a
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
-import { OBJECT_RECORD_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record';
+import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { OBJECT_RECORD_UPDATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-updated';
+import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
+import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-created';
+import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
+import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-delete';
 
 @Processor(MessageQueue.entityEventsToDbQueue)
 export class CreateAuditLogFromInternalEvent {
@@ -52,11 +57,17 @@ export class CreateAuditLogFromInternalEvent {
         workspaceEventBatch.workspaceId,
       );
 
-      this.analyticsService
-        .createAnalyticsContext({
-          workspaceId: workspaceEventBatch.workspaceId,
-        })
-        .track(OBJECT_RECORD_EVENT, eventData.properties);
+      const analytics = this.analyticsService.createAnalyticsContext({
+        workspaceId: workspaceEventBatch.workspaceId,
+      });
+
+      if (eventData instanceof ObjectRecordUpdateEvent) {
+        analytics.track(OBJECT_RECORD_UPDATED_EVENT, eventData.properties);
+      } else if (eventData instanceof ObjectRecordCreateEvent) {
+        analytics.track(OBJECT_RECORD_CREATED_EVENT, eventData.properties);
+      } else if (eventData instanceof ObjectRecordDeleteEvent) {
+        analytics.track(OBJECT_RECORD_DELETED_EVENT, eventData.properties);
+      }
     }
   }
 }

@@ -17,14 +17,9 @@ async function seedEvents() {
   try {
     console.log(`⚡ Seeding ${fixtures.length} events...`);
 
-    const processedFixtures = fixtures.map((event) => ({
-      ...event,
-      payload: JSON.stringify(event.payload),
-    }));
-
     await client.insert({
       table: 'events',
-      values: processedFixtures,
+      values: fixtures,
       format: 'JSONEachRow',
     });
 
