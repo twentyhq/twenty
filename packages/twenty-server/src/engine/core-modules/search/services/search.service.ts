@@ -188,10 +188,6 @@ export class SearchService {
       return 'domainNamePrimaryLinkUrl';
     }
 
-    if (objectMetadataItem.nameSingular === 'workspaceMember') {
-      return 'avatarUrl';
-    }
-
     if (!objectMetadataItem.imageIdentifierFieldMetadataId) {
       return null;
     }
@@ -201,23 +197,19 @@ export class SearchService {
     ].name;
   }
 
-  private async getImageUrlWithToken(
-    avatarUrl: string,
-    workspaceMemberId: string,
-    workspaceId: string,
-  ): Promise<string> {
-    const avatarUrlToken = await this.fileService.encodeFileToken({
+  private getImageUrlWithToken(avatarUrl: string, workspaceId: string): string {
+    const avatarUrlToken = this.fileService.encodeFileToken({
       workspaceId,
     });
 
     return `${avatarUrl}?token=${avatarUrlToken}`;
   }
 
-  async getImageIdentifierValue(
+  getImageIdentifierValue(
     record: ObjectRecord,
     objectMetadataItem: ObjectMetadataItemWithFieldMaps,
     workspaceId: string,
-  ): Promise<string> {
+  ): string {
     const imageIdentifierField =
       this.getImageIdentifierColumn(objectMetadataItem);
 
@@ -225,25 +217,8 @@ export class SearchService {
       return getLogoUrlFromDomainName(record.domainNamePrimaryLinkUrl) || '';
     }
 
-    if (
-      objectMetadataItem.nameSingular === 'workspaceMember' ||
-      objectMetadataItem.nameSingular === 'person'
-    ) {
-      return record.avatarUrl
-        ? await this.getImageUrlWithToken(
-            record.avatarUrl,
-            record.id,
-            workspaceId,
-          )
-        : '';
-    }
-
     return imageIdentifierField
-      ? await this.getImageUrlWithToken(
-          record[imageIdentifierField],
-          record.id,
-          workspaceId,
-        )
+      ? this.getImageUrlWithToken(record[imageIdentifierField], workspaceId)
       : '';
   }
 
@@ -252,30 +227,26 @@ export class SearchService {
     limit: number,
     workspaceId: string,
   ) {
-    const searchRecords = await Promise.all(
-      recordsWithObjectMetadataItems.flatMap(
-        async ({ objectMetadataItem, records }) => {
-          return Promise.all(
-            records.map(async (record) => {
-              return {
-                recordId: record.id,
-                objectNameSingular: objectMetadataItem.nameSingular,
-                label: this.getLabelIdentifierValue(record, objectMetadataItem),
-                imageUrl: await this.getImageIdentifierValue(
-                  record,
-                  objectMetadataItem,
-                  workspaceId,
-                ),
-                tsRankCD: record.tsRankCD,
-                tsRank: record.tsRank,
-              };
-            }),
-          );
-        },
-      ),
+    const searchRecords = recordsWithObjectMetadataItems.flatMap(
+      ({ objectMetadataItem, records }) => {
+        return records.map((record) => {
+          return {
+            recordId: record.id,
+            objectNameSingular: objectMetadataItem.nameSingular,
+            label: this.getLabelIdentifierValue(record, objectMetadataItem),
+            imageUrl: this.getImageIdentifierValue(
+              record,
+              objectMetadataItem,
+              workspaceId,
+            ),
+            tsRankCD: record.tsRankCD,
+            tsRank: record.tsRank,
+          };
+        });
+      },
     );
 
-    return this.sortSearchObjectResults(searchRecords.flat()).slice(0, limit);
+    return this.sortSearchObjectResults(searchRecords).slice(0, limit);
   }
 
   sortSearchObjectResults(searchObjectResultsWithRank: SearchRecordDTO[]) {
