@@ -13,17 +13,14 @@ registerEnumType(DatabaseEventAction, {
 
 @ObjectType()
 export class OnDbEventDTO {
-  @Field(() => String)
-  eventId: string;
-
-  @Field()
-  emittedAt: Date;
-
   @Field(() => DatabaseEventAction)
   action: DatabaseEventAction;
 
   @Field(() => String)
   objectNameSingular: string;
+
+  @Field()
+  eventDate: Date;
 
   @Field(() => GraphQLJSON)
   record: ObjectRecord;

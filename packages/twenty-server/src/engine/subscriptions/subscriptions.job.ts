@@ -2,13 +2,13 @@ import { Inject } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
-import { v4 } from 'uuid';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
+import { removeSecretFromWebhookRecord } from 'src/utils/remove-secret-from-webhook-record';
 
 @Processor(MessageQueue.subscriptionsQueue)
 export class SubscriptionsJob {
@@ -19,8 +19,7 @@ export class SubscriptionsJob {
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
   ): Promise<void> {
     for (const eventData of workspaceEventBatch.events) {
-      const [objectNameSingular, operation] =
-        workspaceEventBatch.name.split('.');
+      const [nameSingular, operation] = workspaceEventBatch.name.split('.');
       const record =
         'after' in eventData.properties && isDefined(eventData.properties.after)
           ? eventData.properties.after
@@ -33,13 +32,18 @@ export class SubscriptionsJob {
           ? eventData.properties.updatedFields
           : undefined;
 
+      const isWebhookEvent = nameSingular === 'webhook';
+      const sanitizedRecord = removeSecretFromWebhookRecord(
+        record,
+        isWebhookEvent,
+      );
+
       await this.pubSub.publish('onDbEvent', {
         onDbEvent: {
-          eventId: v4(),
-          emittedAt: new Date().toISOString(),
           action: operation,
-          objectNameSingular,
-          record,
+          objectNameSingular: nameSingular,
+          eventDate: new Date(),
+          record: sanitizedRecord,
           ...(updatedFields && { updatedFields }),
         },
       });
