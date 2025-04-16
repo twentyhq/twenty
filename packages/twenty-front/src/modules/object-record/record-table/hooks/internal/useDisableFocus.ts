@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
+import { useSetIsFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsFocusActive';
 import { focusPositionComponentState } from '@/object-record/record-table/states/focusPositionComponentState';
-import { isFocusActiveComponentState } from '@/object-record/record-table/states/isFocusActiveComponentState';
 import { isFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isFocusOnTableCellComponentFamilyState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -11,25 +11,24 @@ export const useDisableFocus = (recordTableId?: string) => {
     focusPositionComponentState,
     recordTableId,
   );
-  const isFocusActiveState = useRecoilComponentCallbackStateV2(
-    isFocusActiveComponentState,
-    recordTableId,
-  );
+
   const isFocusOnTableCellFamilyState = useRecoilComponentCallbackStateV2(
     isFocusOnTableCellComponentFamilyState,
     recordTableId,
   );
+
+  const setIsFocusActive = useSetIsFocusActive(recordTableId);
 
   return useRecoilCallback(
     ({ set, snapshot }) => {
       return () => {
         const currentPosition = getSnapshotValue(snapshot, focusPositionState);
 
-        set(isFocusActiveState, false);
+        setIsFocusActive(false);
 
         set(isFocusOnTableCellFamilyState(currentPosition), false);
       };
     },
-    [isFocusActiveState, focusPositionState, isFocusOnTableCellFamilyState],
+    [focusPositionState, isFocusOnTableCellFamilyState, setIsFocusActive],
   );
 };
