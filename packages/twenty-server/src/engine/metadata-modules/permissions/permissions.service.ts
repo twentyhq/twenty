@@ -207,7 +207,9 @@ export class PermissionsService {
 
     // until permissions V2 is enabled all objects have the same permission values deriving from role, ex role.canReadAllObjectRecords
     const objectPermissionValue =
-      rolePermissionsForUserWorkspaceRole['person']?.[objectPermissionKey];
+      rolePermissionsForUserWorkspaceRole[
+        Object.keys(rolePermissionsForUserWorkspaceRole)[0]
+      ]?.[objectPermissionKey];
 
     return objectPermissionValue === true;
   }

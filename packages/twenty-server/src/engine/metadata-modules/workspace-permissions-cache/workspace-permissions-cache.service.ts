@@ -5,7 +5,7 @@ import {
   ObjectRecordsPermissions,
   ObjectRecordsPermissionsByRoleId,
 } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -22,6 +22,9 @@ type CacheResult<T, U> = {
   version: T;
   data: U;
 };
+
+const USER_WORKSPACE_ROLE_MAP = 'User workspace role map';
+const ROLES_PERMISSIONS = 'Roles permissions';
 
 @Injectable()
 export class WorkspacePermissionsCacheService {
@@ -42,9 +45,11 @@ export class WorkspacePermissionsCacheService {
   async recomputeRolesPermissionsCache({
     workspaceId,
     ignoreLock = false,
+    roleIds,
   }: {
     workspaceId: string;
     ignoreLock?: boolean;
+    roleIds?: string[];
   }): Promise<void> {
     const isPermissionsV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -65,11 +70,26 @@ export class WorkspacePermissionsCacheService {
       workspaceId,
     );
 
-    const freshObjectRecordsPermissionsByRoleId =
+    let currentRolesPermissions: ObjectRecordsPermissionsByRoleId | undefined =
+      undefined;
+
+    if (roleIds) {
+      currentRolesPermissions =
+        await this.workspacePermissionsCacheStorageService.getRolesPermissions(
+          workspaceId,
+        );
+    }
+
+    const recomputedRolesPermissions =
       await this.getObjectRecordPermissionsForRoles({
         workspaceId,
         isPermissionsV2Enabled,
+        roleIds,
       });
+
+    const freshObjectRecordsPermissionsByRoleId = roleIds
+      ? { ...currentRolesPermissions, ...recomputedRolesPermissions }
+      : recomputedRolesPermissions;
 
     await this.workspacePermissionsCacheStorageService.setRolesPermissions(
       workspaceId,
@@ -132,7 +152,7 @@ export class WorkspacePermissionsCacheService {
           workspaceId,
         ),
       recomputeCache: (params) => this.recomputeRolesPermissionsCache(params),
-      cachedEntityName: 'Roles permissions',
+      cachedEntityName: ROLES_PERMISSIONS,
       exceptionCode: TwentyORMExceptionCode.ROLES_PERMISSIONS_VERSION_NOT_FOUND,
     });
   }
@@ -154,7 +174,7 @@ export class WorkspacePermissionsCacheService {
         ),
       recomputeCache: (params) =>
         this.recomputeUserWorkspaceRoleMapCache(params),
-      cachedEntityName: 'User workspace role map',
+      cachedEntityName: USER_WORKSPACE_ROLE_MAP,
       exceptionCode:
         TwentyORMExceptionCode.USER_WORKSPACE_ROLE_MAP_VERSION_NOT_FOUND,
     });
@@ -163,26 +183,21 @@ export class WorkspacePermissionsCacheService {
   private async getObjectRecordPermissionsForRoles({
     workspaceId,
     isPermissionsV2Enabled,
+    roleIds,
   }: {
     workspaceId: string;
     isPermissionsV2Enabled: boolean;
+    roleIds?: string[];
   }): Promise<ObjectRecordsPermissionsByRoleId> {
     let roles: RoleEntity[] = [];
 
-    if (isPermissionsV2Enabled) {
-      roles = await this.roleRepository.find({
-        where: {
-          workspaceId,
-        },
-        relations: ['objectPermissions'],
-      });
-    } else {
-      roles = await this.roleRepository.find({
-        where: {
-          workspaceId,
-        },
-      });
-    }
+    roles = await this.roleRepository.find({
+      where: {
+        workspaceId,
+        ...(roleIds ? { id: In(roleIds) } : {}),
+      },
+      relations: ['objectPermissions'],
+    });
 
     const workspaceObjectMetadataNameIdMap =
       await this.getWorkspaceObjectMetadataNameIdMap(workspaceId);

@@ -70,16 +70,6 @@ export class WorkspaceDatasourceFactory {
       workspaceId,
     });
 
-    const {
-      data: cachedUserWorkspaceRoleMap,
-      version: cachedUserWorkspaceRoleMapVersion,
-    } =
-      await this.workspacePermissionsCacheService.getUserWorkspaceRoleMapFromCache(
-        {
-          workspaceId,
-        },
-      );
-
     if (
       workspaceMetadataVersion !== null &&
       cachedWorkspaceMetadataVersion !== workspaceMetadataVersion
@@ -180,8 +170,6 @@ export class WorkspaceDatasourceFactory {
             },
             cachedFeatureFlagMapVersion,
             cachedFeatureFlagMap,
-            cachedUserWorkspaceRoleMapVersion,
-            cachedUserWorkspaceRoleMap,
             cachedRolesPermissionsVersion,
             cachedRolesPermissions,
           );
@@ -211,12 +199,6 @@ export class WorkspaceDatasourceFactory {
       workspaceDataSource,
       cachedRolesPermissionsVersion,
       cachedRolesPermissions,
-    });
-
-    await this.updateWorkspaceDataSourceUserWorkspaceRoleMapIfNeeded({
-      workspaceDataSource,
-      cachedUserWorkspaceRoleMapVersion,
-      cachedUserWorkspaceRoleMap,
     });
 
     await this.updateWorkspaceDataSourceFeatureFlagsMapIfNeeded({
@@ -276,26 +258,6 @@ export class WorkspaceDatasourceFactory {
       setData(newData);
       setVersion(newVersion);
     }
-  }
-
-  private async updateWorkspaceDataSourceUserWorkspaceRoleMapIfNeeded({
-    workspaceDataSource,
-    cachedUserWorkspaceRoleMapVersion,
-    cachedUserWorkspaceRoleMap,
-  }: {
-    workspaceDataSource: WorkspaceDataSource;
-    cachedUserWorkspaceRoleMapVersion: string | undefined;
-    cachedUserWorkspaceRoleMap: UserWorkspaceRoleMap | undefined;
-  }): Promise<void> {
-    this.updateWorkspaceDataSourceIfNeeded({
-      workspaceDataSource,
-      currentVersion: workspaceDataSource.userWorkspaceRoleMapVersion,
-      newVersion: cachedUserWorkspaceRoleMapVersion,
-      newData: cachedUserWorkspaceRoleMap,
-      setData: (data) => workspaceDataSource.setUserWorkspaceRoleMap(data),
-      setVersion: (version) =>
-        workspaceDataSource.setUserWorkspaceRoleMapVersion(version),
-    });
   }
 
   private async updateWorkspaceDataSourceRolesPermissionsIfNeeded({

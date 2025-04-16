@@ -65,7 +65,7 @@ export class RoleService {
   }): Promise<RoleEntity> {
     await this.validateRoleInput({ input, workspaceId });
 
-    const role = this.roleRepository.save({
+    const role = await this.roleRepository.save({
       label: input.label,
       description: input.description,
       icon: input.icon,
@@ -80,6 +80,7 @@ export class RoleService {
 
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
+      roleIds: [role.id],
     });
 
     return role;
@@ -124,6 +125,7 @@ export class RoleService {
 
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
+      roleIds: [input.id],
     });
 
     return { ...existingRole, ...updatedRole };

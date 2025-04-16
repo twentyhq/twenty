@@ -57,6 +57,7 @@ export class ObjectPermissionService {
       await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
         {
           workspaceId,
+          roleIds: [input.roleId],
         },
       );
 
