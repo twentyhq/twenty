@@ -29,8 +29,6 @@ type CacheResult<T, U> = {
   data: U;
 };
 
-type UserWorkspaceRoleMap = Record<string, string>;
-
 @Injectable()
 export class WorkspaceDatasourceFactory {
   private readonly logger = new Logger(WorkspaceDatasourceFactory.name);
