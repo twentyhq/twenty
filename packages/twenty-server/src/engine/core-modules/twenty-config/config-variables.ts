@@ -464,6 +464,18 @@ export class ConfigVariables {
   ANALYTICS_ENABLED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AnalyticsConfig,
+    description: 'Clickhouse host for analytics',
+  })
+  @IsOptional()
+  @IsUrl({
+    require_tld: false,
+    allow_underscores: true,
+  })
+  @ValidateIf((env) => env.ANALYTICS_ENABLED === true)
+  CLICKHOUSE_URL: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Logging,
     description: 'Enable or disable telemetry logging',
   })
