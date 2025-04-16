@@ -58,6 +58,10 @@ podman ps --pod -f name=twenty-pod
 
 
 mkdir -p ~/.config/systemd/user
+if [ ! -f "twentycrm.service" ]; then
+    echo "Error: twentycrm.service file not found"
+    exit 1
+fi
 cp twentycrm.service ~/.config/systemd/user
 
 systemctl --user daemon-reload
