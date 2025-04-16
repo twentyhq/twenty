@@ -1,19 +1,19 @@
-import { useOnDbEvent } from '@/subscription/hooks/useOnDbEvent';
 import { useApolloClient } from '@apollo/client';
+import { useOnDbEvent } from '@/subscription/hooks/useOnDbEvent';
 import { DatabaseEventAction } from '~/generated/graphql';
 import { capitalize } from 'twenty-shared/utils';
 
-type ListenUpdatesArgs = {
+type ListenRecordUpdatesEffectProps = {
   objectNameSingular: string;
   recordId: string;
   listenedFields: string[];
 };
 
-export const useListenUpdates = ({
+export const ListenRecordUpdatesEffect = ({
   objectNameSingular,
   recordId,
   listenedFields,
-}: ListenUpdatesArgs) => {
+}: ListenRecordUpdatesEffectProps) => {
   const apolloClient = useApolloClient();
 
   useOnDbEvent({
@@ -40,4 +40,6 @@ export const useListenUpdates = ({
       });
     },
   });
+
+  return null;
 };

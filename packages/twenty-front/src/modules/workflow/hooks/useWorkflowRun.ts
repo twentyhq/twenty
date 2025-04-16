@@ -2,7 +2,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { WorkflowRun } from '@/workflow/types/Workflow';
 import { workflowRunSchema } from '@/workflow/validation-schemas/workflowSchema';
-import { useListenUpdates } from '@/subscription/hooks/useListenUpdates';
 
 export const useWorkflowRun = ({
   workflowRunId,
@@ -15,12 +14,6 @@ export const useWorkflowRun = ({
   });
 
   const { success, data: record } = workflowRunSchema.safeParse(rawRecord);
-
-  useListenUpdates({
-    objectNameSingular: 'workflowRun',
-    recordId: workflowRunId,
-    listenedFields: ['status', 'output'],
-  });
 
   if (!success) {
     return undefined;
