@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+mkdir -p ~/.config/systemd/user
+cp twentycrm.service ~/.config/systemd/user
+
+
+systemctl --user daemon-reload
+systemctl --user enable twentycrm.service
+systemctl --user start twentycrm.service
