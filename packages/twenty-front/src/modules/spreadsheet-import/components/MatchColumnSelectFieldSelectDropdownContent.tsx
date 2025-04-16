@@ -86,6 +86,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
         />
         {filteredAvailableFieldMetadataItems.map((field) => (
           <MenuItemSelect
+            key={field.id}
             selected={selectedValue?.value === field.name}
             onClick={() => handleFieldClick(field)}
             disabled={

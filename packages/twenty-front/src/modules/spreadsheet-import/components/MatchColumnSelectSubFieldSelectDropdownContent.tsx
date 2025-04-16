@@ -89,6 +89,7 @@ export const MatchColumnSelectSubFieldSelectDropdownContent = ({
       <DropdownMenuItemsContainer hasMaxHeight width="auto">
         {subFieldNamesThatExistInOptions.map((subFieldName) => (
           <MenuItem
+            key={subFieldName}
             onClick={() => handleSubFieldSelect(subFieldName)}
             LeftIcon={getIcon(fieldMetadataItem.icon)}
             text={
