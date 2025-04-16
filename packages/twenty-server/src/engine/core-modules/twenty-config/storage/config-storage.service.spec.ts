@@ -450,10 +450,12 @@ describe('ConfigStorageService', () => {
           rejectPromise = reject;
         });
 
-        jest.spyOn(keyValuePairRepository, 'findOne').mockReturnValue(timeoutPromise);
+        jest
+          .spyOn(keyValuePairRepository, 'findOne')
+          .mockReturnValue(timeoutPromise);
 
         const promise = service.get(key);
-        
+
         // Simulate timeout by rejecting the promise
         if (!rejectPromise) {
           throw new Error('Reject function not assigned');

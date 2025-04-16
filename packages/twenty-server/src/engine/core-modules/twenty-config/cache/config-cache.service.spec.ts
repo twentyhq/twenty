@@ -9,6 +9,7 @@ describe('ConfigCacheService', () => {
 
   const withMockedDate = (timeOffset: number, callback: () => void) => {
     const originalNow = Date.now;
+
     try {
       Date.now = jest.fn(() => originalNow() + timeOffset);
       callback();
@@ -133,6 +134,7 @@ describe('ConfigCacheService', () => {
 
       withMockedDate(CONFIG_VARIABLES_CACHE_TTL + 1, () => {
         const result = service.get(key);
+
         expect(result).toBeUndefined();
       });
     });
@@ -145,6 +147,7 @@ describe('ConfigCacheService', () => {
 
       withMockedDate(CONFIG_VARIABLES_CACHE_TTL - 1, () => {
         const result = service.get(key);
+
         expect(result).toBe(value);
       });
     });
@@ -176,6 +179,7 @@ describe('ConfigCacheService', () => {
 
       withMockedDate(CONFIG_VARIABLES_CACHE_TTL + 1, () => {
         const info = service.getCacheInfo();
+
         expect(info.positiveEntries).toBe(0);
         expect(info.negativeEntries).toBe(0);
         expect(info.cacheKeys).toHaveLength(0);
@@ -200,6 +204,7 @@ describe('ConfigCacheService', () => {
 
       withMockedDate(CONFIG_VARIABLES_CACHE_TTL + 1, () => {
         const result = service.get(key);
+
         expect(result).toBeUndefined();
       });
     });
@@ -211,6 +216,7 @@ describe('ConfigCacheService', () => {
 
       withMockedDate(CONFIG_VARIABLES_CACHE_TTL - 1, () => {
         const result = service.get(key);
+
         expect(result).toBe(true);
       });
     });

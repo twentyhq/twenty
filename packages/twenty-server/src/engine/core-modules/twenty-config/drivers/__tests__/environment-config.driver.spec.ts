@@ -84,13 +84,22 @@ describe('EnvironmentConfigDriver', () => {
         });
 
       expect(driver.get(booleanKey)).toBe(true);
-      expect(configService.get).toHaveBeenCalledWith(booleanKey, defaultValues[booleanKey]);
-      
+      expect(configService.get).toHaveBeenCalledWith(
+        booleanKey,
+        defaultValues[booleanKey],
+      );
+
       expect(driver.get(stringKey)).toBe('test@example.com');
-      expect(configService.get).toHaveBeenCalledWith(stringKey, defaultValues[stringKey]);
-      
+      expect(configService.get).toHaveBeenCalledWith(
+        stringKey,
+        defaultValues[stringKey],
+      );
+
       expect(driver.get(numberKey)).toBe(3000);
-      expect(configService.get).toHaveBeenCalledWith(numberKey, defaultValues[numberKey]);
+      expect(configService.get).toHaveBeenCalledWith(
+        numberKey,
+        defaultValues[numberKey],
+      );
     });
   });
 });
