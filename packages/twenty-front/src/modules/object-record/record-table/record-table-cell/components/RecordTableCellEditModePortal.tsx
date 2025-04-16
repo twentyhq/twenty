@@ -5,21 +5,28 @@ import { RecordTableFocusModeHotkeysSetterEffect } from '@/object-record/record-
 import { RecordTableCellEditMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditMode';
 import { RecordTableCellFieldInput } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldInput';
 import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
+import { focusPositionComponentState } from '@/object-record/record-table/states/focusPositionComponentState';
 
 export const RecordTableCellEditModePortal = () => {
-  const openedCellPosition = useRecoilComponentValueV2(
+  const focusedCellPosition = useRecoilComponentValueV2(
+    focusPositionComponentState,
+  );
+
+  const currentTableCellInEditModePosition = useRecoilComponentValueV2(
     currentTableCellInEditModePositionComponentState,
   );
 
-  if (!openedCellPosition) {
+  if (!focusedCellPosition) {
     return null;
   }
 
   return (
-    <RecordTableCellPortalWrapper position={openedCellPosition}>
-      <RecordTableCellEditMode>
-        <RecordTableCellFieldInput />
-      </RecordTableCellEditMode>
+    <RecordTableCellPortalWrapper position={focusedCellPosition}>
+      {currentTableCellInEditModePosition && (
+        <RecordTableCellEditMode>
+          <RecordTableCellFieldInput />
+        </RecordTableCellEditMode>
+      )}
       <RecordTableFocusModeHotkeysSetterEffect />
     </RecordTableCellPortalWrapper>
   );

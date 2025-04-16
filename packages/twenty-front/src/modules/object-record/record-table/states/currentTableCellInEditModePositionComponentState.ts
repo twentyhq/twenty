@@ -5,9 +5,6 @@ import { TableCellPosition } from '../types/TableCellPosition';
 export const currentTableCellInEditModePositionComponentState =
   createComponentStateV2<TableCellPosition | null>({
     key: 'currentTableCellInEditModePositionComponentState',
-    defaultValue: {
-      row: 0,
-      column: 1,
-    },
+    defaultValue: null,
     componentInstanceContext: RecordTableComponentInstanceContext,
   });
