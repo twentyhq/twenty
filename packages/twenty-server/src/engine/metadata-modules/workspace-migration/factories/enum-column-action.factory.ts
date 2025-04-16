@@ -65,11 +65,15 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
     enumOptions: string[] | undefined,
     isNullable: boolean,
   ) {
-    if (
-      typeof defaultValue === 'string' &&
-      enumOptions?.includes(defaultValue)
-    ) {
-      return defaultValue;
+    if (typeof defaultValue === 'string') {
+      const formattedDefaultValue = defaultValue.replace(
+        /^['"](.*)['"]$/,
+        '$1',
+      );
+
+      if (enumOptions?.includes(formattedDefaultValue)) {
+        return defaultValue;
+      }
     }
 
     if (isNullable) {
