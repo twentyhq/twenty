@@ -55,6 +55,9 @@ const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
 
 const StyledEmptyField = styled.div`
   color: ${({ theme }) => theme.font.color.light};
+  height: 20px;
+  display: flex;
+  align-items: center;
 `;
 
 export const RecordInlineCellDisplayMode = ({

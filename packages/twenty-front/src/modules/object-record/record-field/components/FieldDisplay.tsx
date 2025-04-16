@@ -70,6 +70,7 @@ export const FieldDisplay = () => {
   ) : isFieldUuid(fieldDefinition) ? (
     <UuidFieldDisplay />
   ) : isFieldDateTime(fieldDefinition) ? (
+    // done
     <DateTimeFieldDisplay />
   ) : isFieldDate(fieldDefinition) ? (
     //done
@@ -83,10 +84,13 @@ export const FieldDisplay = () => {
     //done
     <CurrencyFieldDisplay />
   ) : isFieldFullName(fieldDefinition) ? (
+    // done
     <FullNameFieldDisplay />
   ) : isFieldSelect(fieldDefinition) ? (
+    // ok
     <SelectFieldDisplay />
   ) : isFieldMultiSelect(fieldDefinition) ? (
+    // ok
     <MultiSelectFieldDisplay />
   ) : isFieldAddress(fieldDefinition) ? (
     <AddressFieldDisplay />

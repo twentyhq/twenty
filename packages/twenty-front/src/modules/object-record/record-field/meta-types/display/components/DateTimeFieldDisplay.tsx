@@ -1,5 +1,6 @@
 import { useDateTimeFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useDateTimeFieldDisplay';
 import { DateTimeDisplay } from '@/ui/field/display/components/DateTimeDisplay';
+import styled from '@emotion/styled';
 
 export const DateTimeFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useDateTimeFieldDisplay();
@@ -7,10 +8,18 @@ export const DateTimeFieldDisplay = () => {
   const displayAsRelativeDate =
     fieldDefinition.metadata?.settings?.displayAsRelativeDate;
 
+  const StyledDateTimeDisplayContainer = styled.div`
+    align-items: center;
+    display: flex;
+    height: 20px;
+  `;
+
   return (
-    <DateTimeDisplay
-      value={fieldValue}
-      displayAsRelativeDate={displayAsRelativeDate}
-    />
+    <StyledDateTimeDisplayContainer>
+      <DateTimeDisplay
+        value={fieldValue}
+        displayAsRelativeDate={displayAsRelativeDate}
+      />
+    </StyledDateTimeDisplayContainer>
   );
 };
