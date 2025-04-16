@@ -83,7 +83,6 @@ describe('WorkspaceService', () => {
         },
         ...[
           WorkspaceManagerService,
-          WorkspaceManagerService,
           UserWorkspaceService,
           UserService,
           DomainManagerService,

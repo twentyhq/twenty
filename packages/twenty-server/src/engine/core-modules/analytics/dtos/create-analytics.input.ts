@@ -53,7 +53,7 @@ export class CreateAnalyticsInputV2 {
   @Field(() => GraphQLJSON, { nullable: true })
   @IsOptional()
   @IsObject()
-  properties: PageviewProperties | Record<string, unknown>;
+  properties?: PageviewProperties | Record<string, unknown>;
 }
 
 export function isPageviewAnalyticsInput(

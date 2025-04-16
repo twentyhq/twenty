@@ -467,8 +467,11 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.AnalyticsConfig,
     description: 'Clickhouse host for analytics',
   })
-  @IsString()
   @IsOptional()
+  @IsUrl({
+    require_tld: false,
+    allow_underscores: true,
+  })
   @ValidateIf((env) => env.ANALYTICS_ENABLED === true)
   CLICKHOUSE_URL: string;
 

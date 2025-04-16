@@ -49,7 +49,7 @@ export class AnalyticsService {
         this.preventAnalyticsIfDisabled(() =>
           this.clickhouseService.pushEvent({
             ...userIdAndWorkspaceId,
-            ...makePageview(name, properties ?? {}),
+            ...makePageview(name, properties),
           }),
         ),
     };
