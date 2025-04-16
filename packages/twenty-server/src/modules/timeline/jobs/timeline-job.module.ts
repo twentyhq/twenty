@@ -6,6 +6,7 @@ import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jo
 import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
       AuditLogWorkspaceEntity,
     ]),
     TimelineActivityModule,
+    AnalyticsModule,
   ],
   providers: [
     CreateAuditLogFromInternalEvent,

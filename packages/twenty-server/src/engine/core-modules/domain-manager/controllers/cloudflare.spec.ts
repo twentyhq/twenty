@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Request, Response } from 'express';
 import { Repository } from 'typeorm';
+import { AnalyticsContextMock } from 'test/utils/analytics-context.mock';
 
 import { CloudflareController } from 'src/engine/core-modules/domain-manager/controllers/cloudflare.controller';
 import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
@@ -12,6 +13,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 
 describe('CloudflareController - customHostnameWebhooks', () => {
   let controller: CloudflareController;
@@ -59,6 +61,12 @@ describe('CloudflareController - customHostnameWebhooks', () => {
           provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
+          },
+        },
+        {
+          provide: AnalyticsService,
+          useValue: {
+            createAnalyticsContext: AnalyticsContextMock,
           },
         },
       ],
