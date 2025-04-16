@@ -33,7 +33,10 @@ describe('removeStep', () => {
     const step2 = createMockAction('2');
     const step3 = createMockAction('3');
 
-    const result = removeStep([step1, step2, step3], step2);
+    const result = removeStep({
+      existingSteps: [step1, step2, step3],
+      stepIdToDelete: '2',
+    });
 
     expect(result).toEqual([step1, step3]);
   });
@@ -43,9 +46,12 @@ describe('removeStep', () => {
     const step2 = createMockAction('2');
     const step3 = createMockAction('3');
 
-    const result = removeStep([step1, step2, step3], step2);
+    const result = removeStep({
+      existingSteps: [step1, step2, step3],
+      stepIdToDelete: '2',
+    });
 
-    expect(result).toEqual([step1, step3]);
+    expect(result).toEqual([{ ...step1, nextStepIds: [] }, step3]);
   });
 
   it('should update nextStepIds of parent steps to include children of removed step', () => {
@@ -53,7 +59,11 @@ describe('removeStep', () => {
     const step2 = createMockAction('2', ['3']);
     const step3 = createMockAction('3');
 
-    const result = removeStep([step1, step2, step3], step2);
+    const result = removeStep({
+      existingSteps: [step1, step2, step3],
+      stepIdToDelete: '2',
+      stepToDeleteChildrenIds: ['3'],
+    });
 
     expect(result).toEqual([{ ...step1, nextStepIds: ['3'] }, step3]);
   });
@@ -64,7 +74,11 @@ describe('removeStep', () => {
     const step3 = createMockAction('3', ['4']);
     const step4 = createMockAction('4');
 
-    const result = removeStep([step1, step2, step3, step4], step3);
+    const result = removeStep({
+      existingSteps: [step1, step2, step3, step4],
+      stepIdToDelete: '3',
+      stepToDeleteChildrenIds: ['4'],
+    });
 
     expect(result).toEqual([
       { ...step1, nextStepIds: ['4'] },
@@ -79,7 +93,11 @@ describe('removeStep', () => {
     const step3 = createMockAction('3');
     const step4 = createMockAction('4');
 
-    const result = removeStep([step1, step2, step3, step4], step2);
+    const result = removeStep({
+      existingSteps: [step1, step2, step3, step4],
+      stepIdToDelete: '2',
+      stepToDeleteChildrenIds: ['3', '4'],
+    });
 
     expect(result).toEqual([
       { ...step1, nextStepIds: ['3', '4'] },

@@ -33,7 +33,10 @@ describe('insertStep', () => {
     const step2 = createMockAction('2');
     const newStep = createMockAction('new');
 
-    const result = insertStep([step1, step2], newStep);
+    const result = insertStep({
+      existingSteps: [step1, step2],
+      insertedStep: newStep,
+    });
 
     expect(result).toEqual([step1, step2, newStep]);
   });
@@ -43,7 +46,12 @@ describe('insertStep', () => {
     const step2 = createMockAction('2');
     const newStep = createMockAction('new');
 
-    const result = insertStep([step1, step2], newStep, '1', '2');
+    const result = insertStep({
+      existingSteps: [step1, step2],
+      insertedStep: newStep,
+      parentStepId: '1',
+      nextStepId: '2',
+    });
 
     expect(result).toEqual([
       { ...step1, nextStepIds: ['new'] },
@@ -56,7 +64,12 @@ describe('insertStep', () => {
     const step1 = createMockAction('1');
     const newStep = createMockAction('new');
 
-    const result = insertStep([step1], newStep, undefined, '1');
+    const result = insertStep({
+      existingSteps: [step1],
+      insertedStep: newStep,
+      parentStepId: undefined,
+      nextStepId: '1',
+    });
 
     expect(result).toEqual([step1, { ...newStep, nextStepIds: ['1'] }]);
   });
@@ -65,7 +78,12 @@ describe('insertStep', () => {
     const step1 = createMockAction('1');
     const newStep = createMockAction('new');
 
-    const result = insertStep([step1], newStep, '1');
+    const result = insertStep({
+      existingSteps: [step1],
+      insertedStep: newStep,
+      parentStepId: '1',
+      nextStepId: undefined,
+    });
 
     expect(result).toEqual([{ ...step1, nextStepIds: ['new'] }, newStep]);
   });
@@ -76,7 +94,12 @@ describe('insertStep', () => {
     const step3 = createMockAction('3');
     const newStep = createMockAction('new');
 
-    const result = insertStep([step1, step2, step3], newStep, '1', '2');
+    const result = insertStep({
+      existingSteps: [step1, step2, step3],
+      insertedStep: newStep,
+      parentStepId: '1',
+      nextStepId: '2',
+    });
 
     expect(result).toEqual([
       { ...step1, nextStepIds: ['3', 'new'] },

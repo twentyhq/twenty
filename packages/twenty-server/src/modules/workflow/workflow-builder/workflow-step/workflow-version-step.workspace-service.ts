@@ -91,12 +91,12 @@ export class WorkflowVersionStepWorkspaceService {
     }
 
     const existingSteps = workflowVersion.steps || [];
-    const updatedSteps = insertStep(
+    const updatedSteps = insertStep({
       existingSteps,
-      enrichedNewStep,
+      insertedStep: enrichedNewStep,
       parentStepId,
       nextStepId,
-    );
+    });
 
     await workflowVersionRepository.update(workflowVersion.id, {
       steps: updatedSteps,
@@ -193,9 +193,9 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
-    const stepToDelete = workflowVersion.steps.filter(
+    const stepToDelete = workflowVersion.steps.find(
       (step) => step.id === stepIdToDelete,
-    )?.[0];
+    );
 
     if (!isDefined(stepToDelete)) {
       throw new WorkflowVersionStepException(
@@ -207,7 +207,13 @@ export class WorkflowVersionStepWorkspaceService {
     const workflowVersionUpdates =
       stepIdToDelete === TRIGGER_STEP_ID
         ? { trigger: null }
-        : { steps: removeStep(workflowVersion.steps, stepToDelete) };
+        : {
+            steps: removeStep({
+              existingSteps: workflowVersion.steps,
+              stepIdToDelete,
+              stepToDeleteChildrenIds: stepToDelete.nextStepIds,
+            }),
+          };
 
     await workflowVersionRepository.update(
       workflowVersion.id,
