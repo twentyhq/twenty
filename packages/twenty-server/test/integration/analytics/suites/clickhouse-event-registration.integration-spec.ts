@@ -12,7 +12,6 @@ describe('ClickHouse Event Registration (integration)', () => {
     jest.useRealTimers();
 
     clickhouseClient = createClient({
-      // use variable
       url: process.env.CLICKHOUSE_URL,
     });
 
