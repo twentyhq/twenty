@@ -16,7 +16,7 @@ import { shouldCaptureException } from 'src/engine/core-modules/graphql/utils/sh
 const DEFAULT_EVENT_ID_KEY = 'exceptionEventId';
 const SCHEMA_VERSION_HEADER = 'x-schema-version';
 const SCHEMA_MISMATCH_ERROR =
-  'Schema version mismatch, please refresh the page to update your client.';
+  'Your workspace has been updated with a new data model. Please refresh the page.';
 
 type GraphQLErrorHandlerHookOptions = {
   /**
