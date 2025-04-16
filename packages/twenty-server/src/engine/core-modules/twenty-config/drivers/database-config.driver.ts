@@ -50,10 +50,20 @@ export class DatabaseConfigDriver
       this.initializationState = InitializationState.INITIALIZING;
       await this.loadAllConfigVarsFromDb();
       this.initializationState = InitializationState.INITIALIZED;
+      // Reset retry attempts on successful initialization
+      this.retryAttempts = 0;
     } catch (error) {
-      this.logger.error('Failed to initialize database driver', error);
+      this.retryAttempts++;
+
+      this.logger.error(
+        `Failed to initialize database driver (attempt ${this.retryAttempts})`,
+        error instanceof Error ? error.stack : error,
+      );
       this.initializationState = InitializationState.FAILED;
       this.scheduleRetry();
+    } finally {
+      // Reset the promise to allow future initialization attempts
+      this.initializationPromise = null;
     }
   }
 
@@ -161,7 +171,9 @@ export class DatabaseConfigDriver
     if (
       this.retryAttempts > DATABASE_CONFIG_DRIVER_INITIALIZATION_MAX_RETRIES
     ) {
-      this.logger.error('Max retry attempts reached, giving up initialization');
+      this.logger.error(
+        `Max retry attempts (${DATABASE_CONFIG_DRIVER_INITIALIZATION_MAX_RETRIES}) reached, giving up initialization`,
+      );
 
       return;
     }
@@ -170,14 +182,21 @@ export class DatabaseConfigDriver
       DATABASE_CONFIG_DRIVER_INITIAL_RETRY_DELAY *
       Math.pow(2, this.retryAttempts - 1);
 
+    this.logger.log(
+      `Scheduling retry attempt ${this.retryAttempts} in ${delay}ms`,
+    );
+
     if (this.retryTimer) {
       clearTimeout(this.retryTimer);
     }
 
     this.retryTimer = setTimeout(() => {
-      this.initializationPromise = null;
+      this.logger.log(`Executing retry attempt ${this.retryAttempts}`);
       this.initialize().catch((error) => {
-        this.logger.error('Retry initialization failed', error);
+        this.logger.error(
+          `Retry initialization attempt ${this.retryAttempts} failed`,
+          error instanceof Error ? error.stack : error,
+        );
       });
     }, delay);
   }

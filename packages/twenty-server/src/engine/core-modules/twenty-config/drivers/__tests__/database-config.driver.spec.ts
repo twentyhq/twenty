@@ -109,15 +109,31 @@ describe('DatabaseConfigDriver', () => {
 
       jest
         .spyOn(configStorage, 'loadAll')
-        .mockRejectedValueOnce(error)
-        .mockResolvedValueOnce(new Map());
+        .mockRejectedValueOnce(error) // First call fails
+        .mockResolvedValueOnce(new Map()); // Second call succeeds
 
+      const originalScheduleRetry = (driver as any).scheduleRetry;
+
+      (driver as any).scheduleRetry = jest.fn(function () {
+        this.initializationPromise = null;
+        this.initializationState = InitializationState.NOT_INITIALIZED;
+        this.initialize();
+      });
+
+      // First initialization attempt (will fail and trigger retry)
       await driver.initialize();
 
+      // The mock scheduleRetry should have been called
+      expect((driver as any).scheduleRetry).toHaveBeenCalled();
+
+      // Since our mock immediately calls initialize again and we've mocked
+      // the second attempt to succeed, the state should now be INITIALIZED
       expect((driver as any).initializationState).toBe(
-        InitializationState.FAILED,
+        InitializationState.INITIALIZED,
       );
-      expect((driver as any).retryAttempts).toBeGreaterThan(0);
+
+      // Restore original method
+      (driver as any).scheduleRetry = originalScheduleRetry;
     });
 
     it('should handle concurrent initialization', async () => {
@@ -136,6 +152,37 @@ describe('DatabaseConfigDriver', () => {
       await Promise.all(promises);
 
       expect(configStorage.loadAll).toHaveBeenCalledTimes(1);
+    });
+
+    it('should reset retry attempts after successful initialization', async () => {
+      (driver as any).retryAttempts = 3;
+
+      jest.spyOn(configStorage, 'loadAll').mockResolvedValue(new Map());
+
+      await driver.initialize();
+
+      expect((driver as any).retryAttempts).toBe(0);
+      expect((driver as any).initializationState).toBe(
+        InitializationState.INITIALIZED,
+      );
+    });
+
+    it('should increment retry attempts when initialization fails', async () => {
+      const error = new Error('DB error');
+
+      (driver as any).retryAttempts = 0;
+
+      const originalScheduleRetry = (driver as any).scheduleRetry;
+
+      (driver as any).scheduleRetry = jest.fn();
+
+      jest.spyOn(configStorage, 'loadAll').mockRejectedValue(error);
+
+      await driver.initialize();
+
+      expect((driver as any).retryAttempts).toBe(1);
+
+      (driver as any).scheduleRetry = originalScheduleRetry;
     });
   });
 
