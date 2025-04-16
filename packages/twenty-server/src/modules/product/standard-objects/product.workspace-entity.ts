@@ -1,8 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { Relation } from 'typeorm';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
@@ -10,12 +12,14 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { PRODUCT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 
 export const SEARCH_FIELDS_FOR_PRODUCT: FieldTypeAndNameMetadata[] = [
   { name: 'name', type: FieldMetadataType.TEXT },
@@ -97,6 +101,18 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
   position: number | null;
+
+  @WorkspaceRelation({
+    standardId: PRODUCT_STANDARD_FIELD_IDS.charge,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: msg`Charges`,
+    description: msg`Charges using this product`,
+    icon: 'IconSettings',
+    inverseSideTarget: () => ChargeWorkspaceEntity,
+    inverseSideFieldKey: 'product',
+  })
+  @WorkspaceIsNullable()
+  charges: Relation<ChargeWorkspaceEntity[]> | null;
 
   @WorkspaceField({
     standardId: PRODUCT_STANDARD_FIELD_IDS.searchVector,

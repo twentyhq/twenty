@@ -28,9 +28,10 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
-const NAME_FIELD_NAME = 'product';
+const NAME_FIELD_NAME = 'name';
 
 export const SEARCH_FIELDS_FOR_CHARGE: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
@@ -43,19 +44,19 @@ export const SEARCH_FIELDS_FOR_CHARGE: FieldTypeAndNameMetadata[] = [
   labelPlural: msg`Charges`,
   description: msg`A charge`,
   icon: 'IconSettings',
-  labelIdentifierStandardId: CHARGE_STANDARD_FIELD_IDS.product,
+  labelIdentifierStandardId: CHARGE_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsNotAuditLogged()
 export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.product,
+    standardId: CHARGE_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: msg`Product`,
+    label: msg`Name`,
     description: msg`Charge product`,
     icon: 'IconSettings',
   })
   @WorkspaceIsNullable()
-  product: string;
+  name: string;
 
   @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.price,
@@ -132,6 +133,21 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('integration')
   integrationId: string | null;
+
+  @WorkspaceRelation({
+    standardId: CHARGE_STANDARD_FIELD_IDS.product,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: msg`Product`,
+    description: msg`Product linked to this charge`,
+    icon: 'IconClipboardList',
+    inverseSideTarget: () => ProductWorkspaceEntity,
+    inverseSideFieldKey: 'charges',
+  })
+  @WorkspaceIsNullable()
+  product: Relation<ProductWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('product')
+  productId: string | null;
 
   //Relations
   @WorkspaceRelation({
