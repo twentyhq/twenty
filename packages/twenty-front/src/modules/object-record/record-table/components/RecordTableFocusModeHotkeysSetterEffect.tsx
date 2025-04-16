@@ -1,5 +1,4 @@
-import { useContext, useEffect, useRef } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useContext } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { useClearField } from '@/object-record/record-field/hooks/useClearField';
@@ -11,12 +10,9 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
-import { TableHotkeyScope } from '../../types/TableHotkeyScope';
+import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
-export const RecordTableCellFocusModeHotkeysSetterEffect = () => {
-  const currentHotkeyScope = useRecoilValue(currentHotkeyScopeState);
-
+export const RecordTableFocusModeHotkeysSetterEffect = () => {
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const { isReadOnly } = useContext(FieldContext);
 
@@ -25,17 +21,8 @@ export const RecordTableCellFocusModeHotkeysSetterEffect = () => {
   const isFieldClearable = useIsFieldClearable();
 
   const toggleEditOnlyInput = useToggleEditOnlyInput();
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   const clearField = useClearField();
-
-  useEffect(() => {
-    if (currentHotkeyScope.scope !== TableHotkeyScope.TableFocus) {
-      return;
-    }
-
-    scrollRef.current?.scrollIntoView({ block: 'nearest' });
-  }, [currentHotkeyScope.scope]);
 
   useScopedHotkeys(
     [Key.Backspace, Key.Delete],

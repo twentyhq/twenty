@@ -10,7 +10,9 @@ import { RecordTableScrollToFocusedElementEffect } from '@/object-record/record-
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { RecordTableCellEditModePortal } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditModePortal';
 import { RecordTableCellHoveredPortal } from '@/object-record/record-table/record-table-cell/components/RecordTableCellHoveredPortal';
+import { isFocusActiveComponentState } from '@/object-record/record-table/states/isFocusActiveComponentState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -46,6 +48,11 @@ export const RecordTable = () => {
   const recordTableIsEmpty =
     !isRecordTableInitialLoading && allRecordIds.length === 0;
 
+  const isFocusActive = useRecoilComponentValueV2(
+    isFocusActiveComponentState,
+    recordTableId,
+  );
+
   if (!isNonEmptyString(objectNameSingular)) {
     return <></>;
   }
@@ -66,7 +73,13 @@ export const RecordTable = () => {
         tableBodyRef={tableBodyRef}
       />
       <RecordTableCellHoveredPortal />
-      <RecordTableScrollToFocusedElementEffect />
+
+      {isFocusActive && (
+        <>
+          <RecordTableScrollToFocusedElementEffect />
+          <RecordTableCellEditModePortal />
+        </>
+      )}
 
       {recordTableIsEmpty ? (
         <RecordTableEmpty

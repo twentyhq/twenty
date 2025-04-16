@@ -1,73 +1,73 @@
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { RecordTableNoRecordGroupBodyContextProvider } from '@/object-record/record-table/components/RecordTableNoRecordGroupBodyContextProvider';
-import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
-import { RecordTableCellHoveredPortalContent } from '@/object-record/record-table/record-table-cell/components/RecordTableCellHoveredPortalContent';
+import { RecordTableCellPortalWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalWrapper';
 import { hoverPositionComponentState } from '@/object-record/record-table/states/hoverPositionComponentState';
-import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
-import ReactDOM from 'react-dom';
 
-const StyledRecordTableCellHoveredPortal = styled.div`
+import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { RecordTableCellDisplayMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDisplayMode';
+import { RecordTableCellEditButton } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditButton';
+import { useContext } from 'react';
+import { BORDER_COMMON } from 'twenty-ui/theme';
+import { useIsMobile } from 'twenty-ui/utilities';
+
+const StyledRecordTableCellHoveredPortalContent = styled.div<{
+  isReadOnly: boolean;
+}>`
+  align-items: center;
+  background: ${({ theme }) => theme.background.transparent.secondary};
   background-color: ${({ theme }) => theme.background.primary};
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
+  border-radius: ${({ isReadOnly }) =>
+    !isReadOnly ? BORDER_COMMON.radius.sm : 'none'};
+  border-radius: ${BORDER_COMMON.radius.sm};
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+
+  height: 32px;
+
+  outline: ${({ theme, isReadOnly }) =>
+    isReadOnly
+      ? `1px solid ${theme.border.color.medium}`
+      : `1px solid ${theme.font.color.extraLight}`};
+
+  position: relative;
+
+  position: relative;
+  user-select: none;
 `;
+
+const RecordTableCellHoveredPortalContent = () => {
+  const hoverPosition = useRecoilComponentValueV2(hoverPositionComponentState);
+
+  const isMobile = useIsMobile();
+
+  const isFirstColumn = hoverPosition.column === 0;
+
+  const { isReadOnly } = useContext(FieldContext);
+
+  const isFieldInputOnly = useIsFieldInputOnly();
+
+  const showButton =
+    !isFieldInputOnly && !isReadOnly && !(isMobile && isFirstColumn);
+
+  return (
+    <StyledRecordTableCellHoveredPortalContent isReadOnly={isReadOnly}>
+      <RecordTableCellDisplayMode>
+        <FieldDisplay />
+      </RecordTableCellDisplayMode>
+      {showButton && <RecordTableCellEditButton />}
+    </StyledRecordTableCellHoveredPortalContent>
+  );
+};
 
 export const RecordTableCellHoveredPortal = () => {
   const hoverPosition = useRecoilComponentValueV2(hoverPositionComponentState);
 
-  const anchorElement = document.body.querySelector(
-    `#record-table-cell-${hoverPosition.column}-${hoverPosition.row}`,
-  ) as HTMLElement;
-
-  const allRecordIds = useRecoilComponentValueV2(
-    recordIndexAllRecordIdsComponentSelector,
-  );
-
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
-
-  const visibleTableColumns = useRecoilComponentValueV2(
-    visibleTableColumnsComponentSelector,
-  );
-
-  if (!anchorElement) {
-    return null;
-  }
-
-  return ReactDOM.createPortal(
-    <StyledRecordTableCellHoveredPortal>
-      <RecordTableNoRecordGroupBodyContextProvider>
-        <RecordTableRowContextProvider
-          value={{
-            recordId: allRecordIds[hoverPosition.row],
-            rowIndex: hoverPosition.row,
-            isSelected: false,
-            inView: true,
-            pathToShowPage: '/',
-            objectNameSingular: objectMetadataItem.nameSingular,
-          }}
-        >
-          <RecordTableCellContext.Provider
-            value={{
-              columnDefinition: visibleTableColumns[hoverPosition.column],
-              columnIndex: hoverPosition.column,
-              cellPosition: hoverPosition,
-            }}
-          >
-            <RecordTableCellFieldContextWrapper>
-              <RecordTableCellHoveredPortalContent />
-            </RecordTableCellFieldContextWrapper>
-          </RecordTableCellContext.Provider>
-        </RecordTableRowContextProvider>
-      </RecordTableNoRecordGroupBodyContextProvider>
-    </StyledRecordTableCellHoveredPortal>,
-    anchorElement,
+  return (
+    <RecordTableCellPortalWrapper position={hoverPosition}>
+      <RecordTableCellHoveredPortalContent />
+    </RecordTableCellPortalWrapper>
   );
 };
