@@ -2,7 +2,6 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -60,7 +59,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
   const { t } = useLingui();
 
   return (
-    <DropdownMenu width={250}>
+    <>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -77,7 +76,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
         autoFocus
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight width="auto">
+      <DropdownMenuItemsContainer hasMaxHeight width={200}>
         <MenuItemSelect
           selected={selectedValue?.value === DO_NOT_IMPORT_OPTION_KEY}
           onClick={onDoNotImportSelect}
@@ -99,6 +98,6 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
           />
         ))}
       </DropdownMenuItemsContainer>
-    </DropdownMenu>
+    </>
   );
 };
