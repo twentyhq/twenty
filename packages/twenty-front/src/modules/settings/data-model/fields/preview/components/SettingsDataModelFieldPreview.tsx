@@ -148,13 +148,13 @@ export const SettingsDataModelFieldPreview = ({
               isReadOnly: false,
             }}
           >
-              {fieldMetadataItem.type === FieldMetadataType.BOOLEAN ? (
-                <BooleanFieldInput readonly />
-              ) : fieldMetadataItem.type === FieldMetadataType.RATING ? (
-                <RatingFieldInput readonly />
-              ) : (
-                <FieldDisplay />
-              )}
+            {fieldMetadataItem.type === FieldMetadataType.BOOLEAN ? (
+              <BooleanFieldInput readonly />
+            ) : fieldMetadataItem.type === FieldMetadataType.RATING ? (
+              <RatingFieldInput readonly />
+            ) : (
+              <FieldDisplay />
+            )}
           </FieldContext.Provider>
         </StyledFieldPreview>
       </RecordFieldComponentInstanceContext.Provider>
