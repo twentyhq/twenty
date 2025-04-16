@@ -445,16 +445,23 @@ describe('ConfigStorageService', () => {
         const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
         const error = new Error('Database operation timed out');
 
-        jest.useFakeTimers();
-        jest.spyOn(keyValuePairRepository, 'findOne').mockRejectedValue(error);
+        let rejectPromise: ((error: Error) => void) | undefined;
+        const timeoutPromise = new Promise<KeyValuePair | null>((_, reject) => {
+          rejectPromise = reject;
+        });
+
+        jest.spyOn(keyValuePairRepository, 'findOne').mockReturnValue(timeoutPromise);
 
         const promise = service.get(key);
-
-        jest.advanceTimersByTime(1000);
+        
+        // Simulate timeout by rejecting the promise
+        if (!rejectPromise) {
+          throw new Error('Reject function not assigned');
+        }
+        rejectPromise(error);
 
         await expect(promise).rejects.toThrow('Database operation timed out');
-        jest.useRealTimers();
-      }, 10000);
+      });
     });
   });
 });
