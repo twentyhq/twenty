@@ -6,6 +6,15 @@ import { RecordTableCellEditMode } from '@/object-record/record-table/record-tab
 import { RecordTableCellFieldInput } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldInput';
 import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
 import { focusPositionComponentState } from '@/object-record/record-table/states/focusPositionComponentState';
+import styled from '@emotion/styled';
+
+const StyledRecordTableCellHoveredPortal = styled.div`
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+`;
 
 export const RecordTableCellEditModePortal = () => {
   const focusedCellPosition = useRecoilComponentValueV2(
@@ -23,9 +32,11 @@ export const RecordTableCellEditModePortal = () => {
   return (
     <RecordTableCellPortalWrapper position={focusedCellPosition}>
       {currentTableCellInEditModePosition && (
-        <RecordTableCellEditMode>
-          <RecordTableCellFieldInput />
-        </RecordTableCellEditMode>
+        <StyledRecordTableCellHoveredPortal>
+          <RecordTableCellEditMode>
+            <RecordTableCellFieldInput />
+          </RecordTableCellEditMode>
+        </StyledRecordTableCellHoveredPortal>
       )}
       <RecordTableFocusModeHotkeysSetterEffect />
     </RecordTableCellPortalWrapper>
