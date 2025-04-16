@@ -6,7 +6,7 @@ import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record
 import { RecordTableBodyEffectsWrapper } from '@/object-record/record-table/components/RecordTableBodyEffectsWrapper';
 import { RecordTableContent } from '@/object-record/record-table/components/RecordTableContent';
 import { RecordTableEmpty } from '@/object-record/record-table/components/RecordTableEmpty';
-import { RecordTableScrollToFocusedElementEffect } from '@/object-record/record-table/components/RecordTableScrollToFocusElementEffect';
+import { RecordTableScrollToFocusedElementEffect } from '@/object-record/record-table/components/RecordTableScrollToFocusedElementEffect';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
