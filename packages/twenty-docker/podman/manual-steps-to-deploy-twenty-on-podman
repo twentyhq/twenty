@@ -54,6 +54,7 @@ podman run -d --pod twenty-pod --name twenty-worker \
   yarn worker:prod
 
 # wait some time, check status
+sleep 30
 podman ps --pod -f name=twenty-pod
 
 
