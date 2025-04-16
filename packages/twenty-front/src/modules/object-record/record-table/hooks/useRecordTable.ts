@@ -2,7 +2,6 @@ import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { useGetIsSomeCellInEditModeState } from '@/object-record/record-table/hooks/internal/useGetIsSomeCellInEditMode';
 import { useSetHasUserSelectedAllRows } from '@/object-record/record-table/hooks/internal/useSetAllRowSelectedState';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -205,9 +204,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const { selectAllRows } = useSelectAllRows(recordTableId);
 
-  const isSomeCellInEditModeState =
-    useGetIsSomeCellInEditModeState(recordTableId);
-
   return {
     onColumnsChange,
     setAvailableTableColumns,
@@ -227,7 +223,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setIsRecordTableInitialLoading,
     setRecordTableLastRowVisible,
     setFocusPosition,
-    isSomeCellInEditModeState,
     setHasUserSelectedAllRows,
     setOnToggleColumnFilter,
     setOnToggleColumnSort,

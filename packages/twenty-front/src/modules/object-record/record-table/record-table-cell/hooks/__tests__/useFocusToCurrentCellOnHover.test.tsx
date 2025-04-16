@@ -103,7 +103,7 @@ describe('useMoveFocusToCurrentCellOnHover', () => {
     });
 
     act(() => {
-      result.current.moveFocusToCurrentCell({
+      result.current.moveHoverToCurrentCell({
         column: 3,
         row: 2,
       });

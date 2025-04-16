@@ -3,11 +3,8 @@ import { createComponentStateV2 } from '@/ui/utilities/state/component-state/uti
 import { TableCellPosition } from '../types/TableCellPosition';
 
 export const hoverPositionComponentState =
-  createComponentStateV2<TableCellPosition>({
+  createComponentStateV2<TableCellPosition | null>({
     key: 'hoverPositionComponentState',
-    defaultValue: {
-      row: 0,
-      column: 1,
-    },
+    defaultValue: null,
     componentInstanceContext: RecordTableComponentInstanceContext,
   });

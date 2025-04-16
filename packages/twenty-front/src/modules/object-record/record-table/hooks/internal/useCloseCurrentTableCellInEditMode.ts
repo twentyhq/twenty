@@ -1,9 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
-import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 
 export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
@@ -12,34 +10,18 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
       currentTableCellInEditModePositionComponentState,
       recordTableId,
     );
-  const isTableCellInEditModeFamilyState = useRecoilComponentCallbackStateV2(
-    isTableCellInEditModeComponentFamilyState,
-    recordTableId,
-  );
 
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
   return useRecoilCallback(
-    ({ set, snapshot }) => {
+    ({ set }) => {
       return async () => {
-        const currentTableCellInEditModePosition = getSnapshotValue(
-          snapshot,
-          currentTableCellInEditModePositionState,
-        );
-
-        set(
-          isTableCellInEditModeFamilyState(currentTableCellInEditModePosition),
-          false,
-        );
+        set(currentTableCellInEditModePositionState, null);
 
         goBackToPreviousDropdownFocusId();
       };
     },
-    [
-      currentTableCellInEditModePositionState,
-      isTableCellInEditModeFamilyState,
-      goBackToPreviousDropdownFocusId,
-    ],
+    [currentTableCellInEditModePositionState, goBackToPreviousDropdownFocusId],
   );
 };

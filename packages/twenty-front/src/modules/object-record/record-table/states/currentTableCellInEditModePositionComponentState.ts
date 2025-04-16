@@ -3,7 +3,7 @@ import { createComponentStateV2 } from '@/ui/utilities/state/component-state/uti
 import { TableCellPosition } from '../types/TableCellPosition';
 
 export const currentTableCellInEditModePositionComponentState =
-  createComponentStateV2<TableCellPosition>({
+  createComponentStateV2<TableCellPosition | null>({
     key: 'currentTableCellInEditModePositionComponentState',
     defaultValue: {
       row: 0,

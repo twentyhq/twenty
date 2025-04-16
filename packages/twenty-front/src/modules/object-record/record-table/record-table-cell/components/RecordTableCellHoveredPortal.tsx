@@ -43,7 +43,7 @@ const RecordTableCellHoveredPortalContent = () => {
 
   const isMobile = useIsMobile();
 
-  const isFirstColumn = hoverPosition.column === 0;
+  const isFirstColumn = hoverPosition?.column === 0;
 
   const { isReadOnly } = useContext(FieldContext);
 
@@ -64,6 +64,10 @@ const RecordTableCellHoveredPortalContent = () => {
 
 export const RecordTableCellHoveredPortal = () => {
   const hoverPosition = useRecoilComponentValueV2(hoverPositionComponentState);
+
+  if (!hoverPosition) {
+    return null;
+  }
 
   return (
     <RecordTableCellPortalWrapper position={hoverPosition}>

@@ -17,9 +17,7 @@ import {
 } from '@/object-record/record-table/record-table-cell/hooks/__mocks__/cell';
 import { useCloseRecordTableCellNoGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellNoGroup';
 import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
-import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
@@ -79,14 +77,11 @@ describe('useCloseRecordTableCellNoGroup', () => {
         const currentTableCellInEditModePosition = useRecoilComponentValueV2(
           currentTableCellInEditModePositionComponentState,
         );
-        const isTableCellInEditMode = useRecoilComponentFamilyValueV2(
-          isTableCellInEditModeComponentFamilyState,
-          currentTableCellInEditModePosition,
-        );
+
         return {
           ...useCloseRecordTableCellNoGroup(),
           ...useDragSelect(),
-          isTableCellInEditMode,
+          currentTableCellInEditModePosition,
         };
       },
       {
@@ -99,7 +94,7 @@ describe('useCloseRecordTableCellNoGroup', () => {
     });
 
     expect(result.current.isDragSelectionStartEnabled()).toBe(true);
-    expect(result.current.isTableCellInEditMode).toBe(false);
+    expect(result.current.currentTableCellInEditModePosition).toBe(null);
     expect(setHotkeyScope).toHaveBeenCalledWith('table-soft-focus');
   });
 });

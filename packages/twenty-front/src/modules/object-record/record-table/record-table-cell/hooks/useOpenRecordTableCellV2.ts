@@ -8,7 +8,6 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/FocusClickOutsideListenerId';
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
-import { useMoveEditModeToTableCellPosition } from '@/object-record/record-table/hooks/internal/useMoveEditModeToCellPosition';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -21,14 +20,15 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
+import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useNavigate } from 'react-router-dom';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
-
 export const DEFAULT_CELL_SCOPE: HotkeyScope = {
   scope: TableHotkeyScope.CellEditMode,
 };
@@ -50,8 +50,10 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
     useClickOustideListenerStates(RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID);
 
   const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
-  const moveEditModeToTableCellPosition =
-    useMoveEditModeToTableCellPosition(tableScopeId);
+  const setCurrentTableCellInEditModePosition = useSetRecoilComponentStateV2(
+    currentTableCellInEditModePositionComponentState,
+    tableScopeId,
+  );
 
   const { setDragSelectionStartEnabled } = useDragSelect();
 
@@ -148,7 +150,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
           recordId,
         });
 
-        moveEditModeToTableCellPosition(cellPosition);
+        setCurrentTableCellInEditModePosition(cellPosition);
 
         initDraftValue({
           value: initialValue,
@@ -175,7 +177,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
       getClickOutsideListenerIsActivatedState,
       setDragSelectionStartEnabled,
       openFieldInput,
-      moveEditModeToTableCellPosition,
+      setCurrentTableCellInEditModePosition,
       initDraftValue,
       toggleClickOutsideListener,
       setActiveDropdownFocusIdAndMemorizePrevious,

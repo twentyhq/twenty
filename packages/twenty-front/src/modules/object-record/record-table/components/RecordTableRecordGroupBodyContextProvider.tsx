@@ -41,10 +41,10 @@ export const RecordTableRecordGroupBodyContextProvider = ({
     closeTableCellInGroup();
   };
 
-  const { moveFocusToCurrentCell } = useMoveHoverToCurrentCell(recordTableId);
+  const { moveHoverToCurrentCell } = useMoveHoverToCurrentCell(recordTableId);
 
   const handleMoveFocusToCurrentCell = (cellPosition: TableCellPosition) => {
-    moveFocusToCurrentCell(cellPosition);
+    moveHoverToCurrentCell(cellPosition);
   };
 
   const { triggerActionMenuDropdown } = useTriggerActionMenuDropdown({

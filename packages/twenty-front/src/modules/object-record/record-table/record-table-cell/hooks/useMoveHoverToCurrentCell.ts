@@ -4,9 +4,8 @@ import { TableCellPosition } from '@/object-record/record-table/types/TableCellP
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
-import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
 import { hoverPositionComponentState } from '@/object-record/record-table/states/hoverPositionComponentState';
-import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
+import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -18,35 +17,23 @@ export const useMoveHoverToCurrentCell = (recordTableId: string) => {
     recordTableId,
   );
 
-  const currentTableCellInEditModePositionState =
-    useRecoilComponentCallbackStateV2(
-      currentTableCellInEditModePositionComponentState,
-      recordTableId,
-    );
-  const isTableCellInEditModeFamilyState = useRecoilComponentCallbackStateV2(
-    isTableCellInEditModeComponentFamilyState,
+  const isSomeCellInEditModeSelector = useRecoilComponentCallbackStateV2(
+    isSomeCellInEditModeComponentSelector,
     recordTableId,
   );
 
-  const moveFocusToCurrentCell = useRecoilCallback(
+  const moveHoverToCurrentCell = useRecoilCallback(
     ({ snapshot }) =>
       (cellPosition: TableCellPosition) => {
-        const currentTableCellInEditModePosition = getSnapshotValue(
+        const isSomeCellInEditMode = getSnapshotValue(
           snapshot,
-          currentTableCellInEditModePositionState,
+          isSomeCellInEditModeSelector,
         );
 
-        const isSomeCellInEditMode = snapshot
-          .getLoadable(
-            isTableCellInEditModeFamilyState(
-              currentTableCellInEditModePosition,
-            ),
-          )
-          .getValue();
-
-        const currentHotkeyScope = snapshot
-          .getLoadable(currentHotkeyScopeState)
-          .getValue();
+        const currentHotkeyScope = getSnapshotValue(
+          snapshot,
+          currentHotkeyScopeState,
+        );
 
         if (
           currentHotkeyScope.scope !== TableHotkeyScope.TableFocus &&
@@ -61,12 +48,8 @@ export const useMoveHoverToCurrentCell = (recordTableId: string) => {
           setHoverPosition(cellPosition);
         }
       },
-    [
-      currentTableCellInEditModePositionState,
-      isTableCellInEditModeFamilyState,
-      setHoverPosition,
-    ],
+    [isSomeCellInEditModeSelector, setHoverPosition],
   );
 
-  return { moveFocusToCurrentCell };
+  return { moveHoverToCurrentCell };
 };
