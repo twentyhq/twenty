@@ -23,6 +23,7 @@ export const BACKGROUND_LIGHT = {
     lighter: RGBA(GRAY_SCALE.gray100, 0.02),
     danger: RGBA(COLOR.red, 0.08),
     blue: RGBA(COLOR.blue, 0.08),
+    orange: RGBA(COLOR.orange, 0.08),
   },
   overlayPrimary: RGBA(GRAY_SCALE.gray80, 0.8),
   overlaySecondary: RGBA(GRAY_SCALE.gray80, 0.4),
