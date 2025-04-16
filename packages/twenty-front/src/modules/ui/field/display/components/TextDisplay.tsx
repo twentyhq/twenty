@@ -6,8 +6,8 @@ type TextDisplayProps = {
   displayedMaxRows?: number;
 };
 
-const StyledContainer = styled.div`
-  height: 20px;
+const StyledContainer = styled.div<{ fixHeight?: boolean }>`
+  height: ${({ fixHeight }) => (fixHeight ? '20px' : 'auto')};
   display: flex;
   align-items: center;
 `;
