@@ -207,7 +207,6 @@ export class SearchService {
     workspaceId: string,
   ): Promise<string> {
     const avatarUrlToken = await this.fileService.encodeFileToken({
-      workspaceMemberId,
       workspaceId,
     });
 
@@ -239,7 +238,13 @@ export class SearchService {
         : '';
     }
 
-    return imageIdentifierField ? record[imageIdentifierField] : '';
+    return imageIdentifierField
+      ? await this.getImageUrlWithToken(
+          record[imageIdentifierField],
+          record.id,
+          workspaceId,
+        )
+      : '';
   }
 
   async computeSearchObjectResults(
