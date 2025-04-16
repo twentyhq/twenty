@@ -155,7 +155,7 @@ export class TwentyConfigService
       }
     > = {};
 
-    const envVars = new ConfigVariables();
+    const configVars = new ConfigVariables();
     const metadata =
       TypedReflect.getMetadata('config-variables', ConfigVariables) ?? {};
 
@@ -169,14 +169,14 @@ export class TwentyConfigService
       let source = ConfigSource.ENVIRONMENT;
 
       if (!isUsingDatabaseDriver || envMetadata.isEnvOnly) {
-        if (value === envVars[key as keyof ConfigVariables]) {
+        if (value === configVars[key as keyof ConfigVariables]) {
           source = ConfigSource.DEFAULT;
         }
       } else {
         const dbValue = value;
 
         source =
-          dbValue !== envVars[key as keyof ConfigVariables]
+          dbValue !== configVars[key as keyof ConfigVariables]
             ? ConfigSource.DATABASE
             : ConfigSource.DEFAULT;
       }
