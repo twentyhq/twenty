@@ -66,6 +66,7 @@ export const FieldDisplay = () => {
     // ok
     <RelationFromManyFieldDisplay />
   ) : isFieldText(fieldDefinition) ? (
+    // done
     <TextFieldDisplay />
   ) : isFieldUuid(fieldDefinition) ? (
     <UuidFieldDisplay />
@@ -79,6 +80,7 @@ export const FieldDisplay = () => {
     //done
     <NumberFieldDisplay />
   ) : isFieldLinks(fieldDefinition) ? (
+    // ok
     <LinksFieldDisplay />
   ) : isFieldCurrency(fieldDefinition) ? (
     //done
@@ -93,8 +95,10 @@ export const FieldDisplay = () => {
     // ok
     <MultiSelectFieldDisplay />
   ) : isFieldAddress(fieldDefinition) ? (
+    // done
     <AddressFieldDisplay />
   ) : isFieldRawJson(fieldDefinition) ? (
+    // done
     <JsonFieldDisplay />
   ) : isFieldBoolean(fieldDefinition) ? (
     //done
@@ -107,8 +111,10 @@ export const FieldDisplay = () => {
   ) : isFieldRichTextV2(fieldDefinition) ? (
     <RichTextV2FieldDisplay />
   ) : isFieldActor(fieldDefinition) ? (
+    // ok
     <ActorFieldDisplay />
   ) : isFieldArray(fieldDefinition) ? (
+    // ok
     <ArrayFieldDisplay />
   ) : isFieldEmails(fieldDefinition) ? (
     //ok

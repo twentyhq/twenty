@@ -9,6 +9,12 @@ const StyledTextDisplay = styled.div`
   height: 20px;
 `;
 
+const StyledTextDisplayAdaptive = styled.div`
+  align-items: center;
+  display: flex;
+  min-height: 20px;
+`;
+
 export const TextFieldDisplay = () => {
   const { fieldValue, fieldDefinition, displayedMaxRows } =
     useTextFieldDisplay();
@@ -21,13 +27,18 @@ export const TextFieldDisplay = () => {
     ? displayedMaxRows
     : displayedMaxRowsFromSettings;
   return displayMaxRowCalculated && displayMaxRowCalculated > 1 ? (
+    <StyledTextDisplayAdaptive>
+      <TextDisplay
+        text={fieldValue}
+        displayedMaxRows={displayMaxRowCalculated}
+      />
+    </StyledTextDisplayAdaptive>
+  ) : (
     <StyledTextDisplay>
       <TextDisplay
         text={fieldValue}
         displayedMaxRows={displayMaxRowCalculated}
       />
     </StyledTextDisplay>
-  ) : (
-    <TextDisplay text={fieldValue} displayedMaxRows={displayMaxRowCalculated} />
   );
 };
