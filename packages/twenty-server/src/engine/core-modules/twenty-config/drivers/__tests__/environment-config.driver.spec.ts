@@ -37,13 +37,14 @@ describe('EnvironmentConfigDriver', () => {
     it('should return value from config service when available', () => {
       const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
       const expectedValue = true;
+      const defaultValue = new ConfigVariables()[key];
 
       jest.spyOn(configService, 'get').mockReturnValue(expectedValue);
 
       const result = driver.get(key);
 
       expect(result).toBe(expectedValue);
-      expect(configService.get).toHaveBeenCalledWith(key, expect.any(Boolean));
+      expect(configService.get).toHaveBeenCalledWith(key, defaultValue);
     });
 
     it('should return default value when config service returns undefined', () => {
@@ -65,6 +66,8 @@ describe('EnvironmentConfigDriver', () => {
       const stringKey = 'EMAIL_FROM_ADDRESS' as keyof ConfigVariables;
       const numberKey = 'NODE_PORT' as keyof ConfigVariables;
 
+      const defaultValues = new ConfigVariables();
+
       jest
         .spyOn(configService, 'get')
         .mockImplementation((key: keyof ConfigVariables) => {
@@ -81,8 +84,13 @@ describe('EnvironmentConfigDriver', () => {
         });
 
       expect(driver.get(booleanKey)).toBe(true);
+      expect(configService.get).toHaveBeenCalledWith(booleanKey, defaultValues[booleanKey]);
+      
       expect(driver.get(stringKey)).toBe('test@example.com');
+      expect(configService.get).toHaveBeenCalledWith(stringKey, defaultValues[stringKey]);
+      
       expect(driver.get(numberKey)).toBe(3000);
+      expect(configService.get).toHaveBeenCalledWith(numberKey, defaultValues[numberKey]);
     });
   });
 });
