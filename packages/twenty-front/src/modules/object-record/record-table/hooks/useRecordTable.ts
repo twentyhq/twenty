@@ -13,6 +13,7 @@ import { useUpsertRecordFromState } from '../../hooks/useUpsertRecordFromState';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
+import { useSetIsFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsFocusActive';
 import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
@@ -24,7 +25,6 @@ import { tableLastRowVisibleComponentState } from '@/object-record/record-table/
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useDisableFocus } from './internal/useDisableFocus';
 import { useLeaveTableFocus } from './internal/useLeaveTableFocus';
 import { useResetTableRowSelection } from './internal/useResetTableRowSelection';
 import { useSelectAllRows } from './internal/useSelectAllRows';
@@ -145,11 +145,12 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const setFocusPosition = useSetFocusPosition(recordTableId);
 
+  const setIsFocusActive = useSetIsFocusActive(recordTableId);
+
   const { moveDown, moveLeft, moveRight, moveUp } =
     useRecordTableMoveFocus(recordTableId);
 
   const useMapKeyboardToFocus = () => {
-    const disableFocus = useDisableFocus(recordTableId);
     const setHotkeyScope = useSetHotkeyScope();
 
     useScopedHotkeys(
@@ -195,10 +196,10 @@ export const useRecordTable = (props?: useRecordTableProps) => {
           goto: true,
           keyboardShortcutMenu: true,
         });
-        disableFocus();
+        setIsFocusActive(false);
       },
       TableHotkeyScope.TableFocus,
-      [disableFocus],
+      [setIsFocusActive],
     );
   };
 

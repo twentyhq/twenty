@@ -3,19 +3,17 @@ import { useRecoilCallback } from 'recoil';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useSetIsFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsFocusActive';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { isFocusActiveComponentState } from '@/object-record/record-table/states/isFocusActiveComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useDisableFocus } from './useDisableFocus';
 
 export const useLeaveTableFocus = (recordTableId?: string) => {
   const recordTableIdFromContext = useAvailableComponentInstanceIdOrThrow(
     RecordTableComponentInstanceContext,
     recordTableId,
   );
-
-  const disableFocus = useDisableFocus(recordTableIdFromContext);
 
   const isFocusActiveState = useRecoilComponentCallbackStateV2(
     isFocusActiveComponentState,
@@ -25,6 +23,8 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
   const resetTableRowSelection = useResetTableRowSelection(
     recordTableIdFromContext,
   );
+
+  const setIsFocusActive = useSetIsFocusActive(recordTableIdFromContext);
 
   return useRecoilCallback(
     ({ snapshot }) =>
@@ -37,8 +37,8 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
           return;
         }
 
-        disableFocus();
+        setIsFocusActive(false);
       },
-    [disableFocus, isFocusActiveState, resetTableRowSelection],
+    [isFocusActiveState, resetTableRowSelection, setIsFocusActive],
   );
 };
