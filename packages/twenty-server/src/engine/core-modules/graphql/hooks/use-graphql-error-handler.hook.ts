@@ -72,7 +72,7 @@ export const useGraphQLErrorHandlerHook = <
                   : generateGraphQLErrorFromError(error);
               });
 
-              const errorsToCapture = originalErrors.reduce<BaseGraphQLError[]>(
+              const errorsToCapture = result.errors.reduce<BaseGraphQLError[]>(
                 (acc, error) => {
                   if (shouldCaptureException(error)) {
                     acc.push(error);
