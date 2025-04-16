@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 const StyledDropdownMenuItemsExternalContainer = styled.div<{
   hasMaxHeight?: boolean;
-  width: number;
+  width: number | 'auto';
 }>`
   --padding: ${({ theme }) => theme.spacing(1)};
 
@@ -52,7 +52,7 @@ export const DropdownMenuItemsContainer = ({
   hasMaxHeight?: boolean;
   className?: string;
   scrollable?: boolean;
-  width?: number;
+  width?: number | 'auto';
 }) => {
   const id = useId();
 

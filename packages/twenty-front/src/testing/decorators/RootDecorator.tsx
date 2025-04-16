@@ -7,13 +7,21 @@ import { ApolloMetadataClientMockedProvider } from '@/object-metadata/hooks/__mo
 import { InitializeHotkeyStorybookHookEffect } from '../InitializeHotkeyStorybookHook';
 import { mockedApolloClient } from '../mockedApolloClient';
 
-export const RootDecorator: Decorator = (Story) => (
-  <RecoilRoot>
-    <ApolloProvider client={mockedApolloClient}>
-      <ApolloMetadataClientMockedProvider>
-        <InitializeHotkeyStorybookHookEffect />
-        <Story />
-      </ApolloMetadataClientMockedProvider>
-    </ApolloProvider>
-  </RecoilRoot>
-);
+export const RootDecorator: Decorator = (Story, context) => {
+  const { parameters } = context;
+
+  const disableHotkeyInitialization = parameters.disableHotkeyInitialization;
+
+  return (
+    <RecoilRoot>
+      <ApolloProvider client={mockedApolloClient}>
+        <ApolloMetadataClientMockedProvider>
+          {!disableHotkeyInitialization && (
+            <InitializeHotkeyStorybookHookEffect />
+          )}
+          <Story />
+        </ApolloMetadataClientMockedProvider>
+      </ApolloProvider>
+    </RecoilRoot>
+  );
+};

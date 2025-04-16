@@ -420,14 +420,12 @@ export const useAuth = () => {
       }
 
       if (isMultiWorkspaceEnabled) {
-        return redirectToWorkspaceDomain(
+        return await redirectToWorkspaceDomain(
           getWorkspaceUrl(signUpResult.data.signUp.workspace.workspaceUrls),
-
           isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
           {
             ...(!isEmailVerificationRequired && {
               loginToken: signUpResult.data.signUp.loginToken.token,
-              animateModal: false,
             }),
             email,
           },

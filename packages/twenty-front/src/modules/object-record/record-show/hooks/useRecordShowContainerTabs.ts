@@ -17,7 +17,6 @@ import {
   IconHome,
   IconMail,
   IconNotes,
-  IconPrinter,
   IconSettings,
 } from 'twenty-ui/display';
 
@@ -189,21 +188,7 @@ export const useRecordShowContainerTabs = (
       },
       [CoreObjectNameSingular.WorkflowRun]: {
         tabs: {
-          workflowRunOutput: {
-            title: 'Output',
-            position: 0,
-            Icon: IconPrinter,
-            cards: [{ type: CardType.WorkflowRunOutputCard }],
-            hide: {
-              ifMobile: false,
-              ifDesktop: false,
-              ifInRightDrawer: false,
-              ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
-              ifRequiredObjectsInactive: [],
-              ifRelationsMissing: [],
-            },
-          },
-          workflowRunFlow: {
+          workflowRun: {
             title: 'Flow',
             position: 0,
             Icon: IconSettings,

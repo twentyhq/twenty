@@ -16,7 +16,6 @@ const StyledScrollWrapper = styled.div`
   }
   overflow-x: hidden;
   overflow-y: hidden;
-  display: flex;
   width: 100%;
   height: 100%;
 `;

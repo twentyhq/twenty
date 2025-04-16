@@ -1,5 +1,4 @@
 import { DROPDOWN_OFFSET_Y } from '@/dropdown/constants/DropdownOffsetY';
-import { DROPDOWN_WIDTH } from '@/dropdown/constants/DropdownWidth';
 import { useCurrentContentId } from '@/dropdown/hooks/useCurrentContentId';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownContent';
@@ -33,7 +32,6 @@ export const ObjectOptionsDropdown = ({
     <Dropdown
       dropdownId={OBJECT_OPTIONS_DROPDOWN_ID}
       dropdownHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
-      dropdownWidth={DROPDOWN_WIDTH}
       dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
       clickableComponent={
         <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>

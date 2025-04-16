@@ -1,7 +1,5 @@
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { FormFieldInputHotKeyScope } from '@/object-record/record-field/form-types/constants/FormFieldInputHotKeyScope';
 
 const StyledFormFieldInputContainer = styled.div`
   display: flex;
@@ -16,27 +14,8 @@ export const FormFieldInputContainer = ({
   children: ReactNode;
   testId?: string;
 }) => {
-  const {
-    goBackToPreviousHotkeyScope,
-    setHotkeyScopeAndMemorizePreviousScope,
-  } = usePreviousHotkeyScope();
-
-  const onFocus = () => {
-    setHotkeyScopeAndMemorizePreviousScope(
-      FormFieldInputHotKeyScope.FormFieldInput,
-    );
-  };
-
-  const onBlur = () => {
-    goBackToPreviousHotkeyScope();
-  };
-
   return (
-    <StyledFormFieldInputContainer
-      data-testid={testId}
-      onFocus={onFocus}
-      onBlur={onBlur}
-    >
+    <StyledFormFieldInputContainer data-testid={testId}>
       {children}
     </StyledFormFieldInputContainer>
   );

@@ -456,7 +456,6 @@ describe('workspace permissions', () => {
                   $input: UpdateLabPublicFeatureFlagInput!
                 ) {
                   updateLabPublicFeatureFlag(input: $input) {
-                    id
                     key
                     value
                   }
@@ -490,7 +489,6 @@ describe('workspace permissions', () => {
                 $input: UpdateLabPublicFeatureFlagInput!
               ) {
                 updateLabPublicFeatureFlag(input: $input) {
-                  id
                   key
                   value
                 }

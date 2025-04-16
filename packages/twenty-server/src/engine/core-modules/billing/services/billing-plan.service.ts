@@ -139,7 +139,9 @@ export class BillingPlanService {
       );
     }
     const filterPricesByInterval = (product: BillingProduct) =>
-      product.billingPrices.filter((price) => price.interval === interval);
+      product.billingPrices.filter(
+        (price) => price.interval === interval && price.active,
+      );
 
     const meteredProductsPrices = meteredProducts.flatMap(
       filterPricesByInterval,

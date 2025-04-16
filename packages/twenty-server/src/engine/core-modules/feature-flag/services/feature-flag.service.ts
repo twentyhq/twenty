@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
+import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import {
@@ -13,47 +14,46 @@ import {
 } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
+import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 
 @Injectable()
 export class FeatureFlagService {
   constructor(
     @InjectRepository(FeatureFlag, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlag>,
+    private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
   ) {}
 
   public async isFeatureEnabled(
     key: FeatureFlagKey,
     workspaceId: string,
   ): Promise<boolean> {
-    const featureFlag = await this.featureFlagRepository.findOneBy({
-      workspaceId,
-      key,
-      value: true,
-    });
+    const featureFlagMap = await this.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    return !!featureFlag?.value;
+    return !!featureFlagMap[key];
   }
 
   public async getWorkspaceFeatureFlags(
     workspaceId: string,
-  ): Promise<FeatureFlag[]> {
-    return this.featureFlagRepository.find({ where: { workspaceId } });
+  ): Promise<FeatureFlagDTO[]> {
+    const workspaceFeatureFlagsMap =
+      await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap(
+        { workspaceId },
+      );
+
+    return Object.entries(workspaceFeatureFlagsMap).map(([key, value]) => ({
+      key: key as FeatureFlagKey,
+      value,
+    }));
   }
 
   public async getWorkspaceFeatureFlagsMap(
     workspaceId: string,
   ): Promise<FeatureFlagMap> {
-    const workspaceFeatureFlags =
-      await this.getWorkspaceFeatureFlags(workspaceId);
-
-    const workspaceFeatureFlagsMap = workspaceFeatureFlags.reduce(
-      (result, currentFeatureFlag) => {
-        result[currentFeatureFlag.key] = currentFeatureFlag.value;
-
-        return result;
-      },
-      {} as FeatureFlagMap,
-    );
+    const workspaceFeatureFlagsMap =
+      await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap(
+        { workspaceId },
+      );
 
     return workspaceFeatureFlagsMap;
   }
@@ -62,13 +62,21 @@ export class FeatureFlagService {
     keys: FeatureFlagKey[],
     workspaceId: string,
   ): Promise<void> {
-    await this.featureFlagRepository.upsert(
-      keys.map((key) => ({ workspaceId, key, value: true })),
-      {
-        conflictPaths: ['workspaceId', 'key'],
-        skipUpdateIfNoValuesChanged: true,
-      },
-    );
+    if (keys.length > 0) {
+      await this.featureFlagRepository.upsert(
+        keys.map((key) => ({ workspaceId, key, value: true })),
+        {
+          conflictPaths: ['workspaceId', 'key'],
+          skipUpdateIfNoValuesChanged: true,
+        },
+      );
+
+      await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
+        {
+          workspaceId: workspaceId,
+        },
+      );
+    }
   }
 
   public async upsertWorkspaceFeatureFlag({
@@ -120,6 +128,14 @@ export class FeatureFlagService {
           workspaceId: workspaceId,
         };
 
-    return await this.featureFlagRepository.save(featureFlagToSave);
+    const result = await this.featureFlagRepository.save(featureFlagToSave);
+
+    await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
+      {
+        workspaceId: workspaceId,
+      },
+    );
+
+    return result;
   }
 }

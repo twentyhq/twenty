@@ -5,8 +5,8 @@ import { expect, userEvent, within } from '@storybook/test';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { sleep } from '~/utils/sleep';
 
-import { IconPicker, IconPickerProps } from '../IconPicker';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { IconPicker, IconPickerProps } from '../IconPicker';
 
 type RenderProps = IconPickerProps;
 const Render = (args: RenderProps) => {
@@ -123,7 +123,7 @@ export const WithSearchAndClose: Story = {
       name: 'Click to select icon (selected: IconBuildingSkyscraper)',
     });
 
-    userEvent.click(iconPickerButton);
+    await userEvent.click(iconPickerButton);
 
     await sleep(500);
 

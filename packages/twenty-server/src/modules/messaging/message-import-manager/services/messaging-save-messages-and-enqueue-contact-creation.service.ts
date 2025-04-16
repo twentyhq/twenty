@@ -53,70 +53,76 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
     const workspaceDataSource = await this.twentyORMManager.getDatasource();
 
-    const participantsWithMessageId = await workspaceDataSource?.transaction(
-      async (transactionManager: EntityManager) => {
-        const messageExternalIdsAndIdsMap =
-          await this.messageService.saveMessagesWithinTransaction(
-            messagesToSave,
-            messageChannel.id,
+    const createdMessagesWithParticipants =
+      await workspaceDataSource?.transaction(
+        async (transactionManager: EntityManager) => {
+          const { messageExternalIdsAndIdsMap, createdMessages } =
+            await this.messageService.saveMessagesWithinTransaction(
+              messagesToSave,
+              messageChannel.id,
+              transactionManager,
+            );
+
+          const participantsWithMessageId: (ParticipantWithMessageId & {
+            shouldCreateContact: boolean;
+          })[] = messagesToSave.flatMap((message) => {
+            const messageId = messageExternalIdsAndIdsMap.get(
+              message.externalId,
+            );
+
+            return messageId
+              ? message.participants.map((participant: Participant) => {
+                  const fromHandle =
+                    message.participants.find((p) => p.role === 'from')
+                      ?.handle || '';
+
+                  const isMessageSentByConnectedAccount =
+                    handleAliases.includes(fromHandle) ||
+                    fromHandle === connectedAccount.handle;
+
+                  const isParticipantConnectedAccount =
+                    handleAliases.includes(participant.handle) ||
+                    participant.handle === connectedAccount.handle;
+
+                  const isExcludedByNonProfessionalEmails =
+                    messageChannel.excludeNonProfessionalEmails &&
+                    !isWorkEmail(participant.handle);
+
+                  const isExcludedByGroupEmails =
+                    messageChannel.excludeGroupEmails &&
+                    isGroupEmail(participant.handle);
+
+                  const shouldCreateContact =
+                    !!participant.handle &&
+                    !isParticipantConnectedAccount &&
+                    !isExcludedByNonProfessionalEmails &&
+                    !isExcludedByGroupEmails &&
+                    (messageChannel.contactAutoCreationPolicy ===
+                      MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED ||
+                      (messageChannel.contactAutoCreationPolicy ===
+                        MessageChannelContactAutoCreationPolicy.SENT &&
+                        isMessageSentByConnectedAccount));
+
+                  return {
+                    ...participant,
+                    messageId,
+                    shouldCreateContact,
+                  };
+                })
+              : [];
+          });
+
+          await this.messageParticipantService.saveMessageParticipants(
+            participantsWithMessageId,
             transactionManager,
           );
 
-        const participantsWithMessageId: (ParticipantWithMessageId & {
-          shouldCreateContact: boolean;
-        })[] = messagesToSave.flatMap((message) => {
-          const messageId = messageExternalIdsAndIdsMap.get(message.externalId);
+          return { participantsWithMessageId, createdMessages };
+        },
+      );
 
-          return messageId
-            ? message.participants.map((participant: Participant) => {
-                const fromHandle =
-                  message.participants.find((p) => p.role === 'from')?.handle ||
-                  '';
-
-                const isMessageSentByConnectedAccount =
-                  handleAliases.includes(fromHandle) ||
-                  fromHandle === connectedAccount.handle;
-
-                const isParticipantConnectedAccount =
-                  handleAliases.includes(participant.handle) ||
-                  participant.handle === connectedAccount.handle;
-
-                const isExcludedByNonProfessionalEmails =
-                  messageChannel.excludeNonProfessionalEmails &&
-                  !isWorkEmail(participant.handle);
-
-                const isExcludedByGroupEmails =
-                  messageChannel.excludeGroupEmails &&
-                  isGroupEmail(participant.handle);
-
-                const shouldCreateContact =
-                  !!participant.handle &&
-                  !isParticipantConnectedAccount &&
-                  !isExcludedByNonProfessionalEmails &&
-                  !isExcludedByGroupEmails &&
-                  (messageChannel.contactAutoCreationPolicy ===
-                    MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED ||
-                    (messageChannel.contactAutoCreationPolicy ===
-                      MessageChannelContactAutoCreationPolicy.SENT &&
-                      isMessageSentByConnectedAccount));
-
-                return {
-                  ...participant,
-                  messageId,
-                  shouldCreateContact,
-                };
-              })
-            : [];
-        });
-
-        await this.messageParticipantService.saveMessageParticipants(
-          participantsWithMessageId,
-          transactionManager,
-        );
-
-        return participantsWithMessageId;
-      },
-    );
+    const { participantsWithMessageId, createdMessages } =
+      createdMessagesWithParticipants;
 
     const messageMetadata = await this.objectMetadataRepository.findOneOrFail({
       where: { nameSingular: 'message', workspaceId },
@@ -125,9 +131,9 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: 'message',
       action: DatabaseEventAction.CREATED,
-      events: messagesToSave.map((message) => {
+      events: createdMessages.map((message) => {
         return {
-          recordId: message.headerMessageId,
+          recordId: message.id ?? '',
           objectMetadata: messageMetadata,
           properties: {
             after: message,
