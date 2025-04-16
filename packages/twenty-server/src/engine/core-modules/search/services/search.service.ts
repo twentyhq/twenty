@@ -222,7 +222,7 @@ export class SearchService {
       : '';
   }
 
-  async computeSearchObjectResults(
+  computeSearchObjectResults(
     recordsWithObjectMetadataItems: RecordsWithObjectMetadataItem[],
     limit: number,
     workspaceId: string,
