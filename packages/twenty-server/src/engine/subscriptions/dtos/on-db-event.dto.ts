@@ -17,7 +17,7 @@ export class OnDbEventDTO {
   eventId: string;
 
   @Field()
-  emittedAt: string;
+  emittedAt: Date;
 
   @Field(() => DatabaseEventAction)
   action: DatabaseEventAction;

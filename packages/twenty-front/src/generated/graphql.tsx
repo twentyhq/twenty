@@ -1364,7 +1364,7 @@ export type ObjectStandardOverrides = {
 export type OnDbEventDto = {
   __typename?: 'OnDbEventDTO';
   action: DatabaseEventAction;
-  emittedAt: Scalars['String'];
+  emittedAt: Scalars['DateTime'];
   eventId: Scalars['String'];
   objectNameSingular: Scalars['String'];
   record: Scalars['JSON'];

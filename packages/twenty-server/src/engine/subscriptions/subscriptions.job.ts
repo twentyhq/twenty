@@ -1,4 +1,4 @@
-import { Inject, Logger } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
@@ -12,7 +12,6 @@ import { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/o
 
 @Processor(MessageQueue.subscriptionsQueue)
 export class SubscriptionsJob {
-  private readonly logger = new Logger(SubscriptionsJob.name);
   constructor(@Inject('PUB_SUB') private readonly pubSub: RedisPubSub) {}
 
   @Process(SubscriptionsJob.name)

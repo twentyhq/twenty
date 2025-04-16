@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { createClient } from 'graphql-sse';
 import { ON_DB_EVENT } from '@/subscription/graphql/subscriptions/onDbEvent';
 import { Subscription, SubscriptionOnDbEventArgs } from '~/generated/graphql';
@@ -12,17 +12,6 @@ type OnDbEventArgs = SubscriptionOnDbEventArgs & {
   onComplete?: () => void;
 };
 
-const tokenPair = getTokenPair();
-
-const sseClient = createClient({
-  url: `${REACT_APP_SERVER_BASE_URL}/graphql`,
-  headers: {
-    Authorization: tokenPair?.accessToken.token
-      ? `Bearer ${tokenPair?.accessToken.token}`
-      : '',
-  },
-});
-
 export const useOnDbEvent = ({
   onData,
   onError,
@@ -30,12 +19,25 @@ export const useOnDbEvent = ({
   input,
   skip = false,
 }: OnDbEventArgs) => {
+  const tokenPair = getTokenPair();
+
+  const sseClient = useMemo(() => {
+    return createClient({
+      url: `${REACT_APP_SERVER_BASE_URL}/graphql`,
+      headers: {
+        Authorization: tokenPair?.accessToken.token
+          ? `Bearer ${tokenPair?.accessToken.token}`
+          : '',
+      },
+    });
+  }, [tokenPair?.accessToken.token]);
+
   useEffect(() => {
     if (skip === true) {
       return;
     }
-    const next = (event: any) => onData?.(event.data);
-    const error = (err: any) => onError?.(err);
+    const next = (value: { data: Subscription }) => onData?.(value.data);
+    const error = (err: unknown) => onError?.(err);
     const complete = () => onComplete?.();
     const unsubscribe = sseClient.subscribe(
       {

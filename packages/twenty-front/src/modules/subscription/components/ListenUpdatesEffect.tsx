@@ -1,7 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 import { useOnDbEvent } from '@/subscription/hooks/useOnDbEvent';
 import { DatabaseEventAction } from '~/generated/graphql';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 type ListenRecordUpdatesEffectProps = {
   objectNameSingular: string;
@@ -21,13 +21,15 @@ export const ListenRecordUpdatesEffect = ({
     onData: (data) => {
       const updatedRecord = data.onDbEvent.record;
 
-      const fieldsUpdater = listenedFields.reduce(
-        (acc, listenedField) => ({
+      const fieldsUpdater = listenedFields.reduce((acc, listenedField) => {
+        if (!isDefined(updatedRecord[listenedField])) {
+          return acc;
+        }
+        return {
           ...acc,
           [listenedField]: () => updatedRecord[listenedField],
-        }),
-        {},
-      );
+        };
+      }, {});
 
       apolloClient.cache.modify({
         id: apolloClient.cache.identify({
