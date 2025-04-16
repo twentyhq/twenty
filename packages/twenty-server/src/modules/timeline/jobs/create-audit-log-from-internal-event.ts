@@ -59,8 +59,6 @@ export class CreateAuditLogFromInternalEvent {
         userId: eventData.userId,
       });
 
-      console.log('>>>>>>>>>>>>>>', workspaceEventBatch);
-
       if (workspaceEventBatch.name.endsWith('.updated')) {
         analytics.track(OBJECT_RECORD_UPDATED_EVENT, eventData.properties);
       } else if (workspaceEventBatch.name.endsWith('.created')) {
