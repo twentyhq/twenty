@@ -389,6 +389,10 @@ describe('TwentyConfigService', () => {
         .spyOn(databaseConfigDriver, 'get')
         .mockImplementation((key: keyof ConfigVariables) => {
           const keyStr = String(key);
+
+          if (mockConfigVarMetadata[keyStr]?.isEnvOnly) {
+            return environmentConfigDriver.get(key);
+          }
           const values = {
             TEST_VAR: 'db test value',
             SENSITIVE_VAR: 'sensitive_data_123',
@@ -429,7 +433,7 @@ describe('TwentyConfigService', () => {
         },
       });
 
-      expect(result.SENSITIVE_VAR.value).not.toBe('sensitive_data_123');
+      expect(result.SENSITIVE_VAR.value).toBe('********a_123');
     });
 
     it('should return config variables with database source when using database driver', () => {
@@ -441,8 +445,23 @@ describe('TwentyConfigService', () => {
 
       const result = service.getAll();
 
-      expect(result.TEST_VAR.source).toBe(ConfigSource.DATABASE);
-      expect(result.ENV_ONLY_VAR.source).toBe(ConfigSource.ENVIRONMENT);
+      expect(result.TEST_VAR).toEqual({
+        value: 'db test value',
+        metadata: mockConfigVarMetadata.TEST_VAR,
+        source: ConfigSource.DATABASE,
+      });
+
+      expect(result.ENV_ONLY_VAR).toEqual({
+        value: 'env only value',
+        metadata: mockConfigVarMetadata.ENV_ONLY_VAR,
+        source: ConfigSource.ENVIRONMENT,
+      });
+
+      expect(result.SENSITIVE_VAR).toEqual({
+        value: '********a_123',
+        metadata: mockConfigVarMetadata.SENSITIVE_VAR,
+        source: ConfigSource.DATABASE,
+      });
     });
   });
 

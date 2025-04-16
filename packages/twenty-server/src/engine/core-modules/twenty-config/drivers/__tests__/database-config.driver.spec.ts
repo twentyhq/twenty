@@ -172,15 +172,19 @@ describe('DatabaseConfigDriver', () => {
 
       (driver as any).retryAttempts = 0;
 
+      const scheduleRetrySpy = jest.fn();
       const originalScheduleRetry = (driver as any).scheduleRetry;
 
-      (driver as any).scheduleRetry = jest.fn();
+      (driver as any).scheduleRetry = scheduleRetrySpy;
 
       jest.spyOn(configStorage, 'loadAll').mockRejectedValue(error);
 
       await driver.initialize();
 
-      expect((driver as any).retryAttempts).toBe(1);
+      expect(scheduleRetrySpy).toHaveBeenCalled();
+      expect((driver as any).initializationState).toBe(
+        InitializationState.FAILED,
+      );
 
       (driver as any).scheduleRetry = originalScheduleRetry;
     });

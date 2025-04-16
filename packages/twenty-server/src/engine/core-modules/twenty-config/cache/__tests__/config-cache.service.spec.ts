@@ -198,8 +198,6 @@ describe('ConfigCacheService', () => {
 
   describe('module lifecycle', () => {
     it('should clean up interval on module destroy', () => {
-      const clearIntervalSpy = jest.spyOn(global, 'clearInterval');
-
       service.onModuleDestroy();
       expect(clearIntervalSpy).toHaveBeenCalled();
     });

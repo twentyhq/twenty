@@ -53,10 +53,8 @@ export class DatabaseConfigDriver
       // Reset retry attempts on successful initialization
       this.retryAttempts = 0;
     } catch (error) {
-      this.retryAttempts++;
-
       this.logger.error(
-        `Failed to initialize database driver (attempt ${this.retryAttempts})`,
+        `Failed to initialize database driver (attempt ${this.retryAttempts + 1})`,
         error instanceof Error ? error.stack : error,
       );
       this.initializationState = InitializationState.FAILED;
@@ -192,6 +190,15 @@ export class DatabaseConfigDriver
 
     this.retryTimer = setTimeout(() => {
       this.logger.log(`Executing retry attempt ${this.retryAttempts}`);
+
+      if (this.initializationState === InitializationState.INITIALIZING) {
+        this.logger.log(
+          'Skipping retry attempt as initialization is already in progress',
+        );
+
+        return;
+      }
+
       this.initialize().catch((error) => {
         this.logger.error(
           `Retry initialization attempt ${this.retryAttempts} failed`,

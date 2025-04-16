@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, OnModuleDestroy } from '@nestjs/common';
 
 import { CONFIG_VARIABLES_CACHE_SCAVENGE_INTERVAL } from 'src/engine/core-modules/twenty-config/constants/config-variables-cache-scavenge-interval';
 import { CONFIG_VARIABLES_CACHE_TTL } from 'src/engine/core-modules/twenty-config/constants/config-variables-cache-ttl';
@@ -18,7 +18,6 @@ export class ConfigCacheService implements OnModuleDestroy {
     ConfigNegativeCacheEntry
   >;
   private cacheScavengeInterval: NodeJS.Timeout;
-  private readonly logger = new Logger(ConfigCacheService.name);
 
   constructor() {
     this.valueCache = new Map();
