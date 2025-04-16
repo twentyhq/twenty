@@ -6,7 +6,7 @@ import { ConfigCacheService } from 'src/engine/core-modules/twenty-config/cache/
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { DATABASE_CONFIG_DRIVER_INITIAL_RETRY_DELAY } from 'src/engine/core-modules/twenty-config/constants/database-config-driver-initial-retry-delay';
 import { DATABASE_CONFIG_DRIVER_INITIALIZATION_MAX_RETRIES } from 'src/engine/core-modules/twenty-config/constants/database-config-driver-initialization-max-retries';
-import { InitializationState } from 'src/engine/core-modules/twenty-config/enums/initialization-state.enum';
+import { ConfigInitializationState } from 'src/engine/core-modules/twenty-config/enums/config-initialization-state.enum';
 import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
 import { isEnvOnlyConfigVar } from 'src/engine/core-modules/twenty-config/utils/is-env-only-config-var.util';
 
@@ -16,8 +16,8 @@ import { EnvironmentConfigDriver } from './environment-config.driver';
 export class DatabaseConfigDriver
   implements DatabaseConfigDriverInterface, OnModuleDestroy
 {
-  private initializationState = InitializationState.NOT_INITIALIZED;
-  private initializationPromise: Promise<void> | null = null;
+  private configInitializationState = ConfigInitializationState.NOT_INITIALIZED;
+  private configInitializationPromise: Promise<void> | null = null;
   private retryAttempts = 0;
   private retryTimer?: NodeJS.Timeout;
   private readonly logger = new Logger(DatabaseConfigDriver.name);
@@ -29,27 +29,30 @@ export class DatabaseConfigDriver
   ) {}
 
   async initialize(): Promise<void> {
-    if (this.initializationState === InitializationState.INITIALIZED) {
+    if (
+      this.configInitializationState === ConfigInitializationState.INITIALIZED
+    ) {
       return Promise.resolve();
     }
-    if (this.initializationPromise) {
-      return this.initializationPromise;
+    if (this.configInitializationPromise) {
+      return this.configInitializationPromise;
     }
 
-    if (this.initializationState === InitializationState.FAILED) {
-      this.initializationState = InitializationState.NOT_INITIALIZED;
+    if (this.configInitializationState === ConfigInitializationState.FAILED) {
+      this.configInitializationState =
+        ConfigInitializationState.NOT_INITIALIZED;
     }
 
-    this.initializationPromise = this.doInitialize();
+    this.configInitializationPromise = this.doInitialize();
 
-    return this.initializationPromise;
+    return this.configInitializationPromise;
   }
 
   private async doInitialize(): Promise<void> {
     try {
-      this.initializationState = InitializationState.INITIALIZING;
+      this.configInitializationState = ConfigInitializationState.INITIALIZING;
       await this.loadAllConfigVarsFromDb();
-      this.initializationState = InitializationState.INITIALIZED;
+      this.configInitializationState = ConfigInitializationState.INITIALIZED;
       // Reset retry attempts on successful initialization
       this.retryAttempts = 0;
     } catch (error) {
@@ -57,11 +60,11 @@ export class DatabaseConfigDriver
         `Failed to initialize database driver (attempt ${this.retryAttempts + 1})`,
         error instanceof Error ? error.stack : error,
       );
-      this.initializationState = InitializationState.FAILED;
+      this.configInitializationState = ConfigInitializationState.FAILED;
       this.scheduleRetry();
     } finally {
       // Reset the promise to allow future initialization attempts
-      this.initializationPromise = null;
+      this.configInitializationPromise = null;
     }
   }
 
@@ -76,7 +79,7 @@ export class DatabaseConfigDriver
       return cachedValue;
     }
 
-    if (this.configCache.getNegativeLookup(key)) {
+    if (this.configCache.isKeyKnownMissing(key)) {
       return this.environmentDriver.get(key);
     }
 
@@ -111,11 +114,11 @@ export class DatabaseConfigDriver
       if (value !== undefined) {
         this.configCache.set(key, value);
       } else {
-        this.configCache.setNegativeLookup(key);
+        this.configCache.markKeyAsMissing(key);
       }
     } catch (error) {
       this.logger.error(`Failed to fetch config for ${key as string}`, error);
-      this.configCache.setNegativeLookup(key);
+      this.configCache.markKeyAsMissing(key);
     }
   }
 
@@ -129,8 +132,8 @@ export class DatabaseConfigDriver
 
   private shouldUseEnvironment(key: keyof ConfigVariables): boolean {
     return (
-      this.initializationState !== InitializationState.INITIALIZED ||
-      isEnvOnlyConfigVar(key)
+      this.configInitializationState !==
+        ConfigInitializationState.INITIALIZED || isEnvOnlyConfigVar(key)
     );
   }
 
@@ -152,7 +155,9 @@ export class DatabaseConfigDriver
   }
 
   private async scheduleRefresh(key: keyof ConfigVariables): Promise<void> {
-    if (this.initializationState !== InitializationState.INITIALIZED) {
+    if (
+      this.configInitializationState !== ConfigInitializationState.INITIALIZED
+    ) {
       return;
     }
 
@@ -191,7 +196,10 @@ export class DatabaseConfigDriver
     this.retryTimer = setTimeout(() => {
       this.logger.log(`Executing retry attempt ${this.retryAttempts}`);
 
-      if (this.initializationState === InitializationState.INITIALIZING) {
+      if (
+        this.configInitializationState ===
+        ConfigInitializationState.INITIALIZING
+      ) {
         this.logger.log(
           'Skipping retry attempt as initialization is already in progress',
         );

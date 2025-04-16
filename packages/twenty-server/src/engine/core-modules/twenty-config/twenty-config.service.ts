@@ -13,9 +13,9 @@ import { CONFIG_VARIABLES_MASKING_CONFIG } from 'src/engine/core-modules/twenty-
 import { ConfigVariablesMetadataOptions } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { DatabaseConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/database-config.driver';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
+import { ConfigInitializationState } from 'src/engine/core-modules/twenty-config/enums/config-initialization-state.enum';
 import { ConfigSource } from 'src/engine/core-modules/twenty-config/enums/config-source.enum';
 import { ConfigVariablesMaskingStrategies } from 'src/engine/core-modules/twenty-config/enums/config-variables-masking-strategies.enum';
-import { InitializationState } from 'src/engine/core-modules/twenty-config/enums/initialization-state.enum';
 import { configVariableMaskSensitiveData } from 'src/engine/core-modules/twenty-config/utils/config-variable-mask-sensitive-data.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
@@ -24,7 +24,7 @@ export class TwentyConfigService
   implements OnModuleInit, OnApplicationBootstrap
 {
   private driver: DatabaseConfigDriver | EnvironmentConfigDriver;
-  private initializationState = InitializationState.NOT_INITIALIZED;
+  private configInitializationState = ConfigInitializationState.NOT_INITIALIZED;
   private readonly isConfigVarInDbEnabled: boolean;
   private readonly logger = new Logger(TwentyConfigService.name);
 
@@ -51,7 +51,7 @@ export class TwentyConfigService
       this.logger.log(
         'Database configuration is disabled, using environment variables only',
       );
-      this.initializationState = InitializationState.INITIALIZED;
+      this.configInitializationState = ConfigInitializationState.INITIALIZED;
 
       return;
     }
@@ -68,12 +68,12 @@ export class TwentyConfigService
 
     try {
       this.logger.log('Initializing database driver for configuration');
-      this.initializationState = InitializationState.INITIALIZING;
+      this.configInitializationState = ConfigInitializationState.INITIALIZING;
 
       await this.databaseConfigDriver.initialize();
 
       this.driver = this.databaseConfigDriver;
-      this.initializationState = InitializationState.INITIALIZED;
+      this.configInitializationState = ConfigInitializationState.INITIALIZED;
       this.logger.log('Database driver initialized successfully');
       this.logger.log(`Active driver: DatabaseDriver`);
     } catch (error) {
@@ -81,7 +81,7 @@ export class TwentyConfigService
         'Failed to initialize database driver, falling back to environment variables',
         error,
       );
-      this.initializationState = InitializationState.FAILED;
+      this.configInitializationState = ConfigInitializationState.FAILED;
 
       this.driver = this.environmentConfigDriver;
       this.logger.log(`Active driver: EnvironmentDriver (fallback)`);
@@ -104,7 +104,9 @@ export class TwentyConfigService
       );
     }
 
-    if (this.initializationState !== InitializationState.INITIALIZED) {
+    if (
+      this.configInitializationState !== ConfigInitializationState.INITIALIZED
+    ) {
       throw new Error(
         'TwentyConfigService not initialized, cannot update configuration',
       );
@@ -162,7 +164,7 @@ export class TwentyConfigService
     const isUsingDatabaseDriver =
       this.driver === this.databaseConfigDriver &&
       this.isConfigVarInDbEnabled &&
-      this.initializationState === InitializationState.INITIALIZED;
+      this.configInitializationState === ConfigInitializationState.INITIALIZED;
 
     Object.entries(metadata).forEach(([key, envMetadata]) => {
       let value = this.get(key as keyof ConfigVariables) ?? '';
@@ -221,11 +223,12 @@ export class TwentyConfigService
     const isUsingDatabaseDriver =
       this.driver === this.databaseConfigDriver &&
       this.isConfigVarInDbEnabled &&
-      this.initializationState === InitializationState.INITIALIZED;
+      this.configInitializationState === ConfigInitializationState.INITIALIZED;
 
     const result = {
       usingDatabaseDriver: isUsingDatabaseDriver,
-      initializationState: InitializationState[this.initializationState],
+      initializationState:
+        ConfigInitializationState[this.configInitializationState],
     };
 
     if (isUsingDatabaseDriver) {

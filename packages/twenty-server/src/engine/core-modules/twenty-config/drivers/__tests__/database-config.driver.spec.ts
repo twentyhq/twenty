@@ -4,7 +4,7 @@ import { ConfigCacheService } from 'src/engine/core-modules/twenty-config/cache/
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { DatabaseConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/database-config.driver';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
-import { InitializationState } from 'src/engine/core-modules/twenty-config/enums/initialization-state.enum';
+import { ConfigInitializationState } from 'src/engine/core-modules/twenty-config/enums/config-initialization-state.enum';
 import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
 import { isEnvOnlyConfigVar } from 'src/engine/core-modules/twenty-config/utils/is-env-only-config-var.util';
 
@@ -32,8 +32,8 @@ describe('DatabaseConfigDriver', () => {
             set: jest.fn(),
             clear: jest.fn(),
             clearAll: jest.fn(),
-            getNegativeLookup: jest.fn(),
-            setNegativeLookup: jest.fn(),
+            isKeyKnownMissing: jest.fn(),
+            markKeyAsMissing: jest.fn(),
             getCacheInfo: jest.fn(),
           },
         },
@@ -98,8 +98,8 @@ describe('DatabaseConfigDriver', () => {
 
       await driver.initialize();
 
-      expect((driver as any).initializationState).toBe(
-        InitializationState.FAILED,
+      expect((driver as any).configInitializationState).toBe(
+        ConfigInitializationState.FAILED,
       );
       expect(configStorage.loadAll).toHaveBeenCalled();
     });
@@ -115,8 +115,9 @@ describe('DatabaseConfigDriver', () => {
       const originalScheduleRetry = (driver as any).scheduleRetry;
 
       (driver as any).scheduleRetry = jest.fn(function () {
-        this.initializationPromise = null;
-        this.initializationState = InitializationState.NOT_INITIALIZED;
+        this.configInitializationPromise = null;
+        this.configInitializationState =
+          ConfigInitializationState.NOT_INITIALIZED;
         this.initialize();
       });
 
@@ -128,8 +129,8 @@ describe('DatabaseConfigDriver', () => {
 
       // Since our mock immediately calls initialize again and we've mocked
       // the second attempt to succeed, the state should now be INITIALIZED
-      expect((driver as any).initializationState).toBe(
-        InitializationState.INITIALIZED,
+      expect((driver as any).configInitializationState).toBe(
+        ConfigInitializationState.INITIALIZED,
       );
 
       // Restore original method
@@ -162,8 +163,8 @@ describe('DatabaseConfigDriver', () => {
       await driver.initialize();
 
       expect((driver as any).retryAttempts).toBe(0);
-      expect((driver as any).initializationState).toBe(
-        InitializationState.INITIALIZED,
+      expect((driver as any).configInitializationState).toBe(
+        ConfigInitializationState.INITIALIZED,
       );
     });
 
@@ -182,8 +183,8 @@ describe('DatabaseConfigDriver', () => {
       await driver.initialize();
 
       expect(scheduleRetrySpy).toHaveBeenCalled();
-      expect((driver as any).initializationState).toBe(
-        InitializationState.FAILED,
+      expect((driver as any).configInitializationState).toBe(
+        ConfigInitializationState.FAILED,
       );
 
       (driver as any).scheduleRetry = originalScheduleRetry;
@@ -201,7 +202,8 @@ describe('DatabaseConfigDriver', () => {
       const envValue = true;
 
       jest.spyOn(environmentDriver, 'get').mockReturnValue(envValue);
-      (driver as any).initializationState = InitializationState.NOT_INITIALIZED;
+      (driver as any).configInitializationState =
+        ConfigInitializationState.NOT_INITIALIZED;
 
       const result = driver.get(key);
 
@@ -240,7 +242,7 @@ describe('DatabaseConfigDriver', () => {
       const envValue = true;
 
       jest.spyOn(configCache, 'get').mockReturnValue(undefined);
-      jest.spyOn(configCache, 'getNegativeLookup').mockReturnValue(true);
+      jest.spyOn(configCache, 'isKeyKnownMissing').mockReturnValue(true);
       jest.spyOn(environmentDriver, 'get').mockReturnValue(envValue);
 
       const result = driver.get(key);
@@ -307,7 +309,8 @@ describe('DatabaseConfigDriver', () => {
       const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
       const value = true;
 
-      (driver as any).initializationState = InitializationState.NOT_INITIALIZED;
+      (driver as any).configInitializationState =
+        ConfigInitializationState.NOT_INITIALIZED;
 
       await expect(driver.update(key, value)).rejects.toThrow();
     });
@@ -351,7 +354,8 @@ describe('DatabaseConfigDriver', () => {
       const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
       const envValue = true;
 
-      (driver as any).initializationState = InitializationState.NOT_INITIALIZED;
+      (driver as any).configInitializationState =
+        ConfigInitializationState.NOT_INITIALIZED;
       jest.spyOn(environmentDriver, 'get').mockReturnValue(envValue);
 
       const result = driver.get(key);
@@ -381,7 +385,7 @@ describe('DatabaseConfigDriver', () => {
       const envValue = true;
 
       jest.spyOn(configCache, 'get').mockReturnValue(undefined);
-      jest.spyOn(configCache, 'getNegativeLookup').mockReturnValue(true);
+      jest.spyOn(configCache, 'isKeyKnownMissing').mockReturnValue(true);
       jest.spyOn(environmentDriver, 'get').mockReturnValue(envValue);
 
       const result = driver.get(key);
@@ -389,7 +393,7 @@ describe('DatabaseConfigDriver', () => {
       expect(result).toBe(envValue);
       expect(environmentDriver.get).toHaveBeenCalledWith(key);
       expect(configCache.get).toHaveBeenCalledWith(key);
-      expect(configCache.getNegativeLookup).toHaveBeenCalledWith(key);
+      expect(configCache.isKeyKnownMissing).toHaveBeenCalledWith(key);
     });
 
     it('should propagate cache service errors when no fallback conditions are met', async () => {
@@ -408,7 +412,8 @@ describe('DatabaseConfigDriver', () => {
       const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
 
       // Force use of environment driver
-      (driver as any).initializationState = InitializationState.NOT_INITIALIZED;
+      (driver as any).configInitializationState =
+        ConfigInitializationState.NOT_INITIALIZED;
       jest.spyOn(environmentDriver, 'get').mockImplementation(() => {
         throw new Error('Environment error');
       });

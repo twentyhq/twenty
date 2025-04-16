@@ -9,7 +9,7 @@ export interface ConfigCacheEntry<T extends ConfigKey> {
   ttl: number;
 }
 
-export interface ConfigNegativeCacheEntry {
+export interface ConfigKnownMissingEntry {
   timestamp: number;
   ttl: number;
 }

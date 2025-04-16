@@ -79,31 +79,32 @@ describe('ConfigCacheService', () => {
   });
 
   describe('negative lookup cache', () => {
-    it('should set and get negative lookup', () => {
-      const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
+    it('should check if a negative cache entry exists', () => {
+      const key = 'TEST_KEY' as any;
 
-      service.setNegativeLookup(key);
-      const result = service.getNegativeLookup(key);
+      service.markKeyAsMissing(key);
+      const result = service.isKeyKnownMissing(key);
 
       expect(result).toBe(true);
     });
 
-    it('should return false for non-existent negative lookup', () => {
-      const result = service.getNegativeLookup(
-        'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables,
-      );
+    it('should return false for negative cache entry check when not in cache', () => {
+      const key = 'NON_EXISTENT_KEY' as any;
+
+      const result = service.isKeyKnownMissing(key);
 
       expect(result).toBe(false);
     });
 
-    it('should clear negative lookup when setting a value', () => {
-      const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
+    it('should return false for negative cache entry check when expired', () => {
+      const key = 'TEST_KEY' as any;
 
-      service.setNegativeLookup(key);
-      service.set(key, true);
+      service.markKeyAsMissing(key);
 
-      expect(service.getNegativeLookup(key)).toBe(false);
-      expect(service.get(key)).toBe(true);
+      // Mock a date beyond the TTL
+      jest.spyOn(Date, 'now').mockReturnValueOnce(Date.now() + 1000000);
+
+      expect(service.isKeyKnownMissing(key)).toBe(false);
     });
   });
 
@@ -169,7 +170,7 @@ describe('ConfigCacheService', () => {
 
       service.set(key1, true);
       service.set(key2, 'test@example.com');
-      service.setNegativeLookup(key3);
+      service.markKeyAsMissing(key3);
 
       const info = service.getCacheInfo();
 
@@ -178,7 +179,7 @@ describe('ConfigCacheService', () => {
       expect(info.cacheKeys).toContain(key1);
       expect(info.cacheKeys).toContain(key2);
       expect(info.cacheKeys).not.toContain(key3);
-      expect(service.getNegativeLookup(key3)).toBe(true);
+      expect(service.isKeyKnownMissing(key3)).toBe(true);
     });
 
     it('should not include expired entries in cache info', () => {
@@ -193,6 +194,25 @@ describe('ConfigCacheService', () => {
         expect(info.negativeEntries).toBe(0);
         expect(info.cacheKeys).toHaveLength(0);
       });
+    });
+
+    it('should properly count cache entries', () => {
+      const key1 = 'KEY1' as any;
+      const key2 = 'KEY2' as any;
+      const key3 = 'KEY3' as any;
+
+      // Add some values to the cache
+      service.set(key1, 'value1');
+      service.set(key2, 'value2');
+      service.markKeyAsMissing(key3);
+
+      const cacheInfo = service.getCacheInfo();
+
+      expect(cacheInfo.positiveEntries).toBe(2);
+      expect(cacheInfo.negativeEntries).toBe(1);
+      expect(cacheInfo.cacheKeys).toContain(key1);
+      expect(cacheInfo.cacheKeys).toContain(key2);
+      expect(service.isKeyKnownMissing(key3)).toBe(true);
     });
   });
 

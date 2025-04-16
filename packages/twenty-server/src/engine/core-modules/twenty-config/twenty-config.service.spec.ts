@@ -4,9 +4,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { DatabaseConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/database-config.driver';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
+import { ConfigInitializationState } from 'src/engine/core-modules/twenty-config/enums/config-initialization-state.enum';
 import { ConfigSource } from 'src/engine/core-modules/twenty-config/enums/config-source.enum';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
-import { InitializationState } from 'src/engine/core-modules/twenty-config/enums/initialization-state.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
@@ -32,7 +32,7 @@ jest.mock(
 type TwentyConfigServicePrivateProps = {
   driver: DatabaseConfigDriver | EnvironmentConfigDriver;
   isConfigVarInDbEnabled: boolean;
-  initializationState: InitializationState;
+  configInitializationState: ConfigInitializationState;
 };
 
 const mockConfigVarMetadata = {
@@ -180,8 +180,8 @@ describe('TwentyConfigService', () => {
       const privateProps =
         newService as unknown as TwentyConfigServicePrivateProps;
 
-      expect(privateProps.initializationState).toBe(
-        InitializationState.INITIALIZED,
+      expect(privateProps.configInitializationState).toBe(
+        ConfigInitializationState.INITIALIZED,
       );
     });
 
@@ -199,8 +199,8 @@ describe('TwentyConfigService', () => {
       const privateProps =
         newService as unknown as TwentyConfigServicePrivateProps;
 
-      expect(privateProps.initializationState).toBe(
-        InitializationState.NOT_INITIALIZED,
+      expect(privateProps.configInitializationState).toBe(
+        ConfigInitializationState.NOT_INITIALIZED,
       );
     });
   });
@@ -242,8 +242,8 @@ describe('TwentyConfigService', () => {
         newService as unknown as TwentyConfigServicePrivateProps;
 
       expect(privateProps.driver).toBe(databaseConfigDriver);
-      expect(privateProps.initializationState).toBe(
-        InitializationState.INITIALIZED,
+      expect(privateProps.configInitializationState).toBe(
+        ConfigInitializationState.INITIALIZED,
       );
     });
 
@@ -267,7 +267,9 @@ describe('TwentyConfigService', () => {
         newService as unknown as TwentyConfigServicePrivateProps;
 
       expect(privateProps.driver).toBe(environmentConfigDriver);
-      expect(privateProps.initializationState).toBe(InitializationState.FAILED);
+      expect(privateProps.configInitializationState).toBe(
+        ConfigInitializationState.FAILED,
+      );
     });
   });
 
@@ -293,7 +295,7 @@ describe('TwentyConfigService', () => {
     ) => {
       setPrivateProps(service, {
         isConfigVarInDbEnabled: true,
-        initializationState: InitializationState.INITIALIZED,
+        configInitializationState: ConfigInitializationState.INITIALIZED,
         driver: databaseConfigDriver,
         ...props,
       });
@@ -311,7 +313,7 @@ describe('TwentyConfigService', () => {
 
     it('should throw error when not initialized', async () => {
       setupUpdateTest({
-        initializationState: InitializationState.NOT_INITIALIZED,
+        configInitializationState: ConfigInitializationState.NOT_INITIALIZED,
       });
 
       await expect(
@@ -410,7 +412,7 @@ describe('TwentyConfigService', () => {
       setPrivateProps(service, {
         driver: environmentConfigDriver,
         isConfigVarInDbEnabled: false,
-        initializationState: InitializationState.INITIALIZED,
+        configInitializationState: ConfigInitializationState.INITIALIZED,
       });
 
       const result = service.getAll();
@@ -440,7 +442,7 @@ describe('TwentyConfigService', () => {
       setPrivateProps(service, {
         driver: databaseConfigDriver,
         isConfigVarInDbEnabled: true,
-        initializationState: InitializationState.INITIALIZED,
+        configInitializationState: ConfigInitializationState.INITIALIZED,
       });
 
       const result = service.getAll();
@@ -472,7 +474,7 @@ describe('TwentyConfigService', () => {
       setPrivateProps(service, {
         driver: environmentConfigDriver,
         isConfigVarInDbEnabled: false,
-        initializationState: InitializationState.INITIALIZED,
+        configInitializationState: ConfigInitializationState.INITIALIZED,
         ...props,
       });
     };

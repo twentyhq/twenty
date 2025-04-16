@@ -6,27 +6,30 @@ import { CONFIG_VARIABLES_CACHE_TTL } from 'src/engine/core-modules/twenty-confi
 import {
   ConfigCacheEntry,
   ConfigKey,
-  ConfigNegativeCacheEntry,
+  ConfigKnownMissingEntry,
   ConfigValue,
 } from './interfaces/config-cache-entry.interface';
 
 @Injectable()
 export class ConfigCacheService implements OnModuleDestroy {
-  private readonly valueCache: Map<ConfigKey, ConfigCacheEntry<ConfigKey>>;
-  private readonly negativeLookupCache: Map<
+  private readonly foundConfigValuesCache: Map<
     ConfigKey,
-    ConfigNegativeCacheEntry
+    ConfigCacheEntry<ConfigKey>
+  >;
+  private readonly knownMissingKeysCache: Map<
+    ConfigKey,
+    ConfigKnownMissingEntry
   >;
   private cacheScavengeInterval: NodeJS.Timeout;
 
   constructor() {
-    this.valueCache = new Map();
-    this.negativeLookupCache = new Map();
+    this.foundConfigValuesCache = new Map();
+    this.knownMissingKeysCache = new Map();
     this.startCacheScavenging();
   }
 
   get<T extends ConfigKey>(key: T): ConfigValue<T> | undefined {
-    const entry = this.valueCache.get(key);
+    const entry = this.foundConfigValuesCache.get(key);
 
     if (entry && !this.isCacheExpired(entry)) {
       return entry.value as ConfigValue<T>;
@@ -35,8 +38,8 @@ export class ConfigCacheService implements OnModuleDestroy {
     return undefined;
   }
 
-  getNegativeLookup(key: ConfigKey): boolean {
-    const entry = this.negativeLookupCache.get(key);
+  isKeyKnownMissing(key: ConfigKey): boolean {
+    const entry = this.knownMissingKeysCache.get(key);
 
     if (entry && !this.isCacheExpired(entry)) {
       return true;
@@ -46,30 +49,30 @@ export class ConfigCacheService implements OnModuleDestroy {
   }
 
   set<T extends ConfigKey>(key: T, value: ConfigValue<T>): void {
-    this.valueCache.set(key, {
+    this.foundConfigValuesCache.set(key, {
       value,
       timestamp: Date.now(),
       ttl: CONFIG_VARIABLES_CACHE_TTL,
     });
-    this.negativeLookupCache.delete(key);
+    this.knownMissingKeysCache.delete(key);
   }
 
-  setNegativeLookup(key: ConfigKey): void {
-    this.negativeLookupCache.set(key, {
+  markKeyAsMissing(key: ConfigKey): void {
+    this.knownMissingKeysCache.set(key, {
       timestamp: Date.now(),
       ttl: CONFIG_VARIABLES_CACHE_TTL,
     });
-    this.valueCache.delete(key);
+    this.foundConfigValuesCache.delete(key);
   }
 
   clear(key: ConfigKey): void {
-    this.valueCache.delete(key);
-    this.negativeLookupCache.delete(key);
+    this.foundConfigValuesCache.delete(key);
+    this.knownMissingKeysCache.delete(key);
   }
 
   clearAll(): void {
-    this.valueCache.clear();
-    this.negativeLookupCache.clear();
+    this.foundConfigValuesCache.clear();
+    this.knownMissingKeysCache.clear();
   }
 
   getCacheInfo(): {
@@ -77,12 +80,12 @@ export class ConfigCacheService implements OnModuleDestroy {
     negativeEntries: number;
     cacheKeys: string[];
   } {
-    const validPositiveEntries = Array.from(this.valueCache.entries()).filter(
-      ([_, entry]) => !this.isCacheExpired(entry),
-    );
+    const validPositiveEntries = Array.from(
+      this.foundConfigValuesCache.entries(),
+    ).filter(([_, entry]) => !this.isCacheExpired(entry));
 
     const validNegativeEntries = Array.from(
-      this.negativeLookupCache.entries(),
+      this.knownMissingKeysCache.entries(),
     ).filter(([_, entry]) => !this.isCacheExpired(entry));
 
     return {
@@ -99,7 +102,7 @@ export class ConfigCacheService implements OnModuleDestroy {
   }
 
   private isCacheExpired(
-    entry: ConfigCacheEntry<ConfigKey> | ConfigNegativeCacheEntry,
+    entry: ConfigCacheEntry<ConfigKey> | ConfigKnownMissingEntry,
   ): boolean {
     const now = Date.now();
 
@@ -115,15 +118,15 @@ export class ConfigCacheService implements OnModuleDestroy {
   private scavengeCache(): void {
     const now = Date.now();
 
-    for (const [key, entry] of this.valueCache.entries()) {
+    for (const [key, entry] of this.foundConfigValuesCache.entries()) {
       if (now - entry.timestamp > entry.ttl) {
-        this.valueCache.delete(key);
+        this.foundConfigValuesCache.delete(key);
       }
     }
 
-    for (const [key, entry] of this.negativeLookupCache.entries()) {
+    for (const [key, entry] of this.knownMissingKeysCache.entries()) {
       if (now - entry.timestamp > entry.ttl) {
-        this.negativeLookupCache.delete(key);
+        this.knownMissingKeysCache.delete(key);
       }
     }
   }
