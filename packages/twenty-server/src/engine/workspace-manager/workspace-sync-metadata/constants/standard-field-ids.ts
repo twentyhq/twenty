@@ -542,7 +542,21 @@ export const CHATBOT_STANDARD_FIELD_IDS = {
   favorites: '045ca203-42d5-4cd9-a320-624e0c76ba25',
   timelineActivities: '337a9630-a180-4758-b234-e021241c69c5',
   createdBy: '134d6f12-3c6b-47e5-afb0-337b19d98148',
+  whatsappIntegration: 'dcf3921a-d486-4f76-af86-dee90948a9ea',
   searchVector: '5e759ff3-dbb9-4616-b392-ccd3d52b3a4b',
+};
+
+export const WHATSAPP_STANDARD_FIELD_IDS = {
+  name: 'f34bf730-b3e2-4513-a8dc-a85f8817105a',
+  phoneId: '29965765-b8d4-48d4-80f1-31008a42b02e',
+  businessAccountId: 'b94489e4-c4be-4f99-85e6-c15168364428',
+  appId: 'e5719886-ddf0-453e-8c0b-14e16cc81547',
+  appKey: 'b70b9165-779d-49a8-93af-8d7ab787e657',
+  accessToken: '23d0e5e9-d402-44ce-bf62-5091494ee6d1',
+  verifyToken: '9a0ea7b1-1e43-477f-881c-66e9771ad233',
+  sla: 'd1c22e84-8eea-4be1-906b-7e84eab40200',
+  chatbot: '28d5f4a0-9afc-4014-8556-2e872f14ed2c',
+  disabled: '20565891-e0ff-4642-89d8-4bfbdd4674d0',
 };
 
 export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {

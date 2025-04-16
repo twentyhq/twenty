@@ -58,6 +58,15 @@ export const chatbotsAllView = (
         isVisible: false,
         size: 150,
       },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.chatbot].fields[
+            CHATBOT_STANDARD_FIELD_IDS.whatsappIntegration
+          ],
+        position: 4,
+        isVisible: true,
+        size: 150,
+      },
     ],
   };
 };

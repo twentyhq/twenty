@@ -30,6 +30,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 
 export enum ChatbotStatus {
   DRAFT = 'DRAFT',
@@ -145,6 +146,18 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The creator of the record`,
   })
   createdBy: ActorMetadata;
+
+  @WorkspaceRelation({
+    standardId: CHATBOT_STANDARD_FIELD_IDS.whatsappIntegration,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: msg`Whatsapp Integration`,
+    description: msg`Integration linked to the charge`,
+    icon: 'IconPhone',
+    inverseSideTarget: () => WhatsappWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  whatsappIntegrations: Relation<WhatsappWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.searchVector,

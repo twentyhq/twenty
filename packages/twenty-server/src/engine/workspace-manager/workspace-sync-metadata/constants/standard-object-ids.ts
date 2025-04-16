@@ -52,4 +52,5 @@ export const STANDARD_OBJECT_IDS = {
   workspaceMember: '20202020-3319-4234-a34c-82d5c0e881a6',
   charge: '20202020-e674-48e5-a542-72570eee7216',
   integration: '20202020-4b4b-4b4b-4b4b-4b4b4b4b4b4b',
+  whatsappIntegration: 'a88de77d-7078-4591-a22b-f7df762c4e65',
 };

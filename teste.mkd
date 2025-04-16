@@ -1,0 +1,188 @@
+import { Field, ObjectType } from '@nestjs/graphql';
+
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
+import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import {
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+
+const NAME_FIELD_NAME = 'name';
+
+export const SEARCH_FIELDS_FOR_WHATSAPP_INTEGRATION: FieldTypeAndNameMetadata[] =
+  [{ name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT }];
+
+@WorkspaceEntity({
+  standardId: STANDARD_OBJECT_IDS.whatsappIntegration,
+  namePlural: 'whatsappIntegrations',
+  labelSingular: msg`WhatsappIntegration`,
+  labelPlural: msg`WhatsappIntegrations`,
+  description: msg`Whatsapp Integrations`,
+  icon: STANDARD_OBJECT_ICONS.message,
+  labelIdentifierStandardId: WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS.label,
+})
+@WorkspaceIsNotAuditLogged()
+@ObjectType()
+export class WhatsappIntegrationEntity extends BaseWorkspaceEntity {
+  @WorkspaceField({
+    standardId: WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS.label,
+    type: FieldMetadataType.TEXT,
+    label: msg`Name`,
+    description: msg`The Whatsapp Inbox name`,
+  })
+  @WorkspaceIsNullable()
+  @Field(() => String, { nullable: true })
+  label: string | null;
+
+  @WorkspaceField({
+    standardId: WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS.phoneId,
+    type: FieldMetadataType.TEXT,
+    label: msg`Phone ID`,
+    description: msg`Phone ID`,
+  })
+  @Field(() => String, { nullable: false })
+  phoneId: string;
+
+  @WorkspaceField({
+    standardId: WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS.businessAccountId,
+    type: FieldMetadataType.TEXT,
+    label: msg`Business Account ID`,
+    description: msg`Business Account ID`,
+  })
+  @Field(() => String, { nullable: false })
+  businessAccountId: string;
+
+  @WorkspaceField({
+    standardId: WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS.appId,
+    type: FieldMetadataType.TEXT,
+    label: msg`App ID`,
+    description: msg`App ID`,
+  })
+  @Field(() => String, { nullable: false })
+  appId: string;
+
+  @WorkspaceField({
+    standardId: WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS.appKey,
+    type: FieldMetadataType.TEXT,
+    label: msg`App Key`,
+    description: msg`App Key`,
+  })
+  @Field(() => String, { nullable: false })
+  appKey: string;
+
+  @WorkspaceField({
+    standardId: WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS.accessToken,
+    type: FieldMetadataType.TEXT,
+    label: msg`Access Token`,
+    description: msg`Access Token`,
+  })
+  @Field(() => String, { nullable: false })
+  accessToken: string;
+
+  @WorkspaceField({
+    standardId: WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS.verifyToken,
+    type: FieldMetadataType.TEXT,
+    label: msg`Verify Token`,
+    description: msg`Verify Token`,
+  })
+  @Field(() => String, { nullable: false })
+  verifyToken: string;
+
+  @WorkspaceField({
+    standardId: WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS.sla,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Service Level Agreement`,
+    description: msg`Service Level Agreement`,
+  })
+  @Field(() => Number, { defaultValue: 30, nullable: false })
+  sla: number;
+
+  @WorkspaceField({
+    standardId: WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS.disabled,
+    type: FieldMetadataType.BOOLEAN,
+    label: msg`Statuses`,
+    description: msg`The current statuses of the whatsapp integration`,
+    icon: 'IconStatusChange',
+  })
+  @WorkspaceIsNullable()
+  @Field(() => Boolean, {
+    nullable: false,
+    defaultValue: false,
+  })
+  disabled: boolean;
+
+  @WorkspaceField({
+    standardId: WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS.position,
+    type: FieldMetadataType.POSITION,
+    label: msg`Position`,
+    description: msg`Whatsapp Integration record position`,
+    icon: 'IconHierarchy2',
+    defaultValue: 0,
+  })
+  @WorkspaceIsSystem()
+  position: number;
+
+  @WorkspaceField({
+    standardId: WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS.createdBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Created by`,
+    icon: 'IconCreativeCommonsSa',
+    description: msg`The creator of the record`,
+  })
+  createdBy: ActorMetadata;
+
+  @WorkspaceField({
+    standardId: WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS.searchVector,
+    type: FieldMetadataType.TS_VECTOR,
+    label: SEARCH_VECTOR_FIELD.label,
+    description: SEARCH_VECTOR_FIELD.description,
+    icon: 'IconUser',
+    generatedType: 'STORED',
+    asExpression: getTsVectorColumnExpressionFromFields(
+      SEARCH_FIELDS_FOR_WHATSAPP_INTEGRATION,
+    ),
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
+  searchVector: any;
+}
+
+
+
+
+
+
+
+
+
+
+
+export const WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS = {
+  label: '48c2abc0-0e7f-45b3-95e7-244cf8a5a3bd',
+  phoneId: '2700449e-55ad-4826-bf48-0adb49d28c3e',
+  businessAccountId: 'b94489e4-c4be-4f99-85e6-c15168364428',
+  appId: 'e5719886-ddf0-453e-8c0b-14e16cc81547',
+  appKey: 'b70b9165-779d-49a8-93af-8d7ab787e657',
+  accessToken: '23d0e5e9-d402-44ce-bf62-5091494ee6d1',
+  verifyToken: '9a0ea7b1-1e43-477f-881c-66e9771ad233',
+  sla: 'd1c22e84-8eea-4be1-906b-7e84eab40200',
+  disabled: 'f84b7c59-3ade-46ac-8354-e31cb2d0bab1',
+  position: '3ec99e10-c5ea-4e52-9c53-7e37a273d84d',
+  createdBy: 'aa18d8dc-4029-471f-b826-670aa9187801',
+  searchVector: '19d87e9d-cc90-4bfe-8ddc-304f0104d399',
+};

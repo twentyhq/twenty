@@ -54,6 +54,8 @@ export class ExecuteFlow {
   public runFlowWithLog() {
     const trace: string[] = [];
 
+    console.log('User input: ', this.incomingMessage);
+
     while (this.currentNodeId) {
       const currentNode = this.findNodeById(this.currentNodeId);
 
