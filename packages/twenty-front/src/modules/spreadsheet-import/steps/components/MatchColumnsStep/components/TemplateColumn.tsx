@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { MatchColumnSelectV2 } from '@/spreadsheet-import/components/MatchColumnSelectV2';
+import { MatchColumnToFieldSelect } from '@/spreadsheet-import/components/MatchColumnToFieldSelect';
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
@@ -71,7 +71,7 @@ export const TemplateColumn = <T extends string>({
 
   return (
     <StyledContainer>
-      <MatchColumnSelectV2
+      <MatchColumnToFieldSelect
         placeholder={t`Select column...`}
         value={isIgnored ? ignoreValue : selectValue}
         onChange={(value) => onChange(value?.value as T, column.index)}

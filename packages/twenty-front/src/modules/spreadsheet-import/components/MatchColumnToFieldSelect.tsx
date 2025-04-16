@@ -13,7 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { SelectOption } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 
-interface MatchColumnSelectV2Props {
+interface MatchColumnToFieldSelectProps {
   columnIndex: string;
   onChange: (value: ReadonlyDeep<SelectOption> | null) => void;
   value?: ReadonlyDeep<SelectOption>;
@@ -21,13 +21,13 @@ interface MatchColumnSelectV2Props {
   placeholder?: string;
 }
 
-export const MatchColumnSelectV2 = ({
+export const MatchColumnToFieldSelect = ({
   onChange,
   value,
   options,
   placeholder,
   columnIndex,
-}: MatchColumnSelectV2Props) => {
+}: MatchColumnToFieldSelectProps) => {
   const dropdownId = `match-column-select-v2-dropdown-${columnIndex}`;
 
   const { closeDropdown } = useDropdown(dropdownId);
