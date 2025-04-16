@@ -57,70 +57,50 @@ export const FieldDisplay = () => {
   );
 
   return isChipDisplay ? (
-    // ok
     <ChipFieldDisplay />
   ) : isFieldRelationToOneObject(fieldDefinition) ? (
-    // ok
     <RelationToOneFieldDisplay />
   ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
-    // ok
     <RelationFromManyFieldDisplay />
   ) : isFieldText(fieldDefinition) ? (
-    // done
     <TextFieldDisplay />
   ) : isFieldUuid(fieldDefinition) ? (
     <UuidFieldDisplay />
   ) : isFieldDateTime(fieldDefinition) ? (
-    // done
     <DateTimeFieldDisplay />
   ) : isFieldDate(fieldDefinition) ? (
-    //done
     <DateFieldDisplay />
   ) : isFieldNumber(fieldDefinition) ? (
-    //done
     <NumberFieldDisplay />
   ) : isFieldLinks(fieldDefinition) ? (
-    // ok
     <LinksFieldDisplay />
   ) : isFieldCurrency(fieldDefinition) ? (
-    //done
     <CurrencyFieldDisplay />
   ) : isFieldFullName(fieldDefinition) ? (
-    // done
     <FullNameFieldDisplay />
   ) : isFieldSelect(fieldDefinition) ? (
-    // ok
     <SelectFieldDisplay />
   ) : isFieldMultiSelect(fieldDefinition) ? (
-    // ok
     <MultiSelectFieldDisplay />
   ) : isFieldAddress(fieldDefinition) ? (
-    // done
     <AddressFieldDisplay />
   ) : isFieldRawJson(fieldDefinition) ? (
-    // done
     <JsonFieldDisplay />
   ) : isFieldBoolean(fieldDefinition) ? (
-    //done
     <BooleanFieldDisplay />
   ) : isFieldRating(fieldDefinition) ? (
-    //ok
     <RatingFieldDisplay />
   ) : isFieldRichText(fieldDefinition) ? (
     <RichTextFieldDisplay />
   ) : isFieldRichTextV2(fieldDefinition) ? (
     <RichTextV2FieldDisplay />
   ) : isFieldActor(fieldDefinition) ? (
-    // ok
     <ActorFieldDisplay />
   ) : isFieldArray(fieldDefinition) ? (
-    // ok
     <ArrayFieldDisplay />
   ) : isFieldEmails(fieldDefinition) ? (
-    //ok
     <EmailsFieldDisplay />
   ) : isFieldPhones(fieldDefinition) ? (
-    //ok
     <PhonesFieldDisplay />
   ) : null;
 };
