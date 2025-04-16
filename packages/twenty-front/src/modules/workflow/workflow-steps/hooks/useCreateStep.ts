@@ -38,6 +38,8 @@ export const useCreateStep = ({
       await createWorkflowVersionStep({
         workflowVersionId,
         stepType: newStepType,
+        parentStepId: workflowCreateStepFromParentStepId,
+        nextStepId: undefined,
       })
     )?.data?.createWorkflowVersionStep;
 
