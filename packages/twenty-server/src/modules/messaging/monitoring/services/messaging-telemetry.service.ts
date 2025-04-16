@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
+import { MONITORING_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/monitoring/monitoring';
 
 type MessagingTelemetryTrackInput = {
   eventName: string;
@@ -14,10 +14,7 @@ type MessagingTelemetryTrackInput = {
 
 @Injectable()
 export class MessagingTelemetryService {
-  constructor(
-    private readonly analyticsService: AnalyticsService,
-    private readonly twentyConfigService: TwentyConfigService,
-  ) {}
+  constructor(private readonly analyticsService: AnalyticsService) {}
 
   public async track({
     eventName,
@@ -27,20 +24,16 @@ export class MessagingTelemetryService {
     messageChannelId,
     message,
   }: MessagingTelemetryTrackInput): Promise<void> {
-    await this.analyticsService.create(
-      {
-        action: 'monitoring',
-        payload: {
-          eventName: `messaging.${eventName}`,
-          workspaceId,
-          userId,
-          connectedAccountId,
-          messageChannelId,
-          message,
-        },
-      },
-      userId,
-      workspaceId,
-    );
+    await this.analyticsService
+      .createAnalyticsContext({
+        userId,
+        workspaceId,
+      })
+      .track(MONITORING_EVENT, {
+        eventName: `messaging.${eventName}`,
+        connectedAccountId,
+        messageChannelId,
+        message,
+      });
   }
 }
