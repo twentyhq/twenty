@@ -3,7 +3,7 @@
 ## How to use
 
 1. Edit `.env` file. At the minimum set `POSTGRES_PASSWORD`, `SERVER_URL`, and `APP_SECRET`.
-2. Start twenty by running `podman-comopse up -d`.
+2. Start twenty by running `podman-compose up -d`.
 
 If you need to stop twenty, you can do so by running `podman-compose down`.
 
