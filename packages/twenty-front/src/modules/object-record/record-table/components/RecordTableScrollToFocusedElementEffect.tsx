@@ -19,13 +19,19 @@ export const RecordTableScrollToFocusedElementEffect = () => {
       return;
     }
 
-    const firstColumnCell = document.getElementById(`record-table-cell-0-0`);
-    const secondColumnCell = document.getElementById(`record-table-cell-1-0`);
+    const isSecondColumn = focusPosition.column === 1;
 
-    if (isDefined(firstColumnCell) && isDefined(secondColumnCell)) {
-      const firstColumnWidth = firstColumnCell.offsetWidth;
-      const secondColumnWidth = secondColumnCell.offsetWidth;
-      focusElement.style.scrollMarginLeft = `${firstColumnWidth + secondColumnWidth}px`;
+    if (isSecondColumn) {
+      const checkBoxColumnCell = document.getElementById(
+        `record-table-cell-0-0`,
+      );
+      const firstColumnCell = document.getElementById(`record-table-cell-1-0`);
+
+      if (isDefined(checkBoxColumnCell) && isDefined(firstColumnCell)) {
+        const checkBoxColumnWidth = checkBoxColumnCell.offsetWidth;
+        const firstColumnWidth = firstColumnCell.offsetWidth;
+        focusElement.style.scrollMarginLeft = `${checkBoxColumnWidth + firstColumnWidth}px`;
+      }
     }
 
     focusElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
