@@ -56,8 +56,8 @@ export const MatchColumnSelectSubFieldSelectDropdownContent = ({
   const fieldMetadataItemSettings =
     SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[fieldMetadataItem.type];
 
-  const subFieldNamesThatExistInOptions =
-    fieldMetadataItemSettings.subFields.filter((subFieldName) => {
+  const subFieldNamesThatExistInOptions = fieldMetadataItemSettings.subFields
+    .filter((subFieldName) => {
       const optionKey = getSubFieldOptionKey(fieldMetadataItem, subFieldName);
 
       const correspondingOption = options.find(
@@ -65,7 +65,8 @@ export const MatchColumnSelectSubFieldSelectDropdownContent = ({
       );
 
       return isDefined(correspondingOption);
-    });
+    })
+    .filter((subFieldName) => subFieldName.includes(searchFilter));
 
   return (
     <DropdownMenu width={250}>
