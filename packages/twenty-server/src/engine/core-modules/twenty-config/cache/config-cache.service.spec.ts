@@ -178,6 +178,7 @@ describe('ConfigCacheService', () => {
       expect(info.cacheKeys).toContain(key1);
       expect(info.cacheKeys).toContain(key2);
       expect(info.cacheKeys).not.toContain(key3);
+      expect(service.getNegativeLookup(key3)).toBe(true);
     });
 
     it('should not include expired entries in cache info', () => {
