@@ -1,17 +1,12 @@
 import { useEffect } from 'react';
 import { createClient } from 'graphql-sse';
 import { ON_DB_EVENT } from '@/subscription/graphql/subscriptions/onDbEvent';
-import { DatabaseEventAction } from '~/generated/graphql';
+import { Subscription, SubscriptionOnDbEventArgs } from '~/generated/graphql';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
-type OnDbEventArgs = {
-  input: {
-    action?: DatabaseEventAction;
-    objectNameSingular?: string;
-    recordId?: string;
-  };
+type OnDbEventArgs = SubscriptionOnDbEventArgs & {
   skip?: boolean;
-  onData?: (data: any) => void;
+  onData?: (data: Subscription) => void;
   onError?: (err: any) => void;
   onComplete?: () => void;
 };
@@ -28,7 +23,7 @@ export const useOnDbEvent = ({
   skip = false,
 }: OnDbEventArgs) => {
   useEffect(() => {
-    if (skip) {
+    if (skip === true) {
       return;
     }
     const next = (data: any) => onData?.(data);

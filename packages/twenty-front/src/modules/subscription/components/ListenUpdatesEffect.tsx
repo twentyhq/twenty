@@ -18,10 +18,8 @@ export const ListenRecordUpdatesEffect = ({
 
   useOnDbEvent({
     input: { recordId, action: DatabaseEventAction.UPDATED },
-    onData: ({ data }) => {
-      const updatedRecord = data?.onDbEvent?.record;
-
-      if (!updatedRecord) return;
+    onData: (data) => {
+      const updatedRecord = data.onDbEvent.record;
 
       const fieldsUpdater = listenedFields.reduce(
         (acc, listenedField) => ({
