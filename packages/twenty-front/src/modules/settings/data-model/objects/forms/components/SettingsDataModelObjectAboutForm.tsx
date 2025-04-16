@@ -156,7 +156,7 @@ export const SettingsDataModelObjectAboutForm = ({
               value={value}
               onChange={(value) => {
                 onChange(capitalize(value));
-                fillLabelPlural(value);
+                fillLabelPlural(capitalize(value));
                 if (isLabelSyncedWithName === true) {
                   fillNameSingularFromLabelSingular(value);
                 }
