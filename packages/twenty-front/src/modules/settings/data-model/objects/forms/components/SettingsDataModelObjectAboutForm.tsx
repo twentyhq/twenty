@@ -11,9 +11,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
 import { Controller, useFormContext } from 'react-hook-form';
-import { isDefined } from 'twenty-shared/utils';
-import { StringKeyOf } from 'type-fest';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   IconInfoCircle,
@@ -21,6 +19,8 @@ import {
   TooltipDelay,
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
+import { StringKeyOf } from 'type-fest';
+import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 type SettingsDataModelObjectAboutFormProps = {
   disableEdition?: boolean;
@@ -155,8 +155,8 @@ export const SettingsDataModelObjectAboutForm = ({
               placeholder={'Listing'}
               value={value}
               onChange={(value) => {
-                onChange(value);
-                fillLabelPlural(value);
+                onChange(capitalize(value));
+                fillLabelPlural(capitalize(value));
                 if (isLabelSyncedWithName === true) {
                   fillNameSingularFromLabelSingular(value);
                 }
@@ -186,7 +186,7 @@ export const SettingsDataModelObjectAboutForm = ({
               placeholder={t`Listings`}
               value={value}
               onChange={(value) => {
-                onChange(value);
+                onChange(capitalize(value));
                 if (isLabelSyncedWithName === true) {
                   fillNamePluralFromLabelPlural(value);
                 }
