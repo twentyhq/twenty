@@ -1,5 +1,5 @@
 import { Decorator, Meta, StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor } from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -143,11 +143,15 @@ type Story = StoryObj<typeof AddressInputWithContext>;
 export const Default: Story = {};
 
 export const Enter: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
     expect(enterJestFn).toHaveBeenCalledTimes(0);
 
+    await canvas.findByText('Address 1');
+    await userEvent.keyboard('{enter}');
+
     await waitFor(() => {
-      userEvent.keyboard('{enter}');
       expect(enterJestFn).toHaveBeenCalledTimes(1);
     });
   },
