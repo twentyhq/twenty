@@ -4,9 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { i18n } from '@lingui/core';
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { isDefined } from 'class-validator';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, In, Not, Repository } from 'typeorm';
 
 import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
@@ -222,11 +221,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   ): Promise<ObjectMetadataEntity> {
     const { update } = input;
 
-    if (update.labelSingular) {
+    if (isDefined(update.labelSingular)) {
       update.labelSingular = capitalize(update.labelSingular);
     }
 
-    if (update.labelPlural) {
+    if (isDefined(update.labelPlural)) {
       update.labelPlural = capitalize(update.labelPlural);
     }
 

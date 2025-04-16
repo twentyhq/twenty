@@ -2,8 +2,8 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
 import Stripe from 'stripe';
+import { isDefined } from 'twenty-shared/utils';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
