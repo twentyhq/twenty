@@ -191,6 +191,7 @@ export const TRACEABLE_STANDARD_FIELD_IDS = {
   generatedUrl: '20202020-4d3c-2b1a-0f9e-8d7c6b5a4b3c',
   createdAt: '20202020-9f8e-7d6c-5b4a-3a2b1c0d9e8f',
   searchVector: '20202020-8c9d-7e6f-5a4b-3c2d1e0f9a8b',
+  timelineActivities: '20202020-b751-43e3-a9f0-186288344f21',
 };
 
 export const LINKLOGS_STANDARD_FIELD_IDS = {
@@ -279,6 +280,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   linkedObjectMetadataId: '20202020-c595-449d-9f89-562758c9ee69',
   charge: '20202020-e674-48e5-a542-72570eee7215',
   integration: '20000000-4b3a-4b3b-8b3b-7f8d6a1d7d5b',
+  traceable: '20202020-1e7e-42bc-82fe-24fd43cfbb2a',
 };
 
 export const FAVORITE_STANDARD_FIELD_IDS = {

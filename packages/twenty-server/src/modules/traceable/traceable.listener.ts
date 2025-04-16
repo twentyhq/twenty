@@ -53,7 +53,7 @@ export class TraceableEventListener {
       ),
     );
 
-    const updateBatches = await Promise.all(
+    await Promise.all(
       traceableEntities.map(async (traceable) => {
         const generatedUrl = this.generateTraceableUrl(traceable);
 
@@ -92,7 +92,7 @@ export class TraceableEventListener {
       }),
     );
 
-    const updatedTraceable = await traceableRepository.find();
+    await traceableRepository.find();
 
     return;
   }
