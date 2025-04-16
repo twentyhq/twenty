@@ -251,6 +251,7 @@ export const WorkflowDiagramCanvasBase = ({
         nodesDraggable={false}
         nodesConnectable={false}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
+        preventScrolling={false}
       >
         <Background color={theme.border.color.medium} size={2} />
 
