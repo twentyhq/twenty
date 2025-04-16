@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useRef } from 'react';
-import { useRecoilValue } from 'recoil';
 
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
@@ -20,9 +20,10 @@ export const SelectableItem = ({
   children,
   className,
 }: SelectableItemProps) => {
-  const { isSelectedItemIdSelector } = useSelectableList();
-
-  const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector(itemId));
+  const isSelectedItemId = useRecoilComponentFamilyValueV2(
+    isSelectedItemIdComponentFamilySelector,
+    itemId,
+  );
 
   const scrollRef = useRef<HTMLDivElement>(null);
 

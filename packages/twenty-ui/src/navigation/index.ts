@@ -7,8 +7,8 @@
  *                              |___/
  */
 
-export { ActionLink } from './link/components/ActionLink';
 export { AdvancedSettingsToggle } from './link/components/AdvancedSettingsToggle';
+export { ClickToActionLink } from './link/components/ClickToActionLink';
 export { ContactLink } from './link/components/ContactLink';
 export { GithubVersionLink } from './link/components/GithubVersionLink';
 export { RawLink } from './link/components/RawLink';
@@ -17,6 +17,7 @@ export { LinkType, SocialLink } from './link/components/SocialLink';
 export { UndecoratedLink } from './link/components/UndecoratedLink';
 export { CAL_LINK } from './link/constants/Cal';
 export { GITHUB_LINK } from './link/constants/GithubLink';
+export { TWENTY_PRICING_LINK } from './link/constants/TwentyPricingLink';
 export type {
   MenuItemIconButton,
   MenuItemProps,

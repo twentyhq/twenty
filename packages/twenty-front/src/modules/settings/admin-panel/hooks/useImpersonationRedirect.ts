@@ -6,11 +6,11 @@ import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 export const useImpersonationRedirect = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
-  const executeImpersonationRedirect = (
+  const executeImpersonationRedirect = async (
     workspaceUrls: WorkspaceUrls,
     loginToken: string,
   ) => {
-    return redirectToWorkspaceDomain(
+    return await redirectToWorkspaceDomain(
       getWorkspaceUrl(workspaceUrls),
       AppPath.Verify,
       { loginToken },

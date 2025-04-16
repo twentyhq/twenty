@@ -13,14 +13,14 @@ import {
   EmailVerificationException,
   EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { EmailVerificationTokenService } from './email-verification-token.service';
 
 describe('EmailVerificationTokenService', () => {
   let service: EmailVerificationTokenService;
   let appTokenRepository: Repository<AppToken>;
-  let environmentService: EnvironmentService;
+  let twentyConfigService: TwentyConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -31,7 +31,7 @@ describe('EmailVerificationTokenService', () => {
           useClass: Repository,
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
           },
@@ -45,7 +45,7 @@ describe('EmailVerificationTokenService', () => {
     appTokenRepository = module.get<Repository<AppToken>>(
       getRepositoryToken(AppToken, 'core'),
     );
-    environmentService = module.get<EnvironmentService>(EnvironmentService);
+    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
   });
 
   describe('generateToken', () => {
@@ -54,7 +54,7 @@ describe('EmailVerificationTokenService', () => {
       const email = 'test@example.com';
       const mockExpiresIn = '24h';
 
-      jest.spyOn(environmentService, 'get').mockReturnValue(mockExpiresIn);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(mockExpiresIn);
       jest.spyOn(appTokenRepository, 'create').mockReturnValue({} as AppToken);
       jest.spyOn(appTokenRepository, 'save').mockResolvedValue({} as AppToken);
 

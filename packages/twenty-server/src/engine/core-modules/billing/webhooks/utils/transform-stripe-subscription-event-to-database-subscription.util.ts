@@ -53,7 +53,7 @@ export const transformStripeSubscriptionEventToDatabaseSubscription = (
   };
 };
 
-const getSubscriptionStatus = (status: Stripe.Subscription.Status) => {
+export const getSubscriptionStatus = (status: Stripe.Subscription.Status) => {
   switch (status) {
     case 'active':
       return SubscriptionStatus.Active;

@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { selectorFamily, SerializableParam } from 'recoil';
 
@@ -17,6 +16,7 @@ export function createComponentFamilySelectorV2<
 >(options: {
   key: string;
   get: SelectorGetter<ValueType, ComponentFamilyStateKeyV2<FamilyKey>>;
+  set?: never;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
 }): ComponentFamilyReadOnlySelectorV2<ValueType, FamilyKey>;
 

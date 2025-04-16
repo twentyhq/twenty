@@ -1,5 +1,5 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowFormAction } from '@/workflow/types/Workflow';
@@ -20,13 +20,13 @@ import { useDebouncedCallback } from 'use-debounce';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 import {
   IconChevronDown,
   IconPlus,
   IconTrash,
   useIcons,
 } from 'twenty-ui/display';
+import { v4 } from 'uuid';
 
 export type WorkflowEditActionFormBuilderProps = {
   action: WorkflowFormAction;
@@ -98,6 +98,10 @@ const StyledAddFieldButtonContentContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(0.5)};
   justify-content: center;
   width: 100%;
+`;
+
+const StyledLabelContainer = styled.div`
+  min-height: 17px;
 `;
 
 export const WorkflowEditActionFormBuilder = ({
@@ -187,14 +191,16 @@ export const WorkflowEditActionFormBuilder = ({
       <WorkflowStepBody>
         {formData.map((field) => (
           <FormFieldInputContainer key={field.id}>
-            {field.label ? <InputLabel>{field.label}</InputLabel> : null}
+            <StyledLabelContainer>
+              <InputLabel>{field.label || ''}</InputLabel>
+            </StyledLabelContainer>
 
             <StyledRowContainer
               onMouseEnter={() => setHoveredField(field.id)}
               onMouseLeave={() => setHoveredField(null)}
             >
               <FormFieldInputRowContainer>
-                <FormFieldInputInputContainer
+                <FormFieldInputInnerContainer
                   hasRightElement={false}
                   onClick={() => {
                     handleFieldClick(field.id);
@@ -207,14 +213,14 @@ export const WorkflowEditActionFormBuilder = ({
                         ? field.placeholder
                         : getDefaultFormFieldSettings(field.type).placeholder}
                     </StyledPlaceholder>
-                    {!isFieldSelected(field.id) && (
+                    {field.type === 'RECORD' && (
                       <IconChevronDown
                         size={theme.icon.size.md}
                         color={theme.font.color.tertiary}
                       />
                     )}
                   </StyledFieldContainer>
-                </FormFieldInputInputContainer>
+                </FormFieldInputInnerContainer>
               </FormFieldInputRowContainer>
               {!actionOptions.readonly &&
                 (isFieldSelected(field.id) || isFieldHovered(field.id)) && (
@@ -257,18 +263,18 @@ export const WorkflowEditActionFormBuilder = ({
             <StyledRowContainer>
               <FormFieldInputContainer>
                 <FormFieldInputRowContainer>
-                  <FormFieldInputInputContainer
+                  <FormFieldInputInnerContainer
                     hasRightElement={false}
                     onClick={() => {
-                      const { label, placeholder, name } =
-                        getDefaultFormFieldSettings(FieldMetadataType.TEXT);
+                      const { label, name } = getDefaultFormFieldSettings(
+                        FieldMetadataType.TEXT,
+                      );
 
                       const newField: WorkflowFormActionField = {
                         id: v4(),
                         name,
                         type: FieldMetadataType.TEXT,
                         label,
-                        placeholder,
                       };
 
                       setFormData([...formData, newField]);
@@ -280,6 +286,8 @@ export const WorkflowEditActionFormBuilder = ({
                           input: [...action.settings.input, newField],
                         },
                       });
+
+                      setSelectedField(newField.id);
                     }}
                   >
                     <StyledFieldContainer>
@@ -288,7 +296,7 @@ export const WorkflowEditActionFormBuilder = ({
                         {t`Add Field`}
                       </StyledAddFieldButtonContentContainer>
                     </StyledFieldContainer>
-                  </FormFieldInputInputContainer>
+                  </FormFieldInputInnerContainer>
                 </FormFieldInputRowContainer>
               </FormFieldInputContainer>
             </StyledRowContainer>

@@ -9,13 +9,13 @@ import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInput
 
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { useRecordInlineCellContext } from './RecordInlineCellContext';
 import {
   AppTooltip,
   OverflowingTextWithTooltip,
   TooltipDelay,
 } from 'twenty-ui/display';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { useRecordInlineCellContext } from './RecordInlineCellContext';
 
 const StyledIconContainer = styled.div`
   align-items: center;
@@ -34,11 +34,11 @@ const StyledIconContainer = styled.div`
 
 const StyledLabelAndIconContainer = styled.div`
   align-items: center;
+  align-self: flex-start;
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  height: 18px;
-  padding-top: 3px;
+  height: 24px;
 `;
 
 const StyledValueContainer = styled.div`

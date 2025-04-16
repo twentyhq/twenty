@@ -13,8 +13,8 @@ import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fiel
 import { SettingsDataModelSetPreviewRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetRecordEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
 import { usePreviewRecord } from '@/settings/data-model/fields/preview/hooks/usePreviewRecord';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useIcons } from 'twenty-ui/display';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export type SettingsDataModelFieldPreviewProps = {
   fieldMetadataItem: Pick<
@@ -145,7 +145,7 @@ export const SettingsDataModelFieldPreview = ({
                 },
                 defaultValue: fieldMetadataItem.defaultValue,
               },
-              hotkeyScope: 'field-preview',
+              isReadOnly: false,
             }}
           >
             {fieldMetadataItem.type === FieldMetadataType.BOOLEAN ? (

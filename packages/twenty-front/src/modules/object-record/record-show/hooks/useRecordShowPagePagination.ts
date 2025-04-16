@@ -9,8 +9,8 @@ import { lastShowPageRecordIdState } from '@/object-record/record-field/states/l
 import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-show/hooks/useRecordIdsFromFindManyCacheRootQuery';
 import { AppPath } from '@/types/AppPath';
 import { useQueryVariablesFromActiveFieldsOfViewOrDefaultView } from '@/views/hooks/useQueryVariablesFromActiveFieldsOfViewOrDefaultView';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useRecordShowPagePagination = (
   propsObjectNameSingular: string,

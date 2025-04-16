@@ -4,7 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-microsoft';
 
 import { getMicrosoftApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type MicrosoftAPIScopeConfig = {
   isCalendarEnabled?: boolean;
@@ -16,14 +16,14 @@ export class MicrosoftAPIsOauthCommonStrategy extends PassportStrategy(
   Strategy,
   'microsoft-apis',
 ) {
-  constructor(environmentService: EnvironmentService) {
+  constructor(twentyConfigService: TwentyConfigService) {
     const scopes = getMicrosoftApisOauthScopes();
 
     super({
-      clientID: environmentService.get('AUTH_MICROSOFT_CLIENT_ID'),
-      clientSecret: environmentService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
+      clientID: twentyConfigService.get('AUTH_MICROSOFT_CLIENT_ID'),
+      clientSecret: twentyConfigService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
       tenant: 'common',
-      callbackURL: environmentService.get('AUTH_MICROSOFT_APIS_CALLBACK_URL'),
+      callbackURL: twentyConfigService.get('AUTH_MICROSOFT_APIS_CALLBACK_URL'),
       scope: scopes,
       passReqToCallback: true,
     });

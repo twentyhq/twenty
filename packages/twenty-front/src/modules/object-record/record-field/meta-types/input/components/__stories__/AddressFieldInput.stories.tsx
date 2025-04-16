@@ -1,11 +1,12 @@
 import { Decorator, Meta, StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor } from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useAddressField } from '@/object-record/record-field/meta-types/hooks/useAddressField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import {
   AddressInput,
@@ -45,7 +46,7 @@ const AddressInputWithContext = ({
   const setHotKeyScope = useSetHotkeyScope();
 
   useEffect(() => {
-    setHotKeyScope('hotkey-scope');
+    setHotKeyScope(DEFAULT_CELL_SCOPE.scope);
   }, [setHotKeyScope]);
 
   return (
@@ -73,8 +74,8 @@ const AddressInputWithContext = ({
               },
             },
             recordId: recordId ?? '123',
-            hotkeyScope: 'hotkey-scope',
             isLabelIdentifier: false,
+            isReadOnly: false,
           }}
         >
           <AddressValueSetterEffect value={value} />
@@ -83,7 +84,7 @@ const AddressInputWithContext = ({
             onEscape={onEscape}
             onClickOutside={onClickOutside}
             value={value}
-            hotkeyScope="hotkey-scope"
+            hotkeyScope={DEFAULT_CELL_SCOPE.scope}
             onTab={onTab}
             onShiftTab={onShiftTab}
           />
@@ -142,11 +143,15 @@ type Story = StoryObj<typeof AddressInputWithContext>;
 export const Default: Story = {};
 
 export const Enter: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
     expect(enterJestFn).toHaveBeenCalledTimes(0);
 
+    await canvas.findByText('Address 1');
+    await userEvent.keyboard('{enter}');
+
     await waitFor(() => {
-      userEvent.keyboard('{enter}');
       expect(enterJestFn).toHaveBeenCalledTimes(1);
     });
   },

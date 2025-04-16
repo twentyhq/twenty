@@ -1,15 +1,15 @@
+import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { UnwrapRecoilValue, useSetRecoilState } from 'recoil';
-import { useDeleteApprovedAccessDomainMutation } from '~/generated/graphql';
-import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { useDeleteApprovedAccessDomainMutation } from '~/generated/graphql';
 
 type SettingsSecurityApprovedAccessDomainRowDropdownMenuProps = {
   approvedAccessDomain: UnwrapRecoilValue<typeof approvedAccessDomainsState>[0];
@@ -61,7 +61,7 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
       clickableComponent={
         <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
       }
-      dropdownMenuWidth={160}
+      dropdownWidth={160}
       dropdownComponents={
         <DropdownMenuItemsContainer>
           <MenuItem

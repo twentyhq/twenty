@@ -44,8 +44,6 @@ const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
   height: fit-content;
-  padding-top: 3px;
-  padding-bottom: 3px;
 
   overflow: hidden;
   text-overflow: ellipsis;
@@ -63,13 +61,8 @@ export const RecordInlineCellDisplayMode = ({
 
   const { t } = useLingui();
 
-  const {
-    editModeContentOnly,
-
-    showLabel,
-    label,
-    buttonIcon,
-  } = useRecordInlineCellContext();
+  const { editModeContentOnly, showLabel, label, buttonIcon } =
+    useRecordInlineCellContext();
 
   const isDisplayModeContentEmpty = useIsFieldEmpty();
   const showEditButton =

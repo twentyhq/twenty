@@ -5,7 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
+import { differenceInDays } from 'date-fns';
 import Stripe from 'stripe';
+import { isDefined } from 'twenty-shared/utils';
 import { Not, Repository } from 'typeorm';
 
 import {
@@ -17,19 +19,22 @@ import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-p
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
+import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
+import { getSubscriptionStatus } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Injectable()
 export class BillingSubscriptionService {
   protected readonly logger = new Logger(BillingSubscriptionService.name);
   constructor(
-    private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly billingPlanService: BillingPlanService,
     private readonly billingProductService: BillingProductService,
@@ -37,6 +42,9 @@ export class BillingSubscriptionService {
     private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    private readonly stripeCustomerService: StripeCustomerService,
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
   ) {}
 
   async getCurrentBillingSubscriptionOrThrow(criteria: {
@@ -46,7 +54,10 @@ export class BillingSubscriptionService {
     const notCanceledSubscriptions =
       await this.billingSubscriptionRepository.find({
         where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
-        relations: ['billingSubscriptionItems'],
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+        ],
       });
 
     assert(
@@ -141,14 +152,19 @@ export class BillingSubscriptionService {
     return entitlement.value;
   }
 
-  async applyBillingSubscription(workspace: Workspace) {
+  async switchToYearlyInterval(workspace: Workspace) {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
-    const newInterval =
-      billingSubscription?.interval === SubscriptionInterval.Year
-        ? SubscriptionInterval.Month
-        : SubscriptionInterval.Year;
+
+    if (billingSubscription.interval === SubscriptionInterval.Year) {
+      throw new BillingException(
+        'Cannot switch from yearly to monthly billing interval',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_INTERVAL_NOT_SWITCHABLE,
+      );
+    }
+
+    const newInterval = SubscriptionInterval.Year;
 
     const planKey = getPlanKeyFromSubscription(billingSubscription);
     const billingProductsByPlan =
@@ -194,5 +210,113 @@ export class BillingSubscriptionService {
       });
 
     return subscriptionItemsToUpdate;
+  }
+
+  async endTrialPeriod(workspace: Workspace) {
+    const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
+      { workspaceId: workspace.id },
+    );
+
+    if (billingSubscription.status !== SubscriptionStatus.Trialing) {
+      throw new BillingException(
+        'Billing subscription is not in trial period',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_IN_TRIAL_PERIOD,
+      );
+    }
+
+    const hasPaymentMethod = await this.stripeCustomerService.hasPaymentMethod(
+      billingSubscription.stripeCustomerId,
+    );
+
+    if (!hasPaymentMethod) {
+      return { hasPaymentMethod: false, status: undefined };
+    }
+
+    const updatedSubscription =
+      await this.stripeSubscriptionService.updateSubscription(
+        billingSubscription.stripeSubscriptionId,
+        {
+          trial_end: 'now',
+        },
+      );
+
+    return {
+      status: getSubscriptionStatus(updatedSubscription.status),
+      hasPaymentMethod: true,
+    };
+  }
+
+  async setBillingThresholdsAndTrialPeriodWorkflowCredits(
+    billingSubscriptionId: string,
+  ) {
+    const billingSubscription =
+      await this.billingSubscriptionRepository.findOneOrFail({
+        where: { id: billingSubscriptionId },
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+        ],
+      });
+
+    await this.stripeSubscriptionService.updateSubscription(
+      billingSubscription.stripeSubscriptionId,
+      {
+        billing_thresholds: {
+          amount_gte: this.twentyConfigService.get(
+            'BILLING_SUBSCRIPTION_THRESHOLD_AMOUNT',
+          ),
+          reset_billing_cycle_anchor: false,
+        },
+      },
+    );
+
+    const workflowSubscriptionItem =
+      billingSubscription.billingSubscriptionItems.find(
+        (item) =>
+          item.billingProduct.metadata.productKey ===
+          BillingProductKey.WORKFLOW_NODE_EXECUTION,
+      );
+
+    if (!workflowSubscriptionItem) {
+      throw new BillingException(
+        'Workflow subscription item not found',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND,
+      );
+    }
+
+    await this.stripeSubscriptionItemService.updateSubscriptionItem(
+      workflowSubscriptionItem.stripeSubscriptionItemId,
+      {
+        metadata: {
+          trialPeriodFreeWorkflowCredits:
+            this.getTrialPeriodFreeWorkflowCredits(billingSubscription),
+        },
+      },
+    );
+  }
+
+  private getTrialPeriodFreeWorkflowCredits(
+    billingSubscription: BillingSubscription,
+  ) {
+    const trialDuration =
+      isDefined(billingSubscription.trialEnd) &&
+      isDefined(billingSubscription.trialStart)
+        ? differenceInDays(
+            billingSubscription.trialEnd,
+            billingSubscription.trialStart,
+          )
+        : 0;
+
+    const trialWithCreditCardDuration = this.twentyConfigService.get(
+      'BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS',
+    );
+
+    return Number(
+      this.twentyConfigService.get(
+        trialDuration === trialWithCreditCardDuration
+          ? 'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD'
+          : 'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
+      ),
+    );
   }
 }

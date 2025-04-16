@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
@@ -10,7 +10,7 @@ import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager
 import { generateRandomSubdomain } from 'src/engine/core-modules/domain-manager/utils/generate-random-subdomain';
 import { getSubdomainFromEmail } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-from-email';
 import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-name-from-display-name';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
@@ -19,13 +19,13 @@ export class DomainManagerService {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   getFrontUrl() {
     return new URL(
-      this.environmentService.get('FRONTEND_URL') ??
-        this.environmentService.get('SERVER_URL'),
+      this.twentyConfigService.get('FRONTEND_URL') ??
+        this.twentyConfigService.get('SERVER_URL'),
     );
   }
 
@@ -33,10 +33,10 @@ export class DomainManagerService {
     const baseUrl = this.getFrontUrl();
 
     if (
-      this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
-      this.environmentService.get('DEFAULT_SUBDOMAIN')
+      this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') &&
+      this.twentyConfigService.get('DEFAULT_SUBDOMAIN')
     ) {
-      baseUrl.hostname = `${this.environmentService.get('DEFAULT_SUBDOMAIN')}.${baseUrl.hostname}`;
+      baseUrl.hostname = `${this.twentyConfigService.get('DEFAULT_SUBDOMAIN')}.${baseUrl.hostname}`;
     }
 
     return baseUrl;
@@ -44,7 +44,7 @@ export class DomainManagerService {
 
   private appendSearchParams(
     url: URL,
-    searchParams: Record<string, string | number>,
+    searchParams: Record<string, string | number | boolean>,
   ) {
     Object.entries(searchParams).forEach(([key, value]) => {
       url.searchParams.set(key, value.toString());
@@ -78,7 +78,7 @@ export class DomainManagerService {
   }: {
     workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType;
     pathname?: string;
-    searchParams?: Record<string, string | number>;
+    searchParams?: Record<string, string | number | boolean>;
   }) {
     const workspaceUrls = this.getWorkspaceUrls(workspace);
 
@@ -122,7 +122,7 @@ export class DomainManagerService {
   }
 
   isDefaultSubdomain(subdomain: string) {
-    return subdomain === this.environmentService.get('DEFAULT_SUBDOMAIN');
+    return subdomain === this.twentyConfigService.get('DEFAULT_SUBDOMAIN');
   }
 
   computeRedirectErrorUrl(
@@ -139,7 +139,7 @@ export class DomainManagerService {
   }
 
   private async getDefaultWorkspace() {
-    if (this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
+    if (this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
       throw new Error(
         'Default workspace does not exist when multi-workspace is enabled',
       );
@@ -171,7 +171,7 @@ export class DomainManagerService {
   }
 
   async getWorkspaceByOriginOrDefaultWorkspace(origin: string) {
-    if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
+    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
       return this.getDefaultWorkspace();
     }
 
@@ -222,7 +222,7 @@ export class DomainManagerService {
   private getTwentyWorkspaceUrl(subdomain: string) {
     const url = this.getFrontUrl();
 
-    url.hostname = this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
+    url.hostname = this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')
       ? `${subdomain}.${url.hostname}`
       : url.hostname;
 
@@ -234,7 +234,7 @@ export class DomainManagerService {
   ) {
     if (!workspace) {
       return {
-        subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+        subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
         customDomain: null,
       };
     }

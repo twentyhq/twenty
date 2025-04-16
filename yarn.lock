@@ -16495,13 +16495,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@recoiljs/refine@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "@recoiljs/refine@npm:0.1.1"
-  checksum: 10c0/27ca1c4ea500b1b99a3af5ee48d6749310e5138e83b87ddfb41304e2222fa64567acb985f340334ab73980202ab277a0f133c40817fbec786076c06bfb3f5363
-  languageName: node
-  linkType: hard
-
 "@redis/bloom@npm:1.2.0, @redis/bloom@npm:^1.2.0":
   version: 1.2.0
   resolution: "@redis/bloom@npm:1.2.0"
@@ -46580,23 +46573,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"overlayscrollbars-react@npm:^0.5.4":
-  version: 0.5.6
-  resolution: "overlayscrollbars-react@npm:0.5.6"
-  peerDependencies:
-    overlayscrollbars: ^2.0.0
-    react: ">=16.8.0"
-  checksum: 10c0/59a2aad3664d81dc4dee5e747b72bb2645047e0e6d300d9583244167d1e4b19c4cc263932e4b112d5c24358430f78d15d34ea389beb8845e3b5319ccc57db8d8
-  languageName: node
-  linkType: hard
-
-"overlayscrollbars@npm:^2.6.1":
-  version: 2.10.0
-  resolution: "overlayscrollbars@npm:2.10.0"
-  checksum: 10c0/d8eead54a8459cade66cac347524858a41f2d207737ea7bbb9df690c242cfd6804023bac85d245168893284cae32e11ed19acf236fad5e8e47116018d7e7d43a
-  languageName: node
-  linkType: hard
-
 "override-require@npm:^1.1.1":
   version: 1.1.1
   resolution: "override-require@npm:1.1.1"
@@ -50087,18 +50063,6 @@ __metadata:
   dependencies:
     resolve: "npm:^1.1.6"
   checksum: 10c0/22c4bb32f4934a9468468b608417194f7e3ceba9a508512125b16082c64f161915a28467562368eeb15dc16058eb5b7c13a20b9eb29ff9927d1ebb3b5aa83e84
-  languageName: node
-  linkType: hard
-
-"recoil-sync@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "recoil-sync@npm:0.2.0"
-  dependencies:
-    "@recoiljs/refine": "npm:^0.1.1"
-    transit-js: "npm:^0.8.874"
-  peerDependencies:
-    recoil: ">=0.7.3"
-  checksum: 10c0/f3a671a3cfcecadb5bbb22d47b3b040721be1013ee91d4fa0570a64ca1707eb68e818b291a82e133551adf4a2dd2fc9a0715d550c1f1e3db82f3b8d9169e2a5a
   languageName: node
   linkType: hard
 
@@ -54405,13 +54369,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"transit-js@npm:^0.8.874":
-  version: 0.8.874
-  resolution: "transit-js@npm:0.8.874"
-  checksum: 10c0/6ca0b413f1e3780a4a56b9bbde54b67a2ffefda1c052f8dc68bf28c1a3df4c29baa6f17f60484c9f2fb056a8c7dcd1fe04d24e091fb99afe1525e4d4406ad58a
-  languageName: node
-  linkType: hard
-
 "transliteration@npm:^2.3.5":
   version: 2.3.5
   resolution: "transliteration@npm:2.3.5"
@@ -55022,7 +54979,6 @@ __metadata:
     eslint-plugin-unused-imports: "npm:^3.0.0"
     file-saver: "npm:^2.0.5"
     optionator: "npm:^0.9.1"
-    recoil-sync: "npm:^0.2.0"
     transliteration: "npm:^2.3.5"
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
@@ -55457,8 +55413,6 @@ __metadata:
     nodemailer: "npm:^6.9.8"
     nx: "npm:18.3.3"
     openapi-types: "npm:^12.1.3"
-    overlayscrollbars: "npm:^2.6.1"
-    overlayscrollbars-react: "npm:^0.5.4"
     passport: "npm:^0.7.0"
     passport-google-oauth20: "npm:^2.0.0"
     passport-jwt: "npm:^4.0.1"

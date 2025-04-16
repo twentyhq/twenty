@@ -12,5 +12,4 @@ export enum FeatureFlagKey {
   IsApprovedAccessDomainsEnabled = 'IS_APPROVED_ACCESS_DOMAINS_ENABLED',
   IsNewRelationEnabled = 'IS_NEW_RELATION_ENABLED',
   IsPermissionsV2Enabled = 'IS_PERMISSIONS_V2_ENABLED',
-  IsMeteredProductBillingEnabled = 'IS_METERED_PRODUCT_BILLING_ENABLED',
 }

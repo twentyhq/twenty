@@ -8,6 +8,7 @@ import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 import { mockedUserJWT } from '../src/testing/mock-data/jwt';
 
 import 'react-loading-skeleton/dist/skeleton.css';
+import 'twenty-ui/style.css';
 import { THEME_DARK, THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
 
 initialize({
