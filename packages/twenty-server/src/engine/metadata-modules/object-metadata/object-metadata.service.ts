@@ -231,6 +231,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     input.update = update;
 
+    validateObjectMetadataInputNamesOrThrow(input.update);
+
     const existingObjectMetadata = await this.objectMetadataRepository.findOne({
       where: { id: input.id, workspaceId: workspaceId },
     });
