@@ -379,7 +379,7 @@ describe('DatabaseConfigDriver', () => {
 
     jest.spyOn(configStorage, 'get').mockResolvedValue(value);
 
-    await driver.refreshConfig(key);
+    await driver.fetchAndCacheConfig(key);
 
     expect(configStorage.get).toHaveBeenCalledWith(key);
     expect(configCache.set).toHaveBeenCalledWith(key, value);
@@ -390,7 +390,7 @@ describe('DatabaseConfigDriver', () => {
 
     jest.spyOn(configStorage, 'get').mockResolvedValue(undefined);
 
-    await driver.refreshConfig(key);
+    await driver.fetchAndCacheConfig(key);
 
     expect(configStorage.get).toHaveBeenCalledWith(key);
     expect(configCache.set).not.toHaveBeenCalled();
