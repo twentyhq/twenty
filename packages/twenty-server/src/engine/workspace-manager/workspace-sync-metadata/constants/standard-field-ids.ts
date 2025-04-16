@@ -166,6 +166,18 @@ export const CHARGE_STANDARD_FIELD_IDS = {
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2a56b',
 };
 
+export const PRODUCT_STANDARD_FIELD_IDS = {
+  name: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5a',
+  salePrice: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5b',
+  cost: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5c',
+  createdAt: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5d',
+  updatedAt: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5e',
+  unitOfMeasure: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5f',
+  status: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c60',
+  position: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c61',
+  searchVector: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c62',
+};
+
 export const TRACEABLE_STANDARD_FIELD_IDS = {
   linkName: '20202020-1234-5678-9abc-def123456789',
   websiteUrl: '20202020-9876-5432-1abc-def654321fed',

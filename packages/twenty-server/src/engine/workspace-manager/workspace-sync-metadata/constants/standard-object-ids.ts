@@ -53,4 +53,5 @@ export const STANDARD_OBJECT_IDS = {
   traceable: '20202020-1234-5678-9abc-def123456789',
   linklogs: '20202020-1f2e-3d4c-5b6a-7a8b9c0d1e2f',
   integration: '20202020-4b4b-4b4b-4b4b-4b4b4b4b4b4b',
+  product: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c63',
 };
