@@ -1,7 +1,7 @@
 import { useNumberFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useNumberFieldDisplay';
 import { NumberDisplay } from '@/ui/field/display/components/NumberDisplay';
-import { formatNumber } from '~/utils/format/number';
 import { isDefined } from 'twenty-shared/utils';
+import { formatNumber } from '~/utils/format/number';
 
 export const NumberFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useNumberFieldDisplay();

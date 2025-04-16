@@ -80,6 +80,7 @@ export const SEARCH_FIELDS_FOR_WORKSPACE_MEMBER: FieldTypeAndNameMetadata[] = [
   description: msg`A workspace member`,
   icon: STANDARD_OBJECT_ICONS.workspaceMember,
   labelIdentifierStandardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.name,
+  imageIdentifierStandardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.avatarUrl,
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
