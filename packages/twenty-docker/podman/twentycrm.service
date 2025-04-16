@@ -3,7 +3,7 @@ Description=TwentyCRM Container Stack via Podman-Compose
 After=network.target
 
 [Service]
-Type=oneshot
+Type=simple
 WorkingDirectory=/opt/apps/twenty
 EnvironmentFile=/opt/apps/twenty/.env
 ExecStart=/usr/bin/podman-compose -f podman-compose.yml up -d
