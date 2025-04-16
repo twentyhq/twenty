@@ -72,13 +72,15 @@ export const useGraphQLErrorHandlerHook = <
                   : generateGraphQLErrorFromError(error);
               });
 
-              const errorsWithTrace = result.errors.map((error) => {
-                const originalError = error.originalError;
+              const processedErrorsWithStackTrace = result.errors.map(
+                (error) => {
+                  const originalError = error.originalError;
 
-                return originalError instanceof BaseGraphQLError
-                  ? originalError
-                  : generateGraphQLErrorFromError(error, true);
-              });
+                  return originalError instanceof BaseGraphQLError
+                    ? originalError
+                    : generateGraphQLErrorFromError(error, true);
+                },
+              );
 
               const errorsToCapture = processedErrors.filter(
                 shouldCaptureException,
@@ -86,7 +88,7 @@ export const useGraphQLErrorHandlerHook = <
 
               if (errorsToCapture.length > 0) {
                 const eventIds = exceptionHandlerService.captureExceptions(
-                  errorsWithTrace.filter((_, index) =>
+                  processedErrorsWithStackTrace.filter((_, index) =>
                     shouldCaptureException(processedErrors[index]),
                   ),
                   {
