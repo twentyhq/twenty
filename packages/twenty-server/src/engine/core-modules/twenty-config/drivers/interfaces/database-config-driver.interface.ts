@@ -6,14 +6,22 @@ import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-va
  */
 export interface DatabaseConfigDriverInterface {
   /**
+   * Initialize the driver
+   */
+  initialize(): Promise<void>;
+
+  /**
    * Get a configuration value
    */
   get<T extends keyof ConfigVariables>(key: T): ConfigVariables[T];
 
   /**
-   * Initialize the driver
+   * Update a configuration value in the database and cache
    */
-  initialize(): Promise<void>;
+  update<T extends keyof ConfigVariables>(
+    key: T,
+    value: ConfigVariables[T],
+  ): Promise<void>;
 
   /**
    * Fetch and cache a specific configuration from its source

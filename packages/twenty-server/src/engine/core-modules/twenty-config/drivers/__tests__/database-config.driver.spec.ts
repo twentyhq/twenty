@@ -263,12 +263,6 @@ describe('DatabaseConfigDriver', () => {
   });
 
   describe('cache operations', () => {
-    it('should clear all cache', () => {
-      driver.clearAllCache();
-
-      expect(configCache.clearAll).toHaveBeenCalled();
-    });
-
     it('should return cache info', () => {
       const cacheInfo = {
         positiveEntries: 2,

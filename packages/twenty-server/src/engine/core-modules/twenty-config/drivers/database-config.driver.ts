@@ -96,10 +96,6 @@ export class DatabaseConfigDriver
     }
   }
 
-  clearAllCache(): void {
-    this.configCache.clearAll();
-  }
-
   async fetchAndCacheConfig(key: keyof ConfigVariables): Promise<void> {
     try {
       const value = await this.configStorage.get(key);
