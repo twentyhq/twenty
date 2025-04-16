@@ -4,6 +4,7 @@ import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlin
 import { useRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { Theme, withTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
@@ -26,10 +27,16 @@ const StyledDiv = styled.div`
   }
 `;
 
+const StyledEmptyText = withTheme(styled.div<{ theme: Theme }>`
+  color: ${({ theme }) => theme.font.color.tertiary};
+`);
+
 export const RecordTitleCellSingleTextDisplayMode = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const recordValue = useRecordValue(recordId);
+  const isEmpty =
+    recordValue?.[fieldDefinition.metadata.fieldName].trim() === '';
 
   const { openInlineCell } = useInlineCell();
 
@@ -46,12 +53,16 @@ export const RecordTitleCellSingleTextDisplayMode = () => {
         openInlineCell();
       }}
     >
-      <OverflowingTextWithTooltip
-        text={
-          recordValue?.[fieldDefinition.metadata.fieldName] ||
-          fieldDefinition.label
-        }
-      />
+      {isEmpty ? (
+        <StyledEmptyText>Untitled</StyledEmptyText>
+      ) : (
+        <OverflowingTextWithTooltip
+          text={
+            recordValue?.[fieldDefinition.metadata.fieldName] ||
+            fieldDefinition.label
+          }
+        />
+      )}
     </StyledDiv>
   );
 };

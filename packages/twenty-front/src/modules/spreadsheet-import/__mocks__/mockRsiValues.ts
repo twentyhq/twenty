@@ -156,6 +156,7 @@ export const mockRsiValues = mockComponentBehaviourForTypes({
     await sleep(4000, (resolve) => resolve(data));
     return data;
   },
+  availableFieldMetadataItems: []
 });
 
 export const editableTableInitialData = [

@@ -174,9 +174,12 @@ export class MessageChannelSyncStatusService {
     });
   }
 
-  public async markAsFailedUnknownAndFlushMessagesToImport(
+  public async markAsFailedAndFlushMessagesToImport(
     messageChannelIds: string[],
     workspaceId: string,
+    syncStatus:
+      | MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS
+      | MessageChannelSyncStatus.FAILED_UNKNOWN,
   ) {
     if (!messageChannelIds.length) {
       return;
@@ -195,41 +198,16 @@ export class MessageChannelSyncStatusService {
 
     await messageChannelRepository.update(messageChannelIds, {
       syncStage: MessageChannelSyncStage.FAILED,
-      syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
+      syncStatus: syncStatus,
     });
+
+    const metricsKey =
+      syncStatus === MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS
+        ? MetricsKeys.MessageChannelSyncJobFailedInsufficientPermissions
+        : MetricsKeys.MessageChannelSyncJobFailedUnknown;
 
     await this.metricsService.batchIncrementCounter({
-      key: MetricsKeys.MessageChannelSyncJobFailedUnknown,
-      eventIds: messageChannelIds,
-    });
-  }
-
-  public async markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
-    messageChannelIds: string[],
-    workspaceId: string,
-  ) {
-    if (!messageChannelIds.length) {
-      return;
-    }
-
-    for (const messageChannelId of messageChannelIds) {
-      await this.cacheStorage.del(
-        `messages-to-import:${workspaceId}:${messageChannelId}`,
-      );
-    }
-
-    const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
-        'messageChannel',
-      );
-
-    await messageChannelRepository.update(messageChannelIds, {
-      syncStage: MessageChannelSyncStage.FAILED,
-      syncStatus: MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
-    });
-
-    await this.metricsService.batchIncrementCounter({
-      key: MetricsKeys.MessageChannelSyncJobFailedInsufficientPermissions,
+      key: metricsKey,
       eventIds: messageChannelIds,
     });
 

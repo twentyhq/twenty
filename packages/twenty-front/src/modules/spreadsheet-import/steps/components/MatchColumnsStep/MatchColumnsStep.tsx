@@ -17,6 +17,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
+import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { UnmatchColumn } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn';
 import { initialComputedColumnsSelector } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/initialComputedColumnsState';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
@@ -116,7 +117,7 @@ export const MatchColumnsStep = <T extends string>({
 
   const onChange = useCallback(
     (value: T, columnIndex: number) => {
-      if (value === 'do-not-import') {
+      if (value === DO_NOT_IMPORT_OPTION_KEY) {
         if (columns[columnIndex].type === SpreadsheetColumnType.ignored) {
           onRevertIgnore(columnIndex);
         } else {

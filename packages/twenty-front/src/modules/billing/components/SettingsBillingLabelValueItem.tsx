@@ -12,7 +12,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledLabelSpan = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
@@ -20,7 +20,7 @@ const StyledLabelSpan = styled.span`
 const StyledValueSpan = styled.span<{ isPrimaryColor: boolean }>`
   color: ${({ theme, isPrimaryColor }) =>
     isPrimaryColor ? theme.font.color.primary : theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.xs};
+  font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 

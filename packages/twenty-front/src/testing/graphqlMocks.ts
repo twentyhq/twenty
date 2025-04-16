@@ -22,6 +22,7 @@ import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
+import { isDefined } from 'twenty-shared/utils';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
 import { getRolesMock } from '~/testing/mock-data/roles';
 import { mockedTasks } from '~/testing/mock-data/tasks';
@@ -236,11 +237,26 @@ export const graphqlMocks = {
             edges: mockedViewsData
               .filter(
                 (view) =>
-                  view?.objectMetadataId === objectMetadataId &&
-                  view?.type === viewType,
+                  (isDefined(objectMetadataId)
+                    ? view?.objectMetadataId === objectMetadataId
+                    : true) &&
+                  (isDefined(viewType) ? view?.type === viewType : true),
               )
               .map((view) => ({
-                node: view,
+                node: {
+                  ...view,
+                  viewFields: {
+                    edges: mockedViewFieldsData
+                      .filter((viewField) => viewField.viewId === view.id)
+                      .map((viewField) => ({
+                        node: viewField,
+                        cursor: null,
+                      })),
+                    totalCount: mockedViewFieldsData.filter(
+                      (viewField) => viewField.viewId === view.id,
+                    ).length,
+                  },
+                },
                 cursor: null,
               })),
             pageInfo: {
@@ -317,69 +333,6 @@ export const graphqlMocks = {
               startCursor: null,
               endCursor: null,
             },
-          },
-        },
-      });
-    }),
-    graphql.query('CombinedFindManyRecords', () => {
-      return HttpResponse.json({
-        data: {
-          favorites: {
-            edges: mockedFavoritesData.map((favorite) => ({
-              node: favorite,
-              cursor: null,
-            })),
-            totalCount: mockedFavoritesData.length,
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
-          favoriteFolders: {
-            edges: [],
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
-          views: {
-            edges: mockedViewsData.map((view) => ({
-              node: {
-                ...view,
-                viewFilters: {
-                  edges: [],
-                  totalCount: 0,
-                },
-                viewSorts: {
-                  edges: [],
-                  totalCount: 0,
-                },
-                viewFields: {
-                  edges: mockedViewFieldsData
-                    .filter((viewField) => viewField.viewId === view.id)
-                    .map((viewField) => ({
-                      node: viewField,
-                      cursor: null,
-                    })),
-                  totalCount: mockedViewFieldsData.filter(
-                    (viewField) => viewField.viewId === view.id,
-                  ).length,
-                },
-              },
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-              totalCount: mockedViewsData.length,
-            },
-            totalCount: mockedViewsData.length,
           },
         },
       });
