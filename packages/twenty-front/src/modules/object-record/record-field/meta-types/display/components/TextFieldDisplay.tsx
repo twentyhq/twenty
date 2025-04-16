@@ -13,9 +13,8 @@ export const TextFieldDisplay = () => {
   const displayMaxRowCalculated = displayedMaxRows
     ? displayedMaxRows
     : displayedMaxRowsFromSettings;
-  return displayMaxRowCalculated && displayMaxRowCalculated > 1 ? (
-    <TextDisplay text={fieldValue} displayedMaxRows={displayMaxRowCalculated} />
-  ) : (
+
+  return (
     <TextDisplay text={fieldValue} displayedMaxRows={displayMaxRowCalculated} />
   );
 };

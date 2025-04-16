@@ -8,6 +8,8 @@ type TextDisplayProps = {
 
 const StyledContainer = styled.div`
   height: 20px;
+  display: flex;
+  align-items: center;
 `;
 
 export const TextDisplay = ({ text, displayedMaxRows }: TextDisplayProps) => {
