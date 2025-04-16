@@ -28,7 +28,10 @@ export const useEventTracker = () => {
   const [createEventMutation] = useTrackAnalyticsMutation();
 
   return useCallback(
-    (type: AnalyticsType, payload: Omit<MutationTrackAnalyticsArgs, 'type'>) => {
+    (
+      type: AnalyticsType,
+      payload: Omit<MutationTrackAnalyticsArgs, 'type'>,
+    ) => {
       createEventMutation({
         variables: {
           type,

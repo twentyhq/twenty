@@ -7,7 +7,12 @@ export const TRACK_ANALYTICS = gql`
     $name: String
     $properties: JSON
   ) {
-    trackAnalytics(type: $type, event: $event, name: $name, properties: $properties) {
+    trackAnalytics(
+      type: $type
+      event: $event
+      name: $name
+      properties: $properties
+    ) {
       success
     }
   }
