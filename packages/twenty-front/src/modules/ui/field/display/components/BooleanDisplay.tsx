@@ -15,6 +15,8 @@ type BooleanDisplayProps = {
 
 const StyledContainer = styled.div`
   height: 20px;
+  display: flex;
+  align-items: center;
 `;
 
 export const BooleanDisplay = ({ value }: BooleanDisplayProps) => {
