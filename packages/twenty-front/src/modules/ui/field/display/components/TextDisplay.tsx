@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isUndefined } from '@sniptt/guards';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 type TextDisplayProps = {
@@ -6,7 +7,7 @@ type TextDisplayProps = {
   displayedMaxRows?: number;
 };
 
-const StyledContainer = styled.div<{ fixHeight?: boolean }>`
+const StyledContainer = styled.div<{ fixHeight: boolean }>`
   height: ${({ fixHeight }) => (fixHeight ? '20px' : 'auto')};
   display: flex;
   align-items: center;
@@ -14,7 +15,9 @@ const StyledContainer = styled.div<{ fixHeight?: boolean }>`
 
 export const TextDisplay = ({ text, displayedMaxRows }: TextDisplayProps) => {
   return (
-    <StyledContainer>
+    <StyledContainer
+      fixHeight={isUndefined(displayedMaxRows) || displayedMaxRows === 1}
+    >
       <OverflowingTextWithTooltip
         text={text}
         displayedMaxRows={displayedMaxRows}
