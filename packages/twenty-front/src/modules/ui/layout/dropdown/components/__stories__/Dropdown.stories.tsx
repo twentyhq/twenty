@@ -6,6 +6,15 @@ import { useState } from 'react';
 
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { Avatar, IconChevronLeft } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import {
+  MenuItem,
+  MenuItemMultiSelectAvatar,
+  MenuItemSelectAvatar,
+} from 'twenty-ui/navigation';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { Dropdown } from '../Dropdown';
 import { DropdownMenuHeader } from '../DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuInput } from '../DropdownMenuInput';
@@ -13,26 +22,17 @@ import { DropdownMenuItemsContainer } from '../DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '../DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '../DropdownMenuSeparator';
 import { StyledDropdownMenuSubheader } from '../StyledDropdownMenuSubheader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { Avatar, IconChevronLeft } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { ComponentDecorator } from 'twenty-ui/testing';
-import {
-  MenuItem,
-  MenuItemMultiSelectAvatar,
-  MenuItemSelectAvatar,
-} from 'twenty-ui/navigation';
 
 const meta: Meta<typeof Dropdown> = {
   title: 'UI/Layout/Dropdown/Dropdown',
   component: Dropdown,
-
   decorators: [ComponentDecorator, (Story) => <Story />],
   args: {
     clickableComponent: <Button title="Open Dropdown" />,
     dropdownHotkeyScope: { scope: 'testDropdownMenu' },
     dropdownOffset: { x: 0, y: 8 },
     dropdownId: 'test-dropdown-id',
+    dropdownWidth: '200px',
   },
   argTypes: {
     clickableComponent: { control: false },
@@ -84,24 +84,26 @@ export const Empty: Story = {
     const canvas = within(document.body);
 
     const buttons = await canvas.findAllByRole('button');
-    userEvent.click(buttons[0]);
+    await userEvent.click(buttons[0]);
 
-    await waitFor(async () => {
-      const fakeMenu = await canvas.findByTestId('dropdown-content');
+    const fakeMenu = await canvas.findByTestId('dropdown-content');
+
+    await waitFor(() => {
       expect(fakeMenu).toBeInTheDocument();
     });
 
-    userEvent.click(buttons[0]);
+    await userEvent.click(buttons[0]);
 
-    await waitFor(async () => {
-      const fakeMenu = canvas.queryByTestId('dropdown-content');
-      expect(fakeMenu).not.toBeInTheDocument();
+    await waitFor(() => {
+      const fakeMenuBis = canvas.queryByTestId('dropdown-content');
+      expect(fakeMenuBis).not.toBeInTheDocument();
     });
 
-    userEvent.click(buttons[0]);
-    await waitFor(async () => {
-      const fakeMenu = await canvas.findByTestId('dropdown-content');
-      expect(fakeMenu).toBeInTheDocument();
+    await userEvent.click(buttons[0]);
+    const fakeMenuTer = await canvas.findByTestId('dropdown-content');
+
+    await waitFor(() => {
+      expect(fakeMenuTer).toBeInTheDocument();
     });
   },
 };
@@ -207,9 +209,9 @@ const playInteraction: PlayFunction<any, any> = async () => {
   const canvas = within(document.body);
 
   const buttons = await canvas.findAllByRole('button');
-  userEvent.click(buttons[0]);
+  await userEvent.click(buttons[0]);
 
-  await waitFor(async () => {
+  await waitFor(() => {
     expect(canvas.getByText('Company A')).toBeInTheDocument();
   });
 };
@@ -265,13 +267,15 @@ export const SearchWithLoadingMenu: Story = {
 
     const buttons = await canvas.findAllByRole('button');
 
+    await userEvent.click(buttons[0]);
+
     await waitFor(() => {
-      userEvent.click(buttons[0]);
       expect(canvas.getByDisplayValue('query')).toBeInTheDocument();
     });
 
+    await userEvent.click(buttons[0]);
+
     await waitFor(() => {
-      userEvent.click(buttons[0]);
       expect(canvas.queryByDisplayValue('query')).not.toBeInTheDocument();
     });
   },

@@ -9,7 +9,6 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { FieldRatingValue } from '../../../../types/FieldMetadata';
 import { useRatingField } from '../../../hooks/useRatingField';
 import { RatingFieldInput, RatingFieldInputProps } from '../RatingFieldInput';
@@ -118,11 +117,10 @@ export const Submit: Story = {
     const input = canvas.getByRole('slider', { name: 'Rating' });
     const firstStar = input.firstElementChild;
 
+    await userEvent.click(firstStar);
+
     await waitFor(() => {
-      if (isDefined(firstStar)) {
-        userEvent.click(firstStar);
-        expect(submitJestFn).toHaveBeenCalledTimes(1);
-      }
+      expect(submitJestFn).toHaveBeenCalledTimes(1);
     });
   },
 };
