@@ -32,7 +32,9 @@ export class TwentyConfigService
   ) {
     this.driver = this.environmentConfigDriver;
 
-    const configVarInDb = this.configService.get('IS_CONFIG_VAR_IN_DB_ENABLED');
+    const configVarInDb = this.configService.get(
+      'IS_CONFIG_VARIABLES_IN_DB_ENABLED',
+    );
 
     this.isConfigVarInDbEnabled = configVarInDb === true;
 
