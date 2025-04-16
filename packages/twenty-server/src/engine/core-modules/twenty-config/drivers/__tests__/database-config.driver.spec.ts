@@ -310,31 +310,74 @@ describe('DatabaseConfigDriver', () => {
       expect(configCache.set).not.toHaveBeenCalled();
     });
 
-    it('should handle cache service errors', async () => {
+    it('should use environment driver when not initialized', async () => {
       const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
       const envValue = true;
 
-      jest.spyOn(configCache, 'get').mockImplementation(() => {
-        throw new Error('Cache error');
-      });
-
+      (driver as any).initializationState = InitializationState.NOT_INITIALIZED;
       jest.spyOn(environmentDriver, 'get').mockReturnValue(envValue);
 
-      expect(() => driver.get(key)).toThrow('Cache error');
+      const result = driver.get(key);
+
+      expect(result).toBe(envValue);
+      expect(environmentDriver.get).toHaveBeenCalledWith(key);
+      expect(configCache.get).not.toHaveBeenCalled();
     });
 
-    it('should handle environment driver errors', async () => {
+    it('should use environment driver for env-only variables', async () => {
+      const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
+      const envValue = true;
+
+      (isEnvOnlyConfigVar as jest.Mock).mockReturnValue(true);
+      jest.spyOn(environmentDriver, 'get').mockReturnValue(envValue);
+
+      const result = driver.get(key);
+
+      expect(result).toBe(envValue);
+      expect(environmentDriver.get).toHaveBeenCalledWith(key);
+      expect(configCache.get).not.toHaveBeenCalled();
+      expect(isEnvOnlyConfigVar).toHaveBeenCalledWith(key);
+    });
+
+    it('should use environment driver when negative lookup is cached', async () => {
+      const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
+      const envValue = true;
+
+      jest.spyOn(configCache, 'get').mockReturnValue(undefined);
+      jest.spyOn(configCache, 'getNegativeLookup').mockReturnValue(true);
+      jest.spyOn(environmentDriver, 'get').mockReturnValue(envValue);
+
+      const result = driver.get(key);
+
+      expect(result).toBe(envValue);
+      expect(environmentDriver.get).toHaveBeenCalledWith(key);
+      expect(configCache.get).toHaveBeenCalledWith(key);
+      expect(configCache.getNegativeLookup).toHaveBeenCalledWith(key);
+    });
+
+    it('should propagate cache service errors when no fallback conditions are met', async () => {
       const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
 
       jest.spyOn(configCache, 'get').mockImplementation(() => {
         throw new Error('Cache error');
       });
 
+      expect(() => driver.get(key)).toThrow('Cache error');
+      expect(configCache.get).toHaveBeenCalledWith(key);
+      expect(environmentDriver.get).not.toHaveBeenCalled();
+    });
+
+    it('should propagate environment driver errors when using environment driver', async () => {
+      const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
+
+      // Force use of environment driver
+      (driver as any).initializationState = InitializationState.NOT_INITIALIZED;
       jest.spyOn(environmentDriver, 'get').mockImplementation(() => {
         throw new Error('Environment error');
       });
 
-      expect(() => driver.get(key)).toThrow('Cache error');
+      expect(() => driver.get(key)).toThrow('Environment error');
+      expect(environmentDriver.get).toHaveBeenCalledWith(key);
     });
   });
 });
