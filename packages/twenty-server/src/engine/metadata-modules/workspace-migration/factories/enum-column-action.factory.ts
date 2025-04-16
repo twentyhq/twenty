@@ -62,7 +62,7 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
 
   private validateDefaultValueOrFallbackToNullIfNullable(
     defaultValue: string | number | boolean | null,
-    enumOptions: string[] | undefined,
+    enumOptions: any,
     isNullable: boolean,
   ) {
     if (typeof defaultValue === 'string') {
@@ -71,7 +71,11 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
         '$1',
       );
 
-      if (enumOptions?.includes(formattedDefaultValue)) {
+      if (
+        enumOptions &&
+        (enumOptions?.includes(formattedDefaultValue) ||
+          enumOptions?.some((option) => option.to === formattedDefaultValue))
+      ) {
         return defaultValue;
       }
     }
