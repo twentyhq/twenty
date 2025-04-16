@@ -11,7 +11,6 @@ describe('ClickHouse Event Registration (integration)', () => {
   beforeAll(async () => {
     jest.useRealTimers();
 
-    console.log('>>>>>>>>>>>>>>', process.env.CLICKHOUSE_URL);
     clickhouseClient = createClient({
       // use variable
       url: process.env.CLICKHOUSE_URL,
