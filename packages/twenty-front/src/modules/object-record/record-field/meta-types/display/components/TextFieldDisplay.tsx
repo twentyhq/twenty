@@ -1,6 +1,13 @@
 import { useTextFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useTextFieldDisplay';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
+import styled from '@emotion/styled';
+
+const StyledTextDisplay = styled.div`
+  align-items: center;
+  display: flex;
+  height: 20px;
+`;
 
 export const TextFieldDisplay = () => {
   const { fieldValue, fieldDefinition, displayedMaxRows } =
@@ -10,12 +17,17 @@ export const TextFieldDisplay = () => {
     ? fieldDefinition.metadata?.settings?.displayedMaxRows
     : undefined;
 
-  return (
-    <TextDisplay
-      text={fieldValue}
-      displayedMaxRows={
-        displayedMaxRows ? displayedMaxRows : displayedMaxRowsFromSettings
-      }
-    />
+  const displayMaxRowCalculated = displayedMaxRows
+    ? displayedMaxRows
+    : displayedMaxRowsFromSettings;
+  return displayMaxRowCalculated && displayMaxRowCalculated > 1 ? (
+    <StyledTextDisplay>
+      <TextDisplay
+        text={fieldValue}
+        displayedMaxRows={displayMaxRowCalculated}
+      />
+    </StyledTextDisplay>
+  ) : (
+    <TextDisplay text={fieldValue} displayedMaxRows={displayMaxRowCalculated} />
   );
 };

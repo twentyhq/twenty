@@ -1,5 +1,4 @@
 import { UserContext } from '@/users/contexts/UserContext';
-import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { formatDateString } from '~/utils/string/formatDateString';
 import { EllipsisDisplay } from './EllipsisDisplay';
@@ -8,12 +7,6 @@ type DateDisplayProps = {
   value: string | null | undefined;
   displayAsRelativeDate?: boolean;
 };
-
-const StyledEllipsisDisplay = styled(EllipsisDisplay)`
-  align-items: center;
-  display: flex;
-  height: 20px;
-`;
 
 export const DateDisplay = ({
   value,
@@ -28,5 +21,5 @@ export const DateDisplay = ({
     displayAsRelativeDate,
   });
 
-  return <StyledEllipsisDisplay>{formattedDate}</StyledEllipsisDisplay>;
+  return <EllipsisDisplay>{formattedDate}</EllipsisDisplay>;
 };

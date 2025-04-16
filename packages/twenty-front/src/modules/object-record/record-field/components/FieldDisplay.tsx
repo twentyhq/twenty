@@ -57,10 +57,13 @@ export const FieldDisplay = () => {
   );
 
   return isChipDisplay ? (
+    // ok
     <ChipFieldDisplay />
   ) : isFieldRelationToOneObject(fieldDefinition) ? (
+    // ok
     <RelationToOneFieldDisplay />
   ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
+    // ok
     <RelationFromManyFieldDisplay />
   ) : isFieldText(fieldDefinition) ? (
     <TextFieldDisplay />
