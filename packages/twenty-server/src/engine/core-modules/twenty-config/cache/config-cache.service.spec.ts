@@ -6,15 +6,16 @@ import { CONFIG_VARIABLES_CACHE_TTL } from 'src/engine/core-modules/twenty-confi
 
 describe('ConfigCacheService', () => {
   let service: ConfigCacheService;
-  let originalDateNow: () => number;
 
-  beforeAll(() => {
-    originalDateNow = Date.now;
-  });
-
-  afterAll(() => {
-    global.Date.now = originalDateNow;
-  });
+  const withMockedDate = (timeOffset: number, callback: () => void) => {
+    const originalNow = Date.now;
+    try {
+      Date.now = jest.fn(() => originalNow() + timeOffset);
+      callback();
+    } finally {
+      Date.now = originalNow;
+    }
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -130,17 +131,10 @@ describe('ConfigCacheService', () => {
 
       service.set(key, value);
 
-      // Mock Date.now to simulate time passing
-      const originalNow = Date.now;
-
-      Date.now = jest.fn(() => originalNow() + CONFIG_VARIABLES_CACHE_TTL + 1);
-
-      const result = service.get(key);
-
-      expect(result).toBeUndefined();
-
-      // Restore Date.now
-      Date.now = originalNow;
+      withMockedDate(CONFIG_VARIABLES_CACHE_TTL + 1, () => {
+        const result = service.get(key);
+        expect(result).toBeUndefined();
+      });
     });
 
     it('should not expire entries before TTL', () => {
@@ -149,17 +143,10 @@ describe('ConfigCacheService', () => {
 
       service.set(key, value);
 
-      // Mock Date.now to simulate time passing but less than TTL
-      const originalNow = Date.now;
-
-      Date.now = jest.fn(() => originalNow() + CONFIG_VARIABLES_CACHE_TTL - 1);
-
-      const result = service.get(key);
-
-      expect(result).toBe(value);
-
-      // Restore Date.now
-      Date.now = originalNow;
+      withMockedDate(CONFIG_VARIABLES_CACHE_TTL - 1, () => {
+        const result = service.get(key);
+        expect(result).toBe(value);
+      });
     });
   });
 
@@ -187,19 +174,12 @@ describe('ConfigCacheService', () => {
 
       service.set(key, true);
 
-      // Mock Date.now to simulate time passing
-      const originalNow = Date.now;
-
-      Date.now = jest.fn(() => originalNow() + CONFIG_VARIABLES_CACHE_TTL + 1);
-
-      const info = service.getCacheInfo();
-
-      expect(info.positiveEntries).toBe(0);
-      expect(info.negativeEntries).toBe(0);
-      expect(info.cacheKeys).toHaveLength(0);
-
-      // Restore Date.now
-      Date.now = originalNow;
+      withMockedDate(CONFIG_VARIABLES_CACHE_TTL + 1, () => {
+        const info = service.getCacheInfo();
+        expect(info.positiveEntries).toBe(0);
+        expect(info.negativeEntries).toBe(0);
+        expect(info.cacheKeys).toHaveLength(0);
+      });
     });
   });
 
@@ -218,17 +198,10 @@ describe('ConfigCacheService', () => {
 
       service.set(key, true);
 
-      // Mock Date.now to simulate time passing
-      const currentTime = Date.now();
-
-      jest
-        .spyOn(global.Date, 'now')
-        .mockImplementation(() => currentTime + CONFIG_VARIABLES_CACHE_TTL + 1);
-
-      // Trigger scavenging by getting the value
-      const result = service.get(key);
-
-      expect(result).toBeUndefined();
+      withMockedDate(CONFIG_VARIABLES_CACHE_TTL + 1, () => {
+        const result = service.get(key);
+        expect(result).toBeUndefined();
+      });
     });
 
     it('should not remove non-expired entries during scavenging', () => {
@@ -236,17 +209,10 @@ describe('ConfigCacheService', () => {
 
       service.set(key, true);
 
-      // Mock Date.now to simulate time passing but still within TTL
-      const currentTime = Date.now();
-
-      jest
-        .spyOn(global.Date, 'now')
-        .mockImplementation(() => currentTime + CONFIG_VARIABLES_CACHE_TTL - 1);
-
-      // Trigger scavenging by getting the value
-      const result = service.get(key);
-
-      expect(result).toBe(true);
+      withMockedDate(CONFIG_VARIABLES_CACHE_TTL - 1, () => {
+        const result = service.get(key);
+        expect(result).toBe(true);
+      });
     });
   });
 
