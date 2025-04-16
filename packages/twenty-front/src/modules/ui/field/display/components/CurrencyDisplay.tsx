@@ -19,7 +19,6 @@ const StyledEllipsisDisplay = styled.div`
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
-  height: 20px;
 `;
 
 export const CurrencyDisplay = ({ currencyValue }: CurrencyDisplayProps) => {
