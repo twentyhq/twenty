@@ -55,11 +55,6 @@ const StyledFieldLabel = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledFieldDisplay = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(0.5)};
-  padding-top: ${({ theme }) => theme.spacing(0.5)};
-`;
-
 export const SettingsDataModelFieldPreview = ({
   fieldMetadataItem,
   objectMetadataItem,
@@ -153,7 +148,6 @@ export const SettingsDataModelFieldPreview = ({
               isReadOnly: false,
             }}
           >
-            <StyledFieldDisplay>
               {fieldMetadataItem.type === FieldMetadataType.BOOLEAN ? (
                 <BooleanFieldInput readonly />
               ) : fieldMetadataItem.type === FieldMetadataType.RATING ? (
@@ -161,7 +155,6 @@ export const SettingsDataModelFieldPreview = ({
               ) : (
                 <FieldDisplay />
               )}
-            </StyledFieldDisplay>
           </FieldContext.Provider>
         </StyledFieldPreview>
       </RecordFieldComponentInstanceContext.Provider>
