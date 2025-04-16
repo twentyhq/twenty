@@ -209,12 +209,6 @@ export class TwentyConfigService
     return result;
   }
 
-  async refreshConfig(key: keyof ConfigVariables): Promise<void> {
-    if (this.driver === this.databaseConfigDriver) {
-      await this.databaseConfigDriver.refreshConfig(key);
-    }
-  }
-
   getCacheInfo(): {
     usingDatabaseDriver: boolean;
     initializationState: string;

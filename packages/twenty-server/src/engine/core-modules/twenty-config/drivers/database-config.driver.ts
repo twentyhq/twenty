@@ -100,7 +100,7 @@ export class DatabaseConfigDriver
     this.configCache.clearAll();
   }
 
-  async refreshConfig(key: keyof ConfigVariables): Promise<void> {
+  async fetchAndCacheConfig(key: keyof ConfigVariables): Promise<void> {
     try {
       const value = await this.configStorage.get(key);
 
@@ -110,7 +110,7 @@ export class DatabaseConfigDriver
         this.configCache.setNegativeLookup(key);
       }
     } catch (error) {
-      this.logger.error(`Failed to refresh config for ${key as string}`, error);
+      this.logger.error(`Failed to fetch config for ${key as string}`, error);
       this.configCache.setNegativeLookup(key);
     }
   }
@@ -153,11 +153,8 @@ export class DatabaseConfigDriver
     }
 
     setImmediate(async () => {
-      await this.refreshConfig(key).catch((error) => {
-        this.logger.error(
-          `Failed to refresh config for ${key as string}`,
-          error,
-        );
+      await this.fetchAndCacheConfig(key).catch((error) => {
+        this.logger.error(`Failed to fetch config for ${key as string}`, error);
       });
     });
   }

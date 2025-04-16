@@ -16,7 +16,7 @@ export interface DatabaseConfigDriverInterface {
   initialize(): Promise<void>;
 
   /**
-   * Refresh a specific configuration from its source
+   * Fetch and cache a specific configuration from its source
    */
-  refreshConfig(key: keyof ConfigVariables): Promise<void>;
+  fetchAndCacheConfig(key: keyof ConfigVariables): Promise<void>;
 }
