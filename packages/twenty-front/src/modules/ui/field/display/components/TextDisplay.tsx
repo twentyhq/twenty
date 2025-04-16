@@ -1,3 +1,4 @@
+import { styled } from '@linaria/react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 type TextDisplayProps = {
@@ -5,12 +6,18 @@ type TextDisplayProps = {
   displayedMaxRows?: number;
 };
 
+const StyledContainer = styled.div`
+  height: 20px;
+`;
+
 export const TextDisplay = ({ text, displayedMaxRows }: TextDisplayProps) => {
   return (
-    <OverflowingTextWithTooltip
-      text={text}
-      displayedMaxRows={displayedMaxRows}
-      isTooltipMultiline={true}
-    />
+    <StyledContainer>
+      <OverflowingTextWithTooltip
+        text={text}
+        displayedMaxRows={displayedMaxRows}
+        isTooltipMultiline={true}
+      />
+    </StyledContainer>
   );
 };

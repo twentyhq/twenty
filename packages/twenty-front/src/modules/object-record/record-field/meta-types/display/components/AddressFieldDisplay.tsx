@@ -2,13 +2,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { useAddressFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useAddressFieldDisplay';
 import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
-import styled from '@emotion/styled';
-
-const StyledTextDisplay = styled.div`
-  align-items: center;
-  display: flex;
-  height: 20px;
-`;
 
 export const AddressFieldDisplay = () => {
   const { fieldValue } = useAddressFieldDisplay();
@@ -22,9 +15,5 @@ export const AddressFieldDisplay = () => {
     .filter(isNonEmptyString)
     .join(', ');
 
-  return (
-    <StyledTextDisplay>
-      <TextDisplay text={content} />
-    </StyledTextDisplay>
-  );
+  return <TextDisplay text={content} />;
 };

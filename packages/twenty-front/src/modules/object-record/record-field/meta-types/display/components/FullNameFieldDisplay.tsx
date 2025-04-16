@@ -1,14 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { useFullNameFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useFullNameFieldDisplay';
-import styled from '@emotion/styled';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
-
-const StyledFullNameFieldDisplayContainer = styled.div`
-  align-items: center;
-  display: flex;
-  height: 20px;
-`;
+import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
 
 export const FullNameFieldDisplay = () => {
   const { fieldValue } = useFullNameFieldDisplay();
@@ -17,9 +10,5 @@ export const FullNameFieldDisplay = () => {
     .filter(isNonEmptyString)
     .join(' ');
 
-  return (
-    <StyledFullNameFieldDisplayContainer>
-      <OverflowingTextWithTooltip text={content} />
-    </StyledFullNameFieldDisplayContainer>
-  );
+  return <TextDisplay text={content} />;
 };
