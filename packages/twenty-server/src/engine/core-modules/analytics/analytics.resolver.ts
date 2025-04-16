@@ -33,7 +33,7 @@ export class AnalyticsResolver {
   }
 
   @Mutation(() => Analytics)
-  async trackV2(
+  async trackAnalytics(
     @Args()
     createAnalyticsInput: CreateAnalyticsInputV2,
     @AuthWorkspace() workspace: Workspace | undefined,

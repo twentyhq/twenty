@@ -29,8 +29,8 @@ describe('ClickHouse Event Registration (integration)', () => {
 
   it('should register events in ClickHouse when sending an event', async () => {
     const mutation = `
-      mutation TrackV2($type: AnalyticsType!, $event: String, $name: String, $properties: JSON) {
-        trackV2(type: $type, event: $event, name: $name, properties: $properties) {
+      mutation TrackAnalytics($type: AnalyticsType!, $event: String, $name: String, $properties: JSON) {
+        trackAnalytics(type: $type, event: $event, name: $name, properties: $properties) {
           success
         }
       }
@@ -50,7 +50,7 @@ describe('ClickHouse Event Registration (integration)', () => {
       });
 
     expect(response.status).toBe(200);
-    expect(response.body.data.trackV2.success).toBe(true);
+    expect(response.body.data.trackAnalytics.success).toBe(true);
 
     const queryResult = await clickhouseClient.query({
       query: `

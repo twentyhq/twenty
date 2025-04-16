@@ -904,7 +904,7 @@ export type Mutation = {
   submitFormStep: Scalars['Boolean'];
   switchToYearlyInterval: BillingUpdateOutput;
   track: Analytics;
-  trackV2: Analytics;
+  trackAnalytics: Analytics;
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneField: Field;
   updateOneObject: Object;
@@ -1145,7 +1145,7 @@ export type MutationTrackArgs = {
 };
 
 
-export type MutationTrackV2Args = {
+export type MutationTrackAnalyticsArgs = {
   event?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   properties?: InputMaybe<Scalars['JSON']>;
@@ -2417,7 +2417,7 @@ export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
 
 export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
-export type TrackV2MutationVariables = Exact<{
+export type TrackAnalyticsMutationVariables = Exact<{
   type: AnalyticsType;
   event?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
@@ -2425,7 +2425,15 @@ export type TrackV2MutationVariables = Exact<{
 }>;
 
 
-export type TrackV2Mutation = { __typename?: 'Mutation', trackV2: { __typename?: 'Analytics', success: boolean } };
+export type TrackAnalyticsMutation = { __typename?: 'Mutation', trackAnalytics: { __typename?: 'Analytics', success: boolean } };
+
+export type TrackMutationVariables = Exact<{
+  action: Scalars['String'];
+  payload: Scalars['JSON'];
+}>;
+
+
+export type TrackMutation = { __typename?: 'Mutation', track: { __typename?: 'Analytics', success: boolean } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -3342,27 +3350,27 @@ export function useGetTimelineThreadsFromPersonIdLazyQuery(baseOptions?: Apollo.
 export type GetTimelineThreadsFromPersonIdQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdQuery>;
 export type GetTimelineThreadsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdLazyQuery>;
 export type GetTimelineThreadsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>;
-export const TrackV2Document = gql`
-    mutation TrackV2($type: AnalyticsType!, $event: String, $name: String, $properties: JSON) {
-  trackV2(type: $type, event: $event, name: $name, properties: $properties) {
+export const TrackAnalyticsDocument = gql`
+    mutation TrackAnalytics($type: AnalyticsType!, $event: String, $name: String, $properties: JSON) {
+  trackAnalytics(type: $type, event: $event, name: $name, properties: $properties) {
     success
   }
 }
     `;
-export type TrackV2MutationFn = Apollo.MutationFunction<TrackV2Mutation, TrackV2MutationVariables>;
+export type TrackAnalyticsMutationFn = Apollo.MutationFunction<TrackAnalyticsMutation, TrackAnalyticsMutationVariables>;
 
 /**
- * __useTrackV2Mutation__
+ * __useTrackAnalyticsMutation__
  *
- * To run a mutation, you first call `useTrackV2Mutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useTrackV2Mutation` returns a tuple that includes:
+ * To run a mutation, you first call `useTrackAnalyticsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTrackAnalyticsMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [trackV2Mutation, { data, loading, error }] = useTrackV2Mutation({
+ * const [trackAnalyticsMutation, { data, loading, error }] = useTrackAnalyticsMutation({
  *   variables: {
  *      type: // value for 'type'
  *      event: // value for 'event'
@@ -3371,13 +3379,47 @@ export type TrackV2MutationFn = Apollo.MutationFunction<TrackV2Mutation, TrackV2
  *   },
  * });
  */
-export function useTrackV2Mutation(baseOptions?: Apollo.MutationHookOptions<TrackV2Mutation, TrackV2MutationVariables>) {
+export function useTrackAnalyticsMutation(baseOptions?: Apollo.MutationHookOptions<TrackAnalyticsMutation, TrackAnalyticsMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<TrackV2Mutation, TrackV2MutationVariables>(TrackV2Document, options);
+        return Apollo.useMutation<TrackAnalyticsMutation, TrackAnalyticsMutationVariables>(TrackAnalyticsDocument, options);
       }
-export type TrackV2MutationHookResult = ReturnType<typeof useTrackV2Mutation>;
-export type TrackV2MutationResult = Apollo.MutationResult<TrackV2Mutation>;
-export type TrackV2MutationOptions = Apollo.BaseMutationOptions<TrackV2Mutation, TrackV2MutationVariables>;
+export type TrackAnalyticsMutationHookResult = ReturnType<typeof useTrackAnalyticsMutation>;
+export type TrackAnalyticsMutationResult = Apollo.MutationResult<TrackAnalyticsMutation>;
+export type TrackAnalyticsMutationOptions = Apollo.BaseMutationOptions<TrackAnalyticsMutation, TrackAnalyticsMutationVariables>;
+export const TrackDocument = gql`
+    mutation Track($action: String!, $payload: JSON!) {
+  track(action: $action, payload: $payload) {
+    success
+  }
+}
+    `;
+export type TrackMutationFn = Apollo.MutationFunction<TrackMutation, TrackMutationVariables>;
+
+/**
+ * __useTrackMutation__
+ *
+ * To run a mutation, you first call `useTrackMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTrackMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [trackMutation, { data, loading, error }] = useTrackMutation({
+ *   variables: {
+ *      action: // value for 'action'
+ *      payload: // value for 'payload'
+ *   },
+ * });
+ */
+export function useTrackMutation(baseOptions?: Apollo.MutationHookOptions<TrackMutation, TrackMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<TrackMutation, TrackMutationVariables>(TrackDocument, options);
+      }
+export type TrackMutationHookResult = ReturnType<typeof useTrackMutation>;
+export type TrackMutationResult = Apollo.MutationResult<TrackMutation>;
+export type TrackMutationOptions = Apollo.BaseMutationOptions<TrackMutation, TrackMutationVariables>;
 export const UploadFileDocument = gql`
     mutation uploadFile($file: Upload!, $fileFolder: FileFolder) {
   uploadFile(file: $file, fileFolder: $fileFolder)

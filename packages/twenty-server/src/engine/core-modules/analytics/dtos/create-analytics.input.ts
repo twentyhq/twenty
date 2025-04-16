@@ -1,6 +1,12 @@
 import { ArgsType, Field, registerEnumType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
 import { TrackEventName } from 'src/engine/core-modules/analytics/types/events.type';
@@ -31,7 +37,7 @@ export class CreateAnalyticsInput {
 @ArgsType()
 export class CreateAnalyticsInputV2 {
   @Field(() => AnalyticsType)
-  @IsString()
+  @IsEnum(AnalyticsType)
   type: 'pageview' | 'track';
 
   @Field(() => String, { nullable: true })

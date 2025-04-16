@@ -50,7 +50,7 @@ describe('AnalyticsResolver', () => {
       name: 'Test Page',
       properties: {},
     };
-    const result = await resolver.trackV2(
+    const result = await resolver.trackAnalytics(
       input,
       { id: 'workspace-1' } as Workspace,
       { id: 'user-1' } as User,
@@ -77,7 +77,7 @@ describe('AnalyticsResolver', () => {
       event: 'Custom Domain Activated' as const,
       properties: {},
     };
-    const result = await resolver.trackV2(
+    const result = await resolver.trackAnalytics(
       input,
       { id: 'workspace-2' } as Workspace,
       { id: 'user-2' } as User,
@@ -95,7 +95,7 @@ describe('AnalyticsResolver', () => {
     const invalidInput = { type: 'invalid' };
 
     await expect(
-      resolver.trackV2(invalidInput as any, undefined, undefined),
+      resolver.trackAnalytics(invalidInput as any, undefined, undefined),
     ).rejects.toThrowError(
       new AnalyticsException(
         'Invalid analytics input',

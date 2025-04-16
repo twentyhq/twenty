@@ -463,13 +463,13 @@ export class ConfigVariables {
   @IsBoolean()
   ANALYTICS_ENABLED = false;
 
-  @IsString()
-  @IsOptional()
-  @ValidateIf((env) => env.ANALYTICS_ENABLED === true)
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AnalyticsConfig,
     description: 'Clickhouse host for analytics',
   })
+  @IsString()
+  @IsOptional()
+  @ValidateIf((env) => env.ANALYTICS_ENABLED === true)
   CLICKHOUSE_URL: string;
 
   @ConfigVariablesMetadata({
