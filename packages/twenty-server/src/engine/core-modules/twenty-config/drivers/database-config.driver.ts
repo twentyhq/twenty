@@ -59,14 +59,6 @@ export class DatabaseConfigDriver
 
   get<T extends keyof ConfigVariables>(key: T): ConfigVariables[T] {
     if (this.shouldUseEnvironment(key)) {
-      this.logger.debug(
-        `[Config:${key}] Using env due to ${
-          this.initializationState !== InitializationState.INITIALIZED
-            ? 'initialization state'
-            : 'isEnvOnly flag'
-        }`,
-      );
-
       return this.environmentDriver.get(key);
     }
 
@@ -157,17 +149,10 @@ export class DatabaseConfigDriver
 
   private async scheduleRefresh(key: keyof ConfigVariables): Promise<void> {
     if (this.initializationState !== InitializationState.INITIALIZED) {
-      this.logger.debug(
-        `[Config:${key}] Skipping refresh due to initialization state`,
-      );
-
       return;
     }
 
-    this.logger.debug(`🕒 [Config:${key}] Scheduling background refresh`);
-
     setImmediate(async () => {
-      this.logger.debug(`⏳ [Config:${key}] Executing background refresh`);
       await this.refreshConfig(key).catch((error) => {
         this.logger.error(
           `Failed to refresh config for ${key as string}`,

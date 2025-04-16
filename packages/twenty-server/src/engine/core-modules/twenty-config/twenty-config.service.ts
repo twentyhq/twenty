@@ -6,11 +6,14 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { isString } from 'class-validator';
+
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_MASKING_CONFIG } from 'src/engine/core-modules/twenty-config/constants/config-variables-masking-config';
 import { ConfigVariablesMetadataOptions } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { DatabaseConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/database-config.driver';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
+import { ConfigSource } from 'src/engine/core-modules/twenty-config/enums/config-source.enum';
 import { ConfigVariablesMaskingStrategies } from 'src/engine/core-modules/twenty-config/enums/config-variables-masking-strategies.enum';
 import { InitializationState } from 'src/engine/core-modules/twenty-config/enums/initialization-state.enum';
 import { configVariableMaskSensitiveData } from 'src/engine/core-modules/twenty-config/utils/config-variable-mask-sensitive-data.util';
@@ -88,15 +91,6 @@ export class TwentyConfigService
   get<T extends keyof ConfigVariables>(key: T): ConfigVariables[T] {
     const value = this.driver.get(key);
 
-    this.logger.debug(
-      `Getting value for '${key}' from ${this.driver.constructor.name}`,
-      {
-        valueType: typeof value,
-        isArray: Array.isArray(value),
-        value: typeof value === 'object' ? JSON.stringify(value) : value,
-      },
-    );
-
     return value;
   }
 
@@ -149,7 +143,7 @@ export class TwentyConfigService
     {
       value: ConfigVariables[keyof ConfigVariables];
       metadata: ConfigVariablesMetadataOptions;
-      source: string;
+      source: ConfigSource;
     }
   > {
     const result: Record<
@@ -157,7 +151,7 @@ export class TwentyConfigService
       {
         value: ConfigVariables[keyof ConfigVariables];
         metadata: ConfigVariablesMetadataOptions;
-        source: string;
+        source: ConfigSource;
       }
     > = {};
 
@@ -172,21 +166,22 @@ export class TwentyConfigService
 
     Object.entries(metadata).forEach(([key, envMetadata]) => {
       let value = this.get(key as keyof ConfigVariables) ?? '';
-      let source = 'ENVIRONMENT';
+      let source = ConfigSource.ENVIRONMENT;
 
-      if (isUsingDatabaseDriver && !envMetadata.isEnvOnly) {
+      if (!isUsingDatabaseDriver || envMetadata.isEnvOnly) {
+        if (value === envVars[key as keyof ConfigVariables]) {
+          source = ConfigSource.DEFAULT;
+        }
+      } else {
         const dbValue = value;
 
-        if (dbValue !== envVars[key as keyof ConfigVariables]) {
-          source = 'DATABASE';
-        } else {
-          source = 'DEFAULT';
-        }
-      } else if (value === envVars[key as keyof ConfigVariables]) {
-        source = 'DEFAULT';
+        source =
+          dbValue !== envVars[key as keyof ConfigVariables]
+            ? ConfigSource.DATABASE
+            : ConfigSource.DEFAULT;
       }
 
-      if (typeof value === 'string' && key in CONFIG_VARIABLES_MASKING_CONFIG) {
+      if (isString(value) && key in CONFIG_VARIABLES_MASKING_CONFIG) {
         const varMaskingConfig =
           CONFIG_VARIABLES_MASKING_CONFIG[
             key as keyof typeof CONFIG_VARIABLES_MASKING_CONFIG

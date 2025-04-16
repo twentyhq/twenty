@@ -30,8 +30,6 @@ export class ConfigCacheService implements OnModuleDestroy {
     const entry = this.valueCache.get(key);
 
     if (entry && !this.isCacheExpired(entry)) {
-      this.logger.debug(`🟢 [Cache:${key}] Positive cache hit`);
-
       return entry.value as ConfigValue<T>;
     }
 
@@ -42,8 +40,6 @@ export class ConfigCacheService implements OnModuleDestroy {
     const entry = this.negativeLookupCache.get(key);
 
     if (entry && !this.isCacheExpired(entry)) {
-      this.logger.debug(`🔴 [Cache:${key}] Negative cache hit`);
-
       return true;
     }
 
@@ -57,7 +53,6 @@ export class ConfigCacheService implements OnModuleDestroy {
       ttl: CONFIG_VARIABLES_CACHE_TTL,
     });
     this.negativeLookupCache.delete(key);
-    this.logger.debug(`✅ [Cache:${key}] Updated positive cache`);
   }
 
   setNegativeLookup(key: ConfigKey): void {
@@ -66,19 +61,16 @@ export class ConfigCacheService implements OnModuleDestroy {
       ttl: CONFIG_VARIABLES_CACHE_TTL,
     });
     this.valueCache.delete(key);
-    this.logger.debug(`❌ [Cache:${key}] Updated negative cache`);
   }
 
   clear(key: ConfigKey): void {
     this.valueCache.delete(key);
     this.negativeLookupCache.delete(key);
-    this.logger.debug(`🧹 [Cache:${key}] Cleared cache entries`);
   }
 
   clearAll(): void {
     this.valueCache.clear();
     this.negativeLookupCache.clear();
-    this.logger.debug('🧹 Cleared all cache entries');
   }
 
   getCacheInfo(): {
@@ -123,26 +115,17 @@ export class ConfigCacheService implements OnModuleDestroy {
 
   private scavengeCache(): void {
     const now = Date.now();
-    let expiredCount = 0;
 
     for (const [key, entry] of this.valueCache.entries()) {
       if (now - entry.timestamp > entry.ttl) {
         this.valueCache.delete(key);
-        expiredCount++;
       }
     }
 
     for (const [key, entry] of this.negativeLookupCache.entries()) {
       if (now - entry.timestamp > entry.ttl) {
         this.negativeLookupCache.delete(key);
-        expiredCount++;
       }
-    }
-
-    if (expiredCount > 0) {
-      this.logger.debug(
-        `🧹 Cache scavenging completed: ${expiredCount} expired entries removed`,
-      );
     }
   }
 }
