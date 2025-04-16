@@ -95,7 +95,7 @@ describe('AnalyticsResolver', () => {
     const invalidInput = { type: 'invalid' };
 
     await expect(
-      resolver.track(invalidInput as any, undefined, undefined),
+      resolver.trackV2(invalidInput as any, undefined, undefined),
     ).rejects.toThrowError(
       new AnalyticsException(
         'Invalid analytics input',
