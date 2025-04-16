@@ -72,7 +72,15 @@ export const useGraphQLErrorHandlerHook = <
                   : generateGraphQLErrorFromError(error);
               });
 
-              const errorsToCapture = result.errors.reduce<BaseGraphQLError[]>(
+              const originalErrorsWithTrace = result.errors.map((error) => {
+                const originalError = error.originalError;
+
+                return originalError instanceof BaseGraphQLError
+                  ? error.originalError
+                  : generateGraphQLErrorFromError(error, true);
+              });
+
+              const errorsToCapture = originalErrors.reduce<BaseGraphQLError[]>(
                 (acc, error) => {
                   if (shouldCaptureException(error)) {
                     acc.push(error);
@@ -85,7 +93,7 @@ export const useGraphQLErrorHandlerHook = <
 
               if (errorsToCapture.length > 0) {
                 const eventIds = exceptionHandlerService.captureExceptions(
-                  errorsToCapture,
+                  originalErrorsWithTrace,
                   {
                     operation: {
                       name: opName,

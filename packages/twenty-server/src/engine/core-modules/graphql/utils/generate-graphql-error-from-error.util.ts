@@ -5,7 +5,10 @@ import {
   ErrorCode,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
-export const generateGraphQLErrorFromError = (error: Error) => {
+export const generateGraphQLErrorFromError = (
+  error: Error,
+  withStackTrace = false,
+) => {
   const graphqlError = new BaseGraphQLError(
     error.message,
     ErrorCode.INTERNAL_SERVER_ERROR,
