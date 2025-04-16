@@ -1,5 +1,9 @@
 #!/bin/bash
 set -e
+if [ ! -f "$(dirname "$0")/.env" ]; then
+    echo "Error: .env file not found"
+    exit 1
+fi
 source "$(dirname "$0")/.env"
 
 ## steps to cleanup and start over from scratch - useful when testing
