@@ -1,5 +1,10 @@
 # How to deploy twenty on podman
 
+DISCLAIMER: The k8s and podman deployments are not maintained by the core team.
+These files are provided and maintained by the community. Twenty core team
+maintains support for docker deployment.
+
+
 ## How to use
 
 1. Edit `.env` file. At the minimum set `POSTGRES_PASSWORD`, `SERVER_URL`, and `APP_SECRET`.
