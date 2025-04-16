@@ -64,36 +64,31 @@ export const useGraphQLErrorHandlerHook = <
             setResult,
           }) => {
             if (result.errors && result.errors.length > 0) {
-              const originalErrors = result.errors.map((error) => {
+              const processedErrors = result.errors.map((error) => {
                 const originalError = error.originalError;
 
                 return originalError instanceof BaseGraphQLError
-                  ? error.originalError
+                  ? originalError
                   : generateGraphQLErrorFromError(error);
               });
 
-              const originalErrorsWithTrace = result.errors.map((error) => {
+              const errorsWithTrace = result.errors.map((error) => {
                 const originalError = error.originalError;
 
                 return originalError instanceof BaseGraphQLError
-                  ? error.originalError
+                  ? originalError
                   : generateGraphQLErrorFromError(error, true);
               });
 
-              const errorsToCapture = originalErrors.reduce<BaseGraphQLError[]>(
-                (acc, error) => {
-                  if (shouldCaptureException(error)) {
-                    acc.push(error);
-                  }
-
-                  return acc;
-                },
-                [],
+              const errorsToCapture = processedErrors.filter(
+                shouldCaptureException,
               );
 
               if (errorsToCapture.length > 0) {
                 const eventIds = exceptionHandlerService.captureExceptions(
-                  originalErrorsWithTrace,
+                  errorsWithTrace.filter((_, index) =>
+                    shouldCaptureException(processedErrors[index]),
+                  ),
                   {
                     operation: {
                       name: opName,
@@ -112,11 +107,13 @@ export const useGraphQLErrorHandlerHook = <
                   },
                 );
 
-                errorsToCapture.map((err, i) => addEventId(err, eventIds?.[i]));
+                errorsToCapture.forEach((err, i) =>
+                  addEventId(err, eventIds?.[i]),
+                );
               }
 
-              const nonCapturedErrors = originalErrors.filter(
-                (error) => !errorsToCapture.includes(error),
+              const nonCapturedErrors = processedErrors.filter(
+                (error) => !shouldCaptureException(error),
               );
 
               setResult({

@@ -14,7 +14,7 @@ export const generateGraphQLErrorFromError = (
     ErrorCode.INTERNAL_SERVER_ERROR,
   );
 
-  if (process.env.NODE_ENV === NodeEnvironment.development) {
+  if (process.env.NODE_ENV === NodeEnvironment.development || withStackTrace) {
     graphqlError.stack = error.stack;
     graphqlError.extensions['response'] = error.message;
   }
