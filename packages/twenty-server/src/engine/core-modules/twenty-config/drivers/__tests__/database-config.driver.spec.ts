@@ -263,14 +263,6 @@ describe('DatabaseConfigDriver', () => {
   });
 
   describe('cache operations', () => {
-    it('should clear specific key from cache', () => {
-      const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
-
-      driver.clearCache(key);
-
-      expect(configCache.clear).toHaveBeenCalledWith(key);
-    });
-
     it('should clear all cache', () => {
       driver.clearAllCache();
 
@@ -379,5 +371,28 @@ describe('DatabaseConfigDriver', () => {
       expect(() => driver.get(key)).toThrow('Environment error');
       expect(environmentDriver.get).toHaveBeenCalledWith(key);
     });
+  });
+
+  it('should refresh config from storage', async () => {
+    const key = 'AUTH_PASSWORD_ENABLED';
+    const value = true;
+
+    jest.spyOn(configStorage, 'get').mockResolvedValue(value);
+
+    await driver.refreshConfig(key);
+
+    expect(configStorage.get).toHaveBeenCalledWith(key);
+    expect(configCache.set).toHaveBeenCalledWith(key, value);
+  });
+
+  it('should handle refresh when value is undefined', async () => {
+    const key = 'AUTH_PASSWORD_ENABLED';
+
+    jest.spyOn(configStorage, 'get').mockResolvedValue(undefined);
+
+    await driver.refreshConfig(key);
+
+    expect(configStorage.get).toHaveBeenCalledWith(key);
+    expect(configCache.set).not.toHaveBeenCalled();
   });
 });

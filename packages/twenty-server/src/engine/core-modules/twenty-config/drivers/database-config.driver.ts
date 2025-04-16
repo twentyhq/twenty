@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 
-import { DatabaseConfigDriverInterface } from 'src/engine/core-modules/twenty-config/interfaces/database-config-driver.interface';
+import { DatabaseConfigDriverInterface } from 'src/engine/core-modules/twenty-config/drivers/interfaces/database-config-driver.interface';
 
 import { ConfigCacheService } from 'src/engine/core-modules/twenty-config/cache/config-cache.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
@@ -29,8 +29,15 @@ export class DatabaseConfigDriver
   ) {}
 
   async initialize(): Promise<void> {
+    if (this.initializationState === InitializationState.INITIALIZED) {
+      return Promise.resolve();
+    }
     if (this.initializationPromise) {
       return this.initializationPromise;
+    }
+
+    if (this.initializationState === InitializationState.FAILED) {
+      this.initializationState = InitializationState.NOT_INITIALIZED;
     }
 
     this.initializationPromise = this.doInitialize();
@@ -88,12 +95,13 @@ export class DatabaseConfigDriver
       );
     }
 
-    await this.configStorage.set(key, value);
-    this.configCache.set(key, value);
-  }
-
-  clearCache(key: keyof ConfigVariables): void {
-    this.configCache.clear(key);
+    try {
+      await this.configStorage.set(key, value);
+      this.configCache.set(key, value);
+    } catch (error) {
+      this.logger.error(`Failed to update config for ${key as string}`, error);
+      throw error;
+    }
   }
 
   clearAllCache(): void {
@@ -158,16 +166,15 @@ export class DatabaseConfigDriver
 
     this.logger.debug(`🕒 [Config:${key}] Scheduling background refresh`);
 
-    try {
-      await new Promise<void>((resolve, reject) => {
-        setImmediate(async () => {
-          this.logger.debug(`⏳ [Config:${key}] Executing background refresh`);
-          await this.refreshConfig(key).then(resolve).catch(reject);
-        });
+    setImmediate(async () => {
+      this.logger.debug(`⏳ [Config:${key}] Executing background refresh`);
+      await this.refreshConfig(key).catch((error) => {
+        this.logger.error(
+          `Failed to refresh config for ${key as string}`,
+          error,
+        );
       });
-    } catch (error) {
-      this.logger.error(`Failed to refresh config for ${key as string}`, error);
-    }
+    });
   }
 
   private scheduleRetry(): void {

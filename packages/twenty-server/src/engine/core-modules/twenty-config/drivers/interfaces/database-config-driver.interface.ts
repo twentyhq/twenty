@@ -16,11 +16,6 @@ export interface DatabaseConfigDriverInterface {
   initialize(): Promise<void>;
 
   /**
-   * Clear a specific key from cache
-   */
-  clearCache(key: keyof ConfigVariables): void;
-
-  /**
    * Refresh a specific configuration from its source
    */
   refreshConfig(key: keyof ConfigVariables): Promise<void>;

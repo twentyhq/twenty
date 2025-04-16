@@ -173,7 +173,7 @@ export class TwentyConfigService
       let source = 'ENVIRONMENT';
 
       if (isUsingDatabaseDriver && !envMetadata.isEnvOnly) {
-        const dbValue = this.get(key as keyof ConfigVariables);
+        const dbValue = value;
 
         if (dbValue !== envVars[key as keyof ConfigVariables]) {
           source = 'DATABASE';
@@ -210,12 +210,6 @@ export class TwentyConfigService
     });
 
     return result;
-  }
-
-  clearCache(key: keyof ConfigVariables): void {
-    if (this.driver === this.databaseConfigDriver) {
-      this.databaseConfigDriver.clearCache(key);
-    }
   }
 
   async refreshConfig(key: keyof ConfigVariables): Promise<void> {

@@ -62,7 +62,6 @@ export class ConfigCacheService implements OnModuleDestroy {
 
   setNegativeLookup(key: ConfigKey): void {
     this.negativeLookupCache.set(key, {
-      value: true,
       timestamp: Date.now(),
       ttl: CONFIG_VARIABLES_CACHE_TTL,
     });
@@ -111,7 +110,9 @@ export class ConfigCacheService implements OnModuleDestroy {
   private isCacheExpired(
     entry: ConfigCacheEntry<ConfigKey> | ConfigNegativeCacheEntry,
   ): boolean {
-    return Date.now() - entry.timestamp > entry.ttl;
+    const now = Date.now();
+
+    return now - entry.timestamp > entry.ttl;
   }
 
   private startCacheScavenging(): void {

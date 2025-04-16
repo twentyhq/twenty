@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { IsNull, Repository } from 'typeorm';
+import { DeleteResult, IsNull, Repository } from 'typeorm';
 
 import {
   KeyValuePair,
@@ -383,8 +383,8 @@ describe('ConfigStorageService', () => {
 
         jest
           .spyOn(keyValuePairRepository, 'delete')
-          .mockResolvedValueOnce({ affected: 1 } as any)
-          .mockResolvedValueOnce({ affected: 0 } as any);
+          .mockResolvedValueOnce({ affected: 1 } as DeleteResult)
+          .mockResolvedValueOnce({ affected: 0 } as DeleteResult);
 
         const firstDelete = service.delete(key);
         const secondDelete = service.delete(key);

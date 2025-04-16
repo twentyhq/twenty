@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Repository } from 'typeorm';
+import { FindOptionsWhere, IsNull, Repository } from 'typeorm';
 
 import {
   KeyValuePair,
@@ -22,17 +22,23 @@ export class ConfigStorageService implements ConfigStorageInterface {
     private readonly keyValuePairRepository: Repository<KeyValuePair>,
   ) {}
 
+  private getConfigVariableWhereClause(
+    key?: string,
+  ): FindOptionsWhere<KeyValuePair> {
+    return {
+      type: KeyValuePairType.CONFIG_VARIABLE,
+      ...(key ? { key } : {}),
+      userId: IsNull(),
+      workspaceId: IsNull(),
+    };
+  }
+
   async get<T extends keyof ConfigVariables>(
     key: T,
   ): Promise<ConfigVariables[T] | undefined> {
     try {
       const result = await this.keyValuePairRepository.findOne({
-        where: {
-          type: KeyValuePairType.CONFIG_VARIABLE,
-          key: key as string,
-          userId: IsNull(),
-          workspaceId: IsNull(),
-        },
+        where: this.getConfigVariableWhereClause(key as string),
       });
 
       if (result === null) {
@@ -72,12 +78,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
       }
 
       const existingRecord = await this.keyValuePairRepository.findOne({
-        where: {
-          key: key as string,
-          userId: IsNull(),
-          workspaceId: IsNull(),
-          type: KeyValuePairType.CONFIG_VARIABLE,
-        },
+        where: this.getConfigVariableWhereClause(key as string),
       });
 
       if (existingRecord) {
@@ -102,12 +103,9 @@ export class ConfigStorageService implements ConfigStorageInterface {
 
   async delete<T extends keyof ConfigVariables>(key: T): Promise<void> {
     try {
-      await this.keyValuePairRepository.delete({
-        type: KeyValuePairType.CONFIG_VARIABLE,
-        key: key as string,
-        userId: IsNull(),
-        workspaceId: IsNull(),
-      });
+      await this.keyValuePairRepository.delete(
+        this.getConfigVariableWhereClause(key as string),
+      );
     } catch (error) {
       this.logger.error(`Failed to delete config for ${key as string}`, error);
       throw error;
@@ -119,11 +117,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
   > {
     try {
       const configVars = await this.keyValuePairRepository.find({
-        where: {
-          type: KeyValuePairType.CONFIG_VARIABLE,
-          userId: IsNull(),
-          workspaceId: IsNull(),
-        },
+        where: this.getConfigVariableWhereClause(),
       });
 
       const result = new Map<

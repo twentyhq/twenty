@@ -10,7 +10,6 @@ export interface ConfigCacheEntry<T extends ConfigKey> {
 }
 
 export interface ConfigNegativeCacheEntry {
-  value: boolean;
   timestamp: number;
   ttl: number;
 }
