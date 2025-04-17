@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export const FIELD_LINKS_MOCK_NAME = 'fieldLinks';
@@ -286,6 +287,14 @@ export const fields = [
 ];
 
 export const objectMetadataItemMock = {
+  targetTableName: 'testingObject',
+  id: 'mockObjectId',
+  nameSingular: 'objectName',
+  namePlural: 'objectsName',
+  fields,
+} as ObjectMetadataEntity;
+
+export const objectMetadataMapItemMock = {
   id: 'mockObjectId',
   nameSingular: 'objectName',
   namePlural: 'objectsName',
@@ -304,10 +313,10 @@ export const objectMetadataItemMock = {
 
 export const objectMetadataMapsMock = {
   byId: {
-    [objectMetadataItemMock.id || 'mock-id']: objectMetadataItemMock,
+    [objectMetadataMapItemMock.id || 'mock-id']: objectMetadataMapItemMock,
   },
   idByNameSingular: {
-    [objectMetadataItemMock.nameSingular]:
-      objectMetadataItemMock.id || 'mock-id',
+    [objectMetadataMapItemMock.nameSingular]:
+      objectMetadataMapItemMock.id || 'mock-id',
   },
 };

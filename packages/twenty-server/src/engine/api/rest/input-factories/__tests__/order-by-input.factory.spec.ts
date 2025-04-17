@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import {
-  objectMetadataItemMock,
+  objectMetadataMapItemMock,
   objectMetadataMapsMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { OrderByInputFactory } from 'src/engine/api/rest/input-factories/order-by-input.factory';
@@ -16,7 +16,7 @@ describe('OrderByInputFactory', () => {
     objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
   } = {
     objectMetadataMaps: objectMetadataMapsMock,
-    objectMetadataMapItem: objectMetadataItemMock,
+    objectMetadataMapItem: objectMetadataMapItemMock,
   };
 
   let service: OrderByInputFactory;
