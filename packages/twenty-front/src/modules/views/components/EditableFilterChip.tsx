@@ -27,7 +27,7 @@ export const EditableFilterChip = ({
 
   const operandLabelShort = getOperandLabelShort(recordFilter.operand);
 
-  const viewFilterSubFieldName = recordFilter.subFieldName;
+  const recordFilterSubFieldName = recordFilter.subFieldName;
 
   const subFieldLabel =
     isCompositeField(fieldMetadataItem.type) &&
