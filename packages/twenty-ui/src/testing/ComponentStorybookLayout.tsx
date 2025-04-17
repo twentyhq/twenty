@@ -1,9 +1,10 @@
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledLayout = styled.div<{
   width?: number;
   backgroundColor?: string | undefined;
-  height?: number;
+  height: number | 'fit-content';
 }>`
   background: ${({ theme, backgroundColor }) =>
     backgroundColor ?? theme.background.primary};
@@ -13,7 +14,12 @@ const StyledLayout = styled.div<{
   display: flex;
   flex-direction: row;
 
-  height: fit-content;
+  height: ${({ height }) =>
+    height === 'fit-content'
+      ? 'fit-content'
+      : `
+      ${height}px
+    `};
   max-width: calc(100% - 40px);
   min-width: ${({ width }) => (width ? 'unset' : '300px')};
   padding: 20px;
@@ -23,17 +29,21 @@ const StyledLayout = styled.div<{
 type ComponentStorybookLayoutProps = {
   width?: number;
   backgroundColor?: string | undefined;
-  height?: number | 'auto';
+  height?: number;
   children: JSX.Element;
 };
 
 export const ComponentStorybookLayout = ({
   width,
   backgroundColor,
-  height = 'auto',
+  height,
   children,
 }: ComponentStorybookLayoutProps) => (
-  <StyledLayout width={width} backgroundColor={backgroundColor} height={height}>
+  <StyledLayout
+    width={width}
+    backgroundColor={backgroundColor}
+    height={isDefined(height) ? height : 'fit-content'}
+  >
     {children}
   </StyledLayout>
 );
