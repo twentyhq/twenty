@@ -47,7 +47,6 @@ export const SettingsNewObject = () => {
       setIsLoading(true);
       const { data: response } = await createOneObjectMetadataItem(formValues);
 
-      setIsLoading(false);
       navigate(
         response ? SettingsPath.ObjectDetail : SettingsPath.Objects,
         response
@@ -55,12 +54,13 @@ export const SettingsNewObject = () => {
           : undefined,
       );
     } catch (error) {
-      setIsLoading(false);
       // eslint-disable-next-line no-console
       console.error(error);
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
