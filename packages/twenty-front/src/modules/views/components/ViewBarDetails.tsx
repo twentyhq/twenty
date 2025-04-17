@@ -111,6 +111,8 @@ export const ViewBarDetails = ({
 
   const { hasFiltersQueryParams } = useViewFromQueryParams();
 
+  //tododo here
+
   const currentRecordFilterGroups = useRecoilComponentValueV2(
     currentRecordFilterGroupsComponentState,
   );

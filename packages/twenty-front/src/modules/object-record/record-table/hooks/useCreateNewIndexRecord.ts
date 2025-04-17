@@ -26,6 +26,7 @@ export const useCreateNewIndexRecord = ({
 
   const { openRecordTitleCell } = useRecordTitleCell();
 
+  //tododo here
   const createNewIndexRecord = useRecoilCallback(
     ({ snapshot }) =>
       async (recordInput?: Partial<ObjectRecord>) => {

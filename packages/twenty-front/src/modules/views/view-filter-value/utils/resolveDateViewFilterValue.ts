@@ -159,7 +159,7 @@ const resolveVariableDateViewFilterValueFromRelativeDate = (relativeDate: {
   }
 };
 
-const resolveVariableDateViewFilterValue = (value?: string | null) => {
+export const resolveVariableDateViewFilterValue = (value?: string | null) => {
   if (!value) return null;
 
   const relativeDate = variableDateViewFilterValueSchema.parse(value);
