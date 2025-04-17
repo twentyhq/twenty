@@ -4,7 +4,9 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableScrollToFocusedElementEffect = () => {
-  const focusPosition = useRecoilComponentValueV2(recordTableFocusPositionComponentState);
+  const focusPosition = useRecoilComponentValueV2(
+    recordTableFocusPositionComponentState,
+  );
 
   useEffect(() => {
     if (!focusPosition) {

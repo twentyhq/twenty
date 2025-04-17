@@ -38,7 +38,9 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
 `;
 
 const RecordTableCellHoveredPortalContent = () => {
-  const hoverPosition = useRecoilComponentValueV2(recordTableHoverPositionComponentState);
+  const hoverPosition = useRecoilComponentValueV2(
+    recordTableHoverPositionComponentState,
+  );
 
   const isMobile = useIsMobile();
 
@@ -76,7 +78,9 @@ const StyledRecordTableCellHoveredPortal = styled.div`
 `;
 
 export const RecordTableCellHoveredPortal = () => {
-  const hoverPosition = useRecoilComponentValueV2(recordTableHoverPositionComponentState);
+  const hoverPosition = useRecoilComponentValueV2(
+    recordTableHoverPositionComponentState,
+  );
 
   if (!hoverPosition) {
     return null;

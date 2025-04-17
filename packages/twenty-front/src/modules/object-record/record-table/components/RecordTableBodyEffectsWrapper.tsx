@@ -20,7 +20,9 @@ export const RecordTableBodyEffectsWrapper = ({
     isAtLeastOneTableRowSelectedSelector,
   );
 
-  const isRecordTableFocusActive = useRecoilComponentValueV2(isRecordTableFocusActiveComponentState);
+  const isRecordTableFocusActive = useRecoilComponentValueV2(
+    isRecordTableFocusActiveComponentState,
+  );
 
   return (
     <>
