@@ -1,6 +1,5 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { RecordTableNoRecordGroupBodyContextProvider } from '@/object-record/record-table/components/RecordTableNoRecordGroupBodyContextProvider';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
@@ -35,30 +34,28 @@ export const RecordTableCellPortalWrapper = ({
   }
 
   return ReactDOM.createPortal(
-    <RecordTableNoRecordGroupBodyContextProvider>
-      <RecordTableRowContextProvider
+    <RecordTableRowContextProvider
+      value={{
+        recordId: allRecordIds[position.row],
+        rowIndex: position.row,
+        isSelected: false,
+        inView: true,
+        pathToShowPage: '/',
+        objectNameSingular: objectMetadataItem.nameSingular,
+      }}
+    >
+      <RecordTableCellContext.Provider
         value={{
-          recordId: allRecordIds[position.row],
-          rowIndex: position.row,
-          isSelected: false,
-          inView: true,
-          pathToShowPage: '/',
-          objectNameSingular: objectMetadataItem.nameSingular,
+          columnDefinition: visibleTableColumns[position.column],
+          columnIndex: position.column,
+          cellPosition: position,
         }}
       >
-        <RecordTableCellContext.Provider
-          value={{
-            columnDefinition: visibleTableColumns[position.column],
-            columnIndex: position.column,
-            cellPosition: position,
-          }}
-        >
-          <RecordTableCellFieldContextWrapper>
-            {children}
-          </RecordTableCellFieldContextWrapper>
-        </RecordTableCellContext.Provider>
-      </RecordTableRowContextProvider>
-    </RecordTableNoRecordGroupBodyContextProvider>,
+        <RecordTableCellFieldContextWrapper>
+          {children}
+        </RecordTableCellFieldContextWrapper>
+      </RecordTableCellContext.Provider>
+    </RecordTableRowContextProvider>,
     anchorElement,
   );
 };
