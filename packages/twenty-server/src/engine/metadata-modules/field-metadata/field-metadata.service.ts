@@ -213,7 +213,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             : existingFieldMetadata.defaultValue,
       };
 
-      this.validateFieldMetadata<UpdateFieldInput>(
+      await this.validateFieldMetadata<UpdateFieldInput>(
         existingFieldMetadata.type,
         fieldMetadataForUpdate,
         objectMetadata,
@@ -545,11 +545,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
   }
 
-  private validateFieldMetadata<T extends UpdateFieldInput | CreateFieldInput>(
+  private async validateFieldMetadata<
+    T extends UpdateFieldInput | CreateFieldInput,
+  >(
     fieldMetadataType: FieldMetadataType,
     fieldMetadataInput: T,
     objectMetadata: ObjectMetadataEntity,
-  ): T {
+  ): Promise<T> {
     if (fieldMetadataInput.name) {
       try {
         validateMetadataNameOrThrow(fieldMetadataInput.name);
@@ -599,10 +601,17 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           );
         }
       }
+      if (isDefined(fieldMetadataInput.defaultValue)) {
+        await this.fieldMetadataValidationService.validateDefaultValueOrThrow({
+          fieldType: fieldMetadataType,
+          options: fieldMetadataInput.options,
+          defaultValue: fieldMetadataInput.defaultValue ?? null,
+        });
+      }
     }
 
     if (fieldMetadataInput.settings) {
-      this.fieldMetadataValidationService.validateSettingsOrThrow({
+      await this.fieldMetadataValidationService.validateSettingsOrThrow({
         fieldType: fieldMetadataType,
         settings: fieldMetadataInput.settings,
       });
@@ -717,7 +726,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     const fieldMetadataForCreate =
       this.prepareCustomFieldMetadata(fieldMetadataInput);
 
-    this.validateFieldMetadata<CreateFieldInput>(
+    await this.validateFieldMetadata<CreateFieldInput>(
       fieldMetadataForCreate.type,
       fieldMetadataForCreate,
       objectMetadata,

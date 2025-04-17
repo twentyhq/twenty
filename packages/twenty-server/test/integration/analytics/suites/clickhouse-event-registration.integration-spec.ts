@@ -5,6 +5,7 @@ import { createClient, ClickHouseClient } from '@clickhouse/client';
 
 import { GenericTrackEvent } from 'src/engine/core-modules/analytics/utils/events/track/track';
 import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-created';
+
 describe('ClickHouse Event Registration (integration)', () => {
   let clickhouseClient: ClickHouseClient;
 

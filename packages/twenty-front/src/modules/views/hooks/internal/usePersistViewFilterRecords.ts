@@ -58,6 +58,7 @@ export const usePersistViewFilterRecords = () => {
                 operand: viewFilter.operand,
                 viewFilterGroupId: viewFilter.viewFilterGroupId,
                 positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+                subFieldName: viewFilter.subFieldName ?? null,
               } satisfies Partial<ViewFilter>,
             },
             update: (cache, { data }) => {
@@ -98,6 +99,7 @@ export const usePersistViewFilterRecords = () => {
                 operand: viewFilter.operand,
                 positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
                 viewFilterGroupId: viewFilter.viewFilterGroupId,
+                subFieldName: viewFilter.subFieldName ?? null,
               } satisfies Partial<ViewFilter>,
             },
             update: (cache, { data }) => {

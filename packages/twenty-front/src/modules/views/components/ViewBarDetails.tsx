@@ -70,12 +70,11 @@ const StyledActionButtonContainer = styled.div`
 `;
 
 const StyledFilterContainer = styled.div`
-  display: flex;
   align-items: center;
-  flex: 1;
-  overflow-x: hidden;
-
+  display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
+
+  overflow-x: hidden;
 `;
 
 const StyledSeperatorContainer = styled.div`
