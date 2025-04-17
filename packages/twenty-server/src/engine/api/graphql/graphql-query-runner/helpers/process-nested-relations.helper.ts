@@ -46,6 +46,7 @@ export class ProcessNestedRelationsHelper {
     authContext,
     dataSource,
     isNewRelationEnabled,
+    shouldBypassPermissionChecks,
     roleId,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
@@ -58,6 +59,7 @@ export class ProcessNestedRelationsHelper {
     authContext: AuthContext;
     dataSource: WorkspaceDataSource;
     isNewRelationEnabled: boolean;
+    shouldBypassPermissionChecks: boolean;
     roleId?: string;
   }): Promise<void> {
     if (isNewRelationEnabled) {
@@ -71,6 +73,7 @@ export class ProcessNestedRelationsHelper {
         limit,
         authContext,
         dataSource,
+        shouldBypassPermissionChecks,
         roleId,
       });
     }
@@ -164,6 +167,7 @@ export class ProcessNestedRelationsHelper {
     authContext,
     dataSource,
     isNewRelationEnabled,
+    shouldBypassPermissionChecks,
     roleId,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
@@ -177,6 +181,7 @@ export class ProcessNestedRelationsHelper {
     authContext: AuthContext;
     dataSource: WorkspaceDataSource;
     isNewRelationEnabled: boolean;
+    shouldBypassPermissionChecks: boolean;
     roleId?: string;
   }): Promise<void> {
     const { inverseRelationName, referenceObjectMetadata } =
@@ -185,8 +190,6 @@ export class ProcessNestedRelationsHelper {
         parentObjectMetadataItem,
         relationName,
       });
-
-    const shouldBypassPermissionChecks = false;
 
     const relationRepository = dataSource.getRepository(
       referenceObjectMetadata.nameSingular,
@@ -251,6 +254,8 @@ export class ProcessNestedRelationsHelper {
         authContext,
         dataSource,
         isNewRelationEnabled,
+        shouldBypassPermissionChecks,
+        roleId,
       });
     }
   }
@@ -352,6 +357,8 @@ export class ProcessNestedRelationsHelper {
         authContext,
         dataSource,
         isNewRelationEnabled,
+        shouldBypassPermissionChecks,
+        roleId,
       });
     }
   }

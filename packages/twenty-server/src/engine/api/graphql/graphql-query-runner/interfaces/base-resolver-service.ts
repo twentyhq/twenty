@@ -45,6 +45,7 @@ export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   repository: WorkspaceRepository<ObjectLiteral>;
   graphqlQueryParser: GraphqlQueryParser;
   graphqlQuerySelectedFieldsResult: GraphqlQuerySelectedFieldsResult;
+  isExecutedByApiKey: boolean;
   roleId?: string;
 };
 
@@ -153,6 +154,7 @@ export abstract class GraphqlQueryBaseResolverService<
         repository,
         graphqlQueryParser,
         graphqlQuerySelectedFieldsResult,
+        isExecutedByApiKey: isDefined(authContext.apiKey),
         roleId,
       };
 

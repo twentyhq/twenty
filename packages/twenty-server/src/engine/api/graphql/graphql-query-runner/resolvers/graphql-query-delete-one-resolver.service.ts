@@ -76,6 +76,7 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
         roleId,
+        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
 
