@@ -1,6 +1,6 @@
 import 'tsconfig-paths/register';
 
 export default async () => {
-  await global.app.get('PUB_SUB').close();
-  await global.app.close();
+  global.app.get('PUB_SUB').close();
+  global.app.close();
 };
