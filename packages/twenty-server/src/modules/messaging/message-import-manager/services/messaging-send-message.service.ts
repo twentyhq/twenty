@@ -7,6 +7,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
+import { OAuth2ClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/oauth2-client.provider';
 
 interface SendMessageInput {
   body: string;
@@ -18,6 +19,7 @@ interface SendMessageInput {
 export class MessagingSendMessageService {
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
+    private readonly oAuth2ClientProvider: OAuth2ClientProvider,
     private readonly microsoftClientProvider: MicrosoftClientProvider,
   ) {}
 
@@ -30,7 +32,17 @@ export class MessagingSendMessageService {
         const gmailClient =
           await this.gmailClientProvider.getGmailClient(connectedAccount);
 
+        const oAuth2Client =
+          await this.oAuth2ClientProvider.getOAuth2Client(connectedAccount);
+
+        const { data } = await oAuth2Client.userinfo.get();
+
+        const fromEmail = data.email;
+
+        const fromName = data.name;
+
         const message = [
+          `From: "${fromName}" <${fromEmail}>`,
           `To: ${sendMessageInput.to}`,
           `Subject: ${sendMessageInput.subject}`,
           'MIME-Version: 1.0',

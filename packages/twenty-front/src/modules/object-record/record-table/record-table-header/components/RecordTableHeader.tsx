@@ -26,21 +26,21 @@ const StyledTableHead = styled.thead`
     th:nth-of-type(1) {
       position: sticky;
       left: 0;
-      z-index: 5;
+      z-index: 6;
       transition: 0.3s ease;
     }
 
     th:nth-of-type(2) {
       position: sticky;
       left: 11px;
-      z-index: 5;
+      z-index: 6;
       transition: 0.3s ease;
     }
 
     th:nth-of-type(3) {
       position: sticky;
       left: 43px;
-      z-index: 5;
+      z-index: 6;
       transition: 0.3s ease;
 
       &::after {
@@ -65,7 +65,7 @@ const StyledTableHead = styled.thead`
     th {
       position: sticky;
       top: 0;
-      z-index: 5;
+      z-index: 6;
     }
   }
 

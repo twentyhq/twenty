@@ -27,6 +27,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
+import { AnalyticsType } from '~/generated/graphql';
+import { getPageTitleFromPath } from '~/utils/title-utils';
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
@@ -174,13 +176,16 @@ export const PageChangeEffect = () => {
   useEffect(() => {
     setTimeout(() => {
       setSessionId();
-      eventTracker('pageview', {
-        pathname: location.pathname,
-        locale: navigator.language,
-        userAgent: window.navigator.userAgent,
-        href: window.location.href,
-        referrer: document.referrer,
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      eventTracker(AnalyticsType['PAGEVIEW'], {
+        name: getPageTitleFromPath(location.pathname),
+        properties: {
+          pathname: location.pathname,
+          locale: navigator.language,
+          userAgent: window.navigator.userAgent,
+          href: window.location.href,
+          referrer: document.referrer,
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        },
       });
     }, 500);
   }, [eventTracker, location.pathname]);
