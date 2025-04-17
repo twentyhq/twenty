@@ -81,23 +81,34 @@ export class BillingAddWorkflowSubscriptionItemCommand extends ActiveOrSuspended
     }
 
     if (!options.dryRun) {
+      await this.stripeSubscriptionService.updateSubscription(
+        subscription.stripeSubscriptionId,
+        {
+          trial_settings: {
+            end_behavior: {
+              missing_payment_method: 'create_invoice',
+            },
+          },
+        },
+      );
+
       await this.stripeSubscriptionItemService.createSubscriptionItem(
         subscription.stripeSubscriptionId,
         associatedWorkflowMeteredPrice.stripePriceId,
       );
-
-      await this.stripeSubscriptionService.updateSubscription(
-        subscription.stripeSubscriptionId,
-        {
-          billing_thresholds: {
-            amount_gte: this.twentyConfigService.get(
-              'BILLING_SUBSCRIPTION_THRESHOLD_AMOUNT',
-            ),
-            reset_billing_cycle_anchor: false,
-          },
-        },
-      );
     }
+
+    await this.stripeSubscriptionService.updateSubscription(
+      subscription.stripeSubscriptionId,
+      {
+        billing_thresholds: {
+          amount_gte: this.twentyConfigService.get(
+            'BILLING_SUBSCRIPTION_THRESHOLD_AMOUNT',
+          ),
+          reset_billing_cycle_anchor: false,
+        },
+      },
+    );
 
     this.logger.log(
       `Adding workflow subscription item with price ${associatedWorkflowMeteredPrice.stripePriceId} to ${workspaceId}`,
