@@ -6,7 +6,7 @@ import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/Da
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { Node } from '@xyflow/react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getWorkflowDiagramTriggerNode = ({
   trigger,
@@ -19,17 +19,19 @@ export const getWorkflowDiagramTriggerNode = ({
   switch (trigger.type) {
     case 'MANUAL': {
       triggerDefaultLabel = 'Manual Trigger';
-      triggerIcon = getTriggerIcon({
-        type: 'MANUAL',
-      });
+      triggerIcon = getTriggerIcon(trigger);
 
       break;
     }
     case 'CRON': {
       triggerDefaultLabel = 'On a Schedule';
-      triggerIcon = getTriggerIcon({
-        type: 'CRON',
-      });
+      triggerIcon = getTriggerIcon(trigger);
+
+      break;
+    }
+    case 'WEBHOOK': {
+      triggerDefaultLabel = 'Webhook';
+      triggerIcon = getTriggerIcon(trigger);
 
       break;
     }
@@ -42,10 +44,7 @@ export const getWorkflowDiagramTriggerNode = ({
         DATABASE_TRIGGER_TYPES.find((item) => item.event === triggerEvent.event)
           ?.defaultLabel ?? '';
 
-      triggerIcon = getTriggerIcon({
-        type: 'DATABASE_EVENT',
-        eventName: triggerEvent.event,
-      });
+      triggerIcon = getTriggerIcon(trigger);
 
       break;
     }
@@ -64,7 +63,6 @@ export const getWorkflowDiagramTriggerNode = ({
       triggerType: trigger.type,
       name: isDefined(trigger.name) ? trigger.name : triggerDefaultLabel,
       icon: triggerIcon,
-      isLeafNode: false,
     } satisfies WorkflowDiagramStepNodeData,
     position: {
       x: 0,

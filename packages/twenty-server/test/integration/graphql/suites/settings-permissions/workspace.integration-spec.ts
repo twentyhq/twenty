@@ -33,14 +33,6 @@ describe('workspace permissions', () => {
     const response = await makeGraphqlAPIRequest({ query });
 
     originalWorkspaceState = response.body.data.currentWorkspace;
-
-    const enablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
-      true,
-    );
-
-    await makeGraphqlAPIRequest(enablePermissionsQuery);
   });
 
   afterAll(async () => {
@@ -345,12 +337,12 @@ describe('workspace permissions', () => {
   });
 
   describe('billing', () => {
-    describe('updateBillingSubscription', () => {
+    describe('switchToYearlyInterval', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
         const queryData = {
           query: `
-            mutation UpdateBillingSubscription {
-              updateBillingSubscription {
+            mutation SwitchToYearlyInterval {
+              switchToYearlyInterval {
                 success
               }
             }
@@ -464,7 +456,6 @@ describe('workspace permissions', () => {
                   $input: UpdateLabPublicFeatureFlagInput!
                 ) {
                   updateLabPublicFeatureFlag(input: $input) {
-                    id
                     key
                     value
                   }
@@ -472,7 +463,7 @@ describe('workspace permissions', () => {
               `,
           variables: {
             input: {
-              publicFeatureFlag: 'TestFeature',
+              publicFeatureFlag: 'IsStripeIntegrationEnabled',
               value: true,
             },
           },
@@ -485,7 +476,9 @@ describe('workspace permissions', () => {
           .expect((res) => {
             expect(res.body.data).toBeDefined();
             expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe('Invalid feature flag key'); // this error shows that update has been attempted after the permission check
+            expect(res.body.errors[0].message).toBe(
+              'Invalid feature flag key, flag is not public',
+            );
           });
       });
 
@@ -496,7 +489,6 @@ describe('workspace permissions', () => {
                 $input: UpdateLabPublicFeatureFlagInput!
               ) {
                 updateLabPublicFeatureFlag(input: $input) {
-                  id
                   key
                   value
                 }

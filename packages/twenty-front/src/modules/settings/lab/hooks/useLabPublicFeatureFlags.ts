@@ -2,7 +2,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import {
   FeatureFlagKey,
   useUpdateLabPublicFeatureFlagMutation,
@@ -28,7 +28,6 @@ export const useLabPublicFeatureFlags = () => {
             ) ?? []),
             {
               ...updatedFlag,
-              workspaceId: currentWorkspace.id,
             },
           ],
         });

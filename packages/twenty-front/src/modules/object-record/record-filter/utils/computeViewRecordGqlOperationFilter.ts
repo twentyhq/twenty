@@ -18,7 +18,6 @@ import {
   SelectFilter,
   StringFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { isDefined } from 'twenty-shared';
 import { Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
@@ -43,6 +42,7 @@ import { z } from 'zod';
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import { isDefined } from 'twenty-shared/utils';
 
 type ComputeFilterRecordGqlOperationFilterParams = {
   filterValueDependencies: RecordFilterValueDependencies;
@@ -584,20 +584,38 @@ export const computeFilterRecordGqlOperationFilter = ({
 
       if (options.length === 0) return;
 
+      const emptyOptions = options.filter((option: string) => option === '');
+      const nonEmptyOptions = options.filter((option: string) => option !== '');
+
       switch (filter.operand) {
-        case RecordFilterOperand.Contains:
-          return {
-            [correspondingField.name]: {
-              containsAny: options,
-            } as MultiSelectFilter,
-          };
+        case RecordFilterOperand.Contains: {
+          const conditions = [];
+
+          if (nonEmptyOptions.length > 0) {
+            conditions.push({
+              [correspondingField.name]: {
+                containsAny: nonEmptyOptions,
+              } as MultiSelectFilter,
+            });
+          }
+
+          if (emptyOptions.length > 0) {
+            conditions.push({
+              [correspondingField.name]: {
+                isEmptyArray: true,
+              } as MultiSelectFilter,
+            });
+          }
+
+          return conditions.length === 1 ? conditions[0] : { or: conditions };
+        }
         case RecordFilterOperand.DoesNotContain:
           return {
             or: [
               {
                 not: {
                   [correspondingField.name]: {
-                    containsAny: options,
+                    containsAny: nonEmptyOptions,
                   } as MultiSelectFilter,
                 },
               },
@@ -624,21 +642,56 @@ export const computeFilterRecordGqlOperationFilter = ({
 
       if (options.length === 0) return;
 
+      const emptyOptions = options.filter((option: string) => option === '');
+      const nonEmptyOptions = options.filter((option: string) => option !== '');
+
       switch (filter.operand) {
-        case RecordFilterOperand.Is:
-          return {
-            [correspondingField.name]: {
-              in: options,
-            } as SelectFilter,
-          };
-        case RecordFilterOperand.IsNot:
-          return {
-            not: {
+        case RecordFilterOperand.Is: {
+          const conditions = [];
+
+          if (nonEmptyOptions.length > 0) {
+            conditions.push({
               [correspondingField.name]: {
-                in: options,
+                in: nonEmptyOptions,
               } as SelectFilter,
-            },
-          };
+            });
+          }
+
+          if (emptyOptions.length > 0) {
+            conditions.push({
+              [correspondingField.name]: {
+                is: 'NULL',
+              } as SelectFilter,
+            });
+          }
+
+          return conditions.length === 1 ? conditions[0] : { or: conditions };
+        }
+        case RecordFilterOperand.IsNot: {
+          const conditions = [];
+
+          if (nonEmptyOptions.length > 0) {
+            conditions.push({
+              not: {
+                [correspondingField.name]: {
+                  in: nonEmptyOptions,
+                } as SelectFilter,
+              },
+            });
+          }
+
+          if (emptyOptions.length > 0) {
+            conditions.push({
+              not: {
+                [correspondingField.name]: {
+                  is: 'NULL',
+                } as SelectFilter,
+              },
+            });
+          }
+
+          return conditions.length === 1 ? conditions[0] : { and: conditions };
+        }
         default:
           throw new Error(
             `Unknown operand ${filter.operand} for ${filterType} filter`,
@@ -671,6 +724,10 @@ export const computeFilterRecordGqlOperationFilter = ({
     case 'ACTOR': {
       switch (filter.operand) {
         case RecordFilterOperand.Is: {
+          if (filter.value === '[]') {
+            return;
+          }
+
           const parsedRecordIds = JSON.parse(filter.value) as string[];
 
           return {
@@ -682,6 +739,10 @@ export const computeFilterRecordGqlOperationFilter = ({
           };
         }
         case RecordFilterOperand.IsNot: {
+          if (filter.value === '[]') {
+            return;
+          }
+
           const parsedRecordIds = JSON.parse(filter.value) as string[];
 
           if (parsedRecordIds.length === 0) return;

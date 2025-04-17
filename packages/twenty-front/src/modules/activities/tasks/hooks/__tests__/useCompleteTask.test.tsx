@@ -10,7 +10,6 @@ const task: Task = {
   id: '123',
   status: 'DONE',
   title: 'Test',
-  body: 'Test',
   bodyV2: {
     blocknote: 'Test',
     markdown: 'Test',

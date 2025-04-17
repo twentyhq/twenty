@@ -8,11 +8,12 @@ import { FormFieldCurrencyValue } from '@/object-record/record-field/types/Field
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useMemo } from 'react';
+import { IconCircleOff } from 'twenty-ui/display';
 
 type FormCurrencyFieldInputProps = {
   label?: string;
   defaultValue?: FormFieldCurrencyValue | null;
-  onPersist: (value: FormFieldCurrencyValue) => void;
+  onChange: (value: FormFieldCurrencyValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
 };
@@ -20,31 +21,40 @@ type FormCurrencyFieldInputProps = {
 export const FormCurrencyFieldInput = ({
   label,
   defaultValue,
-  onPersist,
+  onChange,
   VariablePicker,
   readonly,
 }: FormCurrencyFieldInputProps) => {
   const currencies = useMemo(() => {
-    return Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(
+    const currencies = Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(
       ([key, { Icon, label }]) => ({
         value: key,
-        icon: Icon,
+        Icon,
         label: `${label} (${key})`,
       }),
     );
+
+    return [
+      {
+        label: 'No currency',
+        value: '',
+        Icon: IconCircleOff,
+      },
+      ...currencies,
+    ];
   }, []);
 
   const handleAmountMicrosChange = (
     newAmountMicros: string | number | null,
   ) => {
-    onPersist({
+    onChange({
       currencyCode: defaultValue?.currencyCode ?? null,
       amountMicros: newAmountMicros ?? null,
     });
   };
 
   const handleCurrencyCodeChange = (newCurrencyCode: string | null) => {
-    onPersist({
+    onChange({
       currencyCode: (newCurrencyCode as CurrencyCode) ?? null,
       amountMicros: defaultValue?.amountMicros ?? null,
     });
@@ -57,20 +67,17 @@ export const FormCurrencyFieldInput = ({
         <FormSelectFieldInput
           label="Currency Code"
           defaultValue={defaultValue?.currencyCode ?? ''}
-          onPersist={handleCurrencyCodeChange}
+          onChange={handleCurrencyCodeChange}
           options={currencies}
-          clearLabel={'Currency Code'}
           VariablePicker={VariablePicker}
           readonly={readonly}
-          placeholder="Select a currency"
-          preventDisplayPadding
         />
         <FormNumberFieldInput
           label="Amount Micros"
           defaultValue={defaultValue?.amountMicros ?? ''}
-          onPersist={handleAmountMicrosChange}
+          onChange={handleAmountMicrosChange}
           VariablePicker={VariablePicker}
-          placeholder="Set 3210000 for 3.21$"
+          placeholder="Set 3210000 for $3.21"
           readonly={readonly}
         />
       </FormNestedFieldInputContainer>

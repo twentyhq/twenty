@@ -17,6 +17,7 @@ export class WorkflowVisualizerPage {
   readonly deactivateWorkflowButton: Locator;
   readonly addTriggerButton: Locator;
   readonly commandMenu: Locator;
+  readonly stepHeaderInCommandMenu: Locator;
   readonly workflowNameLabel: Locator;
   readonly triggerNode: Locator;
   readonly background: Locator;
@@ -51,7 +52,7 @@ export class WorkflowVisualizerPage {
     'record-created': 'Record is Created',
     'record-updated': 'Record is Updated',
     'record-deleted': 'Record is Deleted',
-    manual: 'Manual Trigger',
+    manual: 'Launch manually',
   };
 
   constructor({ page, workflowName }: { page: Page; workflowName: string }) {
@@ -68,6 +69,9 @@ export class WorkflowVisualizerPage {
     });
     this.addTriggerButton = page.getByText('Add a Trigger');
     this.commandMenu = page.getByTestId('command-menu');
+    this.stepHeaderInCommandMenu = this.commandMenu.getByTestId(
+      'workflow-step-header',
+    );
     this.workflowNameLabel = page
       .getByTestId('top-bar-title')
       .getByText(this.workflowName);
@@ -104,11 +108,19 @@ export class WorkflowVisualizerPage {
   }
 
   async goToWorkflowVisualizerPage() {
-    await Promise.all([
-      this.#page.goto(`/object/workflow/${this.workflowId}`),
+    await this.#page.goto(`/`);
 
-      this.waitForWorkflowVisualizerLoad(),
-    ]);
+    const workflowsLink = this.#page.getByRole('link', { name: 'Workflows' });
+
+    await workflowsLink.click();
+
+    const workflowLink = this.#page
+      .getByTestId(`row-id-${this.workflowId}`)
+      .getByRole('link', { name: this.workflowName });
+
+    await workflowLink.click();
+
+    await this.waitForWorkflowVisualizerLoad();
   }
 
   async createInitialTrigger(trigger: WorkflowTriggerType) {

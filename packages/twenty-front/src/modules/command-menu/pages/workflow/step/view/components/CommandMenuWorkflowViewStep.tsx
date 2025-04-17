@@ -1,21 +1,31 @@
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
-import { WorkflowVersionComponentInstanceContext } from '@/workflow/states/context/WorkflowVersionComponentInstanceContext';
+import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
 import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
+import styled from '@emotion/styled';
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
 
 export const CommandMenuWorkflowViewStep = () => {
   const flow = useFlowOrThrow();
   const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
+
   return (
-    <WorkflowVersionComponentInstanceContext.Provider
-      value={{ instanceId: flow.workflowVersionId }}
+    <WorkflowStepContextProvider
+      value={{ workflowVersionId: flow.workflowVersionId }}
     >
-      <WorkflowStepDetail
-        stepId={workflowSelectedNode}
-        trigger={flow.trigger}
-        steps={flow.steps}
-        readonly
-      />
-    </WorkflowVersionComponentInstanceContext.Provider>
+      <StyledContainer>
+        <WorkflowStepDetail
+          stepId={workflowSelectedNode}
+          trigger={flow.trigger}
+          steps={flow.steps}
+          readonly
+        />
+      </StyledContainer>
+    </WorkflowStepContextProvider>
   );
 };

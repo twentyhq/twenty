@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import '@xyflow/react/dist/style.css';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { WorkflowDiagramEmptyTrigger } from '../WorkflowDiagramEmptyTrigger';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof WorkflowDiagramEmptyTrigger> = {
   title: 'Modules/Workflow/WorkflowDiagramEmptyTrigger',
@@ -11,7 +11,6 @@ const meta: Meta<typeof WorkflowDiagramEmptyTrigger> = {
   args: {
     data: {
       nodeType: 'empty-trigger',
-      isLeafNode: true,
     },
   },
 };
@@ -41,22 +40,4 @@ export const Selected: Story = {
     ReactflowDecorator,
     ComponentDecorator,
   ],
-};
-
-export const IsNotLeafNode: Story = {
-  decorators: [
-    (Story) => (
-      <div style={{ position: 'relative' }}>
-        <Story />
-      </div>
-    ),
-    ComponentDecorator,
-    ReactflowDecorator,
-  ],
-  args: {
-    data: {
-      nodeType: 'empty-trigger',
-      isLeafNode: false,
-    },
-  },
 };

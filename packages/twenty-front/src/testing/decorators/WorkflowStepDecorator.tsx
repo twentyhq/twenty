@@ -1,5 +1,6 @@
-import { usePopulateStepsOutputSchema } from '@/workflow/hooks/usePopulateStepsOutputSchema';
-import { WorkflowVersionComponentInstanceContext } from '@/workflow/states/context/WorkflowVersionComponentInstanceContext';
+import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
+import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
+import { flowState } from '@/workflow/states/flowState';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
@@ -14,16 +15,20 @@ import {
 export const WorkflowStepDecorator: Decorator = (Story) => {
   const setWorkflowId = useSetRecoilState(workflowIdState);
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
+  const setFlow = useSetRecoilState(flowState);
   const workflowVersion = getWorkflowMock().versions.edges[0]
     .node as WorkflowVersion;
-  const { populateStepsOutputSchema } = usePopulateStepsOutputSchema({
-    workflowVersionId: workflowVersion.id,
-  });
+  const { populateStepsOutputSchema } = useStepsOutputSchema();
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     setWorkflowId(getWorkflowMock().id);
     setWorkflowSelectedNode(getWorkflowNodeIdMock());
+    setFlow({
+      workflowVersionId: workflowVersion.id,
+      trigger: workflowVersion.trigger,
+      steps: workflowVersion.steps,
+    });
     populateStepsOutputSchema(workflowVersion);
     setReady(true);
   }, [
@@ -31,13 +36,17 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
     setWorkflowSelectedNode,
     populateStepsOutputSchema,
     workflowVersion,
+    setFlow,
   ]);
 
   return (
-    <WorkflowVersionComponentInstanceContext.Provider
-      value={{ instanceId: workflowVersion.id }}
+    <WorkflowStepContextProvider
+      value={{
+        workflowVersionId: workflowVersion.id,
+        workflowRunId: '123',
+      }}
     >
       {ready && <Story />}
-    </WorkflowVersionComponentInstanceContext.Provider>
+    </WorkflowStepContextProvider>
   );
 };

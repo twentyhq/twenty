@@ -15,9 +15,9 @@ import {
   IconLock,
   IconPencil,
   IconTrash,
-  MenuItem,
   useIcons,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;
@@ -77,7 +77,6 @@ export const ViewPickerOptionDropdown = ({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => {
           setIsHovered(false);
-          closeDropdown();
         }}
         dropdownPlacement="bottom-start"
         dropdownId={`view-picker-options-${view.id}`}

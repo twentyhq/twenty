@@ -1,14 +1,8 @@
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
 import ReactDatePicker from 'react-datepicker';
-import {
-  IconCalendarX,
-  MenuItemLeftContent,
-  StyledHoverableMenuItemBase,
-} from 'twenty-ui';
 
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { isDefined } from 'twenty-shared';
 
 import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
@@ -22,14 +16,21 @@ import {
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
+import { isDefined } from 'twenty-shared/utils';
+import { IconCalendarX } from 'twenty-ui/display';
+import {
+  MenuItemLeftContent,
+  StyledHoverableMenuItemBase,
+} from 'twenty-ui/navigation';
 
-export const MONTH_AND_YEAR_DROPDOWN_ID = 'date-picker-month-and-year-dropdown';
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';
 export const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
   'date-picker-month-and-year-dropdown-year-select';
 
 const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
+  width: 280px;
+
   & .react-datepicker {
     border-color: ${({ theme }) => theme.border.color.light};
     background: transparent;
@@ -323,7 +324,6 @@ export const DateTimePicker = ({
 
   const { timeZone } = useContext(UserContext);
 
-  const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
   const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
     MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   );
@@ -339,7 +339,6 @@ export const DateTimePicker = ({
   const closeDropdowns = () => {
     closeDropdownYearSelect();
     closeDropdownMonthSelect();
-    closeDropdown();
   };
 
   const handleClose = (newDate: Date) => {

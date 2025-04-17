@@ -10,13 +10,13 @@ import { previousUrlState } from '@/auth/states/previousUrlState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
-import { isDefined } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { AppPath } from '@/types/AppPath';
+import { isDefined } from 'twenty-shared/utils';
 import { ApolloFactory, Options } from '../services/apollo.factory';
 
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
@@ -26,7 +26,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
 
   const navigate = useNavigate();
   const { isMatchingLocation } = useIsMatchingLocation();
-  const [tokenPair, setTokenPair] = useRecoilState(tokenPairState);
+  const setTokenPair = useSetRecoilState(tokenPairState);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
@@ -62,8 +62,6 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         },
       },
       connectToDevTools: isDebugMode,
-      // We don't want to re-create the client on token change or it will cause infinite loop
-      initialTokenPair: tokenPair,
       currentWorkspaceMember: currentWorkspaceMember,
       onTokenPairChange: (tokenPair) => {
         setTokenPair(tokenPair);
@@ -103,12 +101,6 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
     currentWorkspace?.metadataVersion,
     setPreviousUrl,
   ]);
-
-  useUpdateEffect(() => {
-    if (isDefined(apolloRef.current)) {
-      apolloRef.current.updateTokenPair(tokenPair);
-    }
-  }, [tokenPair]);
 
   useUpdateEffect(() => {
     if (isDefined(apolloRef.current)) {

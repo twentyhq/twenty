@@ -1,5 +1,4 @@
-import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
@@ -17,19 +16,19 @@ export const useCopyContextStoreStates = () => {
         instanceIdToCopyFrom: string;
         instanceIdToCopyTo: string;
       }) => {
-        const contextStoreCurrentObjectMetadataItem = snapshot
+        const contextStoreCurrentObjectMetadataItemId = snapshot
           .getLoadable(
-            contextStoreCurrentObjectMetadataItemComponentState.atomFamily({
+            contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
               instanceId: instanceIdToCopyFrom,
             }),
           )
           .getValue();
 
         set(
-          contextStoreCurrentObjectMetadataItemComponentState.atomFamily({
+          contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
             instanceId: instanceIdToCopyTo,
           }),
-          contextStoreCurrentObjectMetadataItem,
+          contextStoreCurrentObjectMetadataItemId,
         );
 
         const contextStoreTargetedRecordsRule = snapshot
@@ -105,21 +104,6 @@ export const useCopyContextStoreStates = () => {
             instanceId: instanceIdToCopyTo,
           }),
           contextStoreCurrentViewType,
-        );
-
-        const actionMenuEntries = snapshot
-          .getLoadable(
-            actionMenuEntriesComponentState.atomFamily({
-              instanceId: instanceIdToCopyFrom,
-            }),
-          )
-          .getValue();
-
-        set(
-          actionMenuEntriesComponentState.atomFamily({
-            instanceId: instanceIdToCopyTo,
-          }),
-          actionMenuEntries,
         );
       },
     [],

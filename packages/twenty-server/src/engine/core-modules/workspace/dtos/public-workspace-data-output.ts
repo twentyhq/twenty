@@ -5,7 +5,7 @@ import {
   IdentityProviderType,
   SSOIdentityProviderStatus,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
+import { WorkspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 
 @ObjectType()
 export class SSOIdentityProvider {
@@ -57,6 +57,6 @@ export class PublicWorkspaceDataOutput {
   @Field(() => String, { nullable: true })
   displayName: Workspace['displayName'];
 
-  @Field(() => workspaceUrls)
-  workspaceUrls: workspaceUrls;
+  @Field(() => WorkspaceUrls)
+  workspaceUrls: WorkspaceUrls;
 }

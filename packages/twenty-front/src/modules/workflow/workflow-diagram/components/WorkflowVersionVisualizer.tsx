@@ -1,8 +1,7 @@
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { WorkflowDiagramCanvasReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasReadonly';
-import { WorkflowVersionOutputSchemaEffect } from '@/workflow/workflow-diagram/components/WorkflowVersionOutputSchemaEffect';
 import '@xyflow/react/dist/style.css';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowVersionVisualizer = ({
   workflowVersionId,
@@ -11,10 +10,11 @@ export const WorkflowVersionVisualizer = ({
 }) => {
   const workflowVersion = useWorkflowVersion(workflowVersionId);
 
-  return isDefined(workflowVersion) ? (
-    <>
-      <WorkflowVersionOutputSchemaEffect workflowVersion={workflowVersion} />
-      <WorkflowDiagramCanvasReadonly versionStatus={workflowVersion.status} />
-    </>
-  ) : null;
+  if (!isDefined(workflowVersion)) {
+    return null;
+  }
+
+  return (
+    <WorkflowDiagramCanvasReadonly versionStatus={workflowVersion.status} />
+  );
 };

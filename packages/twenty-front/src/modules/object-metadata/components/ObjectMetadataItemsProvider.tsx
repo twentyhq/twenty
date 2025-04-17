@@ -1,8 +1,8 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
+import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { UserOrMetadataLoader } from '~/loading/components/UserOrMetadataLoader';
 
@@ -11,11 +11,15 @@ export const ObjectMetadataItemsProvider = ({
 }: React.PropsWithChildren) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const shouldDisplayChildren = objectMetadataItems.length > 0;
+  const isAppWaitingForFreshObjectMetadata = useRecoilValue(
+    isAppWaitingForFreshObjectMetadataState,
+  );
+
+  const shouldDisplayChildren =
+    !isAppWaitingForFreshObjectMetadata && objectMetadataItems.length > 0;
 
   return (
     <>
-      <ObjectMetadataItemsLoadEffect />
       {shouldDisplayChildren ? (
         <PreComputedChipGeneratorsProvider>
           {children}

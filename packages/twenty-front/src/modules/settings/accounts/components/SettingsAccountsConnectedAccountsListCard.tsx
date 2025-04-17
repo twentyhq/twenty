@@ -1,5 +1,3 @@
-import { IconComponent, IconGoogle, IconMicrosoft } from 'twenty-ui';
-
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -8,6 +6,7 @@ import { SettingsAccountsConnectedAccountsRowRightContainer } from '@/settings/a
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsListCard } from '../../components/SettingsListCard';
 import { useLingui } from '@lingui/react/macro';
+import { IconComponent, IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 
 const ProviderIcons: { [k: string]: IconComponent } = {
   google: IconGoogle,

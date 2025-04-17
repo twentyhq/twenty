@@ -1,7 +1,9 @@
 import styled from '@emotion/styled';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 
+import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { LeftPanelSkeletonLoader } from '~/loading/components/LeftPanelSkeletonLoader';
 import { RightPanelSkeletonLoader } from '~/loading/components/RightPanelSkeletonLoader';
 
@@ -23,8 +25,11 @@ const StyledContainer = styled.div`
 `;
 
 export const UserOrMetadataLoader = () => {
+  const showAuthModal = useShowAuthModal();
+
   return (
     <StyledContainer>
+      {showAuthModal && <Modal.Backdrop modalVariant="primary" />}
       <LeftPanelSkeletonLoader />
       <RightPanelSkeletonLoader />
     </StyledContainer>

@@ -1,12 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
-import {
-  capitalize,
-  isDefined,
-  PermissionsOnAllObjectRecords,
-} from 'twenty-shared';
-import { DataSource, ObjectLiteral } from 'typeorm';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+import { ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
@@ -29,24 +26,26 @@ import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/g
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;
   options: WorkspaceQueryRunnerOptions;
-  dataSource: DataSource;
+  dataSource: WorkspaceDataSource;
   repository: WorkspaceRepository<ObjectLiteral>;
   graphqlQueryParser: GraphqlQueryParser;
   graphqlQuerySelectedFieldsResult: GraphqlQuerySelectedFieldsResult;
+  roleId?: string;
 };
 
 @Injectable()
@@ -71,9 +70,9 @@ export abstract class GraphqlQueryBaseResolverService<
   @Inject()
   protected readonly processNestedRelationsHelper: ProcessNestedRelationsHelper;
   @Inject()
-  protected readonly featureFlagService: FeatureFlagService;
-  @Inject()
   protected readonly permissionsService: PermissionsService;
+  @Inject()
+  protected readonly userRoleService: UserRoleService;
 
   public async execute(
     args: Input,
@@ -85,26 +84,24 @@ export abstract class GraphqlQueryBaseResolverService<
 
       await this.validate(args, options);
 
-      const featureFlagsMap =
-        await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+      const dataSource =
+        await this.twentyORMGlobalManager.getDataSourceForWorkspace(
           authContext.workspace.id,
         );
 
-      if (
-        featureFlagsMap[FeatureFlagKey.IsPermissionsEnabled] &&
-        objectMetadataItemWithFieldMaps.isSystem === true
-      ) {
-        await this.validateSystemObjectPermissionsOrThrow(options);
-      }
+      const featureFlagsMap = dataSource.featureFlagMap;
 
-      if (
-        featureFlagsMap[FeatureFlagKey.IsPermissionsEnabled] &&
-        !objectMetadataItemWithFieldMaps.isSystem
-      ) {
-        await this.validateObjectRecordPermissionsOrThrow({
-          operationName,
-          options,
-        });
+      const isPermissionsV2Enabled =
+        featureFlagsMap[FeatureFlagKey.IsPermissionsV2Enabled];
+
+      if (objectMetadataItemWithFieldMaps.isSystem === true) {
+        await this.validateSystemObjectPermissionsOrThrow(options);
+      } else {
+        if (!isPermissionsV2Enabled)
+          await this.validateObjectRecordPermissionsOrThrow({
+            operationName,
+            options,
+          });
       }
 
       const hookedArgs =
@@ -121,13 +118,14 @@ export abstract class GraphqlQueryBaseResolverService<
         ResolverArgsType[capitalize(operationName)],
       )) as Input;
 
-      const dataSource =
-        await this.twentyORMGlobalManager.getDataSourceForWorkspace(
-          authContext.workspace.id,
-        );
+      const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+        userWorkspaceId: authContext.userWorkspaceId,
+        workspaceId: authContext.workspace.id,
+      });
 
       const repository = dataSource.getRepository(
         objectMetadataItemWithFieldMaps.nameSingular,
+        roleId,
       );
 
       const graphqlQueryParser = new GraphqlQueryParser(
@@ -151,6 +149,7 @@ export abstract class GraphqlQueryBaseResolverService<
         repository,
         graphqlQueryParser,
         graphqlQuerySelectedFieldsResult,
+        roleId,
       };
 
       const results = await this.resolve(
@@ -193,7 +192,7 @@ export abstract class GraphqlQueryBaseResolverService<
         objectMetadataItemWithFieldMaps.nameSingular,
       )
     ) {
-      const permissionRequired: SettingsPermissions =
+      const permissionRequired: SettingPermissionType =
         SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS[
           objectMetadataItemWithFieldMaps.nameSingular
         ];
@@ -201,7 +200,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const userHasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId: authContext.userWorkspaceId,
-          _setting: permissionRequired,
+          setting: permissionRequired,
           workspaceId: authContext.workspace.id,
           isExecutedByApiKey: isDefined(authContext.apiKey),
         });
@@ -248,7 +247,6 @@ export abstract class GraphqlQueryBaseResolverService<
       case RESOLVER_METHOD_NAMES.FIND_MANY:
       case RESOLVER_METHOD_NAMES.FIND_ONE:
       case RESOLVER_METHOD_NAMES.FIND_DUPLICATES:
-      case RESOLVER_METHOD_NAMES.SEARCH:
         return PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS;
       case RESOLVER_METHOD_NAMES.CREATE_MANY:
       case RESOLVER_METHOD_NAMES.CREATE_ONE:

@@ -36,7 +36,6 @@ describe('getWorkflowVersionDiagram', () => {
   "nodes": [
     {
       "data": {
-        "isLeafNode": false,
         "nodeType": "empty-trigger",
       },
       "id": "trigger",
@@ -75,7 +74,6 @@ describe('getWorkflowVersionDiagram', () => {
     {
       "data": {
         "icon": "IconPlaylistAdd",
-        "isLeafNode": false,
         "name": "Record is created",
         "nodeType": "trigger",
         "triggerType": "DATABASE_EVENT",
@@ -144,7 +142,6 @@ describe('getWorkflowVersionDiagram', () => {
     {
       "data": {
         "icon": "IconPlaylistAdd",
-        "isLeafNode": false,
         "name": "Company created",
         "nodeType": "trigger",
         "triggerType": "DATABASE_EVENT",
@@ -158,7 +155,6 @@ describe('getWorkflowVersionDiagram', () => {
     {
       "data": {
         "actionType": "CODE",
-        "isLeafNode": false,
         "name": "",
         "nodeType": "action",
       },

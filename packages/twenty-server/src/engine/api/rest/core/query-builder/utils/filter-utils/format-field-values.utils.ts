@@ -1,6 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 
-import { FieldMetadataType, isDefined } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FieldValue } from 'src/engine/api/rest/core/types/field-value.type';
 

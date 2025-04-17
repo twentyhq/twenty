@@ -1,14 +1,6 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
 import { Controller, useFormContext } from 'react-hook-form';
-import {
-  CardContent,
-  CardFooter,
-  IconPlus,
-  IconPoint,
-  LightButton,
-  MAIN_COLORS,
-} from 'twenty-ui';
 import { z } from 'zod';
 
 import {
@@ -30,9 +22,13 @@ import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToStr
 
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
-import { t } from '@lingui/core/macro';
+import { CardContent, CardFooter } from 'twenty-ui/layout';
+import { IconPlus, IconPoint } from 'twenty-ui/display';
+import { LightButton } from 'twenty-ui/input';
+import { MAIN_COLORS } from 'twenty-ui/theme';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({
   defaultValue: selectFieldDefaultValueSchema(),
@@ -251,7 +247,7 @@ export const SettingsDataModelFieldSelectForm = ({
           <>
             <StyledContainer>
               <StyledLabelContainer>
-                <AdvancedSettingsWrapper dimension="width" hideIcon={true}>
+                <AdvancedSettingsWrapper animationDimension="width" hideDot>
                   <StyledApiKeyContainer>
                     <StyledIconContainer>
                       <StyledIconPoint

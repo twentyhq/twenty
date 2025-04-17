@@ -8,13 +8,13 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -25,6 +25,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 
 describe('WorkspaceService', () => {
   let service: WorkspaceService;
@@ -33,6 +34,8 @@ describe('WorkspaceService', () => {
   let workspaceRepository: Repository<Workspace>;
   let workspaceCacheStorageService: WorkspaceCacheStorageService;
   let messageQueueService: MessageQueueService;
+  let customDomainService: CustomDomainService;
+  let billingSubscriptionService: BillingSubscriptionService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -60,16 +63,31 @@ describe('WorkspaceService', () => {
             softDelete: jest.fn(),
           },
         },
+        {
+          provide: BillingService,
+          useValue: {
+            isBillingEnabled: jest.fn().mockReturnValue(true),
+          },
+        },
+        {
+          provide: BillingSubscriptionService,
+          useValue: {
+            deleteSubscriptions: jest.fn(),
+          },
+        },
+        {
+          provide: AnalyticsService,
+          useValue: {
+            createAnalyticsContext: jest.fn(),
+          },
+        },
         ...[
-          WorkspaceManagerService,
           WorkspaceManagerService,
           UserWorkspaceService,
           UserService,
           DomainManagerService,
           CustomDomainService,
-          BillingSubscriptionService,
-          BillingService,
-          EnvironmentService,
+          TwentyConfigService,
           EmailService,
           OnboardingService,
           WorkspaceInvitationService,
@@ -111,6 +129,11 @@ describe('WorkspaceService', () => {
     );
     messageQueueService = module.get<MessageQueueService>(
       getQueueToken(MessageQueue.deleteCascadeQueue),
+    );
+    customDomainService = module.get<CustomDomainService>(CustomDomainService);
+    customDomainService.deleteCustomHostnameByHostnameSilently = jest.fn();
+    billingSubscriptionService = module.get<BillingSubscriptionService>(
+      BillingSubscriptionService,
     );
   });
 
@@ -217,12 +240,62 @@ describe('WorkspaceService', () => {
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace);
       jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
+
       await service.deleteWorkspace(mockWorkspace.id, true);
+
+      expect(billingSubscriptionService.deleteSubscriptions).toHaveBeenCalled;
 
       expect(workspaceRepository.softDelete).toHaveBeenCalledWith({
         id: mockWorkspace.id,
       });
       expect(workspaceRepository.delete).not.toHaveBeenCalled();
+    });
+
+    it('should delete the custom domain when hard deleting a workspace with a custom domain', async () => {
+      const customDomain = 'custom.example.com';
+      const mockWorkspace = {
+        id: 'workspace-id',
+        metadataVersion: 0,
+        customDomain,
+      } as Workspace;
+
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue(mockWorkspace);
+      jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
+      jest
+        .spyOn(service, 'deleteMetadataSchemaCacheAndUserWorkspace')
+        .mockResolvedValue({} as Workspace);
+
+      await service.deleteWorkspace(mockWorkspace.id, false);
+
+      expect(
+        customDomainService.deleteCustomHostnameByHostnameSilently,
+      ).toHaveBeenCalledWith(customDomain);
+      expect(workspaceRepository.delete).toHaveBeenCalledWith(mockWorkspace.id);
+    });
+
+    it('should not delete the custom domain when soft deleting a workspace with a custom domain', async () => {
+      const customDomain = 'custom.example.com';
+      const mockWorkspace = {
+        id: 'workspace-id',
+        metadataVersion: 0,
+        customDomain,
+      } as Workspace;
+
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue(mockWorkspace);
+      jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
+
+      await service.deleteWorkspace(mockWorkspace.id, true);
+
+      expect(
+        customDomainService.deleteCustomHostnameByHostnameSilently,
+      ).not.toHaveBeenCalled();
+      expect(workspaceRepository.softDelete).toHaveBeenCalledWith({
+        id: mockWorkspace.id,
+      });
     });
   });
 });

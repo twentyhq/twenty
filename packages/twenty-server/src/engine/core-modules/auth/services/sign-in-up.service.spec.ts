@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -17,10 +17,10 @@ import {
   SignInUpBaseParams,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -42,10 +42,8 @@ describe('SignInUpService', () => {
   let fileUploadService: FileUploadService;
   let workspaceInvitationService: WorkspaceInvitationService;
   let userWorkspaceService: UserWorkspaceService;
-  let environmentService: EnvironmentService;
+  let twentyConfigService: TwentyConfigService;
   let domainManagerService: DomainManagerService;
-  let userRoleService: UserRoleService;
-  let featureFlagService: FeatureFlagService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -83,7 +81,7 @@ describe('SignInUpService', () => {
         {
           provide: UserWorkspaceService,
           useValue: {
-            addUserToWorkspace: jest.fn(),
+            addUserToWorkspaceIfUserNotInWorkspace: jest.fn(),
             checkUserWorkspaceExists: jest.fn(),
             create: jest.fn(),
           },
@@ -100,7 +98,7 @@ describe('SignInUpService', () => {
           useValue: {},
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
           },
@@ -145,11 +143,9 @@ describe('SignInUpService', () => {
     );
     userWorkspaceService =
       module.get<UserWorkspaceService>(UserWorkspaceService);
-    environmentService = module.get<EnvironmentService>(EnvironmentService);
+    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     domainManagerService =
       module.get<DomainManagerService>(DomainManagerService);
-    userRoleService = module.get<UserRoleService>(UserRoleService);
-    featureFlagService = module.get<FeatureFlagService>(FeatureFlagService);
   });
 
   it('should handle signInUp with valid personal invitation', async () => {
@@ -179,10 +175,9 @@ describe('SignInUpService', () => {
       .spyOn(workspaceInvitationService, 'invalidateWorkspaceInvitation')
       .mockResolvedValue(undefined);
 
-    jest.spyOn(userWorkspaceService, 'addUserToWorkspace').mockResolvedValue({
-      user: {} as User,
-      userWorkspace: {} as UserWorkspace,
-    });
+    jest
+      .spyOn(userWorkspaceService, 'addUserToWorkspaceIfUserNotInWorkspace')
+      .mockResolvedValue(undefined);
 
     const result = await service.signInUp(params);
 
@@ -200,6 +195,9 @@ describe('SignInUpService', () => {
       (params.workspace as Workspace).id,
       'test@example.com',
     );
+    expect(
+      userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace,
+    ).toHaveBeenCalled();
   });
 
   it('should handle signInUp on existing workspace without invitation', async () => {
@@ -217,16 +215,17 @@ describe('SignInUpService', () => {
       },
     };
 
-    jest.spyOn(userWorkspaceService, 'addUserToWorkspace').mockResolvedValue({
-      user: {} as User,
-      userWorkspace: {} as UserWorkspace,
-    });
+    jest
+      .spyOn(userWorkspaceService, 'addUserToWorkspaceIfUserNotInWorkspace')
+      .mockResolvedValue(undefined);
 
     const result = await service.signInUp(params);
 
     expect(result.workspace).toEqual(params.workspace);
     expect(result.user).toBeDefined();
-    expect(userWorkspaceService.addUserToWorkspace).toHaveBeenCalled();
+    expect(
+      userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace,
+    ).toHaveBeenCalled();
   });
 
   it('should handle signUp on new workspace for a new user', async () => {
@@ -243,7 +242,7 @@ describe('SignInUpService', () => {
       },
     };
 
-    jest.spyOn(environmentService, 'get').mockReturnValue(false);
+    jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
     jest.spyOn(WorkspaceRepository, 'count').mockResolvedValue(0);
     jest.spyOn(WorkspaceRepository, 'create').mockReturnValue({} as Workspace);
     jest.spyOn(WorkspaceRepository, 'save').mockResolvedValue({
@@ -261,8 +260,11 @@ describe('SignInUpService', () => {
       .mockResolvedValue('a-subdomain');
     jest
       .spyOn(UserRepository, 'save')
+
       .mockResolvedValue({ id: 'newUserId' } as User);
-    jest.spyOn(userWorkspaceService, 'create').mockResolvedValue({} as any);
+    jest
+      .spyOn(userWorkspaceService, 'create')
+      .mockResolvedValue({} as UserWorkspace);
 
     const result = await service.signInUp(params);
 
@@ -290,11 +292,10 @@ describe('SignInUpService', () => {
       },
     };
 
-    jest.spyOn(environmentService, 'get').mockReturnValue(false);
-    jest.spyOn(userWorkspaceService, 'addUserToWorkspace').mockResolvedValue({
-      user: {} as User,
-      userWorkspace: {} as UserWorkspace,
-    });
+    jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
+    jest
+      .spyOn(userWorkspaceService, 'addUserToWorkspaceIfUserNotInWorkspace')
+      .mockResolvedValue(undefined);
     jest
       .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
       .mockResolvedValue({} as UserWorkspace);
@@ -303,7 +304,9 @@ describe('SignInUpService', () => {
 
     expect(result.workspace).toEqual(params.workspace);
     expect(result.user).toBeDefined();
-    expect(userWorkspaceService.addUserToWorkspace).toHaveBeenCalled();
+    expect(
+      userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace,
+    ).toHaveBeenCalled();
   });
 
   it('should throw - handle signUp on workspace in pending state', async () => {
@@ -321,7 +324,7 @@ describe('SignInUpService', () => {
       },
     };
 
-    jest.spyOn(environmentService, 'get').mockReturnValue(false);
+    jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
     jest
       .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
       .mockResolvedValue(null);
@@ -334,37 +337,32 @@ describe('SignInUpService', () => {
     );
   });
 
-  it('should assign default role when permissions are enabled', async () => {
+  it('should handle signup for existing user on new workspace', async () => {
     const params: SignInUpBaseParams &
       ExistingUserOrPartialUserWithPicture &
       AuthProviderWithPasswordType = {
-      workspace: {
-        id: 'workspaceId',
-        defaultRoleId: 'defaultRoleId',
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      } as Workspace,
+      workspace: null,
       authParams: { provider: 'password', password: 'validPassword' },
       userData: {
         type: 'existingUser',
-        existingUser: { email: 'test@example.com' } as User,
+        existingUser: { email: 'existinguser@example.com' } as User,
       },
     };
 
-    const mockUserWorkspace = { id: 'userWorkspaceId' };
+    jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
+    jest.spyOn(WorkspaceRepository, 'count').mockResolvedValue(0);
+    jest.spyOn(WorkspaceRepository, 'create').mockReturnValue({} as Workspace);
+    jest.spyOn(WorkspaceRepository, 'save').mockResolvedValue({
+      id: 'newWorkspaceId',
+      activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+    } as Workspace);
+    jest.spyOn(userWorkspaceService, 'create').mockResolvedValue({} as any);
 
-    jest.spyOn(featureFlagService, 'isFeatureEnabled').mockResolvedValue(true);
-    jest.spyOn(userWorkspaceService, 'addUserToWorkspace').mockResolvedValue({
-      user: {} as User,
-      userWorkspace: mockUserWorkspace as UserWorkspace,
-    });
+    const result = await service.signInUp(params);
 
-    await service.signInUp(params);
-
-    expect(params.workspace).toBeDefined();
-    expect(userRoleService.assignRoleToUserWorkspace).toHaveBeenCalledWith({
-      workspaceId: params.workspace!.id,
-      userWorkspaceId: mockUserWorkspace.id,
-      roleId: params.workspace!.defaultRoleId,
-    });
+    expect(result.workspace).toBeDefined();
+    expect(result.user).toBeDefined();
+    expect(WorkspaceRepository.create).toHaveBeenCalled();
+    expect(WorkspaceRepository.save).toHaveBeenCalled();
   });
 });

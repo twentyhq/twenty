@@ -16,7 +16,7 @@ export class PersonQueryResultGetterHandler
       return person;
     }
 
-    const signedPayload = await this.fileService.encodeFileToken({
+    const signedPayload = this.fileService.encodeFileToken({
       personId: person.id,
       workspaceId: workspaceId,
     });

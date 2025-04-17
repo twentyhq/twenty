@@ -1,11 +1,11 @@
-import { FieldValidationDefinition } from '@/spreadsheet-import/types';
-import { absoluteUrlSchema, isDefined, isValidUuid } from 'twenty-shared';
+import { SpreadsheetImportFieldValidationDefinition } from '@/spreadsheet-import/types';
+import { absoluteUrlSchema, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const getSpreadSheetFieldValidationDefinitions = (
   type: FieldMetadataType,
   fieldName: string,
-): FieldValidationDefinition[] => {
+): SpreadsheetImportFieldValidationDefinition[] => {
   switch (type) {
     case FieldMetadataType.FULL_NAME:
       return [

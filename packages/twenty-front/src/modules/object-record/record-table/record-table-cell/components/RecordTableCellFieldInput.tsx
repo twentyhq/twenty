@@ -1,40 +1,29 @@
-import { useContext } from 'react';
-
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
+
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
-import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import {
+  FieldInputClickOutsideEvent,
+  FieldInputEvent,
+} from '@/object-record/record-field/types/FieldInputEvent';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
-import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
+import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
-  const { recordId, fieldDefinition } = useContext(FieldContext);
-
-  const { onUpsertRecord, onMoveFocus, onCloseTableCell } =
-    useRecordTableBodyContextOrThrow();
-
-  const isFieldReadOnly = useIsFieldValueReadOnly();
+  const { onMoveFocus, onCloseTableCell } = useRecordTableBodyContextOrThrow();
+  const { isReadOnly } = useContext(FieldContext);
 
   const handleEnter: FieldInputEvent = (persistField) => {
-    onUpsertRecord({
-      persistField,
-      recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-    });
+    persistField();
 
     onCloseTableCell();
     onMoveFocus('down');
   };
 
   const handleSubmit: FieldInputEvent = (persistField) => {
-    onUpsertRecord({
-      persistField,
-      recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-    });
+    persistField();
 
     onCloseTableCell();
   };
@@ -43,63 +32,38 @@ export const RecordTableCellFieldInput = () => {
     onCloseTableCell();
   };
 
-  const handleClickOutside = useRecoilCallback(
+  const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
     ({ snapshot }) =>
-      (persistField: () => void, event: MouseEvent | TouchEvent) => {
-        const dropdownFocusId = getDropdownFocusIdForRecordField(
-          recordId,
-          fieldDefinition.fieldMetadataId,
-          'table-cell',
-        );
-
-        const activeDropdownFocusId = snapshot
-          .getLoadable(activeDropdownFocusIdState)
+      (persistField, event) => {
+        const hotkeyScope = snapshot
+          .getLoadable(currentHotkeyScopeState)
           .getValue();
-
-        if (activeDropdownFocusId !== dropdownFocusId) {
+        if (hotkeyScope.scope !== TableHotkeyScope.CellEditMode) {
           return;
         }
-
         event.stopImmediatePropagation();
 
-        onUpsertRecord({
-          persistField,
-          recordId,
-          fieldName: fieldDefinition.metadata.fieldName,
-        });
-
+        persistField();
         onCloseTableCell();
       },
-    [fieldDefinition, onCloseTableCell, onUpsertRecord, recordId],
+    [onCloseTableCell],
   );
 
   const handleEscape: FieldInputEvent = (persistField) => {
-    onUpsertRecord({
-      persistField,
-      recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-    });
+    persistField();
 
     onCloseTableCell();
   };
 
   const handleTab: FieldInputEvent = (persistField) => {
-    onUpsertRecord({
-      persistField,
-      recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-    });
+    persistField();
 
     onCloseTableCell();
     onMoveFocus('right');
   };
 
   const handleShiftTab: FieldInputEvent = (persistField) => {
-    onUpsertRecord({
-      persistField,
-      recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-    });
+    persistField();
 
     onCloseTableCell();
     onMoveFocus('left');
@@ -107,10 +71,6 @@ export const RecordTableCellFieldInput = () => {
 
   return (
     <FieldInput
-      recordFieldInputdId={getRecordFieldInputId(
-        recordId,
-        fieldDefinition?.metadata?.fieldName,
-      )}
       onCancel={handleCancel}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
@@ -118,7 +78,7 @@ export const RecordTableCellFieldInput = () => {
       onShiftTab={handleShiftTab}
       onSubmit={handleSubmit}
       onTab={handleTab}
-      isReadOnly={isFieldReadOnly}
+      isReadOnly={isReadOnly}
     />
   );
 };

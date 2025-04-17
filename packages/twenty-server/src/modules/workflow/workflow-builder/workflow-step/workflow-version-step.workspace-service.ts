@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
+import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
@@ -17,6 +19,8 @@ import {
 import { StepOutput } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
+import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/insert-step';
+import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/remove-step';
 import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
   WorkflowAction,
@@ -53,13 +57,13 @@ export class WorkflowVersionStepWorkspaceService {
 
   async createWorkflowVersionStep({
     workspaceId,
-    workflowVersionId,
-    stepType,
+    input,
   }: {
     workspaceId: string;
-    workflowVersionId: string;
-    stepType: WorkflowActionType;
+    input: CreateWorkflowVersionStepInput;
   }): Promise<WorkflowActionDTO> {
+    const { workflowVersionId, stepType, parentStepId, nextStepId } = input;
+
     const newStep = await this.getStepDefaultDefinition({
       type: stepType,
       workspaceId,
@@ -86,8 +90,16 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
+    const existingSteps = workflowVersion.steps || [];
+    const updatedSteps = insertStep({
+      existingSteps,
+      insertedStep: enrichedNewStep,
+      parentStepId,
+      nextStepId,
+    });
+
     await workflowVersionRepository.update(workflowVersion.id, {
-      steps: [...(workflowVersion.steps || []), enrichedNewStep],
+      steps: updatedSteps,
     });
 
     return enrichedNewStep;
@@ -150,11 +162,11 @@ export class WorkflowVersionStepWorkspaceService {
   async deleteWorkflowVersionStep({
     workspaceId,
     workflowVersionId,
-    stepId,
+    stepIdToDelete,
   }: {
     workspaceId: string;
     workflowVersionId: string;
-    stepId: string;
+    stepIdToDelete: string;
   }): Promise<WorkflowActionDTO> {
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -181,9 +193,9 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
-    const stepToDelete = workflowVersion.steps.filter(
-      (step) => step.id === stepId,
-    )?.[0];
+    const stepToDelete = workflowVersion.steps.find(
+      (step) => step.id === stepIdToDelete,
+    );
 
     if (!isDefined(stepToDelete)) {
       throw new WorkflowVersionStepException(
@@ -193,9 +205,15 @@ export class WorkflowVersionStepWorkspaceService {
     }
 
     const workflowVersionUpdates =
-      stepId === TRIGGER_STEP_ID
+      stepIdToDelete === TRIGGER_STEP_ID
         ? { trigger: null }
-        : { steps: workflowVersion.steps.filter((step) => step.id !== stepId) };
+        : {
+            steps: removeStep({
+              existingSteps: workflowVersion.steps,
+              stepIdToDelete,
+              stepToDeleteChildrenIds: stepToDelete.nextStepIds,
+            }),
+          };
 
     await workflowVersionRepository.update(
       workflowVersion.id,
@@ -492,6 +510,33 @@ export class WorkflowVersionStepWorkspaceService {
               objectName: activeObjectMetadataItem?.nameSingular || '',
               limit: 1,
             },
+          },
+        };
+      }
+      case WorkflowActionType.FORM: {
+        return {
+          id: newStepId,
+          name: 'Form',
+          type: WorkflowActionType.FORM,
+          valid: false,
+          settings: {
+            ...BASE_STEP_DEFINITION,
+            input: [
+              {
+                id: v4(),
+                name: 'company',
+                label: 'Company',
+                placeholder: 'Select a company',
+                type: FieldMetadataType.TEXT,
+              },
+              {
+                id: v4(),
+                name: 'number',
+                label: 'Number',
+                placeholder: '1000',
+                type: FieldMetadataType.NUMBER,
+              },
+            ],
           },
         };
       }

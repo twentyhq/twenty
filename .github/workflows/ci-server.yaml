@@ -168,8 +168,25 @@ jobs:
         image: redis
         ports:
           - 6379:6379
+      clickhouse:
+        image: clickhouse/clickhouse-server:latest
+        env:
+          CLICKHOUSE_PASSWORD: clickhousePassword
+          CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
+        ports:
+          - 8123:8123
+          - 9000:9000
+        options: >-
+          --health-cmd "clickhouse-client --host=localhost --port=9000 --user=default --password=clickhousePassword --query='SELECT 1'" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+      NODE_ENV: test
+      ANALYTICS_ENABLED: true
+      CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
+      CLICKHOUSE_PASSWORD: clickhousePassword
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -177,12 +194,13 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
-      - name: Update .env.test for billing
+      - name: Update .env.test for integrations tests
         run: |
           echo "IS_BILLING_ENABLED=true" >> .env.test
           echo "BILLING_STRIPE_API_KEY=test-api-key" >> .env.test
           echo "BILLING_STRIPE_BASE_PLAN_PRODUCT_ID=test-base-plan-product-id" >> .env.test
           echo "BILLING_STRIPE_WEBHOOK_SECRET=test-webhook-secret" >> .env.test
+          echo "BILLING_PLAN_REQUIRED_LINK=http://localhost:3001/stripe-redirection" >> .env.test
       - name: Restore server setup
         uses: ./.github/workflows/actions/restore-cache
         with:
@@ -194,15 +212,18 @@ jobs:
           npx nx build twenty-shared
           npx nx build twenty-emails
       - name: Server / Create Test DB
-        env:
-          NODE_ENV: test
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+      - name: Run ClickHouse migrations
+        run: npx nx clickhouse:migrate twenty-server
+      - name: Run ClickHouse seeds
+        run: npx nx clickhouse:seed twenty-server
       - name: Server / Run Integration Tests
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:backend
-          tasks: 'test:integration:with-db-reset'
+          tasks: 'test:integration'
+          configuration: 'with-db-reset'
       - name: Server / Upload reset-logs file
         if: always()
         uses: actions/upload-artifact@v4

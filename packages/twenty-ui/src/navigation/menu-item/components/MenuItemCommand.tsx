@@ -46,7 +46,9 @@ const StyledMenuItemCommandContainer = styled.div<{ isSelected?: boolean }>`
   transition: all 150ms ease;
   transition-property: none;
   user-select: none;
-  width: calc(100% - 2 * var(--horizontal-padding));
+  width: 100%;
+  box-sizing: border-box;
+  height: 40px;
   &:hover {
     background: ${({ theme }) => theme.background.transparent.lighter};
   }
@@ -76,6 +78,7 @@ const StyledTextContainer = styled.div`
   display: flex;
   flex-direction: row;
   max-width: calc(100% - 2 * var(--horizontal-padding));
+  overflow: hidden;
 `;
 
 export type MenuItemCommandProps = {

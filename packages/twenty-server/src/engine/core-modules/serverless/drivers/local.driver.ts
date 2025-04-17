@@ -18,6 +18,7 @@ import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/dri
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
+import { ConsoleListener } from 'src/engine/core-modules/serverless/drivers/utils/intercept-console';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -47,7 +48,7 @@ export class LocalDriver implements ServerlessDriver {
 
   async delete() {}
 
-  async build(serverlessFunction: ServerlessFunctionEntity) {
+  private async build(serverlessFunction: ServerlessFunctionEntity) {
     await this.createLayerIfNotExists(serverlessFunction.layerVersion);
   }
 
@@ -81,12 +82,9 @@ export class LocalDriver implements ServerlessDriver {
 
     const startTime = Date.now();
 
-    const computedVersion =
-      version === 'latest' ? serverlessFunction.latestVersion : version;
-
     const folderPath = getServerlessFolder({
       serverlessFunction,
-      version: computedVersion,
+      version,
     });
 
     const tsCodeStream = await this.fileStorageService.read({
@@ -129,6 +127,39 @@ export class LocalDriver implements ServerlessDriver {
       }
     }
 
+    let logs = '';
+
+    const consoleListener = new ConsoleListener();
+
+    consoleListener.intercept((type, args) => {
+      const formattedArgs = args.map((arg) => {
+        if (typeof arg === 'object' && arg !== null) {
+          const seen = new WeakSet();
+
+          return JSON.stringify(
+            arg,
+            (key, value) => {
+              if (typeof value === 'object' && value !== null) {
+                if (seen.has(value)) {
+                  return '[Circular]'; // Handle circular references
+                }
+                seen.add(value);
+              }
+
+              return value;
+            },
+            2,
+          );
+        }
+
+        return arg;
+      });
+
+      const formattedType = type === 'log' ? 'info' : type;
+
+      logs += `${new Date().toISOString()} ${formattedType.toUpperCase()} ${formattedArgs.join(' ')}\n`;
+    });
+
     try {
       const mainFile = await import(compiledCodeFilePath);
 
@@ -141,12 +172,14 @@ export class LocalDriver implements ServerlessDriver {
 
       return {
         data: result,
+        logs,
         duration,
         status: ServerlessFunctionExecutionStatus.SUCCESS,
       };
     } catch (error) {
       return {
         data: null,
+        logs,
         duration: Date.now() - startTime,
         error: {
           errorType: 'UnhandledError',
@@ -156,6 +189,8 @@ export class LocalDriver implements ServerlessDriver {
         status: ServerlessFunctionExecutionStatus.ERROR,
       };
     } finally {
+      // Restoring originalConsole
+      consoleListener.release();
       await fs.rm(compiledCodeFolderPath, { recursive: true, force: true });
     }
   }

@@ -14,9 +14,9 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared';
-import { MenuItem } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 import { getOperandLabel } from '../utils/getOperandLabel';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   background-color: ${({ theme }) => theme.background.primary};
@@ -66,13 +66,14 @@ export const ObjectFilterDropdownOperandSelect = () => {
 
     if (isValuelessOperand && isDefined(fieldMetadataItemUsedInDropdown)) {
       applyRecordFilter({
-        id: v4(),
+        id: selectedFilter?.id ? selectedFilter.id : v4(),
         fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
         displayValue: '',
         operand: newOperand,
         value: '',
         type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
         label: fieldMetadataItemUsedInDropdown.label,
+        subFieldName: subFieldNameUsedInDropdown,
       });
       return;
     }
@@ -100,6 +101,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
         value,
         type: filterType,
         label: fieldMetadataItemUsedInDropdown.label,
+        subFieldName: subFieldNameUsedInDropdown,
       });
     }
   };

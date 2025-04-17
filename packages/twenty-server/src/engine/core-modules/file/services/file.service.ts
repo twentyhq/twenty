@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common';
 
 import { Stream } from 'stream';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class FileService {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly fileStorageService: FileStorageService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async getFileStream(
@@ -27,8 +27,8 @@ export class FileService {
     });
   }
 
-  async encodeFileToken(payloadToEncode: Record<string, any>) {
-    const fileTokenExpiresIn = this.environmentService.get(
+  encodeFileToken(payloadToEncode: Record<string, any>) {
+    const fileTokenExpiresIn = this.twentyConfigService.get(
       'FILE_TOKEN_EXPIRES_IN',
     );
     const secret = this.jwtWrapperService.generateAppSecret(

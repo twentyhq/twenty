@@ -12,6 +12,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -62,6 +63,10 @@ describe('AuthResolver', () => {
         },
         {
           provide: RenewTokenService,
+          useValue: {},
+        },
+        {
+          provide: SignInUpService,
           useValue: {},
         },
         {

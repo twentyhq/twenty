@@ -3,8 +3,7 @@ import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { THEME_COMMON } from '@ui/theme';
-
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay } from './AppTooltip';
 
 const spacing4 = THEME_COMMON.spacing(4);
@@ -113,7 +112,7 @@ export const OverflowingTextWithTooltip = ({
   };
   return (
     <>
-      {isDefined(displayedMaxRows) && (
+      {isDefined(displayedMaxRows) ? (
         <StyledOverflowingMultilineText
           data-testid="tooltip"
           cursorPointer={isTitleOverflowing}
@@ -126,8 +125,7 @@ export const OverflowingTextWithTooltip = ({
         >
           {text}
         </StyledOverflowingMultilineText>
-      )}
-      {!isDefined(displayedMaxRows) && (
+      ) : (
         <StyledOverflowingText
           data-testid="tooltip"
           cursorPointer={isTitleOverflowing}

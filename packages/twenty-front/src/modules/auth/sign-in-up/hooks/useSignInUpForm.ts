@@ -11,7 +11,7 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const makeValidationSchema = (signInUpStep: SignInUpStep) =>
   z
@@ -22,10 +22,7 @@ const makeValidationSchema = (signInUpStep: SignInUpStep) =>
         signInUpStep === SignInUpStep.Password
           ? z
               .string()
-              .regex(
-                PASSWORD_REGEX,
-                'Password must contain at least 8 characters',
-              )
+              .regex(PASSWORD_REGEX, 'Password must be min. 8 characters')
           : z.string().optional(),
       captchaToken: z.string().default(''),
     })

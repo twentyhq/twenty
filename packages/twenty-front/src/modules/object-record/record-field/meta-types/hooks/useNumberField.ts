@@ -18,7 +18,7 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldNumber } from '../../types/guards/isFieldNumber';
 
 export const useNumberField = () => {
-  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   assertFieldMetadata(FieldMetadataType.NUMBER, isFieldNumber, fieldDefinition);
 
@@ -55,7 +55,7 @@ export const useNumberField = () => {
   };
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldNumberValue>(`${recordId}-${fieldName}`);
+    useRecordFieldInput<FieldNumberValue>();
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 
@@ -65,7 +65,6 @@ export const useNumberField = () => {
     draftValue,
     setDraftValue,
     setFieldValue,
-    hotkeyScope,
     persistNumberField,
   };
 };

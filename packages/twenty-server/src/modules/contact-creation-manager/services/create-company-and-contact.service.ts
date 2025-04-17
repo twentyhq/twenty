@@ -6,6 +6,7 @@ import compact from 'lodash.compact';
 import { Any, EntityManager, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
@@ -36,6 +37,7 @@ export class CreateCompanyAndContactService {
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   private async createCompaniesAndPeople(
@@ -84,13 +86,14 @@ export class CreateCompanyAndContactService {
     });
 
     const alreadyCreatedContactEmails: string[] = alreadyCreatedContacts?.map(
-      ({ emails }) => emails?.primaryEmail,
+      ({ emails }) => emails?.primaryEmail?.toLowerCase(),
     );
 
     const filteredContactsToCreate = uniqueContacts.filter(
       (participant) =>
-        !alreadyCreatedContactEmails.includes(participant.handle) &&
-        participant.handle.includes('@'),
+        !alreadyCreatedContactEmails.includes(
+          participant.handle.toLowerCase(),
+        ) && participant.handle.includes('@'),
     );
 
     const filteredContactsToCreateWithCompanyDomainNames =
@@ -204,26 +207,34 @@ export class CreateCompanyAndContactService {
     }
 
     for (const contactsBatch of contactsBatches) {
-      const createdPeople = await this.createCompaniesAndPeople(
-        connectedAccount,
-        contactsBatch,
-        workspaceId,
-        source,
-      );
+      try {
+        const createdPeople = await this.createCompaniesAndPeople(
+          connectedAccount,
+          contactsBatch,
+          workspaceId,
+          source,
+        );
 
-      this.workspaceEventEmitter.emitDatabaseBatchEvent({
-        objectMetadataNameSingular: 'person',
-        action: DatabaseEventAction.CREATED,
-        events: createdPeople.map((createdPerson) => ({
-          // Fix ' as string': TypeORM typing issue... id is always returned when using save
-          recordId: createdPerson.id as string,
-          objectMetadata,
-          properties: {
-            after: createdPerson,
+        this.workspaceEventEmitter.emitDatabaseBatchEvent({
+          objectMetadataNameSingular: 'person',
+          action: DatabaseEventAction.CREATED,
+          events: createdPeople.map((createdPerson) => ({
+            // Fix ' as string': TypeORM typing issue... id is always returned when using save
+            recordId: createdPerson.id as string,
+            objectMetadata,
+            properties: {
+              after: createdPerson,
+            },
+          })),
+          workspaceId,
+        });
+      } catch (error) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: {
+            id: workspaceId,
           },
-        })),
-        workspaceId,
-      });
+        });
+      }
     }
   }
 }

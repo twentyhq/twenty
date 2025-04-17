@@ -3,17 +3,12 @@ import { wrapper } from '@keystatic/core/content-components';
 
 export default config({
   storage: {
-    kind:
-      process.env.KEYSTATIC_STORAGE_KIND === ''
-        ? 'local'
-        : ((process.env.KEYSTATIC_STORAGE_KIND || 'local') as
-            | 'local'
-            | 'github'
-            | 'cloud'),
+    kind: 'github',
     repo: {
       owner: 'twentyhq',
       name: 'twenty',
     },
+    pathPrefix: 'packages/twenty-website',
   },
   collections: {
     developers: collection({
@@ -43,12 +38,42 @@ export default config({
       path: 'src/content/releases/*',
       format: { contentField: 'content' },
       schema: {
-        release: fields.slug({ name: { label: 'Release' } }),
+        release: fields.slug({
+          name: {
+            label: 'Release',
+            validation: {
+              pattern: {
+                regex: /^\d+\.\d+\.\d+$/,
+                message: 'The release must be in the format major.minor.patch',
+              },
+            },
+          },
+          slug: {
+            generate: (name) => name,
+            validation: {
+              pattern: {
+                regex: /^\d+\.\d+\.\d+$/,
+                message: 'The release must be in the format major.minor.patch',
+              },
+            },
+          },
+        }),
         // TODO: Define the date with a normalized format
         Date: fields.text({ label: 'Date' }),
         content: fields.mdx({
           label: 'Content',
+          options: {
+            image: {
+              directory: 'public/images/releases',
+              publicPath: '/images/releases/',
+            },
+          },
         }),
+      },
+      parseSlugForSort: (slug) => {
+        const [major, minor, patch] = slug.split('.');
+
+        return `${major.padStart(4, '0')}.${minor.padStart(4, '0')}.${patch.padStart(4, '0')}`;
       },
     }),
   },

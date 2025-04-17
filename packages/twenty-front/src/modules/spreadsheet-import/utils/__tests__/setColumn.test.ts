@@ -1,24 +1,22 @@
-import {
-  Column,
-  ColumnType,
-} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import { Field } from '@/spreadsheet-import/types';
+import { SpreadsheetImportField } from '@/spreadsheet-import/types';
+import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { setColumn } from '@/spreadsheet-import/utils/setColumn';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('setColumn', () => {
-  const defaultField: Field<'Name'> = {
-    icon: null,
+  const defaultField: SpreadsheetImportField<'Name'> = {
+    Icon: null,
     label: 'label',
     key: 'Name',
     fieldType: { type: 'input' },
     fieldMetadataType: FieldMetadataType.TEXT,
   };
 
-  const oldColumn: Column<'oldValue'> = {
+  const oldColumn: SpreadsheetColumn<'oldValue'> = {
     index: 0,
     header: 'Name',
-    type: ColumnType.matched,
+    type: SpreadsheetColumnType.matched,
     value: 'oldValue',
   };
 
@@ -29,7 +27,7 @@ describe('setColumn', () => {
         type: 'select',
         options: [{ value: 'John' }, { value: 'Alice' }],
       },
-    } as Field<'Name'>;
+    } as SpreadsheetImportField<'Name'>;
 
     const data = [['John'], ['Alice']];
     const result = setColumn(oldColumn, field, data);
@@ -37,7 +35,7 @@ describe('setColumn', () => {
     expect(result).toEqual({
       index: 0,
       header: 'Name',
-      type: ColumnType.matchedSelectOptions,
+      type: SpreadsheetColumnType.matchedSelectOptions,
       value: 'Name',
       matchedOptions: [
         {
@@ -56,14 +54,14 @@ describe('setColumn', () => {
     const field = {
       ...defaultField,
       fieldType: { type: 'checkbox' },
-    } as Field<'Name'>;
+    } as SpreadsheetImportField<'Name'>;
 
     const result = setColumn(oldColumn, field);
 
     expect(result).toEqual({
       index: 0,
       header: 'Name',
-      type: ColumnType.matchedCheckbox,
+      type: SpreadsheetColumnType.matchedCheckbox,
       value: 'Name',
     });
   });
@@ -72,14 +70,14 @@ describe('setColumn', () => {
     const field = {
       ...defaultField,
       fieldType: { type: 'input' },
-    } as Field<'Name'>;
+    } as SpreadsheetImportField<'Name'>;
 
     const result = setColumn(oldColumn, field);
 
     expect(result).toEqual({
       index: 0,
       header: 'Name',
-      type: ColumnType.matched,
+      type: SpreadsheetColumnType.matched,
       value: 'Name',
     });
   });
@@ -88,14 +86,14 @@ describe('setColumn', () => {
     const field = {
       ...defaultField,
       fieldType: { type: 'unknown' },
-    } as unknown as Field<'Name'>;
+    } as unknown as SpreadsheetImportField<'Name'>;
 
     const result = setColumn(oldColumn, field);
 
     expect(result).toEqual({
       index: 0,
       header: 'Name',
-      type: ColumnType.empty,
+      type: SpreadsheetColumnType.empty,
     });
   });
 });

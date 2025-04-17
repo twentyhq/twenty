@@ -9,12 +9,14 @@ import {
   CleanSuspendedWorkspaceEmail,
   WarnSuspendedWorkspaceEmail,
 } from 'twenty-emails';
-import { isDefined, WorkspaceActivationStatus } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
@@ -37,7 +39,7 @@ export class CleanerWorkspaceService {
 
   constructor(
     private readonly workspaceService: WorkspaceService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly userVarsService: UserVarsService,
     private readonly userService: UserService,
     private readonly emailService: EmailService,
@@ -46,19 +48,22 @@ export class CleanerWorkspaceService {
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    @InjectRepository(UserWorkspace, 'core')
+    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
   ) {
-    this.inactiveDaysBeforeSoftDelete = this.environmentService.get(
+    this.inactiveDaysBeforeSoftDelete = this.twentyConfigService.get(
       'WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION',
     );
-    this.inactiveDaysBeforeDelete = this.environmentService.get(
+    this.inactiveDaysBeforeDelete = this.twentyConfigService.get(
       'WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION',
     );
-    this.inactiveDaysBeforeWarn = this.environmentService.get(
+    this.inactiveDaysBeforeWarn = this.twentyConfigService.get(
       'WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION',
     );
-    this.maxNumberOfWorkspacesDeletedPerExecution = this.environmentService.get(
-      'MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION',
-    );
+    this.maxNumberOfWorkspacesDeletedPerExecution =
+      this.twentyConfigService.get(
+        'MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION',
+      );
   }
 
   async computeWorkspaceBillingInactivity(
@@ -117,17 +122,16 @@ export class CleanerWorkspaceService {
       locale: workspaceMember.locale,
     };
     const emailTemplate = WarnSuspendedWorkspaceEmail(emailData);
-    const html = render(emailTemplate, { pretty: true });
-    const text = render(emailTemplate, { plainText: true });
+    const html = await render(emailTemplate, { pretty: true });
+    const text = await render(emailTemplate, { plainText: true });
 
     i18n.activate(workspaceMember.locale);
 
     this.emailService.send({
       to: workspaceMember.userEmail,
-      bcc: this.environmentService.get('EMAIL_SYSTEM_ADDRESS'),
-      from: `${this.environmentService.get(
+      from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
-      )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
+      )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
       subject: t`Action needed to prevent workspace deletion`,
       html,
       text,
@@ -194,15 +198,14 @@ export class CleanerWorkspaceService {
       locale: workspaceMember.locale,
     };
     const emailTemplate = CleanSuspendedWorkspaceEmail(emailData);
-    const html = render(emailTemplate, { pretty: true });
-    const text = render(emailTemplate, { plainText: true });
+    const html = await render(emailTemplate, { pretty: true });
+    const text = await render(emailTemplate, { plainText: true });
 
     this.emailService.send({
       to: workspaceMember.userEmail,
-      bcc: this.environmentService.get('EMAIL_SYSTEM_ADDRESS'),
-      from: `${this.environmentService.get(
+      from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
-      )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
+      )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
       subject: 'Your workspace has been deleted',
       html,
       text,
@@ -257,6 +260,53 @@ export class CleanerWorkspaceService {
     );
   }
 
+  async batchCleanOnboardingWorkspaces(
+    workspaceIds: string[],
+    dryRun = false,
+  ): Promise<void> {
+    this.logger.log(
+      `${dryRun ? 'DRY RUN - ' : ''}batchCleanOnboardingWorkspaces running...`,
+    );
+
+    const workspaces = await this.workspaceRepository.find({
+      where: {
+        id: In(workspaceIds),
+        activationStatus: In([
+          WorkspaceActivationStatus.PENDING_CREATION,
+          WorkspaceActivationStatus.ONGOING_CREATION,
+        ]),
+      },
+      withDeleted: true,
+    });
+
+    if (workspaces.length !== 0) {
+      if (!dryRun) {
+        for (const workspace of workspaces) {
+          const userWorkspaces = await this.userWorkspaceRepository.find({
+            where: {
+              workspaceId: workspace.id,
+            },
+            withDeleted: true,
+          });
+
+          for (const userWorkspace of userWorkspaces) {
+            await this.workspaceService.handleRemoveWorkspaceMember(
+              workspace.id,
+              userWorkspace.userId,
+              false,
+            );
+          }
+
+          await this.workspaceRepository.delete(workspace.id);
+        }
+      }
+
+      this.logger.log(
+        `${dryRun ? 'DRY RUN - ' : ''}batchCleanOnboardingWorkspaces done with ${workspaces.length} workspaces!`,
+      );
+    }
+  }
+
   async batchWarnOrCleanSuspendedWorkspaces(
     workspaceIds: string[],
     dryRun = false,
@@ -277,32 +327,35 @@ export class CleanerWorkspaceService {
 
     for (const workspace of workspaces) {
       try {
+        const isSoftDeletedWorkspace = isDefined(workspace.deletedAt);
+
+        if (isSoftDeletedWorkspace) {
+          const daysSinceSoftDeleted = workspace.deletedAt
+            ? differenceInDays(new Date(), workspace.deletedAt)
+            : 0;
+
+          if (
+            daysSinceSoftDeleted >
+              this.inactiveDaysBeforeDelete -
+                this.inactiveDaysBeforeSoftDelete &&
+            deletedWorkspacesCount <
+              this.maxNumberOfWorkspacesDeletedPerExecution
+          ) {
+            this.logger.log(
+              `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id} ${workspace.displayName}`,
+            );
+            if (!dryRun) {
+              await this.workspaceService.deleteWorkspace(workspace.id);
+            }
+            deletedWorkspacesCount++;
+          }
+          continue;
+        }
+
         const workspaceInactivity =
           await this.computeWorkspaceBillingInactivity(workspace);
 
-        const daysSinceSoftDeleted = workspace.deletedAt
-          ? differenceInDays(new Date(), workspace.deletedAt)
-          : 0;
-
-        if (
-          daysSinceSoftDeleted >
-            this.inactiveDaysBeforeDelete - this.inactiveDaysBeforeSoftDelete &&
-          deletedWorkspacesCount < this.maxNumberOfWorkspacesDeletedPerExecution
-        ) {
-          this.logger.log(
-            `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id} ${workspace.displayName}`,
-          );
-          if (!dryRun) {
-            await this.workspaceService.deleteWorkspace(workspace.id);
-          }
-          deletedWorkspacesCount++;
-
-          continue;
-        }
-        if (
-          workspaceInactivity > this.inactiveDaysBeforeSoftDelete &&
-          !isDefined(workspace.deletedAt)
-        ) {
+        if (workspaceInactivity > this.inactiveDaysBeforeSoftDelete) {
           await this.informWorkspaceMembersAndSoftDeleteWorkspace(
             workspace,
             workspaceInactivity,

@@ -7,10 +7,11 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { Button, IconCopy } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { CustomDomainValidRecords } from '~/generated/graphql';
 import { useTheme } from '@emotion/react';
+import { Button } from 'twenty-ui/input';
+import { IconCopy } from 'twenty-ui/display';
 
 const StyledTable = styled(Table)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -18,7 +19,7 @@ const StyledTable = styled(Table)`
 
 const StyledTableCell = styled(TableCell)`
   overflow: hidden;
-
+  display: block;
   padding: 0 ${({ theme }) => theme.spacing(3)} 0 0;
 
   &:first-child {

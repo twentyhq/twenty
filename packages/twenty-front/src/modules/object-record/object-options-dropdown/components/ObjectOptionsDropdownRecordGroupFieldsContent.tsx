@@ -1,12 +1,4 @@
 import { useEffect } from 'react';
-import {
-  IconChevronLeft,
-  IconSettings,
-  MenuItem,
-  MenuItemSelect,
-  UndecoratedLink,
-  useIcons,
-} from 'twenty-ui';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 
@@ -18,18 +10,25 @@ import { recordGroupFieldMetadataComponentState } from '@/object-record/record-g
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { useHandleRecordGroupField } from '@/object-record/record-index/hooks/useHandleRecordGroupField';
 import { SettingsPath } from '@/types/SettingsPath';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
+import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { useLingui } from '@lingui/react/macro';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { isDefined } from 'twenty-shared/utils';
+import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
+import {
+  MenuItem,
+  MenuItemSelect,
+  UndecoratedLink,
+} from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   const { t } = useLingui();
@@ -106,11 +105,15 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   return (
     <>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onClick={() =>
-          isDefined(recordGroupFieldMetadata)
-            ? onContentChange('recordGroups')
-            : resetContent()
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={() =>
+              isDefined(recordGroupFieldMetadata)
+                ? onContentChange('recordGroups')
+                : resetContent()
+            }
+            Icon={IconChevronLeft}
+          />
         }
       >
         Group by
@@ -140,7 +143,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
         ))}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer scrollable={false}>
         <UndecoratedLink
           to={newSelectFieldSettingsUrl}
           onClick={() => {

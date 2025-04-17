@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { isDefined, WorkspaceActivationStatus } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
@@ -12,9 +13,7 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   FileWorkspaceFolderDeletionJob,
@@ -23,6 +22,7 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -33,7 +33,7 @@ import {
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -43,11 +43,16 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
+import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/custom-domain/custom-domain-activated';
+import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/custom-domain/custom-domain-deactivated';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   private readonly featureLookUpKey = BillingEntitlementKey.CUSTOM_DOMAIN;
+  protected readonly logger = new Logger(WorkspaceService.name);
 
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -61,10 +66,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingService: BillingService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly permissionsService: PermissionsService,
+    private readonly analyticsService: AnalyticsService,
     private readonly customDomainService: CustomDomainService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
@@ -93,7 +99,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     if (
       !subdomainAvailable ||
-      this.environmentService.get('DEFAULT_SUBDOMAIN') === newSubdomain
+      this.twentyConfigService.get('DEFAULT_SUBDOMAIN') === newSubdomain
     ) {
       throw new WorkspaceException(
         'Subdomain already taken',
@@ -151,26 +157,20 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-    const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsPermissionsEnabled,
-      workspace.id,
-    );
+    await this.validateSecurityPermissions({
+      payload,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+      apiKey,
+    });
 
-    if (permissionsEnabled) {
-      await this.validateSecurityPermissions({
-        payload,
-        userWorkspaceId,
-        workspaceId: workspace.id,
-        apiKey,
-      });
-
-      await this.validateWorkspacePermissions({
-        payload,
-        userWorkspaceId,
-        workspaceId: workspace.id,
-        apiKey,
-      });
-    }
+    await this.validateWorkspacePermissions({
+      payload,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+      apiKey,
+      workspaceActivationStatus: workspace.activationStatus,
+    });
 
     if (payload.subdomain && workspace.subdomain !== payload.subdomain) {
       await this.validateSubdomainUpdate(payload.subdomain);
@@ -193,9 +193,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
 
     const authProvidersBySystem = {
-      google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
-      password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
-      microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
+      google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),
+      password: this.twentyConfigService.get('AUTH_PASSWORD_ENABLED'),
+      microsoft: this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED'),
     };
 
     if (payload.isGoogleAuthEnabled && !authProvidersBySystem.google) {
@@ -271,9 +271,12 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
+    const appVersion = this.twentyConfigService.get('APP_VERSION');
+
     await this.workspaceRepository.update(workspace.id, {
       displayName: data.displayName,
       activationStatus: WorkspaceActivationStatus.ACTIVE,
+      version: extractVersionMajorMinorPatch(appVersion),
     });
 
     return await this.workspaceRepository.findOneBy({
@@ -294,6 +297,12 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   }
 
   async deleteWorkspace(id: string, softDelete = false) {
+    //TODO: delete all logs when #611 closed
+
+    this.logger.log(
+      `${softDelete ? 'Soft' : 'Hard'} deleting workspace ${id} ...`,
+    );
+
     const workspace = await this.workspaceRepository.findOne({
       where: { id },
       withDeleted: true,
@@ -315,14 +324,22 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         softDelete,
       );
     }
+    this.logger.log(`workspace ${id} user workspaces deleted`);
 
     await this.workspaceCacheStorageService.flush(
       workspace.id,
       workspace.metadataVersion,
     );
+    this.logger.log(`workspace ${id} cache flushed`);
 
     if (softDelete) {
+      if (this.billingService.isBillingEnabled()) {
+        await this.billingSubscriptionService.deleteSubscriptions(workspace.id);
+      }
+
       await this.workspaceRepository.softDelete({ id });
+
+      this.logger.log(`workspace ${id} soft deleted`);
 
       return workspace;
     }
@@ -333,7 +350,17 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       FileWorkspaceFolderDeletionJob.name,
       { workspaceId: id },
     );
+
+    if (workspace.customDomain) {
+      await this.customDomainService.deleteCustomHostnameByHostnameSilently(
+        workspace.customDomain,
+      );
+      this.logger.log(`workspace ${id} custom domain deleted`);
+    }
+
     await this.workspaceRepository.delete(id);
+
+    this.logger.log(`workspace ${id} hard deleted`);
 
     return workspace;
   }
@@ -390,6 +417,17 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     if (workspace.isCustomDomainEnabled !== isCustomDomainWorking) {
       workspace.isCustomDomainEnabled = isCustomDomainWorking;
       await this.workspaceRepository.save(workspace);
+
+      const analytics = this.analyticsService.createAnalyticsContext({
+        workspaceId: workspace.id,
+      });
+
+      analytics.track(
+        workspace.isCustomDomainEnabled
+          ? CUSTOM_DOMAIN_ACTIVATED_EVENT
+          : CUSTOM_DOMAIN_DEACTIVATED_EVENT,
+        {},
+      );
     }
 
     return customDomainDetails;
@@ -419,7 +457,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       const userHasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
-          _setting: SettingsPermissions.SECURITY,
+          setting: SettingPermissionType.SECURITY,
           workspaceId: workspaceId,
           isExecutedByApiKey: isDefined(apiKey),
         });
@@ -438,11 +476,13 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     userWorkspaceId,
     workspaceId,
     apiKey,
+    workspaceActivationStatus,
   }: {
     payload: Partial<Workspace>;
     userWorkspaceId?: string;
     workspaceId: string;
     apiKey?: string;
+    workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     if (
       'displayName' in payload ||
@@ -454,11 +494,17 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         throw new Error('Missing userWorkspaceId in authContext');
       }
 
+      if (
+        workspaceActivationStatus === WorkspaceActivationStatus.PENDING_CREATION
+      ) {
+        return;
+      }
+
       const userHasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           workspaceId,
-          _setting: SettingsPermissions.WORKSPACE,
+          setting: SettingPermissionType.WORKSPACE,
           isExecutedByApiKey: isDefined(apiKey),
         });
 

@@ -3,27 +3,25 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import {
-  deleteCoreSchema,
-  seedCoreSchema,
-} from 'src/database/typeorm-seeds/core/demo';
+import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
+import { deleteCoreSchema } from 'src/database/typeorm-seeds/core/demo';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 
 @Injectable()
 export class DataSeedDemoWorkspaceService {
   constructor(
-    private readonly environmentService: EnvironmentService,
     private readonly workspaceManagerService: WorkspaceManagerService,
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     private readonly workspaceSchemaCache: CacheStorageService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async seedDemo(): Promise<void> {
@@ -45,7 +43,15 @@ export class DataSeedDemoWorkspaceService {
           await deleteCoreSchema(rawDataSource, workspaceId);
         }
 
-        await seedCoreSchema(rawDataSource, workspaceId);
+        const appVersion = this.twentyConfigService.get('APP_VERSION');
+
+        await seedCoreSchema({
+          workspaceDataSource: rawDataSource,
+          workspaceId,
+          appVersion,
+          seedBilling: false,
+          seedFeatureFlags: false,
+        });
         await this.workspaceManagerService.initDemo(workspaceId);
       }
     } catch (error) {

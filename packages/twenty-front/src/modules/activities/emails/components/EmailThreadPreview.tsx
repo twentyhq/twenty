@@ -1,25 +1,18 @@
 import styled from '@emotion/styled';
-import { useRecoilCallback } from 'recoil';
-import { Avatar, GRAY_SCALE } from 'twenty-ui';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
-import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
-import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/states/lastViewableEmailThreadIdState';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import {
-  FeatureFlagKey,
-  MessageChannelVisibility,
-  TimelineThread,
-} from '~/generated/graphql';
+import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEmailThreadInCommandMenu';
+import { Avatar } from 'twenty-ui/display';
+import { GRAY_SCALE } from 'twenty-ui/theme';
+import { MessageChannelVisibility, TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 const StyledHeading = styled.div<{ unread: boolean }>`
   display: flex;
   overflow: hidden;
-  width: 20%;
+  width: fit-content;
+  max-width: 20%;
 `;
 
 const StyledParticipantsContainer = styled.div`
@@ -51,12 +44,14 @@ const StyledSubjectAndBody = styled.div`
   overflow: hidden;
 `;
 
-const StyledSubject = styled.span`
+const StyledSubject = styled.span<{ flex: number }>`
   color: ${({ theme }) => theme.font.color.primary};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   flex-shrink: 0;
+  flex: ${({ flex }) => flex};
+  max-width: max-content;
 `;
 
 const StyledBody = styled.span`
@@ -77,11 +72,7 @@ type EmailThreadPreviewProps = {
 };
 
 export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
-  const { openEmailThread } = useEmailThread();
-  const { openEmailThreadInCommandMenu } = useCommandMenu();
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
+  const { openEmailThreadInCommandMenu } = useOpenEmailThreadInCommandMenu();
 
   const visibility = thread.visibility;
 
@@ -103,48 +94,19 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
           false,
         ];
 
-  const { isSameEventThanRightDrawerClose } = useRightDrawer();
+  const handleThreadClick = () => {
+    const canOpen =
+      thread.visibility === MessageChannelVisibility.SHARE_EVERYTHING;
 
-  const handleThreadClick = useRecoilCallback(
-    ({ snapshot }) =>
-      (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        const clickJustTriggeredEmailDrawerClose =
-          isSameEventThanRightDrawerClose(event.nativeEvent);
-
-        const emailThreadIdWhenEmailThreadWasClosed = snapshot
-          .getLoadable(emailThreadIdWhenEmailThreadWasClosedState)
-          .getValue();
-
-        const canOpen =
-          thread.visibility === MessageChannelVisibility.SHARE_EVERYTHING &&
-          (!clickJustTriggeredEmailDrawerClose ||
-            emailThreadIdWhenEmailThreadWasClosed !== thread.id);
-
-        if (canOpen) {
-          if (isCommandMenuV2Enabled) {
-            openEmailThreadInCommandMenu(thread.id);
-          } else {
-            openEmailThread(thread.id);
-          }
-        }
-      },
-    [
-      isCommandMenuV2Enabled,
-      isSameEventThanRightDrawerClose,
-      openEmailThread,
-      openEmailThreadInCommandMenu,
-      thread.id,
-      thread.visibility,
-    ],
-  );
+    if (canOpen) {
+      openEmailThreadInCommandMenu(thread.id);
+    }
+  };
 
   const isDisabled = visibility !== MessageChannelVisibility.SHARE_EVERYTHING;
 
   return (
-    <ActivityRow
-      onClick={(event) => handleThreadClick(event)}
-      disabled={isDisabled}
-    >
+    <ActivityRow onClick={handleThreadClick} disabled={isDisabled}>
       <StyledHeading unread={!thread.read}>
         <StyledParticipantsContainer>
           <Avatar
@@ -184,13 +146,19 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
 
       <StyledSubjectAndBody>
         {visibility !== MessageChannelVisibility.METADATA && (
-          <StyledSubject>{thread.subject}</StyledSubject>
+          <StyledSubject
+            flex={
+              visibility === MessageChannelVisibility.SHARE_EVERYTHING ? 0 : 1
+            }
+          >
+            {thread.subject}
+          </StyledSubject>
         )}
         {visibility === MessageChannelVisibility.SHARE_EVERYTHING && (
           <StyledBody>{thread.lastMessageBody}</StyledBody>
         )}
         {visibility !== MessageChannelVisibility.SHARE_EVERYTHING && (
-          <EmailThreadNotShared />
+          <EmailThreadNotShared visibility={visibility} />
         )}
       </StyledSubjectAndBody>
       <StyledReceivedAt>

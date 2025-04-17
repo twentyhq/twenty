@@ -7,6 +7,7 @@ import {
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
 type MapFieldMetadataToGraphQLQueryArgs = {
@@ -24,23 +25,9 @@ export const mapFieldMetadataToGraphQLQuery = ({
 }: MapFieldMetadataToGraphQLQueryArgs): string => {
   const fieldType = field.type;
 
-  const fieldIsSimpleValue = [
-    FieldMetadataType.UUID,
-    FieldMetadataType.TEXT,
-    FieldMetadataType.DATE_TIME,
-    FieldMetadataType.DATE,
-    FieldMetadataType.NUMBER,
-    FieldMetadataType.BOOLEAN,
-    FieldMetadataType.RATING,
-    FieldMetadataType.SELECT,
-    FieldMetadataType.MULTI_SELECT,
-    FieldMetadataType.POSITION,
-    FieldMetadataType.RAW_JSON,
-    FieldMetadataType.RICH_TEXT,
-    FieldMetadataType.ARRAY,
-  ].includes(fieldType);
+  const fieldIsNonCompositeField = isNonCompositeField(fieldType);
 
-  if (fieldIsSimpleValue) {
+  if (fieldIsNonCompositeField) {
     return field.name;
   }
 

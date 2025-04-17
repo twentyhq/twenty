@@ -7,7 +7,7 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type useAttachRelatedRecordFromRecordProps = {
   recordObjectNameSingular: string;
@@ -73,7 +73,7 @@ export const useAttachRelatedRecordFromRecord = ({
       getRelatedRecordFromCache<ObjectRecord>(relatedRecordId);
 
     if (!cachedRelatedRecord) {
-      throw new Error('could not find cached related record');
+      throw new Error('Could not find cached related record');
     }
 
     const previousRecordId = cachedRelatedRecord?.[`${fieldOnRelatedObject}Id`];

@@ -1,6 +1,9 @@
 import { styled } from '@linaria/react';
 
 const StyledEllipsisDisplay = styled.div<{ maxWidth?: number }>`
+  align-items: center;
+  display: flex;
+  height: 20px;
   max-width: ${({ maxWidth }) => (maxWidth ? maxWidth + 'px' : '100%')};
   overflow: hidden;
   text-overflow: ellipsis;

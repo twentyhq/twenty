@@ -3,24 +3,24 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
-import { H2Title, Loader, MainButton } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
-import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared';
-import {
-  OnboardingStatus,
-  useActivateWorkspaceMutation,
-} from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
+import { H2Title } from 'twenty-ui/display';
+import { Loader } from 'twenty-ui/feedback';
+import { MainButton } from 'twenty-ui/input';
+import { useActivateWorkspaceMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -38,8 +38,8 @@ const StyledButtonContainer = styled.div`
 export const CreateWorkspace = () => {
   const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
-  const onboardingStatus = useOnboardingStatus();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
+  const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
 
   const { loadCurrentUser } = useAuth();
   const [activateWorkspace] = useActivateWorkspaceMutation();
@@ -79,6 +79,8 @@ export const CreateWorkspace = () => {
         if (isDefined(result.errors)) {
           throw result.errors ?? new Error(t`Unknown error`);
         }
+
+        await refreshObjectMetadataItems();
         await loadCurrentUser();
         setNextOnboardingStatus();
       } catch (error: any) {
@@ -91,6 +93,7 @@ export const CreateWorkspace = () => {
       activateWorkspace,
       enqueueSnackBar,
       loadCurrentUser,
+      refreshObjectMetadataItems,
       setNextOnboardingStatus,
       t,
     ],
@@ -103,12 +106,8 @@ export const CreateWorkspace = () => {
     }
   };
 
-  if (onboardingStatus !== OnboardingStatus.WORKSPACE_ACTIVATION) {
-    return null;
-  }
-
   return (
-    <>
+    <Modal.Content isVerticalCentered isHorizontalCentered>
       <Title noMarginTop>
         <Trans>Create your workspace</Trans>
       </Title>
@@ -158,6 +157,6 @@ export const CreateWorkspace = () => {
           fullWidth
         />
       </StyledButtonContainer>
-    </>
+    </Modal.Content>
   );
 };

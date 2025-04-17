@@ -1,7 +1,9 @@
 import { useRecoilValue } from 'recoil';
 
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { ClientConfigError } from '@/error-handler/components/ClientConfigError';
+import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
+import { AppPath } from '@/types/AppPath';
+import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   children,
@@ -10,11 +12,24 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
     clientConfigApiStatusState,
   );
 
+  const { isMatchingLocation } = useIsMatchingLocation();
+
   // TODO: Implement a better loading strategy
-  if (!isLoaded) return null;
+  if (
+    !isLoaded &&
+    !isMatchingLocation(AppPath.Verify) &&
+    !isMatchingLocation(AppPath.VerifyEmail)
+  )
+    return null;
 
   return isErrored && error instanceof Error ? (
-    <ClientConfigError error={error} />
+    <AppFullScreenErrorFallback
+      error={error}
+      resetErrorBoundary={() => {
+        window.location.reload();
+      }}
+      title="Unable to Reach Back-end"
+    />
   ) : (
     children
   );

@@ -1,7 +1,10 @@
 import styled from '@emotion/styled';
 import { Editor, EditorContent } from '@tiptap/react';
 
-const StyledEditor = styled.div<{ multiline?: boolean; readonly?: boolean }>`
+const StyledEditor = styled.div<{
+  multiline?: boolean;
+  readonly?: boolean;
+}>`
   width: 100%;
   display: flex;
   box-sizing: border-box;

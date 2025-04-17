@@ -1,8 +1,11 @@
 import { useEmailsField } from '@/object-record/record-field/meta-types/hooks/useEmailsField';
 import { EmailsFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/EmailsFieldMenuItem';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
 import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useCallback, useMemo } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
@@ -15,7 +18,7 @@ export const EmailsFieldInput = ({
   onCancel,
   onClickOutside,
 }: EmailsFieldInputProps) => {
-  const { persistEmailsField, hotkeyScope, fieldValue } = useEmailsField();
+  const { persistEmailsField, fieldValue } = useEmailsField();
 
   const emails = useMemo<string[]>(
     () =>
@@ -44,12 +47,23 @@ export const EmailsFieldInput = ({
 
   const isPrimaryEmail = (index: number) => index === 0 && emails?.length > 1;
 
+  const setIsFieldInError = useSetRecoilComponentStateV2(
+    recordFieldInputIsFieldInErrorComponentState,
+  );
+
+  const handleError = (hasError: boolean, values: any[]) => {
+    setIsFieldInError(hasError && values.length === 0);
+  };
+
   return (
     <MultiItemFieldInput
       items={emails}
       onPersist={handlePersistEmails}
       onCancel={onCancel}
-      onClickOutside={onClickOutside}
+      onClickOutside={(persist, event) => {
+        onClickOutside?.(event);
+        persist();
+      }}
       placeholder="Email"
       fieldMetadataType={FieldMetadataType.EMAILS}
       validateInput={validateInput}
@@ -62,7 +76,7 @@ export const EmailsFieldInput = ({
       }) => (
         <EmailsFieldMenuItem
           key={index}
-          dropdownId={`${hotkeyScope}-emails-${index}`}
+          dropdownId={`emails-${index}`}
           isPrimary={isPrimaryEmail(index)}
           email={email}
           onEdit={handleEdit}
@@ -70,7 +84,8 @@ export const EmailsFieldInput = ({
           onDelete={handleDelete}
         />
       )}
-      hotkeyScope={hotkeyScope}
+      onError={handleError}
+      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
     />
   );
 };

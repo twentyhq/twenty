@@ -4,8 +4,10 @@ import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { isDefined } from 'twenty-shared';
-import { ComponentDecorator, MAIN_COLOR_NAMES, Tag } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { Tag } from 'twenty-ui/components';
+import { ComponentDecorator } from 'twenty-ui/testing';
+import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
@@ -58,15 +60,10 @@ export const WithExpandedList: Story = {
 
     const rootCanvas = within(root);
 
-    const chipCount = await rootCanvas.findByText('+3');
+    const chipCount = await rootCanvas.findByText(/^\+\d+$/);
 
     await userEvent.click(chipCount);
 
     expect(await rootCanvas.findByText('Option 7')).toBeDefined();
   },
-};
-
-export const WithExpandedListBorder: Story = {
-  ...WithExpandedList,
-  args: { ...WithExpandedList.args, withExpandedListBorder: true },
 };

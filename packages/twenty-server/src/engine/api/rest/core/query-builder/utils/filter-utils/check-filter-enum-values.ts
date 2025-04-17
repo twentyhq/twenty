@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
@@ -28,8 +28,10 @@ export const checkFilterEnumValues = (
   if (!enumValues) {
     return;
   }
+  const allowedEnumValues = ['NULL', 'NOT_NULL', ...enumValues];
+
   values.forEach((val) => {
-    if (!enumValues.includes(val)) {
+    if (!allowedEnumValues.includes(val)) {
       throw new BadRequestException(
         `'filter' enum value '${val}' not available in '${fieldName}' enum. Available enum values are ['${enumValues.join(
           "', '",

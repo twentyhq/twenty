@@ -3,13 +3,15 @@ import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Button, H2Title, IconReload, Section } from 'twenty-ui';
 import { SettingsCustomDomainRecords } from '~/pages/settings/workspace/SettingsCustomDomainRecords';
 import { SettingsCustomDomainRecordsStatus } from '~/pages/settings/workspace/SettingsCustomDomainRecordsStatus';
 import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
 import { useRecoilValue } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useCheckCustomDomainValidRecords } from '~/pages/settings/workspace/hooks/useCheckCustomDomainValidRecords';
+import { Button } from 'twenty-ui/input';
+import { H2Title, IconReload } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledDomainFormWrapper = styled.div`
   display: flex;
@@ -29,13 +31,13 @@ const StyledRecordsWrapper = styled.div`
 `;
 
 export const SettingsCustomDomain = () => {
-  const { customDomainRecords, loading } = useRecoilValue(
+  const { customDomainRecords, isLoading } = useRecoilValue(
     customDomainRecordsState,
   );
 
   const { checkCustomDomainRecords } = useCheckCustomDomainValidRecords();
 
-  if (!customDomainRecords && !loading) {
+  if (!customDomainRecords && !isLoading) {
     checkCustomDomainRecords();
   }
 
@@ -69,7 +71,7 @@ export const SettingsCustomDomain = () => {
           )}
         />
         <StyledButton
-          loading={loading}
+          isLoading={isLoading}
           Icon={IconReload}
           title={t`Reload`}
           variant="primary"

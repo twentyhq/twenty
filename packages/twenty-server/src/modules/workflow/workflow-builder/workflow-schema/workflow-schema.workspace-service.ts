@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -59,6 +59,7 @@ export class WorkflowSchemaWorkspaceService {
           objectMetadataRepository: this.objectMetadataRepository,
         });
       }
+      case WorkflowTriggerType.WEBHOOK:
       case WorkflowTriggerType.CRON: {
         return {};
       }
@@ -82,6 +83,8 @@ export class WorkflowSchemaWorkspaceService {
       case WorkflowActionType.FORM:
         return this.computeFormActionOutputSchema({
           formMetadata: step.settings.input,
+          workspaceId,
+          objectMetadataRepository: this.objectMetadataRepository,
         });
       case WorkflowActionType.CODE: // StepOutput schema is computed on serverlessFunction draft execution
       default:
@@ -181,11 +184,19 @@ export class WorkflowSchemaWorkspaceService {
     return { success: { isLeaf: true, type: 'boolean', value: true } };
   }
 
-  private computeFormActionOutputSchema({
+  private async computeFormActionOutputSchema({
     formMetadata,
+    workspaceId,
+    objectMetadataRepository,
   }: {
     formMetadata: FormFieldMetadata[];
-  }): OutputSchema {
-    return generateFakeFormResponse(formMetadata);
+    workspaceId: string;
+    objectMetadataRepository: Repository<ObjectMetadataEntity>;
+  }): Promise<OutputSchema> {
+    return generateFakeFormResponse({
+      formMetadata,
+      workspaceId,
+      objectMetadataRepository,
+    });
   }
 }

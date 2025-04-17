@@ -1,11 +1,12 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import styled from '@emotion/styled';
-import { FieldMetadataType, capitalize } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
 
 const StyledEditableTitleContainer = styled.div`
   align-items: center;
@@ -41,7 +42,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
   objectLabelPlural: string;
   labelIdentifierFieldMetadataItem?: FieldMetadataItem;
 }) => {
-  const { record, loading } = useFindOneRecord({
+  const { loading } = useFindOneRecord({
     objectNameSingular,
     objectRecordId,
     recordGqlFields: {
@@ -52,7 +53,10 @@ export const ObjectRecordShowPageBreadcrumb = ({
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
     objectRecordId,
-    recordFromStore: record ?? null,
+  });
+
+  const isRecordReadOnly = useIsRecordReadOnly({
+    recordId: objectRecordId,
   });
 
   if (loading) {
@@ -69,8 +73,6 @@ export const ObjectRecordShowPageBreadcrumb = ({
         <FieldContext.Provider
           value={{
             recordId: objectRecordId,
-            recoilScopeId:
-              objectRecordId + labelIdentifierFieldMetadataItem?.id,
             isLabelIdentifier: false,
             fieldDefinition: {
               type:
@@ -86,12 +88,12 @@ export const ObjectRecordShowPageBreadcrumb = ({
               defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
             },
             useUpdateRecord: useUpdateOneObjectRecordMutation,
-            hotkeyScope: InlineCellHotkeyScope.InlineCell,
             isCentered: false,
             isDisplayModeFixHeight: true,
+            isReadOnly: isRecordReadOnly,
           }}
         >
-          <RecordTitleCell sizeVariant="sm" />
+          <RecordTitleCell sizeVariant="xs" />
         </FieldContext.Provider>
       </StyledTitle>
     </StyledEditableTitleContainer>

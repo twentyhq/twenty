@@ -3,7 +3,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledSettingsPageContainer = styled.div<{
   width?: number;
@@ -30,11 +30,7 @@ export const SettingsPageContainer = ({
 }: {
   children: ReactNode;
 }) => (
-  <ScrollWrapper
-    contextProviderName="settingsPageContainer"
-    heightMode="full"
-    componentInstanceId={'scroll-wrapper-settings-page-container'}
-  >
+  <ScrollWrapper componentInstanceId={'scroll-wrapper-settings-page-container'}>
     <StyledSettingsPageContainer>{children}</StyledSettingsPageContainer>
   </ScrollWrapper>
 );

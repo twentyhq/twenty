@@ -9,11 +9,11 @@ import { useContainer, ValidationError } from 'class-validator';
 import session from 'express-session';
 import { graphqlUploadExpress } from 'graphql-upload';
 
-import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter';
 
 import { AppModule } from './app.module';
@@ -38,9 +38,9 @@ const bootstrap = async () => {
       : {}),
   });
   const logger = app.get(LoggerService);
-  const environmentService = app.get(EnvironmentService);
+  const twentyConfigService = app.get(TwentyConfigService);
 
-  app.use(session(getSessionStorageOptions(environmentService)));
+  app.use(session(getSessionStorageOptions(twentyConfigService)));
 
   // TODO: Double check this as it's not working for now, it's going to be helpful for durable trees in twenty "orm"
   // // Apply context id strategy for durable trees
@@ -87,7 +87,7 @@ const bootstrap = async () => {
   // Inject the server url in the frontend page
   generateFrontConfig();
 
-  await app.listen(environmentService.get('NODE_PORT'));
+  await app.listen(twentyConfigService.get('NODE_PORT'));
 };
 
 bootstrap();

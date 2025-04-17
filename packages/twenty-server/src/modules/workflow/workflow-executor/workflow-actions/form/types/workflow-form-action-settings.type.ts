@@ -1,11 +1,12 @@
-import { FieldMetadataType } from 'twenty-shared';
-
+import { WorkflowFormFieldType } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-field-type.type';
 import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 
 export type FormFieldMetadata = {
-  label: string;
+  id: string;
   name: string;
-  type: FieldMetadataType;
+  label: string;
+  type: WorkflowFormFieldType;
+  value?: any;
   placeholder?: string;
   settings?: Record<string, any>;
 };

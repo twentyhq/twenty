@@ -1,12 +1,13 @@
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { Status, ThemeColor } from 'twenty-ui';
 import styled from '@emotion/styled';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
 import { useRecoilValue } from 'recoil';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from 'twenty-shared/utils';
+import { Status } from 'twenty-ui/display';
+import { ThemeColor } from 'twenty-ui/theme';
 
 const StyledTable = styled(Table)`
   background-color: ${({ theme }) => theme.background.transparent.lighter};

@@ -1,5 +1,5 @@
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
-import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
+import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
 import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import {
@@ -8,7 +8,8 @@ import {
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { filterOutputSchema } from '@/workflow/workflow-variables/utils/filterOutputSchema';
 import { isEmptyObject } from '@tiptap/core';
-import { isDefined } from 'twenty-shared';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useAvailableVariablesInWorkflowStep = ({
   objectNameSingularToSelect,
@@ -17,7 +18,6 @@ export const useAvailableVariablesInWorkflowStep = ({
 }): StepOutputSchema[] => {
   const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
   const flow = useFlowOrThrow();
-  const { getStepsOutputSchema } = useStepsOutputSchema({});
 
   const steps = flow.steps ?? [];
 
@@ -30,17 +30,14 @@ export const useAvailableVariablesInWorkflowStep = ({
     previousStepIds.push(step.id);
   }
 
-  const availableStepsOutputSchema: StepOutputSchema[] =
-    getStepsOutputSchema(previousStepIds).filter(isDefined);
+  const availableStepsOutputSchema: StepOutputSchema[] = useRecoilValue(
+    stepsOutputSchemaFamilySelector({
+      workflowVersionId: flow.workflowVersionId,
+      stepIds: [TRIGGER_STEP_ID, ...previousStepIds],
+    }),
+  );
 
-  const triggersOutputSchema: StepOutputSchema[] = isDefined(flow.trigger)
-    ? getStepsOutputSchema([TRIGGER_STEP_ID]).filter(isDefined)
-    : [];
-
-  const availableVariablesInWorkflowStep = [
-    ...availableStepsOutputSchema,
-    ...triggersOutputSchema,
-  ]
+  const availableVariablesInWorkflowStep = availableStepsOutputSchema
     .map((stepOutputSchema) => {
       const outputSchema = filterOutputSchema(
         stepOutputSchema.outputSchema,

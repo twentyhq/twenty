@@ -1,11 +1,11 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChevronRight } from 'twenty-ui';
 
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { getUrlHostnameOrThrow } from 'twenty-shared';
+import { getUrlHostnameOrThrow, isValidUrl } from 'twenty-shared/utils';
+import { IconChevronRight } from 'twenty-ui/display';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
   grid-template-columns: 1fr 28px;
@@ -39,7 +39,9 @@ export const SettingsDevelopersWebhookTableRow = ({
   return (
     <StyledApisFieldTableRow to={to}>
       <StyledUrlTableCell>
-        {getUrlHostnameOrThrow(fieldItem.targetUrl)}
+        {isValidUrl(fieldItem.targetUrl)
+          ? getUrlHostnameOrThrow(fieldItem.targetUrl)
+          : fieldItem.targetUrl}
       </StyledUrlTableCell>
       <StyledIconTableCell>
         <StyledIconChevronRight

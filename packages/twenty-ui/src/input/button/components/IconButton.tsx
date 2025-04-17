@@ -20,10 +20,14 @@ export type IconButtonProps = {
   dataTestId?: string;
   ariaLabel?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  to?: string;
 };
 
 const StyledButton = styled.button<
-  Pick<IconButtonProps, 'variant' | 'size' | 'position' | 'accent' | 'focus'>
+  Pick<
+    IconButtonProps,
+    'variant' | 'size' | 'position' | 'accent' | 'focus' | 'to'
+  >
 >`
   align-items: center;
   ${({ theme, variant, accent, disabled, focus }) => {
@@ -125,9 +129,11 @@ const StyledButton = styled.button<
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${theme.accent.tertiary}`
                 : 'none'};
-              color: ${!disabled
-                ? theme.font.color.secondary
-                : theme.font.color.extraLight};
+              color: ${disabled
+                ? theme.font.color.extraLight
+                : variant === 'secondary'
+                  ? theme.font.color.secondary
+                  : theme.font.color.tertiary};
               &:hover {
                 background: ${!disabled
                   ? theme.background.transparent.light
@@ -250,6 +256,7 @@ export const IconButton = ({
   dataTestId,
   ariaLabel,
   onClick,
+  to,
 }: IconButtonProps) => {
   const theme = useTheme();
   return (
@@ -264,6 +271,7 @@ export const IconButton = ({
       className={className}
       onClick={onClick}
       aria-label={ariaLabel}
+      to={to}
     >
       {Icon && <Icon size={theme.icon.size.md} />}
     </StyledButton>

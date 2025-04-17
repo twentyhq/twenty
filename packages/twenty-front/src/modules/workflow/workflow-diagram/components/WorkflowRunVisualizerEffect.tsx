@@ -1,11 +1,14 @@
+import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
+import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { flowState } from '@/workflow/states/flowState';
+import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { workflowRunIdState } from '@/workflow/states/workflowRunIdState';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowRunVisualizerEffect = ({
   workflowRunId,
@@ -13,14 +16,24 @@ export const WorkflowRunVisualizerEffect = ({
   workflowRunId: string;
 }) => {
   const workflowRun = useWorkflowRun({ workflowRunId });
+  const workflowVersion = useWorkflowVersion(workflowRun?.workflowVersionId);
 
   const setWorkflowRunId = useSetRecoilState(workflowRunIdState);
+  const setWorkflowId = useSetRecoilState(workflowIdState);
   const setFlow = useSetRecoilState(flowState);
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
+  const { populateStepsOutputSchema } = useStepsOutputSchema();
 
   useEffect(() => {
     setWorkflowRunId(workflowRunId);
   }, [setWorkflowRunId, workflowRunId]);
+
+  useEffect(() => {
+    if (!isDefined(workflowRun)) {
+      return;
+    }
+    setWorkflowId(workflowRun.workflowId);
+  }, [setWorkflowId, workflowRun]);
 
   useEffect(() => {
     if (!isDefined(workflowRun?.output)) {
@@ -49,6 +62,14 @@ export const WorkflowRunVisualizerEffect = ({
     workflowRun?.output,
     workflowRun?.workflowVersionId,
   ]);
+
+  useEffect(() => {
+    if (!isDefined(workflowVersion)) {
+      return;
+    }
+
+    populateStepsOutputSchema(workflowVersion);
+  }, [populateStepsOutputSchema, workflowVersion]);
 
   return null;
 };

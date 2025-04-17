@@ -1,22 +1,22 @@
-import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
-import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
 
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { RecordBoardCardBody } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBody';
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { AppPath } from '@/types/AppPath';
+import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
@@ -25,10 +25,9 @@ import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { AnimatedEaseInOut } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -71,17 +70,9 @@ const StyledBoardCardWrapper = styled.div`
   width: 100%;
 `;
 
-export const RecordBoardCard = ({
-  isCreating = false,
-  onCreateSuccess,
-  position,
-}: {
-  isCreating?: boolean;
-  onCreateSuccess?: () => void;
-  position?: 'first' | 'last';
-}) => {
+export const RecordBoardCard = () => {
   const navigate = useNavigateApp();
-  const { openRecordInCommandMenu } = useCommandMenu();
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const { recordId } = useContext(RecordBoardCardContext);
 
@@ -119,11 +110,9 @@ export const RecordBoardCard = ({
     ),
   );
 
-  const { openActionMenuDropdown } = useActionMenu(actionMenuId);
+  const { openDropdown } = useDropdownV2();
 
-  const recordIndexOpenRecordIn = useRecoilValue(
-    recordIndexOpenRecordInSelector,
-  );
+  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
 
   const handleActionMenuDropdown = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -132,22 +121,20 @@ export const RecordBoardCard = ({
       x: event.clientX,
       y: event.clientY,
     });
-    openActionMenuDropdown();
+    openDropdown(actionMenuDropdownId);
   };
 
   const handleCardClick = () => {
-    if (!isCreating) {
-      if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
-        openRecordInCommandMenu({
-          recordId,
-          objectNameSingular,
-        });
-      } else {
-        navigate(AppPath.RecordShowPage, {
-          objectNameSingular,
-          objectRecordId: recordId,
-        });
-      }
+    if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
+      openRecordInCommandMenu({
+        recordId,
+        objectNameSingular,
+      });
+    } else {
+      navigate(AppPath.RecordShowPage, {
+        objectNameSingular,
+        objectRecordId: recordId,
+      });
     }
   };
 
@@ -157,10 +144,10 @@ export const RecordBoardCard = ({
     }
   }, 800);
 
-  const scrollWrapperRef = useContext(RecordBoardScrollWrapperContext);
+  const { scrollWrapperHTMLElement } = useScrollWrapperElement();
 
   const { ref: cardRef } = useInView({
-    root: scrollWrapperRef?.ref.current,
+    root: scrollWrapperHTMLElement,
     rootMargin: '1000px',
   });
 
@@ -168,16 +155,12 @@ export const RecordBoardCard = ({
     (boardField) => !boardField.isLabelIdentifier,
   );
 
-  const labelIdentifierField = visibleFieldDefinitions.find(
-    (field) => field.isLabelIdentifier,
-  );
-
   return (
     <StyledBoardCardWrapper
       className="record-board-card"
       onContextMenu={handleActionMenuDropdown}
     >
-      {!isCreating && <RecordValueSetterEffect recordId={recordId} />}
+      <RecordValueSetterEffect recordId={recordId} />
       <InView>
         <StyledBoardCard
           ref={cardRef}
@@ -185,16 +168,10 @@ export const RecordBoardCard = ({
           onMouseLeave={onMouseLeaveBoard}
           onClick={handleCardClick}
         >
-          {isDefined(labelIdentifierField) && (
-            <RecordBoardCardHeader
-              identifierFieldDefinition={labelIdentifierField}
-              isCreating={isCreating}
-              onCreateSuccess={onCreateSuccess}
-              position={position}
-              isCardExpanded={isCardExpanded}
-              setIsCardExpanded={setIsCardExpanded}
-            />
-          )}
+          <RecordBoardCardHeader
+            isCardExpanded={isCardExpanded}
+            setIsCardExpanded={setIsCardExpanded}
+          />
           <AnimatedEaseInOut
             isOpen={isCardExpanded || !isCompactModeActive}
             initial={false}

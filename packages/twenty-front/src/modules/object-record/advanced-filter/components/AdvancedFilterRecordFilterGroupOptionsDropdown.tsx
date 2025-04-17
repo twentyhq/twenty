@@ -1,10 +1,14 @@
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
+import { useRemoveRootRecordFilterGroupIfEmpty } from '@/object-record/record-filter-group/hooks/useRemoveRootRecordFilterGroupIfEmpty';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { IconButton, IconDotsVertical, MenuItem } from 'twenty-ui';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { IconButton } from 'twenty-ui/input';
+import { IconDotsVertical, IconTrash } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type AdvancedFilterRecordFilterGroupOptionsDropdownProps = {
   recordFilterGroupId: string;
@@ -15,8 +19,12 @@ export const AdvancedFilterRecordFilterGroupOptionsDropdown = ({
 }: AdvancedFilterRecordFilterGroupOptionsDropdownProps) => {
   const dropdownId = `advanced-filter-record-filter-group-options-${recordFilterGroupId}`;
 
+  const { closeDropdown } = useDropdown(dropdownId);
+
   const { removeRecordFilter } = useRemoveRecordFilter();
   const { removeRecordFilterGroup } = useRemoveRecordFilterGroup();
+  const { removeRootRecordFilterGroupIfEmpty } =
+    useRemoveRootRecordFilterGroupIfEmpty();
 
   const { childRecordFilters } = useChildRecordFiltersAndRecordFilterGroups({
     recordFilterGroupId,
@@ -28,6 +36,10 @@ export const AdvancedFilterRecordFilterGroupOptionsDropdown = ({
     }
 
     removeRecordFilterGroup(recordFilterGroupId);
+
+    removeRootRecordFilterGroupIfEmpty();
+
+    closeDropdown();
   };
 
   return (
@@ -42,11 +54,16 @@ export const AdvancedFilterRecordFilterGroupOptionsDropdown = ({
       }
       dropdownComponents={
         <DropdownMenuItemsContainer>
-          <MenuItem text="Remove rule group" onClick={handleRemove} />
+          <MenuItem
+            text="Remove rule group"
+            onClick={handleRemove}
+            LeftIcon={IconTrash}
+            accent="danger"
+          />
         </DropdownMenuItemsContainer>
       }
       dropdownHotkeyScope={{ scope: dropdownId }}
-      dropdownOffset={{ y: 8, x: 0 }}
+      dropdownOffset={{ y: 2, x: 0 }}
       dropdownPlacement="bottom-start"
     />
   );

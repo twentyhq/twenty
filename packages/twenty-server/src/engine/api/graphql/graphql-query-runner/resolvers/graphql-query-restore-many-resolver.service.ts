@@ -28,6 +28,8 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
 
+    const { roleId } = executionArgs;
+
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
@@ -71,6 +73,7 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
         dataSource: executionArgs.dataSource,
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
+        roleId,
       });
     }
 

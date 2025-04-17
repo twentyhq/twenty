@@ -21,31 +21,17 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
-import { IconDotsVertical } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { IconDotsVertical } from 'twenty-ui/display';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { CommandMenu } from '../CommandMenu';
 
 const openTimeout = 50;
-
-// Mock workspace with feature flag enabled
-const mockWorkspaceWithFeatureFlag = {
-  ...mockCurrentWorkspace,
-  featureFlags: [
-    ...(mockCurrentWorkspace.featureFlags || []),
-    {
-      id: 'mock-id',
-      key: FeatureFlagKey.IsCommandMenuV2Enabled,
-      value: true,
-      workspaceId: mockCurrentWorkspace.id,
-    },
-  ],
-};
 
 const ContextStoreDecorator: Decorator = (Story) => {
   return (
@@ -64,7 +50,11 @@ const ContextStoreDecorator: Decorator = (Story) => {
             <ActionMenuComponentInstanceContext.Provider
               value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
             >
-              <JestContextStoreSetter contextStoreCurrentObjectMetadataNameSingular="company">
+              <JestContextStoreSetter
+                contextStoreCurrentObjectMetadataNameSingular="company"
+                contextStoreCurrentViewId="1"
+                contextStoreCurrentViewType={ContextStoreViewType.Table}
+              >
                 <Story />
               </JestContextStoreSetter>
             </ActionMenuComponentInstanceContext.Provider>
@@ -92,7 +82,7 @@ const meta: Meta<typeof CommandMenu> = {
         commandMenuNavigationStackState,
       );
 
-      setCurrentWorkspace(mockWorkspaceWithFeatureFlag);
+      setCurrentWorkspace(mockCurrentWorkspace);
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
       setIsCommandMenuOpened(true);
       setCommandMenuNavigationStack([
@@ -125,10 +115,10 @@ export const DefaultWithoutSearch: Story = {
     const canvas = within(document.body);
 
     expect(await canvas.findByText('Go to People')).toBeVisible();
-    expect(await canvas.findByText('Go to Companies')).toBeVisible();
     expect(await canvas.findByText('Go to Opportunities')).toBeVisible();
     expect(await canvas.findByText('Go to Settings')).toBeVisible();
     expect(await canvas.findByText('Go to Tasks')).toBeVisible();
+    expect(await canvas.findByText('Go to Notes')).toBeVisible();
   },
 };
 
@@ -179,10 +169,10 @@ export const NoResultsSearchFallback: Story = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query('GlobalSearch', () => {
+        graphql.query('Search', () => {
           return HttpResponse.json({
             data: {
-              globalSearch: [],
+              search: [],
             },
           });
         }),

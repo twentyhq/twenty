@@ -3,13 +3,13 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { VerifyCallback } from 'passport-google-oauth20';
 import { Strategy } from 'passport-microsoft';
-import { APP_LOCALES } from 'twenty-shared';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type MicrosoftRequest = Omit<
   Request,
@@ -29,11 +29,11 @@ export type MicrosoftRequest = Omit<
 };
 
 export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
-  constructor(environmentService: EnvironmentService) {
+  constructor(twentyConfigService: TwentyConfigService) {
     super({
-      clientID: environmentService.get('AUTH_MICROSOFT_CLIENT_ID'),
-      clientSecret: environmentService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
-      callbackURL: environmentService.get('AUTH_MICROSOFT_CALLBACK_URL'),
+      clientID: twentyConfigService.get('AUTH_MICROSOFT_CLIENT_ID'),
+      clientSecret: twentyConfigService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
+      callbackURL: twentyConfigService.get('AUTH_MICROSOFT_CALLBACK_URL'),
       tenant: 'common',
       scope: ['user.read'],
       passReqToCallback: true,

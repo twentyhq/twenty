@@ -5,10 +5,10 @@ import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/Wo
 import { fn } from '@storybook/test';
 import '@xyflow/react/dist/style.css';
 import { ComponentProps } from 'react';
-import { CatalogDecorator, CatalogStory } from 'twenty-ui';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { WorkflowDiagramStepNodeEditableContent } from '../WorkflowDiagramStepNodeEditableContent';
+import { CatalogDecorator, CatalogStory } from 'twenty-ui/testing';
 
 type ComponentState = 'default' | 'hover' | 'selected';
 
@@ -37,43 +37,36 @@ const ALL_STEPS = [
     nodeType: 'trigger',
     triggerType: 'DATABASE_EVENT',
     name: 'Record is Created',
-    isLeafNode: true,
   },
   {
     nodeType: 'trigger',
     triggerType: 'MANUAL',
     name: 'Manual',
-    isLeafNode: true,
   },
   {
     nodeType: 'action',
     actionType: 'CREATE_RECORD',
     name: 'Create Record',
-    isLeafNode: true,
   },
   {
     nodeType: 'action',
     actionType: 'UPDATE_RECORD',
     name: 'Update Record',
-    isLeafNode: true,
   },
   {
     nodeType: 'action',
     actionType: 'DELETE_RECORD',
     name: 'Delete Record',
-    isLeafNode: true,
   },
   {
     nodeType: 'action',
     actionType: 'SEND_EMAIL',
     name: 'Send Email',
-    isLeafNode: true,
   },
   {
     nodeType: 'action',
     actionType: 'CODE',
     name: 'Code',
-    isLeafNode: true,
   },
 ] satisfies WorkflowDiagramStepNodeData[];
 
@@ -101,6 +94,7 @@ export const Catalog: CatalogStory<Story, typeof Wrapper> = {
           values: [
             'empty',
             'default',
+            'running',
             'success',
             'failure',
             'not-executed',
@@ -126,25 +120,6 @@ export const Catalog: CatalogStory<Story, typeof Wrapper> = {
       );
     },
     CatalogDecorator,
-    ReactflowDecorator,
-  ],
-};
-
-export const IsNotLeafNode: Story = {
-  args: {
-    data: {
-      ...ALL_STEPS[0],
-      isLeafNode: false,
-    },
-    state: 'default',
-    variant: 'default',
-  },
-  decorators: [
-    (Story) => (
-      <div style={{ position: 'relative' }}>
-        <Story />
-      </div>
-    ),
     ReactflowDecorator,
   ],
 };

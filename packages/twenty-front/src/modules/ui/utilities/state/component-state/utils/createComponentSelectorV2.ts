@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { selectorFamily } from 'recoil';
 
@@ -9,7 +8,7 @@ import { ComponentStateKeyV2 } from '@/ui/utilities/state/component-state/types/
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { SelectorGetter } from '@/ui/utilities/state/types/SelectorGetter';
 import { SelectorSetter } from '@/ui/utilities/state/types/SelectorSetter';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export function createComponentSelectorV2<ValueType>(options: {
   key: string;

@@ -44,7 +44,7 @@ export const SettingsNavigationDrawerItems = () => {
         return (
           <NavigationDrawerSection key={section.label}>
             {section.isAdvanced ? (
-              <AdvancedSettingsWrapper hideIcon>
+              <AdvancedSettingsWrapper hideDot>
                 <NavigationDrawerSectionTitle label={section.label} />
               </AdvancedSettingsWrapper>
             ) : (

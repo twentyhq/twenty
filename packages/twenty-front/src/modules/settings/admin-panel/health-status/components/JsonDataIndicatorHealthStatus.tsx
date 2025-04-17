@@ -1,17 +1,19 @@
 import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
-import { JsonTree } from '@/workflow/components/json-visualizer/components/JsonTree';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { Section } from 'twenty-ui';
+import { JsonTree } from 'twenty-ui/json-visualizer';
+import { Section } from 'twenty-ui/layout';
 import { AdminPanelHealthServiceStatus } from '~/generated/graphql';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledDetailsContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
   padding: ${({ theme }) => theme.spacing(4)};
   border-radius: ${({ theme }) => theme.border.radius.md};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  white-space: pre-wrap;
   font-size: ${({ theme }) => theme.font.size.sm};
+  overflow-x: auto;
 `;
 
 const StyledErrorMessage = styled.div`
@@ -21,6 +23,9 @@ const StyledErrorMessage = styled.div`
 `;
 
 export const JsonDataIndicatorHealthStatus = () => {
+  const { t } = useLingui();
+  const { copyToClipboard } = useCopyToClipboard();
+
   const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
 
   const parsedDetails = indicatorHealth.details
@@ -30,6 +35,8 @@ export const JsonDataIndicatorHealthStatus = () => {
   const isDown =
     !indicatorHealth.status ||
     indicatorHealth.status === AdminPanelHealthServiceStatus.OUTAGE;
+
+  const isAnyNode = () => true;
 
   return (
     <Section>
@@ -41,7 +48,16 @@ export const JsonDataIndicatorHealthStatus = () => {
       )}
       {parsedDetails && (
         <StyledDetailsContainer>
-          <JsonTree value={parsedDetails} />
+          <JsonTree
+            value={parsedDetails}
+            shouldExpandNodeInitially={isAnyNode}
+            emptyArrayLabel={t`Empty Array`}
+            emptyObjectLabel={t`Empty Object`}
+            emptyStringLabel={t`[empty string]`}
+            arrowButtonCollapsedLabel={t`Expand`}
+            arrowButtonExpandedLabel={t`Collapse`}
+            onNodeValueClick={copyToClipboard}
+          />
         </StyledDetailsContainer>
       )}
     </Section>

@@ -12,7 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
@@ -21,12 +21,12 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
@@ -35,7 +35,7 @@ import {
   PublicWorkspaceDataOutput,
 } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
-import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
+import { WorkspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
@@ -47,7 +47,7 @@ import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -68,7 +68,7 @@ export class WorkspaceResolver {
     private readonly workspaceService: WorkspaceService,
     private readonly domainManagerService: DomainManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
@@ -130,7 +130,7 @@ export class WorkspaceResolver {
   @Mutation(() => String)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingsPermissions.WORKSPACE),
+    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
   )
   async uploadWorkspaceLogo(
     @AuthWorkspace() { id }: Workspace,
@@ -153,15 +153,17 @@ export class WorkspaceResolver {
       logo: paths[0],
     });
 
-    const workspaceLogoToken = await this.fileService.encodeFileToken({
+    const workspaceLogoToken = this.fileService.encodeFileToken({
       workspaceId: id,
     });
 
     return `${paths[0]}?token=${workspaceLogoToken}`;
   }
 
-  @ResolveField(() => [FeatureFlag], { nullable: true })
-  async featureFlags(@Parent() workspace: Workspace): Promise<FeatureFlag[]> {
+  @ResolveField(() => [FeatureFlagDTO], { nullable: true })
+  async featureFlags(
+    @Parent() workspace: Workspace,
+  ): Promise<FeatureFlagDTO[]> {
     const featureFlags = await this.featureFlagService.getWorkspaceFeatureFlags(
       workspace.id,
     );
@@ -174,7 +176,7 @@ export class WorkspaceResolver {
   @Mutation(() => Workspace)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingsPermissions.WORKSPACE),
+    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
   )
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);
@@ -184,7 +186,7 @@ export class WorkspaceResolver {
   async billingSubscriptions(
     @Parent() workspace: Workspace,
   ): Promise<BillingSubscription[] | undefined> {
-    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return [];
     }
 
@@ -203,19 +205,17 @@ export class WorkspaceResolver {
       return null;
     }
 
-    const role = await this.roleService.getRoleById(
+    return await this.roleService.getRoleById(
       workspace.defaultRoleId,
       workspace.id,
     );
-
-    return role;
   }
 
   @ResolveField(() => BillingSubscription, { nullable: true })
   async currentBillingSubscription(
     @Parent() workspace: Workspace,
   ): Promise<BillingSubscription | undefined> {
-    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return;
     }
 
@@ -235,7 +235,7 @@ export class WorkspaceResolver {
   async logo(@Parent() workspace: Workspace): Promise<string> {
     if (workspace.logo) {
       try {
-        const workspaceLogoToken = await this.fileService.encodeFileToken({
+        const workspaceLogoToken = this.fileService.encodeFileToken({
           workspaceId: workspace.id,
         });
 
@@ -250,10 +250,10 @@ export class WorkspaceResolver {
 
   @ResolveField(() => Boolean)
   hasValidEnterpriseKey(): boolean {
-    return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
+    return isDefined(this.twentyConfigService.get('ENTERPRISE_KEY'));
   }
 
-  @ResolveField(() => workspaceUrls)
+  @ResolveField(() => WorkspaceUrls)
   workspaceUrls(@Parent() workspace: Workspace) {
     return this.domainManagerService.getWorkspaceUrls(workspace);
   }
@@ -262,7 +262,7 @@ export class WorkspaceResolver {
   isGoogleAuthEnabled(@Parent() workspace: Workspace) {
     return (
       workspace.isGoogleAuthEnabled &&
-      this.environmentService.get('AUTH_GOOGLE_ENABLED')
+      this.twentyConfigService.get('AUTH_GOOGLE_ENABLED')
     );
   }
 
@@ -270,7 +270,7 @@ export class WorkspaceResolver {
   isMicrosoftAuthEnabled(@Parent() workspace: Workspace) {
     return (
       workspace.isMicrosoftAuthEnabled &&
-      this.environmentService.get('AUTH_MICROSOFT_ENABLED')
+      this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED')
     );
   }
 
@@ -278,7 +278,7 @@ export class WorkspaceResolver {
   isPasswordAuthEnabled(@Parent() workspace: Workspace) {
     return (
       workspace.isPasswordAuthEnabled &&
-      this.environmentService.get('AUTH_PASSWORD_ENABLED')
+      this.twentyConfigService.get('AUTH_PASSWORD_ENABLED')
     );
   }
 
@@ -306,7 +306,7 @@ export class WorkspaceResolver {
 
       if (workspace.logo) {
         try {
-          const workspaceLogoToken = await this.fileService.encodeFileToken({
+          const workspaceLogoToken = this.fileService.encodeFileToken({
             workspaceId: workspace.id,
           });
 
@@ -317,10 +317,10 @@ export class WorkspaceResolver {
       }
 
       const systemEnabledProviders: AuthProviders = {
-        google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
+        google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),
         magicLink: false,
-        password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
-        microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
+        password: this.twentyConfigService.get('AUTH_PASSWORD_ENABLED'),
+        microsoft: this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED'),
         sso: [],
       };
 

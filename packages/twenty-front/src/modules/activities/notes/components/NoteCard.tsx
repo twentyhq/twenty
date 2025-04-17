@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 
-import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFieldContext } from '@/object-record/hooks/useFieldContext';
+import { FieldContextProvider } from '@/object-record/record-field/components/FieldContextProvider';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
   align-items: flex-start;
@@ -68,36 +68,36 @@ export const NoteCard = ({
   note: Note;
   isSingleNote: boolean;
 }) => {
-  const openActivityRightDrawer = useOpenActivityRightDrawer({
-    objectNameSingular: CoreObjectNameSingular.Note,
-  });
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const body = getActivityPreview(note?.bodyV2?.blocknote ?? null);
-
-  const { FieldContextProvider: NoteTargetsContextProvider } = useFieldContext({
-    objectNameSingular: CoreObjectNameSingular.Note,
-    objectRecordId: note.id,
-    fieldMetadataName: 'noteTargets',
-    fieldPosition: 0,
-  });
 
   return (
     <StyledCard isSingleNote={isSingleNote}>
       <StyledCardDetailsContainer
-        onClick={() => openActivityRightDrawer(note.id)}
+        onClick={() =>
+          openRecordInCommandMenu({
+            recordId: note.id,
+            objectNameSingular: CoreObjectNameSingular.Note,
+          })
+        }
       >
         <StyledNoteTitle>{note.title ?? 'Task Title'}</StyledNoteTitle>
         <StyledCardContent>{body}</StyledCardContent>
       </StyledCardDetailsContainer>
       <StyledFooter>
-        {NoteTargetsContextProvider && (
-          <NoteTargetsContextProvider>
-            <ActivityTargetsInlineCell
-              activity={note}
-              activityObjectNameSingular={CoreObjectNameSingular.Note}
-            />
-          </NoteTargetsContextProvider>
-        )}
+        <FieldContextProvider
+          objectNameSingular={CoreObjectNameSingular.Note}
+          objectRecordId={note.id}
+          fieldMetadataName={'noteTargets'}
+          fieldPosition={0}
+        >
+          <ActivityTargetsInlineCell
+            componentInstanceId={`note-card-${note.id}-targets`}
+            activityRecordId={note.id}
+            activityObjectNameSingular={CoreObjectNameSingular.Note}
+          />
+        </FieldContextProvider>
       </StyledFooter>
     </StyledCard>
   );

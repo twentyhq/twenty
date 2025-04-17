@@ -6,11 +6,14 @@ import { Repository } from 'typeorm';
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -33,6 +36,9 @@ export class CreateRecordWorkflowAction implements WorkflowExecutor {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+    private readonly recordPositionService: RecordPositionService,
+    private readonly recordInputTransformerService: RecordInputTransformerService,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
   async execute({
@@ -80,8 +86,27 @@ export class CreateRecordWorkflowAction implements WorkflowExecutor {
       );
     }
 
+    const position = await this.recordPositionService.buildRecordPosition({
+      value: 'first',
+      objectMetadata,
+      workspaceId,
+    });
+
+    const { objectMetadataItemWithFieldsMaps } =
+      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+        workflowActionInput.objectName,
+        workspaceId,
+      );
+
+    const transformedObjectRecord =
+      await this.recordInputTransformerService.process({
+        recordInput: workflowActionInput.objectRecord,
+        objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
+      });
+
     const objectRecord = await repository.save({
-      ...workflowActionInput.objectRecord,
+      ...transformedObjectRecord,
+      position,
       createdBy: {
         source: FieldActorSource.WORKFLOW,
         name: 'Workflow',

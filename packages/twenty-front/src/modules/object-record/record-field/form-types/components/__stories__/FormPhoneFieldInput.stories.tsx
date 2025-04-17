@@ -37,77 +37,6 @@ export const Default: Story = {
   },
 };
 
-export const SelectCountryCode: Story = {
-  args: {
-    label: 'Phone',
-    onPersist: fn(),
-  },
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-
-    const defaultEmptyOption = await canvas.findByText('No country');
-    expect(defaultEmptyOption).toBeVisible();
-
-    await userEvent.click(defaultEmptyOption);
-
-    const searchInput = await canvas.findByPlaceholderText('Search');
-    expect(searchInput).toBeVisible();
-
-    await userEvent.type(searchInput, 'France');
-
-    const franceOption = await canvas.findByText(/France/);
-
-    await userEvent.click(franceOption);
-
-    await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith({
-        primaryPhoneNumber: '',
-        primaryPhoneCountryCode: 'FR',
-        primaryPhoneCallingCode: '33',
-      });
-    });
-
-    expect(args.onPersist).toHaveBeenCalledTimes(1);
-  },
-};
-
-export const SelectEmptyCountryCode: Story = {
-  args: {
-    label: 'Phone',
-    onPersist: fn(),
-    defaultValue: {
-      primaryPhoneNumber: '',
-      primaryPhoneCountryCode: 'FR',
-      primaryPhoneCallingCode: '33',
-    },
-  },
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-
-    const defaultSelectedOption = await canvas.findByText(/France/);
-    expect(defaultSelectedOption).toBeVisible();
-
-    await userEvent.click(defaultSelectedOption);
-
-    const searchInput = await canvas.findByPlaceholderText('Search');
-    expect(searchInput).toBeVisible();
-
-    const emptyOption = await canvas.findByText('No country');
-
-    await userEvent.click(emptyOption);
-
-    await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith({
-        primaryPhoneNumber: '',
-        primaryPhoneCountryCode: '',
-        primaryPhoneCallingCode: '',
-      });
-    });
-
-    expect(args.onPersist).toHaveBeenCalledTimes(1);
-  },
-};
-
 export const WithVariablesAsDefaultValues: Story = {
   args: {
     label: 'Phone',
@@ -147,7 +76,7 @@ export const SelectingVariables: Story = {
         </button>
       );
     },
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -167,7 +96,7 @@ export const SelectingVariables: Story = {
     expect(phoneNumberVariable).toBeVisible();
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith({
+      expect(args.onChange).toHaveBeenCalledWith({
         primaryPhoneNumber: `{{${MOCKED_STEP_ID}.phone.number}}`,
         primaryPhoneCountryCode: '',
         primaryPhoneCallingCode: '',

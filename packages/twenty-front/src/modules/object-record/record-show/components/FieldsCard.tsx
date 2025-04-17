@@ -1,21 +1,22 @@
 import groupBy from 'lodash.groupby';
 
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
-import { Note } from '@/activities/types/Note';
-import { Task } from '@/activities/types/Task';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
-import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated/graphql';
 
 type FieldsCardProps = {
@@ -27,22 +28,20 @@ export const FieldsCard = ({
   objectNameSingular,
   objectRecordId,
 }: FieldsCardProps) => {
-  const {
-    recordFromStore,
-    recordLoading,
-    objectMetadataItem,
-    labelIdentifierFieldMetadataItem,
-    isPrefetchLoading,
-    objectMetadataItems,
-  } = useRecordShowContainerData({
+  const { recordLoading, labelIdentifierFieldMetadataItem, isPrefetchLoading } =
+    useRecordShowContainerData({
+      objectNameSingular,
+      objectRecordId,
+    });
+
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
-    objectRecordId,
   });
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
     objectRecordId,
-    recordFromStore,
   });
 
   const availableFieldMetadataItems = objectMetadataItem.fields
@@ -56,11 +55,16 @@ export const FieldsCard = ({
     );
 
   const { inlineFieldMetadataItems, relationFieldMetadataItems } = groupBy(
-    availableFieldMetadataItems.filter(
-      (fieldMetadataItem) =>
-        fieldMetadataItem.name !== 'createdAt' &&
-        fieldMetadataItem.name !== 'deletedAt',
-    ),
+    availableFieldMetadataItems
+      .filter(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.name !== 'createdAt' &&
+          fieldMetadataItem.name !== 'deletedAt',
+      )
+      .filter(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.type !== FieldMetadataType.RICH_TEXT_V2,
+      ),
     (fieldMetadataItem) =>
       fieldMetadataItem.type === FieldMetadataType.RELATION
         ? 'relationFieldMetadataItems'
@@ -85,102 +89,115 @@ export const FieldsCard = ({
       ),
   );
 
+  const isRecordReadOnly = useIsRecordReadOnly({
+    recordId: objectRecordId,
+  });
+
   return (
     <>
-      {isDefined(recordFromStore) && (
-        <>
-          <PropertyBox>
-            {isPrefetchLoading ? (
-              <PropertyBoxSkeletonLoader />
-            ) : (
-              <>
-                {inlineRelationFieldMetadataItems?.map(
-                  (fieldMetadataItem, index) => (
-                    <FieldContext.Provider
-                      key={objectRecordId + fieldMetadataItem.id}
-                      value={{
-                        recordId: objectRecordId,
-                        maxWidth: 200,
-                        recoilScopeId: objectRecordId + fieldMetadataItem.id,
-                        isLabelIdentifier: false,
-                        fieldDefinition:
-                          formatFieldMetadataItemAsColumnDefinition({
-                            field: fieldMetadataItem,
-                            position: index,
-                            objectMetadataItem,
-                            showLabel: true,
-                            labelWidth: 90,
-                          }),
-                        useUpdateRecord: useUpdateOneObjectRecordMutation,
-                        hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                      }}
-                    >
-                      <ActivityTargetsInlineCell
-                        activityObjectNameSingular={
-                          objectNameSingular as
-                            | CoreObjectNameSingular.Note
-                            | CoreObjectNameSingular.Task
-                        }
-                        activity={recordFromStore as Task | Note}
-                        showLabel={true}
-                        maxWidth={200}
-                      />
-                    </FieldContext.Provider>
-                  ),
-                )}
-                {inlineFieldMetadataItems?.map((fieldMetadataItem, index) => (
-                  <FieldContext.Provider
-                    key={objectRecordId + fieldMetadataItem.id}
-                    value={{
-                      recordId: objectRecordId,
-                      maxWidth: 200,
-                      recoilScopeId: objectRecordId + fieldMetadataItem.id,
-                      isLabelIdentifier: false,
-                      fieldDefinition:
-                        formatFieldMetadataItemAsColumnDefinition({
-                          field: fieldMetadataItem,
-                          position: index,
-                          objectMetadataItem,
-                          showLabel: true,
-                          labelWidth: 90,
-                        }),
-                      useUpdateRecord: useUpdateOneObjectRecordMutation,
-                      hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                    }}
-                  >
-                    <RecordInlineCell loading={recordLoading} />
-                  </FieldContext.Provider>
-                ))}
-              </>
+      <PropertyBox>
+        {isPrefetchLoading ? (
+          <PropertyBoxSkeletonLoader />
+        ) : (
+          <>
+            {inlineRelationFieldMetadataItems?.map(
+              (fieldMetadataItem, index) => (
+                <FieldContext.Provider
+                  key={objectRecordId + fieldMetadataItem.id}
+                  value={{
+                    recordId: objectRecordId,
+                    maxWidth: 200,
+                    isLabelIdentifier: false,
+                    fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+                      field: fieldMetadataItem,
+                      position: index,
+                      objectMetadataItem,
+                      showLabel: true,
+                      labelWidth: 90,
+                    }),
+                    useUpdateRecord: useUpdateOneObjectRecordMutation,
+                    isDisplayModeFixHeight: true,
+                    isReadOnly: isRecordReadOnly,
+                  }}
+                >
+                  <ActivityTargetsInlineCell
+                    componentInstanceId={getRecordFieldInputId(
+                      objectRecordId,
+                      fieldMetadataItem.name,
+                      'fields-card',
+                    )}
+                    activityObjectNameSingular={
+                      objectNameSingular as
+                        | CoreObjectNameSingular.Note
+                        | CoreObjectNameSingular.Task
+                    }
+                    activityRecordId={objectRecordId}
+                    showLabel={true}
+                    maxWidth={200}
+                  />
+                </FieldContext.Provider>
+              ),
             )}
-          </PropertyBox>
-          <RecordDetailDuplicatesSection
-            objectRecordId={objectRecordId}
-            objectNameSingular={objectNameSingular}
+            {inlineFieldMetadataItems?.map((fieldMetadataItem, index) => (
+              <FieldContext.Provider
+                key={objectRecordId + fieldMetadataItem.id}
+                value={{
+                  recordId: objectRecordId,
+                  maxWidth: 200,
+                  isLabelIdentifier: false,
+                  fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+                    field: fieldMetadataItem,
+                    position: index,
+                    objectMetadataItem,
+                    showLabel: true,
+                    labelWidth: 90,
+                  }),
+                  useUpdateRecord: useUpdateOneObjectRecordMutation,
+                  isDisplayModeFixHeight: true,
+                  isReadOnly: isRecordReadOnly,
+                }}
+              >
+                <RecordFieldComponentInstanceContext.Provider
+                  value={{
+                    instanceId: getRecordFieldInputId(
+                      objectRecordId,
+                      fieldMetadataItem.name,
+                      'fields-card',
+                    ),
+                  }}
+                >
+                  <RecordInlineCell loading={recordLoading} />
+                </RecordFieldComponentInstanceContext.Provider>
+              </FieldContext.Provider>
+            ))}
+          </>
+        )}
+      </PropertyBox>
+      <RecordDetailDuplicatesSection
+        objectRecordId={objectRecordId}
+        objectNameSingular={objectNameSingular}
+      />
+      {boxedRelationFieldMetadataItems?.map((fieldMetadataItem, index) => (
+        <FieldContext.Provider
+          key={objectRecordId + fieldMetadataItem.id}
+          value={{
+            recordId: objectRecordId,
+            isLabelIdentifier: false,
+            fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+              field: fieldMetadataItem,
+              position: index,
+              objectMetadataItem,
+            }),
+            useUpdateRecord: useUpdateOneObjectRecordMutation,
+            isDisplayModeFixHeight: true,
+            isReadOnly: isRecordReadOnly,
+          }}
+        >
+          <RecordDetailRelationSection
+            loading={isPrefetchLoading || recordLoading}
           />
-          {boxedRelationFieldMetadataItems?.map((fieldMetadataItem, index) => (
-            <FieldContext.Provider
-              key={objectRecordId + fieldMetadataItem.id}
-              value={{
-                recordId: objectRecordId,
-                recoilScopeId: objectRecordId + fieldMetadataItem.id,
-                isLabelIdentifier: false,
-                fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-                  field: fieldMetadataItem,
-                  position: index,
-                  objectMetadataItem,
-                }),
-                useUpdateRecord: useUpdateOneObjectRecordMutation,
-                hotkeyScope: InlineCellHotkeyScope.InlineCell,
-              }}
-            >
-              <RecordDetailRelationSection
-                loading={isPrefetchLoading || recordLoading}
-              />
-            </FieldContext.Provider>
-          ))}
-        </>
-      )}
+        </FieldContext.Provider>
+      ))}
     </>
   );
 };

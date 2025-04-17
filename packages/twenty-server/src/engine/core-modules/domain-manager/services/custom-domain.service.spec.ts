@@ -1,18 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { CustomHostnameCreateResponse } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
 import Cloudflare from 'cloudflare';
+import { CustomHostnameCreateResponse } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
+import { AnalyticsContextMock } from 'test/utils/analytics-context.mock';
 
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { DomainManagerException } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 jest.mock('cloudflare');
 
 describe('CustomDomainService', () => {
   let customDomainService: CustomDomainService;
-  let environmentService: EnvironmentService;
+  let twentyConfigService: TwentyConfigService;
   let domainManagerService: DomainManagerService;
 
   beforeEach(async () => {
@@ -20,9 +22,15 @@ describe('CustomDomainService', () => {
       providers: [
         CustomDomainService,
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
+          },
+        },
+        {
+          provide: AnalyticsService,
+          useValue: {
+            createAnalyticsContext: AnalyticsContextMock,
           },
         },
         {
@@ -35,7 +43,7 @@ describe('CustomDomainService', () => {
     }).compile();
 
     customDomainService = module.get<CustomDomainService>(CustomDomainService);
-    environmentService = module.get<EnvironmentService>(EnvironmentService);
+    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     domainManagerService =
       module.get<DomainManagerService>(DomainManagerService);
 
@@ -52,11 +60,11 @@ describe('CustomDomainService', () => {
   it('should initialize cloudflareClient when CLOUDFLARE_API_KEY is defined', () => {
     const mockApiKey = 'test-api-key';
 
-    jest.spyOn(environmentService, 'get').mockReturnValue(mockApiKey);
+    jest.spyOn(twentyConfigService, 'get').mockReturnValue(mockApiKey);
 
-    const instance = new CustomDomainService(environmentService, {} as any);
+    const instance = new CustomDomainService(twentyConfigService, {} as any);
 
-    expect(environmentService.get).toHaveBeenCalledWith('CLOUDFLARE_API_KEY');
+    expect(twentyConfigService.get).toHaveBeenCalledWith('CLOUDFLARE_API_KEY');
     expect(Cloudflare).toHaveBeenCalledWith({ apiToken: mockApiKey });
     expect(instance.cloudflareClient).toBeDefined();
   });
@@ -89,7 +97,7 @@ describe('CustomDomainService', () => {
       jest
         .spyOn(customDomainService, 'getCustomDomainDetails')
         .mockResolvedValueOnce(undefined);
-      jest.spyOn(environmentService, 'get').mockReturnValue('test-zone-id');
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
       (customDomainService as any).cloudflareClient = cloudflareMock;
 
       await customDomainService.registerCustomDomain(customDomain);
@@ -111,7 +119,7 @@ describe('CustomDomainService', () => {
         },
       };
 
-      jest.spyOn(environmentService, 'get').mockReturnValue('test-zone-id');
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
       (customDomainService as any).cloudflareClient = cloudflareMock;
 
       const result =
@@ -137,7 +145,7 @@ describe('CustomDomainService', () => {
         },
       };
 
-      jest.spyOn(environmentService, 'get').mockReturnValue('test-zone-id');
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
 
       jest
         .spyOn(domainManagerService, 'getFrontUrl')
@@ -175,7 +183,7 @@ describe('CustomDomainService', () => {
         },
       };
 
-      jest.spyOn(environmentService, 'get').mockReturnValue('test-zone-id');
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
       jest
         .spyOn(domainManagerService, 'getFrontUrl')
         .mockReturnValue(new URL('https://front.domain'));
@@ -199,7 +207,7 @@ describe('CustomDomainService', () => {
         },
       };
 
-      jest.spyOn(environmentService, 'get').mockReturnValue('test-zone-id');
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
       (customDomainService as any).cloudflareClient = cloudflareMock;
 
       await expect(
@@ -249,7 +257,7 @@ describe('CustomDomainService', () => {
         },
       };
 
-      jest.spyOn(environmentService, 'get').mockReturnValue('test-zone-id');
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
       (customDomainService as any).cloudflareClient = cloudflareMock;
 
       await expect(

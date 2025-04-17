@@ -3,7 +3,7 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   FeatureFlagKey,
   OnboardingStatus,
-  SettingsPermissions,
+  SettingPermissionType,
   SubscriptionInterval,
   SubscriptionStatus,
   User,
@@ -25,7 +25,6 @@ type MockedUser = Pick<
   | 'supportUserHash'
   | 'onboardingStatus'
   | 'userVars'
-  | 'analyticsTinybirdJwts'
 > & {
   workspaceMember: WorkspaceMember | null;
   locale: string;
@@ -60,22 +59,16 @@ export const mockCurrentWorkspace: Workspace = {
   isMicrosoftAuthEnabled: false,
   featureFlags: [
     {
-      id: '1492de61-5018-4368-8923-4f1eeaf988c4',
       key: FeatureFlagKey.IsAirtableIntegrationEnabled,
       value: true,
-      workspaceId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6w',
     },
     {
-      id: '1492de61-5018-4368-8923-4f1eeaf988c5',
       key: FeatureFlagKey.IsPostgreSQLIntegrationEnabled,
       value: true,
-      workspaceId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6w',
     },
     {
-      id: '1492de61-5018-4368-8923-4f1eeaf988c6',
       key: FeatureFlagKey.IsWorkflowEnabled,
       value: true,
-      workspaceId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6w',
     },
   ],
   createdAt: '2023-04-26T10:23:42.33625+00:00',
@@ -131,14 +124,13 @@ export const mockedUserData: MockedUser = {
   workspaceMember: mockedWorkspaceMemberData,
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
-    settingsPermissions: [SettingsPermissions.WORKSPACE_MEMBERS],
+    settingsPermissions: [SettingPermissionType.WORKSPACE_MEMBERS],
   },
   locale: 'en',
   workspaces: [{ workspace: mockCurrentWorkspace }],
   workspaceMembers: [mockedWorkspaceMemberData],
   onboardingStatus: OnboardingStatus.COMPLETED,
   userVars: {},
-  analyticsTinybirdJwts: null,
 };
 
 export const mockedOnboardingUserData = (

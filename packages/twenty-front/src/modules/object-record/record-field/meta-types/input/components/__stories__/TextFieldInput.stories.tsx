@@ -1,14 +1,15 @@
-import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { FieldMetadataType } from '~/generated/graphql';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
-import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
+import { Decorator, Meta, StoryObj } from '@storybook/react';
+import { FieldMetadataType } from '~/generated/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { FieldContextProvider } from '../../../components/FieldContextProvider';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { useTextField } from '../../../hooks/useTextField';
 import { TextFieldInput, TextFieldInputProps } from '../TextFieldInput';
 
@@ -38,27 +39,39 @@ const TextFieldInputWithContext = ({
 }: TextFieldInputWithContextProps) => {
   const setHotKeyScope = useSetHotkeyScope();
 
+  const [isReady, setIsReady] = useState(false);
+
   useEffect(() => {
-    setHotKeyScope('hotkey-scope');
-  }, [setHotKeyScope]);
+    if (!isReady) {
+      setHotKeyScope(DEFAULT_CELL_SCOPE.scope);
+      setIsReady(true);
+    }
+  }, [isReady, setHotKeyScope]);
 
   return (
-    <div>
-      <FieldContextProvider
-        fieldDefinition={{
-          fieldMetadataId: 'text',
-          label: 'Text',
-          type: FieldMetadataType.TEXT,
-          iconName: 'IconTag',
-          metadata: {
-            fieldName: 'Text',
-            placeHolder: 'Enter text',
-            objectMetadataNameSingular: 'person',
+    <RecordFieldComponentInstanceContext.Provider
+      value={{
+        instanceId: 'record-field-component-instance-id',
+      }}
+    >
+      <FieldContext.Provider
+        value={{
+          recordId: recordId ?? '123',
+          fieldDefinition: {
+            fieldMetadataId: 'text',
+            label: 'Text',
+            type: FieldMetadataType.TEXT,
+            iconName: 'IconText',
+            metadata: {
+              fieldName: 'text',
+              objectMetadataNameSingular: 'person',
+              placeHolder: 'Enter text',
+            },
           },
+          isLabelIdentifier: false,
+          isReadOnly: false,
         }}
-        recordId={recordId}
       >
-        <StorybookFieldInputDropdownFocusIdSetterEffect />
         <TextFieldValueSetterEffect value={value} />
         <TextFieldInput
           onEnter={onEnter}
@@ -67,9 +80,10 @@ const TextFieldInputWithContext = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
         />
-      </FieldContextProvider>
+      </FieldContext.Provider>
+      {isReady && <div data-testid="is-ready-marker" />}
       <div data-testid="data-field-input-click-outside-div" />
-    </div>
+    </RecordFieldComponentInstanceContext.Provider>
   );
 };
 
@@ -121,22 +135,30 @@ type Story = StoryObj<typeof TextFieldInputWithContext>;
 export const Default: Story = {};
 
 export const Enter: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
     expect(enterJestFn).toHaveBeenCalledTimes(0);
 
+    await canvas.findByTestId('is-ready-marker');
+    await userEvent.keyboard('{enter}');
+
     await waitFor(() => {
-      userEvent.keyboard('{enter}');
       expect(enterJestFn).toHaveBeenCalledTimes(1);
     });
   },
 };
 
 export const Escape: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
     expect(escapeJestfn).toHaveBeenCalledTimes(0);
 
+    await canvas.findByTestId('is-ready-marker');
+    await userEvent.keyboard('{esc}');
+
     await waitFor(() => {
-      userEvent.keyboard('{esc}');
       expect(escapeJestfn).toHaveBeenCalledTimes(1);
     });
   },
@@ -149,31 +171,43 @@ export const ClickOutside: Story = {
     expect(clickOutsideJestFn).toHaveBeenCalledTimes(0);
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
+    await canvas.findByTestId('is-ready-marker');
+
+    await userEvent.click(emptyDiv);
 
     await waitFor(() => {
-      userEvent.click(emptyDiv);
       expect(clickOutsideJestFn).toHaveBeenCalled();
     });
   },
 };
 
 export const Tab: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByTestId('is-ready-marker');
+
     expect(tabJestFn).toHaveBeenCalledTimes(0);
 
+    await userEvent.keyboard('{tab}');
+
     await waitFor(() => {
-      userEvent.keyboard('{tab}');
       expect(tabJestFn).toHaveBeenCalledTimes(1);
     });
   },
 };
 
 export const ShiftTab: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByTestId('is-ready-marker');
+
     expect(shiftTabJestFn).toHaveBeenCalledTimes(0);
 
+    await userEvent.keyboard('{shift>}{tab}');
+
     await waitFor(() => {
-      userEvent.keyboard('{shift>}{tab}');
       expect(shiftTabJestFn).toHaveBeenCalledTimes(1);
     });
   },

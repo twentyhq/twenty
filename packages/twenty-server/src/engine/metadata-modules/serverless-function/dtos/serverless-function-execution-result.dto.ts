@@ -23,6 +23,9 @@ export class ServerlessFunctionExecutionResultDTO {
   })
   data?: JSON;
 
+  @Field({ description: 'Execution Logs' })
+  logs: string;
+
   @Field({ description: 'Execution duration in milliseconds' })
   duration: number;
 

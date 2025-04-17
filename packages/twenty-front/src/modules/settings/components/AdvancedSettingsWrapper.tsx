@@ -1,76 +1,45 @@
+import { AdvancedSettingsContentWrapperWithDot } from '@/settings/components/AdvancedSettingsContentWrapperWithDot';
 import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/AdvancedSettingsAnimationDurations';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { AnimatedExpandableContainer, IconPoint, MAIN_COLORS } from 'twenty-ui';
-
-const StyledAdvancedWrapper = styled.div`
-  position: relative;
-  width: 100%;
-`;
-
-const StyledIconContainer = styled.div<{ navigationDrawerItem: boolean }>`
-  display: flex;
-  position: absolute;
-
-  ${({ navigationDrawerItem, theme }) => {
-    if (navigationDrawerItem) {
-      return `
-        height: 100%;
-        left: ${theme.spacing(-5)};
-        align-items: center;
-      `;
-    }
-    return `
-      left: ${theme.spacing(-4)};
-      top: ${theme.spacing(1)};
-    `;
-  }}
-`;
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 const StyledContent = styled.div`
   width: 100%;
 `;
 
-const StyledIconPoint = styled(IconPoint)`
-  margin-right: 0;
-`;
+type DotPosition = 'top' | 'centered';
 
 type AdvancedSettingsWrapperProps = {
   children: React.ReactNode;
-  dimension?: 'width' | 'height';
-  hideIcon?: boolean;
-  navigationDrawerItem?: boolean;
+  animationDimension?: 'width' | 'height';
+  hideDot?: boolean;
+  dotPosition?: DotPosition;
 };
 
 export const AdvancedSettingsWrapper = ({
   children,
-  dimension = 'height',
-  hideIcon = false,
-  navigationDrawerItem = false,
+  hideDot = false,
+  dotPosition = 'centered',
+  animationDimension = 'height',
 }: AdvancedSettingsWrapperProps) => {
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
 
   return (
     <AnimatedExpandableContainer
       isExpanded={isAdvancedModeEnabled}
-      dimension={dimension}
+      dimension={animationDimension}
       animationDurations={ADVANCED_SETTINGS_ANIMATION_DURATION}
       mode="scroll-height"
       containAnimation={false}
     >
-      <StyledAdvancedWrapper>
-        {!hideIcon && (
-          <StyledIconContainer navigationDrawerItem={navigationDrawerItem}>
-            <StyledIconPoint
-              size={12}
-              color={MAIN_COLORS.yellow}
-              fill={MAIN_COLORS.yellow}
-            />
-          </StyledIconContainer>
-        )}
+      <AdvancedSettingsContentWrapperWithDot
+        hideDot={hideDot}
+        dotPosition={dotPosition}
+      >
         <StyledContent>{children}</StyledContent>
-      </StyledAdvancedWrapper>
+      </AdvancedSettingsContentWrapperWithDot>
     </AnimatedExpandableContainer>
   );
 };

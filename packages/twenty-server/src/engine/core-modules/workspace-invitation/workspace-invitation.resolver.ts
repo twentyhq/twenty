@@ -12,14 +12,14 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 import { SendInvitationsInput } from './dtos/send-invitations.input';
 
 @UseGuards(
   WorkspaceAuthGuard,
-  SettingsPermissionsGuard(SettingsPermissions.WORKSPACE_MEMBERS),
+  SettingsPermissionsGuard(SettingPermissionType.WORKSPACE_MEMBERS),
 )
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 @Resolver()
@@ -69,7 +69,7 @@ export class WorkspaceInvitationResolver {
     let workspaceLogoWithToken = '';
 
     if (workspace.logo) {
-      const workspaceLogoToken = await this.fileService.encodeFileToken({
+      const workspaceLogoToken = this.fileService.encodeFileToken({
         workspaceId: workspace.id,
       });
 

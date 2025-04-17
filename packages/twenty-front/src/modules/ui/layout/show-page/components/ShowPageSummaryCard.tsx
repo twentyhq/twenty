@@ -4,14 +4,18 @@ import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 import { ChangeEvent, ReactNode, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { AppTooltip, Avatar, AvatarType, IconComponent } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidV4 } from 'uuid';
-
-import { isDefined } from 'twenty-shared';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
+import {
+  AppTooltip,
+  Avatar,
+  AvatarType,
+  IconComponent,
+} from 'twenty-ui/display';
 
 type ShowPageSummaryCardProps = {
   avatarPlaceholder: string;
@@ -53,7 +57,7 @@ const StyledInfoContainer = styled.div<{ isMobile: boolean }>`
 const StyledDate = styled.div<{ isMobile: boolean }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
-  padding-left: ${({ theme, isMobile }) => (isMobile ? theme.spacing(2) : 0)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledTitle = styled.div<{ isMobile: boolean }>`
@@ -65,7 +69,13 @@ const StyledTitle = styled.div<{ isMobile: boolean }>`
   width: 90%;
 `;
 
-const StyledAvatarWrapper = styled.div<{ isAvatarEditable: boolean }>`
+const StyledAvatarWrapper = styled.div<{
+  isAvatarEditable: boolean;
+  hasIcon: boolean;
+}>`
+  background-color: ${({ theme, hasIcon }) =>
+    hasIcon ? theme.background.transparent.light : 'unset'};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: ${({ isAvatarEditable }) =>
     isAvatarEditable ? 'pointer' : 'default'};
 `;
@@ -133,7 +143,10 @@ export const ShowPageSummaryCard = ({
 
   return (
     <StyledShowPageSummaryCard isMobile={isMobile}>
-      <StyledAvatarWrapper isAvatarEditable={!!onUploadPicture}>
+      <StyledAvatarWrapper
+        isAvatarEditable={isDefined(onUploadPicture)}
+        hasIcon={isDefined(icon)}
+      >
         <Avatar
           avatarUrl={logoOrAvatar}
           onClick={onUploadPicture ? handleAvatarClick : undefined}

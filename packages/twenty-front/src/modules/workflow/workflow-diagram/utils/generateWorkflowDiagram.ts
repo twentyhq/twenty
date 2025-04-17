@@ -12,7 +12,7 @@ import {
 import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramTriggerNode';
 
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 export const generateWorkflowDiagram = ({
@@ -55,7 +55,6 @@ export const generateWorkflowDiagram = ({
         nodeType: 'action',
         actionType: step.type,
         name: step.name,
-        isLeafNode: false,
       } satisfies WorkflowDiagramStepNodeData,
       position: {
         x: xPos,

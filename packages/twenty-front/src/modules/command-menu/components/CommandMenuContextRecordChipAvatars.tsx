@@ -4,7 +4,7 @@ import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Avatar } from 'twenty-ui';
+import { Avatar } from 'twenty-ui/display';
 
 const StyledIconWrapper = styled.div<{ withIconBackground?: boolean }>`
   background: ${({ theme, withIconBackground }) =>
@@ -32,7 +32,6 @@ export const CommandMenuContextRecordChipAvatars = ({
     objectNameSingular: objectMetadataItem.nameSingular,
     record,
   });
-
   const { Icon, IconColor } = useGetStandardObjectIcon(
     objectMetadataItem.nameSingular,
   );

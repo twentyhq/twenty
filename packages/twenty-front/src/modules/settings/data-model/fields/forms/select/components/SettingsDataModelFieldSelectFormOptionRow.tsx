@@ -8,6 +8,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
+import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
 import {
   ColorSample,
   IconCheck,
@@ -15,13 +17,10 @@ import {
   IconGripVertical,
   IconTrash,
   IconX,
-  LightIconButton,
-  MAIN_COLOR_NAMES,
-  MenuItem,
-  MenuItemSelectColor,
-} from 'twenty-ui';
-import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
-import { t } from '@lingui/core/macro';
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
+import { MenuItem, MenuItemSelectColor } from 'twenty-ui/navigation';
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
   className?: string;
@@ -102,7 +101,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         stroke={theme.icon.stroke.sm}
         color={theme.font.color.extraLight}
       />
-      <AdvancedSettingsWrapper dimension="width" hideIcon={true}>
+      <AdvancedSettingsWrapper animationDimension="width" hideDot>
         <StyledOptionInput
           value={option.value}
           onChange={(input) =>

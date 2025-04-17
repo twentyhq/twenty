@@ -2,13 +2,16 @@ import styled from '@emotion/styled';
 // @ts-expect-error // Todo: remove usage of react-data-grid
 import { Column, useRowSelection } from 'react-data-grid';
 import { createPortal } from 'react-dom';
-import { AppTooltip, Checkbox, CheckboxVariant, Toggle } from 'twenty-ui';
 
-import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
-import { Fields, ImportedStructuredRow } from '@/spreadsheet-import/types';
+import {
+  ImportedStructuredRow,
+  SpreadsheetImportFields,
+} from '@/spreadsheet-import/types';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { isDefined } from 'twenty-shared';
 
+import { isDefined } from 'twenty-shared/utils';
+import { AppTooltip } from 'twenty-ui/display';
+import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
 import { ImportedStructuredRowMetadata } from '../types';
 
 const StyledHeaderContainer = styled.div`
@@ -57,10 +60,14 @@ const StyledDefaultContainer = styled.div`
   text-overflow: ellipsis;
 `;
 
+const StyledSelectReadonlyValueContianer = styled.div`
+  padding-left: ${({ theme }) => theme.spacing(2)};
+`;
+
 const SELECT_COLUMN_KEY = 'select-row';
 
 export const generateColumns = <T extends string>(
-  fields: Fields<T>,
+  fields: SpreadsheetImportFields<T>,
 ): Column<ImportedStructuredRow<T> & ImportedStructuredRowMetadata>[] => [
   {
     key: SELECT_COLUMN_KEY,
@@ -126,25 +133,10 @@ export const generateColumns = <T extends string>(
 
         switch (column.fieldType.type) {
           case 'select': {
-            const value = column.fieldType.options.find(
-              (option) => option.value === (row[columnKey] as string),
-            );
-
             component = (
-              <MatchColumnSelect
-                value={
-                  value
-                    ? ({
-                        icon: undefined,
-                        ...value,
-                      } as const)
-                    : value
-                }
-                onChange={(value) => {
-                  onRowChange({ ...row, [columnKey]: value?.value }, true);
-                }}
-                options={column.fieldType.options}
-              />
+              <StyledSelectReadonlyValueContianer>
+                {row[columnKey]}
+              </StyledSelectReadonlyValueContianer>
             );
             break;
           }

@@ -1,10 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
-import { ComponentWithRouterDecorator, IconCheckbox } from 'twenty-ui';
-
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { TabList } from '../TabList';
+import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
+import { IconCheckbox } from 'twenty-ui/display';
 
 const tabs = [
   {
@@ -39,17 +38,10 @@ const meta: Meta<typeof TabList> = {
   title: 'UI/Layout/Tab/TabList',
   component: TabList,
   args: {
-    tabListInstanceId: 'tab-list-id',
     tabs: tabs,
+    componentInstanceId: 'tab-list',
   },
-  decorators: [
-    (Story) => (
-      <RecoilScope>
-        <Story />
-      </RecoilScope>
-    ),
-    ComponentWithRouterDecorator,
-  ],
+  decorators: [ComponentWithRouterDecorator],
 };
 
 export default meta;

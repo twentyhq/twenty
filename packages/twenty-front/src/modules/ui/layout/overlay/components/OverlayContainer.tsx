@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 // eslint-disable-next-line @nx/workspace-styled-components-prefixed-with-styled
 export const OverlayContainer = styled.div<{
   borderRadius?: 'sm' | 'md';
+  hasDangerBorder?: boolean;
 }>`
   align-items: center;
   display: flex;
@@ -14,7 +15,9 @@ export const OverlayContainer = styled.div<{
     theme.border.radius[borderRadius ?? 'md']};
 
   background: ${({ theme }) => theme.background.transparent.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border: 1px solid
+    ${({ theme, hasDangerBorder }) =>
+      theme.border.color[hasDangerBorder ? 'danger' : 'medium']};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
 
   overflow: hidden;

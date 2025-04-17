@@ -1,5 +1,6 @@
 import { OpenAPIV3_1 } from 'openapi-types';
-import { capitalize, FieldMetadataType } from 'twenty-shared';
+import { capitalize } from 'twenty-shared/utils';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   computeDepthParameters,
@@ -211,6 +212,7 @@ const getSchemaComponentsProperties = ({
                 'IMPORT',
                 'MANUAL',
                 'SYSTEM',
+                'WEBHOOK',
               ],
             },
             ...(forResponse

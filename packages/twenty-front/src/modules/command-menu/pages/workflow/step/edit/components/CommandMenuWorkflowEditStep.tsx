@@ -2,8 +2,8 @@ import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/w
 import { CommandMenuWorkflowEditStepContent } from '@/command-menu/pages/workflow/step/edit/components/CommandMenuWorkflowEditStepContent';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { WorkflowVersionComponentInstanceContext } from '@/workflow/states/context/WorkflowVersionComponentInstanceContext';
-import { isDefined } from 'twenty-shared';
+import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
+import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuWorkflowEditStep = () => {
   const workflowId = useRecoilComponentValueV2(workflowIdComponentState);
@@ -14,10 +14,10 @@ export const CommandMenuWorkflowEditStep = () => {
   }
 
   return (
-    <WorkflowVersionComponentInstanceContext.Provider
-      value={{ instanceId: workflow.currentVersion.id }}
+    <WorkflowStepContextProvider
+      value={{ workflowVersionId: workflow.currentVersion.id }}
     >
       <CommandMenuWorkflowEditStepContent workflow={workflow} />
-    </WorkflowVersionComponentInstanceContext.Provider>
+    </WorkflowStepContextProvider>
   );
 };

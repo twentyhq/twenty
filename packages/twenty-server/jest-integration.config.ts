@@ -1,6 +1,9 @@
 import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
 
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+
 const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const tsConfig = require('./tsconfig.json');
 
@@ -14,12 +17,12 @@ const jestConfig: JestConfigWithTsJest = {
   rootDir: '.',
   testEnvironment: 'node',
   testRegex: isBillingEnabled
-    ? 'integration-spec.ts'
+    ? '\\.integration-spec\\.ts$'
     : '^(?!.*billing).*\\.integration-spec\\.ts$',
   modulePathIgnorePatterns: ['<rootDir>/dist'],
   globalSetup: '<rootDir>/test/integration/utils/setup-test.ts',
   globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',
-  testTimeout: 15000,
+  testTimeout: 20000,
   maxWorkers: 1,
   transform: {
     '^.+\\.(t|j)s$': [
@@ -53,14 +56,13 @@ const jestConfig: JestConfigWithTsJest = {
       prefix: '<rootDir>/../..',
     }),
     '^test/(.*)$': '<rootDir>/test/$1',
-    'twenty-emails': '<rootDir>/../twenty-emails/dist/index.js',
-    'twenty-shared': '<rootDir>/../twenty-shared/dist/index.js',
   },
   fakeTimers: {
     enableGlobally: true,
   },
   globals: {
     APP_PORT: 4000,
+    NODE_ENV: NodeEnvironment.test,
     ADMIN_ACCESS_TOKEN:
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC05ZTNiLTQ2ZDQtYTU1Ni04OGI5ZGRjMmIwMzQiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtMDY4Ny00YzQxLWI3MDctZWQxYmZjYTk3MmE3IiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtOWUzYi00NmQ0LWE1NTYtODhiOWRkYzJiMDM1IiwiaWF0IjoxNzM5NTQ3NjYxLCJleHAiOjMzMjk3MTQ3NjYxfQ.fbOM9yhr3jWDicPZ1n771usUURiPGmNdeFApsgrbxOw',
     EXPIRED_ACCESS_TOKEN:

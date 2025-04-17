@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { z } from 'zod';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type GoogleTokens = {
   accessToken: string;
@@ -18,14 +18,16 @@ interface GoogleRefreshTokenResponse {
 }
 @Injectable()
 export class GoogleAPIRefreshAccessTokenService {
-  constructor(private readonly environmentService: EnvironmentService) {}
+  constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   async refreshAccessToken(refreshToken: string): Promise<GoogleTokens> {
     const response = await axios.post<GoogleRefreshTokenResponse>(
       'https://oauth2.googleapis.com/token',
       {
-        client_id: this.environmentService.get('AUTH_GOOGLE_CLIENT_ID'),
-        client_secret: this.environmentService.get('AUTH_GOOGLE_CLIENT_SECRET'),
+        client_id: this.twentyConfigService.get('AUTH_GOOGLE_CLIENT_ID'),
+        client_secret: this.twentyConfigService.get(
+          'AUTH_GOOGLE_CLIENT_SECRET',
+        ),
         refresh_token: refreshToken,
         grant_type: 'refresh_token',
       },

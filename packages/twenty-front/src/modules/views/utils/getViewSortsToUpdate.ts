@@ -1,6 +1,6 @@
 import { ViewSort } from '@/views/types/ViewSort';
 import { areViewSortsEqual } from '@/views/utils/areViewSortsEqual';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getViewSortsToUpdate = (
   currentViewSorts: ViewSort[],

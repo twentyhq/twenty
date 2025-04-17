@@ -1,22 +1,18 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  Checkbox,
-  CheckboxShape,
-  IconCalendar,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui';
 
-import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { Task } from '@/activities/types/Task';
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFieldContext } from '@/object-record/hooks/useFieldContext';
+import { FieldContextProvider } from '@/object-record/record-field/components/FieldContextProvider';
 import { useCompleteTask } from '../hooks/useCompleteTask';
+import { Checkbox, CheckboxShape } from 'twenty-ui/input';
+import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledTaskBody = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -78,25 +74,19 @@ const StyledCheckboxContainer = styled.div`
 
 export const TaskRow = ({ task }: { task: Task }) => {
   const theme = useTheme();
-  const openActivityRightDrawer = useOpenActivityRightDrawer({
-    objectNameSingular: CoreObjectNameSingular.Task,
-  });
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const body = getActivitySummary(task?.bodyV2?.blocknote ?? null);
 
   const { completeTask } = useCompleteTask(task);
 
-  const { FieldContextProvider: TaskTargetsContextProvider } = useFieldContext({
-    objectNameSingular: CoreObjectNameSingular.Task,
-    objectRecordId: task.id,
-    fieldMetadataName: 'taskTargets',
-    fieldPosition: 0,
-  });
-
   return (
     <ActivityRow
       onClick={() => {
-        openActivityRightDrawer(task.id);
+        openRecordInCommandMenu({
+          recordId: task.id,
+          objectNameSingular: CoreObjectNameSingular.Task,
+        });
       }}
     >
       <StyledLeftSideContainer>
@@ -127,16 +117,22 @@ export const TaskRow = ({ task }: { task: Task }) => {
             {beautifyExactDate(task.dueAt)}
           </StyledDueDate>
         )}
-        {TaskTargetsContextProvider && (
-          <TaskTargetsContextProvider>
+        {
+          <FieldContextProvider
+            objectNameSingular={CoreObjectNameSingular.Task}
+            objectRecordId={task.id}
+            fieldMetadataName={'taskTargets'}
+            fieldPosition={0}
+          >
             <ActivityTargetsInlineCell
               activityObjectNameSingular={CoreObjectNameSingular.Task}
-              activity={task}
+              activityRecordId={task.id}
               showLabel={false}
               maxWidth={200}
+              componentInstanceId={`task-row-targets-${task.id}`}
             />
-          </TaskTargetsContextProvider>
-        )}
+          </FieldContextProvider>
+        }
       </StyledRightSideContainer>
     </ActivityRow>
   );

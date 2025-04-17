@@ -5,31 +5,32 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { H2Title, Section } from 'twenty-ui';
-import { useGetEnvironmentVariablesGroupedQuery } from '~/generated/graphql';
+import { H2Title } from 'twenty-ui/display';
+import { useGetConfigVariablesGroupedQuery } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-const StyledGroupContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(6)};
-`;
+const StyledGroupContainer = styled.div``;
 
 export const SettingsAdminSecondaryEnvVariables = () => {
-  const { data: environmentVariables, loading: environmentVariablesLoading } =
-    useGetEnvironmentVariablesGroupedQuery({
-      fetchPolicy: 'network-only',
-    });
+  const {
+    data: secondaryConfigVariables,
+    loading: secondaryConfigVariablesLoading,
+  } = useGetConfigVariablesGroupedQuery({
+    fetchPolicy: 'network-only',
+  });
 
   const hiddenGroups =
-    environmentVariables?.getEnvironmentVariablesGrouped.groups.filter(
+    secondaryConfigVariables?.getConfigVariablesGrouped.groups.filter(
       (group) => group.isHiddenOnLoad,
     ) ?? [];
 
-  if (environmentVariablesLoading) {
+  if (secondaryConfigVariablesLoading) {
     return <SettingsSkeletonLoader />;
   }
 
   return (
     <SubMenuTopBarContainer
+      title={t`Other Environment Variables`}
       links={[
         {
           children: t`Other`,
@@ -45,16 +46,14 @@ export const SettingsAdminSecondaryEnvVariables = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          {hiddenGroups.map((group) => (
-            <StyledGroupContainer key={group.name}>
-              <H2Title title={group.name} description={group.description} />
-              {group.variables.length > 0 && (
-                <SettingsAdminEnvVariablesTable variables={group.variables} />
-              )}
-            </StyledGroupContainer>
-          ))}
-        </Section>
+        {hiddenGroups.map((group) => (
+          <StyledGroupContainer key={group.name}>
+            <H2Title title={group.name} description={group.description} />
+            {group.variables.length > 0 && (
+              <SettingsAdminEnvVariablesTable variables={group.variables} />
+            )}
+          </StyledGroupContainer>
+        ))}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

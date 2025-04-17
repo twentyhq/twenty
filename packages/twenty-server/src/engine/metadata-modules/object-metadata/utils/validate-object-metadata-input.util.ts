@@ -1,5 +1,4 @@
-import { slugify } from 'transliteration';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
@@ -11,7 +10,6 @@ import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/
 import { validateMetadataNameIsNotTooLongOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils';
 import { validateMetadataNameIsNotTooShortOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
-import { camelCase } from 'src/utils/camel-case';
 
 export const validateObjectMetadataInputNamesOrThrow = <
   T extends UpdateObjectPayload | CreateObjectInput,
@@ -68,50 +66,6 @@ const validateObjectMetadataInputLabelOrThrow = (name: string): void => {
     }
 
     throw error;
-  }
-};
-
-export const computeMetadataNameFromLabel = (label: string): string => {
-  if (!isDefined(label)) {
-    throw new ObjectMetadataException(
-      'Label is required',
-      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-    );
-  }
-
-  const prefixedLabel = /^\d/.test(label) ? `n${label}` : label;
-
-  if (prefixedLabel === '') {
-    return '';
-  }
-
-  const formattedString = slugify(prefixedLabel, {
-    trim: true,
-    separator: '_',
-    allowedChars: 'a-zA-Z0-9',
-  });
-
-  if (formattedString === '') {
-    throw new ObjectMetadataException(
-      `Invalid label: "${label}"`,
-      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-    );
-  }
-
-  return camelCase(formattedString);
-};
-
-export const validateNameAndLabelAreSyncOrThrow = (
-  label: string,
-  name: string,
-) => {
-  const computedName = computeMetadataNameFromLabel(label);
-
-  if (name !== computedName) {
-    throw new ObjectMetadataException(
-      `Name is not synced with label. Expected name: "${computedName}", got ${name}`,
-      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-    );
   }
 };
 

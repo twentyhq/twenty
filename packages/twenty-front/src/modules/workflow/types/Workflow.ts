@@ -8,8 +8,11 @@ import {
   workflowDatabaseEventTriggerSchema,
   workflowDeleteRecordActionSchema,
   workflowDeleteRecordActionSettingsSchema,
+  workflowExecutorOutputSchema,
   workflowFindRecordsActionSchema,
   workflowFindRecordsActionSettingsSchema,
+  workflowFormActionSchema,
+  workflowFormActionSettingsSchema,
   workflowManualTriggerSchema,
   workflowRunContextSchema,
   workflowRunOutputSchema,
@@ -21,6 +24,7 @@ import {
   workflowTriggerSchema,
   workflowUpdateRecordActionSchema,
   workflowUpdateRecordActionSettingsSchema,
+  workflowWebhookTriggerSchema,
 } from '@/workflow/validation-schemas/workflowSchema';
 import { z } from 'zod';
 
@@ -42,6 +46,9 @@ export type WorkflowDeleteRecordActionSettings = z.infer<
 export type WorkflowFindRecordsActionSettings = z.infer<
   typeof workflowFindRecordsActionSettingsSchema
 >;
+export type WorkflowFormActionSettings = z.infer<
+  typeof workflowFormActionSettingsSchema
+>;
 
 export type WorkflowCodeAction = z.infer<typeof workflowCodeActionSchema>;
 export type WorkflowSendEmailAction = z.infer<
@@ -59,6 +66,7 @@ export type WorkflowDeleteRecordAction = z.infer<
 export type WorkflowFindRecordsAction = z.infer<
   typeof workflowFindRecordsActionSchema
 >;
+export type WorkflowFormAction = z.infer<typeof workflowFormActionSchema>;
 
 export type WorkflowAction = z.infer<typeof workflowActionSchema>;
 export type WorkflowActionType = WorkflowAction['type'];
@@ -70,6 +78,9 @@ export type WorkflowDatabaseEventTrigger = z.infer<
 >;
 export type WorkflowManualTrigger = z.infer<typeof workflowManualTriggerSchema>;
 export type WorkflowCronTrigger = z.infer<typeof workflowCronTriggerSchema>;
+export type WorkflowWebhookTrigger = z.infer<
+  typeof workflowWebhookTriggerSchema
+>;
 
 export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
 export type WorkflowManualTriggerAvailability =
@@ -100,6 +111,9 @@ export type WorkflowVersion = {
 };
 
 export type WorkflowRunOutput = z.infer<typeof workflowRunOutputSchema>;
+export type WorkflowExecutorOutput = z.infer<
+  typeof workflowExecutorOutputSchema
+>;
 export type WorkflowRunOutputStepsOutput = z.infer<
   typeof workflowRunOutputStepsOutputSchema
 >;

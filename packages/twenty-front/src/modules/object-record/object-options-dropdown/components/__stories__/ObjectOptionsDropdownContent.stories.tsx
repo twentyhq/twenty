@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownContent';
@@ -23,6 +22,7 @@ import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecora
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const instanceId = 'entity-options-scope';
 
@@ -123,7 +123,7 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
 
 export const Default = createStory(null);
 
-export const ViewSettings = createStory('viewSettings');
+export const Layout = createStory('layout');
 
 export const Fields = createStory('fields');
 

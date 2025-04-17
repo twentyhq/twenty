@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
 
-import { Card, CardContent } from 'twenty-ui';
-
 import PreviewBackgroundImage from '../assets/preview-background.svg';
 import SyncImage from '../assets/sync.svg?react';
+import { Card, CardContent } from 'twenty-ui/layout';
 
 type SettingsIntegrationPreviewProps = {
   integrationLogoUrl: string;
