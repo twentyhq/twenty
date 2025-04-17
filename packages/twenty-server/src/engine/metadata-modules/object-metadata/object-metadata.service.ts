@@ -219,22 +219,20 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     input: UpdateOneObjectInput,
     workspaceId: string,
   ): Promise<ObjectMetadataEntity> {
-    const { update } = input;
+    const _input = { ...input };
 
-    if (isDefined(update.labelSingular)) {
-      update.labelSingular = capitalize(update.labelSingular);
+    if (isDefined(_input.update.labelSingular)) {
+      _input.update.labelSingular = capitalize(_input.update.labelSingular);
     }
 
-    if (isDefined(update.labelPlural)) {
-      update.labelPlural = capitalize(update.labelPlural);
+    if (isDefined(_input.update.labelPlural)) {
+      _input.update.labelPlural = capitalize(_input.update.labelPlural);
     }
 
-    input.update = update;
-
-    validateObjectMetadataInputNamesOrThrow(input.update);
+    validateObjectMetadataInputNamesOrThrow(_input.update);
 
     const existingObjectMetadata = await this.objectMetadataRepository.findOne({
-      where: { id: input.id, workspaceId: workspaceId },
+      where: { id: _input.id, workspaceId: workspaceId },
     });
 
     if (!existingObjectMetadata) {
@@ -246,7 +244,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const existingObjectMetadataCombinedWithUpdateInput = {
       ...existingObjectMetadata,
-      ...input.update,
+      ..._input.update,
     };
 
     await this.validatesNoOtherObjectWithSameNameExistsOrThrows({
@@ -271,8 +269,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }
 
     if (
-      isDefined(input.update.nameSingular) ||
-      isDefined(input.update.namePlural)
+      isDefined(_input.update.nameSingular) ||
+      isDefined(_input.update.namePlural)
     ) {
       validateLowerCasedAndTrimmedStringsAreDifferentOrThrow({
         inputs: [
@@ -284,35 +282,35 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       });
     }
 
-    const updatedObject = await super.updateOne(input.id, input.update);
+    const updatedObject = await super.updateOne(_input.id, _input.update);
 
     await this.handleObjectNameAndLabelUpdates(
       existingObjectMetadata,
       existingObjectMetadataCombinedWithUpdateInput,
-      input,
+      _input,
     );
 
-    if (input.update.isActive !== undefined) {
+    if (_input.update.isActive !== undefined) {
       await this.objectMetadataRelationService.updateObjectRelationshipsActivationStatus(
-        input.id,
-        input.update.isActive,
+        _input.id,
+        _input.update.isActive,
       );
     }
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       workspaceId,
     );
-    if (input.update.labelIdentifierFieldMetadataId) {
+    if (_input.update.labelIdentifierFieldMetadataId) {
       const labelIdentifierFieldMetadata =
         await this.fieldMetadataRepository.findOneByOrFail({
-          id: input.update.labelIdentifierFieldMetadataId,
-          objectMetadataId: input.id,
+          id: _input.update.labelIdentifierFieldMetadataId,
+          objectMetadataId: _input.id,
           workspaceId: workspaceId,
         });
 
       if (isSearchableFieldType(labelIdentifierFieldMetadata.type)) {
         await this.searchVectorService.updateSearchVector(
-          input.id,
+          _input.id,
           [
             {
               name: labelIdentifierFieldMetadata.name,
