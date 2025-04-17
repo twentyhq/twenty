@@ -99,7 +99,9 @@
     "graphql-fields": "^2.0.3",
     "graphql-middleware": "^6.1.35",
     "graphql-rate-limit": "^3.3.0",
+    "graphql-redis-subscriptions": "^2.7.0",
     "graphql-scalars": "^1.23.0",
+    "graphql-sse": "^2.5.4",
     "graphql-subscriptions": "2.0.0",
     "graphql-tag": "^2.12.6",
     "graphql-type-json": "^0.3.2",
@@ -354,7 +356,8 @@
     "type-fest": "4.10.1",
     "typescript": "5.3.3",
     "prosemirror-model": "1.23.0",
-    "yjs": "13.6.18"
+    "yjs": "13.6.18",
+    "graphql-redis-subscriptions/ioredis": "^5.6.0"
   },
   "version": "0.2.1",
   "nx": {},

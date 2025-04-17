@@ -12,6 +12,7 @@ const StyledContainer = styled.div`
   align-items: center;
   justify-content: center;
   position: relative;
+  min-height: 100px;
 `;
 
 interface StyledImageProps {

@@ -11,6 +11,7 @@ type isFieldValueReadOnlyParams = {
   fieldName?: string;
   fieldType?: FieldMetadataType;
   isRecordReadOnly?: boolean;
+  isCustom?: boolean;
 };
 
 export const isFieldValueReadOnly = ({
@@ -18,6 +19,7 @@ export const isFieldValueReadOnly = ({
   fieldName,
   fieldType,
   isRecordReadOnly = false,
+  isCustom = false,
 }: isFieldValueReadOnlyParams) => {
   if (isRecordReadOnly) {
     return true;
@@ -40,7 +42,8 @@ export const isFieldValueReadOnly = ({
 
   if (
     objectNameSingular === CoreObjectNameSingular.Workflow &&
-    fieldName !== 'name'
+    fieldName !== 'name' &&
+    !isCustom
   ) {
     return true;
   }

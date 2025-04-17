@@ -53,7 +53,7 @@ export class ActivityQueryResultGetterHandler
 
         imageUrl.searchParams.delete('token');
 
-        const signedPayload = await this.fileService.encodeFileToken({
+        const signedPayload = this.fileService.encodeFileToken({
           noteBlockId: block.id,
           workspaceId: workspaceId,
         });
