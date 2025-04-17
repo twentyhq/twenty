@@ -28,7 +28,6 @@ export const DashboardLinks = () => {
       <PageContainer>
         <PageHeader title="Dashboard Links" Icon={IconChartBar} />
         <PageBody>
-          {/* <DashboardLinksCards chartData={} /> */}
           <DashboardLinksChart chartData={chartData} />
         </PageBody>
       </PageContainer>

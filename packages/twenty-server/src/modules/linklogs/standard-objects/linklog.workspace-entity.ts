@@ -35,6 +35,7 @@ export const SEARCH_FIELDS_FOR_LINKLOGS: FieldTypeAndNameMetadata[] = [
   labelIdentifierStandardId: LINKLOGS_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsNotAuditLogged()
+@WorkspaceIsSystem()
 @ObjectType()
 export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -51,7 +52,7 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: LINKLOGS_STANDARD_FIELD_IDS.linkName,
     type: FieldMetadataType.TEXT,
-    label: msg`Link Name`,
+    label: msg`Linklog link Name`,
     description: msg`Link Name`,
     icon: 'IconLink',
   })
