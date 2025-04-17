@@ -120,8 +120,8 @@ export class FieldMetadataValidationService<
 
       if (
         enumOptions &&
-        (enumOptions?.includes(formattedDefaultValue) ||
-          enumOptions?.some((option) => option.to === formattedDefaultValue))
+        (enumOptions.includes(formattedDefaultValue) ||
+          enumOptions.some((option) => option.to === formattedDefaultValue))
       ) {
         return;
       }
