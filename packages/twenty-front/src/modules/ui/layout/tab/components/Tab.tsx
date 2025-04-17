@@ -104,7 +104,7 @@ export const Tab = ({
       to={to}
     >
       <StyledHover>
-        <StyledIconContainer className="awdawdqwd">
+        <StyledIconContainer>
           {logo && (
             <Avatar
               avatarUrl={logo}
