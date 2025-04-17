@@ -5,6 +5,7 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilValue } from 'recoil';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   AvatarChip,
   AvatarChipVariant,
@@ -23,6 +24,7 @@ export type RecordChipProps = {
   to?: string | undefined;
   size?: ChipSize;
   isLabelHidden?: boolean;
+  field?: { type: string; name: string };
 };
 
 export const RecordChip = ({
@@ -35,6 +37,7 @@ export const RecordChip = ({
   size,
   forceDisableClick = false,
   isLabelHidden = false,
+  field,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -70,12 +73,18 @@ export const RecordChip = ({
         })
     : undefined;
 
+  let name = recordChipData.name;
+
+  if (field?.type === FieldMetadataType.FULL_NAME) {
+    name = `${record[field.name]?.firstName || ''} ${record[field.name]?.lastName || ''}`;
+  }
+
   return (
     <LinkAvatarChip
       size={size}
       maxWidth={maxWidth}
       placeholderColorSeed={record.id}
-      name={recordChipData.name}
+      name={name}
       isLabelHidden={isLabelHidden}
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
