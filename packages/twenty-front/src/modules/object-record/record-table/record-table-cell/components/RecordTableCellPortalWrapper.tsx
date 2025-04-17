@@ -1,4 +1,5 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -33,14 +34,19 @@ export const RecordTableCellPortalWrapper = ({
     return null;
   }
 
+  const recordId = allRecordIds[position.row];
+
   return ReactDOM.createPortal(
     <RecordTableRowContextProvider
       value={{
-        recordId: allRecordIds[position.row],
+        recordId,
         rowIndex: position.row,
         isSelected: false,
         inView: true,
-        pathToShowPage: '/',
+        pathToShowPage:
+          getBasePathToShowPage({
+            objectNameSingular: objectMetadataItem.nameSingular,
+          }) + recordId,
         objectNameSingular: objectMetadataItem.nameSingular,
       }}
     >
