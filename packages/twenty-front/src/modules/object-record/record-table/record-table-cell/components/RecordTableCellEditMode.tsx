@@ -4,7 +4,7 @@ import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/re
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { useSetFocusPosition } from '@/object-record/record-table/hooks/internal/useSetFocusPosition';
+import { useSetRecordTableFocusPosition } from '@/object-record/record-table/hooks/internal/useSetRecordTableFocusPosition';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -92,7 +92,7 @@ export const RecordTableCellEditMode = ({
 
   const { cellPosition } = useContext(RecordTableCellContext);
 
-  const setFocusPosition = useSetFocusPosition();
+  const setFocusPosition = useSetRecordTableFocusPosition();
 
   return (
     <StyledEditableCellEditModeContainer

@@ -4,13 +4,13 @@ import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocus
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { useSetFocusPosition } from '@/object-record/record-table/hooks/internal/useSetFocusPosition';
+import { useSetRecordTableFocusPosition } from '@/object-record/record-table/hooks/internal/useSetRecordTableFocusPosition';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { numberOfTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/numberOfTableColumnsComponentSelector';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 
 export const useRecordTableMoveFocus = (recordTableId?: string) => {
-  const setFocusPosition = useSetFocusPosition(recordTableId);
+  const setFocusPosition = useSetRecordTableFocusPosition(recordTableId);
 
   const focusPositionState = useRecoilComponentCallbackStateV2(
     recordTableFocusPositionComponentState,

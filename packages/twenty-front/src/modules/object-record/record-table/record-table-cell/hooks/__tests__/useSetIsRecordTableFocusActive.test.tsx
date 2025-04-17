@@ -3,7 +3,7 @@ import React, { act } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
-import { useSetIsFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsFocusActive';
+import { useSetIsRecordTableFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableFocusActive';
 import { isRecordTableFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableFocusActiveComponentState';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
@@ -48,8 +48,8 @@ const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const { setIsFocusActive, setIsFocusActiveForCurrentPosition } =
-        useSetIsFocusActive('test-table-id');
-      const isFocusActive = useRecoilValue(
+        useSetIsRecordTableFocusActive('test-table-id');
+      const isRecordTableFocusActive = useRecoilValue(
         isRecordTableFocusActiveComponentState.atomFamily({
           instanceId: 'test-table-id',
         }),
@@ -62,7 +62,7 @@ const renderHooks = () => {
       return {
         setIsFocusActive,
         setIsFocusActiveForCurrentPosition,
-        isFocusActive,
+        isRecordTableFocusActive,
         focusPosition,
       };
     },
@@ -72,7 +72,7 @@ const renderHooks = () => {
   return { result };
 };
 
-describe('useSetIsFocusActive', () => {
+describe('useSetIsRecordTableFocusActive', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -94,12 +94,12 @@ describe('useSetIsFocusActive', () => {
 
     expect(mockClassList.add).toHaveBeenCalledWith('focus-active');
 
-    expect(result.current.isFocusActive).toBe(true);
+    expect(result.current.isRecordTableFocusActive).toBe(true);
 
     expect(result.current.focusPosition).toEqual(cellPosition);
   });
 
-  it('should remove focus-active class when focus is deactivated and update isFocusActiveComponentState', () => {
+  it('should remove focus-active class when focus is deactivated and update isRecordTableFocusActiveComponentState', () => {
     const { result } = renderHooks();
 
     const cellPosition: TableCellPosition = { column: 1, row: 0 };
@@ -112,7 +112,7 @@ describe('useSetIsFocusActive', () => {
 
     expect(mockClassList.remove).toHaveBeenCalledWith('focus-active');
 
-    expect(result.current.isFocusActive).toBe(false);
+    expect(result.current.isRecordTableFocusActive).toBe(false);
 
     expect(result.current.focusPosition).toEqual(cellPosition);
   });
@@ -128,7 +128,7 @@ describe('useSetIsFocusActive', () => {
 
     expect(mockClassList.add).toHaveBeenCalledWith('focus-active');
 
-    expect(result.current.isFocusActive).toBe(true);
+    expect(result.current.isRecordTableFocusActive).toBe(true);
 
     expect(result.current.focusPosition).toEqual({ column: 1, row: 0 });
   });
@@ -148,7 +148,7 @@ describe('useSetIsFocusActive', () => {
 
     expect(mockClassList.add).not.toHaveBeenCalled();
 
-    expect(result.current.isFocusActive).toBe(true);
+    expect(result.current.isRecordTableFocusActive).toBe(true);
 
     expect(result.current.focusPosition).toEqual(cellPosition);
   });

@@ -13,7 +13,7 @@ import { useUpsertRecordFromState } from '../../hooks/useUpsertRecordFromState';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
-import { useSetIsFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsFocusActive';
+import { useSetIsRecordTableFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableFocusActive';
 import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
@@ -28,8 +28,8 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { useLeaveTableFocus } from './internal/useLeaveTableFocus';
 import { useResetTableRowSelection } from './internal/useResetTableRowSelection';
 import { useSelectAllRows } from './internal/useSelectAllRows';
-import { useSetFocusPosition } from './internal/useSetFocusPosition';
 import { useSetRecordTableData } from './internal/useSetRecordTableData';
+import { useSetRecordTableFocusPosition } from './internal/useSetRecordTableFocusPosition';
 import { useSetRowSelectedState } from './internal/useSetRowSelectedState';
 
 type useRecordTableProps = {
@@ -143,10 +143,10 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const upsertRecordTableItem = useUpsertRecordFromState;
 
-  const setFocusPosition = useSetFocusPosition(recordTableId);
+  const setFocusPosition = useSetRecordTableFocusPosition(recordTableId);
 
   const { setIsFocusActiveForCurrentPosition } =
-    useSetIsFocusActive(recordTableId);
+    useSetIsRecordTableFocusActive(recordTableId);
 
   const { moveDown, moveLeft, moveRight, moveUp } =
     useRecordTableMoveFocus(recordTableId);

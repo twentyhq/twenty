@@ -7,7 +7,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 export const RecordTableCellPortals = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const isFocusActive = useRecoilComponentValueV2(
+  const isRecordTableFocusActive = useRecoilComponentValueV2(
     isRecordTableFocusActiveComponentState,
     recordTableId,
   );
@@ -16,7 +16,7 @@ export const RecordTableCellPortals = () => {
     <>
       <RecordTableCellHoveredPortal />
 
-      {isFocusActive && <RecordTableCellEditModePortal />}
+      {isRecordTableFocusActive && <RecordTableCellEditModePortal />}
     </>
   );
 };

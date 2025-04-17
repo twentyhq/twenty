@@ -46,7 +46,7 @@ export const RecordTable = () => {
   const recordTableIsEmpty =
     !isRecordTableInitialLoading && allRecordIds.length === 0;
 
-  const isFocusActive = useRecoilComponentValueV2(
+  const isRecordTableFocusActive = useRecoilComponentValueV2(
     isRecordTableFocusActiveComponentState,
     recordTableId,
   );
@@ -71,7 +71,7 @@ export const RecordTable = () => {
         tableBodyRef={tableBodyRef}
       />
 
-      {isFocusActive && <RecordTableScrollToFocusedElementEffect />}
+      {isRecordTableFocusActive && <RecordTableScrollToFocusedElementEffect />}
 
       {recordTableIsEmpty && !hasRecordGroups ? (
         <RecordTableEmpty
