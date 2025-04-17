@@ -11,7 +11,7 @@ import {
 import { Select, SelectValue } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
 import { memo, ReactNode } from 'react';
-import { useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
 
 const StyledLogicNodeWrapper = styled.div`
   background-color: ${({ theme }) => theme.background.primary};

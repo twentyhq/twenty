@@ -1,9 +1,9 @@
 import { useDropzone } from 'react-dropzone';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconUpload } from 'twenty-ui';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import { IconUpload } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   align-items: center;

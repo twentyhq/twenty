@@ -29,7 +29,7 @@ import {
   SessionDescriptionHandler,
   SessionManager,
 } from 'sip.js/lib/platform/web';
-import { IconArrowLeft, IconPhone, useIcons } from 'twenty-ui';
+import { IconArrowLeft, IconPhone, useIcons } from 'twenty-ui/display';
 import defaultCallState from '../constants/defaultCallState';
 import { useRingTone } from '../hooks/useRingTone';
 import { CallState } from '../types/callState';
@@ -619,28 +619,37 @@ const WebSoftphone: React.FC = () => {
       !sessionRef.current ||
       sessionRef.current.state !== SessionState.Established
     ) {
-      console.error('Cannot send DTMF: No active call session');
+      console.log('Não é possível enviar DTMF: chamada não está ativa');
       return;
     }
 
-    try {
-      console.log(`Sending DTMF tone: ${tone}`);
-
-      const options = {
-        requestOptions: {
-          body: {
-            contentDisposition: 'render',
-            contentType: 'application/dtmf-relay',
-            content: `Signal=${tone}\r\nDuration=1000`,
-          },
-        },
-      };
-
-      sessionRef.current.info(options);
-      console.log(`DTMF tone ${tone} sent successfully`);
-    } catch (error) {
-      console.error('Error sending DTMF tone:', error);
+    const sessionDescriptionHandler = sessionRef.current
+      .sessionDescriptionHandler as SessionDescriptionHandler | undefined;
+    if (
+      !sessionDescriptionHandler ||
+      !('peerConnection' in sessionDescriptionHandler)
+    ) {
+      console.error('Session description handler não encontrado');
+      return;
     }
+
+    const peerConnection = sessionDescriptionHandler.peerConnection;
+    if (!peerConnection) {
+      console.error('PeerConnection não disponível');
+      return;
+    }
+
+    const dtmfSender = peerConnection
+      .getSenders()
+      .find((sender) => sender.track?.kind === 'audio')?.dtmf;
+
+    if (!dtmfSender) {
+      console.error('DTMF sender não disponível');
+      return;
+    }
+
+    console.log('Enviando DTMF:', tone);
+    dtmfSender.insertDTMF(tone, 100);
   };
 
   const requestMediaPermissions = async () => {
@@ -824,8 +833,26 @@ const WebSoftphone: React.FC = () => {
   };
 
   return (
-    <Draggable>
-      <StyledContainer>
+    <Draggable
+      enableUserSelectHack={true}
+      onStart={(e) => {
+        // Prevent the dragSelect from triggering
+        e.stopPropagation();
+      }}
+    >
+      <StyledContainer
+        data-select-disable="true"
+        onMouseDown={(e) => {
+          e.stopPropagation();
+        }}
+        onMouseMove={(e) => {
+          e.stopPropagation();
+        }}
+        onMouseUp={(e) => {
+          e.stopPropagation();
+        }}
+        style={{ zIndex: 9999 }}
+      >
         <audio ref={remoteAudioRef} autoPlay />
 
         {callState.incomingCall && !callState.isInCall ? (

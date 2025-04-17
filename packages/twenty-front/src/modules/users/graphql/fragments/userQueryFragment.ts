@@ -12,14 +12,6 @@ export const USER_QUERY_FRAGMENT = gql`
     canAccessFullAdminPanel
     canImpersonate
     supportUserHash
-    analyticsTinybirdJwts {
-      getWebhookAnalytics
-      getPageviewsAnalytics
-      getUsersAnalytics
-      getServerlessFunctionDuration
-      getServerlessFunctionSuccessRate
-      getServerlessFunctionErrorCount
-    }
     onboardingStatus
     workspaceMember {
       ...WorkspaceMemberQueryFragment
@@ -52,16 +44,27 @@ export const USER_QUERY_FRAGMENT = gql`
         customUrl
       }
       featureFlags {
-        id
         key
         value
-        workspaceId
       }
       metadataVersion
       currentBillingSubscription {
         id
         status
         interval
+        billingSubscriptionItems {
+          id
+          hasReachedCurrentPeriodCap
+          billingProduct {
+            name
+            description
+            metadata {
+              planKey
+              priceUsageBased
+              productKey
+            }
+          }
+        }
       }
       billingSubscriptions {
         id

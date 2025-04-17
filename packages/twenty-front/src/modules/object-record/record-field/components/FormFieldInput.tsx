@@ -10,6 +10,7 @@ import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-typ
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { FormPhoneFieldInput } from '@/object-record/record-field/form-types/components/FormPhoneFieldInput';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/form-types/components/FormRawJsonFieldInput';
+import { FormRichTextV2FieldInput } from '@/object-record/record-field/form-types/components/FormRichTextV2FieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { FormUuidFieldInput } from '@/object-record/record-field/form-types/components/FormUuidFieldInput';
@@ -23,6 +24,7 @@ import {
   FieldMetadata,
   FieldMultiSelectValue,
   FieldPhonesValue,
+  FieldRichTextV2Value,
   FormFieldCurrencyValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
@@ -37,17 +39,19 @@ import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/is
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
+import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { JsonValue } from 'type-fest';
 
 type FormFieldInputProps = {
-  field: FieldDefinition<FieldMetadata>;
+  field: Pick<FieldDefinition<FieldMetadata>, 'label' | 'metadata' | 'type'>;
   defaultValue: JsonValue;
   onChange: (value: JsonValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
+  placeholder?: string;
 };
 
 export const FormFieldInput = ({
@@ -56,15 +60,16 @@ export const FormFieldInput = ({
   onChange,
   VariablePicker,
   readonly,
+  placeholder,
 }: FormFieldInputProps) => {
   return isFieldNumber(field) ? (
     <FormNumberFieldInput
       label={field.label}
       defaultValue={defaultValue as string | number | undefined}
       onChange={onChange}
-      placeholder={field.label}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      placeholder={placeholder}
     />
   ) : isFieldBoolean(field) ? (
     <FormBooleanFieldInput
@@ -79,9 +84,9 @@ export const FormFieldInput = ({
       label={field.label}
       defaultValue={defaultValue as string | undefined}
       onChange={onChange}
-      placeholder={field.label}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      placeholder={placeholder}
     />
   ) : isFieldSelect(field) ? (
     <FormSelectFieldInput
@@ -90,9 +95,7 @@ export const FormFieldInput = ({
       onChange={onChange}
       VariablePicker={VariablePicker}
       options={field.metadata.options}
-      clearLabel={field.label}
       readonly={readonly}
-      placeholder={field.label}
     />
   ) : isFieldFullName(field) ? (
     <FormFullNameFieldInput
@@ -141,6 +144,7 @@ export const FormFieldInput = ({
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      placeholder={placeholder}
     />
   ) : isFieldDateTime(field) ? (
     <FormDateTimeFieldInput
@@ -158,25 +162,25 @@ export const FormFieldInput = ({
       VariablePicker={VariablePicker}
       options={field.metadata.options}
       readonly={readonly}
-      placeholder={field.label}
+      placeholder={placeholder}
     />
   ) : isFieldRawJson(field) ? (
     <FormRawJsonFieldInput
       label={field.label}
       defaultValue={defaultValue as string | undefined}
       onChange={onChange}
-      placeholder={field.label}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      placeholder={placeholder}
     />
   ) : isFieldUuid(field) ? (
     <FormUuidFieldInput
       label={field.label}
       defaultValue={defaultValue as string | null | undefined}
       onChange={onChange}
-      placeholder={field.label}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      placeholder={placeholder}
     />
   ) : isFieldCurrency(field) ? (
     <FormCurrencyFieldInput
@@ -185,6 +189,15 @@ export const FormFieldInput = ({
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+    />
+  ) : isFieldRichTextV2(field) ? (
+    <FormRichTextV2FieldInput
+      label={field.label}
+      defaultValue={defaultValue as FieldRichTextV2Value | undefined}
+      onChange={onChange}
+      VariablePicker={VariablePicker}
+      readonly={readonly}
+      placeholder={placeholder}
     />
   ) : null;
 };

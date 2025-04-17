@@ -3,9 +3,9 @@ import { PageFavoriteFoldersDropdown } from '@/favorites/components/PageFavorite
 import { FAVORITE_FOLDER_PICKER_DROPDOWN_ID } from '@/favorites/favorite-folder-picker/constants/FavoriteFolderPickerDropdownId';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { PageHeaderOpenCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton';
+import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
 import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
-import { useIsMobile } from 'twenty-ui';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 type RecordShowPageBaseHeaderProps = {
   isFavorite: boolean;
@@ -51,7 +51,7 @@ export const RecordShowPageBaseHeader = ({
           />
         </>
       )}
-      <PageHeaderOpenCommandMenuButton key="more" />
+      <PageHeaderToggleCommandMenuButton key="more" />
     </>
   );
 };

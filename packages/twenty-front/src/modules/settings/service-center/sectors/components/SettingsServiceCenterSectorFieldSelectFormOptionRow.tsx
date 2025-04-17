@@ -1,17 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
-import {
-  ColorSample,
-  IconCheck,
-  IconDotsVertical,
-  IconGripVertical,
-  IconTrash,
-  LightIconButton,
-  MAIN_COLOR_NAMES,
-  MenuItem,
-  MenuItemSelectColor,
-} from 'twenty-ui';
+
 import { v4 } from 'uuid';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
@@ -21,6 +11,16 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import {
+  ColorSample,
+  IconCheck,
+  IconDotsVertical,
+  IconGripVertical,
+  IconTrash,
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem, MenuItemSelectColor } from 'twenty-ui/navigation';
+import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 
 type SettingsServiceCenterSectorFieldSelectFormOptionRowProps = {
   className?: string;

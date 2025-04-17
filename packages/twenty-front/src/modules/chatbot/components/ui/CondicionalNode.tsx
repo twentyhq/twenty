@@ -17,7 +17,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { memo, useCallback, useEffect, useState } from 'react';
-import { Button } from 'twenty-ui';
+import { Button } from 'twenty-ui/input';
 
 const initialState: CondicionalState = {
   logicNodes: [],

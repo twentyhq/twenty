@@ -11,14 +11,10 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { capitalize, isDefined } from 'twenty-shared';
-import {
-  IconComponent,
-  Label,
-  MOBILE_VIEWPORT,
-  Pill,
-  TablerIconsProps,
-} from 'twenty-ui';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+import { IconComponent, Label, TablerIconsProps } from 'twenty-ui/display';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { Pill } from 'twenty-ui/components';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 

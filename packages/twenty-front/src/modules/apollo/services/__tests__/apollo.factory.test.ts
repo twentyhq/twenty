@@ -33,10 +33,6 @@ const mockWorkspaceMember = {
 
 const createMockOptions = (): Options<any> => ({
   uri: 'http://localhost:3000',
-  initialTokenPair: {
-    accessToken: { token: 'mockAccessToken', expiresAt: '' },
-    refreshToken: { token: 'mockRefreshToken', expiresAt: '' },
-  },
   currentWorkspaceMember: mockWorkspaceMember,
   cache: new InMemoryCache(),
   isDebugMode: true,

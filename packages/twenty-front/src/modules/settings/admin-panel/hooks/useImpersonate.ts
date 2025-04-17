@@ -6,7 +6,7 @@ import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/state
 import { AppPath } from '@/types/AppPath';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { useImpersonateMutation } from '~/generated/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 

@@ -4,7 +4,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import styled from '@emotion/styled';
 import { Handle, Node, NodeProps, Position } from '@xyflow/react';
 import { memo } from 'react';
-import { useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
 
 const StyledButtonNodeWrapper = styled.div`
   background-color: ${({ theme }) => theme.background.primary};

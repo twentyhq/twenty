@@ -1,4 +1,4 @@
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { DataSource } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -47,7 +47,7 @@ export const seedWorkspaces = async ({
       subdomain: 'apple',
       inviteHash: 'apple.dev-invite-hash',
       logo: 'https://twentyhq.github.io/placeholder-images/workspaces/apple-logo.png',
-      activationStatus: WorkspaceActivationStatus.ACTIVE,
+      activationStatus: WorkspaceActivationStatus.PENDING_CREATION, // will be set to active after default role creation
       version: version,
       creatorEmail: 'tim@apple.dev',
     },
@@ -57,7 +57,7 @@ export const seedWorkspaces = async ({
       subdomain: 'acme',
       inviteHash: 'acme.dev-invite-hash',
       logo: 'https://logos-world.net/wp-content/uploads/2022/05/Acme-Logo-700x394.png',
-      activationStatus: WorkspaceActivationStatus.ACTIVE,
+      activationStatus: WorkspaceActivationStatus.PENDING_CREATION, // will be set to active after default role creation
       version: version,
       creatorEmail: 'tim@apple.dev',
     },

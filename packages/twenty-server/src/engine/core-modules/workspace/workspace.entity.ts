@@ -1,8 +1,9 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
+  Check,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -28,6 +29,10 @@ registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
 });
 
+@Check(
+  'onboarded_workspace_requires_default_role',
+  `"activationStatus" IN ('PENDING_CREATION', 'ONGOING_CREATION') OR "defaultRoleId" IS NOT NULL`,
+)
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType()
 export class Workspace {

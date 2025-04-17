@@ -5,24 +5,26 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui';
-import { useGetEnvironmentVariablesGroupedQuery } from '~/generated/graphql';
+import { H2Title } from 'twenty-ui/display';
+import { useGetConfigVariablesGroupedQuery } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledGroupContainer = styled.div``;
 
 export const SettingsAdminSecondaryEnvVariables = () => {
-  const { data: environmentVariables, loading: environmentVariablesLoading } =
-    useGetEnvironmentVariablesGroupedQuery({
-      fetchPolicy: 'network-only',
-    });
+  const {
+    data: secondaryConfigVariables,
+    loading: secondaryConfigVariablesLoading,
+  } = useGetConfigVariablesGroupedQuery({
+    fetchPolicy: 'network-only',
+  });
 
   const hiddenGroups =
-    environmentVariables?.getEnvironmentVariablesGrouped.groups.filter(
+    secondaryConfigVariables?.getConfigVariablesGrouped.groups.filter(
       (group) => group.isHiddenOnLoad,
     ) ?? [];
 
-  if (environmentVariablesLoading) {
+  if (secondaryConfigVariablesLoading) {
     return <SettingsSkeletonLoader />;
   }
 

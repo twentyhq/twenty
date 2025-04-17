@@ -3,9 +3,9 @@ import { PassportStrategy } from '@nestjs/passport';
 
 import { Request } from 'express';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { APP_LOCALES } from 'twenty-shared';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type GoogleRequest = Omit<
   Request,
@@ -26,11 +26,11 @@ export type GoogleRequest = Omit<
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(environmentService: EnvironmentService) {
+  constructor(twentyConfigService: TwentyConfigService) {
     super({
-      clientID: environmentService.get('AUTH_GOOGLE_CLIENT_ID'),
-      clientSecret: environmentService.get('AUTH_GOOGLE_CLIENT_SECRET'),
-      callbackURL: environmentService.get('AUTH_GOOGLE_CALLBACK_URL'),
+      clientID: twentyConfigService.get('AUTH_GOOGLE_CLIENT_ID'),
+      clientSecret: twentyConfigService.get('AUTH_GOOGLE_CLIENT_SECRET'),
+      callbackURL: twentyConfigService.get('AUTH_GOOGLE_CALLBACK_URL'),
       scope: ['email', 'profile'],
       passReqToCallback: true,
     });

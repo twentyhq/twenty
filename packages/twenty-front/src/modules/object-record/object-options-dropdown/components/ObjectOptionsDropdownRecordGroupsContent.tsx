@@ -1,14 +1,4 @@
 import { useEffect } from 'react';
-import {
-  IconChevronLeft,
-  IconCircleOff,
-  IconEyeOff,
-  IconLayoutList,
-  IconSortDescending,
-  MenuItem,
-  MenuItemNavigate,
-  MenuItemToggle,
-} from 'twenty-ui';
 
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { RecordGroupReorderConfirmationModal } from '@/object-record/record-group/components/RecordGroupReorderConfirmationModal';
@@ -21,13 +11,25 @@ import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/re
 import { recordIndexRecordGroupHideComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentFamilyState';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useLingui } from '@lingui/react/macro';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import {
+  IconChevronLeft,
+  IconCircleOff,
+  IconEyeOff,
+  IconLayoutList,
+  IconSortDescending,
+} from 'twenty-ui/display';
+import {
+  MenuItem,
+  MenuItemNavigate,
+  MenuItemToggle,
+} from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const { t } = useLingui();
@@ -97,7 +99,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           />
         }
       >
-        Group by
+        Group
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {currentView?.key !== 'INDEX' && (
@@ -142,7 +144,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
       {hiddenRecordGroupIds.length > 0 && (
         <>
           <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer scrollable={false}>
             <MenuItemNavigate
               onClick={() => onContentChange('hiddenRecordGroups')}
               LeftIcon={IconEyeOff}

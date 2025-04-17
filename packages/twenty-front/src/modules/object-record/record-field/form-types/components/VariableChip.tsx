@@ -6,8 +6,8 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { IconAlertTriangle, IconX } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { IconAlertTriangle, IconX } from 'twenty-ui/display';
 
 const StyledChip = styled.div<{ deletable: boolean; danger: boolean }>`
   background-color: ${({ theme, danger }) =>

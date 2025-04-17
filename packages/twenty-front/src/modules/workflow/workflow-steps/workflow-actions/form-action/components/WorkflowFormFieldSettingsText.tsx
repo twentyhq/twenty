@@ -1,12 +1,15 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
+import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import styled from '@emotion/styled';
+import camelCase from 'lodash.camelcase';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 type WorkflowFormFieldSettingsTextProps = {
-  label?: string;
-  placeholder?: string;
-  onChange: (fieldName: string, value: string | null) => void;
+  field: WorkflowFormActionField;
+  onChange: (updatedField: WorkflowFormActionField) => void;
 };
 
 const StyledContainer = styled.div`
@@ -16,8 +19,7 @@ const StyledContainer = styled.div`
 `;
 
 export const WorkflowFormFieldSettingsText = ({
-  label,
-  placeholder,
+  field,
   onChange,
 }: WorkflowFormFieldSettingsTextProps) => {
   return (
@@ -25,21 +27,32 @@ export const WorkflowFormFieldSettingsText = ({
       <FormFieldInputContainer>
         <InputLabel>Label</InputLabel>
         <FormTextFieldInput
-          onChange={(newLabel: string | null) => {
-            onChange('label', newLabel);
+          onChange={(newLabel: string) => {
+            onChange({
+              ...field,
+              label: newLabel,
+              name: camelCase(newLabel),
+            });
           }}
-          defaultValue={label}
-          placeholder={'Text'}
+          defaultValue={field.label}
+          placeholder={
+            getDefaultFormFieldSettings(FieldMetadataType.TEXT).label
+          }
         />
       </FormFieldInputContainer>
       <FormFieldInputContainer>
         <InputLabel>Placeholder</InputLabel>
         <FormTextFieldInput
-          onChange={(newPlaceholder: string | null) => {
-            onChange('placeholder', newPlaceholder);
+          onChange={(newPlaceholder: string) => {
+            onChange({
+              ...field,
+              placeholder: newPlaceholder,
+            });
           }}
-          defaultValue={placeholder}
-          placeholder={'Enter your text'}
+          defaultValue={field.placeholder}
+          placeholder={
+            getDefaultFormFieldSettings(FieldMetadataType.TEXT).placeholder
+          }
         />
       </FormFieldInputContainer>
     </StyledContainer>

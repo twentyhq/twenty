@@ -16,5 +16,7 @@ export enum PageHotkeyScope {
   WorkspaceMemberPage = 'workspace-member-page',
   TaskPage = 'task-page',
   ChargesPage = 'charges-page',
+  TraceablePage = 'traceable-page',
+  LinkLogsPage = 'linklogs-page',
   IntegrationsPage = 'integrations-page',
 }

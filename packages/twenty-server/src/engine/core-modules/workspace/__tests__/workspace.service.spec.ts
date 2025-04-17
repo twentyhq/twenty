@@ -8,13 +8,13 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -34,6 +34,7 @@ describe('WorkspaceService', () => {
   let workspaceCacheStorageService: WorkspaceCacheStorageService;
   let messageQueueService: MessageQueueService;
   let customDomainService: CustomDomainService;
+  let billingSubscriptionService: BillingSubscriptionService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -61,6 +62,18 @@ describe('WorkspaceService', () => {
             softDelete: jest.fn(),
           },
         },
+        {
+          provide: BillingService,
+          useValue: {
+            isBillingEnabled: jest.fn().mockReturnValue(true),
+          },
+        },
+        {
+          provide: BillingSubscriptionService,
+          useValue: {
+            deleteSubscriptions: jest.fn(),
+          },
+        },
         ...[
           WorkspaceManagerService,
           WorkspaceManagerService,
@@ -68,9 +81,7 @@ describe('WorkspaceService', () => {
           UserService,
           DomainManagerService,
           CustomDomainService,
-          BillingSubscriptionService,
-          BillingService,
-          EnvironmentService,
+          TwentyConfigService,
           EmailService,
           OnboardingService,
           WorkspaceInvitationService,
@@ -115,6 +126,9 @@ describe('WorkspaceService', () => {
     );
     customDomainService = module.get<CustomDomainService>(CustomDomainService);
     customDomainService.deleteCustomHostnameByHostnameSilently = jest.fn();
+    billingSubscriptionService = module.get<BillingSubscriptionService>(
+      BillingSubscriptionService,
+    );
   });
 
   afterEach(() => {
@@ -220,7 +234,10 @@ describe('WorkspaceService', () => {
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace);
       jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
+
       await service.deleteWorkspace(mockWorkspace.id, true);
+
+      expect(billingSubscriptionService.deleteSubscriptions).toHaveBeenCalled;
 
       expect(workspaceRepository.softDelete).toHaveBeenCalledWith({
         id: mockWorkspace.id,

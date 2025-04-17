@@ -1,8 +1,7 @@
 import omit from 'lodash.omit';
 import { AtomEffect } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
-
-import { isDefined } from 'twenty-shared';
 import { cookieStorage } from '~/utils/cookie-storage';
 
 export const localStorageEffect =

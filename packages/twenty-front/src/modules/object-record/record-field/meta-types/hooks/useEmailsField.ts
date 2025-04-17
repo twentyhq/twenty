@@ -13,7 +13,7 @@ import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 
 export const useEmailsField = () => {
-  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   assertFieldMetadata(FieldMetadataType.EMAILS, isFieldEmails, fieldDefinition);
 
@@ -27,7 +27,7 @@ export const useEmailsField = () => {
   );
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldEmailsValue>(`${recordId}-${fieldName}`);
+    useRecordFieldInput<FieldEmailsValue>();
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 
@@ -47,7 +47,6 @@ export const useEmailsField = () => {
     draftValue,
     setDraftValue,
     setFieldValue,
-    hotkeyScope,
     persistEmailsField,
   };
 };

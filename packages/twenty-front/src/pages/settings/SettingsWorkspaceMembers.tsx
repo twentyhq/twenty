@@ -4,19 +4,6 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import {
-  AppTooltip,
-  Avatar,
-  H2Title,
-  IconButton,
-  IconMail,
-  IconReload,
-  IconSearch,
-  IconTrash,
-  Section,
-  Status,
-  TooltipDelay,
-} from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -36,7 +23,6 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { formatDistanceToNow } from 'date-fns';
-import { isDefined } from 'twenty-shared';
 import { useGetWorkspaceInvitationsQuery } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
@@ -44,6 +30,20 @@ import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { useResendWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useResendWorkspaceInvitation';
 import { workspaceInvitationsState } from '../../modules/workspace-invitation/states/workspaceInvitationsStates';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  AppTooltip,
+  Avatar,
+  H2Title,
+  IconMail,
+  IconReload,
+  IconSearch,
+  IconTrash,
+  Status,
+  TooltipDelay,
+} from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 
 const StyledButtonContainer = styled.div`
   align-items: center;

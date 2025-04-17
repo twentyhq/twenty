@@ -124,6 +124,7 @@ const mocks: MockedResponse[] = [
             }
             id
             idealCustomerProfile
+            internalCompetitions
             introVideo {
               primaryLinkUrl
               primaryLinkLabel
@@ -338,9 +339,9 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
         value={{
           fieldDefinition: booleanFieldDefinition,
           recordId,
-          hotkeyScope: 'hotkeyScope',
           isLabelIdentifier: false,
           useUpdateRecord: useUpdateOneRecordMutation,
+          isReadOnly: false,
         }}
       >
         {children}

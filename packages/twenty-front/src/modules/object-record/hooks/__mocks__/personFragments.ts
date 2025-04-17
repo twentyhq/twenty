@@ -127,6 +127,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
         employees
         id
         idealCustomerProfile
+        internalCompetitions
         introVideo {
           primaryLinkUrl
           primaryLinkLabel

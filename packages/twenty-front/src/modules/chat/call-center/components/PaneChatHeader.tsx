@@ -8,7 +8,8 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
-import { Avatar, IconButton, useIcons } from 'twenty-ui';
+import { Avatar, useIcons } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 
 const StyledChatHeader = styled.div`
   display: flex;
@@ -125,7 +126,7 @@ export const PaneChatHeader = () => {
           </>
         }
         onConfirmClick={finalizeService}
-        deleteButtonText={'Close'}
+        confirmButtonText={'Close'}
       />
     </>
   );

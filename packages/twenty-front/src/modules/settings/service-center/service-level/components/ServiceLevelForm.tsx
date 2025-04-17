@@ -3,7 +3,9 @@ import { FindWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/t
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { H2Title, Section } from 'twenty-ui';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
+
 import { z } from 'zod';
 
 const slaMetadataFormSchema = z.object({

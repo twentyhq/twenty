@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { z } from 'zod';
 
 // Base schemas
@@ -86,14 +86,18 @@ export const workflowFormActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.array(
       z.object({
-        id: z.string().uuid(),
+        id: z.string(),
+        name: z.string(),
         label: z.string(),
         type: z.union([
           z.literal(FieldMetadataType.TEXT),
           z.literal(FieldMetadataType.NUMBER),
+          z.literal(FieldMetadataType.DATE),
+          z.literal('RECORD'),
         ]),
         placeholder: z.string().optional(),
         settings: z.record(z.any()).optional(),
+        value: z.any().optional(),
       }),
     ),
   });
@@ -205,9 +209,19 @@ export const workflowCronTriggerSchema = baseTriggerSchema.extend({
 
 export const workflowWebhookTriggerSchema = baseTriggerSchema.extend({
   type: z.literal('WEBHOOK'),
-  settings: z.object({
-    outputSchema: z.object({}).passthrough(),
-  }),
+  settings: z.discriminatedUnion('httpMethod', [
+    z.object({
+      outputSchema: z.object({}).passthrough(),
+      httpMethod: z.literal('GET'),
+      authentication: z.literal('API_KEY').nullable(),
+    }),
+    z.object({
+      outputSchema: z.object({}).passthrough(),
+      httpMethod: z.literal('POST'),
+      expectedBody: z.object({}).passthrough(),
+      authentication: z.literal('API_KEY').nullable(),
+    }),
+  ]),
 });
 
 // Combined trigger schema
@@ -219,9 +233,10 @@ export const workflowTriggerSchema = z.discriminatedUnion('type', [
 ]);
 
 // Step output schemas
-const workflowExecutorOutputSchema = z.object({
+export const workflowExecutorOutputSchema = z.object({
   result: z.any().optional(),
   error: z.string().optional(),
+  pendingEvent: z.boolean().optional(),
 });
 
 export const workflowRunOutputStepsOutputSchema = z.record(
@@ -252,6 +267,7 @@ export const workflowRunSchema = z
     __typename: z.literal('WorkflowRun'),
     id: z.string(),
     workflowVersionId: z.string(),
+    workflowId: z.string(),
     output: workflowRunOutputSchema.nullable(),
     context: workflowRunContextSchema.nullable(),
     status: workflowRunStatusSchema,

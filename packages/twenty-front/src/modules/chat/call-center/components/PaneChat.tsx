@@ -25,7 +25,8 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { Button, IconButton, useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
+import { Button, IconButton } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 
 const StyledPaneChatContainer = styled.div`

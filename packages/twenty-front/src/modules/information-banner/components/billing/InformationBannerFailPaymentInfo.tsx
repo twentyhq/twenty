@@ -1,9 +1,9 @@
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { SettingsPath } from '@/types/SettingsPath';
-import { isDefined } from 'twenty-shared';
 import { useBillingPortalSessionQuery } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { isDefined } from 'twenty-shared/utils';
 
 export const InformationBannerFailPaymentInfo = () => {
   const { redirect } = useRedirect();

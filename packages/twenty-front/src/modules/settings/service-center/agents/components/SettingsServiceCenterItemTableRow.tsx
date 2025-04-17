@@ -1,9 +1,11 @@
-import styled from '@emotion/styled';
-import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui';
 import { Agent } from '@/settings/service-center/agents/types/Agent';
 import { SelectStatus } from '@/settings/service-center/components/SelectStatus';
-// eslint-disable-next-line no-restricted-imports
-import { IconPointFilled } from '@tabler/icons-react';
+import styled from '@emotion/styled';
+import {
+  Avatar,
+  IconPointFilled,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};

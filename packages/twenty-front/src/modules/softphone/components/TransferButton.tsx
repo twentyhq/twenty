@@ -1,10 +1,9 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
-/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
-/* eslint-disable no-console */
 import { useTheme } from '@emotion/react';
 import React, { useState } from 'react';
 import { Session } from 'sip.js';
-import { IconArrowRight, IconCheck } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { IconArrowRight, IconCheck } from 'twenty-ui/display';
 
 interface TransferButtonProps {
   session: Session | null;
@@ -18,10 +17,7 @@ const TransferButton: React.FC<TransferButtonProps> = ({ type, sendDTMF }) => {
   const handleTransfer = () => {
     const extension = window.prompt('Enter the extension to transfer to:');
 
-    console.log('Extension to transfer:', extension);
-    console.log('Type of transfer:', type);
-
-    if (extension) {
+    if (isDefined(extension)) {
       if (type === 'attended') {
         sendDTMF(`${extension}`);
       } else {

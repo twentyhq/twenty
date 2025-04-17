@@ -2,14 +2,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { MouseEvent, ReactNode } from 'react';
+import { Avatar, IconCheck, useIcons } from 'twenty-ui/display';
 import {
-  Avatar,
-  IconCheck,
   MenuItemAccent,
   MenuItemLeftContent,
   StyledHoverableMenuItemBase,
-  useIcons,
-} from 'twenty-ui';
+} from 'twenty-ui/navigation';
 
 import { WorkspaceMember } from '~/generated/graphql';
 

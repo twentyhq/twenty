@@ -1,4 +1,4 @@
-import { ThemeColor } from 'twenty-ui';
+import { ThemeColor } from 'twenty-ui/theme';
 
 export interface SectorTopic {
   color: ThemeColor;

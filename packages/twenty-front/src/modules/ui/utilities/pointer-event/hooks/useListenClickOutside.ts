@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 
-import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
 
 const CLICK_OUTSIDE_DEBUG_MODE = false;
@@ -17,7 +16,6 @@ export type ClickOutsideListenerProps<T extends Element> = {
   callback: (event: MouseEvent | TouchEvent) => void;
   mode?: ClickOutsideMode;
   listenerId: string;
-  hotkeyScope?: string;
   enabled?: boolean;
 };
 
@@ -27,7 +25,6 @@ export const useListenClickOutside = <T extends Element>({
   callback,
   mode = ClickOutsideMode.compareHTMLRef,
   listenerId,
-  hotkeyScope,
   enabled = true,
 }: ClickOutsideListenerProps<T>) => {
   const {
@@ -45,18 +42,7 @@ export const useListenClickOutside = <T extends Element>({
 
         set(getClickOutsideListenerMouseDownHappenedState, true);
 
-        const currentHotkeyScopes = snapshot
-          .getLoadable(internalHotkeysEnabledScopesState)
-          .getValue();
-
-        const isListeningBasedOnHotkeyScope = hotkeyScope
-          ? currentHotkeyScopes.includes(hotkeyScope)
-          : true;
-
-        const isListening =
-          clickOutsideListenerIsActivated &&
-          enabled &&
-          isListeningBasedOnHotkeyScope;
+        const isListening = clickOutsideListenerIsActivated && enabled;
 
         if (!isListening) {
           return;
@@ -121,7 +107,6 @@ export const useListenClickOutside = <T extends Element>({
     [
       getClickOutsideListenerIsActivatedState,
       getClickOutsideListenerMouseDownHappenedState,
-      hotkeyScope,
       enabled,
       mode,
       refs,
@@ -136,18 +121,7 @@ export const useListenClickOutside = <T extends Element>({
           .getLoadable(getClickOutsideListenerIsActivatedState)
           .getValue();
 
-        const currentHotkeyScopes = snapshot
-          .getLoadable(internalHotkeysEnabledScopesState)
-          .getValue();
-
-        const isListeningBasedOnHotkeyScope = hotkeyScope
-          ? currentHotkeyScopes.includes(hotkeyScope)
-          : true;
-
-        const isListening =
-          clickOutsideListenerIsActivated &&
-          enabled &&
-          isListeningBasedOnHotkeyScope;
+        const isListening = clickOutsideListenerIsActivated && enabled;
 
         const isMouseDownInside = snapshot
           .getLoadable(getClickOutsideListenerIsMouseDownInsideState)
@@ -187,6 +161,21 @@ export const useListenClickOutside = <T extends Element>({
             !clickedOnAtLeastOneRef &&
             !isMouseDownInside &&
             !isClickedOnExcluded;
+
+          if (CLICK_OUTSIDE_DEBUG_MODE) {
+            // eslint-disable-next-line no-console
+            console.log('click outside compare ref', {
+              listenerId,
+              shouldTrigger,
+              clickedOnAtLeastOneRef,
+              isMouseDownInside,
+              isListening,
+              hasMouseDownHappened,
+              isClickedOnExcluded,
+              enabled,
+              event,
+            });
+          }
 
           if (shouldTrigger) {
             callback(event);
@@ -241,7 +230,6 @@ export const useListenClickOutside = <T extends Element>({
               isListening,
               hasMouseDownHappened,
               isClickedOnExcluded,
-              hotkeyScope,
               enabled,
               event,
             });
@@ -254,7 +242,6 @@ export const useListenClickOutside = <T extends Element>({
       },
     [
       getClickOutsideListenerIsActivatedState,
-      hotkeyScope,
       enabled,
       getClickOutsideListenerIsMouseDownInsideState,
       getClickOutsideListenerMouseDownHappenedState,

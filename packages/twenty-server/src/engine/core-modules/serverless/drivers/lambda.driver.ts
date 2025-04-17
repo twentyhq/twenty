@@ -20,7 +20,7 @@ import {
   LogType,
 } from '@aws-sdk/client-lambda';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ServerlessDriver,
@@ -50,7 +50,7 @@ import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/cons
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
-const CREDENTIALS_DURATION_IN_SECONDS = 10 * 60 * 60; // 10h
+const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
 const LAMBDA_EXECUTOR_DESCRIPTION = 'User script executor';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
@@ -98,7 +98,7 @@ export class LambdaDriver implements ServerlessDriver {
     );
 
     const assumeRoleCommand = new AssumeRoleCommand({
-      RoleArn: 'arn:aws:iam::820242914089:role/LambdaDeploymentRole',
+      RoleArn: this.options.subhostingRole,
       RoleSessionName: 'LambdaSession',
       DurationSeconds: CREDENTIALS_DURATION_IN_SECONDS,
     });
@@ -217,7 +217,7 @@ export class LambdaDriver implements ServerlessDriver {
     }
   }
 
-  async build(serverlessFunction: ServerlessFunctionEntity) {
+  private async build(serverlessFunction: ServerlessFunctionEntity) {
     const lambdaExecutor = await this.getLambdaExecutor(serverlessFunction);
 
     if (isDefined(lambdaExecutor)) {

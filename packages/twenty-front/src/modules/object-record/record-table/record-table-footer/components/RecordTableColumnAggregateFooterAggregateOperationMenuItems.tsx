@@ -4,8 +4,9 @@ import { useViewFieldAggregateOperation } from '@/object-record/record-table/rec
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ReactNode, useContext } from 'react';
-import { isDefined } from 'twenty-shared';
-import { IconCheck, MenuItem } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { IconCheck } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
   aggregateOperations,

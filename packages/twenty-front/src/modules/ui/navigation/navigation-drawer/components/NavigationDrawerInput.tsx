@@ -1,11 +1,10 @@
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import styled from '@emotion/styled';
 import { FocusEvent, useRef } from 'react';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared';
-import { IconComponent, TablerIconsProps } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { IconComponent, TablerIconsProps } from 'twenty-ui/display';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
 type NavigationDrawerInputProps = {
@@ -19,10 +18,6 @@ type NavigationDrawerInputProps = {
   onClickOutside: (event: MouseEvent | TouchEvent, value: string) => void;
   hotkeyScope: string;
 };
-
-const StyledInput = styled(TextInputV2)`
-  background-color: white;
-`;
 
 export const NavigationDrawerInput = ({
   className,
@@ -71,7 +66,7 @@ export const NavigationDrawerInput = ({
   };
 
   return (
-    <StyledInput
+    <TextInputV2
       className={className}
       LeftIcon={Icon}
       ref={inputRef}

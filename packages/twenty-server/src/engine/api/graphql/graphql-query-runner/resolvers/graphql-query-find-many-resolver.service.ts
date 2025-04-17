@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   GraphqlQueryBaseResolverService,
@@ -46,6 +46,8 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
   ): Promise<IConnection<ObjectRecord>> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
+
+    const { roleId } = executionArgs;
 
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
@@ -156,6 +158,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
         dataSource: executionArgs.dataSource,
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
+        roleId,
       });
     }
 

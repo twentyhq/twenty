@@ -9,7 +9,6 @@ import { ChatbotFlow } from '@/chatbot/components/ChatbotFlow';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
-import { WorkflowRunOutputVisualizer } from '@/workflow/workflow-diagram/components/WorkflowRunOutputVisualizer';
 import { WorkflowRunVisualizer } from '@/workflow/workflow-diagram/components/WorkflowRunVisualizer';
 import { WorkflowRunVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowRunVisualizerEffect';
 import { WorkflowVersionVisualizer } from '@/workflow/workflow-diagram/components/WorkflowVersionVisualizer';
@@ -42,8 +41,11 @@ type CardComponentProps = {
 type CardComponentType = (props: CardComponentProps) => JSX.Element | null;
 
 export const CardComponents: Record<CardType, CardComponentType> = {
-  [CardType.TimelineCard]: ({ targetableObject }) => (
-    <TimelineActivities targetableObject={targetableObject} />
+  [CardType.TimelineCard]: ({ targetableObject, isInRightDrawer }) => (
+    <TimelineActivities
+      targetableObject={targetableObject}
+      isInRightDrawer={isInRightDrawer}
+    />
   ),
 
   [CardType.FieldCard]: ({ targetableObject, isInRightDrawer }) => (
@@ -102,9 +104,9 @@ export const CardComponents: Record<CardType, CardComponentType> = {
       <WorkflowRunVisualizer workflowRunId={targetableObject.id} />
     </>
   ),
-  [CardType.WorkflowRunOutputCard]: ({ targetableObject }) => (
-    <WorkflowRunOutputVisualizer workflowRunId={targetableObject.id} />
-  ),
+  // [CardType.WorkflowRunOutputCard]: ({ targetableObject }) => (
+  //   <WorkflowRunOutputVisualizer workflowRunId={targetableObject.id} />
+  // ),
 
   [CardType.ChatbotCard]: ({ targetableObject }) => (
     <ChatbotFlow targetableObject={targetableObject} />

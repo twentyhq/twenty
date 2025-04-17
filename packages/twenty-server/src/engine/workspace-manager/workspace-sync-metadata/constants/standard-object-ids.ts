@@ -51,6 +51,8 @@ export const STANDARD_OBJECT_IDS = {
   chatbot: 'dd73286e-2c9f-4e29-bcec-c755b3de3df2',
   workspaceMember: '20202020-3319-4234-a34c-82d5c0e881a6',
   charge: '20202020-e674-48e5-a542-72570eee7216',
+  traceable: '20202020-1234-5678-9abc-def123456789',
+  linklogs: '20202020-1f2e-3d4c-5b6a-7a8b9c0d1e2f',
   integration: '20202020-4b4b-4b4b-4b4b-4b4b4b4b4b4b',
   whatsappIntegration: 'a88de77d-7078-4591-a22b-f7df762c4e65',
 };

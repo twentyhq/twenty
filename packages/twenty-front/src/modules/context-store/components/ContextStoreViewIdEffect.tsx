@@ -9,7 +9,7 @@ import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryP
 import { View } from '@/views/types/View';
 import { isUndefined } from '@sniptt/guards';
 import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const ContextStoreViewIdEffect = ({

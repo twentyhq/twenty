@@ -1,5 +1,3 @@
-import { IconFilterOff } from 'twenty-ui';
-
 import { useObjectLabel } from '@/object-metadata/hooks/useObjectLabel';
 import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
@@ -9,7 +7,8 @@ import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
+import { IconFilterOff } from 'twenty-ui/display';
 
 export const RecordTableEmptyStateSoftDelete = () => {
   const { objectMetadataItem, objectNameSingular, recordTableId } =

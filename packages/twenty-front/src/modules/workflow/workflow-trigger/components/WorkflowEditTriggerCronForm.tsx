@@ -6,14 +6,15 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { CRON_TRIGGER_INTERVAL_OPTIONS } from '@/workflow/workflow-trigger/constants/CronTriggerIntervalOptions';
 import { getCronTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getCronTriggerDefaultSettings';
+import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
 import { useTheme } from '@emotion/react';
 import { isNumber } from '@sniptt/guards';
 import cron from 'cron-validate';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared';
-import { useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 
 type WorkflowEditTriggerCronFormProps = {
   trigger: WorkflowCronTrigger;
@@ -48,18 +49,11 @@ export const WorkflowEditTriggerCronForm = ({
 
   const { getIcon } = useIcons();
 
-  const headerIcon = getTriggerIcon({
-    type: 'CRON',
-  });
+  const headerIcon = getTriggerIcon(trigger);
 
-  const defaultLabel =
-    getTriggerDefaultLabel({
-      type: 'CRON',
-    }) ?? '';
-
-  const headerTitle = isDefined(trigger.name) ? trigger.name : defaultLabel;
-
-  const headerType = 'Trigger';
+  const defaultLabel = getTriggerDefaultLabel(trigger);
+  const headerTitle = trigger.name ?? defaultLabel;
+  const headerType = getTriggerHeaderType(trigger);
 
   const onBlur = () => {
     setErrorMessagesVisible(true);

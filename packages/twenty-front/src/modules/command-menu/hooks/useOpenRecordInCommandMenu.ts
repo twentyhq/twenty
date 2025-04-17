@@ -16,9 +16,9 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
-import { capitalize } from 'twenty-shared';
-import { useIcons } from 'twenty-ui';
 import { v4 } from 'uuid';
+import { capitalize } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 
 export const useOpenRecordInCommandMenu = () => {
   const { navigateCommandMenu } = useCommandMenu();

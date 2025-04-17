@@ -1,6 +1,6 @@
 {
   "name": "twenty-server",
-  "version": "0.50.0-canary",
+  "version": "0.52.0-canary",
   "description": "",
   "author": "",
   "private": true,
@@ -25,6 +25,9 @@
     "@nestjs/devtools-integration": "^0.1.6",
     "@nestjs/graphql": "patch:@nestjs/graphql@12.1.1#./patches/@nestjs+graphql+12.1.1.patch",
     "@node-saml/passport-saml": "^5.0.0",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/exporter-metrics-otlp-http": "^0.200.0",
+    "@opentelemetry/sdk-metrics": "^2.0.0",
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch",
     "@revertdotdev/revert-react": "^0.0.21",
     "@sentry/nestjs": "^8.30.0",

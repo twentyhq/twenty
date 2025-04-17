@@ -7,8 +7,8 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import React from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { Label } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { Label } from 'twenty-ui/display';
 
 const StyledTitle = styled.div`
   align-items: center;

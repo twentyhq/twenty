@@ -4,14 +4,18 @@ import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 import { ChangeEvent, ReactNode, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { AppTooltip, Avatar, AvatarType, IconComponent } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidV4 } from 'uuid';
-
-import { isDefined } from 'twenty-shared';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
+import {
+  AppTooltip,
+  Avatar,
+  AvatarType,
+  IconComponent,
+} from 'twenty-ui/display';
 
 type ShowPageSummaryCardProps = {
   avatarPlaceholder: string;
@@ -53,7 +57,7 @@ const StyledInfoContainer = styled.div<{ isMobile: boolean }>`
 const StyledDate = styled.div<{ isMobile: boolean }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
-  padding-left: ${({ theme, isMobile }) => (isMobile ? theme.spacing(2) : 0)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledTitle = styled.div<{ isMobile: boolean }>`
@@ -62,7 +66,6 @@ const StyledTitle = styled.div<{ isMobile: boolean }>`
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   justify-content: ${({ isMobile }) => (isMobile ? 'flex-start' : 'center')};
-  padding-left: ${({ theme, isMobile }) => (isMobile ? theme.spacing(2) : 0)};
   width: 90%;
 `;
 

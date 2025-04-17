@@ -1,5 +1,5 @@
-import { Text } from '@react-email/text';
-import { ReactNode } from 'react';
+import { Text } from '@react-email/components';
+import { JSX } from 'react';
 
 import { emailTheme } from 'src/common-style';
 
@@ -13,7 +13,7 @@ const highlightedStyle = {
 };
 
 type HighlightedTextProps = {
-  value: ReactNode;
+  value: JSX.Element | JSX.Element[] | string | undefined;
   centered?: boolean;
 };
 

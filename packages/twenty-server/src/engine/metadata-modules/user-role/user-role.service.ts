@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { In, Not, Repository } from 'typeorm';
 
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -58,6 +58,24 @@ export class UserRoleService {
     });
   }
 
+  public async getRoleIdForUserWorkspace({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<string | undefined> {
+    if (!isDefined(userWorkspaceId)) {
+      return;
+    }
+
+    const userWorkspaceRole = await this.userWorkspaceRoleRepository.findOne({
+      where: { userWorkspaceId, workspaceId },
+    });
+
+    return userWorkspaceRole?.roleId;
+  }
+
   public async getRolesByUserWorkspaces({
     userWorkspaceIds,
     workspaceId,
@@ -75,7 +93,9 @@ export class UserRoleService {
         workspaceId,
       },
       relations: {
-        role: true,
+        role: {
+          settingPermissions: true,
+        },
       },
     });
 

@@ -2,16 +2,16 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Request } from 'express';
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -22,7 +22,7 @@ import { AccessTokenService } from './access-token.service';
 describe('AccessTokenService', () => {
   let service: AccessTokenService;
   let jwtWrapperService: JwtWrapperService;
-  let environmentService: EnvironmentService;
+  let twentyConfigService: TwentyConfigService;
   let userRepository: Repository<User>;
   let workspaceRepository: Repository<Workspace>;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
@@ -49,7 +49,7 @@ describe('AccessTokenService', () => {
           },
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
           },
@@ -89,7 +89,7 @@ describe('AccessTokenService', () => {
 
     service = module.get<AccessTokenService>(AccessTokenService);
     jwtWrapperService = module.get<JwtWrapperService>(JwtWrapperService);
-    environmentService = module.get<EnvironmentService>(EnvironmentService);
+    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     userRepository = module.get<Repository<User>>(
       getRepositoryToken(User, 'core'),
     );
@@ -123,7 +123,7 @@ describe('AccessTokenService', () => {
       const mockWorkspaceMember = { id: 'workspace-member-id' };
       const mockToken = 'mock-token';
 
-      jest.spyOn(environmentService, 'get').mockReturnValue('1h');
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
       jest
         .spyOn(workspaceRepository, 'findOne')
@@ -155,7 +155,7 @@ describe('AccessTokenService', () => {
     });
 
     it('should throw an error if user is not found', async () => {
-      jest.spyOn(environmentService, 'get').mockReturnValue('1h');
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       await expect(

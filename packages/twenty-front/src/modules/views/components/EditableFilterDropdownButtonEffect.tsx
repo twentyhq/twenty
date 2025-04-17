@@ -2,21 +2,21 @@ import { useEffect } from 'react';
 
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 
+import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type EditableFilterDropdownButtonEffectProps = {
-  viewFilterDropdownId: string;
-  viewFilter: RecordFilter;
+  recordFilter: RecordFilter;
 };
 
 export const EditableFilterDropdownButtonEffect = ({
-  viewFilterDropdownId,
-  viewFilter,
+  recordFilter,
 }: EditableFilterDropdownButtonEffectProps) => {
   const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
     fieldMetadataItemIdUsedInDropdownComponentState,
@@ -24,12 +24,22 @@ export const EditableFilterDropdownButtonEffect = ({
 
   const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
     selectedOperandInDropdownComponentState,
-    viewFilterDropdownId,
+    recordFilter.id,
+  );
+
+  const setSubFieldNameUsedInDropdown = useSetRecoilComponentStateV2(
+    subFieldNameUsedInDropdownComponentState,
+    recordFilter.id,
   );
 
   const setSelectedFilter = useSetRecoilComponentStateV2(
     selectedFilterComponentState,
-    viewFilterDropdownId,
+    recordFilter.id,
+  );
+
+  const setObjectFilterDropdownSelectedRecordIds = useSetRecoilComponentStateV2(
+    objectFilterDropdownSelectedRecordIdsComponentState,
+    recordFilter.id,
   );
 
   const { filterableFieldMetadataItems } =
@@ -38,7 +48,7 @@ export const EditableFilterDropdownButtonEffect = ({
   useEffect(() => {
     const fieldMetadataItem = filterableFieldMetadataItems.find(
       (fieldMetadataItem) =>
-        fieldMetadataItem.id === viewFilter.fieldMetadataId,
+        fieldMetadataItem.id === recordFilter.fieldMetadataId,
     );
 
     if (!isDefined(fieldMetadataItem)) {
@@ -46,15 +56,25 @@ export const EditableFilterDropdownButtonEffect = ({
     }
 
     setFieldMetadataItemIdUsedInDropdown(fieldMetadataItem.id);
-    setSelectedOperandInDropdown(viewFilter.operand);
-    setSelectedFilter(viewFilter);
+    setSelectedOperandInDropdown(recordFilter.operand);
+    setSelectedFilter(recordFilter);
+    setSubFieldNameUsedInDropdown(recordFilter.subFieldName);
+
+    try {
+      const selectedOptions = JSON.parse(recordFilter.value);
+
+      setObjectFilterDropdownSelectedRecordIds(selectedOptions);
+    } catch {
+      setObjectFilterDropdownSelectedRecordIds([]);
+    }
   }, [
     filterableFieldMetadataItems,
     setFieldMetadataItemIdUsedInDropdown,
-    viewFilter,
+    recordFilter,
     setSelectedOperandInDropdown,
     setSelectedFilter,
-    viewFilterDropdownId,
+    setSubFieldNameUsedInDropdown,
+    setObjectFilterDropdownSelectedRecordIds,
   ]);
 
   return null;

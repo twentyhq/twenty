@@ -11,9 +11,10 @@ import {
   useRef,
   useState,
 } from 'react';
-import { AutogrowWrapper, IconComponent, IconEye, IconEyeOff } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { AutogrowWrapper } from 'twenty-ui/utilities';
+import { IconComponent, IconEye, IconEyeOff } from 'twenty-ui/display';
 
 const StyledContainer = styled.div<
   Pick<TextInputV2ComponentProps, 'fullWidth'>
@@ -22,6 +23,7 @@ const StyledContainer = styled.div<
   display: inline-flex;
   flex-direction: column;
   width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
+  position: relative;
 `;
 
 const StyledInputContainer = styled.div`
@@ -32,10 +34,12 @@ const StyledInputContainer = styled.div`
   position: relative;
 `;
 
-const StyledAdornmentContainer = styled.div<{
+type StyledAdornmentContainerProps = {
   sizeVariant: TextInputV2Size;
   position: 'left' | 'right';
-}>`
+};
+
+const StyledAdornmentContainer = styled.div<StyledAdornmentContainerProps>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.light};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -49,13 +53,25 @@ const StyledAdornmentContainer = styled.div<{
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   height: ${({ sizeVariant }) =>
-    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
+    sizeVariant === 'xs'
+      ? '20px'
+      : sizeVariant === 'sm'
+        ? '24px'
+        : sizeVariant === 'md'
+          ? '28px'
+          : '32px'};
   justify-content: center;
   min-width: fit-content;
   padding: ${({ theme }) => theme.spacing(2)};
   width: auto;
   line-height: ${({ sizeVariant }) =>
-    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
+    sizeVariant === 'xs'
+      ? '20px'
+      : sizeVariant === 'sm'
+        ? '24px'
+        : sizeVariant === 'md'
+          ? '28px'
+          : '32px'};
 
   ${({ position }) =>
     position === 'left' ? 'border-right: none;' : 'border-left: none;'}
@@ -97,14 +113,18 @@ const StyledInput = styled.input<
   font-weight: ${({ theme, inheritFontStyles }) =>
     inheritFontStyles ? 'inherit' : theme.font.weight.regular};
   height: ${({ sizeVariant }) =>
-    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
-  line-height: ${({ sizeVariant }) =>
-    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
+    sizeVariant === 'xs'
+      ? '20px'
+      : sizeVariant === 'sm'
+        ? '24px'
+        : sizeVariant === 'md'
+          ? '28px'
+          : '32px'};
   outline: none;
   padding: ${({ theme, sizeVariant, autoGrow }) =>
     autoGrow
-      ? theme.spacing(1)
-      : sizeVariant === 'sm'
+      ? 0
+      : sizeVariant === 'xs'
         ? `${theme.spacing(2)} 0`
         : theme.spacing(2)};
   padding-left: ${({ theme, LeftIcon, autoGrow }) =>
@@ -152,9 +172,9 @@ const StyledLeftIconContainer = styled.div<{ sizeVariant: TextInputV2Size }>`
   display: flex;
   justify-content: center;
   padding-left: ${({ theme, sizeVariant }) =>
-    sizeVariant === 'sm'
+    sizeVariant === 'xs'
       ? theme.spacing(0.5)
-      : sizeVariant === 'md'
+      : sizeVariant === 'md' || sizeVariant === 'sm'
         ? theme.spacing(1)
         : theme.spacing(2)};
   position: absolute;
@@ -191,7 +211,7 @@ const StyledTrailingIcon = styled.div<{
 
 const INPUT_TYPE_PASSWORD = 'password';
 
-export type TextInputV2Size = 'sm' | 'md' | 'lg';
+export type TextInputV2Size = 'xs' | 'sm' | 'md' | 'lg';
 
 export type TextInputV2ComponentProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -376,11 +396,16 @@ const TextInputV2Component = forwardRef<
 const StyledAutogrowWrapper = styled(AutogrowWrapper)<{
   sizeVariant?: TextInputV2Size;
 }>`
-  border: 1px solid transparent;
-  height: ${({ sizeVariant }) =>
-    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
-  padding: 0 ${({ theme }) => theme.spacing(1.25)};
   box-sizing: border-box;
+  height: ${({ sizeVariant }) =>
+    sizeVariant === 'xs'
+      ? '20px'
+      : sizeVariant === 'sm'
+        ? '24px'
+        : sizeVariant === 'md'
+          ? '28px'
+          : '32px'};
+  padding: 0 ${({ theme }) => theme.spacing(1.25)};
 `;
 
 const TextInputV2WithAutoGrowWrapper = forwardRef<

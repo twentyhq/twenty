@@ -1,6 +1,9 @@
 import { AuthModal } from '@/auth/components/AuthModal';
+import { animateModalState } from '@/auth/states/animateModalState';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
+import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
+import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFallback';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
@@ -16,7 +19,8 @@ import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
-import { useScreenSize } from 'twenty-ui';
+import { useRecoilValue } from 'recoil';
+import { useScreenSize } from 'twenty-ui/utilities';
 import WebSoftphone from '../../../../softphone/components/WebSoftphone';
 
 const StyledLayout = styled.div`
@@ -25,21 +29,11 @@ const StyledLayout = styled.div`
   flex-direction: column;
   height: 100dvh;
   position: relative;
-  scrollbar-color: ${({ theme }) => theme.border.color.medium};
+  scrollbar-color: ${({ theme }) => theme.border.color.medium} transparent;
   scrollbar-width: 4px;
   width: 100%;
 
-  *::-webkit-scrollbar {
-    height: 4px;
-    width: 4px;
-  }
-
-  *::-webkit-scrollbar-corner {
-    background-color: transparent;
-  }
-
   *::-webkit-scrollbar-thumb {
-    background-color: transparent;
     border-radius: ${({ theme }) => theme.border.radius.sm};
   }
 `;
@@ -79,6 +73,7 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
+  const animateModal = useRecoilValue(animateModalState);
 
   return (
     <>
@@ -90,51 +85,56 @@ export const DefaultLayout = () => {
         `}
       />
       <StyledLayout>
-        {!showAuthModal && (
-          <>
-            <CommandMenuRouter />
-            <KeyboardShortcutMenu />
-          </>
-        )}
-
-        <StyledPageContainer
-          animate={{
-            marginLeft:
-              isSettingsPage && !isMobile && !useShowFullScreen
-                ? (windowsWidth -
-                    (OBJECT_SETTINGS_WIDTH +
-                      NAV_DRAWER_WIDTHS.menu.desktop.expanded +
-                      64)) /
-                  2
-                : 0,
-          }}
-          transition={{ duration: theme.animation.duration.normal }}
-        >
-          {showAuthModal ? (
-            <StyledAppNavigationDrawerMock />
-          ) : useShowFullScreen ? null : (
-            <StyledAppNavigationDrawer />
-          )}
-          {showAuthModal ? (
-            <>
-              <SignInBackgroundMockPage />
-              <AnimatePresence mode="wait">
-                <LayoutGroup>
-                  <AuthModal>
-                    <Outlet />
-                  </AuthModal>
-                </LayoutGroup>
-              </AnimatePresence>
-            </>
-          ) : (
-            <StyledMainContainer>
-              <AppErrorBoundary>
-                <Outlet />
-              </AppErrorBoundary>
-            </StyledMainContainer>
-          )}
-        </StyledPageContainer>
-        {isMobile && <MobileNavigationBar />}
+        <AppErrorBoundary FallbackComponent={AppFullScreenErrorFallback}>
+          <StyledPageContainer
+            animate={{
+              marginLeft:
+                isSettingsPage && !isMobile && !useShowFullScreen
+                  ? (windowsWidth -
+                      (OBJECT_SETTINGS_WIDTH +
+                        NAV_DRAWER_WIDTHS.menu.desktop.expanded +
+                        76)) /
+                    2
+                  : 0,
+            }}
+            transition={{
+              duration: theme.animation.duration.normal,
+            }}
+          >
+            {!showAuthModal && (
+              <>
+                <CommandMenuRouter />
+                <KeyboardShortcutMenu />
+              </>
+            )}
+            {showAuthModal ? (
+              <StyledAppNavigationDrawerMock />
+            ) : useShowFullScreen ? null : (
+              <StyledAppNavigationDrawer />
+            )}
+            {showAuthModal ? (
+              <>
+                <StyledMainContainer>
+                  <SignInBackgroundMockPage />
+                </StyledMainContainer>
+                <AnimatePresence mode="wait">
+                  <LayoutGroup>
+                    <AuthModal isOpenAnimated={animateModal}>
+                      <Outlet />
+                    </AuthModal>
+                  </LayoutGroup>
+                </AnimatePresence>
+              </>
+            ) : (
+              <StyledMainContainer>
+                <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
+                  <Outlet />
+                </AppErrorBoundary>
+              </StyledMainContainer>
+            )}
+          </StyledPageContainer>
+          {isMobile && !showAuthModal && <MobileNavigationBar />}
+        </AppErrorBoundary>
       </StyledLayout>
       <StyledWebSoftphoneContainer>
         <WebSoftphone />

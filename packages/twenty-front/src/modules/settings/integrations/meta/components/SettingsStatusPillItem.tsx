@@ -2,15 +2,13 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { FunctionComponent, MouseEvent, ReactElement, ReactNode } from 'react';
+import { IconCheck, IconComponent } from 'twenty-ui/display';
+import { LightIconButtonGroup, LightIconButtonProps } from 'twenty-ui/input';
 import {
-  IconCheck,
-  IconComponent,
-  LightIconButtonGroup,
-  LightIconButtonProps,
   MenuItemAccent,
   MenuItemLeftContent,
   StyledHoverableMenuItemBase,
-} from 'twenty-ui';
+} from 'twenty-ui/navigation';
 
 export type MenuItemIconButton = {
   Wrapper?: FunctionComponent<{ iconButton: ReactElement }>;

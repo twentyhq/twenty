@@ -23,8 +23,10 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { isDefined } from 'twenty-shared';
-import { Button, Tag, TagColor, THEME_COMMON } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { Tag, TagColor } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/input';
+import { THEME_COMMON } from 'twenty-ui/theme';
 
 type BotDiagramBaseProps = {
   nodeTypes: NodeTypes;

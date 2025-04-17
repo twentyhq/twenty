@@ -1,7 +1,7 @@
 import { AppRouterProviders } from '@/app/components/AppRouterProviders';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
+import { VerifyEffect } from '@/auth/components/Verify';
 
-import { VerifyEffect } from '@/auth/components/VerifyEffect';
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import { CallCenterProvider } from '@/chat/call-center/context/CallCenterContext';
 import ChatProvider from '@/chat/internal/context/chatContext';
@@ -9,6 +9,7 @@ import indexAppPath from '@/navigation/utils/indexAppPath';
 import { AppPath } from '@/types/AppPath';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
+
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -20,6 +21,7 @@ import { SignInUp } from '~/pages/auth/SignInUp';
 import { CallCenter } from '~/pages/chat/call-center/ExternalChat';
 import { Chat } from '~/pages/chat/internal/InternalChat';
 import { Chatbot } from '~/pages/chatbot/Chatbot';
+import { DashboardLinks } from '~/pages/dashboard-links/DashboarLinks';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
@@ -86,6 +88,7 @@ export const useCreateAppRouter = (
             }
           />
           <Route path={AppPath.Chatbot} element={<Chatbot />} />
+          <Route path={AppPath.DashboardLinks} element={<DashboardLinks />} />
           <Route path={AppPath.NotFoundWildcard} element={<NotFound />} />
         </Route>
         <Route element={<BlankLayout />}>

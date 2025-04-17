@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui';
+import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 
 import { useTheme } from '@emotion/react';
 

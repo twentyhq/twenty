@@ -3,10 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { CreateStripeIntegrationInput } from 'src/engine/core-modules/stripe/integrations/dtos/create-stripe-integration.input';
 import { UpdateStripeIntegrationInput } from 'src/engine/core-modules/stripe/integrations/dtos/update-stripe-integration.input';
 import { StripeIntegration } from 'src/engine/core-modules/stripe/integrations/stripe-integration.entity';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class StripeIntegrationService {
     private stripeIntegrationRepository: Repository<StripeIntegration>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async create(

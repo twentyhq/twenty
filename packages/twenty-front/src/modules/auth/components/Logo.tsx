@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-
-import { getImageAbsoluteURI } from 'twenty-shared';
+import { getImageAbsoluteURI } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 type LogoProps = {
@@ -10,12 +9,12 @@ type LogoProps = {
 };
 
 const StyledContainer = styled.div`
-  height: ${({ theme }) => theme.spacing(12)};
+  height: ${({ theme }) => theme.spacing(14)};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
   margin-top: ${({ theme }) => theme.spacing(4)};
 
   position: relative;
-  width: ${({ theme }) => theme.spacing(12)};
+  width: ${({ theme }) => theme.spacing(48)};
 `;
 
 const StyledSecondaryLogo = styled.img`
@@ -46,7 +45,7 @@ const StyledPrimaryLogo = styled.div<{ src: string }>`
 `;
 
 export const Logo = (props: LogoProps) => {
-  const defaultPrimaryLogoUrl = `${window.location.origin}/icons/android/android-launchericon-192-192.png`;
+  const defaultPrimaryLogoUrl = `${window.location.origin}/icons/windows11/Woulz-logo.png`;
 
   const primaryLogoUrl = getImageAbsoluteURI({
     imageUrl: props.primaryLogo ?? defaultPrimaryLogoUrl,
@@ -62,7 +61,7 @@ export const Logo = (props: LogoProps) => {
 
   return (
     <StyledContainer>
-      <StyledPrimaryLogo src={primaryLogoUrl ?? ''} />
+      <StyledPrimaryLogo src={primaryLogoUrl} />
       {secondaryLogoUrl && (
         <StyledSecondaryLogoContainer>
           <StyledSecondaryLogo src={secondaryLogoUrl} />

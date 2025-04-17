@@ -1,5 +1,5 @@
-import { isDefined } from 'twenty-shared';
-import { Nullable } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { Nullable } from 'twenty-ui/utilities';
 
 // TODO: we should create a custom eslint rule that enforces the use of this function
 // instead of using the `===` operator where a and b are | undefined | null

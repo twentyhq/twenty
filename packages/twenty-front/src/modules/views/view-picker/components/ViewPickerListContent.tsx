@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
 import { MouseEvent, useCallback } from 'react';
-import { IconPlus, MenuItem } from 'twenty-ui';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { prefetchViewsFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchViewsFromObjectMetadataItemFamilySelector';
@@ -9,16 +8,20 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateView } from '@/views/hooks/useUpdateView';
 import { ViewPickerOptionDropdown } from '@/views/view-picker/components/ViewPickerOptionDropdown';
+import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
+import { IconPlus } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
@@ -47,8 +50,11 @@ export const ViewPickerListContent = () => {
   const { updateView } = useUpdateView();
   const { changeView } = useChangeView();
 
+  const { closeDropdown } = useDropdown(VIEW_PICKER_DROPDOWN_ID);
+
   const handleViewSelect = (viewId: string) => {
     changeView(viewId);
+    closeDropdown();
   };
 
   const handleAddViewButtonClick = () => {
@@ -68,17 +74,21 @@ export const ViewPickerListContent = () => {
   };
 
   const handleDragEnd = useCallback(
-    (result: DropResult) => {
+    async (result: DropResult) => {
       if (!result.destination) return;
 
-      moveArrayItem(viewsOnCurrentObject, {
+      const viewsReordered = moveArrayItem(viewsOnCurrentObject, {
         fromIndex: result.source.index,
         toIndex: result.destination.index,
-      }).forEach((view, index) => {
-        if (view.position !== index) {
-          updateView({ ...view, position: index });
-        }
       });
+
+      Promise.all(
+        viewsReordered.map(async (view, index) => {
+          if (view.position !== index) {
+            await updateView({ ...view, position: index });
+          }
+        }),
+      );
     },
     [updateView, viewsOnCurrentObject],
   );

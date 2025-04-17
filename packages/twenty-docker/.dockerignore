@@ -1,0 +1,4 @@
+.git
+.env
+node_modules
+.nx/cache

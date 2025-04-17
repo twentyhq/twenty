@@ -4,13 +4,6 @@ import pick from 'lodash.pick';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import {
-  Button,
-  H2Title,
-  IconArchive,
-  IconArchiveOff,
-  Section,
-} from 'twenty-ui';
 import { z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -34,11 +27,14 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { Button } from 'twenty-ui/input';
+import { H2Title, IconArchive, IconArchiveOff } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 //TODO: fix this type
 type SettingsDataModelFieldEditFormValues = z.infer<
@@ -209,7 +205,6 @@ export const SettingsObjectFieldEdit = () => {
                 description={t`The name and icon of this field`}
               />
               <SettingsDataModelFieldIconLabelForm
-                disabled={!fieldMetadataItem.isCustom}
                 fieldMetadataItem={fieldMetadataItem}
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
                 canToggleSyncLabelWithName={
@@ -240,7 +235,6 @@ export const SettingsObjectFieldEdit = () => {
                 description={t`The description of this field`}
               />
               <SettingsDataModelFieldDescriptionForm
-                disabled={!fieldMetadataItem.isCustom}
                 fieldMetadataItem={fieldMetadataItem}
               />
             </Section>

@@ -9,7 +9,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { Avatar, IconButton, useIcons } from 'twenty-ui';
+import { Avatar, useIcons } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 
 interface StatusPillProps {
   status: 'Available' | 'Busy' | 'Away' | string;

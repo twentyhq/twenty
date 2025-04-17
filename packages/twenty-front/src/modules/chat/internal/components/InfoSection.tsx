@@ -7,7 +7,7 @@ import { formatStatusLabel } from '@/chat/utils/formatStatusLabel';
 import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
-import { IconComponent } from 'twenty-ui';
+import { IconComponent } from 'twenty-ui/display';
 
 interface ServiceStatusPillProps {
   status: statusEnum;

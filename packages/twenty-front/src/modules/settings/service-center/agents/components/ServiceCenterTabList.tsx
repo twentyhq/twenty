@@ -2,10 +2,11 @@ import styled from '@emotion/styled';
 import * as React from 'react';
 
 import { Tab } from '@/ui/layout/tab/components/Tab';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useTheme } from '@emotion/react';
-import { useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
 
 type TabItemProps = {
   id: string;
@@ -46,7 +47,10 @@ export const ServiceCenterTabList = ({
 
   const initialActiveTabId = tabs.find((tab) => !tab.hide)?.id || 0;
 
-  const { activeTabId, setActiveTabId } = useTabList(tabListId);
+  const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
+    activeTabIdComponentState,
+    tabListId,
+  );
 
   // const activeTabId = useRecoilValue(activeTabIdState);
 

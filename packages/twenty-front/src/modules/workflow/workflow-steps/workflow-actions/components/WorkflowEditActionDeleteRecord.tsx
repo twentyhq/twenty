@@ -1,17 +1,20 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { Select, SelectOption } from '@/ui/input/components/Select';
+import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
+import { Select } from '@/ui/input/components/Select';
 import { WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { WorkflowSingleRecordPicker } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowSingleRecordPicker';
-import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
+import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { isDefined } from 'twenty-shared';
-import { HorizontalSeparator, useIcons } from 'twenty-ui';
+import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { isDefined } from 'twenty-shared/utils';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
+import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 
 type WorkflowEditActionDeleteRecordProps = {
   action: WorkflowDeleteRecordAction;
@@ -34,7 +37,6 @@ export const WorkflowEditActionDeleteRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionDeleteRecordProps) => {
-  const theme = useTheme();
   const { getIcon } = useIcons();
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
@@ -108,6 +110,8 @@ export const WorkflowEditActionDeleteRecord = ({
 
   const headerTitle = isDefined(action.name) ? action.name : `Delete Record`;
   const headerIcon = getActionIcon(action.type);
+  const headerIconColor = useActionIconColorOrThrow(action.type);
+  const headerType = useActionHeaderTypeOrThrow(action.type);
 
   return (
     <>
@@ -123,9 +127,9 @@ export const WorkflowEditActionDeleteRecord = ({
           });
         }}
         Icon={getIcon(headerIcon)}
-        iconColor={theme.font.color.tertiary}
+        iconColor={headerIconColor}
         initialTitle={headerTitle}
-        headerType="Action"
+        headerType={headerType}
         disabled={isFormDisabled}
       />
       <WorkflowStepBody>
@@ -152,7 +156,7 @@ export const WorkflowEditActionDeleteRecord = ({
 
         <HorizontalSeparator noMargin />
 
-        <WorkflowSingleRecordPicker
+        <FormSingleRecordPicker
           label="Record"
           onChange={(objectRecordId) =>
             handleFieldChange('objectRecordId', objectRecordId)
@@ -161,6 +165,7 @@ export const WorkflowEditActionDeleteRecord = ({
           defaultValue={formData.objectRecordId}
           testId="workflow-edit-action-record-delete-object-record-id"
           disabled={isFormDisabled}
+          VariablePicker={WorkflowVariablePicker}
         />
       </WorkflowStepBody>
     </>

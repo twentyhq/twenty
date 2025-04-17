@@ -1,8 +1,5 @@
 import { MOCK_REMOTE_DATABASES } from '@/settings/integrations/constants/MockRemoteDatabases';
-import { SETTINGS_INTEGRATION_REQUEST_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationRequest';
 import { useSettingsIntegrationStripeCategory } from '@/settings/integrations/constants/SettingsIntegrationStripe';
-import { SETTINGS_INTEGRATION_WINDMILL_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationWindmill';
-import { SETTINGS_INTEGRATION_ZAPIER_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationZapier';
 import { SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
 import { getSettingsIntegrationAll } from '@/settings/integrations/utils/getSettingsIntegrationAll';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -40,13 +37,15 @@ export const useSettingsIntegrationCategories =
       isStripeIntegrationActive,
     });
 
-    const SETTINGS_INTEGRATION_STRIPE_CATEGORY= useSettingsIntegrationStripeCategory();
+    const SETTINGS_INTEGRATION_STRIPE_CATEGORY =
+      useSettingsIntegrationStripeCategory();
 
     return [
       ...(allIntegrations.integrations.length > 0 ? [allIntegrations] : []),
-      SETTINGS_INTEGRATION_ZAPIER_CATEGORY,
-      SETTINGS_INTEGRATION_WINDMILL_CATEGORY,
-      SETTINGS_INTEGRATION_REQUEST_CATEGORY,
+      //! Check progress of feature flags from twenty.
+      // SETTINGS_INTEGRATION_ZAPIER_CATEGORY,
+      // SETTINGS_INTEGRATION_WINDMILL_CATEGORY,
+      // SETTINGS_INTEGRATION_REQUEST_CATEGORY,
       SETTINGS_INTEGRATION_STRIPE_CATEGORY,
     ];
   };

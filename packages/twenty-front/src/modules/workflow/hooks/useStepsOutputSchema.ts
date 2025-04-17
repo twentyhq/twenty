@@ -1,7 +1,6 @@
 import { stepsOutputSchemaFamilyState } from '@/workflow/states/stepsOutputSchemaFamilyState';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { getStepOutputSchemaFamilyStateKey } from '@/workflow/utils/getStepOutputSchemaFamilyStateKey';
-import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
@@ -11,7 +10,7 @@ import {
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { getTriggerStepName } from '@/workflow/workflow-variables/utils/getTriggerStepName';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useStepsOutputSchema = () => {
   const populateStepsOutputSchema = useRecoilCallback(
@@ -36,17 +35,7 @@ export const useStepsOutputSchema = () => {
         const trigger = workflowVersion.trigger;
 
         if (isDefined(trigger)) {
-          const triggerIconKey =
-            trigger.type === 'DATABASE_EVENT'
-              ? getTriggerIcon({
-                  type: trigger.type,
-                  eventName: splitWorkflowTriggerEventName(
-                    trigger.settings?.eventName,
-                  ).event,
-                })
-              : getTriggerIcon({
-                  type: trigger.type,
-                });
+          const triggerIconKey = getTriggerIcon(trigger);
 
           const triggerOutputSchema: StepOutputSchema = {
             id: TRIGGER_STEP_ID,

@@ -2,7 +2,7 @@ import { WorkflowFindRecordsAction } from '@/workflow/types/Workflow';
 import { WorkflowEditActionFindRecords } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFindRecords';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -10,6 +10,7 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),
@@ -50,6 +51,7 @@ const meta: Meta<typeof WorkflowEditActionFindRecords> = {
     SnackBarDecorator,
     RouterDecorator,
     WorkspaceDecorator,
+    I18nFrontDecorator,
   ],
 };
 
@@ -74,9 +76,14 @@ export const DisabledWithEmptyValues: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const titleInput = await canvas.findByDisplayValue('Search Records');
+    const titleText = await canvas.findByText('Search Records');
 
-    expect(titleInput).toBeDisabled();
+    expect(window.getComputedStyle(titleText).cursor).toBe('default');
+
+    await userEvent.click(titleText);
+
+    const titleInput = canvas.queryByDisplayValue('Search Records');
+    expect(titleInput).not.toBeInTheDocument();
 
     const objectSelectCurrentValue = await canvas.findByText('People');
 

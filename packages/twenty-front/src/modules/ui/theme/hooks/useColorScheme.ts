@@ -5,7 +5,12 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { IconComponent, IconMoon, IconSun, IconSunMoon } from 'twenty-ui';
+import {
+  IconComponent,
+  IconMoon,
+  IconSun,
+  IconSunMoon,
+} from 'twenty-ui/display';
 
 export const useColorScheme = () => {
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(

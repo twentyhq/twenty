@@ -5,7 +5,7 @@ import { prefetchViewsFromObjectMetadataItemFamilySelector } from '@/prefetch/st
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { ViewType } from '@/views/types/ViewType';
+import { viewTypeIconMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
@@ -16,7 +16,7 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ViewPickerContentEffect = () => {
   const setViewPickerSelectedIcon = useSetRecoilComponentStateV2(
@@ -66,7 +66,8 @@ export const ViewPickerContentEffect = () => {
       !viewPickerIsDirty
     ) {
       const defaultIcon =
-        viewPickerType === ViewType.Kanban ? 'IconLayoutKanban' : 'IconTable';
+        viewTypeIconMapping(viewPickerType).displayName ?? 'IconTable';
+
       if (viewPickerMode === 'create-empty') {
         setViewPickerSelectedIcon(defaultIcon);
       } else {

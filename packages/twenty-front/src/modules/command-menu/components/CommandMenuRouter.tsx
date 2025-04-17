@@ -1,3 +1,4 @@
+import { ActionMenuContextProvider } from '@/action-menu/contexts/ActionMenuContextProvider';
 import { CommandMenuContainer } from '@/command-menu/components/CommandMenuContainer';
 import { CommandMenuContextChipRecordSetterEffect } from '@/command-menu/components/CommandMenuContextChipRecordSetterEffect';
 import { CommandMenuTopBar } from '@/command-menu/components/CommandMenuTopBar';
@@ -9,7 +10,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledCommandMenuContent = styled.div`
   flex: 1;
@@ -47,7 +48,13 @@ export const CommandMenuRouter = () => {
           <CommandMenuTopBar />
         </motion.div>
         <StyledCommandMenuContent>
-          {commandMenuPageComponent}
+          <ActionMenuContextProvider
+            isInRightDrawer={true}
+            displayType="listItem"
+            actionMenuType="command-menu"
+          >
+            {commandMenuPageComponent}
+          </ActionMenuContextProvider>
         </StyledCommandMenuContent>
       </CommandMenuPageComponentInstanceContext.Provider>
     </CommandMenuContainer>

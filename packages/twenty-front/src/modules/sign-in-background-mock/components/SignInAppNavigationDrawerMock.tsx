@@ -1,5 +1,6 @@
 import { SupportDropdown } from '@/support/components/SupportDropdown';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
+import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -8,10 +9,10 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { getOsControlSymbol } from '@ui/utilities/device/getOsControlSymbol';
-import { IconSearch, IconSettings, useIsMobile } from 'twenty-ui';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { IconSearch, IconSettings } from 'twenty-ui/display';
+import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
   min-height: fit-content;
@@ -35,8 +36,8 @@ export const SignInAppNavigationDrawerMock = ({
   const isMobile = useIsMobile();
   const { t } = useLingui();
 
-  const children = (
-    <>
+  return (
+    <NavigationDrawer className={className} title={DEFAULT_WORKSPACE_NAME}>
       {!isMobile && (
         <StyledMainSection>
           <NavigationDrawerItem
@@ -60,18 +61,9 @@ export const SignInAppNavigationDrawerMock = ({
           WORKSPACE_FAVORITES.includes(item.nameSingular),
         )}
       />
-    </>
-  );
-
-  const footer = <SupportDropdown />;
-
-  return (
-    <NavigationDrawer
-      className={className}
-      footer={footer}
-      title={DEFAULT_WORKSPACE_NAME}
-    >
-      {children}
+      <NavigationDrawerFixedContent>
+        <SupportDropdown />
+      </NavigationDrawerFixedContent>
     </NavigationDrawer>
   );
 };

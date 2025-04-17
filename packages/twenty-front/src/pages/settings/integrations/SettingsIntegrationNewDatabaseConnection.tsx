@@ -22,13 +22,14 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { H2Title, Section } from 'twenty-ui';
 import { CreateRemoteServerInput } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import SripeLoginButton from './stripe/components/SripeLoginButton';
 
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import { useStripeLogin } from '~/pages/settings/integrations/stripe/hooks/useStripeLoing';
 
 const createRemoteServerInputPostgresSchema =

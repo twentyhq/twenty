@@ -14,7 +14,7 @@ export const workflowRunsAllView = (
     type: 'table',
     key: 'INDEX',
     position: 0,
-    icon: 'IconHistory',
+    icon: 'IconHistoryToggle',
     openRecordIn: ViewOpenRecordInType.RECORD_PAGE,
     kanbanFieldMetadataId: '',
     filters: [],

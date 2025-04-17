@@ -17,8 +17,8 @@ import {
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { isCreateStepNode } from '@/workflow/workflow-diagram/utils/isCreateStepNode';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
-import { isDefined } from 'twenty-shared';
-import { useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 
 export const WorkflowDiagramCanvasEditableEffect = () => {
   const { getIcon } = useIcons();

@@ -6,8 +6,8 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-  THEME_LIGHT,
-} from 'twenty-ui';
+} from 'twenty-ui/layout';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
 export const NoSelectedChat = () => {
   const theme = useTheme();

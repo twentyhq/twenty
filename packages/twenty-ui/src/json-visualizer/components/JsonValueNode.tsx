@@ -3,6 +3,7 @@ import { IconComponent } from '@ui/display';
 import { JsonListItem } from '@ui/json-visualizer/components/internal/JsonListItem';
 import { JsonNodeLabel } from '@ui/json-visualizer/components/internal/JsonNodeLabel';
 import { JsonNodeValue } from '@ui/json-visualizer/components/internal/JsonNodeValue';
+import { JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
 
 const StyledListItem = styled(JsonListItem)`
   column-gap: ${({ theme }) => theme.spacing(2)};
@@ -10,7 +11,7 @@ const StyledListItem = styled(JsonListItem)`
 
 type JsonValueNodeProps = {
   valueAsString: string;
-  isHighlighted: boolean;
+  highlighting: JsonNodeHighlighting | undefined;
 } & (
   | {
       label: string;
@@ -29,13 +30,13 @@ export const JsonValueNode = (props: JsonValueNodeProps) => {
         <JsonNodeLabel
           label={props.label}
           Icon={props.Icon}
-          isHighlighted={props.isHighlighted}
+          highlighting={props.highlighting}
         />
       )}
 
       <JsonNodeValue
         valueAsString={props.valueAsString}
-        isHighlighted={props.isHighlighted}
+        highlighting={props.highlighting}
       />
     </StyledListItem>
   );

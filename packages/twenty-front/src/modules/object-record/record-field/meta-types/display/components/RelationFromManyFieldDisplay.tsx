@@ -6,7 +6,7 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useRelationFromManyFieldDisplay';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { isNull } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RelationFromManyFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useRelationFromManyFieldDisplay();
@@ -49,42 +49,40 @@ export const RelationFromManyFieldDisplay = () => {
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
         {fieldValue
-          .filter((record) => !isNull(record[relationFieldName]))
-          .map((record) => (
-            <RecordChip
-              key={record.id}
-              objectNameSingular={objectNameSingular}
-              record={record[relationFieldName]}
-            />
-          ))}
+          .map((record) =>
+            isDefined(record) && isDefined(record[relationFieldName]) ? (
+              <RecordChip
+                key={record.id}
+                objectNameSingular={objectNameSingular}
+                record={record[relationFieldName]}
+              />
+            ) : undefined,
+          )
+          .filter(isDefined)}
       </ExpandableList>
     );
   } else if (isRelationFromActivityTargets) {
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
-        {activityTargetObjectRecords
-          .filter((record) => !isNull(record.targetObject))
-          .map((record) => (
-            <RecordChip
-              key={record.targetObject.id}
-              objectNameSingular={record.targetObjectMetadataItem.nameSingular}
-              record={record.targetObject}
-            />
-          ))}
+        {activityTargetObjectRecords.filter(isDefined).map((record) => (
+          <RecordChip
+            key={record.targetObject.id}
+            objectNameSingular={record.targetObjectMetadataItem.nameSingular}
+            record={record.targetObject}
+          />
+        ))}
       </ExpandableList>
     );
   } else {
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
-        {fieldValue
-          .filter((record) => !isNull(record))
-          .map((record) => (
-            <RecordChip
-              key={record.id}
-              objectNameSingular={objectNameSingular}
-              record={record}
-            />
-          ))}
+        {fieldValue.filter(isDefined).map((record) => (
+          <RecordChip
+            key={record.id}
+            objectNameSingular={objectNameSingular}
+            record={record}
+          />
+        ))}
       </ExpandableList>
     );
   }

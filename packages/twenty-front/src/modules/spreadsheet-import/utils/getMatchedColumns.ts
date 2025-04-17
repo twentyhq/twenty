@@ -1,26 +1,29 @@
 import lavenstein from 'js-levenshtein';
 
-import {
-  Column,
-  Columns,
-  MatchColumnsStepProps,
-} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import { Field, Fields } from '@/spreadsheet-import/types';
-import { isDefined } from 'twenty-shared';
+import { MatchColumnsStepProps } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 
+import {
+  SpreadsheetImportField,
+  SpreadsheetImportFields,
+} from '@/spreadsheet-import/types';
+import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { isDefined } from 'twenty-shared/utils';
 import { findMatch } from './findMatch';
 import { setColumn } from './setColumn';
 
 export const getMatchedColumns = <T extends string>(
-  columns: Columns<T>,
-  fields: Fields<T>,
+  columns: SpreadsheetColumns<T>,
+  fields: SpreadsheetImportFields<T>,
   data: MatchColumnsStepProps['data'],
   autoMapDistance: number,
 ) =>
-  columns.reduce<Column<T>[]>((arr, column) => {
+  columns.reduce<SpreadsheetColumn<T>[]>((arr, column) => {
     const autoMatch = findMatch(column.header, fields, autoMapDistance);
     if (isDefined(autoMatch)) {
-      const field = fields.find((field) => field.key === autoMatch) as Field<T>;
+      const field = fields.find(
+        (field) => field.key === autoMatch,
+      ) as SpreadsheetImportField<T>;
       const duplicateIndex = arr.findIndex(
         (column) => 'value' in column && column.value === field.key,
       );

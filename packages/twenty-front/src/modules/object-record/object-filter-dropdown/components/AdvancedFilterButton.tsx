@@ -8,6 +8,8 @@ import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 
+import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
@@ -16,13 +18,10 @@ import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLog
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import {
-  IconFilter,
-  MenuItemLeftContent,
-  Pill,
-  StyledMenuItemBase,
-} from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { Pill } from 'twenty-ui/components';
+import { IconFilter } from 'twenty-ui/display';
+import { MenuItemLeftContent, StyledMenuItemBase } from 'twenty-ui/navigation';
 import { v4 } from 'uuid';
 
 export const StyledContainer = styled.div`
@@ -83,6 +82,9 @@ export const AdvancedFilterButton = () => {
     currentRecordFilterGroupsComponentState,
   );
 
+  const { setRecordFilterUsedInAdvancedFilterDropdownRow } =
+    useSetRecordFilterUsedInAdvancedFilterDropdownRow();
+
   const handleClick = () => {
     if (!isDefined(currentView)) {
       throw new Error('Missing current view id');
@@ -121,7 +123,7 @@ export const AdvancedFilterButton = () => {
         filterType,
       })[0];
 
-      upsertRecordFilter({
+      const newRecordFilter: RecordFilter = {
         id: v4(),
         fieldMetadataId: defaultFieldMetadataItem.id,
         operand: firstOperand,
@@ -131,7 +133,11 @@ export const AdvancedFilterButton = () => {
         type: getFilterTypeFromFieldType(defaultFieldMetadataItem.type),
         label: defaultFieldMetadataItem.label,
         positionInRecordFilterGroup: 1,
-      });
+      };
+
+      upsertRecordFilter(newRecordFilter);
+
+      setRecordFilterUsedInAdvancedFilterDropdownRow(newRecordFilter);
     }
 
     closeObjectFilterDropdown();

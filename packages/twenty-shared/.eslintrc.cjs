@@ -1,11 +1,10 @@
 module.exports = {
-  extends: ['../../.eslintrc.cjs'],
-  ignorePatterns: ['!**/*'],
+  extends: ['../../.eslintrc.global.cjs'],
   overrides: [
     {
-      files: ['*.ts', '*.tsx'],
+      files: ['**/*.ts'],
       parserOptions: {
-        project: ['packages/twenty-shared/tsconfig.{json,*.json}'],
+        project: ['packages/twenty-shared/tsconfig.*.json'],
       },
       rules: {
         '@nx/dependency-checks': 'error',

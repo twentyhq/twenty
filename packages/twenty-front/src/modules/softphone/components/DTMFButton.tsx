@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
 
 const DTMFButton = ({
   setIsSendingDTMF,

@@ -11,8 +11,7 @@ import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 
 export const useDateField = () => {
-  const { recordId, fieldDefinition, hotkeyScope, clearable } =
-    useContext(FieldContext);
+  const { recordId, fieldDefinition, clearable } = useContext(FieldContext);
 
   assertFieldMetadata(FieldMetadataType.DATE, isFieldDate, fieldDefinition);
 
@@ -25,16 +24,13 @@ export const useDateField = () => {
     }),
   );
 
-  const { setDraftValue } = useRecordFieldInput<FieldDateValue>(
-    `${recordId}-${fieldName}`,
-  );
+  const { setDraftValue } = useRecordFieldInput<FieldDateValue>();
 
   return {
     fieldDefinition,
     fieldValue,
     setDraftValue,
     setFieldValue,
-    hotkeyScope,
     clearable,
   };
 };

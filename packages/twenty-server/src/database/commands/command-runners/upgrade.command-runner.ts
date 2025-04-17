@@ -2,14 +2,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { SemVer } from 'semver';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
@@ -26,7 +26,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
-    protected readonly environmentService: EnvironmentService,
+    protected readonly twentyConfigService: TwentyConfigService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     protected readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
   ) {
@@ -87,7 +87,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
   }
 
   private retrieveToVersionFromAppVersion() {
-    const appVersion = this.environmentService.get('APP_VERSION');
+    const appVersion = this.twentyConfigService.get('APP_VERSION');
 
     if (!isDefined(appVersion)) {
       throw new Error(
@@ -109,15 +109,6 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
   private async retrieveWorkspaceVersionAndCompareToWorkspaceFromVersion(
     workspaceId: string,
   ): Promise<CompareVersionMajorAndMinorReturnType> {
-    // TODO remove after first release has been done using workspace_version
-    if (!isDefined(this.VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG)) {
-      this.logger.warn(
-        'VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG set to true ignoring workspace versions validation step',
-      );
-
-      return 'equal';
-    }
-
     const workspace = await this.workspaceRepository.findOneByOrFail({
       id: workspaceId,
     });

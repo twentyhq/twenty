@@ -1,6 +1,6 @@
 import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
 
-import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
 
@@ -56,8 +56,6 @@ const jestConfig: JestConfigWithTsJest = {
       prefix: '<rootDir>/../..',
     }),
     '^test/(.*)$': '<rootDir>/test/$1',
-    'twenty-emails': '<rootDir>/../twenty-emails/dist/index.js',
-    'twenty-shared': '<rootDir>/../twenty-shared/dist/index.js',
   },
   fakeTimers: {
     enableGlobally: true,

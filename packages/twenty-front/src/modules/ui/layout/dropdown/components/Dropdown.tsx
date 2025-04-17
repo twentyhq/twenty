@@ -3,8 +3,11 @@ import { DropdownOnToggleEffect } from '@/ui/layout/dropdown/components/Dropdown
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponeInstanceContext';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { dropdownHotkeyComponentState } from '@/ui/layout/dropdown/states/dropdownHotkeyComponentState';
+import { dropdownMaxHeightComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxHeightComponentState';
+import { dropdownMaxWidthComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxWidthComponentState';
+import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import {
   Placement,
@@ -15,17 +18,21 @@ import {
   useFloating,
 } from '@floating-ui/react';
 import { MouseEvent, ReactNode } from 'react';
+import { flushSync } from 'react-dom';
 import { Keys } from 'react-hotkeys-hook';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { sleep } from '~/utils/sleep';
+import { isDefined } from 'twenty-shared/utils';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useDropdown } from '../hooks/useDropdown';
-import { flushSync } from 'react-dom';
 
 const StyledDropdownFallbackAnchor = styled.div`
   left: 0;
   position: fixed;
   top: 0;
+`;
+
+const StyledClickableComponent = styled.div`
+  height: fit-content;
 `;
 
 export type DropdownProps = {
@@ -39,8 +46,8 @@ export type DropdownProps = {
   dropdownHotkeyScope: HotkeyScope;
   dropdownId: string;
   dropdownPlacement?: Placement;
-  dropdownMenuWidth?: `${string}px` | `${number}%` | 'auto' | number;
-  dropdownOffset?: { x?: number; y?: number };
+  dropdownWidth?: `${string}px` | `${number}%` | 'auto' | number;
+  dropdownOffset?: DropdownOffset;
   dropdownStrategy?: 'fixed' | 'absolute';
   onClickOutside?: () => void;
   onClose?: () => void;
@@ -52,7 +59,7 @@ export const Dropdown = ({
   className,
   clickableComponent,
   dropdownComponents,
-  dropdownMenuWidth,
+  dropdownWidth,
   hotkey,
   dropdownId,
   dropdownHotkeyScope,
@@ -78,17 +85,39 @@ export const Dropdown = ({
       ]
     : [];
 
+  const setDropdownMaxHeight = useSetRecoilComponentStateV2(
+    dropdownMaxHeightComponentState,
+    dropdownId,
+  );
+
+  const setDropdownMaxWidth = useSetRecoilComponentStateV2(
+    dropdownMaxWidthComponentState,
+    dropdownId,
+  );
+
+  const isMobile = useIsMobile();
+  const bottomAutoresizePadding = isMobile ? 64 : 32;
+
   const { refs, floatingStyles, placement } = useFloating({
     placement: dropdownPlacement,
     middleware: [
       ...offsetMiddleware,
       flip(),
       size({
-        padding: 32,
-        apply: () => {
+        padding: {
+          right: 32,
+          bottom: bottomAutoresizePadding,
+        },
+        /**
+         * DO NOT TOUCH THIS apply() MIDDLEWARE PLEASE
+         *  THIS IS MANDATORY FOR KEEPING AUTORESIZING FOR ALL DROPDOWNS
+         *  IT'S THE STANDARD WAY OF WORKING RECOMMENDED BY THE LIBRARY
+         *  See https://floating-ui.com/docs/size#usage
+         */
+        apply: ({ availableHeight, availableWidth }) => {
           flushSync(() => {
-            // TODO: I think this is not needed anymore let's remove it if not used for a few weeks
-            // setDropdownMaxHeight(availableHeight);
+            setDropdownMaxHeight(availableHeight);
+            setDropdownMaxWidth(availableWidth);
           });
         },
         boundary: document.querySelector('#root') ?? undefined,
@@ -110,9 +139,7 @@ export const Dropdown = ({
           dropdownHotkeyScope,
         );
 
-        await sleep(100);
-
-        toggleDropdown();
+        toggleDropdown(dropdownHotkeyScope);
         onClickOutside?.();
       },
     [dropdownId, dropdownHotkeyScope, onClickOutside, toggleDropdown],
@@ -122,10 +149,10 @@ export const Dropdown = ({
     <DropdownComponentInstanceContext.Provider
       value={{ instanceId: dropdownId }}
     >
-      <DropdownScope dropdownScopeId={getScopeIdFromComponentId(dropdownId)}>
+      <DropdownScope dropdownScopeId={dropdownId}>
         <>
           {isDefined(clickableComponent) ? (
-            <div
+            <StyledClickableComponent
               ref={refs.setReference}
               onClick={handleClickableComponentClick}
               aria-controls={`${dropdownId}-options`}
@@ -134,7 +161,7 @@ export const Dropdown = ({
               role="button"
             >
               {clickableComponent}
-            </div>
+            </StyledClickableComponent>
           ) : (
             <StyledDropdownFallbackAnchor ref={refs.setReference} />
           )}
@@ -142,7 +169,7 @@ export const Dropdown = ({
             <DropdownContent
               className={className}
               floatingStyles={floatingStyles}
-              dropdownMenuWidth={dropdownMenuWidth}
+              dropdownWidth={dropdownWidth}
               dropdownComponents={dropdownComponents}
               dropdownId={dropdownId}
               dropdownPlacement={placement}

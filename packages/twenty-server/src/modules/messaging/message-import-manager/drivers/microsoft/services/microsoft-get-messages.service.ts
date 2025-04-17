@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
@@ -80,7 +80,7 @@ export class MicrosoftGetMessagesService {
 
     const messages = parsedResponses.map((response) => {
       if ('error' in response) {
-        this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(
+        this.microsoftHandleErrorService.throwMicrosoftBatchError(
           response.error,
         );
       }
@@ -104,6 +104,10 @@ export class MicrosoftGetMessagesService {
         ),
       ];
 
+      const safeParticipantsFormat = participants.filter((participant) => {
+        return participant.handle.includes('@');
+      });
+
       return {
         externalId: response.id,
         subject: response.subject || '',
@@ -116,7 +120,7 @@ export class MicrosoftGetMessagesService {
           response.from.emailAddress.address,
           connectedAccount,
         ),
-        participants: participants,
+        participants: safeParticipantsFormat,
         attachments: [],
       };
     });

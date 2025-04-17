@@ -2,7 +2,8 @@ import { TransferChatOptionsDropdownContent } from '@/chat/call-center/component
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconButton, useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 
 const StyledIconButton = styled(IconButton)`
   border-radius: 50%;

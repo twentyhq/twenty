@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
-import * as React from 'react';
 
 import { Tab } from '@/ui/layout/tab/components/Tab';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { TabListComponentInstanceContext } from '@/ui/layout/tab/states/contexts/TabListComponentInstanceContext';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 
 type TabItemProps = {
   id: string;
@@ -35,14 +35,13 @@ export const PaneSideTabs = ({
   loading,
   className,
 }: PaneSideTabsProps) => {
-  const { activeTabId, setActiveTabId } = useTabList(tabListId);
-
-  const handleTabChange = (tabId: string) => {
-    setActiveTabId(tabId);
-  };
+  const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
+    activeTabIdComponentState,
+    tabListId,
+  );
 
   return (
-    <TabListScope tabListScopeId={tabListId}>
+    <TabListComponentInstanceContext.Provider value={{ instanceId: tabListId }}>
       <StyledContainer className={className}>
         {tabs.map((tab) => (
           <Tab
@@ -50,12 +49,12 @@ export const PaneSideTabs = ({
             key={tab.id}
             title={tab.name}
             active={tab.id.toString() === activeTabId}
-            onClick={() => handleTabChange(tab.id)}
+            onClick={() => setActiveTabId(tab.id)}
             disabled={loading}
             incomingMessages={tab.incomingMessages}
           />
         ))}
       </StyledContainer>
-    </TabListScope>
+    </TabListComponentInstanceContext.Provider>
   );
 };

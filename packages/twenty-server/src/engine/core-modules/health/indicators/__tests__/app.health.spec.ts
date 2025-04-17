@@ -1,23 +1,27 @@
 import { HealthIndicatorService } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 
 describe('AppHealthIndicator', () => {
   let service: AppHealthIndicator;
-  let objectMetadataService: jest.Mocked<ObjectMetadataService>;
+  let workspaceRepository: jest.Mocked<Repository<Workspace>>;
   let workspaceMigrationService: jest.Mocked<WorkspaceMigrationService>;
   let healthIndicatorService: jest.Mocked<HealthIndicatorService>;
 
   beforeEach(async () => {
-    objectMetadataService = {
-      findMany: jest.fn(),
+    workspaceRepository = {
+      count: jest.fn(),
     } as any;
 
     workspaceMigrationService = {
-      getPendingMigrations: jest.fn(),
+      getWorkspacesWithPendingMigrations: jest.fn(),
+      countWorkspacesWithPendingMigrations: jest.fn(),
     } as any;
 
     healthIndicatorService = {
@@ -35,10 +39,9 @@ describe('AppHealthIndicator', () => {
       providers: [
         AppHealthIndicator,
         {
-          provide: ObjectMetadataService,
-          useValue: objectMetadataService,
+          provide: getRepositoryToken(Workspace, 'core'),
+          useValue: workspaceRepository,
         },
-
         {
           provide: WorkspaceMigrationService,
           useValue: workspaceMigrationService,
@@ -63,62 +66,85 @@ describe('AppHealthIndicator', () => {
   });
 
   it('should return up status when no issues and no pending migrations', async () => {
-    objectMetadataService.findMany.mockResolvedValue([
-      {
-        id: '1',
-        workspaceId: 'workspace1',
-      } as any,
-      {
-        id: '2',
-        workspaceId: 'workspace2',
-      } as any,
-    ]);
+    workspaceRepository.count.mockResolvedValue(2);
 
-    workspaceMigrationService.getPendingMigrations.mockResolvedValue([]);
+    workspaceMigrationService.countWorkspacesWithPendingMigrations.mockResolvedValue(
+      0,
+    );
+    workspaceMigrationService.getWorkspacesWithPendingMigrations.mockResolvedValue(
+      [],
+    );
 
     const result = await service.isHealthy();
 
     expect(result.app.status).toBe('up');
     expect(result.app.details.overview.totalWorkspacesCount).toBe(2);
-    expect(result.app.details.overview.criticalWorkspacesCount).toBe(0);
-    expect(result.app.details.criticalWorkspaces).toBe(null);
+    expect(result.app.details.overview.erroredWorkspaceCount).toBe(0);
+    expect(result.app.details.erroredWorkspace).toBe(null);
     expect(result.app.details.system.nodeVersion).toBeDefined();
     expect(result.app.details.system.timestamp).toBeDefined();
   });
 
   it('should return down status when there are pending migrations', async () => {
-    objectMetadataService.findMany.mockResolvedValue([
-      {
-        id: '1',
-        workspaceId: 'workspace1',
-      } as any,
-    ]);
+    workspaceRepository.count.mockResolvedValue(5);
 
-    workspaceMigrationService.getPendingMigrations.mockResolvedValue([
-      {
-        id: '1',
-        createdAt: new Date(),
-        migrations: [],
-        name: 'migration1',
-        isCustom: false,
-        workspaceId: 'workspace1',
-      } as any,
-    ]);
+    // Mock a total count that's higher than the sample
+    workspaceMigrationService.countWorkspacesWithPendingMigrations.mockResolvedValue(
+      10,
+    );
+
+    workspaceMigrationService.getWorkspacesWithPendingMigrations.mockResolvedValue(
+      [
+        {
+          workspaceId: 'workspace1',
+          pendingMigrations: 1,
+        },
+        {
+          workspaceId: 'workspace2',
+          pendingMigrations: 3,
+        },
+        {
+          workspaceId: 'workspace3',
+          pendingMigrations: 2,
+        },
+      ],
+    );
 
     const result = await service.isHealthy();
 
     expect(result.app.status).toBe('down');
-    expect(result.app.details.overview.criticalWorkspacesCount).toBe(1);
-    expect(result.app.details.criticalWorkspaces).toEqual([
-      {
-        workspaceId: 'workspace1',
-        pendingMigrations: 1,
+    expect(result.app.message).toBe(
+      'Found 10 workspaces with pending migrations',
+    );
+
+    expect(result.app.details).toEqual({
+      system: {
+        nodeVersion: process.version,
+        timestamp: expect.any(String),
       },
-    ]);
+      overview: {
+        totalWorkspacesCount: 5,
+        erroredWorkspaceCount: 10,
+      },
+      erroredWorkspace: [
+        {
+          workspaceId: 'workspace1',
+          pendingMigrations: 1,
+        },
+        {
+          workspaceId: 'workspace2',
+          pendingMigrations: 3,
+        },
+        {
+          workspaceId: 'workspace3',
+          pendingMigrations: 2,
+        },
+      ],
+    });
   });
 
   it('should handle errors gracefully and maintain state history', async () => {
-    objectMetadataService.findMany.mockRejectedValue(
+    workspaceRepository.count.mockRejectedValue(
       new Error('Database connection failed'),
     );
 
@@ -133,18 +159,18 @@ describe('AppHealthIndicator', () => {
 
   it('should maintain state history across health checks', async () => {
     // First check - healthy state
-    objectMetadataService.findMany.mockResolvedValue([
-      {
-        id: '1',
-        workspaceId: 'workspace1',
-      } as any,
-    ]);
-    workspaceMigrationService.getPendingMigrations.mockResolvedValue([]);
+    workspaceRepository.count.mockResolvedValue(2);
+    workspaceMigrationService.countWorkspacesWithPendingMigrations.mockResolvedValue(
+      0,
+    );
+    workspaceMigrationService.getWorkspacesWithPendingMigrations.mockResolvedValue(
+      [],
+    );
 
     await service.isHealthy();
 
     // Second check - error state
-    objectMetadataService.findMany.mockRejectedValue(
+    workspaceRepository.count.mockRejectedValue(
       new Error('Database connection failed'),
     );
 
@@ -154,5 +180,35 @@ describe('AppHealthIndicator', () => {
     expect(result.app.details.stateHistory.age).toBeDefined();
     expect(result.app.details.stateHistory.timestamp).toBeDefined();
     expect(result.app.details.stateHistory.details).toBeDefined();
+  });
+
+  it('should sample workspaces with pending migrations up to limit', async () => {
+    workspaceRepository.count.mockResolvedValue(1000);
+
+    // Mock a total count higher than the sample
+    workspaceMigrationService.countWorkspacesWithPendingMigrations.mockResolvedValue(
+      500,
+    );
+
+    const sampleWorkspaces = Array(300)
+      .fill(0)
+      .map((_, i) => ({
+        workspaceId: `workspace${i}`,
+        pendingMigrations: (i % 3) + 1,
+      }));
+
+    workspaceMigrationService.getWorkspacesWithPendingMigrations.mockResolvedValue(
+      sampleWorkspaces,
+    );
+
+    const result = await service.isHealthy();
+
+    expect(result.app.status).toBe('down');
+    expect(result.app.message).toBe(
+      'Found 500 workspaces with pending migrations',
+    );
+    expect(result.app.details.overview.totalWorkspacesCount).toBe(1000);
+    expect(result.app.details.overview.erroredWorkspaceCount).toBe(500);
+    expect(result.app.details.erroredWorkspace.length).toBe(300);
   });
 });

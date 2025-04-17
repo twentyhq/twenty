@@ -33,14 +33,6 @@ describe('workspace permissions', () => {
     const response = await makeGraphqlAPIRequest({ query });
 
     originalWorkspaceState = response.body.data.currentWorkspace;
-
-    const enablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
-      true,
-    );
-
-    await makeGraphqlAPIRequest(enablePermissionsQuery);
   });
 
   afterAll(async () => {
@@ -345,12 +337,12 @@ describe('workspace permissions', () => {
   });
 
   describe('billing', () => {
-    describe('updateBillingSubscription', () => {
+    describe('switchToYearlyInterval', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
         const queryData = {
           query: `
-            mutation UpdateBillingSubscription {
-              updateBillingSubscription {
+            mutation SwitchToYearlyInterval {
+              switchToYearlyInterval {
                 success
               }
             }
@@ -464,7 +456,6 @@ describe('workspace permissions', () => {
                   $input: UpdateLabPublicFeatureFlagInput!
                 ) {
                   updateLabPublicFeatureFlag(input: $input) {
-                    id
                     key
                     value
                   }
@@ -498,7 +489,6 @@ describe('workspace permissions', () => {
                 $input: UpdateLabPublicFeatureFlagInput!
               ) {
                 updateLabPublicFeatureFlag(input: $input) {
-                  id
                   key
                   value
                 }

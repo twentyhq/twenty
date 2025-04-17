@@ -1,51 +1,75 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { EntitySchema } from 'typeorm';
 
-import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/workspace-roles-permissions-cache/workspace-roles-permissions-cache.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
-import { CacheManager } from 'src/engine/twenty-orm/storage/cache-manager.storage';
+import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import { CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
+import { getFromCacheWithRecompute } from 'src/engine/utils/get-data-from-cache-with-recompute.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+
+type CacheResult<T, U> = {
+  version: T;
+  data: U;
+};
 
 @Injectable()
 export class WorkspaceDatasourceFactory {
   private readonly logger = new Logger(WorkspaceDatasourceFactory.name);
-  private cacheManager = new CacheManager<WorkspaceDataSource>();
-  private cachedDataSourcePromise: Record<
-    CacheKey,
-    Promise<WorkspaceDataSource>
-  >;
+  private promiseMemoizer = new PromiseMemoizer<WorkspaceDataSource>();
 
   constructor(
     private readonly dataSourceService: DataSourceService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly entitySchemaFactory: EntitySchemaFactory,
-  ) {
-    this.cachedDataSourcePromise = {};
-  }
+    private readonly workspaceRolesPermissionsCacheService: WorkspaceRolesPermissionsCacheService,
+    private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
+  ) {}
 
   public async create(
     workspaceId: string,
     workspaceMetadataVersion: number | null,
-    failOnMetadataCacheMiss = true,
+    shouldFailIfMetadataNotFound = true,
   ): Promise<WorkspaceDataSource> {
     const cachedWorkspaceMetadataVersion =
       await this.getWorkspaceMetadataVersionFromCache(
         workspaceId,
-        failOnMetadataCacheMiss,
+        shouldFailIfMetadataNotFound,
       );
+
+    const { data: cachedFeatureFlagMap, version: cachedFeatureFlagMapVersion } =
+      await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMapAndVersion(
+        { workspaceId },
+      );
+
+    const isPermissionsV2Enabled =
+      cachedFeatureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
+
+    const {
+      data: cachedRolesPermissions,
+      version: cachedRolesPermissionsVersion,
+    } = await this.getRolesPermissionsFromCache({
+      workspaceId,
+      isPermissionsV2Enabled,
+    });
 
     if (
       workspaceMetadataVersion !== null &&
@@ -59,163 +83,256 @@ export class WorkspaceDatasourceFactory {
 
     const cacheKey: CacheKey = `${workspaceId}-${cachedWorkspaceMetadataVersion}`;
 
-    if (cacheKey in this.cachedDataSourcePromise) {
-      return this.cachedDataSourcePromise[cacheKey];
-    }
-
-    const creationPromise = (async (): Promise<WorkspaceDataSource> => {
-      try {
-        const result = await this.cacheManager.execute(
-          cacheKey,
-          async () => {
-            const dataSourceMetadata =
-              await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
-                workspaceId,
-              );
-
-            if (!dataSourceMetadata) {
-              throw new TwentyORMException(
-                `Workspace Schema not found for workspace ${workspaceId}`,
-                TwentyORMExceptionCode.WORKSPACE_SCHEMA_NOT_FOUND,
-              );
-            }
-
-            const cachedEntitySchemaOptions =
-              await this.workspaceCacheStorageService.getORMEntitySchema(
-                workspaceId,
-                cachedWorkspaceMetadataVersion,
-              );
-
-            let cachedEntitySchemas: EntitySchema[];
-
-            const cachedObjectMetadataMaps =
-              await this.workspaceCacheStorageService.getObjectMetadataMaps(
-                workspaceId,
-                cachedWorkspaceMetadataVersion,
-              );
-
-            if (!cachedObjectMetadataMaps) {
-              throw new TwentyORMException(
-                `Object metadata collection not found for workspace ${workspaceId}`,
-                TwentyORMExceptionCode.METADATA_COLLECTION_NOT_FOUND,
-              );
-            }
-
-            if (cachedEntitySchemaOptions) {
-              cachedEntitySchemas = cachedEntitySchemaOptions.map(
-                (option) => new EntitySchema(option),
-              );
-            } else {
-              const entitySchemas = await Promise.all(
-                Object.values(cachedObjectMetadataMaps.byId).map(
-                  (objectMetadata) =>
-                    this.entitySchemaFactory.create(
-                      workspaceId,
-                      cachedWorkspaceMetadataVersion,
-                      objectMetadata,
-                      cachedObjectMetadataMaps,
-                    ),
-                ),
-              );
-
-              await this.workspaceCacheStorageService.setORMEntitySchema(
-                workspaceId,
-                cachedWorkspaceMetadataVersion,
-                entitySchemas.map((entitySchema) => entitySchema.options),
-              );
-
-              cachedEntitySchemas = entitySchemas;
-            }
-
-            const workspaceDataSource = new WorkspaceDataSource(
-              {
-                workspaceId,
-                objectMetadataMaps: cachedObjectMetadataMaps,
-              },
-              {
-                url:
-                  dataSourceMetadata.url ??
-                  this.environmentService.get('PG_DATABASE_URL'),
-                type: 'postgres',
-                logging:
-                  this.environmentService.get('NODE_ENV') ===
-                  NodeEnvironment.development
-                    ? ['query', 'error']
-                    : ['error'],
-                schema: dataSourceMetadata.schema,
-                entities: cachedEntitySchemas,
-                ssl: this.environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
-                  ? {
-                      rejectUnauthorized: false,
-                    }
-                  : undefined,
-              },
+    const workspaceDataSource =
+      await this.promiseMemoizer.memoizePromiseAndExecute(
+        cacheKey,
+        async () => {
+          const dataSourceMetadata =
+            await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
+              workspaceId,
             );
 
-            await workspaceDataSource.initialize();
+          if (!dataSourceMetadata) {
+            throw new TwentyORMException(
+              `Workspace Schema not found for workspace ${workspaceId}`,
+              TwentyORMExceptionCode.WORKSPACE_SCHEMA_NOT_FOUND,
+            );
+          }
 
-            return workspaceDataSource;
-          },
-          async (dataSource) => {
-            try {
-              await dataSource.destroy();
-            } catch (error) {
-              // Ignore error if pool has already been destroyed which is a common race condition case
-              if (error.message === 'Called end on pool more than once') {
-                return;
-              }
+          const cachedEntitySchemaOptions =
+            await this.workspaceCacheStorageService.getORMEntitySchema(
+              workspaceId,
+              cachedWorkspaceMetadataVersion,
+            );
 
-              throw error;
-            }
-          },
-        );
+          let cachedEntitySchemas: EntitySchema[];
 
-        if (result === null) {
-          throw new Error(
-            `Failed to create WorkspaceDataSource for ${cacheKey}`,
+          const cachedObjectMetadataMaps =
+            await this.workspaceCacheStorageService.getObjectMetadataMaps(
+              workspaceId,
+              cachedWorkspaceMetadataVersion,
+            );
+
+          if (!cachedObjectMetadataMaps) {
+            throw new TwentyORMException(
+              `Object metadata collection not found for workspace ${workspaceId}`,
+              TwentyORMExceptionCode.METADATA_COLLECTION_NOT_FOUND,
+            );
+          }
+
+          if (cachedEntitySchemaOptions) {
+            cachedEntitySchemas = cachedEntitySchemaOptions.map(
+              (option) => new EntitySchema(option),
+            );
+          } else {
+            const entitySchemas = await Promise.all(
+              Object.values(cachedObjectMetadataMaps.byId).map(
+                (objectMetadata) =>
+                  this.entitySchemaFactory.create(
+                    workspaceId,
+                    cachedWorkspaceMetadataVersion,
+                    objectMetadata,
+                    cachedObjectMetadataMaps,
+                  ),
+              ),
+            );
+
+            await this.workspaceCacheStorageService.setORMEntitySchema(
+              workspaceId,
+              cachedWorkspaceMetadataVersion,
+              entitySchemas.map((entitySchema) => entitySchema.options),
+            );
+
+            cachedEntitySchemas = entitySchemas;
+          }
+
+          const workspaceDataSource = new WorkspaceDataSource(
+            {
+              workspaceId,
+              objectMetadataMaps: cachedObjectMetadataMaps,
+            },
+            {
+              url:
+                dataSourceMetadata.url ??
+                this.twentyConfigService.get('PG_DATABASE_URL'),
+              type: 'postgres',
+              logging:
+                this.twentyConfigService.get('NODE_ENV') ===
+                NodeEnvironment.development
+                  ? ['query', 'error']
+                  : ['error'],
+              schema: dataSourceMetadata.schema,
+              entities: cachedEntitySchemas,
+              ssl: this.twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')
+                ? {
+                    rejectUnauthorized: false,
+                  }
+                : undefined,
+            },
+            cachedFeatureFlagMapVersion,
+            cachedFeatureFlagMap,
+            cachedRolesPermissionsVersion,
+            cachedRolesPermissions,
           );
-        }
 
-        return result;
-      } finally {
-        delete this.cachedDataSourcePromise[cacheKey];
-      }
-    })();
+          await workspaceDataSource.initialize();
 
-    this.cachedDataSourcePromise[cacheKey] = creationPromise;
+          return workspaceDataSource;
+        },
+        async (dataSource) => {
+          try {
+            await dataSource.destroy();
+          } catch (error) {
+            // Ignore error if pool has already been destroyed which is a common race condition case
+            if (error.message === 'Called end on pool more than once') {
+              return;
+            }
+            throw error;
+          }
+        },
+      );
 
-    return creationPromise;
+    if (!workspaceDataSource) {
+      throw new Error(`Failed to create WorkspaceDataSource for ${cacheKey}`);
+    }
+
+    if (isPermissionsV2Enabled) {
+      await this.updateWorkspaceDataSourceRolesPermissionsIfNeeded({
+        workspaceDataSource,
+        cachedRolesPermissionsVersion,
+        cachedRolesPermissions,
+      });
+    }
+
+    await this.updateWorkspaceDataSourceFeatureFlagsMapIfNeeded({
+      workspaceDataSource,
+      cachedFeatureFlagMapVersion,
+      cachedFeatureFlagMap,
+    });
+
+    return workspaceDataSource;
   }
 
-  public async destroy(workspaceId: string): Promise<void> {
-    const cacheKeys = (
-      Object.keys(this.cachedDataSourcePromise) as CacheKey[]
-    ).filter((key) => key.startsWith(`${workspaceId}`));
-
-    for (const cacheKey of cacheKeys) {
-      await this.cacheManager.clearKey(cacheKey);
+  private async getRolesPermissionsFromCache({
+    workspaceId,
+    isPermissionsV2Enabled,
+  }: {
+    workspaceId: string;
+    isPermissionsV2Enabled?: boolean;
+  }): Promise<
+    CacheResult<
+      string | undefined,
+      ObjectRecordsPermissionsByRoleId | undefined
+    >
+  > {
+    if (!isPermissionsV2Enabled) {
+      return { version: undefined, data: undefined };
     }
+
+    return getFromCacheWithRecompute<
+      string | undefined,
+      ObjectRecordsPermissionsByRoleId | undefined
+    >({
+      workspaceId,
+      getCacheData: () =>
+        this.workspaceCacheStorageService.getRolesPermissions(workspaceId),
+      getCacheVersion: () =>
+        this.workspaceCacheStorageService.getRolesPermissionsVersionFromCache(
+          workspaceId,
+        ),
+      recomputeCache: (params) =>
+        this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
+          params,
+        ),
+      cachedEntityName: 'Roles permissions',
+      exceptionCode: TwentyORMExceptionCode.ROLES_PERMISSIONS_VERSION_NOT_FOUND,
+    });
+  }
+
+  private updateWorkspaceDataSourceIfNeeded<T>({
+    workspaceDataSource,
+    currentVersion,
+    newVersion,
+    newData,
+    setData,
+    setVersion,
+  }: {
+    workspaceDataSource: WorkspaceDataSource;
+    currentVersion: string | undefined;
+    newVersion: string | undefined;
+    newData: T | undefined;
+    setData: (data: T) => void;
+    setVersion: (version: string) => void;
+  }): void {
+    if (
+      isDefined(newVersion) &&
+      isDefined(newData) &&
+      currentVersion !== newVersion
+    ) {
+      workspaceDataSource.manager.repositories.clear();
+      setData(newData);
+      setVersion(newVersion);
+    }
+  }
+
+  private async updateWorkspaceDataSourceRolesPermissionsIfNeeded({
+    workspaceDataSource,
+    cachedRolesPermissionsVersion,
+    cachedRolesPermissions,
+  }: {
+    workspaceDataSource: WorkspaceDataSource;
+    cachedRolesPermissionsVersion: string | undefined;
+    cachedRolesPermissions: ObjectRecordsPermissionsByRoleId | undefined;
+  }): Promise<void> {
+    this.updateWorkspaceDataSourceIfNeeded({
+      workspaceDataSource,
+      currentVersion: workspaceDataSource.rolesPermissionsVersion,
+      newVersion: cachedRolesPermissionsVersion,
+      newData: cachedRolesPermissions,
+      setData: (data) => workspaceDataSource.setRolesPermissions(data),
+      setVersion: (version) =>
+        workspaceDataSource.setRolesPermissionsVersion(version),
+    });
+  }
+
+  private async updateWorkspaceDataSourceFeatureFlagsMapIfNeeded({
+    workspaceDataSource,
+    cachedFeatureFlagMapVersion,
+    cachedFeatureFlagMap,
+  }: {
+    workspaceDataSource: WorkspaceDataSource;
+    cachedFeatureFlagMapVersion: string | undefined;
+    cachedFeatureFlagMap: FeatureFlagMap | undefined;
+  }): Promise<void> {
+    this.updateWorkspaceDataSourceIfNeeded({
+      workspaceDataSource,
+      currentVersion: workspaceDataSource.featureFlagMapVersion,
+      newVersion: cachedFeatureFlagMapVersion,
+      newData: cachedFeatureFlagMap,
+      setData: (data) => workspaceDataSource.setFeatureFlagsMap(data),
+      setVersion: (version) =>
+        workspaceDataSource.setFeatureFlagsMapVersion(version),
+    });
   }
 
   private async getWorkspaceMetadataVersionFromCache(
     workspaceId: string,
-    failOnMetadataCacheMiss = true,
+    shouldFailIfMetadataNotFound = true,
   ): Promise<number> {
     let latestWorkspaceMetadataVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
 
     if (latestWorkspaceMetadataVersion === undefined) {
-      await this.workspaceMetadataCacheService.recomputeMetadataCache({
-        workspaceId,
-        ignoreLock: !failOnMetadataCacheMiss,
-      });
-
-      if (failOnMetadataCacheMiss) {
+      if (shouldFailIfMetadataNotFound) {
         throw new TwentyORMException(
           `Metadata version not found for workspace ${workspaceId}`,
           TwentyORMExceptionCode.METADATA_VERSION_NOT_FOUND,
         );
       } else {
+        await this.workspaceMetadataCacheService.recomputeMetadataCache({
+          workspaceId,
+          ignoreLock: !shouldFailIfMetadataNotFound,
+        });
         latestWorkspaceMetadataVersion =
           await this.workspaceCacheStorageService.getMetadataVersion(
             workspaceId,
@@ -231,5 +348,11 @@ export class WorkspaceDatasourceFactory {
     }
 
     return latestWorkspaceMetadataVersion;
+  }
+
+  public async destroy(workspaceId: string) {
+    await this.promiseMemoizer.clearKeys(`${workspaceId}-`, (dataSource) => {
+      dataSource.destroy();
+    });
   }
 }

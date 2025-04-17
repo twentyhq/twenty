@@ -1,3 +1,4 @@
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -6,6 +7,7 @@ import {
   useListenClickOutside,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import React, { useEffect, useRef } from 'react';
@@ -31,7 +33,7 @@ const StyledModalDiv = styled(motion.div)<{
   }};
   overflow-x: hidden;
   overflow-y: auto;
-  z-index: 10000; // should be higher than Backdrop's z-index
+  z-index: ${RootStackingContextZIndices.RootModal}; // should be higher than Backdrop's z-index
 
   width: ${({ isMobile, size, theme }) => {
     if (isMobile) return theme.modal.size.fullscreen;
@@ -75,12 +77,25 @@ const StyledHeader = styled.div`
   padding: ${({ theme }) => theme.spacing(5)};
 `;
 
-const StyledContent = styled.div`
+const StyledContent = styled.div<{
+  isVerticalCentered?: boolean;
+  isHorizontalCentered?: boolean;
+}>`
   display: flex;
   flex: 1;
   flex: 1 1 0%;
   flex-direction: column;
   padding: ${({ theme }) => theme.spacing(10)};
+  ${({ isVerticalCentered }) =>
+    isVerticalCentered &&
+    css`
+      align-items: center;
+    `}
+  ${({ isHorizontalCentered }) =>
+    isHorizontalCentered &&
+    css`
+      justify-content: center;
+    `}
 `;
 
 const StyledFooter = styled.div`
@@ -109,7 +124,7 @@ const StyledBackDrop = styled(motion.div)<{
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 9999;
+  z-index: ${RootStackingContextZIndices.RootModalBackDrop};
   user-select: none;
 `;
 
@@ -123,12 +138,24 @@ const ModalHeader = ({ children, className }: ModalHeaderProps) => (
 
 type ModalContentProps = React.PropsWithChildren & {
   className?: string;
+  isVerticalCentered?: boolean;
+  isHorizontalCentered?: boolean;
 };
 
-const ModalContent = ({ children, className }: ModalContentProps) => (
-  <StyledContent className={className}>{children}</StyledContent>
+const ModalContent = ({
+  children,
+  className,
+  isVerticalCentered,
+  isHorizontalCentered,
+}: ModalContentProps) => (
+  <StyledContent
+    className={className}
+    isVerticalCentered={isVerticalCentered}
+    isHorizontalCentered={isHorizontalCentered}
+  >
+    {children}
+  </StyledContent>
 );
-
 type ModalFooterProps = React.PropsWithChildren & {
   className?: string;
 };
@@ -147,6 +174,7 @@ export type ModalProps = React.PropsWithChildren & {
   className?: string;
   hotkeyScope?: ModalHotkeyScope;
   onEnter?: () => void;
+  isOpenAnimated?: boolean;
   modalVariant?: ModalVariants;
 } & (
     | { isClosable: true; onClose: () => void }
@@ -169,6 +197,7 @@ export const Modal = ({
   isClosable = false,
   onClose,
   modalVariant = 'primary',
+  isOpenAnimated = true,
 }: ModalProps) => {
   const isMobile = useIsMobile();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -222,6 +251,8 @@ export const Modal = ({
     e.stopPropagation();
   };
 
+  const theme = useTheme();
+
   return (
     <StyledBackDrop
       className="modal-backdrop"
@@ -232,12 +263,13 @@ export const Modal = ({
         ref={modalRef}
         size={size}
         padding={padding}
-        initial="hidden"
+        initial={isOpenAnimated ? 'hidden' : 'visible'}
         animate="visible"
         exit="exit"
         layout
         modalVariant={modalVariant}
         variants={modalAnimation}
+        transition={{ duration: theme.animation.duration.normal }}
         className={className}
         isMobile={isMobile}
       >
@@ -250,3 +282,4 @@ export const Modal = ({
 Modal.Header = ModalHeader;
 Modal.Content = ModalContent;
 Modal.Footer = ModalFooter;
+Modal.Backdrop = StyledBackDrop;

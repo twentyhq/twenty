@@ -1,26 +1,25 @@
-import {
-  IconChevronLeft,
-  IconLayoutNavbar,
-  IconLayoutSidebarRight,
-  MenuItemSelect,
-} from 'twenty-ui';
-
-import { useObjectOptions } from '@/object-record/object-options-dropdown/hooks/useObjectOptions';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
+import { useUpdateObjectViewOptions } from '@/object-record/object-options-dropdown/hooks/useUpdateObjectViewOptions';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import {
+  IconChevronLeft,
+  IconLayoutNavbar,
+  IconLayoutSidebarRight,
+} from 'twenty-ui/display';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownLayoutOpenInContent = () => {
   const { onContentChange } = useOptionsDropdown();
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
   const { currentView } = useGetCurrentViewOnly();
-  const { setAndPersistOpenRecordIn } = useObjectOptions();
+  const { setAndPersistOpenRecordIn } = useUpdateObjectViewOptions();
 
   return (
     <>

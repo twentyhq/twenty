@@ -1,15 +1,3 @@
-import {
-  AvatarChip,
-  Button,
-  H2Title,
-  IconEyeShare,
-  IconHome,
-  IconId,
-  IconUser,
-  Section,
-  Toggle,
-} from 'twenty-ui';
-
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
@@ -32,13 +20,23 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   FeatureFlagKey,
   useImpersonateMutation,
   useUpdateWorkspaceFeatureFlagMutation,
 } from '~/generated/graphql';
+import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
+import { AvatarChip } from 'twenty-ui/components';
+import { Button, Toggle } from 'twenty-ui/input';
+import {
+  H2Title,
+  IconEyeShare,
+  IconHome,
+  IconId,
+  IconUser,
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 type SettingsAdminWorkspaceContentProps = {
   activeWorkspace: WorkspaceInfo | undefined;

@@ -1,11 +1,17 @@
 import styled from '@emotion/styled';
-import { IconPhone, IconUsers, Section, UndecoratedLink } from 'twenty-ui';
 
 import { SettingsNavigationCard } from '@/settings/service-center/components/SettingsNavigationCard';
 import { SettingsPath } from '@/types/SettingsPath';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 // eslint-disable-next-line no-restricted-imports
-import { IconIdBadge2, IconMailCog } from '@tabler/icons-react';
+import {
+  IconIdBadge2,
+  IconMailCog,
+  IconPhone,
+  IconUsers,
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 
 const StyledCardsContainer = styled.div`
   display: grid;

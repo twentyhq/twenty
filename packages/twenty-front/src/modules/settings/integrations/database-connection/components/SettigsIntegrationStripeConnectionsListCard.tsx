@@ -1,16 +1,22 @@
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
+import { useGetDatabaseConnections } from '@/databases/hooks/useGetDatabaseConnections';
+import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { IconTrash } from '@ui/display/icon/components/TablerIcons';
-import { IconButton } from '@ui/input/button/components/IconButton';
+
+import { IconChevronRight, IconTrash } from 'twenty-ui/display';
+import { IconButton, LightIconButton } from 'twenty-ui/input';
+
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import StripeAccountConnectedContainer from '~/pages/settings/integrations/stripe/components/StripeAccountConnectedContainer';
 import { useCreateCheckoutSession } from '~/pages/settings/integrations/stripe/hooks/useCreateCheckoutSession';
 import { useFindAllStripeIntegrations } from '~/pages/settings/integrations/stripe/hooks/useFindAllStripeIntegrations';
 import { useRemoveStripeIntegration } from '~/pages/settings/integrations/stripe/hooks/useRemoveStripeIntegrations';
-import { SettingsIntegrationGroup } from '../../components/SettingsIntegrationGroup';
 
 // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
 const StyledIsActiveContainer = styled.div`
@@ -29,6 +35,24 @@ const StyledIsActiveContent = styled.div`
   display: flex;
   align-items: center;
   gap: 13px;
+`;
+
+const StyledDatabaseLogoContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: ${({ theme }) => theme.spacing(4)};
+  justify-content: center;
+  width: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledDatabaseLogo = styled.img`
+  height: 100%;
+`;
+
+const StyledRowRightContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const SettigsIntegrationStripeConnectionsListCard = () => {
@@ -68,9 +92,22 @@ export const SettigsIntegrationStripeConnectionsListCard = () => {
       });
     }
   };
+  const { databaseKey = '' } = useParams();
+  const [integrationCategoryAll] = useSettingsIntegrationCategories();
 
-  const integrationCategories = useSettingsIntegrationCategories();
-  const stripeCategory = integrationCategories[3];
+  const integration = integrationCategoryAll.integrations.find(
+    ({ from: { key } }) => key === databaseKey,
+  );
+
+  const navigate = useNavigateSettings();
+  const isIntegrationAvailable = !!integration;
+
+  const { connections } = useGetDatabaseConnections({
+    databaseKey,
+    skip: !isIntegrationAvailable,
+  });
+
+  if (!isIntegrationAvailable) return null;
 
   return (
     <>
@@ -108,9 +145,32 @@ export const SettigsIntegrationStripeConnectionsListCard = () => {
           {/* <button onClick={() => handleCheckoutSession()}>checkout</button> */}
         </StripeAccountConnectedContainer>
       ) : (
-        <SettingsIntegrationGroup
-          key={stripeCategory.key}
-          integrationGroup={stripeCategory}
+        <SettingsListCard
+          items={connections}
+          RowIcon={() => (
+            <StyledDatabaseLogoContainer>
+              <StyledDatabaseLogo alt="" src={integration.from.image} />
+            </StyledDatabaseLogoContainer>
+          )}
+          RowRightComponent={({ item: connection }) => (
+            <StyledRowRightContainer>
+              <LightIconButton Icon={IconChevronRight} accent="tertiary" />
+            </StyledRowRightContainer>
+          )}
+          onRowClick={(connection) =>
+            navigate(SettingsPath.IntegrationDatabaseConnection, {
+              databaseKey: integration.from.key,
+              connectionId: connection.id,
+            })
+          }
+          getItemLabel={(connection) => connection.label}
+          hasFooter
+          footerButtonLabel="Add connection"
+          onFooterButtonClick={() =>
+            navigate(SettingsPath.IntegrationNewDatabaseConnection, {
+              databaseKey: integration.from.key,
+            })
+          }
         />
       )}
     </>

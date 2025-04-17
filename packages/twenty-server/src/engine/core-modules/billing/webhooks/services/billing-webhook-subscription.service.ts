@@ -4,17 +4,22 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-customer.util';
 import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
 import { transformStripeSubscriptionEventToDatabaseSubscription } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription.util';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -23,19 +28,6 @@ import {
   CleanWorkspaceDeletionWarningUserVarsJob,
   CleanWorkspaceDeletionWarningUserVarsJobData,
 } from 'src/engine/workspace-manager/workspace-cleaner/jobs/clean-workspace-deletion-warning-user-vars.job';
-
-const BILLING_SUBSCRIPTION_STATUS_BY_WORKSPACE_ACTIVATION_STATUS = {
-  [WorkspaceActivationStatus.ACTIVE]: [
-    SubscriptionStatus.Active,
-    SubscriptionStatus.Trialing,
-    SubscriptionStatus.PastDue,
-  ],
-  [WorkspaceActivationStatus.SUSPENDED]: [
-    SubscriptionStatus.Canceled,
-    SubscriptionStatus.Unpaid,
-    SubscriptionStatus.Paused,
-  ],
-};
 
 @Injectable()
 export class BillingWebhookSubscriptionService {
@@ -54,20 +46,30 @@ export class BillingWebhookSubscriptionService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(BillingCustomer, 'core')
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
+    @InjectRepository(FeatureFlag, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlag>,
   ) {}
 
   async processStripeEvent(
     workspaceId: string,
-    data:
-      | Stripe.CustomerSubscriptionUpdatedEvent.Data
-      | Stripe.CustomerSubscriptionCreatedEvent.Data
-      | Stripe.CustomerSubscriptionDeletedEvent.Data,
+    event:
+      | Stripe.CustomerSubscriptionUpdatedEvent
+      | Stripe.CustomerSubscriptionCreatedEvent
+      | Stripe.CustomerSubscriptionDeletedEvent,
   ) {
+    const { data, type } = event;
+
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
+      withDeleted: true,
     });
 
-    if (!workspace) {
+    if (
+      !workspace ||
+      (isDefined(workspace?.deletedAt) &&
+        type !== BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED)
+    ) {
       return { noWorkspace: true };
     }
 
@@ -99,13 +101,6 @@ export class BillingWebhookSubscriptionService {
       throw new Error('Billing subscription not found');
     }
 
-    const hasActiveWorkspaceCompatibleSubscription = billingSubscriptions.some(
-      (subscription) =>
-        BILLING_SUBSCRIPTION_STATUS_BY_WORKSPACE_ACTIVATION_STATUS[
-          WorkspaceActivationStatus.ACTIVE
-        ].includes(subscription.status),
-    );
-
     await this.billingSubscriptionItemRepository.upsert(
       transformStripeSubscriptionEventToDatabaseSubscriptionItem(
         updatedBillingSubscription.id,
@@ -118,10 +113,8 @@ export class BillingWebhookSubscriptionService {
     );
 
     if (
-      BILLING_SUBSCRIPTION_STATUS_BY_WORKSPACE_ACTIVATION_STATUS[
-        WorkspaceActivationStatus.SUSPENDED
-      ].includes(data.object.status as SubscriptionStatus) &&
-      !hasActiveWorkspaceCompatibleSubscription
+      this.shouldSuspendWorkspace(data) &&
+      workspace.activationStatus == WorkspaceActivationStatus.ACTIVE
     ) {
       await this.workspaceRepository.update(workspaceId, {
         activationStatus: WorkspaceActivationStatus.SUSPENDED,
@@ -129,9 +122,7 @@ export class BillingWebhookSubscriptionService {
     }
 
     if (
-      BILLING_SUBSCRIPTION_STATUS_BY_WORKSPACE_ACTIVATION_STATUS[
-        WorkspaceActivationStatus.ACTIVE
-      ].includes(data.object.status as SubscriptionStatus) &&
+      !this.shouldSuspendWorkspace(data) &&
       workspace.activationStatus == WorkspaceActivationStatus.SUSPENDED
     ) {
       await this.workspaceRepository.update(workspaceId, {
@@ -149,9 +140,51 @@ export class BillingWebhookSubscriptionService {
       workspaceId,
     );
 
+    const isMeteredProductBillingEnabled =
+      await this.featureFlagRepository.findOne({
+        where: {
+          key: FeatureFlagKey.IsMeteredProductBillingEnabled,
+          workspaceId: workspaceId,
+          value: true,
+        },
+      });
+
+    if (
+      event.type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED &&
+      isDefined(isMeteredProductBillingEnabled)
+    ) {
+      await this.billingSubscriptionService.setBillingThresholdsAndTrialPeriodWorkflowCredits(
+        updatedBillingSubscription.id,
+      );
+    }
+
     return {
       stripeSubscriptionId: data.object.id,
       stripeCustomerId: data.object.customer,
     };
+  }
+
+  shouldSuspendWorkspace(
+    data:
+      | Stripe.CustomerSubscriptionUpdatedEvent.Data
+      | Stripe.CustomerSubscriptionCreatedEvent.Data
+      | Stripe.CustomerSubscriptionDeletedEvent.Data,
+  ) {
+    const timeSinceTrialEnd = Date.now() / 1000 - (data.object.trial_end || 0);
+    const hasTrialJustEnded =
+      timeSinceTrialEnd < 60 * 60 * 24 && timeSinceTrialEnd > 0;
+
+    if (
+      [
+        SubscriptionStatus.Canceled,
+        SubscriptionStatus.Unpaid,
+        SubscriptionStatus.Paused, // TODO: remove this once paused subscriptions are deprecated
+      ].includes(data.object.status as SubscriptionStatus) ||
+      (hasTrialJustEnded && data.object.status === SubscriptionStatus.PastDue)
+    ) {
+      return true;
+    }
+
+    return false;
   }
 }

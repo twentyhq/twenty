@@ -7,8 +7,8 @@ import { z } from 'zod';
 
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useLingui } from '@lingui/react/macro';
-import { isValidHostname } from 'twenty-shared';
-import { Button } from 'twenty-ui';
+import { isValidHostname } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
   display: flex;

@@ -11,11 +11,9 @@ import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/
 import { useMoveEditModeToTableCellPosition } from '@/object-record/record-table/hooks/internal/useMoveEditModeToCellPosition';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { isDefined } from 'twenty-shared';
 
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
@@ -24,6 +22,7 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
@@ -40,7 +39,6 @@ export type OpenTableCellArgs = {
   isReadOnly: boolean;
   pathToShowPage: string;
   objectNameSingular: string;
-  customCellHotkeyScope: HotkeyScope | null;
   fieldDefinition: FieldDefinition<FieldMetadata>;
   recordId: string;
   isActionButtonClick: boolean;
@@ -55,7 +53,6 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
   const moveEditModeToTableCellPosition =
     useMoveEditModeToTableCellPosition(tableScopeId);
 
-  const setHotkeyScope = useSetHotkeyScope();
   const { setDragSelectionStartEnabled } = useDragSelect();
 
   const leaveTableFocus = useLeaveTableFocus(tableScopeId);
@@ -86,7 +83,6 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         cellPosition,
         isReadOnly,
         objectNameSingular,
-        customCellHotkeyScope,
         fieldDefinition,
         recordId,
         isActionButtonClick,
@@ -158,21 +154,14 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
           value: initialValue,
           recordId,
           fieldDefinition,
+          fieldComponentInstanceId: getRecordFieldInputId(
+            recordId,
+            fieldDefinition.metadata.fieldName,
+            'record-table-cell',
+          ),
         });
 
         toggleClickOutsideListener(false);
-
-        if (isDefined(customCellHotkeyScope)) {
-          setHotkeyScope(
-            customCellHotkeyScope.scope,
-            customCellHotkeyScope.customScopes,
-          );
-        } else {
-          setHotkeyScope(
-            DEFAULT_CELL_SCOPE.scope,
-            DEFAULT_CELL_SCOPE.customScopes,
-          );
-        }
 
         setActiveDropdownFocusIdAndMemorizePrevious(
           getDropdownFocusIdForRecordField(
@@ -196,7 +185,6 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
       openRecordInCommandMenu,
       setViewableRecordId,
       setViewableRecordNameSingular,
-      setHotkeyScope,
     ],
   );
 

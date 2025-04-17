@@ -2,8 +2,9 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { isDefined } from 'twenty-shared';
-import { CardContent, IconChevronRight, IconComponent } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { CardContent } from 'twenty-ui/layout';
+import { IconChevronRight, IconComponent } from 'twenty-ui/display';
 
 const StyledRow = styled(CardContent)<{ to?: boolean }>`
   align-items: center;

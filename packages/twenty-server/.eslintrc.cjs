@@ -1,6 +1,6 @@
 module.exports = {
   plugins: ['@stylistic'],
-  extends: ['../../.eslintrc.cjs'],
+  extends: ['../../.eslintrc.global.cjs'],
   ignorePatterns: [
     'src/engine/workspace-manager/demo-objects-prefill-data/**',
     'src/engine/seeder/data-seeds/**',
@@ -9,7 +9,7 @@ module.exports = {
   ],
   overrides: [
     {
-      files: ['*.ts'],
+      files: ['**/*.ts'],
       parserOptions: {
         project: ['packages/twenty-server/tsconfig.json'],
       },

@@ -1,17 +1,17 @@
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
-import { H2Title, IconButton, Section } from 'twenty-ui';
+
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import WhatsappIcon from '/images/integrations/whatsapp-logo.svg';
 // import MessengerIcon from '/images/integrations/messenger-logo.svg';
+import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useNavigate } from 'react-router-dom';
+import { H2Title, IconEdit } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-// eslint-disable-next-line no-restricted-imports
-import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
-// eslint-disable-next-line no-restricted-imports
-import { IconEdit } from '@tabler/icons-react';
 
 const StyledShowServiceServiceLevel = styled.div<{ isMobile: boolean }>`
   display: flex;

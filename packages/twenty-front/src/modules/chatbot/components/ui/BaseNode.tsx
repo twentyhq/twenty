@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
-import { Label, useIcons } from 'twenty-ui';
+import { Label, useIcons } from 'twenty-ui/display';
 
 const StyledBaseNodeWrapper = styled.div`
   background-color: ${({ theme }) => theme.background.primary};

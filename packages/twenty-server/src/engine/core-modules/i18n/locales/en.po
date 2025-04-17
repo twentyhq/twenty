@@ -108,6 +108,11 @@ msgstr "A task"
 msgid "A task target"
 msgstr "A task target"
 
+#. js-lingui-id: L31GZg
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "A traceable link"
+msgstr "A traceable link"
+
 #. js-lingui-id: HTSJFW
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "A webhook"
@@ -568,6 +573,21 @@ msgstr "Calendar Event Participants"
 msgid "Calendar events"
 msgstr "Calendar events"
 
+#. js-lingui-id: sq1PHM
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "Campaign associated with the traffic"
+msgstr "Campaign associated with the traffic"
+
+#. js-lingui-id: QieS3l
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Campaign Name"
+msgstr "Campaign Name"
+
+#. js-lingui-id: NrtXDZ
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Campaign Source"
+msgstr "Campaign Source"
+
 #. js-lingui-id: 4IVK41
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -610,6 +630,7 @@ msgid "Charge quantity"
 msgstr "Charge quantity"
 
 #. js-lingui-id: ytwNBF
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Charge record position"
 msgstr "Charge record position"
@@ -1247,6 +1268,11 @@ msgstr "Folder name"
 msgid "Full path"
 msgstr "Full path"
 
+#. js-lingui-id: XM2gXm
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Generated URL"
+msgstr "Generated URL"
+
 #. js-lingui-id: UzpVUy
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "Group by this field value"
@@ -1304,6 +1330,11 @@ msgstr "ICP"
 msgid "Id"
 msgstr "Id"
 
+#. js-lingui-id: hYtWqG
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "ID of the traceable link associated with this log"
+msgstr "ID of the traceable link associated with this log"
+
 #. js-lingui-id: Ebc83S
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
@@ -1341,6 +1372,11 @@ msgstr "Integration record position"
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 msgid "Integrations"
 msgstr "Integrations"
+
+#. js-lingui-id: oK4zvs
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "IP address of the user who accessed the link"
+msgstr "IP address of the user who accessed the link"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1424,6 +1460,11 @@ msgstr "kanbanfieldMetadataId"
 msgid "Key"
 msgstr "Key"
 
+#. js-lingui-id: nhxAdQ
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Keyword"
+msgstr "Keyword"
+
 #. js-lingui-id: vXIe7J
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Language"
@@ -1464,6 +1505,18 @@ msgstr "Last time the record was changed"
 msgid "Last update"
 msgstr "Last update"
 
+#. js-lingui-id: m5K33y
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "Link ID"
+msgstr "Link ID"
+
+#. js-lingui-id: yg5UPw
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "Link Name"
+msgstr "Link Name"
+
 #. js-lingui-id: wR9USP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1492,6 +1545,16 @@ msgstr "Linked Record id"
 msgid "Linkedin"
 msgstr "Linkedin"
 
+#. js-lingui-id: H3nIla
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "Linklog"
+msgstr "Linklog"
+
+#. js-lingui-id: XmF8WY
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "Linklogs"
+msgstr "Linklogs"
+
 #. js-lingui-id: LeFv/R
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "List of opportunities for which that person is the point of contact"
@@ -1512,6 +1575,21 @@ msgstr "Logical Operator"
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Logical operator for the filter group"
 msgstr "Logical operator for the filter group"
+
+#. js-lingui-id: xl8Wza
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "Logs of access to traceable links"
+msgstr "Logs of access to traceable links"
+
+#. js-lingui-id: okbTw8
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Means of Communication"
+msgstr "Means of Communication"
+
+#. js-lingui-id: 9rZW6o
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "Medium of the traffic (e.g., cpc, email)"
+msgstr "Medium of the traffic (e.g., cpc, email)"
 
 #. js-lingui-id: EnfPm2
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1673,9 +1751,11 @@ msgstr "Messaging provider refresh token"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -1690,6 +1770,11 @@ msgstr "Name"
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Name of the favorite folder"
 msgstr "Name of the favorite folder"
+
+#. js-lingui-id: qwLr4u
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "Name of the traceable access log"
+msgstr "Name of the traceable access log"
 
 #. js-lingui-id: csMjko
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -1984,10 +2069,12 @@ msgstr "Point of Contact"
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -2130,6 +2217,11 @@ msgstr "Secret"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Size"
 msgstr "Size"
+
+#. js-lingui-id: DxObh7
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "Source of the traffic (e.g., Google, Facebook)"
+msgstr "Source of the traffic (e.g., Google, Facebook)"
 
 #. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -2375,15 +2467,50 @@ msgstr "The date the message was received"
 msgid "The executor of the workflow"
 msgstr "The executor of the workflow"
 
+#. js-lingui-id: ww4vYo
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "The final URL with UTM parameters"
+msgstr "The final URL with UTM parameters"
+
 #. js-lingui-id: W3raza
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "The folder this favorite belongs to"
 msgstr "The folder this favorite belongs to"
 
+#. js-lingui-id: 0XFpHq
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "The keyword associated with the traceable link"
+msgstr "The keyword associated with the traceable link"
+
+#. js-lingui-id: Wd7tXn
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "The means of communication used (e.g., email, social media)"
+msgstr "The means of communication used (e.g., email, social media)"
+
+#. js-lingui-id: dwkGHj
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "The name of the traceable link"
+msgstr "The name of the traceable link"
+
+#. js-lingui-id: yoBR0I
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "The name of the traceable link associated with the link"
+msgstr "The name of the traceable link associated with the link"
+
 #. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "The opportunity name"
 msgstr "The opportunity name"
+
+#. js-lingui-id: Jiq0u3
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "The source of the traceable link (e.g., Google, Facebook)"
+msgstr "The source of the traceable link (e.g., Google, Facebook)"
+
+#. js-lingui-id: ftaTVP
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "The URL of the website to redirect to"
+msgstr "The URL of the website to redirect to"
 
 #. js-lingui-id: 7mPrpl
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
@@ -2504,6 +2631,26 @@ msgstr "Timeline Activity"
 msgid "Title"
 msgstr "Title"
 
+#. js-lingui-id: 2jNX/d
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Traceable"
+msgstr "Traceable"
+
+#. js-lingui-id: kLFXFH
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Traceable name"
+msgstr "Traceable name"
+
+#. js-lingui-id: ABScWw
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Traceable record position"
+msgstr "Traceable record position"
+
+#. js-lingui-id: PdZf5t
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Traceables"
+msgstr "Traceables"
+
 #. js-lingui-id: +zy2Nq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -2516,6 +2663,16 @@ msgstr "Type"
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Update DateTime"
 msgstr "Update DateTime"
+
+#. js-lingui-id: qM884L
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "User Agent"
+msgstr "User Agent"
+
+#. js-lingui-id: srVp10
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "User agent of the browser/device used to access the link"
+msgstr "User agent of the browser/device used to access the link"
 
 #. js-lingui-id: LJ3EUY
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2531,6 +2688,11 @@ msgstr "User Email"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Id"
 msgstr "User Id"
+
+#. js-lingui-id: pOjO8a
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "User IP"
+msgstr "User IP"
 
 #. js-lingui-id: nNRI18
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2551,6 +2713,27 @@ msgstr "User's preferred date format"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
 msgstr "User's preferred time format"
+
+#. js-lingui-id: Wc3Q5/
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "UTM Campaign"
+msgstr "UTM Campaign"
+
+#. js-lingui-id: zUH/4K
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "UTM Medium"
+msgstr "UTM Medium"
+
+#. js-lingui-id: XnlxVh
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "UTM Source"
+msgstr "UTM Source"
+
+#. js-lingui-id: cNWodE
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "UV"
+msgstr "UV"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -2814,6 +2997,11 @@ msgstr "Webhook target url"
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Webhooks"
 msgstr "Webhooks"
+
+#. js-lingui-id: XYcw7G
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Website URL"
+msgstr "Website URL"
 
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts

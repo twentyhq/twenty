@@ -94,7 +94,7 @@ On Microsoft Azure Console enable the following APIs in "Permissions":
 - Microsoft Graph: Mail.ReadWrite
 - Microsoft Graph: Mail.Send
 - Microsoft Graph: Calendars.Read
-- Microsoft Graph: User.Read.All
+- Microsoft Graph: User.Read
 - Microsoft Graph: openid
 - Microsoft Graph: email
 - Microsoft Graph: profile
@@ -279,7 +279,7 @@ yarn command:prod cron:calendar:ongoing-stale
   ['SERVERLESS_LAMBDA_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
 ]}></ArticleTable>
 
-### Logging
+### Logging and Observability
 
 <ArticleTable options={[
     ['LOGGER_DRIVER', 'console', "Currently, only supports 'console'"],
@@ -290,6 +290,8 @@ yarn command:prod cron:calendar:ongoing-stale
     ['SENTRY_RELEASE', 'latest', 'The sentry release used if sentry logging driver is selected'],
     ['SENTRY_DSN', 'https://xxx@xxx.ingest.sentry.io/xxx', 'The sentry logging endpoint used if sentry logging driver is selected'],
     ['SENTRY_FRONT_DSN', 'https://xxx@xxx.ingest.sentry.io/xxx', 'The sentry logging endpoint used by the frontend if sentry logging driver is selected'],
+    ['METER_DRIVER', 'console', "The meter driver can be: 'console' and/or 'opentelemetry' "],
+    ['OTLP_COLLECTOR_ENDPOINT_URL', '', 'The OpenTelemetry collector endpoint collects metrics if opentelemetry meter driver is selected. The collector has to be set separately.'],
     ]}></ArticleTable>
 
 

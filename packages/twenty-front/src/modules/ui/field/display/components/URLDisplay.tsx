@@ -1,20 +1,8 @@
-import styled from '@emotion/styled';
 import { MouseEvent } from 'react';
 
+import { LinkType, RoundedLink, SocialLink } from 'twenty-ui/navigation';
 import { checkUrlType } from '~/utils/checkUrlType';
-
-import { LinkType, RoundedLink, SocialLink } from 'twenty-ui';
 import { EllipsisDisplay } from './EllipsisDisplay';
-
-const StyledRawLink = styled(RoundedLink)`
-  overflow: hidden;
-
-  a {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-`;
 
 type URLDisplayProps = {
   value: string | null;
@@ -49,7 +37,7 @@ export const URLDisplay = ({ value }: URLDisplayProps) => {
   }
   return (
     <EllipsisDisplay>
-      <StyledRawLink
+      <RoundedLink
         href={absoluteUrl}
         onClick={handleClick}
         label={displayedValue}

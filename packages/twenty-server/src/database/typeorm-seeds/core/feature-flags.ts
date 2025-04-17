@@ -18,12 +18,12 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IsAirtableIntegrationEnabled,
         workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
       {
         key: FeatureFlagKey.IsPostgreSQLIntegrationEnabled,
         workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
       {
         key: FeatureFlagKey.IsEventObjectEnabled,
@@ -61,19 +61,9 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
-        key: FeatureFlagKey.IsAdvancedFiltersEnabled,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
         key: FeatureFlagKey.IsNewRelationEnabled,
         workspaceId: workspaceId,
         value: false,
-      },
-      {
-        key: FeatureFlagKey.IsWorkflowFormActionEnabled,
-        workspaceId: workspaceId,
-        value: true,
       },
     ])
     .execute();

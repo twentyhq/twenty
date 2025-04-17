@@ -15,7 +15,7 @@ import {
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramTriggerNode';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 export const generateWorkflowRunDiagram = ({
@@ -79,11 +79,15 @@ export const generateWorkflowRunDiagram = ({
     }
 
     const runResult = stepsOutput?.[nodeId];
+    const isPendingFormAction =
+      step.type === 'FORM' &&
+      isDefined(runResult?.pendingEvent) &&
+      runResult.pendingEvent;
 
     let runStatus: WorkflowDiagramRunStatus;
     if (skippedExecution) {
       runStatus = 'not-executed';
-    } else if (!isDefined(runResult)) {
+    } else if (!isDefined(runResult) || isPendingFormAction) {
       runStatus = 'running';
     } else {
       if (isDefined(runResult.error)) {
@@ -105,6 +109,7 @@ export const generateWorkflowRunDiagram = ({
         x: xPos,
         y: yPos,
       },
+      selected: isPendingFormAction,
     });
 
     processNode({

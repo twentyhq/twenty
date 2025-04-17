@@ -1,35 +1,47 @@
-import { CommandMenuActionMenuDropdownHotkeyScope } from '@/action-menu/types/CommandMenuActionMenuDropdownHotkeyScope';
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { AppPath } from '@/types/AppPath';
+import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, IconBrowserMaximize, getOsControlSymbol } from 'twenty-ui';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { Button } from 'twenty-ui/input';
+import { IconBrowserMaximize } from 'twenty-ui/display';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
+
 const StyledLink = styled(Link)`
   text-decoration: none;
 `;
 
 type RecordShowRightDrawerOpenRecordButtonProps = {
   objectNameSingular: string;
-  record: ObjectRecord;
+  recordId: string;
 };
 
 export const RecordShowRightDrawerOpenRecordButton = ({
   objectNameSingular,
-  record,
+  recordId,
 }: RecordShowRightDrawerOpenRecordButtonProps) => {
+  const record = useRecoilValue<ObjectRecord | null>(
+    recordStoreFamilyState(recordId),
+  );
   const { closeCommandMenu } = useCommandMenu();
 
   const commandMenuPageComponentInstance = useComponentInstanceStateContext(
@@ -38,7 +50,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
 
   const tabListComponentId = getShowPageTabListComponentId({
     pageId: commandMenuPageComponentInstance?.instanceId,
-    targetObjectId: record.id,
+    targetObjectId: recordId,
   });
 
   const activeTabIdInRightDrawer = useRecoilComponentValueV2(
@@ -47,7 +59,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
   );
 
   const tabListComponentIdInRecordPage = getShowPageTabListComponentId({
-    targetObjectId: record.id,
+    targetObjectId: recordId,
   });
 
   const setActiveTabIdInRecordPage = useSetRecoilComponentStateV2(
@@ -55,9 +67,13 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     tabListComponentIdInRecordPage,
   );
 
-  const to = getLinkToShowPage(objectNameSingular, record);
-
   const navigate = useNavigateApp();
+
+  const actionMenuId = useAvailableComponentInstanceIdOrThrow(
+    ActionMenuComponentInstanceContext,
+  );
+
+  const { closeDropdown } = useDropdownV2();
 
   const handleOpenRecord = useCallback(() => {
     const tabIdToOpen =
@@ -72,16 +88,22 @@ export const RecordShowRightDrawerOpenRecordButton = ({
 
     navigate(AppPath.RecordShowPage, {
       objectNameSingular,
-      objectRecordId: record.id,
+      objectRecordId: recordId,
     });
+
+    closeDropdown(
+      getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
+    );
 
     closeCommandMenu();
   }, [
+    actionMenuId,
     activeTabIdInRightDrawer,
     closeCommandMenu,
+    closeDropdown,
     navigate,
     objectNameSingular,
-    record.id,
+    recordId,
     setActiveTabIdInRecordPage,
   ]);
 
@@ -89,15 +111,14 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     ['ctrl+Enter,meta+Enter'],
     handleOpenRecord,
     AppHotkeyScope.CommandMenuOpen,
-    [closeCommandMenu, navigate, objectNameSingular, record.id],
+    [closeCommandMenu, navigate, objectNameSingular, recordId],
   );
 
-  useScopedHotkeys(
-    ['ctrl+Enter,meta+Enter'],
-    handleOpenRecord,
-    CommandMenuActionMenuDropdownHotkeyScope.CommandMenuActionMenuDropdown,
-    [closeCommandMenu, navigate, objectNameSingular, record.id],
-  );
+  if (!isDefined(record)) {
+    return null;
+  }
+
+  const to = getLinkToShowPage(objectNameSingular, record);
 
   return (
     <StyledLink to={to} onClick={closeCommandMenu}>

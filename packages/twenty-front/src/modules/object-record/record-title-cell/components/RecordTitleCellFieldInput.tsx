@@ -1,17 +1,14 @@
 import { useContext } from 'react';
 
-import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
-
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { RecordTitleCellTextFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellTextFieldInput';
 import { RecordTitleFullNameFieldInput } from '@/object-record/record-title-cell/components/RecordTitleFullNameFieldInput';
+import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
 
 type RecordTitleCellFieldInputProps = {
-  recordFieldInputId: string;
   onClickOutside?: (
     persist: () => void,
     event: MouseEvent | TouchEvent,
@@ -20,12 +17,11 @@ type RecordTitleCellFieldInputProps = {
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
-  sizeVariant?: 'sm' | 'md';
+  sizeVariant?: 'xs' | 'md';
 };
 
 export const RecordTitleCellFieldInput = ({
   sizeVariant,
-  recordFieldInputId,
   onEnter,
   onEscape,
   onShiftTab,
@@ -39,9 +35,7 @@ export const RecordTitleCellFieldInput = ({
   }
 
   return (
-    <RecordFieldInputScope
-      recordFieldInputScopeId={getScopeIdFromComponentId(recordFieldInputId)}
-    >
+    <>
       {isFieldText(fieldDefinition) ? (
         <RecordTitleCellTextFieldInput
           onEnter={onEnter}
@@ -50,6 +44,7 @@ export const RecordTitleCellFieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
           sizeVariant={sizeVariant}
+          hotkeyScope={TitleInputHotkeyScope.TitleInput}
         />
       ) : isFieldFullName(fieldDefinition) ? (
         <RecordTitleFullNameFieldInput
@@ -59,8 +54,9 @@ export const RecordTitleCellFieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
           sizeVariant={sizeVariant}
+          hotkeyScope={TitleInputHotkeyScope.TitleInput}
         />
       ) : null}
-    </RecordFieldInputScope>
+    </>
   );
 };

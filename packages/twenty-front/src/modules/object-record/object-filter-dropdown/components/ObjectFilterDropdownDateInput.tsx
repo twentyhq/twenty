@@ -16,7 +16,7 @@ import {
   VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const ObjectFilterDropdownDateInput = () => {
@@ -60,6 +60,7 @@ export const ObjectFilterDropdownDateInput = () => {
           : newDate.toLocaleDateString()
         : '',
       recordFilterGroupId: selectedFilter?.recordFilterGroupId,
+      positionInRecordFilterGroup: selectedFilter?.positionInRecordFilterGroup,
       type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
       label: fieldMetadataItemUsedInDropdown.label,
     });
@@ -89,6 +90,7 @@ export const ObjectFilterDropdownDateInput = () => {
       operand: selectedOperandInDropdown,
       displayValue: getRelativeDateDisplayValue(relativeDate),
       recordFilterGroupId: selectedFilter?.recordFilterGroupId,
+      positionInRecordFilterGroup: selectedFilter?.positionInRecordFilterGroup,
       type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
       label: fieldMetadataItemUsedInDropdown.label,
     });
@@ -114,7 +116,6 @@ export const ObjectFilterDropdownDateInput = () => {
       date={internalDate}
       onChange={handleAbsoluteDateChange}
       onRelativeDateChange={handleRelativeDateChange}
-      onClose={handleAbsoluteDateChange}
       isDateTimeInput={isDateTimeInput}
     />
   );

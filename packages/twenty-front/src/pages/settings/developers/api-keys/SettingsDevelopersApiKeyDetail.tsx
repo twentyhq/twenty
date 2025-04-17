@@ -4,7 +4,6 @@ import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { Button, H2Title, IconRepeat, IconTrash, Section } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -27,6 +26,9 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { Button } from 'twenty-ui/input';
+import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};

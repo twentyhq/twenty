@@ -2,11 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 import { OpenAPIV3_1 } from 'openapi-types';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.utils';
 import {
   computeMetadataSchemaComponents,
@@ -36,6 +35,7 @@ import {
   getFindOneResponse200,
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { getServerUrl } from 'src/utils/get-server-url';
 
@@ -43,14 +43,14 @@ import { getServerUrl } from 'src/utils/get-server-url';
 export class OpenApiService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
   async generateCoreSchema(request: Request): Promise<OpenAPIV3_1.Document> {
     const baseUrl = getServerUrl(
       request,
-      this.environmentService.get('SERVER_URL'),
+      this.twentyConfigService.get('SERVER_URL'),
     );
 
     const schema = baseSchema('core', baseUrl);
@@ -123,7 +123,7 @@ export class OpenApiService {
   ): Promise<OpenAPIV3_1.Document> {
     const baseUrl = getServerUrl(
       request,
-      this.environmentService.get('SERVER_URL'),
+      this.twentyConfigService.get('SERVER_URL'),
     );
 
     const schema = baseSchema('metadata', baseUrl);
@@ -174,16 +174,6 @@ export class OpenApiService {
         },
       } as OpenAPIV3_1.PathItemObject;
       path[`/${item.namePlural}/{id}`] = {
-        get: {
-          tags: [item.namePlural],
-          summary: `Find One ${item.nameSingular}`,
-          parameters: [{ $ref: '#/components/parameters/idPath' }],
-          responses: {
-            '200': getFindOneResponse200(item),
-            '400': { $ref: '#/components/responses/400' },
-            '401': { $ref: '#/components/responses/401' },
-          },
-        },
         delete: {
           tags: [item.namePlural],
           summary: `Delete One ${item.nameSingular}`,
@@ -196,6 +186,16 @@ export class OpenApiService {
           },
         },
         ...(item.nameSingular !== 'relation' && {
+          get: {
+            tags: [item.namePlural],
+            summary: `Find One ${item.nameSingular}`,
+            parameters: [{ $ref: '#/components/parameters/idPath' }],
+            responses: {
+              '200': getFindOneResponse200(item),
+              '400': { $ref: '#/components/responses/400' },
+              '401': { $ref: '#/components/responses/401' },
+            },
+          },
           patch: {
             tags: [item.namePlural],
             summary: `Update One ${item.nameSingular}`,

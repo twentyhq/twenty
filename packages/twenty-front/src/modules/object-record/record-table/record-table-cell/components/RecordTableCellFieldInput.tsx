@@ -1,18 +1,19 @@
-import { useContext } from 'react';
-
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
+
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
-import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import {
+  FieldInputClickOutsideEvent,
+  FieldInputEvent,
+} from '@/object-record/record-field/types/FieldInputEvent';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
+import { useContext } from 'react';
+import { useRecoilCallback } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
-  const { recordId, fieldDefinition } = useContext(FieldContext);
-
   const { onMoveFocus, onCloseTableCell } = useRecordTableBodyContextOrThrow();
-
-  const isFieldReadOnly = useIsFieldValueReadOnly();
+  const { isReadOnly } = useContext(FieldContext);
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
@@ -31,16 +32,22 @@ export const RecordTableCellFieldInput = () => {
     onCloseTableCell();
   };
 
-  const handleClickOutside = (
-    persistField: () => void,
-    event: MouseEvent | TouchEvent,
-  ) => {
-    event.stopImmediatePropagation();
+  const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
+    ({ snapshot }) =>
+      (persistField, event) => {
+        const hotkeyScope = snapshot
+          .getLoadable(currentHotkeyScopeState)
+          .getValue();
+        if (hotkeyScope.scope !== TableHotkeyScope.CellEditMode) {
+          return;
+        }
+        event.stopImmediatePropagation();
 
-    persistField();
-
-    onCloseTableCell();
-  };
+        persistField();
+        onCloseTableCell();
+      },
+    [onCloseTableCell],
+  );
 
   const handleEscape: FieldInputEvent = (persistField) => {
     persistField();
@@ -64,10 +71,6 @@ export const RecordTableCellFieldInput = () => {
 
   return (
     <FieldInput
-      recordFieldInputdId={getRecordFieldInputId(
-        recordId,
-        fieldDefinition?.metadata?.fieldName,
-      )}
       onCancel={handleCancel}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
@@ -75,7 +78,7 @@ export const RecordTableCellFieldInput = () => {
       onShiftTab={handleShiftTab}
       onSubmit={handleSubmit}
       onTab={handleTab}
-      isReadOnly={isFieldReadOnly}
+      isReadOnly={isReadOnly}
     />
   );
 };

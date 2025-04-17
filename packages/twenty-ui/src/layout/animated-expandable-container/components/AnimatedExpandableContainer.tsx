@@ -8,7 +8,7 @@ import { AnimationSize } from '@ui/layout/animated-expandable-container/types/An
 import { getExpandableAnimationConfig } from '@ui/layout/animated-expandable-container/utils/getExpandableAnimationConfig';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ReactNode, useRef, useState } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledMotionContainer = styled(motion.div)<{
   containAnimation: boolean;

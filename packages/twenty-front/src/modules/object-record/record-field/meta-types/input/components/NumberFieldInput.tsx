@@ -1,6 +1,7 @@
 import { TextInput } from '@/ui/field/input/components/TextInput';
 
-import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
+import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { useNumberField } from '../../hooks/useNumberField';
 
@@ -21,13 +22,8 @@ export const NumberFieldInput = ({
   onTab,
   onShiftTab,
 }: NumberFieldInputProps) => {
-  const {
-    fieldDefinition,
-    draftValue,
-    setDraftValue,
-    hotkeyScope,
-    persistNumberField,
-  } = useNumberField();
+  const { fieldDefinition, draftValue, setDraftValue, persistNumberField } =
+    useNumberField();
 
   const handleEnter = (newText: string) => {
     onEnter?.(() => persistNumberField(newText));
@@ -67,7 +63,7 @@ export const NumberFieldInput = ({
         onEscape={handleEscape}
         onShiftTab={handleShiftTab}
         onTab={handleTab}
-        hotkeyScope={hotkeyScope}
+        hotkeyScope={DEFAULT_CELL_SCOPE.scope}
         onChange={handleChange}
       />
     </FieldInputContainer>

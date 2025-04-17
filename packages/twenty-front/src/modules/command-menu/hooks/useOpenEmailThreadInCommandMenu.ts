@@ -2,8 +2,8 @@ import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandM
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useRecoilCallback } from 'recoil';
-import { IconMail } from 'twenty-ui';
 import { v4 } from 'uuid';
+import { IconMail } from 'twenty-ui/display';
 
 export const useOpenEmailThreadInCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();

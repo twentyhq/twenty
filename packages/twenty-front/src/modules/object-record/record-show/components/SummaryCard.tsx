@@ -1,17 +1,16 @@
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierSelector';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
-import { ShowPageSummaryCardSkeletonLoader } from '@/ui/layout/show-page/components/ShowPageSummaryCardSkeletonLoader';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated/graphql';
 
 type SummaryCardProps = {
@@ -55,9 +54,9 @@ export const SummaryCard = ({
     }),
   );
 
-  if (!isDefined(recordCreatedAt)) {
-    return <ShowPageSummaryCardSkeletonLoader />;
-  }
+  const isRecordReadOnly = useIsRecordReadOnly({
+    recordId: objectRecordId,
+  });
 
   return (
     <ShowPageSummaryCard
@@ -68,13 +67,13 @@ export const SummaryCard = ({
       iconColor={IconColor}
       avatarPlaceholder={recordIdentifier?.name ?? ''}
       date={recordCreatedAt ?? ''}
-      loading={isPrefetchLoading || recordLoading}
+      loading={
+        isPrefetchLoading || recordLoading || !isDefined(recordCreatedAt)
+      }
       title={
         <FieldContext.Provider
           value={{
             recordId: objectRecordId,
-            recoilScopeId:
-              objectRecordId + labelIdentifierFieldMetadataItem?.id,
             isLabelIdentifier: false,
             fieldDefinition: {
               type:
@@ -90,9 +89,9 @@ export const SummaryCard = ({
               defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
             },
             useUpdateRecord: useUpdateOneObjectRecordMutation,
-            hotkeyScope: InlineCellHotkeyScope.InlineCell,
             isCentered: !isMobile,
             isDisplayModeFixHeight: true,
+            isReadOnly: isRecordReadOnly,
           }}
         >
           <RecordTitleCell sizeVariant="md" />

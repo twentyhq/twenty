@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { MouseEvent, useMemo, useRef, useState } from 'react';
-import { IconComponent, MenuItem, MenuItemSelect } from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -9,14 +8,12 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { isDefined } from 'twenty-shared';
+import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
+import { isDefined } from 'twenty-shared/utils';
+import { IconComponent } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
-
-export type SelectOption<Value extends string | number | boolean | null> = {
-  value: Value;
-  label: string;
-  Icon?: IconComponent;
-};
 
 export type SelectSizeVariant = 'small' | 'default';
 
@@ -33,7 +30,7 @@ export type SelectProps<Value extends SelectValue> = {
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
   dropdownId: string;
-  dropdownWidth?: `${string}px` | 'auto' | number;
+  dropdownWidth?: number;
   dropdownWidthAuto?: boolean;
   emptyOption?: SelectOption<Value>;
   fullWidth?: boolean;
@@ -45,6 +42,8 @@ export type SelectProps<Value extends SelectValue> = {
   withSearchInput?: boolean;
   needIconCheck?: boolean;
   callToActionButton?: CallToActionButton;
+  dropdownOffset?: DropdownOffset;
+  hasRightElement?: boolean;
 };
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
@@ -76,6 +75,8 @@ export const Select = <Value extends SelectValue>({
   withSearchInput,
   needIconCheck,
   callToActionButton,
+  dropdownOffset,
+  hasRightElement,
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
@@ -122,17 +123,20 @@ export const Select = <Value extends SelectValue>({
           selectedOption={selectedOption}
           isDisabled={isDisabled}
           selectSizeVariant={selectSizeVariant}
+          hasRightElement={hasRightElement}
         />
       ) : (
         <Dropdown
           dropdownId={dropdownId}
-          dropdownMenuWidth={dropDownMenuWidth}
+          dropdownWidth={dropDownMenuWidth}
           dropdownPlacement="bottom-start"
+          dropdownOffset={dropdownOffset}
           clickableComponent={
             <SelectControl
               selectedOption={selectedOption}
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
+              hasRightElement={hasRightElement}
             />
           }
           dropdownComponents={
@@ -148,7 +152,7 @@ export const Select = <Value extends SelectValue>({
                 <DropdownMenuSeparator />
               )}
               {!!filteredOptions.length && (
-                <DropdownMenuItemsContainer hasMaxHeight>
+                <DropdownMenuItemsContainer hasMaxHeight width={'auto'}>
                   {filteredOptions.map((option) => (
                     <MenuItemSelect
                       key={`${option.value}-${option.label}`}

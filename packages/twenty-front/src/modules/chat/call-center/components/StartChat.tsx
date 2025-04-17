@@ -8,14 +8,9 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useContext, useEffect, useMemo, useState } from 'react';
-import {
-  Button,
-  H1Title,
-  H1TitleFontColor,
-  Section,
-  SectionAlignment,
-  SectionFontColor,
-} from 'twenty-ui';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 
 type StartChatProps = {
   isStartChatOpen: boolean;
@@ -142,9 +137,9 @@ export const StartChat = ({
                 label="Inbox"
                 defaultValue={integrationId}
                 options={waIntegration}
-                onPersist={handleBusinessIdChange}
+                onChange={handleBusinessIdChange}
               />
-              <FormPhoneFieldInput onPersist={handlePhoneChange} />
+              <FormPhoneFieldInput onChange={handlePhoneChange} />
             </StyledSection>
             <StyledCenteredButton
               onClick={handleConfirm}

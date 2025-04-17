@@ -11,8 +11,7 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldDateTime } from '../../types/guards/isFieldDateTime';
 
 export const useDateTimeField = () => {
-  const { recordId, fieldDefinition, hotkeyScope, clearable } =
-    useContext(FieldContext);
+  const { recordId, fieldDefinition, clearable } = useContext(FieldContext);
 
   assertFieldMetadata(
     FieldMetadataType.DATE_TIME,
@@ -29,16 +28,13 @@ export const useDateTimeField = () => {
     }),
   );
 
-  const { setDraftValue } = useRecordFieldInput<FieldDateTimeValue>(
-    `${recordId}-${fieldName}`,
-  );
+  const { setDraftValue } = useRecordFieldInput<FieldDateTimeValue>();
 
   return {
     fieldDefinition,
     fieldValue,
     setDraftValue,
     setFieldValue,
-    hotkeyScope,
     clearable,
   };
 };

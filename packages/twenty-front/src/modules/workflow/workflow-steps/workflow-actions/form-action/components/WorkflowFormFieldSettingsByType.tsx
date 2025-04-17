@@ -1,5 +1,8 @@
-import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionForm';
-import { assertUnreachable, FieldMetadataType } from 'twenty-shared';
+import { WorkflowFormFieldSettingsDate } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsDate';
+import { WorkflowFormFieldSettingsRecordPicker } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker';
+import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
 import { WorkflowFormFieldSettingsNumber } from './WorkflowFormFieldSettingsNumber';
 import { WorkflowFormFieldSettingsText } from './WorkflowFormFieldSettingsText';
 
@@ -8,27 +11,26 @@ export const WorkflowFormFieldSettingsByType = ({
   onChange,
 }: {
   field: WorkflowFormActionField;
-  onChange: (fieldName: string, value: string | null) => void;
+  onChange: (updatedField: WorkflowFormActionField) => void;
 }) => {
   switch (field.type) {
     case FieldMetadataType.TEXT:
       return (
-        <WorkflowFormFieldSettingsText
-          label={field.label}
-          placeholder={field.placeholder}
-          onChange={(fieldName, value) => {
-            onChange(fieldName, value);
-          }}
-        />
+        <WorkflowFormFieldSettingsText field={field} onChange={onChange} />
       );
     case FieldMetadataType.NUMBER:
       return (
-        <WorkflowFormFieldSettingsNumber
-          label={field.label}
-          placeholder={field.placeholder}
-          onChange={(fieldName, value) => {
-            onChange(fieldName, value);
-          }}
+        <WorkflowFormFieldSettingsNumber field={field} onChange={onChange} />
+      );
+    case FieldMetadataType.DATE:
+      return (
+        <WorkflowFormFieldSettingsDate field={field} onChange={onChange} />
+      );
+    case 'RECORD':
+      return (
+        <WorkflowFormFieldSettingsRecordPicker
+          field={field}
+          onChange={onChange}
         />
       );
     default:

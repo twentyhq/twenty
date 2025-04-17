@@ -7,11 +7,10 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -20,34 +19,32 @@ import {
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 export const SettingsPermissionsGuard = (
-  requiredPermission: SettingsPermissions,
+  requiredPermission: SettingPermissionType,
 ): Type<CanActivate> => {
   @Injectable()
   class SettingsPermissionsMixin implements CanActivate {
-    constructor(
-      private readonly featureFlagService: FeatureFlagService,
-      private readonly permissionsService: PermissionsService,
-    ) {}
+    constructor(private readonly permissionsService: PermissionsService) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
       const ctx = GqlExecutionContext.create(context);
       const workspaceId = ctx.getContext().req.workspace.id;
+      const userWorkspaceId = ctx.getContext().req.userWorkspaceId;
+      const workspaceActivationStatus =
+        ctx.getContext().req.workspace.activationStatus;
 
-      const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsPermissionsEnabled,
-        workspaceId,
-      );
-
-      if (!permissionsEnabled) {
+      if (
+        [
+          WorkspaceActivationStatus.PENDING_CREATION,
+          WorkspaceActivationStatus.ONGOING_CREATION,
+        ].includes(workspaceActivationStatus)
+      ) {
         return true;
       }
-
-      const userWorkspaceId = ctx.getContext().req.userWorkspaceId;
 
       const hasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
-          _setting: requiredPermission,
+          setting: requiredPermission,
           workspaceId,
           isExecutedByApiKey: isDefined(ctx.getContext().req.apiKey),
         });

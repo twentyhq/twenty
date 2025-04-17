@@ -1,11 +1,3 @@
-import {
-  AvatarChip,
-  AvatarChipVariant,
-  ChipSize,
-  LinkAvatarChip,
-  isModifiedEvent,
-} from 'twenty-ui';
-
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
@@ -13,6 +5,14 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilValue } from 'recoil';
+import {
+  AvatarChip,
+  AvatarChipVariant,
+  ChipSize,
+  LinkAvatarChip,
+} from 'twenty-ui/components';
+import { isModifiedEvent } from 'twenty-ui/utilities';
+
 export type RecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
@@ -22,6 +22,7 @@ export type RecordChipProps = {
   maxWidth?: number;
   to?: string | undefined;
   size?: ChipSize;
+  isLabelHidden?: boolean;
 };
 
 export const RecordChip = ({
@@ -33,6 +34,7 @@ export const RecordChip = ({
   to,
   size,
   forceDisableClick = false,
+  isLabelHidden = false,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -74,10 +76,16 @@ export const RecordChip = ({
       maxWidth={maxWidth}
       placeholderColorSeed={record.id}
       name={recordChipData.name}
+      isLabelHidden={isLabelHidden}
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
       className={className}
-      variant={variant}
+      variant={
+        variant ??
+        (!forceDisableClick
+          ? AvatarChipVariant.Regular
+          : AvatarChipVariant.Transparent)
+      }
       to={to ?? getLinkToShowPage(objectNameSingular, record)}
       onClick={(clickEvent) => {
         // TODO refactor wrapper event listener to avoid colliding events

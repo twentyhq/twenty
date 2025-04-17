@@ -1,13 +1,13 @@
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
-import { OverflowingTextWithTooltip } from 'twenty-ui';
 
 import { EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
 import { EventCardMessageNotShared } from '@/activities/timeline-activities/rows/message/components/EventCardMessageNotShared';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledEventCardMessageContainer = styled.div`
   display: flex;

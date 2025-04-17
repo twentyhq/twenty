@@ -20,6 +20,8 @@ export enum AppPath {
   OpportunitiesPage = '/objects/opportunities',
 
   ChargesPage = '/objects/charges',
+  TraceablePage = '/objects/traceable',
+  LinkLogsPage = '/objects/linklogs',
   IntegrationsPage = '/objects/integrations',
 
   RecordIndexPage = '/objects/:objectNamePlural',
@@ -34,6 +36,7 @@ export enum AppPath {
   ExternalChat = '/chat/call-center',
 
   Chatbot = 'objects/chatbot',
+  DashboardLinks = '/dashboard-links',
 
   Authorize = '/authorize',
 

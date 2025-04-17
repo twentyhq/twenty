@@ -1,10 +1,11 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFullNameFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useFullNameFieldDisplay';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
+import { Theme, withTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { OverflowingTextWithTooltip } from 'twenty-ui';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledDiv = styled.div`
   align-items: center;
@@ -15,11 +16,19 @@ const StyledDiv = styled.div`
   cursor: pointer;
   overflow: hidden;
   height: 28px;
-  line-height: 28px;
+  padding: ${({ theme }) => theme.spacing(0, 1.25)};
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};
   }
 `;
+
+const StyledEmptyText = withTheme(styled.div<{ theme: Theme }>`
+  color: ${({ theme }) => theme.font.color.tertiary};
+`);
 
 export const RecordTitleFullNameFieldDisplay = () => {
   const { fieldDefinition } = useContext(FieldContext);
@@ -35,9 +44,13 @@ export const RecordTitleFullNameFieldDisplay = () => {
 
   return (
     <StyledDiv onClick={() => openInlineCell()}>
-      <OverflowingTextWithTooltip
-        text={isNonEmptyString(content) ? content : fieldDefinition.label}
-      />
+      {!content ? (
+        <StyledEmptyText>Untitled</StyledEmptyText>
+      ) : (
+        <OverflowingTextWithTooltip
+          text={isNonEmptyString(content) ? content : fieldDefinition.label}
+        />
+      )}
     </StyledDiv>
   );
 };

@@ -2,13 +2,13 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRef } from 'react';
-import { IconComponent } from 'twenty-ui';
+import { IconComponent } from 'twenty-ui/display';
 
+import { MenuSelectStatus } from '@/settings/service-center/components/MenuSelectStatus';
 import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuSelectStatus } from '@/settings/service-center/components/MenuSelectStatus';
 
 export type SelectOption<Value extends string | number | null> = {
   value: Value;

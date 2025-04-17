@@ -116,6 +116,7 @@ export const queries = {
         settings
         defaultValue
         options
+        isLabelSyncedWithName
       }
     }
   `,
@@ -134,14 +135,6 @@ export const queries = {
       canAccessFullAdminPanel
       canImpersonate
       supportUserHash
-      analyticsTinybirdJwts {
-        getWebhookAnalytics
-        getPageviewsAnalytics
-        getUsersAnalytics
-        getServerlessFunctionDuration
-        getServerlessFunctionSuccessRate
-        getServerlessFunctionErrorCount
-      }
       onboardingStatus
       workspaceMember {
         ...WorkspaceMemberQueryFragment
@@ -289,14 +282,6 @@ export const responseData = {
       canAccessFullAdminPanel: false,
       canImpersonate: false,
       supportUserHash: null,
-      analyticsTinybirdJwts: {
-        getWebhookAnalytics: null,
-        getPageviewsAnalytics: null,
-        getUsersAnalytics: null,
-        getServerlessFunctionDuration: null,
-        getServerlessFunctionSuccessRate: null,
-        getServerlessFunctionErrorCount: null,
-      },
       onboardingStatus: 'completed',
       workspaceMember: {
         id: 'test-workspace-member-id',

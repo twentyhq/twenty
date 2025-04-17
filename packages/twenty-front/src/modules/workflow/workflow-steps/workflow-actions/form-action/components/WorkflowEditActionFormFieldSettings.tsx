@@ -1,20 +1,16 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionForm';
 import { WorkflowFormFieldSettingsByType } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsByType';
+import { FORM_SELECT_FIELD_TYPE_OPTIONS } from '@/workflow/workflow-steps/workflow-actions/form-action/constants/FormSelectFieldTypeOptions';
+import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
+import { WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormFieldType';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared';
-import {
-  IconSettingsAutomation,
-  IconX,
-  IllustrationIconNumbers,
-  IllustrationIconText,
-  LightIconButton,
-} from 'twenty-ui';
+import { IconSettingsAutomation, IconX } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
 type WorkflowEditActionFormFieldSettingsProps = {
   field: WorkflowFormActionField;
@@ -43,12 +39,14 @@ const StyledSettingsHeader = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   display: grid;
   gap: ${({ theme }) => theme.spacing(1)};
-  padding-inline: ${({ theme }) => theme.spacing(3)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(3)};
   grid-template-columns: 1fr 24px;
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTitleContainer = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
@@ -65,12 +63,6 @@ export const WorkflowEditActionFormFieldSettings = ({
   onClose,
 }: WorkflowEditActionFormFieldSettingsProps) => {
   const theme = useTheme();
-  const onSubFieldUpdate = (fieldName: string, value: any) => {
-    onChange({
-      ...field,
-      [fieldName]: value,
-    });
-  };
 
   return (
     <StyledFormFieldSettingsContainer>
@@ -84,6 +76,7 @@ export const WorkflowEditActionFormFieldSettings = ({
         </StyledTitleContainer>
         <StyledCloseButtonContainer>
           <LightIconButton
+            testId="close-button"
             Icon={IconX}
             size="small"
             accent="secondary"
@@ -95,45 +88,29 @@ export const WorkflowEditActionFormFieldSettings = ({
         <FormFieldInputContainer>
           <InputLabel>Type</InputLabel>
           <FormSelectFieldInput
-            options={[
-              {
-                label: getDefaultFormFieldSettings(FieldMetadataType.TEXT)
-                  .label,
-                value: FieldMetadataType.TEXT,
-                icon: IllustrationIconText,
-              },
-              {
-                label: getDefaultFormFieldSettings(FieldMetadataType.NUMBER)
-                  .label,
-                value: FieldMetadataType.NUMBER,
-                icon: IllustrationIconNumbers,
-              },
-            ]}
+            options={FORM_SELECT_FIELD_TYPE_OPTIONS}
             onChange={(newType: string | null) => {
               if (newType === null) {
                 return;
               }
 
-              const type = newType as
-                | FieldMetadataType.TEXT
-                | FieldMetadataType.NUMBER;
-              const { label, placeholder } = getDefaultFormFieldSettings(type);
+              const type = newType as WorkflowFormFieldType;
+              const { name, label, settings } =
+                getDefaultFormFieldSettings(type);
 
               onChange({
                 ...field,
                 type,
+                name,
                 label,
-                placeholder,
+                settings,
+                placeholder: '',
               });
             }}
             defaultValue={field.type}
-            preventDisplayPadding
           />
         </FormFieldInputContainer>
-        <WorkflowFormFieldSettingsByType
-          field={field}
-          onChange={onSubFieldUpdate}
-        />
+        <WorkflowFormFieldSettingsByType field={field} onChange={onChange} />
       </StyledSettingsContent>
     </StyledFormFieldSettingsContainer>
   );

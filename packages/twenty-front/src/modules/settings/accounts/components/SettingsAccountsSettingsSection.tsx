@@ -1,18 +1,14 @@
 import styled from '@emotion/styled';
-import {
-  H2Title,
-  IconCalendarEvent,
-  IconMailCog,
-  MOBILE_VIEWPORT,
-  Section,
-  UndecoratedLink,
-} from 'twenty-ui';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { H2Title, IconCalendarEvent, IconMailCog } from 'twenty-ui/display';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { Section } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 
 const StyledCardsContainer = styled.div`
   display: flex;

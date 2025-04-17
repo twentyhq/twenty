@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { IconChevronDown, MenuItem, useIcons } from 'twenty-ui';
 
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -33,6 +32,8 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 import { useTheme } from '@emotion/react';
+import { IconChevronDown, useIcons } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export const StyledInput = styled.input`
   background: transparent;
@@ -240,7 +241,7 @@ export const ObjectSortDropdownButton = ({
               setObjectSortDropdownSearchInput(event.target.value)
             }
           />
-          <DropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer scrollable={false}>
             {visibleFieldMetadataItems.map(
               (visibleFieldMetadataItem, index) => (
                 <MenuItem

@@ -1,6 +1,7 @@
-import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
+import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
+import { ActionScope } from '@/action-menu/actions/types/ActionScope';
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { ActionMenuEntryScope } from '@/action-menu/types/ActionMenuEntry';
 import { CommandMenuActionMenuDropdownHotkeyScope } from '@/action-menu/types/CommandMenuActionMenuDropdownHotkeyScope';
 import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -9,40 +10,26 @@ import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useTheme } from '@emotion/react';
-import { i18n } from '@lingui/core';
-import { Key } from 'ts-key-enum';
-import { Button, getOsControlSymbol, MenuItem } from 'twenty-ui';
+import { useContext } from 'react';
+import { Button } from 'twenty-ui/input';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 export const CommandMenuActionMenuDropdown = () => {
-  const actionMenuEntries = useRecoilComponentValueV2(
-    actionMenuEntriesComponentSelector,
-  );
+  const { actions } = useContext(ActionMenuContext);
 
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(
     ActionMenuComponentInstanceContext,
   );
 
-  const { closeDropdown, openDropdown } = useDropdownV2();
+  const { toggleDropdown } = useDropdownV2();
 
   const theme = useTheme();
 
   useScopedHotkeys(
-    [Key.Escape, 'ctrl+o,meta+o'],
-    () => {
-      closeDropdown(
-        getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
-      );
-    },
-    CommandMenuActionMenuDropdownHotkeyScope.CommandMenuActionMenuDropdown,
-    [closeDropdown],
-  );
-
-  useScopedHotkeys(
     ['ctrl+o,meta+o'],
     () => {
-      openDropdown(
+      toggleDropdown(
         getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
         {
           scope:
@@ -51,7 +38,7 @@ export const CommandMenuActionMenuDropdown = () => {
       );
     },
     AppHotkeyScope.CommandMenuOpen,
-    [openDropdown],
+    [toggleDropdown],
   );
 
   return (
@@ -71,25 +58,10 @@ export const CommandMenuActionMenuDropdown = () => {
       dropdownOffset={{ y: parseInt(theme.spacing(2), 10) }}
       dropdownComponents={
         <DropdownMenuItemsContainer>
-          {actionMenuEntries
-            .filter(
-              (actionMenuEntry) =>
-                actionMenuEntry.scope === ActionMenuEntryScope.RecordSelection,
-            )
-            .map((actionMenuEntry, index) => (
-              <MenuItem
-                key={index}
-                LeftIcon={actionMenuEntry.Icon}
-                onClick={() => {
-                  closeDropdown(
-                    getRightDrawerActionMenuDropdownIdFromActionMenuId(
-                      actionMenuId,
-                    ),
-                  );
-                  actionMenuEntry.onClick?.();
-                }}
-                text={i18n._(actionMenuEntry.label)}
-              />
+          {actions
+            .filter((action) => action.scope === ActionScope.RecordSelection)
+            .map((action) => (
+              <ActionComponent action={action} key={action.key} />
             ))}
         </DropdownMenuItemsContainer>
       }

@@ -10,8 +10,9 @@ import { useFindAllAgents } from '@/settings/service-center/agents/hooks/useFind
 import { Agent } from '@/settings/service-center/agents/types/Agent';
 import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
 import { IntegrationType } from '@/settings/service-center/types/IntegrationType';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 const StyledShowServiceCenterTabs = styled.div<{ isMobile: boolean }>`
@@ -43,7 +44,10 @@ export const ServiceCenterTabs = ({
   loading,
   isRightDrawer = false,
 }: ServiceCenterTabsProps) => {
-  const { activeTabId } = useTabList(TAB_LIST_COMPONENT_ID);
+  const [activeTabId] = useRecoilComponentStateV2(
+    activeTabIdComponentState,
+    TAB_LIST_COMPONENT_ID,
+  );
   // const activeTabId = useRecoilValue(activeTabIdState);
   // const { t } = useTranslation();
 

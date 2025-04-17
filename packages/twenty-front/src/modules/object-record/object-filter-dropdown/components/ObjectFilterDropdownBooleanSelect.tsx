@@ -14,8 +14,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { isDefined } from 'twenty-shared';
-import { IconCheck } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { IconCheck } from 'twenty-ui/display';
 
 const StyledBooleanSelectContainer = styled.div<{ selected?: boolean }>`
   align-items: center;
@@ -79,6 +79,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
       fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
       value: value.toString(),
       recordFilterGroupId: selectedFilter?.recordFilterGroupId,
+      positionInRecordFilterGroup: selectedFilter?.positionInRecordFilterGroup,
       type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
       label: fieldMetadataItemUsedInDropdown.label,
     });
@@ -89,7 +90,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
 
   return (
     <SelectableList
-      selectableListId="boolean-select"
+      selectableListInstanceId="boolean-select"
       selectableItemIdArray={options.map((option) => option.toString())}
       hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
       onEnter={(itemId) => {

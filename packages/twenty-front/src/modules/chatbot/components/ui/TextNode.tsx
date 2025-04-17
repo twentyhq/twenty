@@ -11,7 +11,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { memo, useEffect, useRef } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledDiv = styled.div`
   width: 100%;

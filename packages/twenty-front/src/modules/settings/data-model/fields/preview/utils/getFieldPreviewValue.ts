@@ -3,7 +3,7 @@ import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldVal
 import { generateDefaultFieldValue } from '@/object-record/utils/generateDefaultFieldValue';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type getFieldPreviewValueArgs = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'defaultValue'>;
