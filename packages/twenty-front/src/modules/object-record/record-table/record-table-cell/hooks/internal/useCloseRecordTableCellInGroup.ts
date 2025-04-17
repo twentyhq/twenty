@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { SOFT_FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/SoftFocusClickOutsideListenerId';
+import { FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/FocusClickOutsideListenerId';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
@@ -16,7 +16,7 @@ export const useCloseRecordTableCellInGroup = () => {
   const { setDragSelectionStartEnabled } = useDragSelect();
 
   const { toggleClickOutsideListener } = useClickOutsideListener(
-    SOFT_FOCUS_CLICK_OUTSIDE_LISTENER_ID,
+    FOCUS_CLICK_OUTSIDE_LISTENER_ID,
   );
 
   const closeCurrentTableCellInEditMode =
@@ -27,7 +27,7 @@ export const useCloseRecordTableCellInGroup = () => {
       toggleClickOutsideListener(true);
       setDragSelectionStartEnabled(true);
       closeCurrentTableCellInEditMode();
-      setHotkeyScope(TableHotkeyScope.TableSoftFocus);
+      setHotkeyScope(TableHotkeyScope.TableFocus);
     },
     [
       closeCurrentTableCellInEditMode,
