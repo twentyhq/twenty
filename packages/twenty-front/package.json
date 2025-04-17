@@ -1,6 +1,6 @@
 {
   "name": "twenty-front",
-  "version": "0.51.0-canary",
+  "version": "0.52.0-canary",
   "private": true,
   "type": "module",
   "scripts": {
@@ -54,7 +54,6 @@
     "buffer": "^6.0.3",
     "docx": "^9.1.0",
     "file-saver": "^2.0.5",
-    "recoil-sync": "^0.2.0",
     "transliteration": "^2.3.5",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*"

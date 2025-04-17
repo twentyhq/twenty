@@ -1,6 +1,6 @@
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated/graphql';
@@ -41,9 +41,14 @@ const NumberFieldInputWithContext = ({
 }: NumberFieldInputWithContextProps) => {
   const setHotKeyScope = useSetHotkeyScope();
 
+  const [isReady, setIsReady] = useState(false);
+
   useEffect(() => {
-    setHotKeyScope(DEFAULT_CELL_SCOPE.scope);
-  }, [setHotKeyScope]);
+    if (!isReady) {
+      setHotKeyScope(DEFAULT_CELL_SCOPE.scope);
+      setIsReady(true);
+    }
+  }, [isReady, setHotKeyScope]);
 
   return (
     <RecordFieldComponentInstanceContext.Provider
@@ -73,7 +78,7 @@ const NumberFieldInputWithContext = ({
           isReadOnly: false,
         }}
       >
-        <StorybookFieldInputDropdownFocusIdSetterEffect />
+        {isReady && <StorybookFieldInputDropdownFocusIdSetterEffect />}
         <NumberFieldValueSetterEffect value={value} />
         <NumberFieldInput
           onEnter={onEnter}
@@ -83,6 +88,7 @@ const NumberFieldInputWithContext = ({
           onShiftTab={onShiftTab}
         />
       </FieldContext.Provider>
+      {isReady && <div data-testid="is-ready-marker" />}
       <div data-testid="data-field-input-click-outside-div" />
     </RecordFieldComponentInstanceContext.Provider>
   );
@@ -137,22 +143,30 @@ type Story = StoryObj<typeof NumberFieldInputWithContext>;
 export const Default: Story = {};
 
 export const Enter: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
     expect(enterJestFn).toHaveBeenCalledTimes(0);
 
+    await canvas.findByTestId('is-ready-marker');
+    await userEvent.keyboard('{enter}');
+
     await waitFor(() => {
-      userEvent.keyboard('{enter}');
       expect(enterJestFn).toHaveBeenCalledTimes(1);
     });
   },
 };
 
 export const Escape: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
     expect(escapeJestfn).toHaveBeenCalledTimes(0);
 
+    await canvas.findByTestId('is-ready-marker');
+    await userEvent.keyboard('{esc}');
+
     await waitFor(() => {
-      userEvent.keyboard('{esc}');
       expect(escapeJestfn).toHaveBeenCalledTimes(1);
     });
   },
@@ -166,30 +180,40 @@ export const ClickOutside: Story = {
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
 
+    await canvas.findByTestId('is-ready-marker');
+    await userEvent.click(emptyDiv);
+
     await waitFor(() => {
-      userEvent.click(emptyDiv);
       expect(clickOutsideJestFn).toHaveBeenCalledTimes(1);
     });
   },
 };
 
 export const Tab: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
     expect(tabJestFn).toHaveBeenCalledTimes(0);
 
+    await canvas.findByTestId('is-ready-marker');
+    await userEvent.keyboard('{tab}');
+
     await waitFor(() => {
-      userEvent.keyboard('{tab}');
       expect(tabJestFn).toHaveBeenCalledTimes(1);
     });
   },
 };
 
 export const ShiftTab: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
     expect(shiftTabJestFn).toHaveBeenCalledTimes(0);
 
+    await canvas.findByTestId('is-ready-marker');
+    await userEvent.keyboard('{shift>}{tab}');
+
     await waitFor(() => {
-      userEvent.keyboard('{shift>}{tab}');
       expect(shiftTabJestFn).toHaveBeenCalledTimes(1);
     });
   },

@@ -19,6 +19,11 @@ export enum CheckboxSize {
   Small = 'small',
 }
 
+export enum CheckboxAccent {
+  Blue = 'blue',
+  Orange = 'orange',
+}
+
 type CheckboxProps = {
   checked: boolean;
   indeterminate?: boolean;
@@ -30,11 +35,13 @@ type CheckboxProps = {
   shape?: CheckboxShape;
   className?: string;
   disabled?: boolean;
+  accent?: CheckboxAccent;
 };
 
 type InputProps = {
   checkboxSize: CheckboxSize;
   variant: CheckboxVariant;
+  accent?: CheckboxAccent;
   indeterminate?: boolean;
   hoverable?: boolean;
   shape?: CheckboxShape;
@@ -68,12 +75,14 @@ const StyledInputContainer = styled.div<InputProps>`
     }
   }};
   position: relative;
-  ${({ hoverable, isChecked, theme, indeterminate, disabled }) => {
+  ${({ hoverable, isChecked, theme, indeterminate, disabled, accent }) => {
     if (!hoverable || disabled === true) return '';
     return `&:hover{
       background-color: ${
         indeterminate || isChecked
-          ? theme.background.transparent.blue
+          ? accent === CheckboxAccent.Blue
+            ? theme.background.transparent.blue
+            : theme.background.transparent.orange
           : theme.background.transparent.light
       };
     }}
@@ -100,9 +109,15 @@ const StyledInput = styled.input<InputProps>`
   & + label:before {
     --size: ${({ checkboxSize }) =>
       checkboxSize === CheckboxSize.Large ? '18px' : '12px'};
-    background: ${({ theme, indeterminate, isChecked, disabled }) => {
+    background: ${({ theme, indeterminate, isChecked, disabled, accent }) => {
       if (!(indeterminate || isChecked)) return 'transparent';
-      return disabled ? theme.adaptiveColors.blue3 : theme.color.blue;
+      return disabled
+        ? accent === CheckboxAccent.Blue
+          ? theme.adaptiveColors.blue3
+          : theme.adaptiveColors.orange3
+        : accent === CheckboxAccent.Blue
+          ? theme.color.blue
+          : theme.color.orange;
     }};
     border-color: ${({
       theme,
@@ -110,10 +125,17 @@ const StyledInput = styled.input<InputProps>`
       isChecked,
       variant,
       disabled,
+      accent,
     }) => {
       switch (true) {
         case indeterminate || isChecked:
-          return disabled ? theme.adaptiveColors.blue3 : theme.color.blue;
+          return disabled
+            ? accent === CheckboxAccent.Blue
+              ? theme.adaptiveColors.blue3
+              : theme.adaptiveColors.orange3
+            : accent === CheckboxAccent.Blue
+              ? theme.color.blue
+              : theme.color.orange;
         case disabled:
           return theme.border.color.strong;
         case variant === CheckboxVariant.Primary:
@@ -165,6 +187,7 @@ export const Checkbox = ({
   hoverable = true,
   className,
   disabled = false,
+  accent = CheckboxAccent.Blue,
 }: CheckboxProps) => {
   const [isInternalChecked, setIsInternalChecked] =
     React.useState<boolean>(false);
@@ -191,6 +214,7 @@ export const Checkbox = ({
       indeterminate={indeterminate}
       className={className}
       disabled={disabled}
+      accent={accent}
     >
       <StyledInput
         autoComplete="off"
@@ -206,6 +230,7 @@ export const Checkbox = ({
         isChecked={isInternalChecked}
         onChange={handleChange}
         disabled={disabled}
+        accent={accent}
       />
       <label htmlFor={checkboxId}>
         {indeterminate ? (

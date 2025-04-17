@@ -43,12 +43,17 @@ const StyledIconsContainer = styled.div`
   display: flex;
 `;
 
+const StyledEmptyText = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+`;
+
 export type CommandMenuContextChipProps = {
   Icons: React.ReactNode[];
   text?: string;
   onClick?: () => void;
   testId?: string;
   maxWidth?: string;
+  forceEmptyText?: boolean;
 };
 
 export const CommandMenuContextChip = ({
@@ -57,6 +62,7 @@ export const CommandMenuContextChip = ({
   onClick,
   testId,
   maxWidth,
+  forceEmptyText = false,
 }: CommandMenuContextChipProps) => {
   return (
     <StyledChip
@@ -70,7 +76,13 @@ export const CommandMenuContextChip = ({
           <Fragment key={index}>{Icon}</Fragment>
         ))}
       </StyledIconsContainer>
-      {text && <OverflowingTextWithTooltip text={text} />}
+      {text?.trim() ? (
+        <OverflowingTextWithTooltip text={text} />
+      ) : !forceEmptyText ? (
+        <StyledEmptyText>Untitled</StyledEmptyText>
+      ) : (
+        ''
+      )}
     </StyledChip>
   );
 };

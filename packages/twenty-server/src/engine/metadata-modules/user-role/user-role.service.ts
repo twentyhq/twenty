@@ -12,6 +12,7 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -24,6 +25,7 @@ export class UserRoleService {
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   public async assignRoleToUserWorkspace({
@@ -56,6 +58,33 @@ export class UserRoleService {
       workspaceId,
       id: Not(newUserWorkspaceRole.id),
     });
+
+    await this.workspacePermissionsCacheService.recomputeUserWorkspaceRoleMapCache(
+      {
+        workspaceId,
+      },
+    );
+  }
+
+  public async getRoleIdForUserWorkspace({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<string | undefined> {
+    if (!isDefined(userWorkspaceId)) {
+      return;
+    }
+
+    const userWorkspaceRoleMap =
+      await this.workspacePermissionsCacheService.getUserWorkspaceRoleMapFromCache(
+        {
+          workspaceId,
+        },
+      );
+
+    return userWorkspaceRoleMap.data[userWorkspaceId];
   }
 
   public async getRoleIdForUserWorkspace({
@@ -125,21 +154,13 @@ export class UserRoleService {
     roleId: string,
     workspaceId: string,
   ): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    const userWorkspaceRoles = await this.userWorkspaceRoleRepository.find({
-      where: {
-        roleId,
-        workspaceId,
-      },
-    });
+    const userWorkspaceIdsWithRole =
+      await this.getUserWorkspaceIdsAssignedToRole(roleId, workspaceId);
 
     const userIds = await this.userWorkspaceRepository
       .find({
         where: {
-          id: In(
-            userWorkspaceRoles.map(
-              (userWorkspaceRole) => userWorkspaceRole.userWorkspaceId,
-            ),
-          ),
+          id: In(userWorkspaceIdsWithRole),
         },
       })
       .then((userWorkspaces) =>
@@ -162,6 +183,22 @@ export class UserRoleService {
     });
 
     return workspaceMembers;
+  }
+
+  public async getUserWorkspaceIdsAssignedToRole(
+    roleId: string,
+    workspaceId: string,
+  ): Promise<string[]> {
+    const userWorkspaceRoleMap =
+      await this.workspacePermissionsCacheService.getUserWorkspaceRoleMapFromCache(
+        {
+          workspaceId,
+        },
+      );
+
+    return Object.entries(userWorkspaceRoleMap.data)
+      .filter(([_, roleIdFromMap]) => roleIdFromMap === roleId)
+      .map(([userWorkspaceId]) => userWorkspaceId);
   }
 
   public async validateUserWorkspaceIsNotUniqueAdminOrThrow({

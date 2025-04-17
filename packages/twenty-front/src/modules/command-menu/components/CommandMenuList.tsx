@@ -43,6 +43,10 @@ const StyledInnerList = styled.div`
   }
 `;
 
+const StyledCommandMenuList = styled.div`
+  overflow-y: hidden;
+`;
+
 const StyledEmpty = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.light};
@@ -68,14 +72,14 @@ export const CommandMenuList = ({
   );
 
   return (
-    <>
+    <StyledCommandMenuList>
       <CommandMenuDefaultSelectionEffect
         selectableItemIds={selectableItemIds}
       />
       <ScrollWrapper componentInstanceId={`scroll-wrapper-command-menu`}>
         <StyledInnerList>
           <SelectableList
-            selectableListId="command-menu-list"
+            selectableListInstanceId="command-menu-list"
             hotkeyScope={AppHotkeyScope.CommandMenuOpen}
             selectableItemIdArray={selectableItemIds}
             onEnter={(itemId) => {
@@ -104,6 +108,6 @@ export const CommandMenuList = ({
           </SelectableList>
         </StyledInnerList>
       </ScrollWrapper>
-    </>
+    </StyledCommandMenuList>
   );
 };

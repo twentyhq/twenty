@@ -6,9 +6,9 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
-import { WorkspaceFeatureFlagMapCacheModule } from 'src/engine/metadata-modules/workspace-feature-flag-map-cache.service.ts/workspace-roles-feature-flag-map-cache.module';
+import { WorkspaceFeatureFlagsMapCacheModule } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
-import { WorkspaceRolesPermissionsCacheModule } from 'src/engine/metadata-modules/workspace-roles-permissions-cache/workspace-roles-permissions-cache.module';
+import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { entitySchemaFactories } from 'src/engine/twenty-orm/factories';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -26,8 +26,8 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     WorkspaceCacheStorageModule,
     WorkspaceMetadataCacheModule,
     PermissionsModule,
-    WorkspaceRolesPermissionsCacheModule,
-    WorkspaceFeatureFlagMapCacheModule,
+    WorkspaceFeatureFlagsMapCacheModule,
+    WorkspacePermissionsCacheModule,
     FeatureFlagModule,
   ],
   providers: [

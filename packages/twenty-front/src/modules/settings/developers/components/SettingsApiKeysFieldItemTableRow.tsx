@@ -4,7 +4,10 @@ import styled from '@emotion/styled';
 import { ApiFieldItem } from '@/settings/developers/types/api-key/ApiFieldItem';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { IconChevronRight } from 'twenty-ui/display';
+import {
+  IconChevronRight,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
@@ -41,7 +44,9 @@ export const SettingsApiKeysFieldItemTableRow = ({
 
   return (
     <StyledApisFieldTableRow to={to}>
-      <StyledNameTableCell>{fieldItem.name}</StyledNameTableCell>
+      <StyledNameTableCell>
+        <OverflowingTextWithTooltip text={fieldItem.name} />
+      </StyledNameTableCell>
       <TableCell
         color={
           fieldItem.expiration === 'Expired'

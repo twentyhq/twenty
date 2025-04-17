@@ -30,10 +30,14 @@ export type ChipProps = {
   maxWidth?: number;
   variant?: ChipVariant;
   accent?: ChipAccent;
-  leftComponent?: (() => ReactNode) | null;
+  leftComponent?: ReactNode | null;
   rightComponent?: (() => ReactNode) | null;
   className?: string;
 };
+
+const StyledDiv = withTheme(styled.div<{ theme: Theme }>`
+  color: ${({ theme }) => theme.font.color.tertiary};
+`);
 
 const StyledContainer = withTheme(styled.div<
   Pick<
@@ -146,9 +150,11 @@ export const Chip = ({
       className={className}
       maxWidth={maxWidth}
     >
-      {leftComponent?.()}
-      {!isLabelHidden && (
+      {leftComponent}
+      {!isLabelHidden && label.trim() ? (
         <OverflowingTextWithTooltip size={size} text={label} />
+      ) : (
+        <StyledDiv>Untitled</StyledDiv>
       )}
       {rightComponent?.()}
     </StyledContainer>

@@ -8,6 +8,7 @@ import {
   workflowDatabaseEventTriggerSchema,
   workflowDeleteRecordActionSchema,
   workflowDeleteRecordActionSettingsSchema,
+  workflowExecutorOutputSchema,
   workflowFindRecordsActionSchema,
   workflowFindRecordsActionSettingsSchema,
   workflowFormActionSchema,
@@ -110,6 +111,9 @@ export type WorkflowVersion = {
 };
 
 export type WorkflowRunOutput = z.infer<typeof workflowRunOutputSchema>;
+export type WorkflowExecutorOutput = z.infer<
+  typeof workflowExecutorOutputSchema
+>;
 export type WorkflowRunOutputStepsOutput = z.infer<
   typeof workflowRunOutputStepsOutputSchema
 >;

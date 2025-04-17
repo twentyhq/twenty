@@ -4,8 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { i18n } from '@lingui/core';
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { isDefined } from 'class-validator';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, In, Not, Repository } from 'typeorm';
 
 import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
@@ -88,6 +88,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         objectMetadataInput.workspaceId,
       );
+
+    objectMetadataInput.labelSingular = capitalize(
+      objectMetadataInput.labelSingular,
+    );
+    objectMetadataInput.labelPlural = capitalize(
+      objectMetadataInput.labelPlural,
+    );
 
     validateObjectMetadataInputNamesOrThrow(objectMetadataInput);
     validateObjectMetadataInputLabelsOrThrow(objectMetadataInput);
@@ -212,6 +219,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     input: UpdateOneObjectInput,
     workspaceId: string,
   ): Promise<ObjectMetadataEntity> {
+    const { update } = input;
+
+    if (isDefined(update.labelSingular)) {
+      update.labelSingular = capitalize(update.labelSingular);
+    }
+
+    if (isDefined(update.labelPlural)) {
+      update.labelPlural = capitalize(update.labelPlural);
+    }
+
+    input.update = update;
+
     validateObjectMetadataInputNamesOrThrow(input.update);
 
     const existingObjectMetadata = await this.objectMetadataRepository.findOne({

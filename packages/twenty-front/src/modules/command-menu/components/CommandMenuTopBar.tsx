@@ -21,8 +21,8 @@ import { useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
 import { IconChevronLeft, IconX } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
 
 const StyledInputContainer = styled.div`
@@ -126,6 +126,7 @@ export const CommandMenuTopBar = () => {
                 Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
                 onClick={goBackFromCommandMenu}
                 testId="command-menu-go-back-button"
+                forceEmptyText={true}
               />
             </motion.div>
           )}

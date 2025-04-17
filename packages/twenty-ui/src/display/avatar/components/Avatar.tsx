@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { invalidAvatarUrlsState } from '@ui/display/avatar/components/states/isInvalidAvatarUrlState';
 import { AVATAR_PROPERTIES_BY_SIZE } from '@ui/display/avatar/constants/AvatarPropertiesBySize';
@@ -11,6 +10,7 @@ import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme';
 import { Nullable, stringToHslColor } from '@ui/utilities';
 import { REACT_APP_SERVER_BASE_URL } from '@ui/utilities/config';
+import { useRecoilState } from 'recoil';
 import { getImageAbsoluteURI } from 'twenty-shared/utils';
 
 const StyledAvatar = styled.div<{
@@ -90,7 +90,10 @@ export const Avatar = ({
       })
     : null;
 
-  const placeholderChar = placeholder?.[0]?.toLocaleUpperCase();
+  const placeholderFirstChar = placeholder?.trim()?.charAt(0);
+  const isPlaceholderFirstCharEmpty =
+    !placeholderFirstChar || placeholderFirstChar === '';
+  const placeholderChar = placeholderFirstChar?.toUpperCase() || '-';
 
   const showPlaceholder =
     isNull(avatarImageURI) || invalidAvatarUrls.includes(avatarImageURI);
@@ -101,10 +104,12 @@ export const Avatar = ({
     }
   };
 
-  const fixedColor =
-    color ?? stringToHslColor(placeholderColorSeed ?? '', 75, 25);
-  const fixedBackgroundColor =
-    backgroundColor ?? stringToHslColor(placeholderColorSeed ?? '', 75, 85);
+  const fixedColor = isPlaceholderFirstCharEmpty
+    ? theme.font.color.tertiary
+    : (color ?? stringToHslColor(placeholderColorSeed ?? '', 75, 25));
+  const fixedBackgroundColor = isPlaceholderFirstCharEmpty
+    ? theme.background.transparent.light
+    : (backgroundColor ?? stringToHslColor(placeholderColorSeed ?? '', 75, 85));
 
   const showBackgroundColor = showPlaceholder;
 

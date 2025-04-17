@@ -9,11 +9,10 @@ import {
 } from '@/spreadsheet-import/types';
 import { TextInput } from '@/ui/input/components/TextInput';
 
-import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import { isDefined } from 'twenty-shared/utils';
-import { ImportedStructuredRowMetadata } from '../types';
 import { AppTooltip } from 'twenty-ui/display';
 import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
+import { ImportedStructuredRowMetadata } from '../types';
 
 const StyledHeaderContainer = styled.div`
   align-items: center;
@@ -59,6 +58,10 @@ const StyledDefaultContainer = styled.div`
   min-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+`;
+
+const StyledSelectReadonlyValueContianer = styled.div`
+  padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const SELECT_COLUMN_KEY = 'select-row';
@@ -130,26 +133,10 @@ export const generateColumns = <T extends string>(
 
         switch (column.fieldType.type) {
           case 'select': {
-            const value = column.fieldType.options.find(
-              (option) => option.value === (row[columnKey] as string),
-            );
-
             component = (
-              <MatchColumnSelect
-                value={
-                  value
-                    ? ({
-                        Icon: undefined,
-                        ...value,
-                      } as const)
-                    : value
-                }
-                onChange={(value) => {
-                  onRowChange({ ...row, [columnKey]: value?.value }, true);
-                }}
-                options={column.fieldType.options}
-                columnIndex={column.key}
-              />
+              <StyledSelectReadonlyValueContianer>
+                {row[columnKey]}
+              </StyledSelectReadonlyValueContianer>
             );
             break;
           }

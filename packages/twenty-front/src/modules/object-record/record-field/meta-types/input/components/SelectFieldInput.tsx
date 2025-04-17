@@ -50,7 +50,7 @@ export const SelectFieldInput = ({
       onCancel?.();
       resetSelectedItem();
     },
-    `select-field-input-${fieldDefinition.metadata.fieldName}`,
+    DEFAULT_CELL_SCOPE.scope,
     [onCancel, resetSelectedItem],
   );
 

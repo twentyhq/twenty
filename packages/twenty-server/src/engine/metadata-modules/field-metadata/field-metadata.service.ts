@@ -257,9 +257,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
 
       if (
-        fieldMetadataInput.name ||
-        updatableFieldInput.options ||
-        updatableFieldInput.defaultValue
+        isDefined(fieldMetadataInput.name) ||
+        isDefined(updatableFieldInput.options) ||
+        isDefined(updatableFieldInput.defaultValue)
       ) {
         await this.workspaceMigrationService.createCustomMigration(
           generateMigrationName(`update-${updatedFieldMetadata.name}`),

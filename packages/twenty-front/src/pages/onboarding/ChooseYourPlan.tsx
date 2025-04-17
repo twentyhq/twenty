@@ -8,17 +8,21 @@ import { TrialCard } from '@/billing/components/TrialCard';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
 import { isBillingPriceLicensed } from '@/billing/utils/isBillingPriceLicensed';
 import { billingState } from '@/client-config/states/billingState';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
-import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
+import {
+  CAL_LINK,
+  ClickToActionLink,
+  TWENTY_PRICING_LINK,
+} from 'twenty-ui/navigation';
 import {
   BillingPlanKey,
   BillingPriceLicensedDto,
-  SubscriptionInterval,
   useBillingBaseProductPricesQuery,
 } from '~/generated/graphql';
 
@@ -94,7 +98,7 @@ export const ChooseYourPlan = () => {
 
   const { data: plans } = useBillingBaseProductPricesQuery();
 
-  const currentPlan = billingCheckoutSession.plan || BillingPlanKey.PRO;
+  const currentPlan = billingCheckoutSession.plan;
 
   const getPlanBenefits = (planKey: BillingPlanKey) => {
     if (planKey === BillingPlanKey.ENTERPRISE) {
@@ -128,7 +132,7 @@ export const ChooseYourPlan = () => {
   const baseProductPrice = baseProduct?.prices?.find(
     (price): price is BillingPriceLicensedDto =>
       isBillingPriceLicensed(price) &&
-      price.recurringInterval === SubscriptionInterval.Month,
+      price.recurringInterval === billingCheckoutSession.interval,
   );
 
   const hasWithoutCreditCardTrialPeriod = billing?.trialPeriods.some(
@@ -160,32 +164,15 @@ export const ChooseYourPlan = () => {
     };
   };
 
-  const handleSwitchPlan = (planKey: BillingPlanKey) => {
-    return () => {
-      if (isDefined(baseProductPrice)) {
-        setBillingCheckoutSession({
-          plan: planKey,
-          interval: baseProductPrice.recurringInterval,
-          requirePaymentMethod: billingCheckoutSession.requirePaymentMethod,
-        });
-      }
-    };
-  };
-
   const { signOut } = useAuth();
 
   const withCreditCardTrialPeriodDuration = withCreditCardTrialPeriod?.duration;
-
-  const alternatePlan =
-    currentPlan === BillingPlanKey.PRO
-      ? BillingPlanKey.ENTERPRISE
-      : BillingPlanKey.PRO;
 
   const planName = plans?.plans.find((plan) => plan.planKey === currentPlan)
     ?.baseProduct.name;
 
   return (
-    <>
+    <Modal.Content isVerticalCentered>
       {isDefined(baseProductPrice) && isDefined(billing) ? (
         <>
           <Title noMarginTop>
@@ -252,8 +239,8 @@ export const ChooseYourPlan = () => {
               <Trans>Log out</Trans>
             </ClickToActionLink>
             <span />
-            <ClickToActionLink onClick={handleSwitchPlan(alternatePlan)}>
-              <Trans>Switch Plan</Trans>
+            <ClickToActionLink href={TWENTY_PRICING_LINK}>
+              <Trans>Change Plan</Trans>
             </ClickToActionLink>
             <span />
             <ClickToActionLink href={CAL_LINK} target="_blank" rel="noreferrer">
@@ -264,6 +251,6 @@ export const ChooseYourPlan = () => {
       ) : (
         <StyledChooseYourPlanPlaceholder />
       )}
-    </>
+    </Modal.Content>
   );
 };

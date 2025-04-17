@@ -35,6 +35,7 @@ import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPic
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { IconX } from 'twenty-ui/display';
+import { VIEW_PICKER_TYPE_SELECT_OPTIONS } from '@/views/view-picker/constants/ViewPickerTypeSelectOptions';
 
 const StyledNoKanbanFieldAvailableContainer = styled.div`
   color: ${({ theme }) => theme.font.color.light};
@@ -163,18 +164,10 @@ export const ViewPickerContentCreateMode = () => {
               setViewPickerIsDirty(true);
               setViewPickerType(value);
             }}
-            options={[
-              {
-                value: ViewType.Table,
-                label: t`Table`,
-                Icon: viewTypeIconMapping(ViewType.Table),
-              },
-              {
-                value: ViewType.Kanban,
-                label: t`Kanban`,
-                Icon: viewTypeIconMapping(ViewType.Kanban),
-              },
-            ]}
+            options={VIEW_PICKER_TYPE_SELECT_OPTIONS.map((option) => ({
+              ...option,
+              label: t(option.label),
+            }))}
             dropdownId={VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID}
           />
         </ViewPickerSelectContainer>

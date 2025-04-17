@@ -18,16 +18,16 @@ export class WorkspaceDataSource extends DataSource {
   readonly manager: WorkspaceEntityManager;
   featureFlagMapVersion: string;
   featureFlagMap: FeatureFlagMap;
-  rolesPermissionsVersion?: string;
-  permissionsPerRoleId?: ObjectRecordsPermissionsByRoleId;
+  rolesPermissionsVersion: string;
+  permissionsPerRoleId: ObjectRecordsPermissionsByRoleId;
 
   constructor(
     internalContext: WorkspaceInternalContext,
     options: DataSourceOptions,
     featureFlagMapVersion: string,
     featureFlagMap: FeatureFlagMap,
-    rolesPermissionsVersion?: string,
-    permissionsPerRoleId?: ObjectRecordsPermissionsByRoleId,
+    rolesPermissionsVersion: string,
+    permissionsPerRoleId: ObjectRecordsPermissionsByRoleId,
   ) {
     super(options);
     this.internalContext = internalContext;

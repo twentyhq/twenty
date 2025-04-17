@@ -5194,6 +5194,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@clickhouse/client-common@npm:1.11.0":
+  version: 1.11.0
+  resolution: "@clickhouse/client-common@npm:1.11.0"
+  checksum: 10c0/84a74458acdf279bc4e844c235d0f658cb77f82e90f19fa285481c31f2f17210a5e801a61f080d6dfd100d970bc4e15a5692d2b7fd067502fbaad99d0dc51310
+  languageName: node
+  linkType: hard
+
+"@clickhouse/client@npm:^1.11.0":
+  version: 1.11.0
+  resolution: "@clickhouse/client@npm:1.11.0"
+  dependencies:
+    "@clickhouse/client-common": "npm:1.11.0"
+  checksum: 10c0/8557de33dd9c88d2813d563f89b49e666dc2d8166c9131e9727f6935db8dc65428927b4b4ab20b1bc7646b9c38c1eb8d1e372ba483b0b2bb69d64ed89488dec2
+  languageName: node
+  linkType: hard
+
 "@codemirror/autocomplete@npm:^6.0.0, @codemirror/autocomplete@npm:^6.4.0":
   version: 6.18.0
   resolution: "@codemirror/autocomplete@npm:6.18.0"
@@ -16492,13 +16508,6 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   checksum: 10c0/2eacf7ed585b8e6e6f191d0cf30c693a09a006314eb0d8def9b96de02b4f54db594e0c60480e6444dc36cd79958abf35c8e7142a57898cc9899b999ab565a5cb
-  languageName: node
-  linkType: hard
-
-"@recoiljs/refine@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "@recoiljs/refine@npm:0.1.1"
-  checksum: 10c0/27ca1c4ea500b1b99a3af5ee48d6749310e5138e83b87ddfb41304e2222fa64567acb985f340334ab73980202ab277a0f133c40817fbec786076c06bfb3f5363
   languageName: node
   linkType: hard
 
@@ -50073,18 +50082,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recoil-sync@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "recoil-sync@npm:0.2.0"
-  dependencies:
-    "@recoiljs/refine": "npm:^0.1.1"
-    transit-js: "npm:^0.8.874"
-  peerDependencies:
-    recoil: ">=0.7.3"
-  checksum: 10c0/f3a671a3cfcecadb5bbb22d47b3b040721be1013ee91d4fa0570a64ca1707eb68e818b291a82e133551adf4a2dd2fc9a0715d550c1f1e3db82f3b8d9169e2a5a
-  languageName: node
-  linkType: hard
-
 "recoil@npm:^0.7.7":
   version: 0.7.7
   resolution: "recoil@npm:0.7.7"
@@ -54388,13 +54385,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"transit-js@npm:^0.8.874":
-  version: 0.8.874
-  resolution: "transit-js@npm:0.8.874"
-  checksum: 10c0/6ca0b413f1e3780a4a56b9bbde54b67a2ffefda1c052f8dc68bf28c1a3df4c29baa6f17f60484c9f2fb056a8c7dcd1fe04d24e091fb99afe1525e4d4406ad58a
-  languageName: node
-  linkType: hard
-
 "transliteration@npm:^2.3.5":
   version: 2.3.5
   resolution: "transliteration@npm:2.3.5"
@@ -55005,7 +54995,6 @@ __metadata:
     eslint-plugin-unused-imports: "npm:^3.0.0"
     file-saver: "npm:^2.0.5"
     optionator: "npm:^0.9.1"
-    recoil-sync: "npm:^0.2.0"
     transliteration: "npm:^2.3.5"
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
@@ -55016,6 +55005,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-server@workspace:packages/twenty-server"
   dependencies:
+    "@clickhouse/client": "npm:^1.11.0"
     "@esbuild-plugins/node-modules-polyfill": "npm:^0.2.2"
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch"
     "@langchain/mistralai": "npm:^0.0.24"
