@@ -24,7 +24,7 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
     !isReadOnly ? BORDER_COMMON.radius.sm : 'none'};
   border-radius: ${BORDER_COMMON.radius.sm};
   box-sizing: border-box;
-  cursor: pointer;
+  cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
   display: flex;
 
   height: 32px;
@@ -33,8 +33,6 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
     isReadOnly
       ? `1px solid ${theme.border.color.medium}`
       : `1px solid ${theme.font.color.extraLight}`};
-
-  position: relative;
 
   position: relative;
   user-select: none;
