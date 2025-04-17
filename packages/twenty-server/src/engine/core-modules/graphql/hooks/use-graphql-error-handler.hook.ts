@@ -13,6 +13,11 @@ import { generateGraphQLErrorFromError } from 'src/engine/core-modules/graphql/u
 import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { shouldCaptureException } from 'src/engine/core-modules/graphql/utils/should-capture-exception.util';
 
+const DEFAULT_EVENT_ID_KEY = 'exceptionEventId';
+const SCHEMA_VERSION_HEADER = 'x-schema-version';
+const SCHEMA_MISMATCH_ERROR =
+  'Your workspace has been updated with a new data model. Please refresh the page.';
+
 type GraphQLErrorHandlerHookOptions = {
   /**
    * The exception handler service to use.
@@ -30,17 +35,19 @@ export const useGraphQLErrorHandlerHook = <
 >(
   options: GraphQLErrorHandlerHookOptions,
 ): Plugin<PluginContext> => {
-  const eventIdKey = options.eventIdKey === null ? null : 'exceptionEventId';
+  const eventIdKey = options.eventIdKey === null ? null : DEFAULT_EVENT_ID_KEY;
 
-  function addEventId(
-    err: GraphQLError,
-    eventId: string | undefined | null,
-  ): GraphQLError {
-    if (eventIdKey !== null && eventId) {
-      err.extensions[eventIdKey] = eventId;
+  function extractWorkspaceInfo(req: GraphQLContext['req']) {
+    if (!req.workspace) {
+      return null;
     }
 
-    return err;
+    return {
+      id: req.workspace.id,
+      displayName: req.workspace.displayName,
+      createdAt: req.workspace.createdAt?.toISOString() ?? null,
+      activationStatus: req.workspace.activationStatus,
+    };
   }
 
   return {
@@ -49,6 +56,11 @@ export const useGraphQLErrorHandlerHook = <
       const rootOperation = args.document.definitions.find(
         (o) => o.kind === Kind.OPERATION_DEFINITION,
       ) as OperationDefinitionNode;
+
+      if (!rootOperation) {
+        return;
+      }
+
       const operationType = rootOperation.operation;
       const user = args.contextValue.req.user;
       const document = getDocumentString(args.document, print);
@@ -56,6 +68,7 @@ export const useGraphQLErrorHandlerHook = <
         args.operationName ||
         rootOperation.name?.value ||
         'Anonymous Operation';
+      const workspaceInfo = extractWorkspaceInfo(args.contextValue.req);
 
       return {
         onExecuteDone(payload) {
@@ -63,81 +76,81 @@ export const useGraphQLErrorHandlerHook = <
             result,
             setResult,
           }) => {
-            if (result.errors && result.errors.length > 0) {
-              const originalErrors = result.errors.map((error) => {
-                const originalError = error.originalError;
+            if (!result.errors || result.errors.length === 0) {
+              return;
+            }
 
-                return originalError instanceof BaseGraphQLError
-                  ? error.originalError
-                  : generateGraphQLErrorFromError(error);
-              });
+            // Step 1: Flatten errors - extract original errors when available
+            const originalErrors = result.errors.map((error) => {
+              return error.originalError || error;
+            });
 
-              const errorsToCapture = originalErrors.reduce<BaseGraphQLError[]>(
-                (acc, error) => {
-                  if (shouldCaptureException(error)) {
-                    acc.push(error);
-                  }
+            // Step 2: Send errors to monitoring service (with stack traces)
+            const errorsToCapture = originalErrors.filter(
+              shouldCaptureException,
+            );
 
-                  return acc;
-                },
-                [],
-              );
-
-              if (errorsToCapture.length > 0) {
-                const eventIds = exceptionHandlerService.captureExceptions(
-                  errorsToCapture,
-                  {
-                    operation: {
-                      name: opName,
-                      type: operationType,
-                    },
-                    document,
-                    user,
-                    workspace: {
-                      id: args.contextValue.req.workspace?.id,
-                      displayName: args.contextValue.req.workspace?.displayName,
-                      createdAt:
-                        args.contextValue.req.workspace?.createdAt.toISOString(),
-                      activationStatus:
-                        args.contextValue.req.workspace?.activationStatus,
-                    },
+            if (errorsToCapture.length > 0) {
+              const eventIds = exceptionHandlerService.captureExceptions(
+                errorsToCapture,
+                {
+                  operation: {
+                    name: opName,
+                    type: operationType,
                   },
-                );
-
-                errorsToCapture.map((err, i) => addEventId(err, eventIds?.[i]));
-              }
-
-              const nonCapturedErrors = originalErrors.filter(
-                (error) => !errorsToCapture.includes(error),
+                  document,
+                  user,
+                  workspace: workspaceInfo,
+                },
               );
 
-              setResult({
-                ...result,
-                errors: [...nonCapturedErrors, ...errorsToCapture],
+              errorsToCapture.forEach((_, i) => {
+                if (eventIds?.[i] && eventIdKey !== null) {
+                  originalErrors[
+                    originalErrors.indexOf(errorsToCapture[i])
+                  ].eventId = eventIds[i];
+                }
               });
             }
+
+            // Step 3: Transform errors for GraphQL response (clean GraphQL errors)
+            const transformedErrors = originalErrors.map((error) => {
+              const graphqlError =
+                error instanceof BaseGraphQLError
+                  ? error
+                  : generateGraphQLErrorFromError(error);
+
+              if (error.eventId && eventIdKey) {
+                graphqlError.extensions[eventIdKey] = error.eventId;
+              }
+
+              return graphqlError;
+            });
+
+            setResult({
+              ...result,
+              errors: transformedErrors,
+            });
           };
 
           return handleStreamOrSingleExecutionResult(payload, handleResult);
         },
       };
     },
+
     onValidate: ({ context, validateFn, params: { documentAST, schema } }) => {
       const errors = validateFn(schema, documentAST);
 
       if (Array.isArray(errors) && errors.length > 0) {
         const headers = context.req.headers;
         const currentMetadataVersion = context.req.workspaceMetadataVersion;
-
-        const requestMetadataVersion = headers['x-schema-version'];
+        const requestMetadataVersion = headers[SCHEMA_VERSION_HEADER];
 
         if (
           requestMetadataVersion &&
           requestMetadataVersion !== `${currentMetadataVersion}`
         ) {
-          throw new GraphQLError(
-            `Schema version mismatch, please refresh the page.`,
-          );
+          throw new GraphQLError(SCHEMA_MISMATCH_ERROR);
         }
       }
     },

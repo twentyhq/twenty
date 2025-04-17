@@ -1,8 +1,9 @@
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetImportFields } from '@/spreadsheet-import/types/SpreadsheetImportFields';
+import { SpreadsheetImportImportValidationResult } from '@/spreadsheet-import/types/SpreadsheetImportImportValidationResult';
 import { ImportedRow } from '@/spreadsheet-import/types/SpreadsheetImportImportedRow';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types/SpreadsheetImportImportedStructuredRow';
-import { SpreadsheetImportImportValidationResult } from '@/spreadsheet-import/types/SpreadsheetImportImportValidationResult';
 import { SpreadsheetImportRowHook } from '@/spreadsheet-import/types/SpreadsheetImportRowHook';
 import { SpreadsheetImportTableHook } from '@/spreadsheet-import/types/SpreadsheetImportTableHook';
 import { SpreadsheetImportStep } from '../steps/types/SpreadsheetImportStep';
@@ -58,4 +59,5 @@ export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
   rtl?: boolean;
   // Allow header selection
   selectHeader?: boolean;
+  availableFieldMetadataItems: FieldMetadataItem[];
 };

@@ -6,6 +6,7 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
+import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta<PageDecoratorArgs> = {
@@ -19,6 +20,7 @@ const meta: Meta<PageDecoratorArgs> = {
   },
   parameters: {
     msw: graphqlMocks,
+    prefetchLoadingSetDelay: 1000,
   },
 };
 
@@ -29,7 +31,7 @@ export type Story = StoryObj<typeof RecordIndexPage>;
 export const Default: Story = {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  decorators: [PageDecorator],
+  decorators: [PrefetchLoadingDecorator, PageDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

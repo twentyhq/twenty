@@ -1,5 +1,8 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useRedirectToDefaultDomain } from '~/modules/domain-manager/hooks/useRedirectToDefaultDomain';
+import { AppPath } from '~/modules/types/AppPath';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { getImageAbsoluteURI } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
@@ -45,6 +48,7 @@ const StyledPrimaryLogo = styled.div<{ src: string }>`
 `;
 
 export const Logo = (props: LogoProps) => {
+  const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
   const defaultPrimaryLogoUrl = `${window.location.origin}/icons/windows11/Woulz-logo.png`;
 
   const primaryLogoUrl = getImageAbsoluteURI({
@@ -59,9 +63,20 @@ export const Logo = (props: LogoProps) => {
       })
     : null;
 
+  const isUsingDefaultLogo = !props.primaryLogo;
+
   return (
     <StyledContainer>
-      <StyledPrimaryLogo src={primaryLogoUrl} />
+      {isUsingDefaultLogo ? (
+        <UndecoratedLink
+          to={AppPath.SignInUp}
+          onClick={redirectToDefaultDomain}
+        >
+          <StyledPrimaryLogo src={primaryLogoUrl ?? ''} />
+        </UndecoratedLink>
+      ) : (
+        <StyledPrimaryLogo src={primaryLogoUrl ?? ''} />
+      )}
       {secondaryLogoUrl && (
         <StyledSecondaryLogoContainer>
           <StyledSecondaryLogo src={secondaryLogoUrl} />

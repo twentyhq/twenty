@@ -5,8 +5,8 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 import { useLingui } from '@lingui/react/macro';
-import { IconButton } from 'twenty-ui/input';
 import { IconX } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 
 const StyledCloseButtonContainer = styled.div`
   align-items: center;

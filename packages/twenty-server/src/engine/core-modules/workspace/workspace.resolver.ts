@@ -153,7 +153,7 @@ export class WorkspaceResolver {
       logo: paths[0],
     });
 
-    const workspaceLogoToken = await this.fileService.encodeFileToken({
+    const workspaceLogoToken = this.fileService.encodeFileToken({
       workspaceId: id,
     });
 
@@ -235,7 +235,7 @@ export class WorkspaceResolver {
   async logo(@Parent() workspace: Workspace): Promise<string> {
     if (workspace.logo) {
       try {
-        const workspaceLogoToken = await this.fileService.encodeFileToken({
+        const workspaceLogoToken = this.fileService.encodeFileToken({
           workspaceId: workspace.id,
         });
 
@@ -306,7 +306,7 @@ export class WorkspaceResolver {
 
       if (workspace.logo) {
         try {
-          const workspaceLogoToken = await this.fileService.encodeFileToken({
+          const workspaceLogoToken = this.fileService.encodeFileToken({
             workspaceId: workspace.id,
           });
 

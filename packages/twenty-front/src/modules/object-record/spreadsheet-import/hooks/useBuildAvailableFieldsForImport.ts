@@ -3,8 +3,8 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { COMPOSITE_FIELD_IMPORT_LABELS } from '@/object-record/spreadsheet-import/constants/CompositeFieldImportLabels';
 import { AvailableFieldForImport } from '@/object-record/spreadsheet-import/types/AvailableFieldForImport';
 import { getSpreadSheetFieldValidationDefinitions } from '@/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useIcons } from 'twenty-ui/display';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type CompositeFieldType = keyof typeof COMPOSITE_FIELD_IMPORT_LABELS;
 
@@ -42,17 +42,17 @@ export const useBuildAvailableFieldsForImport = () => {
       validationTypeResolver?: ValidationTypeResolver,
     ) => {
       Object.entries(COMPOSITE_FIELD_IMPORT_LABELS[fieldType]).forEach(
-        ([key, fieldLabel]) => {
-          const label = `${fieldLabel} (${fieldMetadataItem.label})`;
+        ([key, subFieldLabel]) => {
+          const label = `${fieldMetadataItem.label} / ${subFieldLabel}`;
           // Use the custom validation type if provided, otherwise use the field's type
           const validationType = validationTypeResolver
-            ? validationTypeResolver(key, fieldLabel)
+            ? validationTypeResolver(key, subFieldLabel)
             : fieldMetadataItem.type;
 
           availableFieldsForImport.push(
             createBaseField(fieldMetadataItem, {
               label,
-              key: `${fieldLabel} (${fieldMetadataItem.name})`,
+              key: `${subFieldLabel} (${fieldMetadataItem.name})`,
               fieldValidationDefinitions:
                 getSpreadSheetFieldValidationDefinitions(validationType, label),
             }),
@@ -135,6 +135,12 @@ export const useBuildAvailableFieldsForImport = () => {
           fieldMetadataItem,
           FieldMetadataType.CURRENCY,
           currencyValidationResolver,
+        );
+      },
+      [FieldMetadataType.ACTOR]: (fieldMetadataItem) => {
+        handleCompositeFieldWithLabels(
+          fieldMetadataItem,
+          FieldMetadataType.ACTOR,
         );
       },
       [FieldMetadataType.RELATION]: (fieldMetadataItem) => {

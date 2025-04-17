@@ -13,19 +13,25 @@ type BooleanDisplayProps = {
   value: boolean | null | undefined;
 };
 
+const StyledContainer = styled.div`
+  height: 20px;
+  display: flex;
+  align-items: center;
+`;
+
 export const BooleanDisplay = ({ value }: BooleanDisplayProps) => {
   if (value === null || value === undefined) {
-    return <></>;
+    return <StyledContainer />;
   }
 
   const isTrue = value === true;
 
   return (
-    <>
+    <StyledContainer>
       {isTrue ? <IconCheck size={iconSizeSm} /> : <IconX size={iconSizeSm} />}
       <StyledBooleanFieldValue>
         {isTrue ? 'True' : 'False'}
       </StyledBooleanFieldValue>
-    </>
+    </StyledContainer>
   );
 };
