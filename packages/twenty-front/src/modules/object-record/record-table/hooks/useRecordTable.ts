@@ -145,7 +145,8 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const setFocusPosition = useSetFocusPosition(recordTableId);
 
-  const setIsFocusActive = useSetIsFocusActive(recordTableId);
+  const { setIsFocusActiveForCurrentPosition } =
+    useSetIsFocusActive(recordTableId);
 
   const { moveDown, moveLeft, moveRight, moveUp } =
     useRecordTableMoveFocus(recordTableId);
@@ -196,10 +197,10 @@ export const useRecordTable = (props?: useRecordTableProps) => {
           goto: true,
           keyboardShortcutMenu: true,
         });
-        setIsFocusActive(false);
+        setIsFocusActiveForCurrentPosition(false);
       },
       TableHotkeyScope.TableFocus,
-      [setIsFocusActive],
+      [setIsFocusActiveForCurrentPosition],
     );
   };
 

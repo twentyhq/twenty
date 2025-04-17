@@ -20,9 +20,7 @@ export const RecordTableBodyEffectsWrapper = ({
     isAtLeastOneTableRowSelectedSelector,
   );
 
-  const isFocusActiveState = useRecoilComponentValueV2(
-    isFocusActiveComponentState,
-  );
+  const isFocusActive = useRecoilComponentValueV2(isFocusActiveComponentState);
 
   return (
     <>
@@ -32,8 +30,8 @@ export const RecordTableBodyEffectsWrapper = ({
         <RecordTableNoRecordGroupBodyEffect />
       )}
       {isAtLeastOneRecordSelected && <RecordTableBodyEscapeHotkeyEffect />}
-      {isFocusActiveState && <RecordTableBodyFocusKeyboardEffect />}
-      {isFocusActiveState && (
+      {isFocusActive && <RecordTableBodyFocusKeyboardEffect />}
+      {isFocusActive && (
         <RecordTableBodyFocusClickOutsideEffect tableBodyRef={tableBodyRef} />
       )}
     </>

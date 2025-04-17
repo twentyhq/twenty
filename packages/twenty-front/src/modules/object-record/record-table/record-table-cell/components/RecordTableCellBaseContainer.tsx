@@ -23,7 +23,7 @@ const StyledBaseContainer = styled.div<{
   position: relative;
   user-select: none;
 
-  &.focus-mode {
+  &.focus-active {
     border-radius: ${BORDER_COMMON.radius.sm};
     outline: 1px solid ${({ borderColorBlue }) => borderColorBlue};
   }

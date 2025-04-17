@@ -24,7 +24,9 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
     recordTableIdFromContext,
   );
 
-  const setIsFocusActive = useSetIsFocusActive(recordTableIdFromContext);
+  const { setIsFocusActiveForCurrentPosition } = useSetIsFocusActive(
+    recordTableIdFromContext,
+  );
 
   return useRecoilCallback(
     ({ snapshot }) =>
@@ -33,12 +35,12 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
 
         resetTableRowSelection();
 
-        if (!isFocusActive) {
-          return;
-        }
-
-        setIsFocusActive(false);
+        setIsFocusActiveForCurrentPosition(false);
       },
-    [isFocusActiveState, resetTableRowSelection, setIsFocusActive],
+    [
+      isFocusActiveState,
+      resetTableRowSelection,
+      setIsFocusActiveForCurrentPosition,
+    ],
   );
 };

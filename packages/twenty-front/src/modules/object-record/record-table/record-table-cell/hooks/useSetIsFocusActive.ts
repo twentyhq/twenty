@@ -1,45 +1,51 @@
 import { focusPositionComponentState } from '@/object-record/record-table/states/focusPositionComponentState';
 import { isFocusActiveComponentState } from '@/object-record/record-table/states/isFocusActiveComponentState';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilCallback } from 'recoil';
 
 export const useSetIsFocusActive = (recordTableId?: string) => {
-  const focusPositionState = useRecoilComponentCallbackStateV2(
-    focusPositionComponentState,
-    recordTableId,
-  );
-
   const isFocusActiveState = useRecoilComponentCallbackStateV2(
     isFocusActiveComponentState,
     recordTableId,
   );
 
+  const focusPositionState = useRecoilComponentCallbackStateV2(
+    focusPositionComponentState,
+    recordTableId,
+  );
+
   const setIsFocusActive = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (isFocusActive: boolean) => {
-        const currentPosition = getSnapshotValue(snapshot, focusPositionState);
+    ({ set }) =>
+      (isFocusActive: boolean, cellPosition: TableCellPosition) => {
+        const cellId = `record-table-cell-${cellPosition.column}-${cellPosition.row}`;
+
+        const cellElement = document.getElementById(cellId);
 
         if (isFocusActive) {
-          document
-            .getElementById(
-              `record-table-cell-${currentPosition.column}-${currentPosition.row}`,
-            )
-            ?.classList.add('focus-active');
+          cellElement?.classList.add('focus-active');
         }
 
         if (!isFocusActive) {
-          document
-            .getElementById(
-              `record-table-cell-${currentPosition.column}-${currentPosition.row}`,
-            )
-            ?.classList.remove('focus-active');
+          cellElement?.classList.remove('focus-active');
         }
 
         set(isFocusActiveState, isFocusActive);
       },
-    [focusPositionState, isFocusActiveState],
+    [isFocusActiveState],
   );
 
-  return setIsFocusActive;
+  const setIsFocusActiveForCurrentPosition = useRecoilCallback(
+    ({ snapshot }) =>
+      (isFocusActive: boolean) => {
+        const currentPosition = snapshot
+          .getLoadable(focusPositionState)
+          .getValue();
+
+        setIsFocusActive(isFocusActive, currentPosition);
+      },
+    [setIsFocusActive, focusPositionState],
+  );
+
+  return { setIsFocusActive, setIsFocusActiveForCurrentPosition };
 };

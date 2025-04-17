@@ -1,44 +1,27 @@
 import { useRecoilCallback } from 'recoil';
 
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-
 import { focusPositionComponentState } from '@/object-record/record-table/states/focusPositionComponentState';
-import { isFocusActiveComponentState } from '@/object-record/record-table/states/isFocusActiveComponentState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useSetIsFocusActive } from '../../record-table-cell/hooks/useSetIsFocusActive';
 import { TableCellPosition } from '../../types/TableCellPosition';
-
 export const useSetFocusPosition = (recordTableId?: string) => {
   const focusPositionState = useRecoilComponentCallbackStateV2(
     focusPositionComponentState,
     recordTableId,
   );
-  const isFocusActiveState = useRecoilComponentCallbackStateV2(
-    isFocusActiveComponentState,
-    recordTableId,
-  );
+
+  const { setIsFocusActive, setIsFocusActiveForCurrentPosition } =
+    useSetIsFocusActive(recordTableId);
 
   return useRecoilCallback(
-    ({ set, snapshot }) => {
+    ({ set }) => {
       return (newPosition: TableCellPosition) => {
-        const currentPosition = getSnapshotValue(snapshot, focusPositionState);
-
-        set(isFocusActiveState, true);
-
         set(focusPositionState, newPosition);
 
-        document
-          .getElementById(
-            `record-table-cell-${newPosition.column}-${newPosition.row}`,
-          )
-          ?.classList.add('focus-mode');
-
-        document
-          .getElementById(
-            `record-table-cell-${currentPosition.column}-${currentPosition.row}`,
-          )
-          ?.classList.remove('focus-mode');
+        setIsFocusActiveForCurrentPosition(false);
+        setIsFocusActive(true, newPosition);
       };
     },
-    [focusPositionState, isFocusActiveState],
+    [focusPositionState, setIsFocusActive, setIsFocusActiveForCurrentPosition],
   );
 };
