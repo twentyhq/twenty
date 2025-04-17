@@ -5,7 +5,10 @@ import { createClient, ClickHouseClient } from '@clickhouse/client';
 
 import { GenericTrackEvent } from 'src/engine/core-modules/analytics/utils/events/track/track';
 import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-created';
-describe('ClickHouse Event Registration (integration)', () => {
+
+const describeOrSkip = process.env.CLICKHOUSE_URL ? describe : describe.skip;
+
+describeOrSkip('ClickHouse Event Registration (integration)', () => {
   let clickhouseClient: ClickHouseClient;
 
   beforeAll(async () => {
