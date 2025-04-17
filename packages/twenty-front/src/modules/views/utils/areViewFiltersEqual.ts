@@ -12,6 +12,7 @@ export const areViewFiltersEqual = (
     'value',
     'displayValue',
     'operand',
+    'subFieldName',
   ];
 
   return propertiesToCompare.every((property) =>

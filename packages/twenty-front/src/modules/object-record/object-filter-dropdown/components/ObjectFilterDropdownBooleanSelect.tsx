@@ -82,6 +82,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
       positionInRecordFilterGroup: selectedFilter?.positionInRecordFilterGroup,
       type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
       label: fieldMetadataItemUsedInDropdown.label,
+      subFieldName: selectedFilter?.subFieldName,
     });
 
     setSelectedValue(value);
