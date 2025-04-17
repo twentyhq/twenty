@@ -18,5 +18,6 @@ export const useIsFieldValueReadOnly = ({
     fieldName: metadata.fieldName,
     fieldType: type,
     isRecordReadOnly,
+    isCustom: metadata.isCustom,
   });
 };

@@ -162,11 +162,11 @@ export class MessageImportExceptionHandlerService {
     );
 
     this.exceptionHandlerService.captureExceptions([
-      `Unknown error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
+      `Unknown error importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
     ]);
 
     throw new MessageImportException(
-      `Unknown error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
+      exception.message,
       MessageImportExceptionCode.UNKNOWN,
     );
   }
