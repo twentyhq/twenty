@@ -14,15 +14,15 @@ export const AdvancedFilterDropdownTextInput = ({
   const handleChange = (newValue: string) => {
     applyRecordFilter({
       id: recordFilter.id,
-      fieldMetadataId: recordFilter?.fieldMetadataId ?? '',
+      fieldMetadataId: recordFilter.fieldMetadataId,
       value: newValue,
       operand: recordFilter.operand,
       displayValue: newValue,
       type: recordFilter.type,
       label: recordFilter.label,
-      recordFilterGroupId: recordFilter?.recordFilterGroupId,
-      positionInRecordFilterGroup: recordFilter?.positionInRecordFilterGroup,
-      subFieldName: recordFilter?.subFieldName,
+      recordFilterGroupId: recordFilter.recordFilterGroupId,
+      positionInRecordFilterGroup: recordFilter.positionInRecordFilterGroup,
+      subFieldName: recordFilter.subFieldName,
     });
   };
 

@@ -48,7 +48,7 @@ export const AdvancedFilterFieldSelectDropdownButtonClickableSelect = ({
       : '';
 
   const fieldNameLabel = isNonEmptyString(subFieldLabel)
-    ? `${recordFilter?.label} / ${subFieldLabel} `
+    ? `${recordFilter?.label} / ${subFieldLabel}`
     : (recordFilter?.label ?? '');
 
   return (

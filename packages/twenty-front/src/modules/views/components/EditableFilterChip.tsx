@@ -31,16 +31,16 @@ export const EditableFilterChip = ({
 
   const subFieldLabel =
     isCompositeField(fieldMetadataItem.type) &&
-    isNonEmptyString(viewFilterSubFieldName) &&
-    isValidSubFieldName(viewFilterSubFieldName)
+    isNonEmptyString(recordFilterSubFieldName) &&
+    isValidSubFieldName(recordFilterSubFieldName)
       ? getCompositeSubFieldLabel(
           fieldMetadataItem.type,
-          viewFilterSubFieldName,
+          recordFilterSubFieldName,
         )
       : '';
 
   const fieldNameLabel = isNonEmptyString(subFieldLabel)
-    ? `${recordFilter.label} / ${subFieldLabel} `
+    ? `${recordFilter.label} / ${subFieldLabel}`
     : recordFilter.label;
 
   const labelKey = `${fieldNameLabel}${isNonEmptyString(recordFilter.value) ? operandLabelShort : ''}`;

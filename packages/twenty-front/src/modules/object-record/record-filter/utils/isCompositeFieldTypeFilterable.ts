@@ -1,7 +1,11 @@
 import { FieldType } from '@/settings/data-model/types/FieldType';
 
+type CompositeFilterableFieldType = Extract<FieldType, 'ACTOR' | 'FULL_NAME'>;
+
 export const isCompositeFieldTypeSubFieldsFilterable = (
   fieldType: FieldType,
-) => {
-  return ['ACTOR', 'FULL_NAME'].includes(fieldType);
+): fieldType is CompositeFilterableFieldType => {
+  return (
+    ['ACTOR', 'FULL_NAME'] satisfies CompositeFilterableFieldType[]
+  ).includes(fieldType as any);
 };
