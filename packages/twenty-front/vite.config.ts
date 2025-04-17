@@ -123,6 +123,7 @@ export default defineConfig(({ command, mode }) => {
           '**/MultiSelectFieldDisplay.tsx',
           '**/RatingInput.tsx',
           '**/RecordTableCellContainer.tsx',
+          '**/RecordTableCell.tsx',
           '**/RecordTableCellDisplayContainer.tsx',
           '**/Avatar.tsx',
           '**/RecordTableBodyDroppable.tsx',

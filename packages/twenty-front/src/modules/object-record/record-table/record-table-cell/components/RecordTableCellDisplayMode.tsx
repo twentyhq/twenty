@@ -1,9 +1,9 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
-import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { ReactNode, useContext } from 'react';
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
+import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 
 export const RecordTableCellDisplayMode = ({
   children,
