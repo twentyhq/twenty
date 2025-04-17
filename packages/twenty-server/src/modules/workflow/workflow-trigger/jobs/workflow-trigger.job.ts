@@ -1,5 +1,8 @@
 import { Scope } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
+import isEmpty from 'lodash.isempty';
+
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -68,17 +71,20 @@ export class WorkflowTriggerJob {
         );
       }
 
-      await this.workflowRunnerWorkspaceService.run(
-        data.workspaceId,
-        workflow.lastPublishedVersionId,
-        data.payload,
-        {
+      await this.workflowRunnerWorkspaceService.run({
+        workspaceId: data.workspaceId,
+        workflowVersionId: workflow.lastPublishedVersionId,
+        payload: data.payload,
+        source: {
           source: FieldActorSource.WORKFLOW,
-          name: workflow.name,
+          name:
+            isDefined(workflow.name) && !isEmpty(workflow.name)
+              ? workflow.name
+              : 'Workflow',
           context: {},
           workspaceMemberId: null,
         },
-      );
+      });
     } catch (e) {
       // We remove cron if it exists when no valid workflowVersion exists
       await this.messageQueueService.removeCron({

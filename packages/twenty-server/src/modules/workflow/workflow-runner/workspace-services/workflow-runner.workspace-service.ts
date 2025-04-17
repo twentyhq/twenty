@@ -21,12 +21,17 @@ export class WorkflowRunnerWorkspaceService {
     private readonly billingUsageService: BillingUsageService,
   ) {}
 
-  async run(
-    workspaceId: string,
-    workflowVersionId: string,
-    payload: object,
-    source: ActorMetadata,
-  ) {
+  async run({
+    workspaceId,
+    workflowVersionId,
+    payload,
+    source,
+  }: {
+    workspaceId: string;
+    workflowVersionId: string;
+    payload: object;
+    source: ActorMetadata;
+  }) {
     const canFeatureBeUsed =
       await this.billingUsageService.canFeatureBeUsed(workspaceId);
 
