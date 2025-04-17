@@ -47,7 +47,6 @@ export const RecordTableCellPortalWrapper = ({
       <RecordTableCellContext.Provider
         value={{
           columnDefinition: visibleTableColumns[position.column],
-          columnIndex: position.column,
           cellPosition: position,
         }}
       >

@@ -6,7 +6,6 @@ import { TableCellPosition } from '@/object-record/record-table/types/TableCellP
 
 export type RecordTableCellContextValue = {
   columnDefinition: ColumnDefinition<FieldMetadata>;
-  columnIndex: number;
   cellPosition: TableCellPosition;
 };
 

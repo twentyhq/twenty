@@ -18,7 +18,6 @@ export const recordTableRowDraggableContextValue: RecordTableRowDraggableContext
 };
 
 export const recordTableCellContextValue: RecordTableCellContextValue = {
-  columnIndex: 3,
   columnDefinition: {
     size: 1,
     position: 1,

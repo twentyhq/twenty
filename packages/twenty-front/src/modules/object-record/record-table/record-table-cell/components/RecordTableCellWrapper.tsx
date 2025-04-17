@@ -29,7 +29,6 @@ export const RecordTableCellWrapper = ({
     <RecordTableCellContext.Provider
       value={{
         columnDefinition: column,
-        columnIndex,
         cellPosition: currentTableCellPosition,
       }}
       key={column.fieldMetadataId}

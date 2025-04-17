@@ -58,7 +58,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
               value={recordTableRowDraggableContextValue}
             >
               <RecordTableCellContext.Provider
-                value={{ ...recordTableCellContextValue, columnIndex: 0 }}
+                value={{ ...recordTableCellContextValue }}
               >
                 {children}
               </RecordTableCellContext.Provider>

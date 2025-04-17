@@ -122,7 +122,6 @@ const meta: Meta = {
                       <RecordTableCellContext.Provider
                         value={{
                           columnDefinition: mockPerformance.fieldDefinition,
-                          columnIndex: 0,
                           cellPosition: { row: 0, column: 0 },
                         }}
                       >
