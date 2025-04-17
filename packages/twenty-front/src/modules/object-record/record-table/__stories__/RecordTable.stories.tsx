@@ -82,14 +82,14 @@ export const ScrolledLeft: Story = {
       },
     });
 
-    await canvas.findByText('Linkedin');
+    await canvas.findByText('Facebook');
   },
 };
 
 export const ScrolledBottom: Story = {
   parameters: {
     container: {
-      height: 500,
+      height: 300,
     },
   },
   play: async () => {
@@ -108,7 +108,7 @@ export const ScrolledBottom: Story = {
 
     fireEvent.scroll(scrollWrapper, {
       target: {
-        scrollTop: 100,
+        scrollTop: 80,
       },
     });
 
