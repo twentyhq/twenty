@@ -11,6 +11,7 @@ const StyledContainer = styled.div`
 
 type SaveAndCancelButtonsProps = {
   onSave?: () => void;
+  isLoading?: boolean;
   onCancel?: () => void;
   isSaveDisabled?: boolean;
   isCancelDisabled?: boolean;
@@ -18,6 +19,7 @@ type SaveAndCancelButtonsProps = {
 
 export const SaveAndCancelButtons = ({
   onSave,
+  isLoading,
   onCancel,
   isSaveDisabled,
   isCancelDisabled,
@@ -25,7 +27,11 @@ export const SaveAndCancelButtons = ({
   return (
     <StyledContainer>
       <CancelButton onCancel={onCancel} disabled={isCancelDisabled} />
-      <SaveButton onSave={onSave} disabled={isSaveDisabled} />
+      <SaveButton
+        onSave={onSave}
+        disabled={isSaveDisabled}
+        isLoading={isLoading}
+      />
     </StyledContainer>
   );
 };
