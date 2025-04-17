@@ -8,8 +8,7 @@ import {
   KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
-import { convertConfigVarToAppType } from 'src/engine/core-modules/twenty-config/utils/convert-config-var-to-app-type.util';
-import { convertConfigVarToStorageType } from 'src/engine/core-modules/twenty-config/utils/convert-config-var-to-storage-type.util';
+import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
 
 import { ConfigStorageInterface } from './interfaces/config-storage.interface';
 
@@ -20,6 +19,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
   constructor(
     @InjectRepository(KeyValuePair, 'core')
     private readonly keyValuePairRepository: Repository<KeyValuePair>,
+    private readonly configValueConverter: ConfigValueConverterService,
   ) {}
 
   private getConfigVariableWhereClause(
@@ -46,7 +46,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
       }
 
       try {
-        return convertConfigVarToAppType(result.value, key);
+        return this.configValueConverter.convertToAppValue(result.value, key);
       } catch (error) {
         this.logger.error(
           `Failed to convert value to app type for key ${key as string}`,
@@ -68,7 +68,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
       let processedValue;
 
       try {
-        processedValue = convertConfigVarToStorageType(value);
+        processedValue = this.configValueConverter.convertToStorageValue(value);
       } catch (error) {
         this.logger.error(
           `Failed to convert value to storage type for key ${key as string}`,
@@ -130,9 +130,15 @@ export class ConfigStorageService implements ConfigStorageInterface {
           const key = configVar.key as keyof ConfigVariables;
 
           try {
-            const value = convertConfigVarToAppType(configVar.value, key);
+            const value = this.configValueConverter.convertToAppValue(
+              configVar.value,
+              key,
+            );
 
-            result.set(key, value);
+            // Only set values that are defined
+            if (value !== undefined) {
+              result.set(key, value);
+            }
           } catch (error) {
             this.logger.error(
               `Failed to convert value to app type for key ${key as string}`,
