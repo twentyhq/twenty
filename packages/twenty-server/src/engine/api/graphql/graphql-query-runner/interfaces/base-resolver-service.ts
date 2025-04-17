@@ -123,8 +123,12 @@ export abstract class GraphqlQueryBaseResolverService<
         workspaceId: authContext.workspace.id,
       });
 
+      const executedByApiKey = isDefined(authContext.apiKey);
+      const shouldBypassPermissionChecks = !!executedByApiKey;
+
       const repository = dataSource.getRepository(
         objectMetadataItemWithFieldMaps.nameSingular,
+        shouldBypassPermissionChecks,
         roleId,
       );
 
