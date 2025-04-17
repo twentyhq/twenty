@@ -90,6 +90,7 @@ export const SettingsCustomDomain = () => {
             Icon={IconTrash}
             variant="primary"
             onClick={deleteCustomDomain}
+            type="button"
           />
         </ButtonGroup>
       </StyledDomainFormWrapper>
