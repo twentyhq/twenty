@@ -1,4 +1,3 @@
-import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { usePhonesFieldDisplay } from '@/object-record/record-field/meta-types/hooks/usePhonesFieldDisplay';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -9,8 +8,6 @@ import { useIcons } from 'twenty-ui/display';
 
 export const PhonesFieldDisplay = () => {
   const { fieldValue } = usePhonesFieldDisplay();
-
-  const { isFocused } = useFieldFocus();
 
   const { enqueueSnackBar } = useSnackBar();
 
@@ -43,11 +40,5 @@ export const PhonesFieldDisplay = () => {
     }
   };
 
-  return (
-    <PhonesDisplay
-      value={fieldValue}
-      isFocused={isFocused}
-      onPhoneNumberClick={handleClick}
-    />
-  );
+  return <PhonesDisplay value={fieldValue} onPhoneNumberClick={handleClick} />;
 };

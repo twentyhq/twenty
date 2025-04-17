@@ -1,4 +1,3 @@
-import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { useMultiSelectFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useMultiSelectFieldDisplay';
 import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
@@ -7,7 +6,7 @@ import { Tag } from 'twenty-ui/components';
 export const MultiSelectFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useMultiSelectFieldDisplay();
 
-  const { isFocused } = useFieldFocus();
+  const isFocused = false;
 
   const selectedOptions = fieldValue
     ? fieldDefinition.metadata.options?.filter((option) =>

@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { ReactNode, useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
@@ -35,7 +34,6 @@ export const RecordTableCellBaseContainer = ({
   children: ReactNode;
 }) => {
   const { isReadOnly } = useContext(FieldContext);
-  const { setIsFocused } = useFieldFocus();
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const { theme } = useContext(ThemeContext);
 
@@ -45,15 +43,12 @@ export const RecordTableCellBaseContainer = ({
     useRecordTableBodyContextOrThrow();
 
   const handleContainerMouseMove = () => {
-    setIsFocused(true);
     onCellMouseEnter({
       cellPosition,
     });
   };
 
-  const handleContainerMouseLeave = () => {
-    setIsFocused(false);
-  };
+  const handleContainerMouseLeave = () => {};
 
   const handleContainerClick = () => {
     onMoveHoverToCurrentCell(cellPosition);
