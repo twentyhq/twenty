@@ -1,10 +1,14 @@
+import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
 import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
+import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { workflowStepToOpenByDefaultState } from '@/workflow/workflow-diagram/states/workflowStepToOpenByDefaultState';
 import {
   WorkflowDiagramEdge,
   WorkflowDiagramEdgeType,
@@ -12,6 +16,7 @@ import {
   WorkflowDiagramNodeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
+import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -31,6 +36,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
+import { useIcons } from 'twenty-ui/display';
 import { THEME_COMMON } from 'twenty-ui/theme';
 
 const StyledResetReactflowStyles = styled.div`
@@ -118,11 +124,13 @@ export const WorkflowDiagramCanvasBase = ({
   tagText: string;
 }) => {
   const theme = useTheme();
+  const { getIcon } = useIcons();
 
   const reactflow = useReactFlow();
   const setWorkflowReactFlowRefState = useSetRecoilState(
     workflowReactFlowRefState,
   );
+  const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
 
   const workflowDiagram = useRecoilValue(workflowDiagramState);
 
@@ -176,6 +184,11 @@ export const WorkflowDiagramCanvasBase = ({
 
     const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
 
+    console.log('right drawer change', {
+      rightDrawerState,
+      rightDrawerWidth,
+    });
+
     let visibleRightDrawerWidth = 0;
     if (rightDrawerState === 'normal') {
       visibleRightDrawerWidth = rightDrawerWidth;
@@ -209,17 +222,60 @@ export const WorkflowDiagramCanvasBase = ({
             nodes: applyNodeChanges(changes, diagram.nodes),
           };
         });
+      },
+    [],
+  );
+
+  const handleInit = useRecoilCallback(
+    ({ snapshot, set }) =>
+      () => {
+        console.log('on init reactflow');
+
+        if (!isDefined(containerRef.current)) {
+          return;
+        }
+
+        const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
+
+        reactflow.setViewport({
+          x: containerRef.current.offsetWidth / 2 - flowBounds.width / 2,
+          y: 150,
+          zoom: defaultFitViewOptions.maxZoom,
+        });
 
         const workflowDiagramStatus = getSnapshotValue(
           snapshot,
           workflowDiagramStatusState,
         );
 
+        console.log('on init, status =', workflowDiagramStatus);
+
         if (workflowDiagramStatus === 'computing-dimensions') {
+          console.log('set state to DONE');
+
           set(workflowDiagramStatusState, 'done');
+
+          const workflowStepToOpenByDefault = getSnapshotValue(
+            snapshot,
+            workflowStepToOpenByDefaultState,
+          );
+
+          if (isDefined(workflowStepToOpenByDefault)) {
+            const workflowId = getSnapshotValue(snapshot, workflowIdState);
+
+            set(workflowSelectedNodeState, workflowStepToOpenByDefault.id);
+
+            openWorkflowRunViewStepInCommandMenu(
+              workflowId!,
+              workflowStepToOpenByDefault.data.name,
+              getIcon(getWorkflowNodeIconKey(workflowStepToOpenByDefault.data)),
+            );
+
+            set(workflowStepToOpenByDefaultState, undefined);
+          }
         }
       },
-    [],
+    [getIcon, openWorkflowRunViewStepInCommandMenu, reactflow],
   );
 
   return (
@@ -232,22 +288,7 @@ export const WorkflowDiagramCanvasBase = ({
             setWorkflowReactFlowRefState({ current: node });
           }
         }}
-        onInit={() => {
-          console.log('on init reactflow');
-
-          if (!isDefined(containerRef.current)) {
-            // throw new Error('Expect the container ref to be defined');
-            return;
-          }
-
-          const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
-
-          reactflow.setViewport({
-            x: containerRef.current.offsetWidth / 2 - flowBounds.width / 2,
-            y: 150,
-            zoom: defaultFitViewOptions.maxZoom,
-          });
-        }}
+        onInit={handleInit}
         minZoom={defaultFitViewOptions.minZoom}
         maxZoom={defaultFitViewOptions.maxZoom}
         nodeTypes={nodeTypes}

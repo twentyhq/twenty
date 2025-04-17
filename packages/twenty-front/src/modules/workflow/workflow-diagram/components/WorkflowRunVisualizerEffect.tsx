@@ -4,11 +4,13 @@ import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { flowState } from '@/workflow/states/flowState';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { workflowRunIdState } from '@/workflow/states/workflowRunIdState';
+import { WorkflowRunOutput } from '@/workflow/types/Workflow';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
+import { workflowStepToOpenByDefaultState } from '@/workflow/workflow-diagram/states/workflowStepToOpenByDefaultState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowRunVisualizerEffect = ({
@@ -21,11 +23,6 @@ export const WorkflowRunVisualizerEffect = ({
 
   const setWorkflowRunId = useSetRecoilState(workflowRunIdState);
   const setWorkflowId = useSetRecoilState(workflowIdState);
-  const setFlow = useSetRecoilState(flowState);
-  const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
-  const setWorkflowDiagramStatus = useSetRecoilState(
-    workflowDiagramStatusState,
-  );
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
   useEffect(() => {
@@ -36,39 +33,61 @@ export const WorkflowRunVisualizerEffect = ({
     if (!isDefined(workflowRun)) {
       return;
     }
+
     setWorkflowId(workflowRun.workflowId);
   }, [setWorkflowId, workflowRun]);
 
+  const handleWorkflowRunDiagramGeneration = useRecoilCallback(
+    ({ set }) =>
+      ({
+        workflowRunOutput,
+        workflowVersionId,
+      }: {
+        workflowRunOutput: WorkflowRunOutput | undefined;
+        workflowVersionId: string | undefined;
+      }) => {
+        if (!(isDefined(workflowRunOutput) && isDefined(workflowVersionId))) {
+          set(flowState, undefined);
+          set(workflowDiagramState, undefined);
+
+          return;
+        }
+
+        set(workflowDiagramStatusState, 'computing-diagram');
+
+        set(flowState, {
+          workflowVersionId,
+          trigger: workflowRunOutput.flow.trigger,
+          steps: workflowRunOutput.flow.steps,
+        });
+
+        const { diagram: nextWorkflowDiagram, stepToOpenByDefault } =
+          generateWorkflowRunDiagram({
+            trigger: workflowRunOutput.flow.trigger,
+            steps: workflowRunOutput.flow.steps,
+            stepsOutput: workflowRunOutput.stepsOutput,
+          });
+
+        set(workflowDiagramState, nextWorkflowDiagram);
+        set(workflowDiagramStatusState, 'computing-dimensions');
+
+        if (isDefined(stepToOpenByDefault)) {
+          set(workflowStepToOpenByDefaultState, {
+            id: stepToOpenByDefault.id,
+            data: stepToOpenByDefault.data,
+          });
+        }
+      },
+    [],
+  );
+
   useEffect(() => {
-    console.log('in useEffect WorkflowRunVisualizerEffect');
-
-    setWorkflowDiagramStatus('computing-diagram');
-
-    if (!isDefined(workflowRun?.output)) {
-      setFlow(undefined);
-      setWorkflowDiagram(undefined);
-
-      return;
-    }
-
-    setFlow({
-      workflowVersionId: workflowRun.workflowVersionId,
-      trigger: workflowRun.output.flow.trigger,
-      steps: workflowRun.output.flow.steps,
+    handleWorkflowRunDiagramGeneration({
+      workflowRunOutput: workflowRun?.output ?? undefined,
+      workflowVersionId: workflowRun?.workflowVersionId,
     });
-
-    const nextWorkflowDiagram = generateWorkflowRunDiagram({
-      trigger: workflowRun.output.flow.trigger,
-      steps: workflowRun.output.flow.steps,
-      stepsOutput: workflowRun.output.stepsOutput,
-    });
-
-    setWorkflowDiagram(nextWorkflowDiagram);
-    setWorkflowDiagramStatus('computing-dimensions');
   }, [
-    setFlow,
-    setWorkflowDiagram,
-    setWorkflowDiagramStatus,
+    handleWorkflowRunDiagramGeneration,
     workflowRun?.output,
     workflowRun?.workflowVersionId,
   ]);
