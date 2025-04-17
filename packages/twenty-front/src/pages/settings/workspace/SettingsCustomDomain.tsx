@@ -9,9 +9,10 @@ import { customDomainRecordsState } from '~/pages/settings/workspace/states/cust
 import { useRecoilValue } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useCheckCustomDomainValidRecords } from '~/pages/settings/workspace/hooks/useCheckCustomDomainValidRecords';
-import { Button } from 'twenty-ui/input';
-import { H2Title, IconReload } from 'twenty-ui/display';
+import { Button, ButtonGroup } from 'twenty-ui/input';
+import { H2Title, IconReload, IconTrash } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { CheckCustomDomainValidRecordsEffect } from '~/pages/settings/workspace/CheckCustomDomainValidRecordsEffect';
 
 const StyledDomainFormWrapper = styled.div`
   display: flex;
@@ -20,6 +21,10 @@ const StyledDomainFormWrapper = styled.div`
 
 const StyledButton = styled(Button)`
   align-self: flex-start;
+
+  * + * {
+    border-width: 1px 0 1px 1px;
+  }
 `;
 
 const StyledRecordsWrapper = styled.div`
@@ -37,17 +42,18 @@ export const SettingsCustomDomain = () => {
 
   const { checkCustomDomainRecords } = useCheckCustomDomainValidRecords();
 
-  if (!customDomainRecords && !isLoading) {
-    checkCustomDomainRecords();
-  }
-
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { t } = useLingui();
 
-  const { control } = useFormContext<{
+  const { control, setValue, trigger } = useFormContext<{
     customDomain: string;
   }>();
+
+  const deleteCustomDomain = () => {
+    setValue('customDomain', '');
+    trigger();
+  };
 
   return (
     <Section>
@@ -55,6 +61,7 @@ export const SettingsCustomDomain = () => {
         title={t`Custom Domain`}
         description={t`Set the name of your custom domain and configure your DNS records.`}
       />
+      <CheckCustomDomainValidRecordsEffect />
       <StyledDomainFormWrapper>
         <Controller
           name="customDomain"
@@ -70,14 +77,21 @@ export const SettingsCustomDomain = () => {
             />
           )}
         />
-        <StyledButton
-          isLoading={isLoading}
-          Icon={IconReload}
-          title={t`Reload`}
-          variant="primary"
-          onClick={checkCustomDomainRecords}
-          type="button"
-        />
+        <ButtonGroup>
+          <StyledButton
+            isLoading={isLoading}
+            Icon={IconReload}
+            title={t`Reload`}
+            variant="primary"
+            onClick={checkCustomDomainRecords}
+            type="button"
+          />
+          <StyledButton
+            Icon={IconTrash}
+            variant="primary"
+            onClick={deleteCustomDomain}
+          />
+        </ButtonGroup>
       </StyledDomainFormWrapper>
       {currentWorkspace?.customDomain && (
         <StyledRecordsWrapper>
