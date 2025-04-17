@@ -131,12 +131,15 @@ export default defineConfig(({ command, mode }) => {
           '**/RecordTableTd.tsx',
           '**/RecordTableHeaderDragDropColumn.tsx',
           '**/ActorDisplay.tsx',
+          '**/BooleanDisplay.tsx',
+          '**/CurrencyDisplay.tsx',
+          '**/TextDisplay.tsx',
+          '**/EllipsisDisplay.tsx',
           '**/AvatarChip.tsx',
           '**/URLDisplay.tsx',
           '**/EmailsDisplay.tsx',
           '**/PhonesDisplay.tsx',
           '**/MultiSelectDisplay.tsx',
-          
         ],
         babelOptions: {
           presets: ['@babel/preset-typescript', '@babel/preset-react'],

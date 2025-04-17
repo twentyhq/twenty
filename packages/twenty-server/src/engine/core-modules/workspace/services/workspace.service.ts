@@ -44,6 +44,9 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/custom-domain/custom-domain-activated';
+import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/custom-domain/custom-domain-deactivated';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -67,6 +70,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly domainManagerService: DomainManagerService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly permissionsService: PermissionsService,
+    private readonly analyticsService: AnalyticsService,
     private readonly customDomainService: CustomDomainService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
@@ -413,6 +417,17 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     if (workspace.isCustomDomainEnabled !== isCustomDomainWorking) {
       workspace.isCustomDomainEnabled = isCustomDomainWorking;
       await this.workspaceRepository.save(workspace);
+
+      const analytics = this.analyticsService.createAnalyticsContext({
+        workspaceId: workspace.id,
+      });
+
+      analytics.track(
+        workspace.isCustomDomainEnabled
+          ? CUSTOM_DOMAIN_ACTIVATED_EVENT
+          : CUSTOM_DOMAIN_DEACTIVATED_EVENT,
+        {},
+      );
     }
 
     return customDomainDetails;
