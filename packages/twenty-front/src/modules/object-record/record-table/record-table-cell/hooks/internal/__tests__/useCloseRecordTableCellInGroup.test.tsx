@@ -11,12 +11,12 @@ import { RecordTableCellContext } from '@/object-record/record-table/contexts/Re
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import {
-    recordTableCellContextValue,
-    recordTableRowContextValue,
-    recordTableRowDraggableContextValue,
+  recordTableCellContextValue,
+  recordTableRowContextValue,
+  recordTableRowDraggableContextValue,
 } from '@/object-record/record-table/record-table-cell/hooks/__mocks__/cell';
 import { useCloseRecordTableCellInGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellInGroup';
-import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
+import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
@@ -75,7 +75,7 @@ describe('useCloseRecordTableCellInGroup', () => {
     const { result } = renderHook(
       () => {
         const currentTableCellInEditModePosition = useRecoilComponentValueV2(
-          currentTableCellInEditModePositionComponentState,
+          recordTableCellEditModePositionComponentState,
         );
         return {
           ...useCloseRecordTableCellInGroup(),

@@ -1,5 +1,5 @@
 import { RecordTableCellPortalWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalWrapper';
-import { hoverPositionComponentState } from '@/object-record/record-table/states/hoverPositionComponentState';
+import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 
@@ -38,7 +38,7 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
 `;
 
 const RecordTableCellHoveredPortalContent = () => {
-  const hoverPosition = useRecoilComponentValueV2(hoverPositionComponentState);
+  const hoverPosition = useRecoilComponentValueV2(recordTableHoverPositionComponentState);
 
   const isMobile = useIsMobile();
 
@@ -76,7 +76,7 @@ const StyledRecordTableCellHoveredPortal = styled.div`
 `;
 
 export const RecordTableCellHoveredPortal = () => {
-  const hoverPosition = useRecoilComponentValueV2(hoverPositionComponentState);
+  const hoverPosition = useRecoilComponentValueV2(recordTableHoverPositionComponentState);
 
   if (!hoverPosition) {
     return null;

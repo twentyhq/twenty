@@ -4,7 +4,7 @@ import { RecordTableBodyFocusKeyboardEffect } from '@/object-record/record-table
 import { RecordTableNoRecordGroupBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBodyEffect';
 import { RecordTableRecordGroupBodyEffects } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupBodyEffects';
 import { isAtLeastOneTableRowSelectedSelector } from '@/object-record/record-table/record-table-row/states/isAtLeastOneTableRowSelectedSelector';
-import { isFocusActiveComponentState } from '@/object-record/record-table/states/isFocusActiveComponentState';
+import { isRecordTableFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableFocusActiveComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export interface RecordTableBodyEffectsWrapperProps {
@@ -20,7 +20,7 @@ export const RecordTableBodyEffectsWrapper = ({
     isAtLeastOneTableRowSelectedSelector,
   );
 
-  const isFocusActive = useRecoilComponentValueV2(isFocusActiveComponentState);
+  const isFocusActive = useRecoilComponentValueV2(isRecordTableFocusActiveComponentState);
 
   return (
     <>

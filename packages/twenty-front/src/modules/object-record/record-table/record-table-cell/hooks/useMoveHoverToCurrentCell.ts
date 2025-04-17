@@ -4,7 +4,7 @@ import { TableCellPosition } from '@/object-record/record-table/types/TableCellP
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
-import { hoverPositionComponentState } from '@/object-record/record-table/states/hoverPositionComponentState';
+import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -13,7 +13,7 @@ import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 export const useMoveHoverToCurrentCell = (recordTableId: string) => {
   const setHoverPosition = useSetRecoilComponentStateV2(
-    hoverPositionComponentState,
+    recordTableHoverPositionComponentState,
     recordTableId,
   );
 

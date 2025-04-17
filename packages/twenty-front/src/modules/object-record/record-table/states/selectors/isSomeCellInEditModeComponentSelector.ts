@@ -1,5 +1,5 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
+import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -10,7 +10,7 @@ export const isSomeCellInEditModeComponentSelector = createComponentSelectorV2({
     ({ instanceId }) =>
     ({ get }) => {
       const currentTableCellInEditModePosition = get(
-        currentTableCellInEditModePositionComponentState.atomFamily({
+        recordTableCellEditModePositionComponentState.atomFamily({
           instanceId,
         }),
       );

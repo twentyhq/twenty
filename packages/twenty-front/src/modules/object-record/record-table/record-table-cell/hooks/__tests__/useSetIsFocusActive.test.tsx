@@ -4,8 +4,8 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { useSetIsFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsFocusActive';
-import { focusPositionComponentState } from '@/object-record/record-table/states/focusPositionComponentState';
-import { isFocusActiveComponentState } from '@/object-record/record-table/states/isFocusActiveComponentState';
+import { isRecordTableFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableFocusActiveComponentState';
+import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 
 const mockClassList = {
@@ -19,11 +19,15 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot
     initializeState={({ set }) => {
       set(
-        isFocusActiveComponentState.atomFamily({ instanceId: 'test-table-id' }),
+        isRecordTableFocusActiveComponentState.atomFamily({
+          instanceId: 'test-table-id',
+        }),
         false,
       );
       set(
-        focusPositionComponentState.atomFamily({ instanceId: 'test-table-id' }),
+        recordTableFocusPositionComponentState.atomFamily({
+          instanceId: 'test-table-id',
+        }),
         {
           column: 1,
           row: 0,
@@ -46,10 +50,14 @@ const renderHooks = () => {
       const { setIsFocusActive, setIsFocusActiveForCurrentPosition } =
         useSetIsFocusActive('test-table-id');
       const isFocusActive = useRecoilValue(
-        isFocusActiveComponentState.atomFamily({ instanceId: 'test-table-id' }),
+        isRecordTableFocusActiveComponentState.atomFamily({
+          instanceId: 'test-table-id',
+        }),
       );
       const focusPosition = useRecoilValue(
-        focusPositionComponentState.atomFamily({ instanceId: 'test-table-id' }),
+        recordTableFocusPositionComponentState.atomFamily({
+          instanceId: 'test-table-id',
+        }),
       );
       return {
         setIsFocusActive,

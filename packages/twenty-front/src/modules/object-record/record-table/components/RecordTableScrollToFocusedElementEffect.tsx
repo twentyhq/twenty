@@ -1,10 +1,10 @@
-import { focusPositionComponentState } from '@/object-record/record-table/states/focusPositionComponentState';
+import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableScrollToFocusedElementEffect = () => {
-  const focusPosition = useRecoilComponentValueV2(focusPositionComponentState);
+  const focusPosition = useRecoilComponentValueV2(recordTableFocusPositionComponentState);
 
   useEffect(() => {
     if (!focusPosition) {

@@ -10,7 +10,7 @@ import { RecordTableScrollToFocusedElementEffect } from '@/object-record/record-
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { isFocusActiveComponentState } from '@/object-record/record-table/states/isFocusActiveComponentState';
+import { isRecordTableFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableFocusActiveComponentState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -47,7 +47,7 @@ export const RecordTable = () => {
     !isRecordTableInitialLoading && allRecordIds.length === 0;
 
   const isFocusActive = useRecoilComponentValueV2(
-    isFocusActiveComponentState,
+    isRecordTableFocusActiveComponentState,
     recordTableId,
   );
 
