@@ -10,7 +10,7 @@ import { IsNull, Not, Repository } from 'typeorm';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
-import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -35,6 +35,7 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/serverless-function/serverless-function-executed';
 
 @Injectable()
 export class ServerlessFunctionService {
@@ -143,9 +144,11 @@ export class ServerlessFunctionService {
       version,
     );
 
-    const eventInput = {
-      action: 'serverlessFunction.executed',
-      payload: {
+    this.analyticsService
+      .createAnalyticsContext({
+        workspaceId,
+      })
+      .track(SERVERLESS_FUNCTION_EXECUTED_EVENT, {
         duration: resultServerlessFunction.duration,
         status: resultServerlessFunction.status,
         ...(resultServerlessFunction.error && {
@@ -153,14 +156,7 @@ export class ServerlessFunctionService {
         }),
         functionId: functionToExecute.id,
         functionName: functionToExecute.name,
-      },
-    };
-
-    this.analyticsService.create(
-      eventInput,
-      'serverless-function',
-      workspaceId,
-    );
+      });
 
     return resultServerlessFunction;
   }

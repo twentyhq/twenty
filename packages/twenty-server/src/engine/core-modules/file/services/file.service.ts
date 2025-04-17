@@ -27,7 +27,7 @@ export class FileService {
     });
   }
 
-  async encodeFileToken(payloadToEncode: Record<string, any>) {
+  encodeFileToken(payloadToEncode: Record<string, any>) {
     const fileTokenExpiresIn = this.twentyConfigService.get(
       'FILE_TOKEN_EXPIRES_IN',
     );
