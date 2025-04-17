@@ -3,6 +3,7 @@ import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
+const isClickhouseEnabled = process.env.CLICKHOUSE_URL !== undefined;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const tsConfig = require('./tsconfig.json');
@@ -16,9 +17,11 @@ const jestConfig: JestConfigWithTsJest = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: '.',
   testEnvironment: 'node',
-  testRegex: isBillingEnabled
-    ? '\\.integration-spec\\.ts$'
-    : '^(?!.*billing).*\\.integration-spec\\.ts$',
+  testPathIgnorePatterns: [
+    ...(isBillingEnabled ? [] : ['<rootDir>/test/integration/billing']),
+    ...(isClickhouseEnabled ? [] : ['<rootDir>/test/integration/analytics']),
+  ],
+  testRegex: '\\.integration-spec\\.ts$',
   modulePathIgnorePatterns: ['<rootDir>/dist'],
   globalSetup: '<rootDir>/test/integration/utils/setup-test.ts',
   globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',
