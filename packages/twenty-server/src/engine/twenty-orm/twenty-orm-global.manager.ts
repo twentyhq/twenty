@@ -15,14 +15,14 @@ export class TwentyORMGlobalManager {
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     workspaceEntity: Type<T>,
-    shouldBypassPermissionChecks: boolean,
+    shouldBypassPermissionChecks?: boolean,
     shouldFailIfMetadataNotFound?: boolean,
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     objectMetadataName: string,
-    shouldBypassPermissionChecks: boolean,
+    shouldBypassPermissionChecks?: boolean,
     shouldFailIfMetadataNotFound?: boolean,
   ): Promise<WorkspaceRepository<T>>;
 

@@ -51,19 +51,15 @@ export class WorkspacePermissionsCacheService {
     ignoreLock?: boolean;
     roleIds?: string[];
   }): Promise<void> {
-    const isPermissionsV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsPermissionsV2Enabled,
-        workspaceId,
-      );
+    if (!ignoreLock) {
+      const isAlreadyCaching =
+        await this.workspacePermissionsCacheStorageService.getRolesPermissionsOngoingCachingLock(
+          workspaceId,
+        );
 
-    const isAlreadyCaching =
-      await this.workspacePermissionsCacheStorageService.getRolesPermissionsOngoingCachingLock(
-        workspaceId,
-      );
-
-    if (!ignoreLock && isAlreadyCaching) {
-      return;
+      if (isAlreadyCaching) {
+        return;
+      }
     }
 
     await this.workspacePermissionsCacheStorageService.addRolesPermissionsOngoingCachingLock(
@@ -79,6 +75,12 @@ export class WorkspacePermissionsCacheService {
           workspaceId,
         );
     }
+
+    const isPermissionsV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsPermissionsV2Enabled,
+        workspaceId,
+      );
 
     const recomputedRolesPermissions =
       await this.getObjectRecordPermissionsForRoles({
@@ -108,13 +110,15 @@ export class WorkspacePermissionsCacheService {
     workspaceId: string;
     ignoreLock?: boolean;
   }): Promise<void> {
-    const isAlreadyCaching =
-      await this.workspacePermissionsCacheStorageService.getUserWorkspaceRoleMapOngoingCachingLock(
-        workspaceId,
-      );
+    if (!ignoreLock) {
+      const isAlreadyCaching =
+        await this.workspacePermissionsCacheStorageService.getUserWorkspaceRoleMapOngoingCachingLock(
+          workspaceId,
+        );
 
-    if (!ignoreLock && isAlreadyCaching) {
-      return;
+      if (isAlreadyCaching) {
+        return;
+      }
     }
 
     await this.workspacePermissionsCacheStorageService.addUserWorkspaceRoleMapOngoingCachingLock(

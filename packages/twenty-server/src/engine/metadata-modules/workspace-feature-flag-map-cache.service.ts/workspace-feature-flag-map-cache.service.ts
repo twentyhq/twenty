@@ -20,7 +20,7 @@ export class WorkspaceFeatureFlagMapCacheService {
     ignoreLock?: boolean;
   }): Promise<void> {
     const isAlreadyCaching =
-      await this.workspaceCacheStorageService.getFeatureFlagMapOngoingCachingLock(
+      await this.workspaceCacheStorageService.getFeatureFlagsMapOngoingCachingLock(
         workspaceId,
       );
 
@@ -35,12 +35,12 @@ export class WorkspaceFeatureFlagMapCacheService {
     const freshFeatureFlagMap =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    await this.workspaceCacheStorageService.setFeatureFlagMap(
+    await this.workspaceCacheStorageService.setFeatureFlagsMap(
       workspaceId,
       freshFeatureFlagMap,
     );
 
-    await this.workspaceCacheStorageService.removeFeatureFlagMapOngoingCachingLock(
+    await this.workspaceCacheStorageService.removeFeatureFlagsMapOngoingCachingLock(
       workspaceId,
     );
   }
