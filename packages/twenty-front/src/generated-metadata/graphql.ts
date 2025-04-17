@@ -78,6 +78,11 @@ export type Analytics = {
   success: Scalars['Boolean']['output'];
 };
 
+export enum AnalyticsType {
+  PAGEVIEW = 'PAGEVIEW',
+  TRACK = 'TRACK'
+}
+
 export type ApiConfig = {
   __typename?: 'ApiConfig';
   mutationMaximumAffectedRecords: Scalars['Float']['output'];
@@ -573,6 +578,10 @@ export type CreateWhatsappIntegrationInput = {
 };
 
 export type CreateWorkflowVersionStepInput = {
+  /** Next step ID */
+  nextStepId?: InputMaybe<Scalars['String']['input']>;
+  /** Parent step ID */
+  parentStepId?: InputMaybe<Scalars['String']['input']>;
   /** New step type */
   stepType: Scalars['String']['input'];
   /** Workflow version ID */
@@ -1136,6 +1145,7 @@ export type Mutation = {
   toggleAgentStatus: Scalars['Boolean']['output'];
   toggleWhatsappIntegrationStatus: Scalars['Boolean']['output'];
   track: Analytics;
+  trackAnalytics: Analytics;
   unsyncRemoteTable: RemoteTable;
   updateAgent: Agent;
   updateLabPublicFeatureFlag: FeatureFlagDto;
@@ -1498,6 +1508,14 @@ export type MutationToggleWhatsappIntegrationStatusArgs = {
 export type MutationTrackArgs = {
   action: Scalars['String']['input'];
   payload: Scalars['JSON']['input'];
+};
+
+
+export type MutationTrackAnalyticsArgs = {
+  event?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  properties?: InputMaybe<Scalars['JSON']['input']>;
+  type: AnalyticsType;
 };
 
 
@@ -2266,6 +2284,7 @@ export type Role = {
   id: Scalars['String']['output'];
   isEditable: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
+  objectPermissions?: Maybe<Array<ObjectPermission>>;
   settingPermissions?: Maybe<Array<SettingPermission>>;
   workspaceMembers: Array<WorkspaceMember>;
 };

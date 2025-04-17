@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 
-import { ArrayContains } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { ArrayContains } from 'typeorm';
 
 import { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -98,11 +98,6 @@ export class CallWebhookJobsJob {
           { retryLimit: 3 },
         );
       });
-
-      webhooks.length > 0 &&
-        this.logger.log(
-          `CallWebhookJobsJob on eventName '${workspaceEventBatch.name}' triggered webhooks with ids [\n"${webhooks.map((webhook) => webhook.id).join('",\n"')}"\n]`,
-        );
     }
   }
 }

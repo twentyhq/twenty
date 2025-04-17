@@ -44,16 +44,20 @@ const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
   height: fit-content;
-  padding-top: 3px;
-  padding-bottom: 3px;
 
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  padding-top: 2px;
+  padding-bottom: 2px;
 `;
 
 const StyledEmptyField = styled.div`
   color: ${({ theme }) => theme.font.color.light};
+  height: 20px;
+  display: flex;
+  align-items: center;
 `;
 
 export const RecordInlineCellDisplayMode = ({

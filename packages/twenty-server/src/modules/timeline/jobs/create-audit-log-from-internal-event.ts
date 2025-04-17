@@ -8,6 +8,10 @@ import { AuditLogRepository } from 'src/modules/timeline/repositiories/audit-log
 import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
+import { OBJECT_RECORD_UPDATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-updated';
+import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-created';
+import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-delete';
 
 @Processor(MessageQueue.entityEventsToDbQueue)
 export class CreateAuditLogFromInternalEvent {
@@ -16,6 +20,7 @@ export class CreateAuditLogFromInternalEvent {
     private readonly workspaceMemberService: WorkspaceMemberRepository,
     @InjectObjectMetadataRepository(AuditLogWorkspaceEntity)
     private readonly auditLogRepository: AuditLogRepository,
+    private readonly analyticsService: AnalyticsService,
   ) {}
 
   @Process(CreateAuditLogFromInternalEvent.name)
@@ -48,6 +53,19 @@ export class CreateAuditLogFromInternalEvent {
         eventData.recordId,
         workspaceEventBatch.workspaceId,
       );
+
+      const analytics = this.analyticsService.createAnalyticsContext({
+        workspaceId: workspaceEventBatch.workspaceId,
+        userId: eventData.userId,
+      });
+
+      if (workspaceEventBatch.name.endsWith('.updated')) {
+        analytics.track(OBJECT_RECORD_UPDATED_EVENT, eventData.properties);
+      } else if (workspaceEventBatch.name.endsWith('.created')) {
+        analytics.track(OBJECT_RECORD_CREATED_EVENT, eventData.properties);
+      } else if (workspaceEventBatch.name.endsWith('.deleted')) {
+        analytics.track(OBJECT_RECORD_DELETED_EVENT, eventData.properties);
+      }
     }
   }
 }

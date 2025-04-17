@@ -18,7 +18,6 @@ import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/se
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-customer.util';
 import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
 import { transformStripeSubscriptionEventToDatabaseSubscription } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -140,19 +139,7 @@ export class BillingWebhookSubscriptionService {
       workspaceId,
     );
 
-    const isMeteredProductBillingEnabled =
-      await this.featureFlagRepository.findOne({
-        where: {
-          key: FeatureFlagKey.IsMeteredProductBillingEnabled,
-          workspaceId: workspaceId,
-          value: true,
-        },
-      });
-
-    if (
-      event.type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED &&
-      isDefined(isMeteredProductBillingEnabled)
-    ) {
+    if (event.type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED) {
       await this.billingSubscriptionService.setBillingThresholdsAndTrialPeriodWorkflowCredits(
         updatedBillingSubscription.id,
       );

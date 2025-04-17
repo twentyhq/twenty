@@ -45,6 +45,7 @@ export const mockedSpreadsheetOptions: SpreadsheetImportDialogOptions<Spreadshee
     parseRaw: true,
     rtl: false,
     selectHeader: true,
+    availableFieldMetadataItems: [],
   };
 
 describe('useSpreadsheetImport', () => {

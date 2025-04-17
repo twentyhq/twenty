@@ -33,10 +33,9 @@ const StyledEmptyText = withTheme(styled.div<{ theme: Theme }>`
 
 export const RecordTitleCellSingleTextDisplayMode = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
-
   const recordValue = useRecordValue(recordId);
   const isEmpty =
-    recordValue?.[fieldDefinition.metadata.fieldName].trim() === '';
+    recordValue?.[fieldDefinition.metadata.fieldName]?.trim() === '';
 
   const { openInlineCell } = useInlineCell();
 

@@ -1,5 +1,3 @@
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
-
 import {
   BaseGraphQLError,
   ErrorCode,
@@ -10,11 +8,6 @@ export const generateGraphQLErrorFromError = (error: Error) => {
     error.message,
     ErrorCode.INTERNAL_SERVER_ERROR,
   );
-
-  if (process.env.NODE_ENV === NodeEnvironment.development) {
-    graphqlError.stack = error.stack;
-    graphqlError.extensions['response'] = error.message;
-  }
 
   return graphqlError;
 };

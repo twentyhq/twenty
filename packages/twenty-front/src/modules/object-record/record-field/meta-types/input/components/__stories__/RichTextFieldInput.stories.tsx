@@ -108,11 +108,14 @@ type Story = StoryObj<typeof RichTextFieldInputWithContext>;
 export const Default: Story = {};
 
 export const Escape: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
     expect(escapeJestFn).toHaveBeenCalledTimes(0);
 
+    await canvas.findByTestId('click-outside-element');
+    await userEvent.keyboard('{esc}');
+
     await waitFor(() => {
-      userEvent.keyboard('{esc}');
       expect(escapeJestFn).toHaveBeenCalledTimes(1);
     });
   },
@@ -123,9 +126,11 @@ export const ClickOutside: Story = {
     const canvas = within(canvasElement);
     expect(clickOutsideJestFn).toHaveBeenCalledTimes(0);
 
+    const outsideElement = await canvas.findByTestId('click-outside-element');
+
+    await userEvent.click(outsideElement);
+
     await waitFor(() => {
-      const outsideElement = canvas.getByTestId('click-outside-element');
-      userEvent.click(outsideElement);
       expect(clickOutsideJestFn).toHaveBeenCalledTimes(1);
     });
   },

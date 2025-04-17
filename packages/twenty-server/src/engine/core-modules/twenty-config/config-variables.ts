@@ -464,6 +464,18 @@ export class ConfigVariables {
   ANALYTICS_ENABLED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AnalyticsConfig,
+    description: 'Clickhouse host for analytics',
+  })
+  @IsOptional()
+  @IsUrl({
+    require_tld: false,
+    allow_underscores: true,
+  })
+  @ValidateIf((env) => env.ANALYTICS_ENABLED === true)
+  CLICKHOUSE_URL: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Logging,
     description: 'Enable or disable telemetry logging',
   })
@@ -719,6 +731,15 @@ export class ConfigVariables {
   @IsBoolean()
   @IsOptional()
   PG_SSL_ALLOW_SELF_SIGNED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
+    description: 'Enable configuration variables to be stored in the database',
+  })
+  @CastToBoolean()
+  @IsBoolean()
+  @IsOptional()
+  IS_CONFIG_VARIABLES_IN_DB_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,

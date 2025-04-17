@@ -24,6 +24,6 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const tooltip = await canvas.findByTestId('tooltip');
-    userEvent.hover(tooltip);
+    await userEvent.hover(tooltip);
   },
 };
