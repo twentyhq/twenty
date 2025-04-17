@@ -147,7 +147,7 @@ export const COMPANY_STANDARD_FIELD_IDS = {
 };
 
 export const CHARGE_STANDARD_FIELD_IDS = {
-  name: '20202020-0b7b-4d0d-8b5d-4b7c3d2b8u2r',
+  name: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c66',
   company: '20202020-0b7b-4d0d-8b5d-4b7c3d2b0f9f',
   contact: '20202020-0b7b-4d0d-8b5d-4b7c3d2bm9pe',
   product: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3a',
@@ -164,6 +164,19 @@ export const CHARGE_STANDARD_FIELD_IDS = {
   timelineActivities: '20202020-0416-4cac-4c0c-34ae7b25f89b',
   integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5a',
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2a56b',
+};
+
+export const PRODUCT_STANDARD_FIELD_IDS = {
+  name: '02020202-6b3b-4b3b-8b3b-7f8d6a1d7c63',
+  salePrice: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5b',
+  cost: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5c',
+  createdAt: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5d',
+  updatedAt: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5e',
+  unitOfMeasure: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5f',
+  status: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c60',
+  position: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c61',
+  searchVector: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c62',
+  charge: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c68',
 };
 
 export const TRACEABLE_STANDARD_FIELD_IDS = {
