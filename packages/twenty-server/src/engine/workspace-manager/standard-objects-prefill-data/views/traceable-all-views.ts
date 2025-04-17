@@ -28,7 +28,7 @@ export const tracaebleAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.traceable].fields[
-            TRACEABLE_STANDARD_FIELD_IDS.campaignName
+            TRACEABLE_STANDARD_FIELD_IDS.websiteUrl
           ],
         position: 1,
         isVisible: true,
@@ -37,7 +37,7 @@ export const tracaebleAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.traceable].fields[
-            TRACEABLE_STANDARD_FIELD_IDS.campaignSource
+            TRACEABLE_STANDARD_FIELD_IDS.campaignName
           ],
         position: 2,
         isVisible: true,
@@ -46,16 +46,17 @@ export const tracaebleAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.traceable].fields[
-            TRACEABLE_STANDARD_FIELD_IDS.generatedUrl
+            TRACEABLE_STANDARD_FIELD_IDS.campaignSource
           ],
         position: 3,
-        isVisible: false,
+        isVisible: true,
         size: 150,
       },
+
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.traceable].fields[
-            TRACEABLE_STANDARD_FIELD_IDS.keyword
+            TRACEABLE_STANDARD_FIELD_IDS.meansOfCommunication
           ],
         position: 4,
         isVisible: true,
@@ -64,10 +65,28 @@ export const tracaebleAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.traceable].fields[
-            TRACEABLE_STANDARD_FIELD_IDS.meansOfCommunication
+            TRACEABLE_STANDARD_FIELD_IDS.keyword
           ],
         position: 5,
         isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.traceable].fields[
+            TRACEABLE_STANDARD_FIELD_IDS.campaignContent
+          ],
+        position: 6,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.traceable].fields[
+            TRACEABLE_STANDARD_FIELD_IDS.generatedUrl
+          ],
+        position: 7,
+        isVisible: false,
         size: 150,
       },
     ],

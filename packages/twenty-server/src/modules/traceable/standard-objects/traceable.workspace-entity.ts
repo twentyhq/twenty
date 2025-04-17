@@ -26,7 +26,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
-const NAME_FIELD_NAME = 'product';
+const NAME_FIELD_NAME = 'linkName';
 
 export const SEARCH_FIELDS_FOR_TRACEABLE: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
@@ -39,29 +39,19 @@ export const SEARCH_FIELDS_FOR_TRACEABLE: FieldTypeAndNameMetadata[] = [
   labelPlural: msg`Traceables`,
   description: msg`A traceable link`,
   icon: 'IconLink',
-  labelIdentifierStandardId: TRACEABLE_STANDARD_FIELD_IDS.name,
+  labelIdentifierStandardId: TRACEABLE_STANDARD_FIELD_IDS.linkName,
 })
 @WorkspaceIsNotAuditLogged()
 export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.name,
-    type: FieldMetadataType.TEXT,
-    label: msg`Name`,
-    description: msg`Traceable name`,
-    icon: 'IconLink',
-  })
-  @WorkspaceIsNullable()
-  product: string;
-
-  @WorkspaceField({
     standardId: TRACEABLE_STANDARD_FIELD_IDS.linkName,
-    type: FieldMetadataType.LINKS,
-    label: msg`Link Name`,
+    type: FieldMetadataType.TEXT,
+    label: msg`Traceable Link Name`,
     description: msg`The name of the traceable link`,
     icon: 'IconLink',
   })
-  @WorkspaceIsNullable()
-  linkName: LinksMetadata | null;
+  @WorkspaceIsUnique()
+  linkName: string;
 
   @WorkspaceField({
     standardId: TRACEABLE_STANDARD_FIELD_IDS.websiteUrl,
@@ -70,7 +60,6 @@ export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The URL of the website to redirect to`,
     icon: 'IconLink',
   })
-  @WorkspaceIsUnique()
   websiteUrl: LinksMetadata | null;
 
   @WorkspaceField({
@@ -101,17 +90,6 @@ export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
   meansOfCommunication: string;
 
   @WorkspaceField({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.position,
-    type: FieldMetadataType.POSITION,
-    label: msg`Position`,
-    description: msg`Traceable record position`,
-    icon: 'IconHierarchy2',
-  })
-  @WorkspaceIsSystem()
-  @WorkspaceIsNullable()
-  position: number | null;
-
-  @WorkspaceField({
     standardId: TRACEABLE_STANDARD_FIELD_IDS.keyword,
     type: FieldMetadataType.TEXT,
     label: msg`Keyword`,
@@ -121,13 +99,48 @@ export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
   keyword: string;
 
   @WorkspaceField({
+    standardId: TRACEABLE_STANDARD_FIELD_IDS.campaignSource,
+    type: FieldMetadataType.TEXT,
+    label: msg`Campaign Content`,
+    description: msg`The content of the traceable link (e.g., bannerSale)`,
+    icon: 'IconMessage',
+  })
+  campaignContent: string;
+
+  @WorkspaceField({
     standardId: TRACEABLE_STANDARD_FIELD_IDS.generatedUrl,
-    type: FieldMetadataType.LINKS,
+    type: FieldMetadataType.TEXT,
     label: msg`Generated URL`,
     description: msg`The final URL with UTM parameters`,
     icon: 'IconLink',
+    generatedType: 'STORED',
+    asExpression: `
+    CASE 
+      WHEN "websiteUrl" IS NOT NULL 
+      THEN CONCAT(
+        "websiteUrl"->>'url', 
+        '?utm_campaign=', COALESCE("campaignName", ''),
+        '&utm_source=', COALESCE("campaignSource", ''),
+        '&utm_medium=', COALESCE("meansOfCommunication", ''),
+        '&utm_term=', COALESCE("keyword", ''),
+        '&utm_content=', COALESCE("campaignContent", '')
+      ) 
+      ELSE NULL 
+    END
+  `,
   })
-  generatedUrl: LinksMetadata | null;
+  generatedUrl: string | null;
+
+  @WorkspaceField({
+    standardId: TRACEABLE_STANDARD_FIELD_IDS.position,
+    type: FieldMetadataType.POSITION,
+    label: msg`Position`,
+    description: msg`Traceable record position`,
+    icon: 'IconHierarchy2',
+  })
+  @WorkspaceIsSystem()
+  @WorkspaceIsNullable()
+  position: number | null;
 
   @WorkspaceRelation({
     standardId: TRACEABLE_STANDARD_FIELD_IDS.timelineActivities,

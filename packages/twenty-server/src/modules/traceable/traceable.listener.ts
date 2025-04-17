@@ -1,9 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
-import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { LinkLogsWorkspaceEntity } from 'src/modules/linklogs/standard-objects/linklog.workspace-entity';
@@ -17,7 +14,7 @@ export class TraceableEventListener {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  @OnDatabaseBatchEvent('traceable', DatabaseEventAction.UPDATED)
+  // @OnDatabaseBatchEvent('traceable', DatabaseEventAction.UPDATED)
   async handleChargeCreateEvent(
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
   ) {
@@ -70,7 +67,7 @@ export class TraceableEventListener {
           existingLog.utmSource = traceable.campaignSource || '';
           existingLog.utmMedium = 'cpc';
           existingLog.utmCampaign = traceable.campaignName || '';
-          existingLog.linkName = traceable.product || '';
+          existingLog.linkName = traceable.linkName || '';
           existingLog.uv = 10;
           await linklogsRepository.save(existingLog);
         } else {
@@ -81,7 +78,7 @@ export class TraceableEventListener {
             utmMedium: 'cpc',
             utmCampaign: traceable.campaignName || '',
             userIp: null,
-            linkName: traceable.product || '',
+            linkName: traceable.linkName || '',
             uv: 10,
           });
 
@@ -99,8 +96,8 @@ export class TraceableEventListener {
 
   private generateTraceableUrl(
     traceable: TraceableWorkspaceEntity,
-  ): LinksMetadata {
-    const linkName = traceable.linkName?.primaryLinkUrl || '';
+  ): TraceableWorkspaceEntity['generatedUrl'] {
+    const linkName = traceable.linkName || '';
     const campaignSource = traceable.campaignSource || '';
     const campaignName = traceable.campaignName || '';
 
@@ -108,10 +105,6 @@ export class TraceableEventListener {
       campaignSource,
     )}&utm_medium=cpc&utm_campaign=${encodeURIComponent(campaignName)}`;
 
-    return {
-      primaryLinkLabel: 'Generated URL',
-      primaryLinkUrl: url,
-      secondaryLinks: null,
-    };
+    return url;
   }
 }
