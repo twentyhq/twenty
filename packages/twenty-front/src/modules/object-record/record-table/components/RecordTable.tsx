@@ -64,7 +64,7 @@ export const RecordTable = () => {
         tableBodyRef={tableBodyRef}
       />
 
-      {recordTableIsEmpty ? (
+      {recordTableIsEmpty && !hasRecordGroups ? (
         <RecordTableEmpty
           tableBodyRef={tableBodyRef}
           hasRecordGroups={hasRecordGroups}
