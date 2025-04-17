@@ -85,7 +85,7 @@ const InternalTableContextProviders = ({
             onOpenTableCell: () => {},
             onActionMenuDropdownOpened: () => {},
             onMoveFocus: () => {},
-            onMoveFocusToCurrentCell: () => {},
+            onMoveHoverToCurrentCell: () => {},
           }}
         >
           {children}

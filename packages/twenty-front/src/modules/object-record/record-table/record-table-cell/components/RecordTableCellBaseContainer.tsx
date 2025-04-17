@@ -41,7 +41,7 @@ export const RecordTableCellBaseContainer = ({
 
   const { cellPosition } = useContext(RecordTableCellContext);
 
-  const { onMoveFocusToCurrentCell, onCellMouseEnter } =
+  const { onMoveHoverToCurrentCell, onCellMouseEnter } =
     useRecordTableBodyContextOrThrow();
 
   const handleContainerMouseMove = () => {
@@ -56,7 +56,7 @@ export const RecordTableCellBaseContainer = ({
   };
 
   const handleContainerClick = () => {
-    onMoveFocusToCurrentCell(cellPosition);
+    onMoveHoverToCurrentCell(cellPosition);
     openTableCell();
   };
 

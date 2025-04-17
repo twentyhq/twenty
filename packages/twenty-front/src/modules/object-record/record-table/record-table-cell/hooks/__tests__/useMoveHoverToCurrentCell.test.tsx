@@ -7,9 +7,9 @@ import { RecordTableCellContext } from '@/object-record/record-table/contexts/Re
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import {
-  recordTableCellContextValue,
-  recordTableRowContextValue,
-  recordTableRowDraggableContextValue,
+    recordTableCellContextValue,
+    recordTableRowContextValue,
+    recordTableRowDraggableContextValue,
 } from '@/object-record/record-table/record-table-cell/hooks/__mocks__/cell';
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
@@ -96,7 +96,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
   </RecoilRoot>
 );
 
-describe('useMoveFocusToCurrentCellOnHover', () => {
+describe('useMoveHoverToCurrentCell', () => {
   it('should work as expected', () => {
     const { result } = renderHook(() => useMoveHoverToCurrentCell('scopeId'), {
       wrapper: Wrapper,

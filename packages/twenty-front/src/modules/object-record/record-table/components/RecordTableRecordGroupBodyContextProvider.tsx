@@ -43,7 +43,7 @@ export const RecordTableRecordGroupBodyContextProvider = ({
 
   const { moveHoverToCurrentCell } = useMoveHoverToCurrentCell(recordTableId);
 
-  const handleMoveFocusToCurrentCell = (cellPosition: TableCellPosition) => {
+  const handleMoveHoverToCurrentCell = (cellPosition: TableCellPosition) => {
     moveHoverToCurrentCell(cellPosition);
   };
 
@@ -68,7 +68,7 @@ export const RecordTableRecordGroupBodyContextProvider = ({
         onOpenTableCell: handleOpenTableCell,
         onMoveFocus: handleMoveFocus,
         onCloseTableCell: handlecloseTableCellInGroup,
-        onMoveFocusToCurrentCell: handleMoveFocusToCurrentCell,
+        onMoveHoverToCurrentCell: handleMoveHoverToCurrentCell,
         onActionMenuDropdownOpened: handleActionMenuDropdown,
         onCellMouseEnter: handleContainerMouseEnter,
       }}

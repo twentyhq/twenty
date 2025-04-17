@@ -67,7 +67,7 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
         onOpenTableCell: handleOpenTableCell,
         onMoveFocus: handleMoveFocus,
         onCloseTableCell: handleCloseTableCell,
-        onMoveFocusToCurrentCell: handleMoveFocusToCurrentCell,
+        onMoveHoverToCurrentCell: handleMoveFocusToCurrentCell,
         onActionMenuDropdownOpened: handleActionMenuDropdown,
         onCellMouseEnter: handleContainerMouseEnter,
       }}
