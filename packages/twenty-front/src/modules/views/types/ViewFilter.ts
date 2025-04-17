@@ -13,4 +13,5 @@ export type ViewFilter = {
   viewId?: string;
   viewFilterGroupId?: string;
   positionInViewFilterGroup?: number | null;
+  subFieldName?: string | null;
 };

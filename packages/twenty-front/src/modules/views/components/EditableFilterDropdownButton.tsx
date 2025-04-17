@@ -8,7 +8,7 @@ import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 
 import { ObjectFilterOperandSelectAndInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterOperandSelectAndInput';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
-import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
+import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { EditableFilterDropdownButtonEffect } from '@/views/components/EditableFilterDropdownButtonEffect';
 
 type EditableFilterDropdownButtonProps = {
@@ -31,17 +31,9 @@ export const EditableFilterDropdownButton = ({
   };
 
   const handleDropdownClickOutside = useCallback(() => {
-    const { value, operand } = recordFilter;
-    if (
-      !value &&
-      ![
-        RecordFilterOperand.IsEmpty,
-        RecordFilterOperand.IsNotEmpty,
-        RecordFilterOperand.IsInPast,
-        RecordFilterOperand.IsInFuture,
-        RecordFilterOperand.IsToday,
-      ].includes(operand)
-    ) {
+    const recordFilterIsEmpty = isRecordFilterConsideredEmpty(recordFilter);
+
+    if (recordFilterIsEmpty) {
       removeRecordFilter({ recordFilterId: recordFilter.id });
     }
   }, [recordFilter, removeRecordFilter]);
@@ -53,7 +45,7 @@ export const EditableFilterDropdownButton = ({
         dropdownId={recordFilter.id}
         clickableComponent={
           <EditableFilterChip
-            viewFilter={recordFilter}
+            recordFilter={recordFilter}
             onRemove={handleRemove}
           />
         }
