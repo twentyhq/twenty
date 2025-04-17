@@ -4,6 +4,8 @@ import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
 import { StripeSDKMockService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/mocks/stripe-sdk-mock.service';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { ExceptionHandlerMockService } from 'src/engine/core-modules/exception-handler/mocks/exception-handler-mock.service';
 
 interface TestingModuleCreatePreHook {
   (moduleBuilder: TestingModuleBuilder): TestingModuleBuilder;
@@ -26,11 +28,14 @@ export const createApp = async (
   } = {},
 ): Promise<NestExpressApplication> => {
   const stripeSDKMockService = new StripeSDKMockService();
+  const mockExceptionHandlerService = new ExceptionHandlerMockService();
   let moduleBuilder: TestingModuleBuilder = Test.createTestingModule({
     imports: [AppModule],
   })
     .overrideProvider(StripeSDKService)
-    .useValue(stripeSDKMockService);
+    .useValue(stripeSDKMockService)
+    .overrideProvider(ExceptionHandlerService)
+    .useValue(mockExceptionHandlerService);
 
   if (config.moduleBuilderHook) {
     moduleBuilder = config.moduleBuilderHook(moduleBuilder);
