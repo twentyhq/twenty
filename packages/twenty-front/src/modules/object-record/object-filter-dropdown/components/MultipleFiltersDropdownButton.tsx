@@ -38,7 +38,7 @@ export const MultipleFiltersDropdownButton = ({
 
   const handleDropdownClose = () => {
     resetFilterDropdown();
-  }
+  };
 
   return (
     <Dropdown
