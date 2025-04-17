@@ -49,5 +49,7 @@ export const createApp = async (
 
   await app.init();
 
+  app.useLogger(false);
+
   return app;
 };
