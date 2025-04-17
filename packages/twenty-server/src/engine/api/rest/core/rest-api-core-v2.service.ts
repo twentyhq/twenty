@@ -25,6 +25,7 @@ import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/f
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { DepthInputFactory } from 'src/engine/api/rest/input-factories/depth-input.factory';
 
 interface PageInfo {
   hasNextPage?: boolean;
@@ -46,6 +47,7 @@ export class RestApiCoreServiceV2 {
   constructor(
     private readonly coreQueryBuilderFactory: CoreQueryBuilderFactory,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly depthInputFactory: DepthInputFactory,
     private readonly limitInputFactory: LimitInputFactory,
     private readonly filterInputFactory: FilterInputFactory,
     private readonly orderByInputFactory: OrderByInputFactory,
@@ -177,7 +179,7 @@ export class RestApiCoreServiceV2 {
   }
 
   private async findOne(
-    repository: any,
+    repository: WorkspaceRepository<ObjectRecord>,
     recordId: string,
     objectMetadataNameSingular: string,
   ) {
@@ -203,7 +205,9 @@ export class RestApiCoreServiceV2 {
       | undefined,
   ) {
     // Get input parameters
-    const inputs = this.getPaginationInputs(request, objectMetadata);
+    const inputs = this.getInputs(request, objectMetadata);
+
+    repository.find({ where: inputs.filter });
 
     // Create query builder
     const qb = repository.createQueryBuilder(objectMetadataNameSingular);
@@ -240,7 +244,8 @@ export class RestApiCoreServiceV2 {
     );
   }
 
-  private getPaginationInputs(request: Request, objectMetadata: any) {
+  private getInputs(request: Request, objectMetadata: any) {
+    const depth = this.depthInputFactory.create(request);
     const limit = this.limitInputFactory.create(request);
     const filter = this.filterInputFactory.create(request, objectMetadata);
     const orderBy = this.orderByInputFactory.create(request, objectMetadata);
@@ -249,6 +254,7 @@ export class RestApiCoreServiceV2 {
     const isForwardPagination = !endingBefore;
 
     return {
+      depth,
       limit,
       filter,
       orderBy,
@@ -269,6 +275,7 @@ export class RestApiCoreServiceV2 {
       orderBy: any;
       startingAfter: string | undefined;
       endingBefore: string | undefined;
+      depth: number;
       isForwardPagination: boolean;
     },
   ) {
@@ -336,6 +343,7 @@ export class RestApiCoreServiceV2 {
       orderBy: any;
       limit: number;
       isForwardPagination: boolean;
+      depth: number;
     },
   ) {
     const fieldMetadataMapByName =
