@@ -25,6 +25,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 
 describe('WorkspaceService', () => {
   let service: WorkspaceService;
@@ -74,8 +75,13 @@ describe('WorkspaceService', () => {
             deleteSubscriptions: jest.fn(),
           },
         },
+        {
+          provide: AnalyticsService,
+          useValue: {
+            createAnalyticsContext: jest.fn(),
+          },
+        },
         ...[
-          WorkspaceManagerService,
           WorkspaceManagerService,
           UserWorkspaceService,
           UserService,

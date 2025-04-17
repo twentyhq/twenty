@@ -12,7 +12,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/workspace-roles-permissions-cache/workspace-roles-permissions-cache.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 export class ObjectPermissionService {
   constructor(
@@ -22,7 +22,7 @@ export class ObjectPermissionService {
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly workspaceRolesPermissionsCacheService: WorkspaceRolesPermissionsCacheService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   public async upsertObjectPermission({
@@ -54,9 +54,10 @@ export class ObjectPermissionService {
         throw new Error('Failed to upsert object permission');
       }
 
-      await this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
+      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
         {
           workspaceId,
+          roleIds: [input.roleId],
         },
       );
 
