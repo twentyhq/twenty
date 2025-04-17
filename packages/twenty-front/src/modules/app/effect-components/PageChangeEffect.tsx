@@ -86,8 +86,6 @@ export const PageChangeEffect = () => {
   }, [isMatchingLocation, previousLocation, resetTableSelections]);
 
   useEffect(() => {
-    console.log('set hotkey scope in PageChangeEffect');
-
     switch (true) {
       case isMatchingLocation(AppPath.RecordIndexPage): {
         setHotkeyScope(TableHotkeyScope.Table, {
