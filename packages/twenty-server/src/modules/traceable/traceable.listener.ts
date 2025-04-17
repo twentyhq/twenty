@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
@@ -14,7 +16,7 @@ export class TraceableEventListener {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  // @OnDatabaseBatchEvent('traceable', DatabaseEventAction.UPDATED)
+  @OnDatabaseBatchEvent('traceable', DatabaseEventAction.UPDATED)
   async handleChargeCreateEvent(
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
   ) {
@@ -97,13 +99,18 @@ export class TraceableEventListener {
   private generateTraceableUrl(
     traceable: TraceableWorkspaceEntity,
   ): TraceableWorkspaceEntity['generatedUrl'] {
-    const linkName = traceable.linkName || '';
-    const campaignSource = traceable.campaignSource || '';
+    const websiteUrl = traceable.websiteUrl?.primaryLinkUrl || '';
     const campaignName = traceable.campaignName || '';
+    const campaignSource = traceable.campaignSource || '';
+    const meansOfCommunication = traceable.meansOfCommunication || '';
+    const keyworkd = traceable.keyword || '';
+    const campaignContent = traceable.campaignContent || '';
 
-    const url = `${linkName}/?utm_source=${encodeURIComponent(
+    const url = `${websiteUrl}/?utm_campaign=${encodeURIComponent(campaignName)}&utm_source=${encodeURIComponent(
       campaignSource,
-    )}&utm_medium=cpc&utm_campaign=${encodeURIComponent(campaignName)}`;
+    )}&utm_medium=${encodeURIComponent(
+      meansOfCommunication,
+    )}&utm_term=${encodeURIComponent(keyworkd)}&utm_content=${encodeURIComponent(campaignContent)}`;
 
     return url;
   }

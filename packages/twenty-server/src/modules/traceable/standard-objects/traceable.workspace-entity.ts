@@ -99,7 +99,7 @@ export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
   keyword: string;
 
   @WorkspaceField({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.campaignSource,
+    standardId: TRACEABLE_STANDARD_FIELD_IDS.campaignContent,
     type: FieldMetadataType.TEXT,
     label: msg`Campaign Content`,
     description: msg`The content of the traceable link (e.g., bannerSale)`,
@@ -113,21 +113,6 @@ export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Generated URL`,
     description: msg`The final URL with UTM parameters`,
     icon: 'IconLink',
-    generatedType: 'STORED',
-    asExpression: `
-    CASE 
-      WHEN "websiteUrl" IS NOT NULL 
-      THEN CONCAT(
-        "websiteUrl"->>'url', 
-        '?utm_campaign=', COALESCE("campaignName", ''),
-        '&utm_source=', COALESCE("campaignSource", ''),
-        '&utm_medium=', COALESCE("meansOfCommunication", ''),
-        '&utm_term=', COALESCE("keyword", ''),
-        '&utm_content=', COALESCE("campaignContent", '')
-      ) 
-      ELSE NULL 
-    END
-  `,
   })
   generatedUrl: string | null;
 

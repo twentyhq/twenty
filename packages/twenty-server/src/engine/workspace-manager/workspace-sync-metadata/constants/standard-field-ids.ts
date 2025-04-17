@@ -190,7 +190,6 @@ export const TRACEABLE_STANDARD_FIELD_IDS = {
   generatedUrl: '20202020-4d3c-2b1a-0f9e-8d7c6b5a4b3c',
   position: '20202020-1a2b-3c4d-5e6f-7a8b9c0d1e2f',
   timelineActivities: '20202020-b751-43e3-a9f0-186288344f21',
-  createdAt: '20202020-9f8e-7d6c-5b4a-3a2b1c0d9e8f',
   searchVector: '20202020-8c9d-7e6f-5a4b-3c2d1e0f9a8b',
 };
 
