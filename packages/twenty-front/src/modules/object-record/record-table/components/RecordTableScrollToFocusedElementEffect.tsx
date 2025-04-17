@@ -35,6 +35,12 @@ export const RecordTableScrollToFocusedElementEffect = () => {
     }
 
     focusElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    return () => {
+      if (isDefined(focusElement)) {
+        focusElement.style.scrollMarginLeft = '';
+      }
+    };
   }, [focusPosition]);
 
   return null;
