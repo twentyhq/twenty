@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 const StyledLayout = styled.div<{
   width?: number;
   backgroundColor?: string | undefined;
+  height?: number;
 }>`
   background: ${({ theme, backgroundColor }) =>
     backgroundColor ?? theme.background.primary};
@@ -22,15 +23,17 @@ const StyledLayout = styled.div<{
 type ComponentStorybookLayoutProps = {
   width?: number;
   backgroundColor?: string | undefined;
+  height?: number | 'auto';
   children: JSX.Element;
 };
 
 export const ComponentStorybookLayout = ({
   width,
   backgroundColor,
+  height = 'auto',
   children,
 }: ComponentStorybookLayoutProps) => (
-  <StyledLayout width={width} backgroundColor={backgroundColor}>
+  <StyledLayout width={width} backgroundColor={backgroundColor} height={height}>
     {children}
   </StyledLayout>
 );

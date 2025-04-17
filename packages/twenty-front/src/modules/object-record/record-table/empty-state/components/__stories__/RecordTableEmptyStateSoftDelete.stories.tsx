@@ -1,39 +1,39 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
-import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
+import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { RecordTableEmptyStateSoftDelete } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { ComponentDecorator } from 'twenty-ui/testing';
+import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta = {
   title: 'Modules/ObjectRecord/RecordTable/RecordTableEmptyStateSoftDelete',
   component: RecordTableEmptyStateSoftDelete,
   decorators: [
+    (Story) => (
+      <RecordTableContextProvider
+        recordTableId="persons"
+        viewBarId="view-bar"
+        objectNameSingular="person"
+      >
+        <Story />
+      </RecordTableContextProvider>
+    ),
     ComponentDecorator,
     MemoryRouterDecorator,
-    ObjectMetadataItemsDecorator,
     RecordTableDecorator,
-    (Story) => (
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-        <RecordFiltersComponentInstanceContext.Provider
-          value={{ instanceId: 'record-filters-component-instance' }}
-        >
-          <RecordTableComponentInstance
-            recordTableId="persons"
-            onColumnsChange={() => {}}
-          >
-            <Story />
-          </RecordTableComponentInstance>
-        </RecordFiltersComponentInstanceContext.Provider>
-      </SnackBarProviderScope>
-    ),
+    ContextStoreDecorator,
+    SnackBarDecorator,
+    ObjectMetadataItemsDecorator,
+    I18nFrontDecorator,
   ],
   parameters: {
+    recordTableObjectNameSingular: 'person',
     msw: graphqlMocks,
   },
 };

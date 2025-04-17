@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { RecordTableEmptyStateNoGroupNoRecordAtAll } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoGroupNoRecordAtAll';
+import { fireEvent, userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -11,6 +12,7 @@ import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator'
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedViewsData } from '~/testing/mock-data/views';
+import { sleep } from '~/utils/sleep';
 
 const meta: Meta = {
   title: 'Modules/ObjectRecord/RecordTable/RecordTable',
@@ -30,6 +32,7 @@ const meta: Meta = {
     objectNameSingular: 'company',
   },
   parameters: {
+    recordTableObjectNameSingular: 'company',
     msw: graphqlMocks,
   },
 };
@@ -37,4 +40,78 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj<typeof RecordTableEmptyStateNoGroupNoRecordAtAll>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Linkedin');
+  },
+};
+
+export const HeaderMenuOpen: Story = {
+  play: async () => {
+    const canvas = within(document.body);
+    await canvas.findByText('Linkedin');
+
+    const headerMenuButton = await canvas.findByText('Domain Name');
+
+    await userEvent.click(headerMenuButton);
+
+    await canvas.findByText('Move right');
+  },
+};
+
+export const ScrolledLeft: Story = {
+  play: async () => {
+    const canvas = within(document.body);
+    await canvas.findByText('Linkedin');
+
+    const scrollWrapper = document.body.querySelector(
+      '.scroll-wrapper-x-enabled',
+    );
+
+    if (!scrollWrapper) {
+      throw new Error('Scroll wrapper not found');
+    }
+
+    await sleep(1000);
+
+    fireEvent.scroll(scrollWrapper, {
+      target: {
+        scrollLeft: 100,
+      },
+    });
+
+    await canvas.findByText('Linkedin');
+  },
+};
+
+export const ScrolledBottom: Story = {
+  parameters: {
+    container: {
+      height: 500,
+    },
+  },
+  play: async () => {
+    const canvas = within(document.body);
+    await canvas.findByText('Linkedin');
+
+    const scrollWrapper = document.body.querySelector(
+      '.scroll-wrapper-y-enabled',
+    );
+
+    if (!scrollWrapper) {
+      throw new Error('Scroll wrapper not found');
+    }
+
+    await sleep(1000);
+
+    fireEvent.scroll(scrollWrapper, {
+      target: {
+        scrollTop: 100,
+      },
+    });
+
+    await canvas.findByText('Facebook');
+  },
+};

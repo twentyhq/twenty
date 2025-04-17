@@ -58,8 +58,6 @@ const InternalTableContextProviders = ({
     visibleTableColumnsComponentSelector,
   );
 
-  console.log(visibleTableColumns);
-
   return (
     <RecordIndexContextProvider
       value={{
@@ -98,7 +96,8 @@ const InternalTableContextProviders = ({
 };
 
 export const RecordTableDecorator: Decorator = (Story, context) => {
-  const { objectNameSingular } = context.args;
+  const { recordTableObjectNameSingular: objectNameSingular } =
+    context.parameters;
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -108,7 +107,9 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
   );
 
   if (!isDefined(objectMetadataItem)) {
-    return <Story />;
+    throw new Error(
+      'Object metadata item not found while loading RecordTableDecorator',
+    );
   }
 
   const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
