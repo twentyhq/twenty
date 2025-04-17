@@ -26,12 +26,11 @@ export class WorkflowStepResolver {
   async createWorkflowVersionStep(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('input')
-    { stepType, workflowVersionId }: CreateWorkflowVersionStepInput,
+    input: CreateWorkflowVersionStepInput,
   ): Promise<WorkflowActionDTO> {
     return this.workflowVersionStepWorkspaceService.createWorkflowVersionStep({
       workspaceId,
-      workflowVersionId,
-      stepType,
+      input,
     });
   }
 
@@ -57,7 +56,7 @@ export class WorkflowStepResolver {
     return this.workflowVersionStepWorkspaceService.deleteWorkflowVersionStep({
       workspaceId,
       workflowVersionId,
-      stepId,
+      stepIdToDelete: stepId,
     });
   }
 

@@ -19,7 +19,7 @@ export const AvatarChip = ({
     label={name}
     variant={ChipVariant.Transparent}
     size={size}
-    leftComponent={() => (
+    leftComponent={
       <AvatarChipsLeftComponent
         name={name}
         LeftIcon={LeftIcon}
@@ -29,7 +29,7 @@ export const AvatarChip = ({
         isIconInverted={isIconInverted}
         placeholderColorSeed={placeholderColorSeed}
       />
-    )}
+    }
     clickable={false}
     className={className}
     maxWidth={maxWidth}

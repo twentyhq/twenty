@@ -82,6 +82,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
       positionInRecordFilterGroup: selectedFilter?.positionInRecordFilterGroup,
       type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
       label: fieldMetadataItemUsedInDropdown.label,
+      subFieldName: selectedFilter?.subFieldName,
     });
 
     setSelectedValue(value);
@@ -90,7 +91,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
 
   return (
     <SelectableList
-      selectableListId="boolean-select"
+      selectableListInstanceId="boolean-select"
       selectableItemIdArray={options.map((option) => option.toString())}
       hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
       onEnter={(itemId) => {

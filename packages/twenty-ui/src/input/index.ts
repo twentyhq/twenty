@@ -82,6 +82,7 @@ export {
   CheckboxVariant,
   CheckboxShape,
   CheckboxSize,
+  CheckboxAccent,
   Checkbox,
 } from './components/Checkbox';
 export { IconListViewGrip } from './components/IconListViewGrip';

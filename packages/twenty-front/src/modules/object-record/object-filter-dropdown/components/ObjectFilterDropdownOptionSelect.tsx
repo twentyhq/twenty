@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { v4 } from 'uuid';
 
@@ -8,7 +7,7 @@ import { useOptionsForSelect } from '@/object-record/object-filter-dropdown/hook
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListStates';
+
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
@@ -20,6 +19,7 @@ import { selectedFilterComponentState } from '@/object-record/object-filter-drop
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -62,13 +62,12 @@ export const ObjectFilterDropdownOptionSelect = () => {
 
   const { closeDropdown } = useDropdown();
 
-  const { selectedItemIdState } = useSelectableListStates({
-    selectableListScopeId: componentInstanceId,
-  });
-
   const { resetSelectedItem } = useSelectableList(componentInstanceId);
 
-  const selectedItemId = useRecoilValue(selectedItemIdState);
+  const selectedItemId = useRecoilComponentValueV2(
+    selectedItemIdComponentState,
+    componentInstanceId,
+  );
 
   const fieldMetaDataId = fieldMetadataItemUsedInDropdown?.id ?? '';
 
@@ -148,6 +147,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
         recordFilterGroupId: selectedFilter?.recordFilterGroupId,
         positionInRecordFilterGroup:
           selectedFilter?.positionInRecordFilterGroup,
+        subFieldName: selectedFilter?.subFieldName,
       });
     }
     resetSelectedItem();
@@ -164,7 +164,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
 
   return (
     <SelectableList
-      selectableListId={componentInstanceId}
+      selectableListInstanceId={componentInstanceId}
       selectableItemIdArray={objectRecordsIds}
       hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
       onEnter={(itemId) => {

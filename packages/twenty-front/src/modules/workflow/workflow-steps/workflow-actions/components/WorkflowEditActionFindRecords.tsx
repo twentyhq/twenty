@@ -10,9 +10,9 @@ import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-a
 import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { isDefined } from 'twenty-shared/utils';
-import { useDebouncedCallback } from 'use-debounce';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
+import { useDebouncedCallback } from 'use-debounce';
 
 type WorkflowEditActionFindRecordsProps = {
   action: WorkflowFindRecordsAction;
@@ -52,14 +52,10 @@ export const WorkflowEditActionFindRecords = ({
   });
   const isFormDisabled = actionOptions.readonly;
 
-  const selectedObjectMetadataItemNameSingular = formData.objectName;
-
-  const selectedObjectMetadataItem = activeObjectMetadataItems.find(
-    (item) => item.nameSingular === selectedObjectMetadataItemNameSingular,
-  );
-  if (!isDefined(selectedObjectMetadataItem)) {
-    throw new Error('Should have found the metadata item');
-  }
+  const selectedObjectMetadataItemNameSingular =
+    activeObjectMetadataItems.find(
+      (item) => item.nameSingular === formData.objectName,
+    )?.nameSingular ?? '';
 
   const saveAction = useDebouncedCallback(
     async (formData: FindRecordsFormData) => {
@@ -119,7 +115,7 @@ export const WorkflowEditActionFindRecords = ({
           label="Object"
           fullWidth
           disabled={isFormDisabled}
-          value={formData.objectName}
+          value={selectedObjectMetadataItemNameSingular}
           emptyOption={{ label: 'Select an option', value: '' }}
           options={availableMetadata}
           onChange={(objectName) => {

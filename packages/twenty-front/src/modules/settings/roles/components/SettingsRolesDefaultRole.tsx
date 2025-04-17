@@ -7,15 +7,21 @@ import { Select } from '@/ui/input/components/Select';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { H2Title, IconUserPin } from 'twenty-ui/display';
+import { Card, Section } from 'twenty-ui/layout';
 import {
   Role,
   UpdateWorkspaceMutation,
   useUpdateWorkspaceMutation,
 } from '~/generated/graphql';
-import { Card, Section } from 'twenty-ui/layout';
-import { H2Title, IconUserPin } from 'twenty-ui/display';
 
-export const SettingsRoleDefaultRole = ({ roles }: { roles: Role[] }) => {
+type SettingsRoleDefaultRoleProps = {
+  roles: Role[];
+};
+
+export const SettingsRoleDefaultRole = ({
+  roles,
+}: SettingsRoleDefaultRoleProps) => {
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(

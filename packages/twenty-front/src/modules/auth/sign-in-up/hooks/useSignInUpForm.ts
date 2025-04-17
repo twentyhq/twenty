@@ -22,10 +22,7 @@ const makeValidationSchema = (signInUpStep: SignInUpStep) =>
         signInUpStep === SignInUpStep.Password
           ? z
               .string()
-              .regex(
-                PASSWORD_REGEX,
-                'Password must contain at least 8 characters',
-              )
+              .regex(PASSWORD_REGEX, 'Password must be min. 8 characters')
           : z.string().optional(),
       captchaToken: z.string().default(''),
     })

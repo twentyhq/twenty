@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
-import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
+import { MatchColumnToFieldSelect } from '@/spreadsheet-import/components/MatchColumnToFieldSelect';
+import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
@@ -54,7 +55,7 @@ export const TemplateColumn = <T extends string>({
   const selectOptions = [
     {
       Icon: IconForbid,
-      value: 'do-not-import',
+      value: DO_NOT_IMPORT_OPTION_KEY,
       label: t`Do not import`,
     },
     ...fieldOptions,
@@ -65,12 +66,12 @@ export const TemplateColumn = <T extends string>({
   );
 
   const ignoreValue = selectOptions.find(
-    ({ value }) => value === 'do-not-import',
+    ({ value }) => value === DO_NOT_IMPORT_OPTION_KEY,
   );
 
   return (
     <StyledContainer>
-      <MatchColumnSelect
+      <MatchColumnToFieldSelect
         placeholder={t`Select column...`}
         value={isIgnored ? ignoreValue : selectValue}
         onChange={(value) => onChange(value?.value as T, column.index)}

@@ -19,6 +19,7 @@ export const VerifyEmailEffect = () => {
 
   const [searchParams] = useSearchParams();
   const [isError, setIsError] = useState(false);
+
   const email = searchParams.get('email');
   const emailVerificationToken = searchParams.get('emailVerificationToken');
 
@@ -48,9 +49,8 @@ export const VerifyEmailEffect = () => {
 
         const workspaceUrl = getWorkspaceUrl(workspaceUrls);
         if (workspaceUrl.slice(0, -1) !== window.location.origin) {
-          return redirectToWorkspaceDomain(workspaceUrl, AppPath.Verify, {
+          return await redirectToWorkspaceDomain(workspaceUrl, AppPath.Verify, {
             loginToken: loginToken.token,
-            animateModal: false,
           });
         }
         verifyLoginToken(loginToken.token);

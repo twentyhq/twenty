@@ -69,6 +69,7 @@ const jestConfig: JestConfigWithTsJest = {
     'config/*',
     'graphql/queries/*',
     'graphql/mutations/*',
+    'graphql/subscriptions/*',
     'graphql/fragments/*',
     'types/*',
     'constants/*',

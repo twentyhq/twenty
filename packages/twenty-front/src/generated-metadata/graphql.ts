@@ -63,6 +63,11 @@ export type Analytics = {
   success: Scalars['Boolean']['output'];
 };
 
+export enum AnalyticsType {
+  PAGEVIEW = 'PAGEVIEW',
+  TRACK = 'TRACK'
+}
+
 export type ApiConfig = {
   __typename?: 'ApiConfig';
   mutationMaximumAffectedRecords: Scalars['Float']['output'];
@@ -145,6 +150,26 @@ export type Billing = {
   trialPeriods: Array<BillingTrialPeriodDto>;
 };
 
+export type BillingEndTrialPeriodOutput = {
+  __typename?: 'BillingEndTrialPeriodOutput';
+  /** Boolean that confirms if a payment method was found */
+  hasPaymentMethod: Scalars['Boolean']['output'];
+  /** Updated subscription status */
+  status?: Maybe<SubscriptionStatus>;
+};
+
+export type BillingMeteredProductUsageOutput = {
+  __typename?: 'BillingMeteredProductUsageOutput';
+  freeTierQuantity: Scalars['Float']['output'];
+  freeTrialQuantity: Scalars['Float']['output'];
+  periodEnd: Scalars['DateTime']['output'];
+  periodStart: Scalars['DateTime']['output'];
+  productKey: BillingProductKey;
+  totalCostCents: Scalars['Float']['output'];
+  unitPriceCents: Scalars['Float']['output'];
+  usageQuantity: Scalars['Float']['output'];
+};
+
 /** The different billing plans available */
 export enum BillingPlanKey {
   ENTERPRISE = 'ENTERPRISE',
@@ -153,9 +178,9 @@ export enum BillingPlanKey {
 
 export type BillingPlanOutput = {
   __typename?: 'BillingPlanOutput';
-  baseProduct: BillingProductDto;
-  meteredProducts: Array<BillingProductDto>;
-  otherLicensedProducts: Array<BillingProductDto>;
+  baseProduct: BillingProduct;
+  meteredProducts: Array<BillingProduct>;
+  otherLicensedProducts: Array<BillingProduct>;
   planKey: BillingPlanKey;
 };
 
@@ -191,13 +216,26 @@ export enum BillingPriceTiersMode {
 
 export type BillingPriceUnionDto = BillingPriceLicensedDto | BillingPriceMeteredDto;
 
-export type BillingProductDto = {
-  __typename?: 'BillingProductDTO';
+export type BillingProduct = {
+  __typename?: 'BillingProduct';
   description: Scalars['String']['output'];
   images?: Maybe<Array<Scalars['String']['output']>>;
+  metadata: BillingProductMetadata;
   name: Scalars['String']['output'];
-  prices: Array<BillingPriceUnionDto>;
-  type: BillingUsageType;
+  prices?: Maybe<Array<BillingPriceUnionDto>>;
+};
+
+/** The different billing products available */
+export enum BillingProductKey {
+  BASE_PRODUCT = 'BASE_PRODUCT',
+  WORKFLOW_NODE_EXECUTION = 'WORKFLOW_NODE_EXECUTION'
+}
+
+export type BillingProductMetadata = {
+  __typename?: 'BillingProductMetadata';
+  planKey: BillingPlanKey;
+  priceUsageBased: BillingUsageType;
+  productKey: BillingProductKey;
 };
 
 export type BillingSessionOutput = {
@@ -207,9 +245,17 @@ export type BillingSessionOutput = {
 
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
+  billingSubscriptionItems?: Maybe<Array<BillingSubscriptionItem>>;
   id: Scalars['UUID']['output'];
   interval?: Maybe<SubscriptionInterval>;
   status: SubscriptionStatus;
+};
+
+export type BillingSubscriptionItem = {
+  __typename?: 'BillingSubscriptionItem';
+  billingProduct?: Maybe<BillingProduct>;
+  hasReachedCurrentPeriodCap: Scalars['Boolean']['output'];
+  id: Scalars['UUID']['output'];
 };
 
 export type BillingTrialPeriodDto = {
@@ -278,6 +324,49 @@ export type ClientConfig = {
 export type ComputeStepOutputSchemaInput = {
   /** Step JSON format */
   step: Scalars['JSON']['input'];
+};
+
+export type ConfigVariable = {
+  __typename?: 'ConfigVariable';
+  description: Scalars['String']['output'];
+  isSensitive: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
+  value: Scalars['String']['output'];
+};
+
+export enum ConfigVariablesGroup {
+  AnalyticsConfig = 'AnalyticsConfig',
+  BillingConfig = 'BillingConfig',
+  CaptchaConfig = 'CaptchaConfig',
+  CloudflareConfig = 'CloudflareConfig',
+  EmailSettings = 'EmailSettings',
+  ExceptionHandler = 'ExceptionHandler',
+  GoogleAuth = 'GoogleAuth',
+  LLM = 'LLM',
+  Logging = 'Logging',
+  Metering = 'Metering',
+  MicrosoftAuth = 'MicrosoftAuth',
+  Other = 'Other',
+  RateLimiting = 'RateLimiting',
+  SSL = 'SSL',
+  ServerConfig = 'ServerConfig',
+  ServerlessConfig = 'ServerlessConfig',
+  StorageConfig = 'StorageConfig',
+  SupportChatConfig = 'SupportChatConfig',
+  TokensDuration = 'TokensDuration'
+}
+
+export type ConfigVariablesGroupData = {
+  __typename?: 'ConfigVariablesGroupData';
+  description: Scalars['String']['output'];
+  isHiddenOnLoad: Scalars['Boolean']['output'];
+  name: ConfigVariablesGroup;
+  variables: Array<ConfigVariable>;
+};
+
+export type ConfigVariablesOutput = {
+  __typename?: 'ConfigVariablesOutput';
+  groups: Array<ConfigVariablesGroupData>;
 };
 
 export type CreateAppTokenInput = {
@@ -391,6 +480,10 @@ export type CreateServerlessFunctionInput = {
 };
 
 export type CreateWorkflowVersionStepInput = {
+  /** Next step ID */
+  nextStepId?: InputMaybe<Scalars['String']['input']>;
+  /** Parent step ID */
+  parentStepId?: InputMaybe<Scalars['String']['input']>;
   /** New step type */
   stepType: Scalars['String']['input'];
   /** Workflow version ID */
@@ -498,49 +591,6 @@ export type EmailPasswordResetLink = {
   success: Scalars['Boolean']['output'];
 };
 
-export type EnvironmentVariable = {
-  __typename?: 'EnvironmentVariable';
-  description: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-  sensitive: Scalars['Boolean']['output'];
-  value: Scalars['String']['output'];
-};
-
-export enum EnvironmentVariablesGroup {
-  AnalyticsConfig = 'AnalyticsConfig',
-  BillingConfig = 'BillingConfig',
-  CaptchaConfig = 'CaptchaConfig',
-  CloudflareConfig = 'CloudflareConfig',
-  EmailSettings = 'EmailSettings',
-  ExceptionHandler = 'ExceptionHandler',
-  GoogleAuth = 'GoogleAuth',
-  LLM = 'LLM',
-  Logging = 'Logging',
-  Metering = 'Metering',
-  MicrosoftAuth = 'MicrosoftAuth',
-  Other = 'Other',
-  RateLimiting = 'RateLimiting',
-  SSL = 'SSL',
-  ServerConfig = 'ServerConfig',
-  ServerlessConfig = 'ServerlessConfig',
-  StorageConfig = 'StorageConfig',
-  SupportChatConfig = 'SupportChatConfig',
-  TokensDuration = 'TokensDuration'
-}
-
-export type EnvironmentVariablesGroupData = {
-  __typename?: 'EnvironmentVariablesGroupData';
-  description: Scalars['String']['output'];
-  isHiddenOnLoad: Scalars['Boolean']['output'];
-  name: EnvironmentVariablesGroup;
-  variables: Array<EnvironmentVariable>;
-};
-
-export type EnvironmentVariablesOutput = {
-  __typename?: 'EnvironmentVariablesOutput';
-  groups: Array<EnvironmentVariablesGroupData>;
-};
-
 export type ExecuteServerlessFunctionInput = {
   /** Id of the serverless function to execute */
   id: Scalars['UUID']['input'];
@@ -558,6 +608,12 @@ export type FeatureFlag = {
   workspaceId: Scalars['String']['output'];
 };
 
+export type FeatureFlagDto = {
+  __typename?: 'FeatureFlagDTO';
+  key: FeatureFlagKey;
+  value: Scalars['Boolean']['output'];
+};
+
 export enum FeatureFlagKey {
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
@@ -566,7 +622,6 @@ export enum FeatureFlagKey {
   IsCustomDomainEnabled = 'IsCustomDomainEnabled',
   IsEventObjectEnabled = 'IsEventObjectEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
-  IsMeteredProductBillingEnabled = 'IsMeteredProductBillingEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPermissionsV2Enabled = 'IsPermissionsV2Enabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
@@ -908,6 +963,7 @@ export type Mutation = {
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
   enablePostgresProxy: PostgresCredentials;
+  endSubscriptionTrialPeriod: BillingEndTrialPeriodOutput;
   executeOneServerlessFunction: ServerlessFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
@@ -926,12 +982,13 @@ export type Mutation = {
   signUpInNewWorkspace: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean']['output'];
+  switchToYearlyInterval: BillingUpdateOutput;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
   track: Analytics;
+  trackAnalytics: Analytics;
   unsyncRemoteTable: RemoteTable;
-  updateBillingSubscription: BillingUpdateOutput;
-  updateLabPublicFeatureFlag: FeatureFlag;
+  updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRemoteServer: RemoteServer;
@@ -1209,6 +1266,14 @@ export type MutationSyncRemoteTableSchemaChangesArgs = {
 export type MutationTrackArgs = {
   action: Scalars['String']['input'];
   payload: Scalars['JSON']['input'];
+};
+
+
+export type MutationTrackAnalyticsArgs = {
+  event?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  properties?: InputMaybe<Scalars['JSON']['input']>;
+  type: AnalyticsType;
 };
 
 
@@ -1524,8 +1589,9 @@ export type Query = {
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
-  getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
+  getConfigVariablesGrouped: ConfigVariablesOutput;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
+  getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getQueueMetrics: QueueMetricsData;
@@ -1545,6 +1611,7 @@ export type Query = {
   relationMetadata: RelationMetadataConnection;
   search: Array<SearchRecord>;
   validatePasswordResetToken: ValidatePasswordResetToken;
+  versionInfo: VersionInfo;
 };
 
 
@@ -1849,6 +1916,7 @@ export type Role = {
   id: Scalars['String']['output'];
   isEditable: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
+  objectPermissions?: Maybe<Array<ObjectPermission>>;
   settingPermissions?: Maybe<Array<SettingPermission>>;
   workspaceMembers: Array<WorkspaceMember>;
 };
@@ -2369,6 +2437,12 @@ export type ValidatePasswordResetToken = {
   id: Scalars['String']['output'];
 };
 
+export type VersionInfo = {
+  __typename?: 'VersionInfo';
+  currentVersion?: Maybe<Scalars['String']['output']>;
+  latestVersion: Scalars['String']['output'];
+};
+
 export type WorkerQueueMetrics = {
   __typename?: 'WorkerQueueMetrics';
   active: Scalars['Float']['output'];
@@ -2413,7 +2487,7 @@ export type Workspace = {
   defaultRole?: Maybe<Role>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;
-  featureFlags?: Maybe<Array<FeatureFlag>>;
+  featureFlags?: Maybe<Array<FeatureFlagDto>>;
   hasValidEnterpriseKey: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
   inviteHash?: Maybe<Scalars['String']['output']>;

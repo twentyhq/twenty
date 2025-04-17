@@ -1,3 +1,4 @@
+import { ActionMenuContextProvider } from '@/action-menu/contexts/ActionMenuContextProvider';
 import { CommandMenuContainer } from '@/command-menu/components/CommandMenuContainer';
 import { CommandMenuContextChipRecordSetterEffect } from '@/command-menu/components/CommandMenuContextChipRecordSetterEffect';
 import { CommandMenuTopBar } from '@/command-menu/components/CommandMenuTopBar';
@@ -47,7 +48,13 @@ export const CommandMenuRouter = () => {
           <CommandMenuTopBar />
         </motion.div>
         <StyledCommandMenuContent>
-          {commandMenuPageComponent}
+          <ActionMenuContextProvider
+            isInRightDrawer={true}
+            displayType="listItem"
+            actionMenuType="command-menu"
+          >
+            {commandMenuPageComponent}
+          </ActionMenuContextProvider>
         </StyledCommandMenuContent>
       </CommandMenuPageComponentInstanceContext.Provider>
     </CommandMenuContainer>

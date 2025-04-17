@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import {
-  createSearchParams,
   matchPath,
   useLocation,
   useNavigate,
   useParams,
-  useSearchParams,
 } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
@@ -13,6 +11,7 @@ import {
   setSessionId,
   useEventTracker,
 } from '@/analytics/hooks/useEventTracker';
+import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
@@ -27,6 +26,9 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
+import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
+import { AnalyticsType } from '~/generated/graphql';
+import { getPageTitleFromPath } from '~/utils/title-utils';
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
@@ -45,6 +47,8 @@ export const PageChangeEffect = () => {
 
   const eventTracker = useEventTracker();
 
+  const { initializeQueryParamState } = useInitializeQueryParamState();
+
   //TODO: refactor useResetTableRowSelection hook to not throw when the argument `recordTableId` is an empty string
   // - replace CoreObjectNamePlural.Person
   const objectNamePlural =
@@ -52,36 +56,25 @@ export const PageChangeEffect = () => {
 
   const resetTableSelections = useResetTableRowSelection(objectNamePlural);
 
+  const { executeTasksOnAnyLocationChange } =
+    useExecuteTasksOnAnyLocationChange();
+
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
       setPreviousLocation(location.pathname);
+      executeTasksOnAnyLocationChange();
     } else {
       return;
     }
-  }, [location, previousLocation]);
-
-  const [searchParams] = useSearchParams();
+  }, [location, previousLocation, executeTasksOnAnyLocationChange]);
 
   useEffect(() => {
+    initializeQueryParamState();
+
     if (isDefined(pageChangeEffectNavigateLocation)) {
-      const hasQueryParams = pageChangeEffectNavigateLocation.includes('?');
-
-      const navigationParams = createSearchParams({
-        ...(searchParams.get('animateModal')
-          ? { animateModal: searchParams.get('animateModal') ?? 'false' }
-          : {}),
-      });
-
-      if (hasQueryParams) {
-        navigate(pageChangeEffectNavigateLocation);
-      } else {
-        navigate({
-          pathname: pageChangeEffectNavigateLocation,
-          search: navigationParams.toString(),
-        });
-      }
+      navigate(pageChangeEffectNavigateLocation);
     }
-  }, [navigate, pageChangeEffectNavigateLocation, searchParams]);
+  }, [navigate, pageChangeEffectNavigateLocation, initializeQueryParamState]);
 
   useEffect(() => {
     const isLeavingRecordIndexPage = !!matchPath(
@@ -183,13 +176,16 @@ export const PageChangeEffect = () => {
   useEffect(() => {
     setTimeout(() => {
       setSessionId();
-      eventTracker('pageview', {
-        pathname: location.pathname,
-        locale: navigator.language,
-        userAgent: window.navigator.userAgent,
-        href: window.location.href,
-        referrer: document.referrer,
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      eventTracker(AnalyticsType['PAGEVIEW'], {
+        name: getPageTitleFromPath(location.pathname),
+        properties: {
+          pathname: location.pathname,
+          locale: navigator.language,
+          userAgent: window.navigator.userAgent,
+          href: window.location.href,
+          referrer: document.referrer,
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        },
       });
     }, 500);
   }, [eventTracker, location.pathname]);

@@ -21,12 +21,12 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
@@ -68,7 +68,7 @@ export class WorkspaceResolver {
     private readonly workspaceService: WorkspaceService,
     private readonly domainManagerService: DomainManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
@@ -153,15 +153,17 @@ export class WorkspaceResolver {
       logo: paths[0],
     });
 
-    const workspaceLogoToken = await this.fileService.encodeFileToken({
+    const workspaceLogoToken = this.fileService.encodeFileToken({
       workspaceId: id,
     });
 
     return `${paths[0]}?token=${workspaceLogoToken}`;
   }
 
-  @ResolveField(() => [FeatureFlag], { nullable: true })
-  async featureFlags(@Parent() workspace: Workspace): Promise<FeatureFlag[]> {
+  @ResolveField(() => [FeatureFlagDTO], { nullable: true })
+  async featureFlags(
+    @Parent() workspace: Workspace,
+  ): Promise<FeatureFlagDTO[]> {
     const featureFlags = await this.featureFlagService.getWorkspaceFeatureFlags(
       workspace.id,
     );
@@ -184,7 +186,7 @@ export class WorkspaceResolver {
   async billingSubscriptions(
     @Parent() workspace: Workspace,
   ): Promise<BillingSubscription[] | undefined> {
-    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return [];
     }
 
@@ -213,7 +215,7 @@ export class WorkspaceResolver {
   async currentBillingSubscription(
     @Parent() workspace: Workspace,
   ): Promise<BillingSubscription | undefined> {
-    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return;
     }
 
@@ -233,7 +235,7 @@ export class WorkspaceResolver {
   async logo(@Parent() workspace: Workspace): Promise<string> {
     if (workspace.logo) {
       try {
-        const workspaceLogoToken = await this.fileService.encodeFileToken({
+        const workspaceLogoToken = this.fileService.encodeFileToken({
           workspaceId: workspace.id,
         });
 
@@ -248,7 +250,7 @@ export class WorkspaceResolver {
 
   @ResolveField(() => Boolean)
   hasValidEnterpriseKey(): boolean {
-    return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
+    return isDefined(this.twentyConfigService.get('ENTERPRISE_KEY'));
   }
 
   @ResolveField(() => WorkspaceUrls)
@@ -260,7 +262,7 @@ export class WorkspaceResolver {
   isGoogleAuthEnabled(@Parent() workspace: Workspace) {
     return (
       workspace.isGoogleAuthEnabled &&
-      this.environmentService.get('AUTH_GOOGLE_ENABLED')
+      this.twentyConfigService.get('AUTH_GOOGLE_ENABLED')
     );
   }
 
@@ -268,7 +270,7 @@ export class WorkspaceResolver {
   isMicrosoftAuthEnabled(@Parent() workspace: Workspace) {
     return (
       workspace.isMicrosoftAuthEnabled &&
-      this.environmentService.get('AUTH_MICROSOFT_ENABLED')
+      this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED')
     );
   }
 
@@ -276,7 +278,7 @@ export class WorkspaceResolver {
   isPasswordAuthEnabled(@Parent() workspace: Workspace) {
     return (
       workspace.isPasswordAuthEnabled &&
-      this.environmentService.get('AUTH_PASSWORD_ENABLED')
+      this.twentyConfigService.get('AUTH_PASSWORD_ENABLED')
     );
   }
 
@@ -304,7 +306,7 @@ export class WorkspaceResolver {
 
       if (workspace.logo) {
         try {
-          const workspaceLogoToken = await this.fileService.encodeFileToken({
+          const workspaceLogoToken = this.fileService.encodeFileToken({
             workspaceId: workspace.id,
           });
 
@@ -315,10 +317,10 @@ export class WorkspaceResolver {
       }
 
       const systemEnabledProviders: AuthProviders = {
-        google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
+        google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),
         magicLink: false,
-        password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
-        microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
+        password: this.twentyConfigService.get('AUTH_PASSWORD_ENABLED'),
+        microsoft: this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED'),
         sso: [],
       };
 

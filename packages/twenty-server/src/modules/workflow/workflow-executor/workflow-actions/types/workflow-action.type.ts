@@ -25,6 +25,7 @@ type BaseWorkflowAction = {
   type: WorkflowActionType;
   settings: WorkflowActionSettings;
   valid: boolean;
+  nextStepIds?: string[];
 };
 
 export type WorkflowCodeAction = BaseWorkflowAction & {

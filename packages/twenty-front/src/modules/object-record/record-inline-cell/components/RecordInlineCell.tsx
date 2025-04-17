@@ -14,7 +14,7 @@ import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFie
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { useRecoilCallback } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
@@ -80,9 +80,11 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
         const hotkeyScope = snapshot
           .getLoadable(currentHotkeyScopeState)
           .getValue();
-        if (hotkeyScope.scope !== InlineCellHotkeyScope.InlineCell) {
+
+        if (hotkeyScope.scope !== DEFAULT_CELL_SCOPE.scope) {
           return;
         }
+
         event.stopImmediatePropagation();
 
         persistField();
