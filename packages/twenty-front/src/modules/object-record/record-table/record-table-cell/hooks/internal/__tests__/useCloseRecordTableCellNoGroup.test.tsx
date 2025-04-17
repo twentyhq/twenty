@@ -11,9 +11,9 @@ import { RecordTableCellContext } from '@/object-record/record-table/contexts/Re
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import {
-  recordTableCellContextValue,
-  recordTableRowContextValue,
-  recordTableRowDraggableContextValue,
+    recordTableCellContextValue,
+    recordTableRowContextValue,
+    recordTableRowDraggableContextValue,
 } from '@/object-record/record-table/record-table-cell/hooks/__mocks__/cell';
 import { useCloseRecordTableCellNoGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellNoGroup';
 import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
@@ -95,6 +95,6 @@ describe('useCloseRecordTableCellNoGroup', () => {
 
     expect(result.current.isDragSelectionStartEnabled()).toBe(true);
     expect(result.current.currentTableCellInEditModePosition).toBe(null);
-    expect(setHotkeyScope).toHaveBeenCalledWith('table-soft-focus');
+    expect(setHotkeyScope).toHaveBeenCalledWith('table-focus');
   });
 });

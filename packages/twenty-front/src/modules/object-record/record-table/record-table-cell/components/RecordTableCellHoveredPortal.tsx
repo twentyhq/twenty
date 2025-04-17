@@ -22,7 +22,6 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${({ isReadOnly }) =>
     !isReadOnly ? BORDER_COMMON.radius.sm : 'none'};
-  border-radius: ${BORDER_COMMON.radius.sm};
   box-sizing: border-box;
   cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
   display: flex;

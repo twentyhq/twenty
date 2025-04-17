@@ -44,7 +44,7 @@ export const RecordTableCellDisplayContainer = ({
 }: React.PropsWithChildren<EditableCellDisplayContainerProps>) => (
   <StyledOuterContainer
     data-testid={
-      focus ? 'editable-cell-soft-focus-mode' : 'editable-cell-display-mode'
+      focus ? 'editable-cell-focus-mode' : 'editable-cell-display-mode'
     }
     onClick={onClick}
     ref={scrollRef}
