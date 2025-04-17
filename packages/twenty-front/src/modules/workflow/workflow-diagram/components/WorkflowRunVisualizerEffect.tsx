@@ -5,6 +5,7 @@ import { flowState } from '@/workflow/states/flowState';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { workflowRunIdState } from '@/workflow/states/workflowRunIdState';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
+import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
@@ -22,6 +23,9 @@ export const WorkflowRunVisualizerEffect = ({
   const setWorkflowId = useSetRecoilState(workflowIdState);
   const setFlow = useSetRecoilState(flowState);
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
+  const setWorkflowDiagramStatus = useSetRecoilState(
+    workflowDiagramStatusState,
+  );
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
   useEffect(() => {
@@ -36,6 +40,10 @@ export const WorkflowRunVisualizerEffect = ({
   }, [setWorkflowId, workflowRun]);
 
   useEffect(() => {
+    console.log('in useEffect WorkflowRunVisualizerEffect');
+
+    setWorkflowDiagramStatus('computing-diagram');
+
     if (!isDefined(workflowRun?.output)) {
       setFlow(undefined);
       setWorkflowDiagram(undefined);
@@ -56,9 +64,11 @@ export const WorkflowRunVisualizerEffect = ({
     });
 
     setWorkflowDiagram(nextWorkflowDiagram);
+    setWorkflowDiagramStatus('computing-dimensions');
   }, [
     setFlow,
     setWorkflowDiagram,
+    setWorkflowDiagramStatus,
     workflowRun?.output,
     workflowRun?.workflowVersionId,
   ]);

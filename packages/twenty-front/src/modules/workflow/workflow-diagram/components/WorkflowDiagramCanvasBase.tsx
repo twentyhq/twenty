@@ -1,7 +1,9 @@
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
+import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
 import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
 import {
   WorkflowDiagramEdge,
@@ -26,7 +28,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
@@ -140,23 +142,6 @@ export const WorkflowDiagramCanvasBase = ({
 
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
 
-  const handleNodesChange = (
-    nodeChanges: Array<NodeChange<WorkflowDiagramNode>>,
-  ) => {
-    setWorkflowDiagram((diagram) => {
-      if (isDefined(diagram) === false) {
-        throw new Error(
-          'It must be impossible for the nodes to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
-        );
-      }
-
-      return {
-        ...diagram,
-        nodes: applyNodeChanges(nodeChanges, diagram.nodes),
-      };
-    });
-  };
-
   const handleEdgesChange = (
     edgeChanges: Array<EdgeChange<WorkflowDiagramEdge>>,
   ) => {
@@ -209,6 +194,34 @@ export const WorkflowDiagramCanvasBase = ({
     );
   }, [reactflow, rightDrawerState, rightDrawerWidth]);
 
+  const handleNodesChanges = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (changes: NodeChange<WorkflowDiagramNode>[]) => {
+        set(workflowDiagramState, (diagram) => {
+          if (isDefined(diagram) === false) {
+            throw new Error(
+              'It must be impossible for the nodes to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
+            );
+          }
+
+          return {
+            ...diagram,
+            nodes: applyNodeChanges(changes, diagram.nodes),
+          };
+        });
+
+        const workflowDiagramStatus = getSnapshotValue(
+          snapshot,
+          workflowDiagramStatusState,
+        );
+
+        if (workflowDiagramStatus === 'computing-dimensions') {
+          set(workflowDiagramStatusState, 'done');
+        }
+      },
+    [],
+  );
+
   return (
     <StyledResetReactflowStyles ref={containerRef}>
       <WorkflowDiagramCustomMarkers />
@@ -220,8 +233,11 @@ export const WorkflowDiagramCanvasBase = ({
           }
         }}
         onInit={() => {
+          console.log('on init reactflow');
+
           if (!isDefined(containerRef.current)) {
-            throw new Error('Expect the container ref to be defined');
+            // throw new Error('Expect the container ref to be defined');
+            return;
           }
 
           const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
@@ -238,7 +254,7 @@ export const WorkflowDiagramCanvasBase = ({
         edgeTypes={edgeTypes}
         nodes={nodes}
         edges={edges}
-        onNodesChange={handleNodesChange}
+        onNodesChange={handleNodesChanges}
         onEdgesChange={handleEdgesChange}
         onBeforeDelete={async () => {
           // Abort all non-programmatic deletions
