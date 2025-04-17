@@ -16,10 +16,8 @@ import {
   recordTableRowDraggableContextValue,
 } from '@/object-record/record-table/record-table-cell/hooks/__mocks__/cell';
 import { useCloseRecordTableCellNoGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellNoGroup';
-import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
-import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
+import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
@@ -60,7 +58,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
               value={recordTableRowDraggableContextValue}
             >
               <RecordTableCellContext.Provider
-                value={{ ...recordTableCellContextValue, columnIndex: 0 }}
+                value={{ ...recordTableCellContextValue }}
               >
                 {children}
               </RecordTableCellContext.Provider>
@@ -77,16 +75,13 @@ describe('useCloseRecordTableCellNoGroup', () => {
     const { result } = renderHook(
       () => {
         const currentTableCellInEditModePosition = useRecoilComponentValueV2(
-          currentTableCellInEditModePositionComponentState,
+          recordTableCellEditModePositionComponentState,
         );
-        const isTableCellInEditMode = useRecoilComponentFamilyValueV2(
-          isTableCellInEditModeComponentFamilyState,
-          currentTableCellInEditModePosition,
-        );
+
         return {
           ...useCloseRecordTableCellNoGroup(),
           ...useDragSelect(),
-          isTableCellInEditMode,
+          currentTableCellInEditModePosition,
         };
       },
       {
@@ -99,7 +94,7 @@ describe('useCloseRecordTableCellNoGroup', () => {
     });
 
     expect(result.current.isDragSelectionStartEnabled()).toBe(true);
-    expect(result.current.isTableCellInEditMode).toBe(false);
-    expect(setHotkeyScope).toHaveBeenCalledWith('table-soft-focus');
+    expect(result.current.currentTableCellInEditModePosition).toBe(null);
+    expect(setHotkeyScope).toHaveBeenCalledWith('table-focus');
   });
 });

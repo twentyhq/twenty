@@ -2,12 +2,9 @@ import { RecordTableComponentInstanceContext } from '@/object-record/record-tabl
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 import { TableCellPosition } from '../types/TableCellPosition';
 
-export const currentTableCellInEditModePositionComponentState =
-  createComponentStateV2<TableCellPosition>({
-    key: 'currentTableCellInEditModePositionComponentState',
-    defaultValue: {
-      row: 0,
-      column: 1,
-    },
+export const recordTableCellEditModePositionComponentState =
+  createComponentStateV2<TableCellPosition | null>({
+    key: 'recordTableCellEditModePositionComponentState',
+    defaultValue: null,
     componentInstanceContext: RecordTableComponentInstanceContext,
   });
