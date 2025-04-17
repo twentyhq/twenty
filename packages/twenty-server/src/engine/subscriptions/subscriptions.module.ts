@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Inject, Module, OnModuleDestroy } from '@nestjs/common';
 
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
@@ -23,4 +23,12 @@ import { SubscriptionsJob } from 'src/engine/subscriptions/subscriptions.job';
     SubscriptionsJob,
   ],
 })
-export class SubscriptionsModule {}
+export class SubscriptionsModule implements OnModuleDestroy {
+  constructor(@Inject('PUB_SUB') private readonly pubSub: RedisPubSub) {}
+
+  async onModuleDestroy() {
+    if (this.pubSub) {
+      await this.pubSub.close();
+    }
+  }
+}
