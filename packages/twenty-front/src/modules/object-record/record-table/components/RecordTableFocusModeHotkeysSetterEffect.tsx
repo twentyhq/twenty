@@ -49,7 +49,7 @@ export const RecordTableFocusModeHotkeysSetterEffect = () => {
       }
     },
     TableHotkeyScope.TableFocus,
-    [openTableCell],
+    [openTableCell, isFieldInputOnly, toggleEditOnlyInput, isReadOnly],
   );
 
   useScopedHotkeys(
@@ -77,7 +77,7 @@ export const RecordTableFocusModeHotkeysSetterEffect = () => {
       }
     },
     TableHotkeyScope.TableFocus,
-    [openTableCell],
+    [openTableCell, isFieldInputOnly, toggleEditOnlyInput, isReadOnly],
     {
       preventDefault: false,
     },
