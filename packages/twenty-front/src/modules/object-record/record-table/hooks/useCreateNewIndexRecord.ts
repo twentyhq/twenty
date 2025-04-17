@@ -2,6 +2,7 @@ import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordIn
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { useBuildRecordInputFromFilters } from '@/object-record/record-table/hooks/useBuildRecordInputFromFilters';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { AppPath } from '@/types/AppPath';
@@ -27,16 +28,27 @@ export const useCreateNewIndexRecord = ({
   const { openRecordTitleCell } = useRecordTitleCell();
 
   //tododo here
+  const { buildRecordInputFromFilters } = useBuildRecordInputFromFilters({
+    objectMetadataItem,
+  });
+
   const createNewIndexRecord = useRecoilCallback(
     ({ snapshot }) =>
       async (recordInput?: Partial<ObjectRecord>) => {
         const recordId = v4();
+        const recordInputFromFilters = buildRecordInputFromFilters();
 
         const recordIndexOpenRecordIn = snapshot
           .getLoadable(recordIndexOpenRecordInState)
           .getValue();
 
-        await createOneRecord({ id: recordId, ...recordInput });
+        await createOneRecord({
+          id: recordId,
+          ...{
+            ...recordInputFromFilters,
+            ...recordInput,
+          },
+        });
 
         if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
           openRecordInCommandMenu({
@@ -57,6 +69,7 @@ export const useCreateNewIndexRecord = ({
         }
       },
     [
+      buildRecordInputFromFilters,
       createOneRecord,
       navigate,
       objectMetadataItem.labelIdentifierFieldMetadataId,

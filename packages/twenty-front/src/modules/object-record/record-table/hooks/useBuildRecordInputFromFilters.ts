@@ -10,11 +10,12 @@ export const useBuildRecordInputFromFilters = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
+  // we might need to build a recoil callback for better performance
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
 
-  const buildRecordInputFromFilters = () => {
+  const buildRecordInputFromFilters = (): Partial<ObjectRecord> => {
     const recordInput: Partial<ObjectRecord> = {};
 
     currentRecordFilters.forEach((filter) => {
