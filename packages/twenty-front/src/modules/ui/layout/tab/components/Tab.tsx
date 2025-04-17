@@ -4,8 +4,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
-import { Avatar, IconComponent } from 'twenty-ui/display';
 import { Pill } from 'twenty-ui/components';
+import { Avatar, IconComponent } from 'twenty-ui/display';
 
 type TabProps = {
   id: string;
@@ -69,6 +69,9 @@ const StyledHover = styled.span`
 
 const StyledIconContainer = styled.div`
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const Tab = ({
@@ -101,7 +104,7 @@ export const Tab = ({
       to={to}
     >
       <StyledHover>
-        <StyledIconContainer>
+        <StyledIconContainer className="awdawdqwd">
           {logo && (
             <Avatar
               avatarUrl={logo}
