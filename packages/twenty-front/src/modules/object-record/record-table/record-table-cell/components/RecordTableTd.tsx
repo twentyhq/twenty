@@ -18,7 +18,7 @@ const StyledTd = styled.td<{
   width?: number;
 }>`
   border-bottom: 1px solid
-    ${({ hasBottomBorder, borderColor, isDragging }) =>
+    ${({ borderColor, hasBottomBorder, isDragging }) =>
       hasBottomBorder && !isDragging ? borderColor : 'transparent'};
 
   color: ${({ fontColor }) => fontColor};
@@ -58,7 +58,6 @@ export const RecordTableTd = ({
   className?: string;
   children?: ReactNode;
   isSelected?: boolean;
-  isPreviousRowSelected?: boolean;
   isDragging?: boolean;
   sticky?: boolean;
   freezeFirstColumns?: boolean;
