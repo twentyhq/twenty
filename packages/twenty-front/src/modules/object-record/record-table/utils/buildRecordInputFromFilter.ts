@@ -32,7 +32,7 @@ const stringToFieldMetadataType = (type: FieldMetadataType, value: string) => {
     case FieldMetadataType.POSITION:
       return Number(value);
     case FieldMetadataType.BOOLEAN:
-      return Boolean(value);
+      return value === 'true';
     case FieldMetadataType.RAW_JSON:
       return JSON.parse(value);
     case FieldMetadataType.ARRAY:
@@ -60,7 +60,7 @@ const buildValueFromFilter = (
   if (isCompositeField(fieldMetadataItem.type)) {
     return filter.value;
   }
-
+  debugger;
   // convert the value to the correct javascript type based on the fieldmetadataitem type
   const convertedValue = stringToFieldMetadataType(
     fieldMetadataItem.type,
