@@ -21,6 +21,7 @@ export const makeRestAPIRequest = ({
 
   return client[method](`/rest${path}`)
     .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+    .set('Content-Type', 'application/json')
     .set(headers)
     .send(body ? JSON.stringify(body) : undefined);
 };
