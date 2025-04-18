@@ -57,7 +57,7 @@ test('Use an old version as draft', async ({ workflowVisualizer, page }) => {
     },
   );
 
-  await linkToFirstWorkflowVersion.click();
+  await linkToFirstWorkflowVersion.click({ force: true });
 
   await expect(workflowVisualizer.workflowStatus).toHaveText('Archived');
   await expect(workflowVisualizer.useAsDraftButton).toBeVisible();
@@ -139,7 +139,7 @@ test('Use an old version as draft while having a pending draft version', async (
     },
   );
 
-  await linkToFirstWorkflowVersion.click();
+  await linkToFirstWorkflowVersion.click({ force: true });
 
   await expect(workflowVisualizer.workflowStatus).toHaveText('Active');
   await expect(workflowVisualizer.useAsDraftButton).toBeVisible();
