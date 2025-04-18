@@ -1,25 +1,15 @@
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
 
 import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
+import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
+import { isDefined } from 'twenty-shared/utils';
 import { formatAmount } from '~/utils/format/formatAmount';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { isDefined } from 'twenty-shared/utils';
 
 type CurrencyDisplayProps = {
   currencyValue: FieldCurrencyValue | null | undefined;
 };
-
-const StyledEllipsisDisplay = styled.div`
-  align-items: center;
-  display: flex;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-`;
 
 export const CurrencyDisplay = ({ currencyValue }: CurrencyDisplayProps) => {
   const theme = useTheme();
@@ -35,11 +25,11 @@ export const CurrencyDisplay = ({ currencyValue }: CurrencyDisplayProps) => {
     : currencyValue?.amountMicros / 1000000;
 
   if (!shouldDisplayCurrency) {
-    return <StyledEllipsisDisplay>{0}</StyledEllipsisDisplay>;
+    return <EllipsisDisplay>{0}</EllipsisDisplay>;
   }
 
   return (
-    <StyledEllipsisDisplay>
+    <EllipsisDisplay>
       {isDefined(CurrencyIcon) && amountToDisplay !== null && (
         <>
           <CurrencyIcon
@@ -50,6 +40,6 @@ export const CurrencyDisplay = ({ currencyValue }: CurrencyDisplayProps) => {
         </>
       )}
       {amountToDisplay !== null ? formatAmount(amountToDisplay) : ''}
-    </StyledEllipsisDisplay>
+    </EllipsisDisplay>
   );
 };

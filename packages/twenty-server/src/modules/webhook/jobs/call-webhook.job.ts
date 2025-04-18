@@ -3,10 +3,11 @@ import { Logger } from '@nestjs/common';
 
 import crypto from 'crypto';
 
-import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { WEBHOOK_RESPONSE_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/webhook/webhook-response';
 
 export type CallWebhookJobData = {
   targetUrl: string;
@@ -46,6 +47,9 @@ export class CallWebhookJob {
       webhookId: data.webhookId,
       eventName: data.eventName,
     };
+    const analytics = this.analyticsService.createAnalyticsContext({
+      workspaceId: data.workspaceId,
+    });
 
     try {
       const headers: Record<string, string> = {
@@ -73,27 +77,18 @@ export class CallWebhookJob {
       );
 
       const success = response.status >= 200 && response.status < 300;
-      const eventInput = {
-        action: 'webhook.response',
-        payload: {
-          status: response.status,
-          success,
-          ...commonPayload,
-        },
-      };
 
-      this.analyticsService.create(eventInput, 'webhook', data.workspaceId);
+      analytics.track(WEBHOOK_RESPONSE_EVENT, {
+        status: response.status,
+        success,
+        ...commonPayload,
+      });
     } catch (err) {
-      const eventInput = {
-        action: 'webhook.response',
-        payload: {
-          success: false,
-          ...commonPayload,
-          ...(err.response && { status: err.response.status }),
-        },
-      };
-
-      this.analyticsService.create(eventInput, 'webhook', data.workspaceId);
+      analytics.track(WEBHOOK_RESPONSE_EVENT, {
+        success: false,
+        ...commonPayload,
+        ...(err.response && { status: err.response.status }),
+      });
       this.logger.error(
         `Error calling webhook on targetUrl '${data.targetUrl}': ${err}`,
       );

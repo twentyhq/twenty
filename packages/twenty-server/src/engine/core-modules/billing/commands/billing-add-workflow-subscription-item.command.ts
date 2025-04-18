@@ -14,6 +14,8 @@ import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
+import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -31,6 +33,8 @@ export class BillingAddWorkflowSubscriptionItemCommand extends ActiveOrSuspended
     @InjectRepository(BillingProduct, 'core')
     protected readonly billingProductRepository: Repository<BillingProduct>,
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
+    private readonly stripeSubscriptionService: StripeSubscriptionService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -77,9 +81,32 @@ export class BillingAddWorkflowSubscriptionItemCommand extends ActiveOrSuspended
     }
 
     if (!options.dryRun) {
+      await this.stripeSubscriptionService.updateSubscription(
+        subscription.stripeSubscriptionId,
+        {
+          trial_settings: {
+            end_behavior: {
+              missing_payment_method: 'create_invoice',
+            },
+          },
+        },
+      );
+
       await this.stripeSubscriptionItemService.createSubscriptionItem(
         subscription.stripeSubscriptionId,
         associatedWorkflowMeteredPrice.stripePriceId,
+      );
+
+      await this.stripeSubscriptionService.updateSubscription(
+        subscription.stripeSubscriptionId,
+        {
+          billing_thresholds: {
+            amount_gte: this.twentyConfigService.get(
+              'BILLING_SUBSCRIPTION_THRESHOLD_AMOUNT',
+            ),
+            reset_billing_cycle_anchor: false,
+          },
+        },
       );
     }
 

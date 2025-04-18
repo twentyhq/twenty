@@ -77,6 +77,7 @@ export const ObjectFilterDropdownRatingInput = () => {
                 fieldMetadataItemUsedInDropdown.type,
               ),
               label: fieldMetadataItemUsedInDropdown.label,
+              subFieldName: selectedFilter?.subFieldName,
             });
           }}
         />

@@ -147,6 +147,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
         recordFilterGroupId: selectedFilter?.recordFilterGroupId,
         positionInRecordFilterGroup:
           selectedFilter?.positionInRecordFilterGroup,
+        subFieldName: selectedFilter?.subFieldName,
       });
     }
     resetSelectedItem();

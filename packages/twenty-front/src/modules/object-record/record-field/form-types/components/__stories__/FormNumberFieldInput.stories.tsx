@@ -70,3 +70,16 @@ export const Disabled: Story = {
     expect(variablePicker).not.toBeInTheDocument();
   },
 };
+
+export const WithError: Story = {
+  args: {
+    error: 'Invalid number',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const error = await canvas.findByText('Invalid number');
+
+    expect(error).toBeVisible();
+  },
+};

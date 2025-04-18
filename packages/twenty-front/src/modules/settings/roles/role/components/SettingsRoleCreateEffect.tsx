@@ -5,7 +5,13 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-export const SettingsRoleCreateEffect = ({ roleId }: { roleId: string }) => {
+type SettingsRoleCreateEffectProps = {
+  roleId: string;
+};
+
+export const SettingsRoleCreateEffect = ({
+  roleId,
+}: SettingsRoleCreateEffectProps) => {
   const setSettingsDraftRole = useSetRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );

@@ -4,8 +4,6 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import React from 'react';
-import { Role } from '~/generated-metadata/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import {
   AppTooltip,
   Avatar,
@@ -14,6 +12,8 @@ import {
   TooltipDelay,
   useIcons,
 } from 'twenty-ui/display';
+import { Role } from '~/generated-metadata/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledAssignedText = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
@@ -52,14 +52,12 @@ const StyledTableRow = styled(TableRow)`
   }
 `;
 
-export const SettingsRolesTableRow = ({ role }: { role: Role }) => {
+type SettingsRolesTableRowProps = {
+  role: Role;
+};
+
+export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
   const theme = useTheme();
-
-  const navigateSettings = useNavigateSettings();
-
-  const handleRoleClick = (roleId: string) => {
-    navigateSettings(SettingsPath.RoleDetail, { roleId });
-  };
 
   const { getIcon } = useIcons();
   const Icon = getIcon(role.icon ?? 'IconUser');
@@ -68,7 +66,7 @@ export const SettingsRolesTableRow = ({ role }: { role: Role }) => {
     <StyledTableRow
       key={role.id}
       gridAutoColumns="332px 3fr 2fr 1fr"
-      onClick={() => handleRoleClick(role.id)}
+      to={getSettingsPath(SettingsPath.RoleDetail, { roleId: role.id })}
     >
       <TableCell>
         <StyledNameCell>

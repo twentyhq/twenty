@@ -52,6 +52,8 @@ type FormFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
   placeholder?: string;
+  error?: string;
+  onError?: (error: string | undefined) => void;
 };
 
 export const FormFieldInput = ({
@@ -61,6 +63,8 @@ export const FormFieldInput = ({
   VariablePicker,
   readonly,
   placeholder,
+  error,
+  onError,
 }: FormFieldInputProps) => {
   return isFieldNumber(field) ? (
     <FormNumberFieldInput
@@ -70,6 +74,8 @@ export const FormFieldInput = ({
       VariablePicker={VariablePicker}
       readonly={readonly}
       placeholder={placeholder}
+      error={error}
+      onError={onError}
     />
   ) : isFieldBoolean(field) ? (
     <FormBooleanFieldInput

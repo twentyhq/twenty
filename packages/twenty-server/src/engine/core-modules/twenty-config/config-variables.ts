@@ -464,6 +464,18 @@ export class ConfigVariables {
   ANALYTICS_ENABLED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AnalyticsConfig,
+    description: 'Clickhouse host for analytics',
+  })
+  @IsOptional()
+  @IsUrl({
+    require_tld: false,
+    allow_underscores: true,
+  })
+  @ValidateIf((env) => env.ANALYTICS_ENABLED === true)
+  CLICKHOUSE_URL: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Logging,
     description: 'Enable or disable telemetry logging',
   })
@@ -508,6 +520,33 @@ export class ConfigVariables {
   @IsOptional()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS = 7;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BillingConfig,
+    description: 'Amount of money in cents to trigger a billing threshold',
+  })
+  @IsNumber()
+  @CastToPositiveNumber()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_SUBSCRIPTION_THRESHOLD_AMOUNT = 10000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BillingConfig,
+    description: 'Amount of credits for the free trial without credit card',
+  })
+  @IsNumber()
+  @CastToPositiveNumber()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD = 5000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BillingConfig,
+    description: 'Amount of credits for the free trial with credit card',
+  })
+  @IsNumber()
+  @CastToPositiveNumber()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD = 10000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
@@ -692,6 +731,15 @@ export class ConfigVariables {
   @IsBoolean()
   @IsOptional()
   PG_SSL_ALLOW_SELF_SIGNED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
+    description: 'Enable configuration variables to be stored in the database',
+  })
+  @CastToBoolean()
+  @IsBoolean()
+  @IsOptional()
+  IS_CONFIG_VARIABLES_IN_DB_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,

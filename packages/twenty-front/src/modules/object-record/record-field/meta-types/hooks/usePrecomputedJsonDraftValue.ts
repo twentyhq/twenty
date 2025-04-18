@@ -1,7 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { WorkflowRunOutput } from '@/workflow/types/Workflow';
-import { workflowRunOutputSchema } from '@/workflow/validation-schemas/workflowSchema';
+import { orderWorkflowRunOutput } from '@/object-record/record-field/meta-types/utils/orderWorkflowRunOutput';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { JsonObject, JsonValue } from 'type-fest';
@@ -22,26 +21,7 @@ export const usePrecomputedJsonDraftValue = ({
     fieldDefinition.metadata.fieldName === 'output' &&
     isDefined(draftValue)
   ) {
-    const parsedValue = workflowRunOutputSchema.safeParse(parsedJsonValue);
-    if (!parsedValue.success) {
-      return null;
-    }
-
-    const orderedWorkflowRunOutput: WorkflowRunOutput = {
-      ...(isDefined(parsedValue.data.error)
-        ? {
-            error: parsedValue.data.error,
-          }
-        : {}),
-      ...(isDefined(parsedValue.data.stepsOutput)
-        ? {
-            stepsOutput: parsedValue.data.stepsOutput,
-          }
-        : {}),
-      flow: parsedValue.data.flow,
-    };
-
-    return orderedWorkflowRunOutput as JsonObject;
+    return orderWorkflowRunOutput(parsedJsonValue) as JsonObject;
   }
 
   return parsedJsonValue;
