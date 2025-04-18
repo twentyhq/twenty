@@ -1,7 +1,7 @@
-import { useApolloClient } from '@apollo/client';
 import { useOnDbEvent } from '@/subscription/hooks/useOnDbEvent';
-import { DatabaseEventAction } from '~/generated/graphql';
+import { useApolloClient } from '@apollo/client';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import { DatabaseEventAction } from '~/generated/graphql';
 
 type ListenRecordUpdatesEffectProps = {
   objectNameSingular: string;
