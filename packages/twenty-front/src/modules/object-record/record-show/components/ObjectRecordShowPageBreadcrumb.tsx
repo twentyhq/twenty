@@ -3,6 +3,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
+import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import styled from '@emotion/styled';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -21,7 +22,7 @@ const StyledEditableTitlePrefix = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(0.75)};
+  cursor: pointer;
 `;
 
 const StyledTitle = styled.div`
@@ -59,13 +60,22 @@ export const ObjectRecordShowPageBreadcrumb = ({
     recordId: objectRecordId,
   });
 
+  const { navigateToIndexView } = useRecordShowPagePagination(
+    objectNameSingular,
+    objectRecordId,
+  );
+
   if (loading) {
     return null;
   }
 
   return (
     <StyledEditableTitleContainer>
-      <StyledEditableTitlePrefix>
+      <StyledEditableTitlePrefix
+        onClick={() => {
+          navigateToIndexView();
+        }}
+      >
         {capitalize(objectLabelPlural)}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>
