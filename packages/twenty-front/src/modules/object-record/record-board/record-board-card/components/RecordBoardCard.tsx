@@ -25,9 +25,9 @@ import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -43,7 +43,7 @@ const StyledBoardCard = styled.div<{ selected: boolean }>`
       selected && theme.accent.tertiary};
     border: 1px solid
       ${({ theme, selected }) =>
-        selected ? theme.accent.primary : theme.border.color.medium};
+        selected ? theme.accent.primary : theme.border.color.strong};
   }
   cursor: pointer;
 
