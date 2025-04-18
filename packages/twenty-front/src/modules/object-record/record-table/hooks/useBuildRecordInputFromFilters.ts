@@ -1,6 +1,8 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { buildRecordInputFromFilter } from '@/object-record/record-table/utils/buildRecordInputFromFilter';
+import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import { buildValueFromFilter } from '@/object-record/record-table/utils/buildRecordInputFromFilter';
+
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,9 +26,9 @@ export const useBuildRecordInputFromFilters = ({
       );
 
       if (isDefined(fieldMetadataItem)) {
-        recordInput[fieldMetadataItem.name] = buildRecordInputFromFilter(
+        recordInput[fieldMetadataItem.name] = buildValueFromFilter(
           filter,
-          fieldMetadataItem,
+          fieldMetadataItem.type as FilterableFieldType,
         );
       }
     });

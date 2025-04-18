@@ -1,102 +1,146 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
+import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
-// add a spec file exhautive test for this function
-export const buildRecordInputFromFilter = (
+
+export const buildValueFromFilter = (
   filter: RecordFilter,
-  fieldMetadataItem: FieldMetadataItem,
+  type: FilterableFieldType,
 ) => {
-  const value = buildValueFromFilter(filter, fieldMetadataItem);
+  if (isCompositeField(type)) {
+    return;
+  }
 
-  return value;
-};
+  if (type === 'RAW_JSON') {
+    throw new Error('Raw JSON is not supported');
+  }
 
-const stringToFieldMetadataType = (type: FieldMetadataType, value: string) => {
+  const operands = getRecordFilterOperands({
+    filterType: type,
+  });
+  if (!operands.includes(filter.operand)) {
+    throw new Error('Operand not supported for this field type');
+  }
+
   switch (type) {
-    case FieldMetadataType.UUID:
-    case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT:
-    case FieldMetadataType.FULL_NAME:
-    case FieldMetadataType.RICH_TEXT_V2:
-    case FieldMetadataType.RATING:
-      return value;
-    case FieldMetadataType.DATE_TIME:
-    case FieldMetadataType.DATE:
-      return new Date(value);
-    case FieldMetadataType.NUMBER:
-      return Number(value);
-    case FieldMetadataType.NUMERIC:
-    case FieldMetadataType.POSITION:
-      return Number(value);
-    case FieldMetadataType.BOOLEAN:
-      return value === 'true';
-    case FieldMetadataType.RAW_JSON:
-      return JSON.parse(value);
-    case FieldMetadataType.ARRAY:
-    case FieldMetadataType.PHONES:
-    case FieldMetadataType.EMAILS:
-    case FieldMetadataType.LINKS:
-    case FieldMetadataType.CURRENCY:
-    case FieldMetadataType.TS_VECTOR:
-    case FieldMetadataType.SELECT:
-    case FieldMetadataType.MULTI_SELECT:
-    case FieldMetadataType.RELATION:
-    case FieldMetadataType.ADDRESS:
-    case FieldMetadataType.ACTOR:
+    case 'TEXT':
+    case 'RATING': // RATING not working
+      return computeValueFromFilterText(filter.operand, filter.value);
+    case 'DATE_TIME': // test not working
+    case 'DATE': // test not working
+      return computeValueFromFilterDate(filter.operand, filter.value);
+    case 'NUMBER': // ok
+      return computeValueFromFilterNumber(filter.operand, filter.value);
+    case 'BOOLEAN': // ok
+      return computeValueFromFilterBoolean(filter.operand, filter.value);
+    case 'ARRAY': // ok
+      return computeValueFromFilterArray(filter.operand, filter.value);
+    case 'SELECT':
+    case 'MULTI_SELECT':
+    case 'RELATION':
       throw new Error('Type not supported');
     default:
       assertUnreachable(type);
   }
 };
-// rebuild using the getRecordIOperands.ts file to get all operands for a fieldmetadatatype.
-// then loop on fieldmetadataitem.type and call call a function that will rtreat each operand. "compute Input value from array filter"
-// note : call the fieldmetadataType fieldmetadataFilter
-const buildValueFromFilter = (
-  filter: RecordFilter,
-  fieldMetadataItem: FieldMetadataItem,
+
+const computeValueFromFilterText = (
+  operand: ViewFilterOperand, // TODO: add type better scoping
+  value: string,
 ) => {
-  // check if it is a composite field
-  if (isCompositeField(fieldMetadataItem.type)) {
-    return filter.value;
-  }
-
-  // convert the value to the correct javascript type based on the fieldmetadataitem type
-  const convertedValue = stringToFieldMetadataType(
-    fieldMetadataItem.type,
-    filter.value,
-  );
-
-  switch (filter.operand) {
+  switch (operand) {
     case ViewFilterOperand.Contains:
-    case ViewFilterOperand.Is:
-      return convertedValue;
-    case ViewFilterOperand.IsNotEmpty: ///tododo
-      return convertedValue;
-    case ViewFilterOperand.IsNotNull: ///tododo
-      return convertedValue;
-    case ViewFilterOperand.LessThan:
-      return Number(convertedValue) - 1;
-    case ViewFilterOperand.GreaterThan:
-      return Number(convertedValue) + 1;
-    case ViewFilterOperand.IsBefore:
-      return convertedValue;
-    case ViewFilterOperand.IsAfter:
-      return convertedValue;
-    case ViewFilterOperand.IsInPast:
-      return convertedValue;
-    case ViewFilterOperand.IsInFuture:
-      return convertedValue;
-    case ViewFilterOperand.IsRelative:
-    case ViewFilterOperand.IsToday:
-      // get a date with this format "2025-04-22T07:45:00.000Z"
-      // how to return a new string "2025-04-22T07:45:00.000Z"
-      return new Date().toISOString();
+      return value;
     case ViewFilterOperand.DoesNotContain:
-    case ViewFilterOperand.IsNot:
+      return undefined;
+    case ViewFilterOperand.IsNotEmpty:
+      return value;
     case ViewFilterOperand.IsEmpty:
       return undefined;
+    default:
+      // assertUnreachable(operand);
+      return value;
+  }
+};
+
+const computeValueFromFilterDate = (
+  operand: ViewFilterOperand, // TODO: add type better scoping
+  value: string,
+) => {
+  switch (operand) {
+    case ViewFilterOperand.Is:
+      return new Date(value);
+    case ViewFilterOperand.IsNot:
+      return new Date(value);
+    case ViewFilterOperand.IsAfter:
+      return new Date(value);
+    case ViewFilterOperand.IsBefore:
+      return new Date(value);
+    case ViewFilterOperand.IsInPast:
+      return new Date(value);
+    case ViewFilterOperand.IsInFuture:
+      return new Date(value);
+    case ViewFilterOperand.IsToday:
+      return new Date();
+    case ViewFilterOperand.IsRelative:
+      return new Date();
+    case ViewFilterOperand.IsEmpty:
+      return undefined;
+    default:
+      // assertUnreachable(operand);
+      return new Date(value);
+  }
+};
+
+const computeValueFromFilterNumber = (
+  operand: ViewFilterOperand, // TODO: add type better scoping
+  value: string,
+) => {
+  switch (operand) {
+    case ViewFilterOperand.GreaterThan:
+      return Number(value) + 1;
+    case ViewFilterOperand.LessThan:
+      return Number(value) - 1;
+    case ViewFilterOperand.IsNotEmpty:
+      return Number(value);
+    case ViewFilterOperand.IsEmpty:
+      return undefined;
+    default:
+      // assertUnreachable(operand);
+      return Number(value);
+  }
+};
+
+const computeValueFromFilterBoolean = (
+  operand: ViewFilterOperand, // TODO: add type better scoping
+  value: string,
+) => {
+  switch (operand) {
+    case ViewFilterOperand.Is:
+      return value === 'true';
+    default:
+      // assertUnreachable(operand);
+      return value === 'true';
+  }
+};
+
+const computeValueFromFilterArray = (
+  operand: ViewFilterOperand, // TODO: add type better scoping
+  value: string,
+) => {
+  switch (operand) {
+    case ViewFilterOperand.Contains:
+      return value;
+    case ViewFilterOperand.DoesNotContain:
+      return undefined;
+    case ViewFilterOperand.IsNotEmpty:
+      return value;
+    case ViewFilterOperand.IsEmpty:
+      return undefined;
+    default:
+      // assertUnreachable(operand);
+      return value;
   }
 };
