@@ -185,14 +185,13 @@ export class BillingWebhookSubscriptionService {
       hasUpdatedSubscriptionItems &&
       event.type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED
     ) {
-      const updatedSubscriptionItemIds = event.data.object.items.data.map(
-        (item) => item.id,
-      );
+      const updatedSubscriptionItemIds =
+        event.data.object.items.data.map((item) => item.id) ?? [];
 
       const deletedSubscriptionItemIds =
         event.data.previous_attributes?.items?.data
           .filter((item) => !updatedSubscriptionItemIds.includes(item.id))
-          .map((item) => item.id);
+          .map((item) => item.id) ?? [];
 
       if (
         isDefined(deletedSubscriptionItemIds) &&
@@ -211,7 +210,7 @@ export class BillingWebhookSubscriptionService {
         event.data,
       ),
       {
-        conflictPaths: ['billingSubscriptionId', 'stripeSubscriptionItemId'],
+        conflictPaths: ['stripeSubscriptionItemId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );
