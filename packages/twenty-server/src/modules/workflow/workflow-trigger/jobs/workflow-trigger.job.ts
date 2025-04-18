@@ -27,6 +27,8 @@ export type WorkflowTriggerJobData = {
   payload: object;
 };
 
+const DEFAULT_WORKFLOW_NAME = 'Workflow';
+
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class WorkflowTriggerJob {
   constructor(
@@ -80,7 +82,7 @@ export class WorkflowTriggerJob {
           name:
             isDefined(workflow.name) && !isEmpty(workflow.name)
               ? workflow.name
-              : 'Workflow',
+              : DEFAULT_WORKFLOW_NAME,
           context: {},
           workspaceMemberId: null,
         },
