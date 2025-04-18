@@ -20,7 +20,7 @@ export const RecordTable = () => {
 
   const tableBodyRef = useRef<HTMLTableElement>(null);
 
-  const { toggleClickOutsideListener } = useClickOutsideListener(
+  const { toggleClickOutside } = useClickOutsideListener(
     RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
   );
 
@@ -57,11 +57,11 @@ export const RecordTable = () => {
 
   const handleDragSelectionStart = () => {
     resetTableRowSelection();
-    toggleClickOutsideListener(false);
+    toggleClickOutside(false);
   };
 
   const handleDragSelectionEnd = () => {
-    toggleClickOutsideListener(true);
+    toggleClickOutside(true);
   };
 
   return (
