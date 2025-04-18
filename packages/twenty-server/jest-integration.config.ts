@@ -25,7 +25,7 @@ const jestConfig: JestConfigWithTsJest = {
   modulePathIgnorePatterns: ['<rootDir>/dist'],
   globalSetup: '<rootDir>/test/integration/utils/setup-test.ts',
   globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',
-  testTimeout: 20000,
+  testTimeout: 5000,
   maxWorkers: 1,
   transform: {
     '^.+\\.(t|j)s$': [

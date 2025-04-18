@@ -5,7 +5,7 @@ describe('Core REST API Authentication', () => {
     await makeRestAPIRequest({
       method: 'post',
       path: `/people`,
-      headers: { authorization: '' },
+      bearer: '',
     })
       .expect(400)
       .expect((res) => {
@@ -18,7 +18,7 @@ describe('Core REST API Authentication', () => {
     await makeRestAPIRequest({
       method: 'post',
       path: `/people`,
-      headers: { authorization: `Bearer ${INVALID_ACCESS_TOKEN}` },
+      bearer: INVALID_ACCESS_TOKEN,
     })
       .expect(401)
       .expect((res) => {
@@ -31,7 +31,7 @@ describe('Core REST API Authentication', () => {
     await makeRestAPIRequest({
       method: 'post',
       path: `/people`,
-      headers: { authorization: 'Bearer invalid-token' },
+      bearer: 'invalid-token',
     })
       .expect(401)
       .expect((res) => {
@@ -44,7 +44,7 @@ describe('Core REST API Authentication', () => {
     await makeRestAPIRequest({
       method: 'post',
       path: `/people`,
-      headers: { authorization: `Bearer ${EXPIRED_ACCESS_TOKEN}` },
+      bearer: EXPIRED_ACCESS_TOKEN,
     })
       .expect(401)
       .expect((res) => {
