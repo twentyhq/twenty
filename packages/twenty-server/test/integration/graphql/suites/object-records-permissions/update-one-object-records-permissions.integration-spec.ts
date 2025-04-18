@@ -145,5 +145,26 @@ describe('updateOneObjectRecordsPermissions', () => {
         'Senior Software Engineer',
       );
     });
+
+    // TODO
+    // it('should update an object record when executed by api key', async () => {
+    //   const graphqlOperation = updateOneOperationFactory({
+    //     objectMetadataSingularName: 'person',
+    //     gqlFields: PERSON_GQL_FIELDS,
+    //     recordId: personId,
+    //     data: {
+    //       jobTitle: 'Senior Software Engineer',
+    //     },
+    //   });
+
+    //   const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    //   expect(response.body.data).toBeDefined();
+    //   expect(response.body.data.updatePerson).toBeDefined();
+    //   expect(response.body.data.updatePerson.id).toBe(personId);
+    //   expect(response.body.data.updatePerson.jobTitle).toBe(
+    //     'Senior Software Engineer',
+    //   );
+    // });
   });
 });

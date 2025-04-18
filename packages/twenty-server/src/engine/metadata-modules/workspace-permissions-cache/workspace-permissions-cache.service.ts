@@ -5,6 +5,7 @@ import {
   ObjectRecordsPermissions,
   ObjectRecordsPermissionsByRoleId,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -182,6 +183,26 @@ export class WorkspacePermissionsCacheService {
       exceptionCode:
         TwentyORMExceptionCode.USER_WORKSPACE_ROLE_MAP_VERSION_NOT_FOUND,
     });
+  }
+
+  async getRoleIdFromUserWorkspaceId({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<string | undefined> {
+    if (!isDefined(userWorkspaceId)) {
+      return undefined;
+    }
+
+    const userWorkspaceRoleMap = await this.getUserWorkspaceRoleMapFromDatabase(
+      {
+        workspaceId,
+      },
+    );
+
+    return userWorkspaceRoleMap[userWorkspaceId];
   }
 
   private async getObjectRecordPermissionsForRoles({

@@ -10,6 +10,7 @@ import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
@@ -19,6 +20,7 @@ export class RestApiCoreServiceV2 {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly recordInputTransformerService: RecordInputTransformerService,
     protected readonly apiEventEmitterService: ApiEventEmitterService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   async delete(request: Request) {
@@ -125,7 +127,7 @@ export class RestApiCoreServiceV2 {
   }
 
   private async getRepositoryAndMetadataOrFail(request: Request) {
-    const { workspace } = request;
+    const { workspace, apiKey, userWorkspaceId } = request;
     const { object: parsedObject } = parseCorePath(request);
 
     const objectMetadata = await this.coreQueryBuilderFactory.getObjectMetadata(
@@ -141,16 +143,25 @@ export class RestApiCoreServiceV2 {
       throw new BadRequestException('Workspace not found');
     }
 
+    const dataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace(workspace.id);
+
     const objectMetadataNameSingular =
       objectMetadata.objectMetadataMapItem.nameSingular;
 
-    const shouldBypassPermissionChecks = false;
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ObjectRecord>(
-        workspace.id,
-        objectMetadataNameSingular,
-        shouldBypassPermissionChecks,
-      );
+    const shouldBypassPermissionChecks = !!apiKey;
+
+    const roleId =
+      await this.workspacePermissionsCacheService.getRoleIdFromUserWorkspaceId({
+        workspaceId: workspace.id,
+        userWorkspaceId,
+      });
+
+    const repository = dataSource.getRepository<ObjectRecord>(
+      objectMetadataNameSingular,
+      shouldBypassPermissionChecks,
+      roleId,
+    );
 
     return {
       objectMetadataNameSingular,
