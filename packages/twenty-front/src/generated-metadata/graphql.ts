@@ -298,7 +298,6 @@ export enum CaptchaDriverType {
 
 export type ClientConfig = {
   __typename?: 'ClientConfig';
-  analyticsEnabled: Scalars['Boolean']['output'];
   api: ApiConfig;
   authProviders: AuthProviders;
   billing: Billing;
@@ -308,6 +307,7 @@ export type ClientConfig = {
   debugMode: Scalars['Boolean']['output'];
   defaultSubdomain?: Maybe<Scalars['String']['output']>;
   frontDomain: Scalars['String']['output'];
+  isAnalyticsEnabled: Scalars['Boolean']['output'];
   isAttachmentPreviewEnabled: Scalars['Boolean']['output'];
   isEmailVerificationRequired: Scalars['Boolean']['output'];
   isGoogleCalendarEnabled: Scalars['Boolean']['output'];
@@ -516,6 +516,15 @@ export type CustomDomainValidRecords = {
   id: Scalars['String']['output'];
   records: Array<CustomDomainRecord>;
 };
+
+/** Database Event Action */
+export enum DatabaseEventAction {
+  CREATED = 'CREATED',
+  DELETED = 'DELETED',
+  DESTROYED = 'DESTROYED',
+  RESTORED = 'RESTORED',
+  UPDATED = 'UPDATED'
+}
 
 export type DateFilter = {
   eq?: InputMaybe<Scalars['Date']['input']>;
@@ -1500,6 +1509,21 @@ export type ObjectStandardOverrides = {
   translations?: Maybe<Scalars['JSON']['output']>;
 };
 
+export type OnDbEventDto = {
+  __typename?: 'OnDbEventDTO';
+  action: DatabaseEventAction;
+  eventDate: Scalars['DateTime']['output'];
+  objectNameSingular: Scalars['String']['output'];
+  record: Scalars['JSON']['output'];
+  updatedFields?: Maybe<Array<Scalars['String']['output']>>;
+};
+
+export type OnDbEventInput = {
+  action?: InputMaybe<DatabaseEventAction>;
+  objectNameSingular?: InputMaybe<Scalars['String']['input']>;
+  recordId?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** Onboarding status */
 export enum OnboardingStatus {
   COMPLETED = 'COMPLETED',
@@ -2088,6 +2112,16 @@ export type SubmitFormStepInput = {
   stepId: Scalars['String']['input'];
   /** Workflow run ID */
   workflowRunId: Scalars['String']['input'];
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  onDbEvent: OnDbEventDto;
+};
+
+
+export type SubscriptionOnDbEventArgs = {
+  input: OnDbEventInput;
 };
 
 export enum SubscriptionInterval {

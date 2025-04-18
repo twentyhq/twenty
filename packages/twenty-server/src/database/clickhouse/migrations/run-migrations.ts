@@ -29,9 +29,6 @@ async function ensureDatabaseExists() {
   await client.command({
     query: `CREATE DATABASE IF NOT EXISTS "${database}"`,
   });
-  await client.command({
-    query: `SET enable_json_type = 1`,
-  });
 
   await client.close();
 }
@@ -78,6 +75,10 @@ async function runMigrations() {
 
   const client = createClient({
     url: clickhouseUrl(),
+  });
+
+  await client.command({
+    query: `SET allow_experimental_json_type = 1`,
   });
 
   await ensureMigrationTable(client);

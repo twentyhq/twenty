@@ -29,7 +29,7 @@ export const GET_CLIENT_CONFIG = gql`
       defaultSubdomain
       frontDomain
       debugMode
-      analyticsEnabled
+      isAnalyticsEnabled
       isAttachmentPreviewEnabled
       support {
         supportDriver

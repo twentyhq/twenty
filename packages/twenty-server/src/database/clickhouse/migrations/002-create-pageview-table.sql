@@ -6,5 +6,7 @@ CREATE TABLE IF NOT EXISTS pageview
     `userId`      String DEFAULT '',
     `workspaceId` String DEFAULT ''
 )
-    ENGINE = MergeTree
-        ORDER BY (name, workspaceId, userId, timestamp);
+ENGINE = MergeTree
+ORDER BY (name, workspaceId, userId, timestamp)
+SETTINGS index_granularity = 8192
+SETTINGS allow_experimental_json_type = 1;
