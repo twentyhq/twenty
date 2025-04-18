@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
@@ -146,25 +147,24 @@ describe('updateOneObjectRecordsPermissions', () => {
       );
     });
 
-    // TODO
-    // it('should update an object record when executed by api key', async () => {
-    //   const graphqlOperation = updateOneOperationFactory({
-    //     objectMetadataSingularName: 'person',
-    //     gqlFields: PERSON_GQL_FIELDS,
-    //     recordId: personId,
-    //     data: {
-    //       jobTitle: 'Senior Software Engineer',
-    //     },
-    //   });
+    it('should update an object record when executed by api key', async () => {
+      const graphqlOperation = updateOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: PERSON_GQL_FIELDS,
+        recordId: personId,
+        data: {
+          jobTitle: 'Senior Software Engineer',
+        },
+      });
 
-    //   const response = await makeGraphqlAPIRequest(graphqlOperation);
+      const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
 
-    //   expect(response.body.data).toBeDefined();
-    //   expect(response.body.data.updatePerson).toBeDefined();
-    //   expect(response.body.data.updatePerson.id).toBe(personId);
-    //   expect(response.body.data.updatePerson.jobTitle).toBe(
-    //     'Senior Software Engineer',
-    //   );
-    // });
+      expect(response.body.data).toBeDefined();
+      expect(response.body.data.updatePerson).toBeDefined();
+      expect(response.body.data.updatePerson.id).toBe(personId);
+      expect(response.body.data.updatePerson.jobTitle).toBe(
+        'Senior Software Engineer',
+      );
+    });
   });
 });
