@@ -55,7 +55,10 @@ export class WorkspaceMetadataCacheService {
     }
 
     if (currentCacheVersion !== undefined) {
-      this.workspaceCacheStorageService.flush(workspaceId, currentCacheVersion);
+      this.workspaceCacheStorageService.flushVersionedMetadata(
+        workspaceId,
+        currentCacheVersion,
+      );
     }
 
     await this.workspaceCacheStorageService.addObjectMetadataCollectionOngoingCachingLock(
