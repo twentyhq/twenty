@@ -28,18 +28,32 @@ export type FieldTextMetadata = BaseFieldMetadata & {
   };
 };
 
+export enum FieldDateDisplayFormat {
+  RELATIVE = 'RELATIVE',
+  USER_SETTINGS = 'USER_SETTINGS',
+  CUSTOM = 'CUSTOM',
+}
+
+export type FieldDateMetadataSettings =
+  | {
+      displayFormat?: FieldDateDisplayFormat.CUSTOM;
+      customUnicodeDateFormat: string;
+    }
+  | {
+      displayFormat?: Exclude<
+        FieldDateDisplayFormat,
+        FieldDateDisplayFormat.CUSTOM
+      >;
+    };
+
 export type FieldDateTimeMetadata = BaseFieldMetadata & {
   placeHolder: string;
-  settings?: {
-    displayAsRelativeDate?: boolean;
-  };
+  settings?: FieldDateMetadataSettings;
 };
 
 export type FieldDateMetadata = BaseFieldMetadata & {
   placeHolder: string;
-  settings?: {
-    displayAsRelativeDate?: boolean;
-  };
+  settings?: FieldDateMetadataSettings;
 };
 
 export type FieldNumberVariant = 'number' | 'percentage';
