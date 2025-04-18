@@ -1,6 +1,6 @@
 import {
   NOT_EXISTING_PERSON_ID,
-  PERSON_2_ID,
+  PERSON_1_ID,
 } from 'test/integration/constants/mock-person-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
@@ -9,13 +9,13 @@ describe('Core REST API Update One endpoint', () => {
   beforeAll(async () => {
     await makeRestAPIRequest({
       method: 'delete',
-      path: `/people/${PERSON_2_ID}`,
+      path: `/people/${PERSON_1_ID}`,
     });
     await makeRestAPIRequest({
       method: 'post',
       path: `/people`,
       body: {
-        id: PERSON_2_ID,
+        id: PERSON_1_ID,
       },
     });
   });
@@ -30,19 +30,19 @@ describe('Core REST API Update One endpoint', () => {
         primaryEmail: 'updated@example.com',
         additionalEmails: ['extra@example.com'],
       },
-      city: generateRecordName(PERSON_2_ID),
+      city: generateRecordName(PERSON_1_ID),
     };
 
     await makeRestAPIRequest({
       method: 'patch',
-      path: `/people/${PERSON_2_ID}`,
+      path: `/people/${PERSON_1_ID}`,
       body: updatedData,
     })
       .expect(200)
       .expect((res) => {
         const updatedPerson = res.body.data.updatePerson;
 
-        expect(updatedPerson.id).toBe(PERSON_2_ID);
+        expect(updatedPerson.id).toBe(PERSON_1_ID);
         expect(updatedPerson.name.firstName).toBe(updatedData.name.firstName);
         expect(updatedPerson.name.lastName).toBe(updatedData.name.lastName);
         expect(updatedPerson.emails.primaryEmail).toBe(

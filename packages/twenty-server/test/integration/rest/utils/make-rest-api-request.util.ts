@@ -17,12 +17,13 @@ export const makeRestAPIRequest = ({
 }: RestAPIRequestParams) => {
   const client = request(`http://localhost:${APP_PORT}`);
 
-  const req = client[method](`/rest${path}`)
-    .set('Authorization', `Bearer ${bearer}`)
-    .set('Content-Type', 'application/json');
+  const req = client[method](`/rest${path}`).set(
+    'Authorization',
+    `Bearer ${bearer}`,
+  );
 
   if (['post', 'patch', 'put'].includes(method)) {
-    req.send(JSON.stringify(body));
+    req.set('Content-Type', 'application/json').send(JSON.stringify(body));
   }
 
   return req;
