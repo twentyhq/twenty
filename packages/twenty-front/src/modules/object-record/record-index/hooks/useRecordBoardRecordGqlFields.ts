@@ -2,9 +2,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectMetadataIdentifierFields } from '@/object-metadata/utils/getObjectMetadataIdentifierFields';
-import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
-import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,11 +14,6 @@ export const useRecordBoardRecordGqlFields = ({
   recordBoardId: string;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const visibleFieldDefinitions = useRecoilComponentValueV2(
-    recordBoardVisibleFieldDefinitionsComponentSelector,
-    recordBoardId,
-  );
-
   const { imageIdentifierFieldMetadataItem, labelIdentifierFieldMetadataItem } =
     getObjectMetadataIdentifierFields({ objectMetadataItem });
 
@@ -49,18 +42,12 @@ export const useRecordBoardRecordGqlFields = ({
       objectNameSingular: CoreObjectNameSingular.TaskTarget,
     });
 
+  const allDepthOneRecordGqlFields = generateDepthOneRecordGqlFields({
+    objectMetadataItem,
+  });
+
   const recordGqlFields: Record<string, any> = {
-    id: true,
-    deletedAt: true,
-    ...Object.fromEntries(
-      visibleFieldDefinitions.map((visibleFieldDefinition) => [
-        visibleFieldDefinition.metadata.fieldName,
-        true,
-      ]),
-    ),
-    ...(hasObjectMetadataItemPositionField(objectMetadataItem)
-      ? { position: true }
-      : undefined),
+    ...allDepthOneRecordGqlFields,
     ...identifierQueryFields,
     noteTargets: generateDepthOneRecordGqlFields({
       objectMetadataItem: noteTargetObjectMetadataItem,

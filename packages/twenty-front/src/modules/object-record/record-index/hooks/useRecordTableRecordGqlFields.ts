@@ -3,8 +3,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectMetadataIdentifierFields } from '@/object-metadata/utils/getObjectMetadataIdentifierFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
-import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordTableRecordGqlFields = ({
@@ -14,10 +12,6 @@ export const useRecordTableRecordGqlFields = ({
 }) => {
   const { imageIdentifierFieldMetadataItem, labelIdentifierFieldMetadataItem } =
     getObjectMetadataIdentifierFields({ objectMetadataItem });
-
-  const visibleTableColumns = useRecoilComponentValueV2(
-    visibleTableColumnsComponentSelector,
-  );
 
   const identifierQueryFields: Record<string, boolean> = {};
 
@@ -39,14 +33,13 @@ export const useRecordTableRecordGqlFields = ({
       objectNameSingular: CoreObjectNameSingular.TaskTarget,
     });
 
+  const allDepthOneRecordGqlFields = generateDepthOneRecordGqlFields({
+    objectMetadataItem,
+  });
+
   const recordGqlFields: Record<string, any> = {
-    id: true,
-    deletedAt: true,
-    ...Object.fromEntries(
-      visibleTableColumns.map((column) => [column.metadata.fieldName, true]),
-    ),
+    ...allDepthOneRecordGqlFields,
     ...identifierQueryFields,
-    position: true,
     noteTargets: generateDepthOneRecordGqlFields({
       objectMetadataItem: noteTargetObjectMetadataItem,
     }),
