@@ -10,13 +10,13 @@ import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-tabl
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { t } from '@lingui/core/macro';
 import isEmpty from 'lodash.isempty';
+import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { formatAmount } from '~/utils/format/formatAmount';
 import { formatNumber } from '~/utils/format/number';
 import { formatDateString } from '~/utils/string/formatDateString';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
-import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
 export const computeAggregateValueAndLabel = ({
   data,
@@ -63,7 +63,7 @@ export const computeAggregateValueAndLabel = ({
 
   let value;
 
-  const displayAsRelativeDate = field?.settings?.displayAsRelativeDate;
+  const dateFieldSettings = field?.settings;
 
   if (
     COUNT_AGGREGATE_OPERATION_OPTIONS.includes(
@@ -101,10 +101,10 @@ export const computeAggregateValueAndLabel = ({
         value = aggregateValue as string;
         value = formatDateTimeString({
           value,
-          displayAsRelativeDate,
           timeZone,
           dateFormat,
           timeFormat,
+          dateFieldSettings,
         });
         break;
       }
@@ -113,9 +113,9 @@ export const computeAggregateValueAndLabel = ({
         value = aggregateValue as string;
         value = formatDateString({
           value,
-          displayAsRelativeDate,
           timeZone,
           dateFormat,
+          dateFieldSettings,
         });
         break;
       }

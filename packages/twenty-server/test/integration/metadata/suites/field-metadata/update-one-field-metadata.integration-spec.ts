@@ -116,4 +116,59 @@ describe('updateOne', () => {
       );
     });
   });
+
+  describe('FieldMetadataService Enum Default Value Validation', () => {
+    it('should throw an error if the default value is not in the options', async () => {
+      const { data: listingObjectMetadata } = await createOneObjectMetadata({
+        input: {
+          labelSingular: LISTING_NAME_SINGULAR,
+          labelPlural: LISTING_NAME_PLURAL,
+          nameSingular: LISTING_NAME_SINGULAR,
+          namePlural: LISTING_NAME_PLURAL,
+          icon: 'IconBuildingSkyscraper',
+          isLabelSyncedWithName: true,
+        },
+      });
+
+      const { data: createdFieldMetadata } = await createOneFieldMetadata({
+        input: {
+          objectMetadataId: listingObjectMetadata.createOneObject.id,
+          type: FieldMetadataType.SELECT,
+          name: 'testName',
+          label: 'Test name',
+          isLabelSyncedWithName: true,
+          options: [
+            {
+              label: 'Option 1',
+              value: 'option1',
+              color: 'green',
+              position: 1,
+            },
+          ],
+        },
+      });
+
+      const { errors } = await updateOneFieldMetadata({
+        input: {
+          idToUpdate: createdFieldMetadata.createOneField.id,
+          updatePayload: {
+            defaultValue: 'option2',
+          },
+        },
+        gqlFields: `
+          id
+          name
+          label
+          isLabelSyncedWithName
+        `,
+        expectToFail: true,
+      });
+
+      expect(errors[0].message).toBe('Invalid default value "option2"');
+
+      await deleteOneObjectMetadata({
+        input: { idToDelete: listingObjectMetadata.createOneObject.id },
+      });
+    });
+  });
 });

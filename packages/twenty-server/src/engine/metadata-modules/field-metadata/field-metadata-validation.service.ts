@@ -11,6 +11,8 @@ import {
 } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import {
@@ -85,5 +87,48 @@ export class FieldMetadataValidationService<
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       );
     }
+  }
+
+  async validateDefaultValueOrThrow({
+    fieldType,
+    defaultValue,
+    options,
+  }: {
+    fieldType: FieldMetadataType;
+    defaultValue: FieldMetadataDefaultValue<T>;
+    options: FieldMetadataOptions<T>;
+  }) {
+    if (
+      fieldType === FieldMetadataType.SELECT ||
+      fieldType === FieldMetadataType.MULTI_SELECT
+    ) {
+      this.validateEnumDefaultValue(options, defaultValue);
+    }
+  }
+
+  private validateEnumDefaultValue(
+    options: FieldMetadataOptions<T>,
+    defaultValue: FieldMetadataDefaultValue<T>,
+  ) {
+    if (typeof defaultValue === 'string') {
+      const formattedDefaultValue = defaultValue.replace(
+        /^['"](.*)['"]$/,
+        '$1',
+      );
+
+      const enumOptions = options.map((option) => option.value);
+
+      if (
+        enumOptions &&
+        (enumOptions.includes(formattedDefaultValue) ||
+          enumOptions.some((option) => option.to === formattedDefaultValue))
+      ) {
+        return;
+      }
+    }
+    throw new FieldMetadataException(
+      `Default value for existing options is invalid: ${defaultValue}`,
+      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+    );
   }
 }

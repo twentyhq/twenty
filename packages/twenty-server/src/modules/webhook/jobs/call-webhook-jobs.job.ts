@@ -101,11 +101,6 @@ export class CallWebhookJobsJob {
           { retryLimit: 3 },
         );
       });
-
-      webhooks.length > 0 &&
-        this.logger.log(
-          `CallWebhookJobsJob on eventName '${workspaceEventBatch.name}' triggered webhooks with ids [\n"${webhooks.map((webhook) => webhook.id).join('",\n"')}"\n]`,
-        );
     }
   }
 }
