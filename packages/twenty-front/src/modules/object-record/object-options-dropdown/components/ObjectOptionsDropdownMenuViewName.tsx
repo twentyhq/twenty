@@ -46,7 +46,7 @@ const StyledMenuIconContainer = styled.div`
 const StyledMainText = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   flex-shrink: 0;
-  overflow: #123;
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
