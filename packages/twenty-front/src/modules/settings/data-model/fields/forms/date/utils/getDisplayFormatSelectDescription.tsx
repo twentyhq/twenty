@@ -6,19 +6,19 @@ export const getDisplayFormatSelectDescription = (
 ) => {
   if (selectedDisplayFormat === FieldDateDisplayFormat.CUSTOM) {
     return (
-      <>
-        <Trans>Enter in</Trans>{' '}
+      <Trans>
+        Enter in{' '}
         <a
           href="https://www.unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table"
           target="_blank"
           rel="noopener noreferrer"
+          style={{ textDecoration: 'underline', color: 'inherit' }}
         >
-          <Trans>Unicode</Trans>
+          Unicode
         </a>{' '}
-        <Trans>format</Trans>{' '}
-      </>
+        format
+      </Trans>
     );
-  } else {
-    return <Trans>Choose the format used to display date value</Trans>;
   }
+  return <Trans>Choose the format used to display date value</Trans>;
 };
