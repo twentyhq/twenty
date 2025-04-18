@@ -3,7 +3,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useHandleContainerMouseEnter } from '@/object-record/record-table/hooks/internal/useHandleContainerMouseEnter';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { useCloseRecordTableCellInGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellInGroup';
-import { useMoveSoftFocusToCurrentCellOnHover } from '@/object-record/record-table/record-table-cell/hooks/useMoveSoftFocusToCurrentCellOnHover';
+import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import {
   OpenTableCellArgs,
   useOpenRecordTableCellV2,
@@ -41,13 +41,10 @@ export const RecordTableRecordGroupBodyContextProvider = ({
     closeTableCellInGroup();
   };
 
-  const { moveSoftFocusToCurrentCell } =
-    useMoveSoftFocusToCurrentCellOnHover(recordTableId);
+  const { moveHoverToCurrentCell } = useMoveHoverToCurrentCell(recordTableId);
 
-  const handleMoveSoftFocusToCurrentCell = (
-    cellPosition: TableCellPosition,
-  ) => {
-    moveSoftFocusToCurrentCell(cellPosition);
+  const handleMoveHoverToCurrentCell = (cellPosition: TableCellPosition) => {
+    moveHoverToCurrentCell(cellPosition);
   };
 
   const { triggerActionMenuDropdown } = useTriggerActionMenuDropdown({
@@ -71,7 +68,7 @@ export const RecordTableRecordGroupBodyContextProvider = ({
         onOpenTableCell: handleOpenTableCell,
         onMoveFocus: handleMoveFocus,
         onCloseTableCell: handlecloseTableCellInGroup,
-        onMoveSoftFocusToCurrentCell: handleMoveSoftFocusToCurrentCell,
+        onMoveHoverToCurrentCell: handleMoveHoverToCurrentCell,
         onActionMenuDropdownOpened: handleActionMenuDropdown,
         onCellMouseEnter: handleContainerMouseEnter,
       }}

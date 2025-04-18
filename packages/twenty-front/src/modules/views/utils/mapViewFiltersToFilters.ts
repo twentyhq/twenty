@@ -3,8 +3,8 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { ViewFilter } from '../types/ViewFilter';
 import { isDefined } from 'twenty-shared/utils';
+import { ViewFilter } from '../types/ViewFilter';
 
 export const mapViewFiltersToFilters = (
   viewFilters: ViewFilter[],
@@ -36,6 +36,7 @@ export const mapViewFiltersToFilters = (
         positionInRecordFilterGroup: viewFilter.positionInViewFilterGroup,
         label: availableFieldMetadataItem.label,
         type: filterType,
+        subFieldName: viewFilter.subFieldName,
       } satisfies RecordFilter;
     })
     .filter(isDefined);

@@ -5,6 +5,7 @@ import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldM
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -17,6 +18,10 @@ export const ObjectFilterDropdownTextInput = () => {
 
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
     fieldMetadataItemUsedInDropdownComponentSelector,
+  );
+
+  const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
+    subFieldNameUsedInDropdownComponentState,
   );
 
   const selectedFilter = useRecoilComponentValueV2(
@@ -70,6 +75,7 @@ export const ObjectFilterDropdownTextInput = () => {
               recordFilterGroupId: selectedFilter?.recordFilterGroupId,
               positionInRecordFilterGroup:
                 selectedFilter?.positionInRecordFilterGroup,
+              subFieldName: subFieldNameUsedInDropdown,
             });
           }}
         />

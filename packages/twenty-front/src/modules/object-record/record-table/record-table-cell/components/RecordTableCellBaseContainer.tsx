@@ -9,11 +9,11 @@ import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/rec
 import { BORDER_COMMON, ThemeContext } from 'twenty-ui/theme';
 
 const StyledBaseContainer = styled.div<{
-  hasSoftFocus: boolean;
   fontColorExtraLight: string;
   fontColorMedium: string;
   backgroundColorTransparentSecondary: string;
   isReadOnly: boolean;
+  borderColorBlue: string;
 }>`
   align-items: center;
   box-sizing: border-box;
@@ -23,23 +23,10 @@ const StyledBaseContainer = styled.div<{
   position: relative;
   user-select: none;
 
-  background: ${({ hasSoftFocus, backgroundColorTransparentSecondary }) =>
-    hasSoftFocus ? backgroundColorTransparentSecondary : 'none'};
-
-  border-radius: ${({ hasSoftFocus, isReadOnly }) =>
-    hasSoftFocus && !isReadOnly ? BORDER_COMMON.radius.sm : 'none'};
-
-  outline: ${({
-    hasSoftFocus,
-    fontColorExtraLight,
-    fontColorMedium,
-    isReadOnly,
-  }) =>
-    hasSoftFocus
-      ? isReadOnly
-        ? `1px solid ${fontColorMedium}`
-        : `1px solid ${fontColorExtraLight}`
-      : 'none'};
+  &.focus-active {
+    border-radius: ${BORDER_COMMON.radius.sm};
+    outline: 1px solid ${({ borderColorBlue }) => borderColorBlue};
+  }
 `;
 
 export const RecordTableCellBaseContainer = ({
@@ -52,18 +39,16 @@ export const RecordTableCellBaseContainer = ({
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const { theme } = useContext(ThemeContext);
 
-  const { hasSoftFocus, cellPosition } = useContext(RecordTableCellContext);
+  const { cellPosition } = useContext(RecordTableCellContext);
 
-  const { onMoveSoftFocusToCurrentCell, onCellMouseEnter } =
+  const { onMoveHoverToCurrentCell, onCellMouseEnter } =
     useRecordTableBodyContextOrThrow();
 
   const handleContainerMouseMove = () => {
     setIsFocused(true);
-    if (!hasSoftFocus) {
-      onCellMouseEnter({
-        cellPosition,
-      });
-    }
+    onCellMouseEnter({
+      cellPosition,
+    });
   };
 
   const handleContainerMouseLeave = () => {
@@ -71,10 +56,8 @@ export const RecordTableCellBaseContainer = ({
   };
 
   const handleContainerClick = () => {
-    if (!hasSoftFocus) {
-      onMoveSoftFocusToCurrentCell(cellPosition);
-      openTableCell();
-    }
+    onMoveHoverToCurrentCell(cellPosition);
+    openTableCell();
   };
 
   return (
@@ -87,8 +70,9 @@ export const RecordTableCellBaseContainer = ({
       }
       fontColorExtraLight={theme.font.color.extraLight}
       fontColorMedium={theme.border.color.medium}
-      hasSoftFocus={hasSoftFocus}
+      borderColorBlue={theme.adaptiveColors.blue4}
       isReadOnly={isReadOnly ?? false}
+      id={`record-table-cell-${cellPosition.column}-${cellPosition.row}`}
     >
       {children}
     </StyledBaseContainer>

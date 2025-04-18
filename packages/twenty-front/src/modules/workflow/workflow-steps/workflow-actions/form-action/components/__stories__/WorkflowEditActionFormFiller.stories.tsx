@@ -2,6 +2,7 @@ import { WorkflowFormAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -9,7 +10,6 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { WorkflowEditActionFormFiller } from '../WorkflowEditActionFormFiller';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof WorkflowEditActionFormFiller> = {
   title: 'Modules/Workflow/Actions/Form/WorkflowEditActionFormFiller',

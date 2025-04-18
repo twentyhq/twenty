@@ -1,10 +1,10 @@
 import { RecordTableBodyEscapeHotkeyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyEscapeHotkeyEffect';
-import { RecordTableBodySoftFocusClickOutsideEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodySoftFocusClickOutsideEffect';
-import { RecordTableBodySoftFocusKeyboardEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodySoftFocusKeyboardEffect';
+import { RecordTableBodyFocusClickOutsideEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyFocusClickOutsideEffect';
+import { RecordTableBodyFocusKeyboardEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyFocusKeyboardEffect';
 import { RecordTableNoRecordGroupBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBodyEffect';
 import { RecordTableRecordGroupBodyEffects } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupBodyEffects';
 import { isAtLeastOneTableRowSelectedSelector } from '@/object-record/record-table/record-table-row/states/isAtLeastOneTableRowSelectedSelector';
-import { isSoftFocusActiveComponentState } from '@/object-record/record-table/states/isSoftFocusActiveComponentState';
+import { isRecordTableFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableFocusActiveComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export interface RecordTableBodyEffectsWrapperProps {
@@ -20,8 +20,8 @@ export const RecordTableBodyEffectsWrapper = ({
     isAtLeastOneTableRowSelectedSelector,
   );
 
-  const isSoftFocusActiveState = useRecoilComponentValueV2(
-    isSoftFocusActiveComponentState,
+  const isRecordTableFocusActive = useRecoilComponentValueV2(
+    isRecordTableFocusActiveComponentState,
   );
 
   return (
@@ -32,11 +32,9 @@ export const RecordTableBodyEffectsWrapper = ({
         <RecordTableNoRecordGroupBodyEffect />
       )}
       {isAtLeastOneRecordSelected && <RecordTableBodyEscapeHotkeyEffect />}
-      {isSoftFocusActiveState && <RecordTableBodySoftFocusKeyboardEffect />}
-      {isSoftFocusActiveState && (
-        <RecordTableBodySoftFocusClickOutsideEffect
-          tableBodyRef={tableBodyRef}
-        />
+      {isRecordTableFocusActive && <RecordTableBodyFocusKeyboardEffect />}
+      {isRecordTableFocusActive && (
+        <RecordTableBodyFocusClickOutsideEffect tableBodyRef={tableBodyRef} />
       )}
     </>
   );

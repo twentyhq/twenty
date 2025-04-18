@@ -94,4 +94,15 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   positionInViewFilterGroup: number | null;
+
+  @WorkspaceField({
+    standardId: VIEW_FILTER_STANDARD_FIELD_IDS.subFieldName,
+    type: FieldMetadataType.TEXT,
+    label: msg`Sub field name`,
+    description: msg`Sub field name`,
+    icon: 'IconSubtask',
+    defaultValue: null,
+  })
+  @WorkspaceIsNullable()
+  subFieldName: string | null;
 }

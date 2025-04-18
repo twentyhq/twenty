@@ -23,6 +23,7 @@ import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { ApolloManager } from '../types/apolloManager.interface';
 import { loggerLink } from '../utils/loggerLink';
+import { getTokenPair } from '../utils/getTokenPair';
 
 const logger = loggerLink(() => 'Twenty');
 
@@ -54,14 +55,6 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
     } = opts;
 
     this.currentWorkspaceMember = currentWorkspaceMember;
-
-    const getTokenPair = () => {
-      const stringTokenPair = cookieStorage.getItem('tokenPair');
-      const tokenPair = isDefined(stringTokenPair)
-        ? (JSON.parse(stringTokenPair) as AuthTokenPair)
-        : undefined;
-      return tokenPair;
-    };
 
     const buildApolloLink = (): ApolloLink => {
       const httpLink = createUploadLink({

@@ -408,6 +408,7 @@ export const VIEW_FILTER_STANDARD_FIELD_IDS = {
   view: '20202020-4f5b-487e-829c-3d881c163611',
   viewFilterGroupId: '20202020-2580-420a-8328-cab1635c0296',
   positionInViewFilterGroup: '20202020-3bb0-4f66-a537-a46fe0dc468f',
+  subFieldName: '20202020-3bb0-4f66-a537-a46fe0dc469a',
 };
 
 export const VIEW_FILTER_GROUP_STANDARD_FIELD_IDS = {

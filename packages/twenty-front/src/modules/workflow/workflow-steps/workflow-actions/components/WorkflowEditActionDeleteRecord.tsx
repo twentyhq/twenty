@@ -11,10 +11,10 @@ import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-ac
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { isDefined } from 'twenty-shared/utils';
-import { JsonValue } from 'type-fest';
-import { useDebouncedCallback } from 'use-debounce';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
+import { JsonValue } from 'type-fest';
+import { useDebouncedCallback } from 'use-debounce';
 
 type WorkflowEditActionDeleteRecordProps = {
   action: WorkflowDeleteRecordAction;
@@ -68,14 +68,9 @@ export const WorkflowEditActionDeleteRecord = ({
     saveAction(newFormData);
   };
 
-  const selectedObjectMetadataItemNameSingular = formData.objectName;
-
-  const selectedObjectMetadataItem = activeObjectMetadataItems.find(
-    (item) => item.nameSingular === selectedObjectMetadataItemNameSingular,
-  );
-  if (!isDefined(selectedObjectMetadataItem)) {
-    throw new Error('Should have found the metadata item');
-  }
+  const objectNameSingular = activeObjectMetadataItems.find(
+    (item) => item.nameSingular === formData.objectName,
+  )?.nameSingular;
 
   const saveAction = useDebouncedCallback(
     async (formData: DeleteRecordFormData) => {
@@ -156,17 +151,19 @@ export const WorkflowEditActionDeleteRecord = ({
 
         <HorizontalSeparator noMargin />
 
-        <FormSingleRecordPicker
-          label="Record"
-          onChange={(objectRecordId) =>
-            handleFieldChange('objectRecordId', objectRecordId)
-          }
-          objectNameSingular={formData.objectName}
-          defaultValue={formData.objectRecordId}
-          testId="workflow-edit-action-record-delete-object-record-id"
-          disabled={isFormDisabled}
-          VariablePicker={WorkflowVariablePicker}
-        />
+        {isDefined(objectNameSingular) && (
+          <FormSingleRecordPicker
+            label="Record"
+            onChange={(objectRecordId) =>
+              handleFieldChange('objectRecordId', objectRecordId)
+            }
+            objectNameSingular={objectNameSingular}
+            defaultValue={formData.objectRecordId}
+            testId="workflow-edit-action-record-delete-object-record-id"
+            disabled={isFormDisabled}
+            VariablePicker={WorkflowVariablePicker}
+          />
+        )}
       </WorkflowStepBody>
     </>
   );

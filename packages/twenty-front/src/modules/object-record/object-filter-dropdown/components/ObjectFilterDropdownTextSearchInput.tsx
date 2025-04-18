@@ -71,6 +71,7 @@ export const ObjectFilterDropdownTextSearchInput = () => {
             label: fieldMetadataItemUsedInDropdown.label,
             positionInRecordFilterGroup:
               selectedFilter?.positionInRecordFilterGroup,
+            subFieldName: selectedFilter?.subFieldName,
           });
         }}
       />

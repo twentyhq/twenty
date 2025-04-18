@@ -2,6 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export const FIELD_LINKS_MOCK_NAME = 'fieldLinks';
 export const FIELD_CURRENCY_MOCK_NAME = 'fieldCurrency';
@@ -11,6 +12,7 @@ export const FIELD_FULL_NAME_MOCK_NAME = 'fieldFullName';
 export const FIELD_PHONES_MOCK_NAME = 'fieldPhones';
 
 export const fieldNumberMock = {
+  id: 'fieldNumberId',
   name: 'fieldNumber',
   type: FieldMetadataType.NUMBER,
   isNullable: false,
@@ -18,6 +20,7 @@ export const fieldNumberMock = {
 };
 
 export const fieldTextMock = {
+  id: 'fieldTextId',
   name: 'fieldText',
   type: FieldMetadataType.TEXT,
   isNullable: true,
@@ -25,6 +28,7 @@ export const fieldTextMock = {
 };
 
 export const fieldCurrencyMock = {
+  id: 'fieldCurrencyId',
   name: FIELD_CURRENCY_MOCK_NAME,
   type: FieldMetadataType.CURRENCY,
   isNullable: true,
@@ -32,6 +36,7 @@ export const fieldCurrencyMock = {
 };
 
 export const fieldSelectMock = {
+  id: 'fieldSelectId',
   name: 'fieldSelect',
   type: FieldMetadataType.SELECT,
   isNullable: true,
@@ -55,6 +60,7 @@ export const fieldSelectMock = {
 };
 
 const fieldMultiSelectMock = {
+  id: 'fieldMultiSelectId',
   name: 'fieldMultiSelect',
   type: FieldMetadataType.MULTI_SELECT,
   isNullable: true,
@@ -78,6 +84,7 @@ const fieldMultiSelectMock = {
 };
 
 export const fieldRelationMock = {
+  id: 'fieldRelationId',
   name: 'fieldRelation',
   type: FieldMetadataType.RELATION,
   fromRelationMetadata: {
@@ -90,6 +97,7 @@ export const fieldRelationMock = {
 };
 
 const fieldLinksMock = {
+  id: 'fieldLinksId',
   name: FIELD_LINKS_MOCK_NAME,
   type: FieldMetadataType.LINKS,
   isNullable: false,
@@ -99,6 +107,7 @@ const fieldLinksMock = {
 };
 
 const fieldUuidMock = {
+  id: 'fieldUuidId',
   name: 'fieldUuid',
   type: FieldMetadataType.UUID,
   isNullable: true,
@@ -106,6 +115,7 @@ const fieldUuidMock = {
 };
 
 const fieldDateTimeMock = {
+  id: 'fieldDateTimeId',
   name: 'fieldDateTime',
   type: FieldMetadataType.DATE_TIME,
   isNullable: true,
@@ -113,6 +123,7 @@ const fieldDateTimeMock = {
 };
 
 const fieldDateMock = {
+  id: 'fieldDateId',
   name: 'fieldDate',
   type: FieldMetadataType.DATE,
   isNullable: true,
@@ -120,6 +131,7 @@ const fieldDateMock = {
 };
 
 const fieldBooleanMock = {
+  id: 'fieldBooleanId',
   name: 'fieldBoolean',
   type: FieldMetadataType.BOOLEAN,
   isNullable: true,
@@ -127,6 +139,7 @@ const fieldBooleanMock = {
 };
 
 const fieldNumericMock = {
+  id: 'fieldNumericId',
   name: 'fieldNumeric',
   type: FieldMetadataType.NUMERIC,
   isNullable: true,
@@ -134,6 +147,7 @@ const fieldNumericMock = {
 };
 
 const fieldFullNameMock = {
+  id: 'fieldFullNameId',
   name: FIELD_FULL_NAME_MOCK_NAME,
   type: FieldMetadataType.FULL_NAME,
   isNullable: true,
@@ -141,6 +155,7 @@ const fieldFullNameMock = {
 };
 
 const fieldRatingMock = {
+  id: 'fieldRatingId',
   name: 'fieldRating',
   type: FieldMetadataType.RATING,
   isNullable: true,
@@ -164,6 +179,7 @@ const fieldRatingMock = {
 };
 
 const fieldPositionMock = {
+  id: 'fieldPositionId',
   name: 'fieldPosition',
   type: FieldMetadataType.POSITION,
   isNullable: true,
@@ -171,6 +187,7 @@ const fieldPositionMock = {
 };
 
 const fieldAddressMock = {
+  id: 'fieldAddressId',
   name: FIELD_ADDRESS_MOCK_NAME,
   type: FieldMetadataType.ADDRESS,
   isNullable: true,
@@ -187,6 +204,7 @@ const fieldAddressMock = {
 };
 
 const fieldRawJsonMock = {
+  id: 'fieldRawJsonId',
   name: 'fieldRawJson',
   type: FieldMetadataType.RAW_JSON,
   isNullable: true,
@@ -194,6 +212,7 @@ const fieldRawJsonMock = {
 };
 
 const fieldRichTextMock = {
+  id: 'fieldRichTextId',
   name: 'fieldRichText',
   type: FieldMetadataType.RICH_TEXT,
   isNullable: true,
@@ -201,6 +220,7 @@ const fieldRichTextMock = {
 };
 
 const fieldActorMock = {
+  id: 'fieldActorId',
   name: FIELD_ACTOR_MOCK_NAME,
   type: FieldMetadataType.ACTOR,
   isNullable: true,
@@ -211,6 +231,7 @@ const fieldActorMock = {
 };
 
 const fieldEmailsMock = {
+  id: 'fieldEmailsId',
   name: 'fieldEmails',
   type: FieldMetadataType.EMAILS,
   isNullable: false,
@@ -218,6 +239,7 @@ const fieldEmailsMock = {
 };
 
 const fieldArrayMock = {
+  id: 'fieldArrayId',
   name: 'fieldArray',
   type: FieldMetadataType.ARRAY,
   isNullable: true,
@@ -225,6 +247,7 @@ const fieldArrayMock = {
 };
 
 const fieldPhonesMock = {
+  id: 'fieldPhonesId',
   name: FIELD_PHONES_MOCK_NAME,
   type: FieldMetadataType.PHONES,
   isNullable: false,
@@ -265,7 +288,35 @@ export const fields = [
 
 export const objectMetadataItemMock = {
   targetTableName: 'testingObject',
+  id: 'mockObjectId',
   nameSingular: 'objectName',
   namePlural: 'objectsName',
   fields,
 } as ObjectMetadataEntity;
+
+export const objectMetadataMapItemMock = {
+  id: 'mockObjectId',
+  nameSingular: 'objectName',
+  namePlural: 'objectsName',
+  fields,
+  fieldsById: fields.reduce((acc, field) => {
+    acc[field.id] = field;
+
+    return acc;
+  }, {}),
+  fieldsByName: fields.reduce((acc, field) => {
+    acc[field.name] = field;
+
+    return acc;
+  }, {}),
+} as ObjectMetadataItemWithFieldMaps;
+
+export const objectMetadataMapsMock = {
+  byId: {
+    [objectMetadataMapItemMock.id || 'mock-id']: objectMetadataMapItemMock,
+  },
+  idByNameSingular: {
+    [objectMetadataMapItemMock.nameSingular]:
+      objectMetadataMapItemMock.id || 'mock-id',
+  },
+};

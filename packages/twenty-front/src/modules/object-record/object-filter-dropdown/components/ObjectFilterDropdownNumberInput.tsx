@@ -70,6 +70,7 @@ export const ObjectFilterDropdownNumberInput = () => {
               recordFilterGroupId: selectedFilter?.recordFilterGroupId,
               positionInRecordFilterGroup:
                 selectedFilter?.positionInRecordFilterGroup,
+              subFieldName: selectedFilter?.subFieldName,
             });
           }}
         />

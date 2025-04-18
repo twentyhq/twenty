@@ -11,6 +11,7 @@ import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/o
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { getFilterableFieldTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFilterableFieldTypeLabel';
+import { isCompositeFieldTypeSubFieldsFilterable } from '@/object-record/record-filter/utils/isCompositeFieldTypeFilterable';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -79,6 +80,12 @@ export const AdvancedFilterSubFieldSelectMenu = ({
     objectFilterDropdownSubMenuFieldType
   ].filterableSubFields.sort((a, b) => a.localeCompare(b));
 
+  const subFieldsAreFilterable =
+    isDefined(fieldMetadataItemUsedInDropdown) &&
+    isCompositeFieldTypeSubFieldsFilterable(
+      fieldMetadataItemUsedInDropdown.type,
+    );
+
   return (
     <>
       <DropdownMenuHeader
@@ -101,8 +108,7 @@ export const AdvancedFilterSubFieldSelectMenu = ({
           LeftIcon={IconApps}
           text={`Any ${getFilterableFieldTypeLabel(objectFilterDropdownSubMenuFieldType)} field`}
         />
-        {/* TODO: fix this with a backend field on ViewFilter for composite field filter */}
-        {fieldMetadataItemUsedInDropdown?.type === 'ACTOR' &&
+        {subFieldsAreFilterable &&
           options.map((subFieldName, index) => (
             <MenuItem
               key={`select-filter-${index}`}
