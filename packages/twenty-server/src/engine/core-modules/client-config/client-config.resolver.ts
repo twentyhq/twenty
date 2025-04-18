@@ -63,7 +63,7 @@ export class ClientConfigResolver {
       },
       sentry: {
         environment: this.twentyConfigService.get('SENTRY_ENVIRONMENT'),
-        release: this.twentyConfigService.get('SENTRY_RELEASE'),
+        release: this.twentyConfigService.get('APP_VERSION'),
         dsn: this.twentyConfigService.get('SENTRY_FRONT_DSN'),
       },
       captcha: {

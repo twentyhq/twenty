@@ -130,7 +130,7 @@ export class AccessTokenService {
 
     if (!token) {
       throw new AuthException(
-        'missing authentication token',
+        'Missing authentication token',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
