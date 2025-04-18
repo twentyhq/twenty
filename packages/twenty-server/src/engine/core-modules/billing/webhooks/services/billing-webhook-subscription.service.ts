@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import Stripe from 'stripe';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
@@ -100,15 +100,9 @@ export class BillingWebhookSubscriptionService {
       throw new Error('Billing subscription not found');
     }
 
-    await this.billingSubscriptionItemRepository.upsert(
-      transformStripeSubscriptionEventToDatabaseSubscriptionItem(
-        updatedBillingSubscription.id,
-        data,
-      ),
-      {
-        conflictPaths: ['billingSubscriptionId', 'stripeSubscriptionItemId'],
-        skipUpdateIfNoValuesChanged: true,
-      },
+    await this.updateBillingSubscriptionItems(
+      updatedBillingSubscription.id,
+      event,
     );
 
     if (
@@ -173,5 +167,53 @@ export class BillingWebhookSubscriptionService {
     }
 
     return false;
+  }
+
+  async updateBillingSubscriptionItems(
+    subscriptionId: string,
+    event:
+      | Stripe.CustomerSubscriptionUpdatedEvent
+      | Stripe.CustomerSubscriptionCreatedEvent
+      | Stripe.CustomerSubscriptionDeletedEvent,
+  ) {
+    const hasUpdatedSubscriptionItems = isDefined(
+      event.data.previous_attributes?.items,
+    );
+
+    // delete subscription items that are no longer in the stripe subscription
+    if (
+      hasUpdatedSubscriptionItems &&
+      event.type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED
+    ) {
+      const updatedSubscriptionItemIds = event.data.object.items.data.map(
+        (item) => item.id,
+      );
+
+      const deletedSubscriptionItemIds =
+        event.data.previous_attributes?.items?.data
+          .filter((item) => !updatedSubscriptionItemIds.includes(item.id))
+          .map((item) => item.id);
+
+      if (
+        isDefined(deletedSubscriptionItemIds) &&
+        deletedSubscriptionItemIds.length > 0
+      ) {
+        await this.billingSubscriptionItemRepository.delete({
+          billingSubscriptionId: subscriptionId,
+          stripeSubscriptionItemId: In(deletedSubscriptionItemIds),
+        });
+      }
+    }
+
+    await this.billingSubscriptionItemRepository.upsert(
+      transformStripeSubscriptionEventToDatabaseSubscriptionItem(
+        subscriptionId,
+        event.data,
+      ),
+      {
+        conflictPaths: ['billingSubscriptionId', 'stripeSubscriptionItemId'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
   }
 }
