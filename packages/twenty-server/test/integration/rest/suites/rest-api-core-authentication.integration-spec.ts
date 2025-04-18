@@ -1,0 +1,57 @@
+import { FAKE_PERSON_ID } from 'test/integration/constants/mock-person-ids.constants';
+import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+
+describe('Core REST API Authentication', () => {
+  it('should return an UnauthorizedException when no token is provided', async () => {
+    await makeRestAPIRequest({
+      method: 'post',
+      path: `/people`,
+      headers: { authorization: '' },
+    })
+      .expect(400)
+      .expect((res) => {
+        expect(res.body.error).toBe('FORBIDDEN_EXCEPTION');
+        expect(res.body.messages[0]).toBe('Missing authentication token');
+      });
+  });
+
+  it('should return an Unauthenticated when an invalid token is provided', async () => {
+    await makeRestAPIRequest({
+      method: 'post',
+      path: `/people`,
+      headers: { authorization: `Bearer ${INVALID_ACCESS_TOKEN}` },
+    })
+      .expect(401)
+      .expect((res) => {
+        expect(res.body.error).toBe('UNAUTHENTICATED');
+        expect(res.body.messages[0]).toBe('Token invalid.');
+      });
+  });
+
+  it('should return an Unauthenticated when no token is provided', async () => {
+    await makeRestAPIRequest({
+      method: 'post',
+      path: `/people`,
+      headers: { authorization: 'Bearer invalid-token' },
+    })
+      .expect(401)
+      .expect((res) => {
+        expect(res.body.error).toBe('UNAUTHENTICATED');
+        expect(res.body.messages[0]).toBe('No payload');
+      });
+  });
+
+  it('should return an Unauthenticated when an expired token is provided', async () => {
+    await makeRestAPIRequest({
+      method: 'post',
+      path: `/people`,
+      body: { id: FAKE_PERSON_ID, city: 'FakeCity' },
+      headers: { authorization: `Bearer ${EXPIRED_ACCESS_TOKEN}` },
+    })
+      .expect(401)
+      .expect((res) => {
+        expect(res.body.error).toBe('UNAUTHENTICATED');
+        expect(res.body.messages[0]).toBe('Token has expired.');
+      });
+  });
+});
