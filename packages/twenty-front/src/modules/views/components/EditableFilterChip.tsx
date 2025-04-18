@@ -2,7 +2,6 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { getOperandLabelShort } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useIcons } from 'twenty-ui/display';
 
 type EditableFilterChipProps = {
@@ -24,13 +23,11 @@ export const EditableFilterChip = ({
 
   const operandLabelShort = getOperandLabelShort(viewFilter.operand);
 
-  const labelKey = `${viewFilter.label}${isNonEmptyString(viewFilter.value) ? operandLabelShort : ''}`;
-
   return (
     <SortOrFilterChip
       key={viewFilter.id}
       testId={viewFilter.id}
-      labelKey={labelKey}
+      labelKey={`${viewFilter.label}${getOperandLabelShort(viewFilter.operand)}`}
       labelValue={viewFilter.displayValue}
       Icon={FieldMetadataItemIcon}
       onRemove={onRemove}
