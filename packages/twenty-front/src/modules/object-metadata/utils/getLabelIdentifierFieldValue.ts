@@ -13,7 +13,7 @@ export const getLabelIdentifierFieldValue = (
     objectNameSingular === CoreObjectNameSingular.WorkspaceMember ||
     labelIdentifierFieldMetadataItem?.type === FieldMetadataType.FULL_NAME
   ) {
-    return `${record.name?.firstName ?? ''} ${record.name?.lastName ?? ''}`;
+    return `${record[labelIdentifierFieldMetadataItem?.name ?? '']?.firstName ?? ''} ${record[labelIdentifierFieldMetadataItem?.name ?? '']?.lastName ?? ''}`;
   }
 
   if (isDefined(labelIdentifierFieldMetadataItem?.name)) {
