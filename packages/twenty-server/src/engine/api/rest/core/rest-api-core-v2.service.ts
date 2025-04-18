@@ -219,8 +219,6 @@ export class RestApiCoreServiceV2 {
     // Get input parameters
     const inputs = this.getInputs(request, objectMetadata);
 
-    repository.find({ where: inputs.filter });
-
     // Create query builder
     const qb = repository.createQueryBuilder(objectMetadataNameSingular);
 
