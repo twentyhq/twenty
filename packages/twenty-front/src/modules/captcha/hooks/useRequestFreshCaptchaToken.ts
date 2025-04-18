@@ -52,8 +52,6 @@ export const useRequestFreshCaptchaToken = () => {
               });
             break;
           case CaptchaDriverType.Turnstile:
-            // TODO: fix workspace-no-hardcoded-colors rule
-            // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
             captchaWidget = window.turnstile.render('#captcha-widget', {
               sitekey: captcha.siteKey,
             });
