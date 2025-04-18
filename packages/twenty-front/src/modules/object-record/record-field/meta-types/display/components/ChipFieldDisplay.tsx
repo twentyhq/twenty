@@ -9,7 +9,6 @@ export const ChipFieldDisplay = () => {
     objectNameSingular,
     labelIdentifierLink,
     isLabelIdentifierCompact,
-    fieldDefinition,
   } = useChipFieldDisplay();
 
   if (!isDefined(recordValue)) {
@@ -23,10 +22,6 @@ export const ChipFieldDisplay = () => {
       size={ChipSize.Small}
       to={labelIdentifierLink}
       isLabelHidden={isLabelIdentifierCompact}
-      field={{
-        type: fieldDefinition.type,
-        name: fieldDefinition.metadata.fieldName,
-      }}
     />
   );
 };
