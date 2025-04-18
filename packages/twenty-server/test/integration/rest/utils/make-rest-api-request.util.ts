@@ -1,5 +1,3 @@
-import { IncomingHttpHeaders } from 'http';
-
 import request from 'supertest';
 
 export type RestAPIRequestMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
@@ -7,20 +5,26 @@ export type RestAPIRequestMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
 interface RestAPIRequestParams {
   method: RestAPIRequestMethod;
   path: string;
-  headers?: IncomingHttpHeaders;
+  bearer?: string;
   body?: any;
 }
 
 export const makeRestAPIRequest = ({
   method,
   path,
-  headers = {},
-  body,
+  bearer = ADMIN_ACCESS_TOKEN,
+  body = {},
 }: RestAPIRequestParams) => {
   const client = request(`http://localhost:${APP_PORT}`);
 
-  return client[method](`/rest${path}`)
-    .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
-    .set(headers)
-    .send(body ? JSON.stringify(body) : undefined);
+  const req = client[method](`/rest${path}`).set(
+    'Authorization',
+    `Bearer ${bearer}`,
+  );
+
+  if (['post', 'patch', 'put'].includes(method)) {
+    req.set('Content-Type', 'application/json').send(JSON.stringify(body));
+  }
+
+  return req;
 };

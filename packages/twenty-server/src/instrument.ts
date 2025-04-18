@@ -26,7 +26,7 @@ const meterDrivers = parseArrayEnvVar(
 if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry) {
   Sentry.init({
     environment: process.env.SENTRY_ENVIRONMENT,
-    release: process.env.SENTRY_RELEASE,
+    release: process.env.APP_VERSION,
     dsn: process.env.SENTRY_DSN,
     integrations: [
       // TODO: Redis integration doesn't seem to work - investigate why

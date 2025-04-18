@@ -7,6 +7,7 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -35,7 +36,6 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
 import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 import { assertNever } from 'src/utils/assert';
-import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
 @Injectable()
 export class WorkflowTriggerWorkspaceService {
@@ -78,12 +78,12 @@ export class WorkflowTriggerWorkspaceService {
       workflowVersionId,
     );
 
-    return await this.workflowRunnerWorkspaceService.run(
-      this.getWorkspaceId(),
+    return this.workflowRunnerWorkspaceService.run({
+      workspaceId: this.getWorkspaceId(),
       workflowVersionId,
       payload,
-      createdBy,
-    );
+      source: createdBy,
+    });
   }
 
   async activateWorkflowVersion(workflowVersionId: string) {

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Request } from 'express';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -55,6 +55,18 @@ export class RestApiCoreServiceV2 {
       recordInput: request.body,
       objectMetadataMapItem: objectMetadata.objectMetadataMapItem,
     });
+
+    const recordExists =
+      isDefined(overriddenBody.id) &&
+      (await repository.exists({
+        where: {
+          id: overriddenBody.id,
+        },
+      }));
+
+    if (recordExists) {
+      throw new BadRequestException('Record already exists');
+    }
 
     const createdRecord = await repository.save(overriddenBody);
 
