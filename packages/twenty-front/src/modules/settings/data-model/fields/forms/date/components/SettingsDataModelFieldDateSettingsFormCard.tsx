@@ -31,7 +31,7 @@ export const SettingsDataModelFieldDateSettingsFormCard = ({
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldDateSettingsFormCardProps) => {
-  const { initialDisplayAsRelativeDateValue } =
+  const { initialDisplayFormat, initialCustomUnicodeDateFormat } =
     useDateSettingsFormInitialValues({
       fieldMetadataItem,
     });
@@ -46,9 +46,13 @@ export const SettingsDataModelFieldDateSettingsFormCard = ({
           fieldMetadataItem={{
             ...fieldMetadataItem,
             settings: {
-              displayAsRelativeDate: watchFormValue(
-                'settings.displayAsRelativeDate',
-                initialDisplayAsRelativeDateValue,
+              displayFormat: watchFormValue(
+                'settings.displayFormat',
+                initialDisplayFormat,
+              ),
+              customUnicodeDateFormat: watchFormValue(
+                'settings.customUnicodeDateFormat',
+                initialCustomUnicodeDateFormat,
               ),
             },
           }}

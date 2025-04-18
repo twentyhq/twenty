@@ -1,14 +1,14 @@
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 
-export const RecordTableBodySoftFocusKeyboardEffect = () => {
+export const RecordTableBodyFocusKeyboardEffect = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const { useMapKeyboardToSoftFocus } = useRecordTable({
+  const { useMapKeyboardToFocus } = useRecordTable({
     recordTableId,
   });
 
-  useMapKeyboardToSoftFocus();
+  useMapKeyboardToFocus();
 
   return <></>;
 };

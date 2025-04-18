@@ -96,6 +96,18 @@ export class RestApiCoreServiceV2 {
       objectMetadataMapItem: objectMetadata.objectMetadataMapItem,
     });
 
+    const recordExists =
+      isDefined(overriddenBody.id) &&
+      (await repository.exists({
+        where: {
+          id: overriddenBody.id,
+        },
+      }));
+
+    if (recordExists) {
+      throw new BadRequestException('Record already exists');
+    }
+
     const createdRecord = await repository.save(overriddenBody);
 
     this.apiEventEmitterService.emitCreateEvents(

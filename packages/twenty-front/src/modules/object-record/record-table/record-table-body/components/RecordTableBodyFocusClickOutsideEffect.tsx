@@ -3,13 +3,13 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
-type RecordTableBodySoftFocusClickOutsideEffectProps = {
+type RecordTableBodyFocusClickOutsideEffectProps = {
   tableBodyRef: React.RefObject<HTMLDivElement>;
 };
 
-export const RecordTableBodySoftFocusClickOutsideEffect = ({
+export const RecordTableBodyFocusClickOutsideEffect = ({
   tableBodyRef,
-}: RecordTableBodySoftFocusClickOutsideEffectProps) => {
+}: RecordTableBodyFocusClickOutsideEffectProps) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
   const leaveTableFocus = useLeaveTableFocus(recordTableId);

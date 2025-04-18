@@ -9,6 +9,7 @@ import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import styled from '@emotion/styled';
+import isEmpty from 'lodash.isempty';
 import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -22,7 +23,6 @@ const StyledInput = styled(TextInput)`
 
 type FormNumberFieldInputProps = {
   label?: string;
-  error?: string;
   defaultValue: number | string | undefined;
   onChange: (value: number | null | string) => void;
   onBlur?: () => void;
@@ -30,20 +30,26 @@ type FormNumberFieldInputProps = {
   hint?: string;
   readonly?: boolean;
   placeholder?: string;
+  error?: string;
+  onError?: (error: string | undefined) => void;
 };
 
 export const FormNumberFieldInput = ({
   label,
-  error,
   placeholder,
   defaultValue,
   onChange,
+  onError,
   onBlur,
   VariablePicker,
   hint,
   readonly,
+  error: errorFromProps,
 }: FormNumberFieldInputProps) => {
   const inputId = useId();
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(
+    undefined,
+  );
 
   const [draftValue, setDraftValue] = useState<
     | {
@@ -68,8 +74,13 @@ export const FormNumberFieldInput = ({
 
   const persistNumber = (newValue: string) => {
     if (!canBeCastAsNumberOrNull(newValue)) {
+      setErrorMessage('Invalid number');
+      onError?.('Invalid number');
       return;
     }
+
+    setErrorMessage(undefined);
+    onError?.(undefined);
 
     const castedValue = castAsNumberOrNull(newValue);
 
@@ -115,7 +126,11 @@ export const FormNumberFieldInput = ({
           {draftValue.type === 'static' ? (
             <StyledInput
               inputId={inputId}
-              placeholder={placeholder ?? 'Enter a number'}
+              placeholder={
+                isDefined(placeholder) && !isEmpty(placeholder)
+                  ? placeholder
+                  : 'Enter a number'
+              }
               value={draftValue.value}
               copyButton={false}
               hotkeyScope="record-create"
@@ -139,7 +154,7 @@ export const FormNumberFieldInput = ({
       </FormFieldInputRowContainer>
 
       {hint ? <InputHint>{hint}</InputHint> : null}
-      <InputErrorHelper>{error}</InputErrorHelper>
+      <InputErrorHelper>{errorMessage ?? errorFromProps}</InputErrorHelper>
     </FormFieldInputContainer>
   );
 };

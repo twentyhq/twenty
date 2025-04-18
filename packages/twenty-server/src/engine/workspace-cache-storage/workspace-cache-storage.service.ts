@@ -253,7 +253,10 @@ export class WorkspaceCacheStorageService {
     );
   }
 
-  async flush(workspaceId: string, metadataVersion: number): Promise<void> {
+  async flushVersionedMetadata(
+    workspaceId: string,
+    metadataVersion: number,
+  ): Promise<void> {
     await this.cacheStorageService.del(
       `${WorkspaceCacheKeys.MetadataObjectMetadataMaps}:${workspaceId}:${metadataVersion}`,
     );
@@ -272,6 +275,10 @@ export class WorkspaceCacheStorageService {
     await this.cacheStorageService.del(
       `${WorkspaceCacheKeys.MetadataObjectMetadataOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
     );
+  }
+
+  async flush(workspaceId: string, metadataVersion: number): Promise<void> {
+    await this.flushVersionedMetadata(workspaceId, metadataVersion);
 
     await this.cacheStorageService.del(
       `${WorkspaceCacheKeys.MetadataPermissionsRolesPermissions}:${workspaceId}`,

@@ -6,6 +6,7 @@ import { RecordTableRecordGroupRows } from '@/object-record/record-table/compone
 import { RecordTableBodyDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppable';
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
 import { RecordTableBodyRecordGroupDragDropContextProvider } from '@/object-record/record-table/record-table-body/components/RecordTableBodyRecordGroupDragDropContextProvider';
+import { RecordTableCellPortals } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortals';
 import { RecordTableRecordGroupSection } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSection';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
@@ -42,6 +43,7 @@ export const RecordTableRecordGroupsBody = () => {
               <RecordTableBodyDroppable recordGroupId={recordGroupId}>
                 <RecordTableRecordGroupSection />
                 <RecordTableRecordGroupRows />
+                <RecordTableCellPortals />
               </RecordTableBodyDroppable>
             </RecordGroupContext.Provider>
           </RecordTableRecordGroupBodyContextProvider>
