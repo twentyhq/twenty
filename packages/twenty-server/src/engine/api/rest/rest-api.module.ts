@@ -20,6 +20,7 @@ import { RecordTransformerModule } from 'src/engine/core-modules/record-transfor
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { DepthInputFactory } from 'src/engine/api/rest/input-factories/depth-input.factory';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-run
     StartingAfterInputFactory,
     EndingBeforeInputFactory,
     LimitInputFactory,
+    DepthInputFactory,
     FilterInputFactory,
     OrderByInputFactory,
     ApiEventEmitterService,
