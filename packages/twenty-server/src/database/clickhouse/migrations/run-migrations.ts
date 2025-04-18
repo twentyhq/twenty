@@ -77,10 +77,6 @@ async function runMigrations() {
     url: clickhouseUrl(),
   });
 
-  await client.command({
-    query: `SET allow_experimental_json_type = 1`,
-  });
-
   await ensureMigrationTable(client);
 
   for (const file of files) {
