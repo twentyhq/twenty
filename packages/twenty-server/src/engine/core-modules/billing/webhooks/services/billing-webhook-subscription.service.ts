@@ -106,7 +106,7 @@ export class BillingWebhookSubscriptionService {
         data,
       ),
       {
-        conflictPaths: ['billingSubscriptionId', 'stripeProductId'],
+        conflictPaths: ['billingSubscriptionId', 'stripeSubscriptionItemId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );
