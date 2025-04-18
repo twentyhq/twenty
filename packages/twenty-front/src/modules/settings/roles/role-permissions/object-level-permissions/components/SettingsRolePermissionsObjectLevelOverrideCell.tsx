@@ -1,3 +1,4 @@
+import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
 import { SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectPermissionIconConfig';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useTheme } from '@emotion/react';
@@ -46,12 +47,8 @@ export const SettingsRolePermissionsObjectLevelOverrideCell = ({
     settingsDraftRoleFamilyState(objectPermission.roleId),
   );
 
-  const permissionMappings = {
-    canReadObjectRecords: 'canReadAllObjectRecords',
-    canUpdateObjectRecords: 'canUpdateAllObjectRecords',
-    canSoftDeleteObjectRecords: 'canSoftDeleteAllObjectRecords',
-    canDestroyObjectRecords: 'canDestroyAllObjectRecords',
-  } as const;
+  const permissionMappings =
+    SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING;
 
   type ObjectPermissionKey = keyof typeof permissionMappings;
 

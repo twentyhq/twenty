@@ -6,3 +6,10 @@ export type SettingsRolePermissionsObjectPermission = {
   setValue: (value: boolean) => void;
   overriddenBy?: number;
 };
+
+export type SettingsRolePermissionsObjectLevelPermission = {
+  key: string;
+  label: string | ReactNode;
+  value?: boolean | null;
+  setValue: (value: boolean | null) => void;
+};
