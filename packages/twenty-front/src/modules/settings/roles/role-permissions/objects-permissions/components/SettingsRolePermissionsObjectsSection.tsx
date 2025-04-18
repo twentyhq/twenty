@@ -5,7 +5,6 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 
@@ -37,12 +36,11 @@ export const SettingsRolePermissionsObjectsSection = ({
     {
       key: 'canReadObjectRecords',
       label: t`See Records on All Objects`,
-      overriddenBy:
+      revokedBy:
         objectPermissions?.filter(
           (permission) =>
-            isDefined(permission.canReadObjectRecords) &&
-            permission.canReadObjectRecords !==
-              settingsDraftRole.canReadAllObjectRecords,
+            permission.canReadObjectRecords === false &&
+            settingsDraftRole.canReadAllObjectRecords === true,
         )?.length ?? 0,
       value: settingsDraftRole.canReadAllObjectRecords,
       setValue: (value: boolean) => {
@@ -55,12 +53,11 @@ export const SettingsRolePermissionsObjectsSection = ({
     {
       key: 'canUpdateObjectRecords',
       label: t`Edit Records on All Objects`,
-      overriddenBy:
+      revokedBy:
         objectPermissions?.filter(
           (permission) =>
-            isDefined(permission.canUpdateObjectRecords) &&
-            permission.canUpdateObjectRecords !==
-              settingsDraftRole.canUpdateAllObjectRecords,
+            permission.canUpdateObjectRecords === false &&
+            settingsDraftRole.canUpdateAllObjectRecords === true,
         )?.length ?? 0,
       value: settingsDraftRole.canUpdateAllObjectRecords,
       setValue: (value: boolean) => {
@@ -73,12 +70,11 @@ export const SettingsRolePermissionsObjectsSection = ({
     {
       key: 'canSoftDeleteObjectRecords',
       label: t`Delete Records on All Objects`,
-      overriddenBy:
+      revokedBy:
         objectPermissions?.filter(
           (permission) =>
-            isDefined(permission.canSoftDeleteObjectRecords) &&
-            permission.canSoftDeleteObjectRecords !==
-              settingsDraftRole.canSoftDeleteAllObjectRecords,
+            permission.canSoftDeleteObjectRecords === false &&
+            settingsDraftRole.canSoftDeleteAllObjectRecords === true,
         )?.length ?? 0,
       value: settingsDraftRole.canSoftDeleteAllObjectRecords,
       setValue: (value: boolean) => {
@@ -91,12 +87,11 @@ export const SettingsRolePermissionsObjectsSection = ({
     {
       key: 'canDestroyObjectRecords',
       label: t`Destroy Records on All Objects`,
-      overriddenBy:
+      revokedBy:
         objectPermissions?.filter(
           (permission) =>
-            isDefined(permission.canDestroyObjectRecords) &&
-            permission.canDestroyObjectRecords !==
-              settingsDraftRole.canDestroyAllObjectRecords,
+            permission.canDestroyObjectRecords === false &&
+            settingsDraftRole.canDestroyAllObjectRecords === true,
         )?.length ?? 0,
       value: settingsDraftRole.canDestroyAllObjectRecords,
       setValue: (value: boolean) => {

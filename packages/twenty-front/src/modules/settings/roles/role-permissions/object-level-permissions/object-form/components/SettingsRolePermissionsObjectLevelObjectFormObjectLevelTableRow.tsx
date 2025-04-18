@@ -85,14 +85,12 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
     const settingsDraftRoleGlobalPermissionValue =
       settingsDraftRole[rolePermission as keyof Role];
 
-    const isObjectPermissionDefined = isDefined(
-      settingsDraftRoleObjectPermissionValue,
-    );
     const isChecked = !!settingsDraftRoleObjectPermissionValue;
 
-    const isOverridden =
-      isObjectPermissionDefined &&
-      !!settingsDraftRoleGlobalPermissionValue !== isChecked;
+    const isRevoked =
+      isDefined(settingsDraftRoleObjectPermissionValue) &&
+      !!settingsDraftRoleGlobalPermissionValue === true &&
+      isChecked === false;
 
     let checkboxType: OverridableCheckboxType;
 
@@ -124,9 +122,9 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
         <StyledPermissionCell>
           <Icon size={theme.icon.size.sm} />
           <StyledLabel>{label}</StyledLabel>
-          {isOverridden ? (
+          {isRevoked ? (
             <StyledOverrideInfo>
-              {t`Overridden for this object`}
+              {t`Revoked for this object`}
             </StyledOverrideInfo>
           ) : null}
         </StyledPermissionCell>

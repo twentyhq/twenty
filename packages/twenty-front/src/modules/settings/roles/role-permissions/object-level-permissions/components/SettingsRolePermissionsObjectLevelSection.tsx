@@ -1,24 +1,30 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { SettingsRolePermissionsObjectLevelObjectPickerDropdownContent } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPickerDropdownContent';
 import { SettingsRolePermissionsObjectLevelTableHeader } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader';
 import { SettingsRolePermissionsObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRow';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { SettingsPath } from '@/types/SettingsPath';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title, IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { v4 } from 'uuid';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-// const StyledCreateObjectOverrideSection = styled(Section)`
-//   border-top: 1px solid ${({ theme }) => theme.border.color.light};
-//   display: flex;
-//   justify-content: flex-end;
-//   padding-top: ${({ theme }) => theme.spacing(2)};
-//   padding-bottom: ${({ theme }) => theme.spacing(2)};
-// `;
+const StyledCreateObjectOverrideSection = styled(Section)`
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  display: flex;
+  justify-content: flex-end;
+  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+`;
 
 const StyledTableRows = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
@@ -36,10 +42,13 @@ const StyledNoOverride = styled(TableCell)`
 
 export const SettingsRolePermissionsObjectLevelSection = ({
   roleId,
+  isEditable,
 }: SettingsRolePermissionsObjectLevelSectionProps) => {
-  const settingsDraftRole = useRecoilValue(
+  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );
+
+  const navigate = useNavigateSettings();
 
   const objectMetadataItems = useObjectMetadataItems();
 
@@ -51,17 +60,39 @@ export const SettingsRolePermissionsObjectLevelSection = ({
     {} as Record<string, ObjectMetadataItem>,
   );
 
-  const objectPermissions = settingsDraftRole.objectPermissions;
+  const filteredObjectPermissions = settingsDraftRole.objectPermissions?.filter(
+    (objectPermission) =>
+      (isDefined(objectPermission.canReadObjectRecords) &&
+        objectPermission.canReadObjectRecords !==
+          settingsDraftRole.canReadAllObjectRecords) ||
+      (isDefined(objectPermission.canUpdateObjectRecords) &&
+        objectPermission.canUpdateObjectRecords !==
+          settingsDraftRole.canUpdateAllObjectRecords) ||
+      (isDefined(objectPermission.canSoftDeleteObjectRecords) &&
+        objectPermission.canSoftDeleteObjectRecords !==
+          settingsDraftRole.canSoftDeleteAllObjectRecords) ||
+      (isDefined(objectPermission.canDestroyObjectRecords) &&
+        objectPermission.canDestroyObjectRecords !==
+          settingsDraftRole.canDestroyAllObjectRecords),
+  );
 
-  // const handleSelectObjectMetadata = (objectMetadataId: string) => {
-  //   setSettingsDraftRole((draftRole) => ({
-  //     ...draftRole,
-  //     objectPermissions: [
-  //       ...(draftRole.objectPermissions ?? []),
-  //       { objectMetadataId, roleId, id: v4() },
-  //     ],
-  //   }));
-  // };
+  const handleSelectObjectMetadata = (objectMetadataId: string) => {
+    setSettingsDraftRole((draftRole) => ({
+      ...draftRole,
+      objectPermissions: [
+        ...(draftRole.objectPermissions ?? []).filter(
+          (permission) =>
+            permission.objectMetadataId !== objectMetadataId ||
+            permission.roleId !== roleId,
+        ),
+        { objectMetadataId, roleId, id: v4() },
+      ],
+    }));
+    navigate(SettingsPath.RoleObjectLevel, {
+      roleId,
+      objectMetadataId,
+    });
+  };
 
   return (
     <Section>
@@ -72,8 +103,9 @@ export const SettingsRolePermissionsObjectLevelSection = ({
       <Table>
         <SettingsRolePermissionsObjectLevelTableHeader />
         <StyledTableRows>
-          {isDefined(objectPermissions) && objectPermissions?.length > 0 ? (
-            objectPermissions?.map((objectPermission) => (
+          {isDefined(filteredObjectPermissions) &&
+          filteredObjectPermissions?.length > 0 ? (
+            filteredObjectPermissions?.map((objectPermission) => (
               <SettingsRolePermissionsObjectLevelTableRow
                 key={objectPermission.id}
                 objectPermission={objectPermission}
@@ -87,7 +119,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
           )}
         </StyledTableRows>
       </Table>
-      {/* <StyledCreateObjectOverrideSection>
+      <StyledCreateObjectOverrideSection>
         <Dropdown
           dropdownId="role-object-select"
           dropdownHotkeyScope={{ scope: 'roleObject' }}
@@ -102,12 +134,16 @@ export const SettingsRolePermissionsObjectLevelSection = ({
           }
           dropdownComponents={
             <SettingsRolePermissionsObjectLevelObjectPickerDropdownContent
-              excludedObjectMetadataIds={[]}
+              excludedObjectMetadataIds={
+                filteredObjectPermissions?.map(
+                  (objectPermission) => objectPermission.objectMetadataId,
+                ) ?? []
+              }
               onSelect={handleSelectObjectMetadata}
             />
           }
         />
-      </StyledCreateObjectOverrideSection> */}
+      </StyledCreateObjectOverrideSection>
     </Section>
   );
 };
