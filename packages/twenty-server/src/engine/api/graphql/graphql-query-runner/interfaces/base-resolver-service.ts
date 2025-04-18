@@ -125,7 +125,7 @@ export abstract class GraphqlQueryBaseResolverService<
       });
 
       const executedByApiKey = isDefined(authContext.apiKey);
-      const shouldBypassPermissionChecks = !!executedByApiKey;
+      const shouldBypassPermissionChecks = executedByApiKey;
 
       const repository = dataSource.getRepository(
         objectMetadataItemWithFieldMaps.nameSingular,
@@ -154,7 +154,7 @@ export abstract class GraphqlQueryBaseResolverService<
         repository,
         graphqlQueryParser,
         graphqlQuerySelectedFieldsResult,
-        isExecutedByApiKey: isDefined(authContext.apiKey),
+        isExecutedByApiKey: executedByApiKey,
         roleId,
       };
 

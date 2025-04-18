@@ -12,7 +12,7 @@ export class ObjectMetadataRelatedRecordsService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  shouldBypassPermissionChecks = true;
+  private readonly shouldBypassPermissionChecks = true;
 
   public async createObjectRelatedRecords(
     objectMetadata: ObjectMetadataEntity,

@@ -30,7 +30,6 @@ describe('updateOneObjectRecordsPermissions', () => {
     });
 
     it('should throw a permission error when user does not have permission (guest role)', async () => {
-      const personId = randomUUID();
       const graphqlOperation = updateOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS,

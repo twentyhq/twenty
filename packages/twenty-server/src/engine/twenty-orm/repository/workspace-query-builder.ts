@@ -12,8 +12,6 @@ export class WorkspaceQueryBuilder<
     shouldBypassPermissionChecks: boolean,
   ) {
     super(queryBuilder, objectRecordsPermissions, shouldBypassPermissionChecks);
-    this.objectRecordsPermissions = objectRecordsPermissions;
-    this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
   }
 
   override clone(): this {

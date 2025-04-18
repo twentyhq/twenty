@@ -123,7 +123,7 @@ export class ProcessNestedRelationsHelper {
     nestedRelations: any;
     aggregate: Record<string, AggregationField>;
     limit: number;
-    authContext: any;
+    authContext: AuthContext;
     dataSource: DataSource;
     isNewRelationEnabled: boolean;
     shouldBypassPermissionChecks: boolean;
