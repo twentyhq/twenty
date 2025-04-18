@@ -3,14 +3,13 @@ import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-re
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
 describe('Core REST API Create One endpoint', () => {
-  const deleteTestPerson = async () =>
-    await makeRestAPIRequest({
-      method: 'delete',
-      path: `/people/${PERSON_2_ID}`,
-    });
-
-  beforeAll(deleteTestPerson);
-  afterAll(deleteTestPerson);
+  beforeAll(
+    async () =>
+      await makeRestAPIRequest({
+        method: 'delete',
+        path: `/people/${PERSON_2_ID}`,
+      }),
+  );
 
   it('should create a new person', async () => {
     const personCity = generateRecordName(PERSON_2_ID);

@@ -1,4 +1,3 @@
-import { FAKE_PERSON_ID } from 'test/integration/constants/mock-person-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 
 describe('Core REST API Authentication', () => {
@@ -45,7 +44,6 @@ describe('Core REST API Authentication', () => {
     await makeRestAPIRequest({
       method: 'post',
       path: `/people`,
-      body: { id: FAKE_PERSON_ID, city: 'FakeCity' },
       headers: { authorization: `Bearer ${EXPIRED_ACCESS_TOKEN}` },
     })
       .expect(401)
