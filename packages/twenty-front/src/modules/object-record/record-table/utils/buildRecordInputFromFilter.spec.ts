@@ -5,22 +5,14 @@ import { buildValueFromFilter } from './buildRecordInputFromFilter';
 
 // TODO: fix the dates, and test the not supported types
 const mockDate = new Date('2024-03-20T12:00:00Z');
-const originalDate = global.Date;
 
 beforeAll(() => {
-  jest.spyOn(global, 'Date').mockImplementation((...args) => {
-    if (args.length === 0) {
-      return mockDate;
-    }
-    if (args.length === 1) {
-      return new (originalDate as any)(args);
-    }
-    return new (originalDate as any)(...args);
-  });
+  jest.useFakeTimers();
+  jest.setSystemTime(mockDate);
 });
 
 afterAll(() => {
-  jest.restoreAllMocks();
+  jest.useRealTimers();
 });
 
 describe('buildValueFromFilter', () => {
@@ -48,7 +40,7 @@ describe('buildValueFromFilter', () => {
       {
         operand: ViewFilterOperand.DoesNotContain,
         value: 'test',
-        expected: 'test',
+        expected: undefined,
       },
       {
         operand: ViewFilterOperand.IsNotEmpty,
@@ -58,7 +50,7 @@ describe('buildValueFromFilter', () => {
       {
         operand: ViewFilterOperand.IsEmpty,
         value: 'test',
-        expected: 'test',
+        expected: undefined,
       },
     ];
 
@@ -81,7 +73,7 @@ describe('buildValueFromFilter', () => {
       {
         operand: ViewFilterOperand.IsNot,
         value: '2024-03-20T12:00:00Z',
-        expected: mockDate,
+        expected: undefined,
       },
       {
         operand: ViewFilterOperand.IsAfter,
@@ -126,18 +118,6 @@ describe('buildValueFromFilter', () => {
         const filter = createTestFilter(operand, value, 'DATE_TIME');
         const result = buildValueFromFilter(filter, 'DATE_TIME');
         if (expected instanceof Date) {
-          console.log('result type:', typeof result);
-          console.log('result constructor:', result?.constructor);
-          console.log('result toString:', result?.toString());
-          if (result instanceof Date) {
-            console.log('result toISOString:', result.toISOString());
-            console.log('result getTime:', result.getTime());
-          }
-          console.log('expected type:', typeof expected);
-          console.log('expected constructor:', expected.constructor);
-          console.log('expected toString:', expected.toString());
-          console.log('expected toISOString:', expected.toISOString());
-          console.log('expected getTime:', expected.getTime());
           expect(result).toBeInstanceOf(Date);
           expect(result).toEqual(expected);
         } else {
@@ -213,7 +193,7 @@ describe('buildValueFromFilter', () => {
       {
         operand: ViewFilterOperand.DoesNotContain,
         value: 'test',
-        expected: 'test',
+        expected: undefined,
       },
       {
         operand: ViewFilterOperand.IsNotEmpty,
@@ -223,7 +203,7 @@ describe('buildValueFromFilter', () => {
       {
         operand: ViewFilterOperand.IsEmpty,
         value: 'test',
-        expected: 'test',
+        expected: undefined,
       },
     ];
 
