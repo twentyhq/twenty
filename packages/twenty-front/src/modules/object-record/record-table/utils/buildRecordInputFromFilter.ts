@@ -4,7 +4,7 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
-
+// add a spec file exhautive test for this function
 export const buildRecordInputFromFilter = (
   filter: RecordFilter,
   fieldMetadataItem: FieldMetadataItem,
@@ -51,7 +51,9 @@ const stringToFieldMetadataType = (type: FieldMetadataType, value: string) => {
       assertUnreachable(type);
   }
 };
-
+// rebuild using the getRecordIOperands.ts file to get all operands for a fieldmetadatatype.
+// then loop on fieldmetadataitem.type and call call a function that will rtreat each operand. "compute Input value from array filter"
+// note : call the fieldmetadataType fieldmetadataFilter
 const buildValueFromFilter = (
   filter: RecordFilter,
   fieldMetadataItem: FieldMetadataItem,
@@ -60,7 +62,7 @@ const buildValueFromFilter = (
   if (isCompositeField(fieldMetadataItem.type)) {
     return filter.value;
   }
-  debugger;
+
   // convert the value to the correct javascript type based on the fieldmetadataitem type
   const convertedValue = stringToFieldMetadataType(
     fieldMetadataItem.type,
