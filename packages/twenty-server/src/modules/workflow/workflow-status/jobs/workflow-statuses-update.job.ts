@@ -18,7 +18,10 @@ import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import {
+  WorkflowStatus,
+  WorkflowWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
   WorkflowAction,
   WorkflowActionType,
@@ -171,26 +174,10 @@ export class WorkflowStatusesUpdateJob {
       },
     );
 
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: workflowObjectMetadata.nameSingular,
-      action: DatabaseEventAction.UPDATED,
-      events: [
-        {
-          recordId: workflowId,
-          objectMetadata: workflowObjectMetadata,
-          properties: {
-            before: previousWorkflow,
-            after: {
-              ...previousWorkflow,
-              statuses: newWorkflowStatuses,
-            },
-            updatedFields: ['statuses'],
-            diff: {
-              statuses: newWorkflowStatuses,
-            },
-          },
-        },
-      ],
+    this.emitWorkflowStatusUpdatedEvent({
+      currentWorkflow: previousWorkflow,
+      workflowObjectMetadata,
+      newWorkflowStatuses,
       workspaceId,
     });
   }
@@ -325,26 +312,10 @@ export class WorkflowStatusesUpdateJob {
       },
     );
 
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: workflowObjectMetadata.nameSingular,
-      action: DatabaseEventAction.UPDATED,
-      events: [
-        {
-          recordId: statusUpdate.workflowId,
-          objectMetadata: workflowObjectMetadata,
-          properties: {
-            before: workflow,
-            after: {
-              ...workflow,
-              statuses: newWorkflowStatuses,
-            },
-            updatedFields: ['statuses'],
-            diff: {
-              statuses: newWorkflowStatuses,
-            },
-          },
-        },
-      ],
+    this.emitWorkflowStatusUpdatedEvent({
+      currentWorkflow: workflow,
+      workflowObjectMetadata,
+      newWorkflowStatuses,
       workspaceId,
     });
   }
@@ -396,17 +367,36 @@ export class WorkflowStatusesUpdateJob {
       },
     );
 
+    this.emitWorkflowStatusUpdatedEvent({
+      currentWorkflow: workflow,
+      workflowObjectMetadata,
+      newWorkflowStatuses,
+      workspaceId,
+    });
+  }
+
+  private emitWorkflowStatusUpdatedEvent({
+    currentWorkflow,
+    workflowObjectMetadata,
+    newWorkflowStatuses,
+    workspaceId,
+  }: {
+    currentWorkflow: WorkflowWorkspaceEntity;
+    workflowObjectMetadata: ObjectMetadataEntity;
+    newWorkflowStatuses: WorkflowStatus[];
+    workspaceId: string;
+  }) {
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: workflowObjectMetadata.nameSingular,
       action: DatabaseEventAction.UPDATED,
       events: [
         {
-          recordId: workflowId,
+          recordId: currentWorkflow.id,
           objectMetadata: workflowObjectMetadata,
           properties: {
-            before: workflow,
+            before: currentWorkflow,
             after: {
-              ...workflow,
+              ...currentWorkflow,
               statuses: newWorkflowStatuses,
             },
             updatedFields: ['statuses'],
