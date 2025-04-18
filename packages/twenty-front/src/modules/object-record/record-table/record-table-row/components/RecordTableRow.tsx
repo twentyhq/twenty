@@ -6,6 +6,7 @@ import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-ta
 import { RecordTableCells } from '@/object-record/record-table/record-table-row/components/RecordTableCells';
 import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
 import { ListenRecordUpdatesEffect } from '@/subscription/components/ListenUpdatesEffect';
+import { getDefaultRecordFieldsToListen } from '@/subscription/utils/getDefaultRecordFieldsToListen.util';
 
 type RecordTableRowProps = {
   recordId: string;
@@ -19,6 +20,9 @@ export const RecordTableRow = ({
   rowIndexForDrag,
 }: RecordTableRowProps) => {
   const { objectNameSingular } = useRecordIndexContextOrThrow();
+  const listenedFields = getDefaultRecordFieldsToListen({
+    objectNameSingular,
+  });
 
   return (
     <RecordTableDraggableTr
@@ -31,11 +35,11 @@ export const RecordTableRow = ({
       <RecordTableCells />
       <RecordTableLastEmptyCell />
       <RecordValueSetterEffect recordId={recordId} />
-      {objectNameSingular === 'workflow' && (
+      {listenedFields.length > 0 && (
         <ListenRecordUpdatesEffect
           objectNameSingular={objectNameSingular}
           recordId={recordId}
-          listenedFields={['statuses']}
+          listenedFields={listenedFields}
         />
       )}
     </RecordTableDraggableTr>
