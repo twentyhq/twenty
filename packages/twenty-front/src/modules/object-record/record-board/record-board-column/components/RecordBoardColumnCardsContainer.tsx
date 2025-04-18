@@ -24,6 +24,7 @@ const StyledNewButtonContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
+// eslint-disable-next-line @nx/workspace-no-hardcoded-colors
 const StyledSkeletonCardContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.background.quaternary};
