@@ -26,6 +26,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
     }),
     TypeOrmModule.forFeature([KeyValuePair], 'core'),
   ],
+
   providers: [
     TwentyConfigService,
     EnvironmentConfigDriver,
@@ -33,7 +34,10 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
     ConfigCacheService,
     ConfigStorageService,
     ConfigValueConverterService,
-    ConfigVariables,
+    {
+      provide: ConfigVariables,
+      useValue: new ConfigVariables(),
+    },
   ],
   exports: [TwentyConfigService],
 })

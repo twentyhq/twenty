@@ -5,7 +5,7 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 export const CastToBoolean =
   () =>
   <T extends object>(target: T, propertyKey: keyof T & string) => {
-    Transform(({ value }: { value: string }) => toBoolean(value))(
+    Transform(({ value }: { value: any }) => toBoolean(value))(
       target,
       propertyKey,
     );

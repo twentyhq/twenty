@@ -99,6 +99,7 @@ export class ConfigCacheService implements OnModuleDestroy {
     if (this.cacheScavengeInterval) {
       clearInterval(this.cacheScavengeInterval);
     }
+    this.clearAll();
   }
 
   private isCacheExpired(
