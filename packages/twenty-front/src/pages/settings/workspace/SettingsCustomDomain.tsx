@@ -19,12 +19,14 @@ const StyledDomainFormWrapper = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledButtonGroup = styled(ButtonGroup)`
+  & > :not(:first-of-type) > button {
+    border-left: none;
+  }
+`;
+
 const StyledButton = styled(Button)`
   align-self: flex-start;
-
-  * + * {
-    border-width: 1px 0 1px 1px;
-  }
 `;
 
 const StyledRecordsWrapper = styled.div`
@@ -77,7 +79,7 @@ export const SettingsCustomDomain = () => {
             />
           )}
         />
-        <ButtonGroup>
+        <StyledButtonGroup>
           <StyledButton
             isLoading={isLoading}
             Icon={IconReload}
@@ -92,7 +94,7 @@ export const SettingsCustomDomain = () => {
             onClick={deleteCustomDomain}
             type="button"
           />
-        </ButtonGroup>
+        </StyledButtonGroup>
       </StyledDomainFormWrapper>
       {currentWorkspace?.customDomain && (
         <StyledRecordsWrapper>
