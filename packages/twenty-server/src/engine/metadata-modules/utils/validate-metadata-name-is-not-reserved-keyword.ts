@@ -47,7 +47,6 @@ const reservedKeywords = [
   'links',
   'currency',
   'currencies',
-  'fullName',
   'fullNames',
   'address',
   'addresses',
