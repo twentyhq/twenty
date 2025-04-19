@@ -79,7 +79,7 @@ export class ClientConfigResolver {
       isAttachmentPreviewEnabled: this.twentyConfigService.get(
         'IS_ATTACHMENT_PREVIEW_ENABLED',
       ),
-      analyticsEnabled: this.twentyConfigService.get('ANALYTICS_ENABLED'),
+      isAnalyticsEnabled: this.twentyConfigService.get('IS_ANALYTICS_ENABLED'),
       canManageFeatureFlags:
         this.twentyConfigService.get('NODE_ENV') ===
           NodeEnvironment.development ||

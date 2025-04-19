@@ -16,7 +16,7 @@ export class ClickhouseService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {
-    if (twentyConfigService.get('ANALYTICS_ENABLED')) {
+    if (twentyConfigService.get('IS_ANALYTICS_ENABLED')) {
       this.clickhouseClient = createClient({
         url: twentyConfigService.get('CLICKHOUSE_URL'),
         compression: {

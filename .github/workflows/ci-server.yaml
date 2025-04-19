@@ -184,7 +184,7 @@ jobs:
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
       NODE_ENV: test
-      ANALYTICS_ENABLED: true
+      IS_ANALYTICS_ENABLED: true
       CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
       CLICKHOUSE_PASSWORD: clickhousePassword
     steps:

@@ -58,7 +58,7 @@ export class AnalyticsService {
   private preventAnalyticsIfDisabled(
     sendEventOrPageviewFunction: () => Promise<{ success: boolean }>,
   ) {
-    if (!this.twentyConfigService.get('ANALYTICS_ENABLED')) {
+    if (!this.twentyConfigService.get('IS_ANALYTICS_ENABLED')) {
       return { success: true };
     }
     try {

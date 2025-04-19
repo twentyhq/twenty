@@ -49,7 +49,7 @@ describe('ClickhouseService', () => {
           provide: TwentyConfigService,
           useValue: {
             get: jest.fn((key) => {
-              if (key === 'ANALYTICS_ENABLED') return true;
+              if (key === 'IS_ANALYTICS_ENABLED') return true;
               if (key === 'CLICKHOUSE_URL') return 'http://localhost:8123';
 
               return null;
@@ -83,7 +83,7 @@ describe('ClickhouseService', () => {
   describe('constructor', () => {
     it('should not initialize clickhouse client when analytics is disabled', async () => {
       jest.spyOn(twentyConfigService, 'get').mockImplementation((key) => {
-        if (key === 'ANALYTICS_ENABLED') return false;
+        if (key === 'IS_ANALYTICS_ENABLED') return false;
       });
 
       const newModule: TestingModule = await Test.createTestingModule({

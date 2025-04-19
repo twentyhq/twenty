@@ -461,7 +461,7 @@ export class ConfigVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  ANALYTICS_ENABLED = false;
+  IS_ANALYTICS_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AnalyticsConfig,
@@ -472,7 +472,7 @@ export class ConfigVariables {
     require_tld: false,
     allow_underscores: true,
   })
-  @ValidateIf((env) => env.ANALYTICS_ENABLED === true)
+  @ValidateIf((env) => env.IS_ANALYTICS_ENABLED === true)
   CLICKHOUSE_URL: string;
 
   @ConfigVariablesMetadata({

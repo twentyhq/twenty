@@ -120,7 +120,7 @@ export const ClientConfigProviderEffect = () => {
       sso: data?.clientConfig.authProviders.sso,
     });
     setIsDebugMode(data?.clientConfig.debugMode);
-    setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
+    setIsAnalyticsEnabled(data?.clientConfig.isAnalyticsEnabled);
     setIsDeveloperDefaultSignInPrefilled(data?.clientConfig.signInPrefilled);
     setIsMultiWorkspaceEnabled(data?.clientConfig.isMultiWorkspaceEnabled);
     setIsEmailVerificationRequired(

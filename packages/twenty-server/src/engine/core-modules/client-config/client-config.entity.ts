@@ -105,7 +105,7 @@ export class ClientConfig {
   debugMode: boolean;
 
   @Field(() => Boolean)
-  analyticsEnabled: boolean;
+  isAnalyticsEnabled: boolean;
 
   @Field(() => Support)
   support: Support;

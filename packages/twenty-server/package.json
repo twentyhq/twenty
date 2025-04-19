@@ -12,6 +12,7 @@
     "worker:prod": "node dist/src/queue-worker/queue-worker",
     "database:init:prod": "npx ts-node ./scripts/setup-db.ts && yarn database:migrate:prod",
     "database:migrate:prod": "npx -y typeorm migration:run -d dist/src/database/typeorm/metadata/metadata.datasource && npx -y typeorm migration:run -d dist/src/database/typeorm/core/core.datasource",
+    "clickhouse:migrate:prod": "npx ts-node ./src/database/clickhouse/migrations/run-migrations.ts",
     "typeorm": "../../node_modules/typeorm/.bin/typeorm"
   },
   "dependencies": {
