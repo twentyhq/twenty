@@ -352,11 +352,14 @@ export class SignInUpService {
       }
     };
 
+    const isWorkEmailFound = isWorkEmail(email);
     const logo =
-      isWorkEmail(email) && (await isLogoUrlValid()) ? logoUrl : undefined;
+      isWorkEmailFound && (await isLogoUrlValid()) ? logoUrl : undefined;
 
     const workspaceToCreate = this.workspaceRepository.create({
-      subdomain: await this.domainManagerService.generateSubdomain(),
+      subdomain: await this.domainManagerService.generateSubdomain(
+        isWorkEmailFound ? { email } : {},
+      ),
       displayName: '',
       inviteHash: v4(),
       activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
