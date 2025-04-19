@@ -34,11 +34,10 @@ import {
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/display';
-import { GithubVersionLink } from 'twenty-ui/navigation';
+import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import jsonPage from '../../../../../../../package.json';
 import { NavigationDrawer } from '../NavigationDrawer';
 import { NavigationDrawerItem } from '../NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '../NavigationDrawerItemGroup';
@@ -194,7 +193,11 @@ export const Settings: Story = {
         </NavigationDrawerSection>
 
         <NavigationDrawerFixedContent>
-          <GithubVersionLink version={jsonPage.version} />
+          <AdvancedSettingsToggle
+            isAdvancedModeEnabled={false}
+            setIsAdvancedModeEnabled={() => {}}
+            label="Advanced:"
+          />
         </NavigationDrawerFixedContent>
       </>
     ),
