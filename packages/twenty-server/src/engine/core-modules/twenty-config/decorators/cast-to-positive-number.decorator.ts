@@ -1,7 +1,22 @@
 import { Transform } from 'class-transformer';
 
-export const CastToPositiveNumber = () =>
-  Transform(({ value }: { value: string }) => toNumber(value));
+import { TypedReflect } from 'src/utils/typed-reflect';
+
+export const CastToPositiveNumber =
+  () =>
+  <T extends object>(target: T, propertyKey: keyof T & string) => {
+    Transform(({ value }: { value: string }) => toNumber(value))(
+      target,
+      propertyKey,
+    );
+
+    TypedReflect.defineMetadata(
+      'config-variable:type',
+      'number',
+      target.constructor,
+      propertyKey,
+    );
+  };
 
 const toNumber = (value: any) => {
   if (typeof value === 'number') {

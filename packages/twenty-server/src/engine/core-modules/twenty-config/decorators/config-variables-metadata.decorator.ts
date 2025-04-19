@@ -7,6 +7,7 @@ export interface ConfigVariablesMetadataOptions {
   group: ConfigVariablesGroup;
   description: string;
   isSensitive?: boolean;
+  isEnvOnly?: boolean;
 }
 
 export type ConfigVariablesMetadataMap = {

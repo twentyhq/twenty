@@ -701,6 +701,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ServerConfig,
     isSensitive: true,
     description: 'Database connection URL',
+    isEnvOnly: true,
   })
   @IsDefined()
   @IsUrl({
@@ -715,6 +716,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ServerConfig,
     description:
       'Allow connections to a database with self-signed certificates',
+    isEnvOnly: true,
   })
   @CastToBoolean()
   @IsBoolean()
@@ -724,6 +726,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Enable configuration variables to be stored in the database',
+    isEnvOnly: true,
   })
   @CastToBoolean()
   @IsBoolean()
@@ -741,6 +744,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ServerConfig,
     isSensitive: true,
     description: 'URL for cache storage (e.g., Redis connection URL)',
+    isEnvOnly: true,
   })
   @IsOptional()
   @IsUrl({
@@ -779,6 +783,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ServerConfig,
     isSensitive: true,
     description: 'Secret key for the application',
+    isEnvOnly: true,
   })
   @IsString()
   APP_SECRET: string;
