@@ -12,6 +12,8 @@ const StyledBaseContainer = styled.div<{
   fontColorExtraLight: string;
   fontColorMedium: string;
   backgroundColorTransparentSecondary: string;
+  backgroundColorSecondary: string;
+  fontColorSecondary: string;
   isReadOnly: boolean;
   borderColorBlue: string;
 }>`
@@ -26,6 +28,32 @@ const StyledBaseContainer = styled.div<{
   &.focus-active {
     border-radius: ${BORDER_COMMON.radius.sm};
     outline: 1px solid ${({ borderColorBlue }) => borderColorBlue};
+  }
+
+  &:hover {
+    ${({
+      isReadOnly,
+      fontColorMedium,
+      backgroundColorSecondary,
+      fontColorSecondary,
+    }) =>
+      isReadOnly
+        ? `
+      outline: 1px solid ${fontColorMedium};
+      border-radius: 0px;
+      background-color: ${backgroundColorSecondary};
+      
+      color: ${fontColorSecondary};
+      
+      svg {
+        color: ${fontColorSecondary};
+      }
+      
+      img {
+        opacity: 0.64;
+      }
+    `
+        : ''}
   }
 `;
 
@@ -68,7 +96,9 @@ export const RecordTableCellBaseContainer = ({
       backgroundColorTransparentSecondary={
         theme.background.transparent.secondary
       }
+      backgroundColorSecondary={theme.background.secondary}
       fontColorExtraLight={theme.font.color.extraLight}
+      fontColorSecondary={theme.font.color.secondary}
       fontColorMedium={theme.border.color.medium}
       borderColorBlue={theme.adaptiveColors.blue4}
       isReadOnly={isReadOnly ?? false}
