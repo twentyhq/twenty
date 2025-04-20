@@ -6,6 +6,7 @@ import { VerifyEmailEffect } from '../VerifyEmailEffect';
 // Mock component that just renders the error state of VerifyEmailEffect directly
 // (since normal VerifyEmailEffect has async logic that's hard to test in Storybook)
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { EmailVerificationSent } from '../../sign-in-up/components/EmailVerificationSent';
 
 // This mock component shows the error state of VerifyEmailEffect
@@ -18,7 +19,7 @@ const VerifyEmailEffectErrorState = ({ email = 'user@example.com' }) => {
 };
 
 const meta: Meta<typeof VerifyEmailEffectErrorState> = {
-  title: 'Auth/VerifyEmailEffect',
+  title: 'Pages/Auth/VerifyEmailEffect',
   component: VerifyEmailEffectErrorState,
   decorators: [
     (Story) => (
@@ -28,6 +29,7 @@ const meta: Meta<typeof VerifyEmailEffectErrorState> = {
         </RecoilRoot>
       </div>
     ),
+    SnackBarDecorator,
   ],
   parameters: {
     codeSection: {
@@ -71,4 +73,5 @@ export const IntegratedExample: StoryObj<typeof VerifyEmailEffect> = {
       },
     },
   },
+  decorators: [SnackBarDecorator],
 };
