@@ -24,7 +24,7 @@ const meta: Meta<typeof EmailVerificationSent> = {
   decorators: [ComponentDecorator, SnackBarDecorator],
   parameters: {
     codeSection: {
-      docs: 'This component should always be wrapped with Modal.Content in the app.\n\nCorrect usage:\n```tsx\n<Modal.Content isVerticalCentered isHorizontalCentered>\n  <EmailVerificationSent email={email} />\n</Modal.Content>\n```\n\nFailure to wrap with Modal.Content will result in visual inconsistencies as seen in the bug fixed in PR #XXXX.',
+      docs: 'This component should always be wrapped with Modal.Content in the app.\n\nCorrect usage:\n```tsx\n<Modal.Content isVerticalCentered isHorizontalCentered>\n  <EmailVerificationSent email={email} />\n</Modal.Content>\n```\n',
     },
   },
   render: RenderWithModal,

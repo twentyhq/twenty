@@ -9,7 +9,6 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { EmailVerificationSent } from '../../sign-in-up/components/EmailVerificationSent';
 
-// This mock component shows the error state of VerifyEmailEffect
 const VerifyEmailEffectErrorState = ({ email = 'user@example.com' }) => {
   return (
     <Modal.Content isVerticalCentered isHorizontalCentered>
@@ -39,7 +38,7 @@ const meta: Meta<typeof VerifyEmailEffectErrorState> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof VerifyEmailEffectErrorState>;
+type Story = StoryObj<typeof VerifyEmailEffect>;
 
 export const ErrorState: Story = {
   args: {
@@ -47,7 +46,6 @@ export const ErrorState: Story = {
   },
 };
 
-// Shows what the component looks like when properly integrated
 export const IntegratedExample: StoryObj<typeof VerifyEmailEffect> = {
   render: () => (
     <RecoilRoot>
