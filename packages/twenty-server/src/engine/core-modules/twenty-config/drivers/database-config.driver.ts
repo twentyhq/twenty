@@ -1,11 +1,12 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 
+import pRetry from 'p-retry';
+
 import { DatabaseConfigDriverInterface } from 'src/engine/core-modules/twenty-config/drivers/interfaces/database-config-driver.interface';
 
 import { ConfigCacheService } from 'src/engine/core-modules/twenty-config/cache/config-cache.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
-import { DATABASE_CONFIG_DRIVER_INITIAL_RETRY_DELAY } from 'src/engine/core-modules/twenty-config/constants/database-config-driver-initial-retry-delay';
-import { DATABASE_CONFIG_DRIVER_INITIALIZATION_MAX_RETRIES } from 'src/engine/core-modules/twenty-config/constants/database-config-driver-initialization-max-retries';
+import { DATABASE_CONFIG_DRIVER_RETRY_OPTIONS } from 'src/engine/core-modules/twenty-config/constants/database-config-driver-retry-options';
 import { ConfigInitializationState } from 'src/engine/core-modules/twenty-config/enums/config-initialization-state.enum';
 import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
 import { isEnvOnlyConfigVar } from 'src/engine/core-modules/twenty-config/utils/is-env-only-config-var.util';
@@ -18,8 +19,7 @@ export class DatabaseConfigDriver
 {
   private configInitializationState = ConfigInitializationState.NOT_INITIALIZED;
   private configInitializationPromise: Promise<void> | null = null;
-  private retryAttempts = 0;
-  private retryTimer?: NodeJS.Timeout;
+  private abortController: AbortController | null = null;
   private readonly logger = new Logger(DatabaseConfigDriver.name);
 
   constructor(
@@ -49,22 +49,43 @@ export class DatabaseConfigDriver
   }
 
   private async doInitialize(): Promise<void> {
+    this.abortController = new AbortController();
+
     try {
       this.configInitializationState = ConfigInitializationState.INITIALIZING;
-      await this.loadAllConfigVarsFromDb();
+
+      await pRetry(
+        async () => {
+          if (this.abortController?.signal.aborted) {
+            throw new pRetry.AbortError('Initialization aborted');
+          }
+
+          await this.loadAllConfigVarsFromDb();
+
+          return true;
+        },
+        {
+          ...DATABASE_CONFIG_DRIVER_RETRY_OPTIONS,
+          onFailedAttempt: (error) => {
+            this.logger.error(
+              `Failed to initialize database driver (attempt ${error.attemptNumber}/${DATABASE_CONFIG_DRIVER_RETRY_OPTIONS.retries})`,
+              error instanceof Error ? error.stack : error,
+            );
+          },
+        },
+      );
+
       this.configInitializationState = ConfigInitializationState.INITIALIZED;
-      // Reset retry attempts on successful initialization
-      this.retryAttempts = 0;
+      this.logger.log('Database config driver successfully initialized');
     } catch (error) {
       this.logger.error(
-        `Failed to initialize database driver (attempt ${this.retryAttempts + 1})`,
+        'Failed to initialize database driver after maximum retries',
         error instanceof Error ? error.stack : error,
       );
       this.configInitializationState = ConfigInitializationState.FAILED;
-      this.scheduleRetry();
     } finally {
-      // Reset the promise to allow future initialization attempts
       this.configInitializationPromise = null;
+      this.abortController = null;
     }
   }
 
@@ -168,57 +189,11 @@ export class DatabaseConfigDriver
     });
   }
 
-  private scheduleRetry(): void {
-    this.retryAttempts++;
-
-    if (
-      this.retryAttempts > DATABASE_CONFIG_DRIVER_INITIALIZATION_MAX_RETRIES
-    ) {
-      this.logger.error(
-        `Max retry attempts (${DATABASE_CONFIG_DRIVER_INITIALIZATION_MAX_RETRIES}) reached, giving up initialization`,
-      );
-
-      return;
-    }
-
-    const delay =
-      DATABASE_CONFIG_DRIVER_INITIAL_RETRY_DELAY *
-      Math.pow(2, this.retryAttempts - 1);
-
-    this.logger.log(
-      `Scheduling retry attempt ${this.retryAttempts} in ${delay}ms`,
-    );
-
-    if (this.retryTimer) {
-      clearTimeout(this.retryTimer);
-    }
-
-    this.retryTimer = setTimeout(() => {
-      this.logger.log(`Executing retry attempt ${this.retryAttempts}`);
-
-      if (
-        this.configInitializationState ===
-        ConfigInitializationState.INITIALIZING
-      ) {
-        this.logger.log(
-          'Skipping retry attempt as initialization is already in progress',
-        );
-
-        return;
-      }
-
-      this.initialize().catch((error) => {
-        this.logger.error(
-          `Retry initialization attempt ${this.retryAttempts} failed`,
-          error instanceof Error ? error.stack : error,
-        );
-      });
-    }, delay);
-  }
-
   onModuleDestroy() {
-    if (this.retryTimer) {
-      clearTimeout(this.retryTimer);
+    // Abort any in-progress initialization
+    if (this.abortController) {
+      this.abortController.abort();
+      this.abortController = null;
     }
   }
 }
