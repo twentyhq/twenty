@@ -15,6 +15,7 @@ import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billin
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
+import { getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent } from 'src/engine/core-modules/billing/webhooks/utils/get-deleted-stripe-subscription-item-ids-from-stripe-subscription-event.util';
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-customer.util';
 import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
 import { transformStripeSubscriptionEventToDatabaseSubscription } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription.util';
@@ -176,32 +177,14 @@ export class BillingWebhookSubscriptionService {
       | Stripe.CustomerSubscriptionCreatedEvent
       | Stripe.CustomerSubscriptionDeletedEvent,
   ) {
-    const hasUpdatedSubscriptionItems = isDefined(
-      event.data.previous_attributes?.items,
-    );
+    const deletedSubscriptionItemIds =
+      getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent(event);
 
-    // delete subscription items that are no longer in the stripe subscription
-    if (
-      hasUpdatedSubscriptionItems &&
-      event.type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED
-    ) {
-      const updatedSubscriptionItemIds =
-        event.data.object.items.data.map((item) => item.id) ?? [];
-
-      const deletedSubscriptionItemIds =
-        event.data.previous_attributes?.items?.data
-          .filter((item) => !updatedSubscriptionItemIds.includes(item.id))
-          .map((item) => item.id) ?? [];
-
-      if (
-        isDefined(deletedSubscriptionItemIds) &&
-        deletedSubscriptionItemIds.length > 0
-      ) {
-        await this.billingSubscriptionItemRepository.delete({
-          billingSubscriptionId: subscriptionId,
-          stripeSubscriptionItemId: In(deletedSubscriptionItemIds),
-        });
-      }
+    if (deletedSubscriptionItemIds.length > 0) {
+      await this.billingSubscriptionItemRepository.delete({
+        billingSubscriptionId: subscriptionId,
+        stripeSubscriptionItemId: In(deletedSubscriptionItemIds),
+      });
     }
 
     await this.billingSubscriptionItemRepository.upsert(
