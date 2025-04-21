@@ -62,6 +62,11 @@ export const HeaderMenuOpen: Story = {
 };
 
 export const ScrolledLeft: Story = {
+  parameters: {
+    container: {
+      width: 1000,
+    },
+  },
   play: async () => {
     const canvas = within(document.body);
     await canvas.findByText('Linkedin');

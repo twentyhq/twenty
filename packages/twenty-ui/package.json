@@ -1,6 +1,5 @@
 {
   "name": "twenty-ui",
-  "version": "0.52.0-canary",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "style": "./dist/style.css",
