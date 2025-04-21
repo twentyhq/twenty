@@ -1,6 +1,13 @@
-import { registerDecorator, ValidationOptions } from 'class-validator';
+import {
+  IsOptional,
+  registerDecorator,
+  ValidationOptions,
+} from 'class-validator';
 
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import { ConfigVariableOptions } from 'src/engine/core-modules/twenty-config/types/config-variable-options.type';
+import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/types/config-variable-type.type';
+import { applyBasicValidators } from 'src/engine/core-modules/twenty-config/utils/apply-basic-validators.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 export interface ConfigVariablesMetadataOptions {
@@ -8,6 +15,8 @@ export interface ConfigVariablesMetadataOptions {
   description: string;
   isSensitive?: boolean;
   isEnvOnly?: boolean;
+  type?: ConfigVariableType;
+  options?: ConfigVariableOptions;
 }
 
 export type ConfigVariablesMetadataMap = {
@@ -30,6 +39,21 @@ export function ConfigVariablesMetadata(
       },
       target.constructor,
     );
+
+    const propertyDescriptor = Object.getOwnPropertyDescriptor(
+      target.constructor.prototype,
+      propertyKey,
+    );
+    const hasDefaultValue =
+      propertyDescriptor && propertyDescriptor.value !== undefined;
+
+    if (!hasDefaultValue) {
+      IsOptional()(target, propertyKey);
+    }
+
+    if (options.type) {
+      applyBasicValidators(options.type, target, propertyKey.toString());
+    }
 
     registerDecorator({
       name: propertyKey.toString(),

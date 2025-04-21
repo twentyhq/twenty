@@ -46,7 +46,10 @@ export class ConfigStorageService implements ConfigStorageInterface {
       }
 
       try {
-        return this.configValueConverter.convertToAppValue(result.value, key);
+        return this.configValueConverter.convertDbValueToAppValue(
+          result.value,
+          key,
+        );
       } catch (error) {
         this.logger.error(
           `Failed to convert value to app type for key ${key as string}`,
@@ -68,7 +71,8 @@ export class ConfigStorageService implements ConfigStorageInterface {
       let processedValue;
 
       try {
-        processedValue = this.configValueConverter.convertToStorageValue(value);
+        processedValue =
+          this.configValueConverter.convertAppValueToDbValue(value);
       } catch (error) {
         this.logger.error(
           `Failed to convert value to storage type for key ${key as string}`,
@@ -130,7 +134,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
           const key = configVar.key as keyof ConfigVariables;
 
           try {
-            const value = this.configValueConverter.convertToAppValue(
+            const value = this.configValueConverter.convertDbValueToAppValue(
               configVar.value,
               key,
             );

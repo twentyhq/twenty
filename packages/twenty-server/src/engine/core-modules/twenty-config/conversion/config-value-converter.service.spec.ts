@@ -2,6 +2,7 @@ import { LogLevel } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 import { ConfigValueConverterService } from './config-value-converter.service';
@@ -29,56 +30,62 @@ describe('ConfigValueConverterService', () => {
     );
   });
 
-  describe('convertToAppValue', () => {
+  describe('convertDbValueToAppValue', () => {
     it('should convert string to boolean based on metadata', () => {
       // Mock the metadata
-      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce('boolean');
+      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
+        AUTH_PASSWORD_ENABLED: {
+          type: 'boolean',
+          group: ConfigVariablesGroup.Other,
+          description: 'Enable or disable password authentication for users',
+        },
+      });
 
       expect(
-        service.convertToAppValue(
+        service.convertDbValueToAppValue(
           'true',
           'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables,
         ),
       ).toBe(true);
       expect(
-        service.convertToAppValue(
+        service.convertDbValueToAppValue(
           'True',
           'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables,
         ),
       ).toBe(true);
       expect(
-        service.convertToAppValue(
+        service.convertDbValueToAppValue(
           'yes',
           'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables,
         ),
       ).toBe(true);
       expect(
-        service.convertToAppValue(
+        service.convertDbValueToAppValue(
           '1',
           'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables,
         ),
       ).toBe(true);
 
       expect(
-        service.convertToAppValue(
+        service.convertDbValueToAppValue(
           'false',
           'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables,
         ),
       ).toBe(false);
       expect(
-        service.convertToAppValue(
+        service.convertDbValueToAppValue(
           'False',
           'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables,
         ),
       ).toBe(false);
       expect(
-        service.convertToAppValue(
+        service.convertDbValueToAppValue(
           'no',
           'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables,
         ),
       ).toBe(false);
       expect(
-        service.convertToAppValue(
+        service.convertDbValueToAppValue(
           '0',
           'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables,
         ),
@@ -86,36 +93,60 @@ describe('ConfigValueConverterService', () => {
     });
 
     it('should convert string to number based on metadata', () => {
-      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce('number');
+      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
+        NODE_PORT: {
+          type: 'number',
+          group: ConfigVariablesGroup.ServerConfig,
+          description: 'Port for the node server',
+        },
+      });
 
       expect(
-        service.convertToAppValue('42', 'NODE_PORT' as keyof ConfigVariables),
+        service.convertDbValueToAppValue(
+          '42',
+          'NODE_PORT' as keyof ConfigVariables,
+        ),
       ).toBe(42);
       expect(
-        service.convertToAppValue('3.14', 'NODE_PORT' as keyof ConfigVariables),
+        service.convertDbValueToAppValue(
+          '3.14',
+          'NODE_PORT' as keyof ConfigVariables,
+        ),
       ).toBe(3.14);
 
-      expect(() => {
-        service.convertToAppValue(
+      expect(
+        service.convertDbValueToAppValue(
           'not-a-number',
           'NODE_PORT' as keyof ConfigVariables,
-        );
-      }).toThrow();
+        ),
+      ).toBeUndefined();
     });
 
     it('should convert string to array based on metadata', () => {
-      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce('array');
+      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
+        LOG_LEVELS: {
+          type: 'array',
+          group: ConfigVariablesGroup.Logging,
+          description: 'Levels of logging to be captured',
+        },
+      });
 
       expect(
-        service.convertToAppValue(
+        service.convertDbValueToAppValue(
           'log,error,warn',
           'LOG_LEVELS' as keyof ConfigVariables,
         ),
       ).toEqual(['log', 'error', 'warn']);
 
-      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce('array');
+      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
+        LOG_LEVELS: {
+          type: 'array',
+          group: ConfigVariablesGroup.Logging,
+          description: 'Levels of logging to be captured',
+        },
+      });
       expect(
-        service.convertToAppValue(
+        service.convertDbValueToAppValue(
           '["log","error","warn"]',
           'LOG_LEVELS' as keyof ConfigVariables,
         ),
@@ -126,7 +157,7 @@ describe('ConfigValueConverterService', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce(undefined);
 
       expect(
-        service.convertToAppValue(
+        service.convertDbValueToAppValue(
           'development',
           'NODE_ENV' as keyof ConfigVariables,
         ),
@@ -134,22 +165,43 @@ describe('ConfigValueConverterService', () => {
     });
 
     it('should handle various input types', () => {
-      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce('boolean');
+      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
+        AUTH_PASSWORD_ENABLED: {
+          type: 'boolean',
+          group: ConfigVariablesGroup.Other,
+          description: 'Enable or disable password authentication for users',
+        },
+      });
       expect(
-        service.convertToAppValue(
+        service.convertDbValueToAppValue(
           true,
           'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables,
         ),
       ).toBe(true);
 
-      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce('number');
+      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
+        NODE_PORT: {
+          type: 'number',
+          group: ConfigVariablesGroup.ServerConfig,
+          description: 'Port for the node server',
+        },
+      });
       expect(
-        service.convertToAppValue(42, 'NODE_PORT' as keyof ConfigVariables),
+        service.convertDbValueToAppValue(
+          42,
+          'NODE_PORT' as keyof ConfigVariables,
+        ),
       ).toBe(42);
 
-      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce('array');
+      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
+        LOG_LEVELS: {
+          type: 'array',
+          group: ConfigVariablesGroup.Logging,
+          description: 'Levels of logging to be captured',
+        },
+      });
       expect(
-        service.convertToAppValue(
+        service.convertDbValueToAppValue(
           ['log', 'error'] as LogLevel[],
           'LOG_LEVELS' as keyof ConfigVariables,
         ),
@@ -160,31 +212,34 @@ describe('ConfigValueConverterService', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce(undefined);
 
       expect(
-        service.convertToAppValue('42', 'NODE_PORT' as keyof ConfigVariables),
+        service.convertDbValueToAppValue(
+          '42',
+          'NODE_PORT' as keyof ConfigVariables,
+        ),
       ).toBe(42);
     });
   });
 
-  describe('convertToStorageValue', () => {
+  describe('convertAppValueToDbValue', () => {
     it('should handle primitive types directly', () => {
-      expect(service.convertToStorageValue('string-value' as any)).toBe(
+      expect(service.convertAppValueToDbValue('string-value' as any)).toBe(
         'string-value',
       );
-      expect(service.convertToStorageValue(42 as any)).toBe(42);
-      expect(service.convertToStorageValue(true as any)).toBe(true);
-      expect(service.convertToStorageValue(undefined as any)).toBe(null);
+      expect(service.convertAppValueToDbValue(42 as any)).toBe(42);
+      expect(service.convertAppValueToDbValue(true as any)).toBe(true);
+      expect(service.convertAppValueToDbValue(undefined as any)).toBe(null);
     });
 
     it('should handle arrays', () => {
       const array = ['log', 'error', 'warn'] as LogLevel[];
 
-      expect(service.convertToStorageValue(array as any)).toEqual(array);
+      expect(service.convertAppValueToDbValue(array as any)).toEqual(array);
     });
 
     it('should handle objects', () => {
       const obj = { key: 'value' };
 
-      expect(service.convertToStorageValue(obj as any)).toEqual(obj);
+      expect(service.convertAppValueToDbValue(obj as any)).toEqual(obj);
     });
   });
 });

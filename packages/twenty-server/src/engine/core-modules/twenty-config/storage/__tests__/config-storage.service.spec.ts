@@ -43,8 +43,8 @@ describe('ConfigStorageService', () => {
         {
           provide: ConfigValueConverterService,
           useValue: {
-            convertToAppValue: jest.fn(),
-            convertToStorageValue: jest.fn(),
+            convertDbValueToAppValue: jest.fn(),
+            convertAppValueToDbValue: jest.fn(),
           },
         },
         ConfigVariables,
@@ -106,17 +106,16 @@ describe('ConfigStorageService', () => {
         .spyOn(keyValuePairRepository, 'findOne')
         .mockResolvedValue(mockRecord);
 
-      (configValueConverter.convertToAppValue as jest.Mock).mockReturnValue(
-        convertedValue,
-      );
+      (
+        configValueConverter.convertDbValueToAppValue as jest.Mock
+      ).mockReturnValue(convertedValue);
 
       const result = await service.get(key);
 
       expect(result).toBe(convertedValue);
-      expect(configValueConverter.convertToAppValue).toHaveBeenCalledWith(
-        storedValue,
-        key,
-      );
+      expect(
+        configValueConverter.convertDbValueToAppValue,
+      ).toHaveBeenCalledWith(storedValue, key);
     });
 
     it('should handle conversion errors', async () => {
@@ -129,11 +128,11 @@ describe('ConfigStorageService', () => {
         .spyOn(keyValuePairRepository, 'findOne')
         .mockResolvedValue(mockRecord);
 
-      (configValueConverter.convertToAppValue as jest.Mock).mockImplementation(
-        () => {
-          throw error;
-        },
-      );
+      (
+        configValueConverter.convertDbValueToAppValue as jest.Mock
+      ).mockImplementation(() => {
+        throw error;
+      });
 
       await expect(service.get(key)).rejects.toThrow('Conversion error');
     });
@@ -151,9 +150,9 @@ describe('ConfigStorageService', () => {
         .spyOn(keyValuePairRepository, 'findOne')
         .mockResolvedValue(mockRecord);
 
-      (configValueConverter.convertToStorageValue as jest.Mock).mockReturnValue(
-        storedValue,
-      );
+      (
+        configValueConverter.convertAppValueToDbValue as jest.Mock
+      ).mockReturnValue(storedValue);
 
       await service.set(key, value);
 
@@ -170,9 +169,9 @@ describe('ConfigStorageService', () => {
 
       jest.spyOn(keyValuePairRepository, 'findOne').mockResolvedValue(null);
 
-      (configValueConverter.convertToStorageValue as jest.Mock).mockReturnValue(
-        storedValue,
-      );
+      (
+        configValueConverter.convertAppValueToDbValue as jest.Mock
+      ).mockReturnValue(storedValue);
 
       await service.set(key, value);
 
@@ -191,7 +190,7 @@ describe('ConfigStorageService', () => {
       const error = new Error('Conversion error');
 
       (
-        configValueConverter.convertToStorageValue as jest.Mock
+        configValueConverter.convertAppValueToDbValue as jest.Mock
       ).mockImplementation(() => {
         throw error;
       });
@@ -233,14 +232,14 @@ describe('ConfigStorageService', () => {
 
       jest.spyOn(keyValuePairRepository, 'find').mockResolvedValue(configVars);
 
-      (configValueConverter.convertToAppValue as jest.Mock).mockImplementation(
-        (value, key) => {
-          if (key === 'AUTH_PASSWORD_ENABLED') return true;
-          if (key === 'EMAIL_FROM_ADDRESS') return 'test@example.com';
+      (
+        configValueConverter.convertDbValueToAppValue as jest.Mock
+      ).mockImplementation((value, key) => {
+        if (key === 'AUTH_PASSWORD_ENABLED') return true;
+        if (key === 'EMAIL_FROM_ADDRESS') return 'test@example.com';
 
-          return value;
-        },
-      );
+        return value;
+      });
 
       const result = await service.loadAll();
 
@@ -261,7 +260,7 @@ describe('ConfigStorageService', () => {
 
       jest.spyOn(keyValuePairRepository, 'find').mockResolvedValue(configVars);
 
-      (configValueConverter.convertToAppValue as jest.Mock)
+      (configValueConverter.convertDbValueToAppValue as jest.Mock)
         .mockImplementationOnce(() => {
           throw new Error('Invalid value');
         })
@@ -298,7 +297,7 @@ describe('ConfigStorageService', () => {
           .mockResolvedValue(configVars);
 
         (
-          configValueConverter.convertToAppValue as jest.Mock
+          configValueConverter.convertDbValueToAppValue as jest.Mock
         ).mockImplementation((value) => {
           if (value === null) throw new Error('Null value');
 
@@ -311,7 +310,9 @@ describe('ConfigStorageService', () => {
         expect(result.get('EMAIL_FROM_ADDRESS' as keyof ConfigVariables)).toBe(
           'test@example.com',
         );
-        expect(configValueConverter.convertToAppValue).toHaveBeenCalledTimes(1); // Only called for non-null value
+        expect(
+          configValueConverter.convertDbValueToAppValue,
+        ).toHaveBeenCalledTimes(1); // Only called for non-null value
       });
     });
   });
@@ -329,7 +330,7 @@ describe('ConfigStorageService', () => {
           .mockResolvedValue(mockRecord);
 
         (
-          configValueConverter.convertToAppValue as jest.Mock
+          configValueConverter.convertDbValueToAppValue as jest.Mock
         ).mockImplementation(() => {
           throw new Error('Invalid boolean value');
         });
@@ -348,7 +349,7 @@ describe('ConfigStorageService', () => {
           .mockResolvedValue(mockRecord);
 
         (
-          configValueConverter.convertToAppValue as jest.Mock
+          configValueConverter.convertDbValueToAppValue as jest.Mock
         ).mockImplementation(() => {
           throw new Error('Invalid string value');
         });
@@ -372,12 +373,12 @@ describe('ConfigStorageService', () => {
           .mockResolvedValueOnce(initialRecord)
           .mockResolvedValueOnce(updatedRecord);
 
-        (configValueConverter.convertToAppValue as jest.Mock)
+        (configValueConverter.convertDbValueToAppValue as jest.Mock)
           .mockReturnValueOnce(initialValue)
           .mockReturnValueOnce(newValue);
 
         (
-          configValueConverter.convertToStorageValue as jest.Mock
+          configValueConverter.convertAppValueToDbValue as jest.Mock
         ).mockReturnValueOnce('false');
 
         const firstGet = service.get(key);
@@ -429,7 +430,7 @@ describe('ConfigStorageService', () => {
         const error = new Error('Database connection failed');
 
         (
-          configValueConverter.convertToStorageValue as jest.Mock
+          configValueConverter.convertAppValueToDbValue as jest.Mock
         ).mockReturnValue('true');
         jest.spyOn(keyValuePairRepository, 'findOne').mockRejectedValue(error);
 

@@ -3,7 +3,6 @@ import 'reflect-metadata';
 import { Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
 import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
-import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
 import { ConfigVariablesMetadataMap } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 
 export interface ReflectMetadataTypeMap {
@@ -17,7 +16,6 @@ export interface ReflectMetadataTypeMap {
   ['workspace:duplicate-criteria-metadata-args']: WorkspaceEntityDuplicateCriteria[];
   ['config-variables']: ConfigVariablesMetadataMap;
   ['workspace:is-searchable-metadata-args']: boolean;
-  ['config-variable:type']: ConfigVariableType;
 }
 
 export class TypedReflect {

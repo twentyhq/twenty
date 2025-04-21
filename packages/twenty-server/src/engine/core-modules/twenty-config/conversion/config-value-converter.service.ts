@@ -1,20 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { ConfigVariablesMetadataMap } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
+import { ConfigVariableOptions } from 'src/engine/core-modules/twenty-config/types/config-variable-options.type';
+import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/types/config-variable-type.type';
+import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
-
-export type ConfigVariableType =
-  | 'boolean'
-  | 'number'
-  | 'array'
-  | 'string'
-  | 'enum';
 
 @Injectable()
 export class ConfigValueConverterService {
   constructor(private readonly configVariables: ConfigVariables) {}
 
-  convertToAppValue<T extends keyof ConfigVariables>(
+  convertDbValueToAppValue<T extends keyof ConfigVariables>(
     dbValue: unknown,
     key: T,
   ): ConfigVariables[T] | undefined {
@@ -22,27 +19,33 @@ export class ConfigValueConverterService {
       return undefined;
     }
 
-    const configType = this.getConfigVarType(key);
+    const metadata = this.getConfigVariableMetadata(key);
+    const configType = metadata?.type || this.inferTypeFromValue(key);
+    const options = metadata?.options;
 
     try {
       switch (configType) {
         case 'boolean':
-          return this.convertToBoolean(dbValue) as ConfigVariables[T];
+          return configTransformers.boolean(dbValue) as ConfigVariables[T];
 
         case 'number':
-          return this.convertToNumber(
-            dbValue,
-            key as string,
-          ) as ConfigVariables[T];
-
-        case 'array':
-          return this.convertToArray(
-            dbValue,
-            key as string,
-          ) as ConfigVariables[T];
+          return configTransformers.number(dbValue) as ConfigVariables[T];
 
         case 'string':
-        case 'enum':
+          return configTransformers.string(dbValue) as ConfigVariables[T];
+
+        case 'array': {
+          const result = this.convertToArray(dbValue, options);
+
+          return result as ConfigVariables[T];
+        }
+
+        case 'enum': {
+          const result = this.convertToEnum(dbValue, options);
+
+          return result as ConfigVariables[T];
+        }
+
         default:
           return dbValue as ConfigVariables[T];
       }
@@ -53,7 +56,7 @@ export class ConfigValueConverterService {
     }
   }
 
-  convertToStorageValue<T extends keyof ConfigVariables>(
+  convertAppValueToDbValue<T extends keyof ConfigVariables>(
     appValue: ConfigVariables[T],
   ): unknown {
     if (appValue === undefined) {
@@ -82,77 +85,12 @@ export class ConfigValueConverterService {
     );
   }
 
-  private getConfigVarType<T extends keyof ConfigVariables>(
-    key: T,
-  ): ConfigVariableType {
-    const metadataType = TypedReflect.getMetadata(
-      'config-variable:type',
-      ConfigVariables.prototype.constructor,
-      key as string,
-    ) as ConfigVariableType | undefined;
-
-    if (metadataType) {
-      return metadataType;
-    }
-
-    const defaultValue = this.configVariables[key];
-
-    if (typeof defaultValue === 'boolean') return 'boolean';
-    if (typeof defaultValue === 'number') return 'number';
-    if (Array.isArray(defaultValue)) return 'array';
-
-    return 'string';
-  }
-
-  private convertToBoolean(value: unknown): boolean {
-    if (typeof value === 'boolean') {
-      return value;
-    }
-
-    if (typeof value === 'number') {
-      return value !== 0;
-    }
-
-    if (typeof value === 'string') {
-      const lowerValue = value.toLowerCase();
-
-      if (['true', 'on', 'yes', '1'].includes(lowerValue)) {
-        return true;
-      }
-
-      if (['false', 'off', 'no', '0'].includes(lowerValue)) {
-        return false;
-      }
-    }
-
-    return false;
-  }
-
-  private convertToNumber(value: unknown, key: string): number {
-    if (typeof value === 'number') {
-      return value;
-    }
-
-    if (typeof value === 'string') {
-      const parsedNumber = parseFloat(value);
-
-      if (isNaN(parsedNumber)) {
-        throw new Error(
-          `Invalid number value for config variable ${key}: ${value}`,
-        );
-      }
-
-      return parsedNumber;
-    }
-
-    throw new Error(
-      `Cannot convert ${typeof value} to number for config variable ${key}`,
-    );
-  }
-
-  private convertToArray(value: unknown, key: string): unknown[] {
+  private convertToArray(
+    value: unknown,
+    options?: ConfigVariableOptions,
+  ): unknown[] {
     if (Array.isArray(value)) {
-      return value;
+      return this.validateArrayAgainstOptions(value, options);
     }
 
     if (typeof value === 'string') {
@@ -160,18 +98,62 @@ export class ConfigValueConverterService {
         const parsedArray = JSON.parse(value);
 
         if (Array.isArray(parsedArray)) {
-          return parsedArray;
+          return this.validateArrayAgainstOptions(parsedArray, options);
         }
       } catch {
-        // JSON parsing failed - normal for comma-separated values
-        // TODO: Handle this better
-      }
+        const splitArray = value.split(',').map((item) => item.trim());
 
-      return value.split(',').map((item) => item.trim());
+        return this.validateArrayAgainstOptions(splitArray, options);
+      }
     }
 
-    throw new Error(
-      `Expected array value for config variable ${key}, got ${typeof value}`,
-    );
+    return [];
+  }
+
+  private validateArrayAgainstOptions(
+    array: unknown[],
+    options?: ConfigVariableOptions,
+  ): unknown[] {
+    if (!options || !Array.isArray(options) || options.length === 0) {
+      return array;
+    }
+
+    return array.filter((item) => options.includes(item as any));
+  }
+
+  private convertToEnum(
+    value: unknown,
+    options?: ConfigVariableOptions,
+  ): unknown {
+    if (!options || !Array.isArray(options) || options.length === 0) {
+      return value;
+    }
+
+    if (options.includes(value as any)) {
+      return value;
+    }
+
+    return undefined;
+  }
+
+  private getConfigVariableMetadata<T extends keyof ConfigVariables>(key: T) {
+    const allMetadata = TypedReflect.getMetadata(
+      'config-variables',
+      ConfigVariables.prototype.constructor,
+    ) as ConfigVariablesMetadataMap | undefined;
+
+    return allMetadata?.[key as string];
+  }
+
+  private inferTypeFromValue<T extends keyof ConfigVariables>(
+    key: T,
+  ): ConfigVariableType {
+    const defaultValue = this.configVariables[key];
+
+    if (typeof defaultValue === 'boolean') return 'boolean';
+    if (typeof defaultValue === 'number') return 'number';
+    if (Array.isArray(defaultValue)) return 'array';
+
+    return 'string';
   }
 }

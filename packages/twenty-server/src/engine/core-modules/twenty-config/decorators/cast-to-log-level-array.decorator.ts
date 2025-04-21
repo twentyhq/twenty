@@ -1,22 +1,7 @@
 import { Transform } from 'class-transformer';
 
-import { TypedReflect } from 'src/utils/typed-reflect';
-
-export const CastToLogLevelArray =
-  () =>
-  <T extends object>(target: T, propertyKey: keyof T & string) => {
-    Transform(({ value }: { value: string }) => toLogLevelArray(value))(
-      target,
-      propertyKey,
-    );
-
-    TypedReflect.defineMetadata(
-      'config-variable:type',
-      'array',
-      target.constructor,
-      propertyKey,
-    );
-  };
+export const CastToLogLevelArray = () =>
+  Transform(({ value }: { value: string }) => toLogLevelArray(value));
 
 const toLogLevelArray = (value: any) => {
   if (typeof value === 'string') {
