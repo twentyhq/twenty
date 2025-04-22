@@ -52,7 +52,12 @@ export function ConfigVariablesMetadata(
     }
 
     if (options.type) {
-      applyBasicValidators(options.type, target, propertyKey.toString());
+      applyBasicValidators(
+        options.type,
+        target,
+        propertyKey.toString(),
+        options.options,
+      );
     }
 
     registerDecorator({

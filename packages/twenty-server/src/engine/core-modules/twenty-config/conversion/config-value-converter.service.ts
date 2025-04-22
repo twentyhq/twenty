@@ -118,7 +118,7 @@ export class ConfigValueConverterService {
       return array;
     }
 
-    return array.filter((item) => options.includes(item as any));
+    return array.filter((item) => options.includes(item as string));
   }
 
   private convertToEnum(
@@ -129,7 +129,7 @@ export class ConfigValueConverterService {
       return value;
     }
 
-    if (options.includes(value as any)) {
+    if (options.includes(value as string)) {
       return value;
     }
 

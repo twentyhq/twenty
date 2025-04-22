@@ -4,7 +4,6 @@ import { plainToClass } from 'class-transformer';
 import {
   IsDefined,
   IsOptional,
-  IsString,
   IsUrl,
   ValidateIf,
   ValidationError,
@@ -292,7 +291,8 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EmailSettings,
     description: 'Email driver to use for sending emails',
-    type: 'string',
+    type: 'enum',
+    options: Object.values(EmailDriver),
   })
   EMAIL_DRIVER: EmailDriver = EmailDriver.Logger;
 
@@ -861,7 +861,6 @@ export class ConfigVariables {
     description: 'API key for Cloudflare integration',
     type: 'string',
   })
-  @IsString()
   @ValidateIf((env) => env.CLOUDFLARE_ZONE_ID)
   CLOUDFLARE_API_KEY: string;
 
