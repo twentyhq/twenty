@@ -101,7 +101,7 @@ describe('Core REST API Find Many endpoint', () => {
     expect(filteredPeople.length).toBe(2);
   });
 
-  it('should support cursor-based pagination with startingAfter', async () => {
+  it('should support cursor-based pagination with starting_after', async () => {
     const initialResponse = await makeRestAPIRequest({
       method: 'get',
       path: '/people?limit=2',
@@ -116,7 +116,7 @@ describe('Core REST API Find Many endpoint', () => {
 
     const nextPageResponse = await makeRestAPIRequest({
       method: 'get',
-      path: `/people?startingAfter=${startCursor}&limit=1`,
+      path: `/people?starting_after=${startCursor}&limit=1`,
     }).expect(200);
 
     const nextPagePeople = nextPageResponse.body.data.people;
@@ -126,7 +126,7 @@ describe('Core REST API Find Many endpoint', () => {
     expect(nextPagePeople[0].id).toBe(people[1].id);
   });
 
-  it('should support cursor-based pagination with endingBefore', async () => {
+  it('should support cursor-based pagination with ending_before', async () => {
     const initialResponse = await makeRestAPIRequest({
       method: 'get',
       path: '/people?limit=2',
@@ -141,7 +141,7 @@ describe('Core REST API Find Many endpoint', () => {
 
     const nextPageResponse = await makeRestAPIRequest({
       method: 'get',
-      path: `/people?endingBefore=${endCursor}&limit=1`,
+      path: `/people?ending_before=${endCursor}&limit=1`,
     }).expect(200);
 
     const nextPagePeople = nextPageResponse.body.data.people;
@@ -182,7 +182,7 @@ describe('Core REST API Find Many endpoint', () => {
   it('should handle invalid cursor gracefully', async () => {
     await makeRestAPIRequest({
       method: 'get',
-      path: '/people?startingAfter=invalid-cursor',
+      path: '/people?starting_after=invalid-cursor',
     })
       .expect(400)
       .expect((res) => {
