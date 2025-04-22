@@ -1,6 +1,5 @@
 {
   "name": "twenty-shared",
-  "version": "0.52.0-canary",
   "main": "dist/twenty-shared.cjs.js",
   "module": "dist/twenty-shared.esm.js",
   "license": "AGPL-3.0",

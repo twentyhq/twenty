@@ -1,8 +1,9 @@
 import { act, renderHook } from '@testing-library/react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { RecoilRoot } from 'recoil';
 
-import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
+import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 const componentId = 'componentId';
 
@@ -10,12 +11,12 @@ describe('useClickOutsideListener', () => {
   it('should toggle the click outside listener activation state', async () => {
     const { result } = renderHook(
       () => {
-        const { getClickOutsideListenerIsActivatedState } =
-          useClickOustideListenerStates(componentId);
-
         return {
           useClickOutside: useClickOutsideListener(componentId),
-          isActivated: useRecoilValue(getClickOutsideListenerIsActivatedState),
+          isActivated: useRecoilComponentValueV2(
+            clickOutsideListenerIsActivatedComponentState,
+            componentId,
+          ),
         };
       },
       {
@@ -23,7 +24,7 @@ describe('useClickOutsideListener', () => {
       },
     );
 
-    const toggle = result.current.useClickOutside.toggleClickOutsideListener;
+    const toggle = result.current.useClickOutside.toggleClickOutside;
 
     act(() => {
       toggle(true);
