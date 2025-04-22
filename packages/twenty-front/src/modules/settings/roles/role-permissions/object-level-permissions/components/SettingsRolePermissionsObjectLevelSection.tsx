@@ -98,7 +98,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
     <Section>
       <H2Title
         title={t`Object-Level Permissions`}
-        description={t`Set additional object-level permissions`}
+        description={t`Ability to interact with specific objects`}
       />
       <Table>
         <SettingsRolePermissionsObjectLevelTableHeader />
@@ -126,7 +126,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
           clickableComponent={
             <Button
               Icon={IconPlus}
-              title={t`Add Object`}
+              title={t`Add rule`}
               variant="secondary"
               size="small"
               disabled={!isEditable}
