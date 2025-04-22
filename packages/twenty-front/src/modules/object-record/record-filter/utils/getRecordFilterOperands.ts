@@ -10,7 +10,7 @@ export type GetRecordFilterOperandsParams = {
 export const getRecordFilterOperands = ({
   filterType,
   subFieldName,
-}: GetRecordFilterOperandsParams): RecordFilterOperand[] => {
+}: GetRecordFilterOperandsParams) => {
   const emptyOperands = [
     RecordFilterOperand.IsEmpty,
     RecordFilterOperand.IsNotEmpty,
@@ -29,20 +29,20 @@ export const getRecordFilterOperands = ({
         RecordFilterOperand.Contains,
         RecordFilterOperand.DoesNotContain,
         ...emptyOperands,
-      ];
+      ] as const;
     case 'CURRENCY':
     case 'NUMBER':
       return [
         RecordFilterOperand.GreaterThan,
         RecordFilterOperand.LessThan,
         ...emptyOperands,
-      ];
+      ] as const;
     case 'RAW_JSON':
       return [
         RecordFilterOperand.Contains,
         RecordFilterOperand.DoesNotContain,
         ...emptyOperands,
-      ];
+      ] as const;
     case 'DATE_TIME':
     case 'DATE':
       return [
@@ -54,51 +54,51 @@ export const getRecordFilterOperands = ({
         RecordFilterOperand.IsBefore,
         RecordFilterOperand.IsAfter,
         ...emptyOperands,
-      ];
+      ] as const;
     case 'RATING':
       return [
         RecordFilterOperand.Is,
         RecordFilterOperand.GreaterThan,
         RecordFilterOperand.LessThan,
         ...emptyOperands,
-      ];
+      ] as const;
     case 'RELATION':
-      return [...relationOperands, ...emptyOperands];
+      return [...relationOperands, ...emptyOperands] as const;
     case 'MULTI_SELECT':
       return [
         RecordFilterOperand.Contains,
         RecordFilterOperand.DoesNotContain,
         ...emptyOperands,
-      ];
+      ] as const;
     case 'SELECT':
       return [
         RecordFilterOperand.Is,
         RecordFilterOperand.IsNot,
         ...emptyOperands,
-      ];
+      ] as const;
     case 'ACTOR': {
       if (isFilterOnActorSourceSubField(subFieldName)) {
         return [
           RecordFilterOperand.Is,
           RecordFilterOperand.IsNot,
           ...emptyOperands,
-        ];
+        ] as const;
       }
 
       return [
         RecordFilterOperand.Contains,
         RecordFilterOperand.DoesNotContain,
         ...emptyOperands,
-      ];
+      ] as const;
     }
     case 'ARRAY':
       return [
         RecordFilterOperand.Contains,
         RecordFilterOperand.DoesNotContain,
         ...emptyOperands,
-      ];
+      ] as const;
     case 'BOOLEAN':
-      return [RecordFilterOperand.Is];
+      return [RecordFilterOperand.Is] as const;
     default:
       return [];
   }
