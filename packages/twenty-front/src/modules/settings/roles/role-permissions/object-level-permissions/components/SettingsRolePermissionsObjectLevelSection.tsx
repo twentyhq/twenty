@@ -82,7 +82,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
       objectPermissions: [
         ...(draftRole.objectPermissions ?? []).filter(
           (permission) =>
-            permission.objectMetadataId !== objectMetadataId &&
+            permission.objectMetadataId !== objectMetadataId ||
             permission.roleId !== roleId,
         ),
         { objectMetadataId, roleId, id: v4() },

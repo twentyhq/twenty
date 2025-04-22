@@ -28,7 +28,7 @@ export const SettingsRolesQueryEffect = () => {
             snapshot,
             settingsPersistedRoleFamilyState(role.id),
           );
-          if (!persistedRole || isDeeplyEqual(role, persistedRole)) {
+          if (isDeeplyEqual(role, persistedRole)) {
             return;
           }
           set(settingsDraftRoleFamilyState(role.id), role);
