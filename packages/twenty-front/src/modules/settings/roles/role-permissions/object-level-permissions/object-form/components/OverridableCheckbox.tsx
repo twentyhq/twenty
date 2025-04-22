@@ -8,7 +8,7 @@ export type OverridableCheckboxType = 'default' | 'override' | 'no_cta';
 const StyledOverridableCheckboxContainer = styled.div`
   align-items: center;
   display: inline-flex;
-  justify-content: left;
+  justify-content: flex-start;
   width: 48px;
 `;
 
@@ -34,7 +34,7 @@ const StyledIconWrapper = styled.div<{
 
 export type OverridableCheckboxProps = {
   type?: OverridableCheckboxType;
-  onChange?: () => void;
+  onChange: () => void;
   checked: boolean;
   disabled: boolean;
 };

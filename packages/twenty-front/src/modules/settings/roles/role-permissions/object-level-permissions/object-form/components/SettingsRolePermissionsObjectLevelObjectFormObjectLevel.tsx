@@ -8,6 +8,7 @@ import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { ObjectPermission } from '~/generated-metadata/graphql';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -42,6 +43,21 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
 
   const objectLabel = objectMetadataItem.labelPlural;
 
+  const updateObjectPermission = (
+    permissionKey: keyof ObjectPermission,
+    value: boolean | null,
+  ) => {
+    setSettingsDraftRole((currentRole) => {
+      const updatedPermissions = currentRole.objectPermissions?.map((perm) => {
+        if (perm.objectMetadataId === objectMetadataItem.id) {
+          return { ...perm, [permissionKey]: value };
+        }
+        return perm;
+      });
+      return { ...currentRole, objectPermissions: updatedPermissions };
+    });
+  };
+
   const objectPermissionsConfig: SettingsRolePermissionsObjectLevelPermission[] =
     [
       {
@@ -49,17 +65,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
         label: t`See Records on ${objectLabel}`,
         value: settingsDraftRoleObjectPermissions.canReadObjectRecords,
         setValue: (value: boolean | null) => {
-          setSettingsDraftRole((currentRole) => {
-            const updatedPermissions = currentRole.objectPermissions?.map(
-              (perm) => {
-                if (perm.objectMetadataId === objectMetadataItem.id) {
-                  return { ...perm, canReadObjectRecords: value };
-                }
-                return perm;
-              },
-            );
-            return { ...currentRole, objectPermissions: updatedPermissions };
-          });
+          updateObjectPermission('canReadObjectRecords', value);
         },
       },
       {
@@ -67,17 +73,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
         label: t`Edit Records on ${objectLabel}`,
         value: settingsDraftRoleObjectPermissions.canUpdateObjectRecords,
         setValue: (value: boolean | null) => {
-          setSettingsDraftRole((currentRole) => {
-            const updatedPermissions = currentRole.objectPermissions?.map(
-              (perm) => {
-                if (perm.objectMetadataId === objectMetadataItem.id) {
-                  return { ...perm, canUpdateObjectRecords: value };
-                }
-                return perm;
-              },
-            );
-            return { ...currentRole, objectPermissions: updatedPermissions };
-          });
+          updateObjectPermission('canUpdateObjectRecords', value);
         },
       },
       {
@@ -85,17 +81,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
         label: t`Delete Records on ${objectLabel}`,
         value: settingsDraftRoleObjectPermissions.canSoftDeleteObjectRecords,
         setValue: (value: boolean | null) => {
-          setSettingsDraftRole((currentRole) => {
-            const updatedPermissions = currentRole.objectPermissions?.map(
-              (perm) => {
-                if (perm.objectMetadataId === objectMetadataItem.id) {
-                  return { ...perm, canSoftDeleteObjectRecords: value };
-                }
-                return perm;
-              },
-            );
-            return { ...currentRole, objectPermissions: updatedPermissions };
-          });
+          updateObjectPermission('canSoftDeleteObjectRecords', value);
         },
       },
       {
@@ -103,17 +89,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
         label: t`Destroy Records on ${objectLabel}`,
         value: settingsDraftRoleObjectPermissions.canDestroyObjectRecords,
         setValue: (value: boolean | null) => {
-          setSettingsDraftRole((currentRole) => {
-            const updatedPermissions = currentRole.objectPermissions?.map(
-              (perm) => {
-                if (perm.objectMetadataId === objectMetadataItem.id) {
-                  return { ...perm, canDestroyObjectRecords: value };
-                }
-                return perm;
-              },
-            );
-            return { ...currentRole, objectPermissions: updatedPermissions };
-          });
+          updateObjectPermission('canDestroyObjectRecords', value);
         },
       },
     ];

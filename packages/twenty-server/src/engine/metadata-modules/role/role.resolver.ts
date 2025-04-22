@@ -152,7 +152,7 @@ export class RoleResolver {
     @AuthWorkspace() workspace: Workspace,
     @Args('upsertObjectPermissionsInput')
     upsertObjectPermissionsInput: UpsertObjectPermissionsInput,
-  ) {
+  ): Promise<ObjectPermissionDTO[]> {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
 
     return this.objectPermissionService.upsertObjectPermissions({
@@ -166,7 +166,7 @@ export class RoleResolver {
     @AuthWorkspace() workspace: Workspace,
     @Args('upsertSettingPermissionsInput')
     upsertSettingPermissionsInput: UpsertSettingPermissionsInput,
-  ) {
+  ): Promise<SettingPermissionDTO[]> {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
 
     return this.settingPermissionService.upsertSettingPermissions({

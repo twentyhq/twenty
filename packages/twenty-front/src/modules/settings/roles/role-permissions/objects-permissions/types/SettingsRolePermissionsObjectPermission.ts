@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 export type SettingsRolePermissionsObjectPermission = {
   key: string;
   label: string | ReactNode;
-  value?: boolean | null;
+  value?: boolean;
   setValue: (value: boolean) => void;
   revokedBy?: number;
 };

@@ -31,7 +31,7 @@ export class ObjectPermissionService {
   }: {
     workspaceId: string;
     input: UpsertObjectPermissionsInput;
-  }): Promise<ObjectPermissionEntity[] | null> {
+  }): Promise<ObjectPermissionEntity[]> {
     try {
       await this.validateRoleIsEditableOrThrow({
         roleId: input.roleId,

@@ -89,7 +89,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
 
     const isRevoked =
       isDefined(settingsDraftRoleObjectPermissionValue) &&
-      !!settingsDraftRoleGlobalPermissionValue === true &&
+      settingsDraftRoleGlobalPermissionValue === true &&
       isChecked === false;
 
     let checkboxType: OverridableCheckboxType;
