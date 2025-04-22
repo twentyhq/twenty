@@ -1,13 +1,13 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldMetadataType } from '~/generated/graphql';
 
-export type GenerateDepthZeroRecordGqlFields = {
+type GenerateDepthOneWithoutRelationsRecordGqlFields = {
   objectMetadataItem: ObjectMetadataItem;
 };
 
 export const generateDepthOneWithoutRelationsRecordGqlFields = ({
   objectMetadataItem,
-}: GenerateDepthZeroRecordGqlFields) => {
+}: GenerateDepthOneWithoutRelationsRecordGqlFields) => {
   return objectMetadataItem.fields
     .filter((field) => field.type !== FieldMetadataType.RELATION)
     .reduce<Record<string, true>>((acc, field) => {
