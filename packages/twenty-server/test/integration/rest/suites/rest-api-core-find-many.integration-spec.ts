@@ -198,6 +198,7 @@ describe('Core REST API Find Many endpoint', () => {
     }).expect(200);
 
     const people = response.body.data.people;
+
     const pageInfo = response.body.pageInfo;
 
     expect(people).toBeDefined();
@@ -210,5 +211,53 @@ describe('Core REST API Find Many endpoint', () => {
         expect(people[i - 1].city <= people[i].city).toBe(true);
       }
     }
+  });
+
+  it('should support depth 0 parameter', async () => {
+    const response = await makeRestAPIRequest({
+      method: 'get',
+      path: '/people?depth=0',
+    }).expect(200);
+
+    const people = response.body.data.people;
+
+    expect(people).toBeDefined();
+
+    const person = people[0];
+
+    expect(person).toBeDefined();
+    expect(person.companyId).toBeDefined();
+    expect(person.company).not.toBeDefined();
+  });
+
+  it('should support depth 1 parameter', async () => {
+    const response = await makeRestAPIRequest({
+      method: 'get',
+      path: '/people?depth=1',
+    }).expect(200);
+
+    const people = response.body.data.people;
+
+    const person = people[0];
+
+    expect(person.company).toBeDefined();
+    expect(person.company.people).not.toBeDefined();
+  });
+
+  it('should support depth 2 parameter', async () => {
+    const response = await makeRestAPIRequest({
+      method: 'get',
+      path: '/people?depth=2',
+    }).expect(200);
+
+    const people = response.body.data.people;
+
+    const person = people[0];
+
+    expect(person.company.people).toBeDefined();
+
+    const depth2Person = person.company.people.find((p) => p.id === person.id);
+
+    expect(depth2Person).toBeDefined();
   });
 });
