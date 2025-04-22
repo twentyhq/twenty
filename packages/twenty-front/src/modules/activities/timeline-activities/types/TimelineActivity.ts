@@ -10,7 +10,7 @@ export type TimelineActivity = {
   properties: any;
   name: string;
   linkedRecordCachedName: string;
-  linkedRecordId: string;
-  linkedObjectMetadataId: string;
+  linkedRecordId: string | null;
+  linkedObjectMetadataId: string | null;
   __typename: 'TimelineActivity';
 } & Record<string, any>;
