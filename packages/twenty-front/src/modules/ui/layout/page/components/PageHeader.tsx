@@ -80,6 +80,12 @@ const StyledTopBarButtonContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledIconContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+`;
+
 type PageHeaderProps = {
   title?: ReactNode;
   hasClosePageButton?: boolean;
@@ -121,7 +127,11 @@ export const PageHeader = ({
         )}
 
         <StyledTopBarIconStyledTitleContainer>
-          {Icon && <Icon size={theme.icon.size.md} />}
+          {Icon && (
+            <StyledIconContainer>
+              <Icon size={theme.icon.size.md} />
+            </StyledIconContainer>
+          )}
           {title && (
             <StyledTitleContainer data-testid="top-bar-title">
               {typeof title === 'string' ? (
