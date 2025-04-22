@@ -31,7 +31,7 @@ export const sanitizeRecordInput = ({
           return undefined;
         }
 
-        if (isDefined(fieldMetadataItem?.isNullable) && fieldValue == null) {
+        if (fieldMetadataItem?.isNullable === false && fieldValue == null) {
           return undefined;
         }
 
