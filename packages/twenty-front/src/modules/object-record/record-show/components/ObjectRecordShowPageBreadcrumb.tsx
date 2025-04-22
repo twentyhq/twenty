@@ -20,11 +20,12 @@ const StyledEditableTitleContainer = styled.div`
 `;
 
 const StyledEditableTitlePrefix = styled.div`
+  align-items: center;
   color: ${({ theme }) => theme.font.color.tertiary};
+  cursor: pointer;
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
-  cursor: pointer;
 `;
 
 const StyledTitle = styled.div`

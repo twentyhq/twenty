@@ -57,6 +57,7 @@ const StyledTitleContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(1)};
   width: 100%;
   overflow: hidden;
+  align-items: center;
 `;
 
 const StyledTopBarIconStyledTitleContainer = styled.div`
