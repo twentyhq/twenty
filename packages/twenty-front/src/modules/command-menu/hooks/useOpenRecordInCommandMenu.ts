@@ -1,6 +1,7 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
+import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
 import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -11,16 +12,30 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
+import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { flowState } from '@/workflow/states/flowState';
+import { workflowIdState } from '@/workflow/states/workflowIdState';
+import { workflowRunIdState } from '@/workflow/states/workflowRunIdState';
+import { WorkflowRun } from '@/workflow/types/Workflow';
+import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
+import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
+import { useApolloClient } from '@apollo/client';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
-import { v4 } from 'uuid';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { v4 } from 'uuid';
 
 export const useOpenRecordInCommandMenu = () => {
+  const apolloClient = useApolloClient();
+
   const { navigateCommandMenu } = useCommandMenu();
 
   const theme = useTheme();
@@ -147,9 +162,66 @@ export const useOpenRecordInCommandMenu = () => {
           pageId: pageComponentInstanceId,
           resetNavigationStack: false,
         });
+
+        if (objectNameSingular === CoreObjectNameSingular.WorkflowRun) {
+          const objectMetadataItems = getSnapshotValue(
+            snapshot,
+            objectMetadataItemsState,
+          );
+
+          const workflowRunRecord = getRecordFromCache<WorkflowRun>({
+            objectMetadataItem,
+            cache: apolloClient.cache,
+            recordId,
+            objectMetadataItems,
+          });
+          if (
+            !(
+              isDefined(workflowRunRecord) &&
+              isDefined(workflowRunRecord.output)
+            )
+          ) {
+            throw new Error(
+              `No workflow run record found for record ID ${recordId}`,
+            );
+          }
+
+          const { stepToOpenByDefault } = generateWorkflowRunDiagram({
+            steps: workflowRunRecord.output.flow.steps,
+            stepsOutput: workflowRunRecord.output.stepsOutput,
+            trigger: workflowRunRecord.output.flow.trigger,
+          });
+
+          if (!isDefined(stepToOpenByDefault)) {
+            return;
+          }
+
+          set(workflowRunIdState, workflowRunRecord.id);
+          set(workflowIdState, workflowRunRecord.workflowId);
+          set(flowState, {
+            workflowVersionId: workflowRunRecord.workflowVersionId,
+            trigger: workflowRunRecord.output.flow.trigger,
+            steps: workflowRunRecord.output.flow.steps,
+          });
+          set(workflowSelectedNodeState, stepToOpenByDefault.id);
+
+          const pageId = v4();
+
+          set(
+            workflowIdComponentState.atomFamily({ instanceId: pageId }),
+            workflowRunRecord.workflowId,
+          );
+
+          navigateCommandMenu({
+            page: CommandMenuPages.WorkflowRunStepView,
+            pageTitle: stepToOpenByDefault.data.name,
+            pageIcon: getIcon(getWorkflowNodeIconKey(stepToOpenByDefault.data)),
+            pageId,
+          });
+        }
       };
     },
-    [getIcon, navigateCommandMenu, theme],
+    [apolloClient.cache, getIcon, navigateCommandMenu, theme],
   );
 
   return {
