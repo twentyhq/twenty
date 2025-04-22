@@ -1,3 +1,4 @@
+import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
@@ -252,6 +253,193 @@ describe('buildValueFromFilter', () => {
           filter,
           type: 'RAW_JSON',
         }),
+      ).toBeUndefined();
+    });
+  });
+
+  describe('RATING field type', () => {
+    const mockOptions = [
+      {
+        label: 'Rating 1',
+        value: 'RATING_1',
+        id: '1',
+        position: 1,
+      },
+      {
+        label: 'Rating 2',
+        value: 'RATING_2',
+        id: '2',
+        position: 2,
+      },
+      {
+        label: 'Rating 3',
+        value: 'RATING_3',
+        id: '3',
+        position: 3,
+      },
+    ];
+
+    const testCases = [
+      {
+        operand: ViewFilterOperand.Is,
+        value: 'Rating 1',
+        expected: 'RATING_1',
+      },
+      {
+        operand: ViewFilterOperand.IsNotEmpty,
+        value: 'Rating 2',
+        expected: 'RATING_2',
+      },
+      {
+        operand: ViewFilterOperand.IsEmpty,
+        value: 'Rating 1',
+        expected: undefined,
+      },
+      {
+        operand: ViewFilterOperand.GreaterThan,
+        value: 'Rating 1',
+        expected: 'RATING_1',
+      },
+      {
+        operand: ViewFilterOperand.LessThan,
+        value: 'Rating 2',
+        expected: 'RATING_2',
+      },
+    ];
+
+    it.each(testCases)(
+      'should handle $operand with value "$value"',
+      ({ operand, value, expected }) => {
+        const filter = createTestFilter(operand, value, 'RATING');
+        expect(
+          buildValueFromFilter({
+            filter,
+            type: 'RATING',
+            options: mockOptions as FieldMetadataItemOption[],
+          }),
+        ).toBe(expected);
+      },
+    );
+
+    it('should return undefined when option is not found', () => {
+      const filter = createTestFilter(
+        ViewFilterOperand.Is,
+        'Rating 4',
+        'RATING',
+      );
+      expect(
+        buildValueFromFilter({
+          filter,
+          type: 'RATING',
+          options: mockOptions as FieldMetadataItemOption[],
+        }),
+      ).toBeUndefined();
+    });
+  });
+
+  describe('SELECT field type', () => {
+    const mockOptions = [
+      {
+        label: 'Option 1',
+        value: 'OPTION_1',
+        color: 'red',
+        id: '1',
+        position: 1,
+      },
+      {
+        label: 'Option 2',
+        value: 'OPTION_2',
+        color: 'blue',
+        id: '2',
+        position: 2,
+      },
+    ];
+
+    const testCases = [
+      {
+        operand: ViewFilterOperand.Is,
+        value: JSON.stringify(['OPTION_1']),
+        expected: 'OPTION_1',
+      },
+      {
+        operand: ViewFilterOperand.IsNot,
+        value: JSON.stringify(['OPTION_1']),
+        expected: undefined,
+      },
+      {
+        operand: ViewFilterOperand.IsEmpty,
+        value: JSON.stringify(['OPTION_1']),
+        expected: undefined,
+      },
+    ];
+
+    it.each(testCases)(
+      'should handle $operand with value "$value"',
+      ({ operand, value, expected }) => {
+        const filter = createTestFilter(operand, value, 'SELECT');
+        expect(
+          buildValueFromFilter({
+            filter,
+            type: 'SELECT',
+            options: mockOptions as FieldMetadataItemOption[],
+          }),
+        ).toBe(expected);
+      },
+    );
+
+    it('should handle invalid JSON', () => {
+      const filter = createTestFilter(
+        ViewFilterOperand.Is,
+        'invalid-json',
+        'SELECT',
+      );
+      expect(
+        buildValueFromFilter({
+          filter,
+          type: 'SELECT',
+          options: mockOptions as FieldMetadataItemOption[],
+        }),
+      ).toBeUndefined();
+    });
+  });
+
+  describe('MULTI_SELECT field type', () => {
+    const testCases = [
+      {
+        operand: ViewFilterOperand.Contains,
+        value: JSON.stringify(['OPTION_1', 'OPTION_2']),
+        expected: ['OPTION_1', 'OPTION_2'],
+      },
+      {
+        operand: ViewFilterOperand.DoesNotContain,
+        value: JSON.stringify(['OPTION_1']),
+        expected: undefined,
+      },
+      {
+        operand: ViewFilterOperand.IsEmpty,
+        value: JSON.stringify(['OPTION_1']),
+        expected: undefined,
+      },
+    ];
+
+    it.each(testCases)(
+      'should handle $operand with value "$value"',
+      ({ operand, value, expected }) => {
+        const filter = createTestFilter(operand, value, 'MULTI_SELECT');
+        expect(buildValueFromFilter({ filter, type: 'MULTI_SELECT' })).toEqual(
+          expected,
+        );
+      },
+    );
+
+    it('should handle invalid JSON', () => {
+      const filter = createTestFilter(
+        ViewFilterOperand.Contains,
+        'invalid-json',
+        'MULTI_SELECT',
+      );
+      expect(
+        buildValueFromFilter({ filter, type: 'MULTI_SELECT' }),
       ).toBeUndefined();
     });
   });
