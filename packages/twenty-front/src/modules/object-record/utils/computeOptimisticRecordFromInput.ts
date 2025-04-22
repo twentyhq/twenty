@@ -40,7 +40,7 @@ export const computeOptimisticRecordFromInput = ({
         objectMetadataItem.fields.find(
           (field) =>
             field.type === FieldMetadataType.RELATION &&
-            field.settings.joinColumnName === recordKey,
+            field.settings?.joinColumnName === recordKey,
         );
 
       const isUnknownField =
@@ -148,7 +148,7 @@ export const computeOptimisticRecordFromInput = ({
 
     if (
       !isDefined(relationIdFieldMetadataItem) &&
-      !isDefined(fieldMetadataItem.settings.joinColumnName)
+      !isDefined(fieldMetadataItem.settings?.joinColumnName)
     ) {
       throw new Error(
         'Should never occur, encountered unknown relationId within relations definitions',

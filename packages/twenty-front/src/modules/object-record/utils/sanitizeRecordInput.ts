@@ -21,7 +21,7 @@ export const sanitizeRecordInput = ({
           objectMetadataItem.fields.find(
             (field) =>
               field.type === FieldMetadataType.RELATION &&
-              field.settings.joinColumnName === fieldName,
+              field.settings?.joinColumnName === fieldName,
           );
 
         if (

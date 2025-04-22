@@ -152,7 +152,7 @@ export class ProcessNestedRelationsV2Helper {
             ? `"${targetRelationName}Id"`
             : 'id',
         ids: relationIds,
-        limit,
+        limit: limit * parentObjectRecords.length,
         objectMetadataMaps,
         targetObjectMetadata,
         aggregate,
