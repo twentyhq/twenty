@@ -39,6 +39,7 @@ export const ListenRecordUpdatesEffect = ({
         fields: fieldsUpdater,
       });
     },
+    skip: listenedFields.length === 0,
   });
 
   return null;

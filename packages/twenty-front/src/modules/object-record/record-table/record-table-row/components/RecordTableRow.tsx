@@ -35,13 +35,11 @@ export const RecordTableRow = ({
       <RecordTableCells />
       <RecordTableLastEmptyCell />
       <RecordValueSetterEffect recordId={recordId} />
-      {listenedFields.length > 0 && (
-        <ListenRecordUpdatesEffect
-          objectNameSingular={objectNameSingular}
-          recordId={recordId}
-          listenedFields={listenedFields}
-        />
-      )}
+      <ListenRecordUpdatesEffect
+        objectNameSingular={objectNameSingular}
+        recordId={recordId}
+        listenedFields={listenedFields}
+      />
     </RecordTableDraggableTr>
   );
 };
