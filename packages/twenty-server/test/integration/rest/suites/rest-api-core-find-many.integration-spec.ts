@@ -235,6 +235,7 @@ describe('Core REST API Find Many endpoint', () => {
     const person = people[0];
 
     expect(person.company).toBeDefined();
+
     expect(person.company.people).not.toBeDefined();
   });
 

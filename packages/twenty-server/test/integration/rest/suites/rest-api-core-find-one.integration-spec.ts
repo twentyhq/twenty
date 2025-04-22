@@ -53,4 +53,52 @@ describe('Core REST API Find One endpoint', () => {
         expect(person).toBeNull();
       });
   });
+
+  it('should support depth 0 parameter', async () => {
+    await makeRestAPIRequest({
+      method: 'get',
+      path: `/people/${NOT_EXISTING_PERSON_ID}?depth=0`,
+    })
+      .expect(200)
+      .expect((res) => {
+        const person = res.body.data.person;
+
+        expect(person).toBeDefined();
+        expect(person.companyId).toBeDefined();
+        expect(person.company).not.toBeDefined();
+      });
+  });
+
+  it('should support depth 1 parameter', async () => {
+    await makeRestAPIRequest({
+      method: 'get',
+      path: `/people/${NOT_EXISTING_PERSON_ID}?depth=1`,
+    })
+      .expect(200)
+      .expect((res) => {
+        const person = res.body.data.person;
+
+        expect(person.company).toBeDefined();
+        expect(person.company.people).not.toBeDefined();
+      });
+  });
+
+  it('should support depth 2 parameter', async () => {
+    await makeRestAPIRequest({
+      method: 'get',
+      path: `/people/${NOT_EXISTING_PERSON_ID}?depth=2`,
+    })
+      .expect(200)
+      .expect((res) => {
+        const person = res.body.data.person;
+
+        expect(person.company.people).toBeDefined();
+
+        const depth2Person = person.company.people.find(
+          (p) => p.id === person.id,
+        );
+
+        expect(depth2Person).toBeDefined();
+      });
+  });
 });

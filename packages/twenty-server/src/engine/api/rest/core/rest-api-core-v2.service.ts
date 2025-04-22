@@ -3,11 +3,13 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   ObjectRecord,
   ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
@@ -23,6 +25,7 @@ import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/get-variables.factory';
 import { QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
+import { Depth } from 'src/engine/api/rest/input-factories/depth-input.factory';
 
 interface PageInfo {
   hasNextPage?: boolean;
@@ -254,6 +257,13 @@ export class RestApiCoreServiceV2 {
       ? graphqlQueryParser.applyLimitToBuilder(selectQueryBuilder, inputs.limit)
       : selectQueryBuilder;
 
+    selectQueryBuilder = this.applyDepth(
+      selectQueryBuilder,
+      objectMetadataNameSingular,
+      objectMetadata.objectMetadataMapItem,
+      inputs.depth,
+    );
+
     const records = await selectQueryBuilder.getMany();
 
     const hasMoreRecords = records.length < totalCount;
@@ -269,6 +279,28 @@ export class RestApiCoreServiceV2 {
       hasMoreRecords,
       totalCount,
     );
+  }
+
+  private applyDepth(
+    query: SelectQueryBuilder<ObjectLiteral>,
+    objectMetadataNameSingular: string,
+    objectMetadata: ObjectMetadataInterface,
+    depth: Depth | undefined,
+  ) {
+    if (!isDefined(depth) || depth === 0) {
+      return query;
+    }
+
+    objectMetadata.fields.forEach((field) => {
+      if (field.type === FieldMetadataType.RELATION) {
+        query.leftJoinAndSelect(
+          `${objectMetadataNameSingular}.${field.name}`,
+          field.name,
+        );
+      }
+    });
+
+    return query;
   }
 
   private computeFilters(inputs: QueryVariables) {
