@@ -13,7 +13,6 @@ const LISTING_NAME_SINGULAR = 'listing';
 
 describe('Custom object renaming', () => {
   let listingObjectId = '';
-  let customRelationId = '';
 
   const STANDARD_OBJECT_RELATIONS = [
     'noteTarget',
@@ -170,8 +169,6 @@ describe('Custom object renaming', () => {
     );
 
     // Assert
-    customRelationId = relationResponse.body.data.createOneRelationMetadata.id;
-
     relationFieldMetadataOnPersonId =
       relationResponse.body.data.createOneRelationMetadata.fromFieldMetadataId;
   });
