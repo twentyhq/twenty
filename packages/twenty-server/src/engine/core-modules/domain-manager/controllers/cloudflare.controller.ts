@@ -10,24 +10,24 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Response, Request } from 'express';
+import { Request, Response } from 'express';
 import { Repository } from 'typeorm';
 
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/custom-domain/custom-domain-activated';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   DomainManagerException,
   DomainManagerExceptionCode,
 } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
-import { handleException } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { CloudflareSecretMatchGuard } from 'src/engine/core-modules/domain-manager/guards/cloudflare-secret.guard';
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
-import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/custom-domain/custom-domain-activated';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { handleException } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
-@Controller('cloudflare')
+@Controller()
 @UseFilters(AuthRestApiExceptionFilter)
 export class CloudflareController {
   constructor(
@@ -39,7 +39,7 @@ export class CloudflareController {
     private readonly analyticsService: AnalyticsService,
   ) {}
 
-  @Post('custom-hostname-webhooks')
+  @Post(['cloudflare/custom-hostname-webhooks', 'webhooks/cloudflare'])
   @UseGuards(CloudflareSecretMatchGuard)
   async customHostnameWebhooks(@Req() req: Request, @Res() res: Response) {
     if (!req.body?.data?.data?.hostname) {
