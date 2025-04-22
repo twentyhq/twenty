@@ -58,7 +58,7 @@ describe('buildValueFromFilter', () => {
       'should handle $operand with value "$value"',
       ({ operand, value, expected }) => {
         const filter = createTestFilter(operand, value, 'TEXT');
-        expect(buildValueFromFilter(filter, 'TEXT')).toBe(expected);
+        expect(buildValueFromFilter({ filter, type: 'TEXT' })).toBe(expected);
       },
     );
   });
@@ -116,7 +116,7 @@ describe('buildValueFromFilter', () => {
       'should handle $operand with value "$value"',
       ({ operand, value, expected }) => {
         const filter = createTestFilter(operand, value, 'DATE_TIME');
-        const result = buildValueFromFilter(filter, 'DATE_TIME');
+        const result = buildValueFromFilter({ filter, type: 'DATE_TIME' });
         if (expected instanceof Date) {
           expect(result).toBeInstanceOf(Date);
           expect(result).toEqual(expected);
@@ -155,7 +155,7 @@ describe('buildValueFromFilter', () => {
       'should handle $operand with value "$value"',
       ({ operand, value, expected }) => {
         const filter = createTestFilter(operand, value, 'NUMBER');
-        expect(buildValueFromFilter(filter, 'NUMBER')).toBe(expected);
+        expect(buildValueFromFilter({ filter, type: 'NUMBER' })).toBe(expected);
       },
     );
   });
@@ -178,7 +178,9 @@ describe('buildValueFromFilter', () => {
       'should handle $operand with value "$value"',
       ({ operand, value, expected }) => {
         const filter = createTestFilter(operand, value, 'BOOLEAN');
-        expect(buildValueFromFilter(filter, 'BOOLEAN')).toBe(expected);
+        expect(buildValueFromFilter({ filter, type: 'BOOLEAN' })).toBe(
+          expected,
+        );
       },
     );
   });
@@ -211,37 +213,19 @@ describe('buildValueFromFilter', () => {
       'should handle $operand with value "$value"',
       ({ operand, value, expected }) => {
         const filter = createTestFilter(operand, value, 'ARRAY');
-        expect(buildValueFromFilter(filter, 'ARRAY')).toBe(expected);
+        expect(buildValueFromFilter({ filter, type: 'ARRAY' })).toBe(expected);
       },
     );
   });
 
   describe('Unsupported field types', () => {
-    const unsupportedTypes: FilterableFieldType[] = ['SELECT', 'RELATION'];
+    const unsupportedTypes: FilterableFieldType[] = ['RELATION'];
 
     it.each(unsupportedTypes)(
       'should throw error for unsupported type %s',
       (type) => {
         const filter = createTestFilter(ViewFilterOperand.Is, 'test', type);
-        expect(() => buildValueFromFilter(filter, type)).toThrow(
-          'Type not supported',
-        );
-      },
-    );
-  });
-
-  describe('Unsupported field types', () => {
-    const unsupportedTypes: FilterableFieldType[] = ['MULTI_SELECT'];
-
-    it.each(unsupportedTypes)(
-      'should throw error for unsupported type %s',
-      (type) => {
-        const filter = createTestFilter(
-          ViewFilterOperand.Contains,
-          'test',
-          type,
-        );
-        expect(() => buildValueFromFilter(filter, type)).toThrow(
+        expect(() => buildValueFromFilter({ filter, type })).toThrow(
           'Type not supported',
         );
       },
@@ -255,25 +239,20 @@ describe('buildValueFromFilter', () => {
       'should return undefined for composite type %s',
       (type) => {
         const filter = createTestFilter(ViewFilterOperand.Is, 'test', type);
-        expect(buildValueFromFilter(filter, type)).toBeUndefined();
+        expect(buildValueFromFilter({ filter, type })).toBeUndefined();
       },
     );
   });
 
   describe('RAW_JSON field type', () => {
-    it('should throw error for type %s', () => {
-      const filter = {
-        id: 'test-id',
-        fieldMetadataId: 'test-field-id',
-        value: 'test',
-        displayValue: 'test',
-        type: 'RAW_JSON',
-        operand: ViewFilterOperand.Is,
-        label: 'Test Label',
-      };
-      expect(() =>
-        buildValueFromFilter(filter as RecordFilter, 'RAW_JSON'),
-      ).toThrow('Raw JSON is not supported');
+    it('should return undefined', () => {
+      const filter = createTestFilter(ViewFilterOperand.Is, 'test', 'RAW_JSON');
+      expect(
+        buildValueFromFilter({
+          filter,
+          type: 'RAW_JSON',
+        }),
+      ).toBeUndefined();
     });
   });
 });
