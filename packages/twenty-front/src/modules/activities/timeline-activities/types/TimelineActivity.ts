@@ -21,7 +21,8 @@ export type TimelineActivityWithRecord = TimelineActivity & {
   linkedObjectMetadataId: string;
 };
 
-export const isTimelineActivityWithRecord = (
-  el: TimelineActivity,
-): el is TimelineActivityWithRecord =>
-  isDefined(el.linkedObjectMetadataId) && isDefined(el.linkedRecordId);
+export const isTimelineActivityWithLinkedRecord = (
+  timelineActivity: TimelineActivity,
+): timelineActivity is TimelineActivityWithRecord =>
+  isDefined(timelineActivity.linkedObjectMetadataId) &&
+  isDefined(timelineActivity.linkedRecordId);
