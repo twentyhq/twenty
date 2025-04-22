@@ -5,7 +5,6 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { undefined } from 'zod';
 
 export const buildValueFromFilter = ({
   filter,
