@@ -6,7 +6,9 @@ export type QueryVariables = {
   orderBy?: object;
   last?: number;
   first?: number;
+  limit?: number;
   startingAfter?: string;
   endingBefore?: string;
   input?: object;
+  depth?: 0 | 1 | 2;
 };

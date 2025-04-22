@@ -10,6 +10,7 @@ import { OrderByInputFactory } from 'src/engine/api/rest/input-factories/order-b
 import { StartingAfterInputFactory } from 'src/engine/api/rest/input-factories/starting-after-input.factory';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { DepthInputFactory } from 'src/engine/api/rest/input-factories/depth-input.factory';
 
 @Injectable()
 export class GetVariablesFactory {
@@ -19,6 +20,7 @@ export class GetVariablesFactory {
     private readonly limitInputFactory: LimitInputFactory,
     private readonly orderByInputFactory: OrderByInputFactory,
     private readonly filterInputFactory: FilterInputFactory,
+    private readonly depthInputFactory: DepthInputFactory,
   ) {}
 
   create(
@@ -36,12 +38,15 @@ export class GetVariablesFactory {
     const limit = this.limitInputFactory.create(request);
     const endingBefore = this.endingBeforeInputFactory.create(request);
     const startingAfter = this.startingAfterInputFactory.create(request);
+    const depth = this.depthInputFactory.create(request);
 
     return {
       filter: this.filterInputFactory.create(request, objectMetadata),
       orderBy: this.orderByInputFactory.create(request, objectMetadata),
       first: !endingBefore ? limit : undefined,
       last: endingBefore ? limit : undefined,
+      limit,
+      depth,
       startingAfter,
       endingBefore,
     };

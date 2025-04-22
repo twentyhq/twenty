@@ -159,11 +159,7 @@ describe('Core REST API Find Many endpoint', () => {
 
     const ascPeople = ascResponse.body.data.people;
 
-    for (let i = 1; i < ascPeople.length; i++) {
-      if (ascPeople[i - 1].position && ascPeople[i].position) {
-        expect(ascPeople[i - 1].position <= ascPeople[i].position).toBe(true);
-      }
-    }
+    expect(ascPeople).toBe(ascPeople.sort((a, b) => a.position - b.position));
 
     const descResponse = await makeRestAPIRequest({
       method: 'get',
@@ -172,11 +168,9 @@ describe('Core REST API Find Many endpoint', () => {
 
     const descPeople = descResponse.body.data.people;
 
-    for (let i = 1; i < descPeople.length; i++) {
-      if (descPeople[i - 1].position && descPeople[i].position) {
-        expect(descPeople[i - 1].position >= descPeople[i].position).toBe(true);
-      }
-    }
+    expect(descPeople).toBe(
+      descPeople.sort((a, b) => -(a.position - b.position)),
+    );
   });
 
   it('should handle invalid cursor gracefully', async () => {

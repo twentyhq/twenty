@@ -2,16 +2,18 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 
-const ALLOWED_DEPTH_VALUES = [0, 1, 2];
+type Depth = 0 | 1 | 2;
+
+const ALLOWED_DEPTH_VALUES: Depth[] = [0, 1, 2];
 
 @Injectable()
 export class DepthInputFactory {
-  create(request: Request): number {
+  create(request: Request): Depth {
     if (!request.query.depth) {
       return 0;
     }
 
-    const depth = +request.query.depth;
+    const depth = +request.query.depth as Depth;
 
     if (isNaN(depth) || !ALLOWED_DEPTH_VALUES.includes(depth)) {
       throw new BadRequestException(

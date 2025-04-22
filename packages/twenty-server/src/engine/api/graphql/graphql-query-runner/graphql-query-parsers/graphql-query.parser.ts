@@ -109,6 +109,13 @@ export class GraphqlQueryParser {
     return queryBuilder.orderBy(parsedOrderBys as OrderByCondition);
   }
 
+  public applyLimitToBuilder(
+    queryBuilder: SelectQueryBuilder<any>,
+    limit: number,
+  ): SelectQueryBuilder<any> {
+    return queryBuilder.limit(limit);
+  }
+
   public parseSelectedFields(
     parentObjectMetadata: ObjectMetadataItemWithFieldMaps,
     graphqlSelectedFields: Partial<Record<string, any>>,

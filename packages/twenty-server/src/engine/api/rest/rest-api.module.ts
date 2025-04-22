@@ -6,11 +6,6 @@ import { RestApiCoreController } from 'src/engine/api/rest/core/controllers/rest
 import { CoreQueryBuilderModule } from 'src/engine/api/rest/core/query-builder/core-query-builder.module';
 import { RestApiCoreServiceV2 } from 'src/engine/api/rest/core/rest-api-core-v2.service';
 import { RestApiCoreService } from 'src/engine/api/rest/core/rest-api-core.service';
-import { EndingBeforeInputFactory } from 'src/engine/api/rest/input-factories/ending-before-input.factory';
-import { FilterInputFactory } from 'src/engine/api/rest/input-factories/filter-input.factory';
-import { LimitInputFactory } from 'src/engine/api/rest/input-factories/limit-input.factory';
-import { OrderByInputFactory } from 'src/engine/api/rest/input-factories/order-by-input.factory';
-import { StartingAfterInputFactory } from 'src/engine/api/rest/input-factories/starting-after-input.factory';
 import { MetadataQueryBuilderModule } from 'src/engine/api/rest/metadata/query-builder/metadata-query-builder.module';
 import { RestApiMetadataController } from 'src/engine/api/rest/metadata/rest-api-metadata.controller';
 import { RestApiMetadataService } from 'src/engine/api/rest/metadata/rest-api-metadata.service';
@@ -20,7 +15,7 @@ import { RecordTransformerModule } from 'src/engine/core-modules/record-transfor
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
-import { DepthInputFactory } from 'src/engine/api/rest/input-factories/depth-input.factory';
+import { coreQueryBuilderFactories } from 'src/engine/api/rest/core/query-builder/factories/factories';
 
 @Module({
   imports: [
@@ -42,13 +37,8 @@ import { DepthInputFactory } from 'src/engine/api/rest/input-factories/depth-inp
     RestApiCoreService,
     RestApiCoreServiceV2,
     RestApiService,
-    StartingAfterInputFactory,
-    EndingBeforeInputFactory,
-    LimitInputFactory,
-    DepthInputFactory,
-    FilterInputFactory,
-    OrderByInputFactory,
     ApiEventEmitterService,
+    ...coreQueryBuilderFactories,
   ],
   exports: [RestApiMetadataService],
 })
