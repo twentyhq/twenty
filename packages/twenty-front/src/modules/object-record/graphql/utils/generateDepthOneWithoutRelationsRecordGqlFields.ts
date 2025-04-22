@@ -5,7 +5,7 @@ export type GenerateDepthZeroRecordGqlFields = {
   objectMetadataItem: ObjectMetadataItem;
 };
 
-export const generateDepthZeroRecordGqlFields = ({
+export const generateDepthOneWithoutRelationsRecordGqlFields = ({
   objectMetadataItem,
 }: GenerateDepthZeroRecordGqlFields) => {
   return objectMetadataItem.fields

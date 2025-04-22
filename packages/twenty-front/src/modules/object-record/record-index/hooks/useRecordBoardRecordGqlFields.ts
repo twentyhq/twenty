@@ -2,7 +2,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
-import { generateDepthZeroRecordGqlFields } from '@/object-record/graphql/utils/generateDepthZeroRecordGqlFields';
+import { generateDepthOneWithoutRelationsRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneWithoutRelationsRecordGqlFields';
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -35,12 +35,13 @@ export const useRecordBoardRecordGqlFields = ({
       objectNameSingular: CoreObjectNameSingular.TaskTarget,
     });
 
-  const allDepthZeroRecordGqlFields = generateDepthZeroRecordGqlFields({
-    objectMetadataItem,
-  });
+  const allDepthOneWithoutRelationsRecordGqlFields =
+    generateDepthOneWithoutRelationsRecordGqlFields({
+      objectMetadataItem,
+    });
 
   const recordGqlFields: Record<string, any> = {
-    ...allDepthZeroRecordGqlFields,
+    ...allDepthOneWithoutRelationsRecordGqlFields,
     ...Object.fromEntries(
       visibleFieldDefinitions.map((visibleFieldDefinition) => [
         visibleFieldDefinition.metadata.fieldName,

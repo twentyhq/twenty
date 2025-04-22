@@ -1,10 +1,10 @@
-import { generateDepthZeroRecordGqlFields } from '@/object-record/graphql/utils/generateDepthZeroRecordGqlFields';
+import { generateDepthOneWithoutRelationsRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneWithoutRelationsRecordGqlFields';
 import { getMockPersonObjectMetadataItem } from '~/testing/mock-data/people';
 
-describe('generateDepthZeroRecordGqlFields', () => {
+describe('generateDepthOneWithoutRelationsRecordGqlFields', () => {
   const objectMetadataItem = getMockPersonObjectMetadataItem();
   it('Should handle basic call with standalone objectMetadataItem', () => {
-    const result = generateDepthZeroRecordGqlFields({
+    const result = generateDepthOneWithoutRelationsRecordGqlFields({
       objectMetadataItem,
     });
     expect(result).toMatchInlineSnapshot(`
