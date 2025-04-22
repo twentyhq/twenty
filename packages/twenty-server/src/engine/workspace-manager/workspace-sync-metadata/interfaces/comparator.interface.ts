@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
@@ -51,6 +53,20 @@ export type FieldComparatorResult =
       Partial<ComputedPartialFieldMetadata> & { id: string }
     >
   | ComparatorDeleteResult<FieldMetadataEntity>;
+
+export type FieldRelationComparatorResult =
+  | ComparatorSkipResult
+  | ComparatorCreateResult<
+      Partial<ComputedPartialFieldMetadata<FieldMetadataType.RELATION>> & {
+        id: string;
+      }
+    >
+  | ComparatorUpdateResult<
+      Partial<ComputedPartialFieldMetadata<FieldMetadataType.RELATION>> & {
+        id: string;
+      }
+    >
+  | ComparatorDeleteResult<FieldMetadataEntity<FieldMetadataType.RELATION>>;
 
 export type RelationComparatorResult =
   | ComparatorCreateResult<Partial<RelationMetadataEntity>>

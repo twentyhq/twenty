@@ -18,6 +18,15 @@ export function WorkspaceIndex(
     throw new Error('Class level WorkspaceIndex should be used with columns');
   }
 
+  // TODO: Remove this when we are handling properly indexes for new relation metadata
+  if (
+    process.env.SYNC_METADATA_INDEX_ENABLED === 'false' ||
+    process.env.SYNC_METADATA_INDEX_ENABLED === '' ||
+    process.env.SYNC_METADATA_INDEX_ENABLED === undefined
+  ) {
+    return (_target: any) => {};
+  }
+
   return (target: any) => {
     const gate = TypedReflect.getMetadata(
       'workspace:gate-metadata-args',

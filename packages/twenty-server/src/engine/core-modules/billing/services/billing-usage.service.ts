@@ -94,6 +94,13 @@ export class BillingUsageService {
         { workspaceId: workspace.id },
       );
 
+    if (!isDefined(subscription)) {
+      throw new BillingException(
+        'Not-canceled subscription not found',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      );
+    }
+
     const meteredSubscriptionItemDetails =
       await this.billingSubscriptionItemService.getMeteredSubscriptionItemDetails(
         subscription.id,

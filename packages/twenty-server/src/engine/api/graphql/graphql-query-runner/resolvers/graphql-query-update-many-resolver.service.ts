@@ -55,6 +55,7 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
       existingRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     if (isEmpty(formattedExistingRecords)) {
@@ -89,6 +90,7 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
       nonFormattedUpdatedObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     this.apiEventEmitterService.emitUpdateEvents(
