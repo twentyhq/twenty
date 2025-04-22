@@ -7,13 +7,12 @@ import { TimelineActivityContext } from '@/activities/timeline-activities/contex
 import { useLinkedObjectObjectMetadataItem } from '@/activities/timeline-activities/hooks/useLinkedObjectObjectMetadataItem';
 import { EventIconDynamicComponent } from '@/activities/timeline-activities/rows/components/EventIconDynamicComponent';
 import { EventRowDynamicComponent } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
-import { TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { TimelineActivityWithRecord } from '@/activities/timeline-activities/types/TimelineActivity';
 import { getTimelineActivityAuthorFullName } from '@/activities/timeline-activities/utils/getTimelineActivityAuthorFullName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { isDefined } from 'twenty-shared/utils';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -83,7 +82,7 @@ const StyledItemContainer = styled.div<{ isMarginBottom?: boolean }>`
 type EventRowProps = {
   mainObjectMetadataItem: ObjectMetadataItem | null;
   isLastEvent?: boolean;
-  event: TimelineActivity;
+  event: TimelineActivityWithRecord;
 };
 
 export const EventRow = ({
@@ -93,12 +92,6 @@ export const EventRow = ({
 }: EventRowProps) => {
   // What about being deleted ? I think this should be displayed as well but we loose it here
   // TO check prastoin
-  if (
-    !isDefined(event.linkedRecordId) ||
-    !isDefined(event.linkedObjectMetadataId)
-  ) {
-    return null;
-  }
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 

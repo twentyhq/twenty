@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceMember } from '~/generated/graphql';
 
 export type TimelineActivity = {
@@ -14,3 +15,13 @@ export type TimelineActivity = {
   linkedObjectMetadataId: string | null;
   __typename: 'TimelineActivity';
 } & Record<string, any>;
+
+export type TimelineActivityWithRecord = TimelineActivity & {
+  linkedRecordId: string;
+  linkedObjectMetadataId: string;
+};
+
+export const isTimeLineActivityWithRecord = (
+  el: TimelineActivity,
+): el is TimelineActivityWithRecord =>
+  isDefined(el.linkedObjectMetadataId) && isDefined(el.linkedRecordId);

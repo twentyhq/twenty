@@ -43,7 +43,7 @@ export const useTimelineActivities = (
   const activityIds = timelineActivities
     .filter((timelineActivity) => timelineActivity.name.match(/note|task/i))
     .map((timelineActivity) => timelineActivity.linkedRecordId)
-    .filter(isDefined)
+    .filter(isDefined);
 
   const { loading: loadingLinkedObjectsTitle } =
     useLinkedObjectsTitle(activityIds);

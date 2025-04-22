@@ -102,7 +102,7 @@ export const EventRowActivity = ({
               if (!event.linkedRecordId) {
                 return;
               }
-              
+
               openRecordInCommandMenu({
                 recordId: event.linkedRecordId,
                 objectNameSingular,
