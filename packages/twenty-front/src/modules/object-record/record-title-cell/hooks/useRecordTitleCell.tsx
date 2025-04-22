@@ -21,13 +21,15 @@ export const useRecordTitleCell = () => {
       ({
         recordId,
         fieldMetadataId,
+        containerType,
       }: {
         recordId: string;
         fieldMetadataId: string;
+        containerType: 'page-header' | 'show-page';
       }) => {
         set(
           isInlineCellInEditModeScopedState(
-            getRecordTitleCellId(recordId, fieldMetadataId),
+            getRecordTitleCellId(recordId, fieldMetadataId, containerType),
           ),
           false,
         );
@@ -44,15 +46,17 @@ export const useRecordTitleCell = () => {
       ({
         recordId,
         fieldMetadataId,
+        containerType,
         customEditHotkeyScopeForField,
       }: {
         recordId: string;
         fieldMetadataId: string;
+        containerType: 'page-header' | 'show-page';
         customEditHotkeyScopeForField?: HotkeyScope;
       }) => {
         set(
           isInlineCellInEditModeScopedState(
-            getRecordTitleCellId(recordId, fieldMetadataId),
+            getRecordTitleCellId(recordId, fieldMetadataId, containerType),
           ),
           true,
         );

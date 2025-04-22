@@ -47,6 +47,7 @@ export const useCreateNewIndexRecord = ({
           openRecordTitleCell({
             recordId,
             fieldMetadataId: objectMetadataItem.labelIdentifierFieldMetadataId,
+            containerType: 'show-page',
           });
         } else {
           navigate(AppPath.RecordShowPage, {

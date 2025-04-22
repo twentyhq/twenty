@@ -7,6 +7,7 @@ import { useRecordShowContainerData } from '@/object-record/record-show/hooks/us
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierSelector';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
+import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilValue } from 'recoil';
@@ -94,7 +95,10 @@ export const SummaryCard = ({
             isReadOnly: isRecordReadOnly,
           }}
         >
-          <RecordTitleCell sizeVariant="md" />
+          <RecordTitleCell
+            sizeVariant="md"
+            containerType={RecordTitleCellContainerType.ShowPage}
+          />
         </FieldContext.Provider>
       }
       avatarType={recordIdentifier?.avatarType ?? 'rounded'}

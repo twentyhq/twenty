@@ -6,6 +6,7 @@ import { useRecordShowContainerActions } from '@/object-record/record-show/hooks
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
+import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -115,7 +116,10 @@ export const ObjectRecordShowPageBreadcrumb = ({
             isReadOnly: isRecordReadOnly,
           }}
         >
-          <RecordTitleCell sizeVariant="xs" />
+          <RecordTitleCell
+            sizeVariant="xs"
+            containerType={RecordTitleCellContainerType.PageHeader}
+          />
         </FieldContext.Provider>
       </StyledTitle>
       <StyledPaginationInformation>
