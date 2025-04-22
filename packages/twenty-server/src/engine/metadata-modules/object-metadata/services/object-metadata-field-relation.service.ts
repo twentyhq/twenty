@@ -6,6 +6,7 @@ import { capitalize } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
+import { FieldMetadataDefaultSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -165,15 +166,30 @@ export class ObjectMetadataFieldRelationService {
         objectMetadataId: targetObjectMetadata.id,
         workspaceId: workspaceId,
       });
+
+    const isTargetFieldMetadataManyToOneRelation =
+      (
+        targetFieldMetadataToUpdate as FieldMetadataEntity<FieldMetadataType.RELATION>
+      ).settings?.relationType === RelationType.MANY_TO_ONE;
+
     const targetFieldMetadata = await this.fieldMetadataRepository.save({
       id: targetFieldMetadataToUpdate.id,
       ...targetFieldMetadataUpdateData,
+      settings: {
+        ...(targetFieldMetadataToUpdate.settings as FieldMetadataDefaultSettings),
+        ...(isTargetFieldMetadataManyToOneRelation
+          ? {
+              joinColumnName: `${sourceObjectMetadata.nameSingular}Id`,
+            }
+          : {}),
+      },
     });
 
     const sourceFieldMetadataUpdateData = this.updateSourceFieldMetadata(
       sourceObjectMetadata,
       targetObjectMetadata,
     );
+
     const sourceFieldMetadataToUpdate =
       await this.fieldMetadataRepository.findOneByOrFail({
         standardId:
@@ -181,9 +197,23 @@ export class ObjectMetadataFieldRelationService {
         objectMetadataId: sourceObjectMetadata.id,
         workspaceId: workspaceId,
       });
+
+    const isSourceFieldMetadataManyToOneRelation =
+      (
+        sourceFieldMetadataToUpdate as FieldMetadataEntity<FieldMetadataType.RELATION>
+      ).settings?.relationType === RelationType.MANY_TO_ONE;
+
     const sourceFieldMetadata = await this.fieldMetadataRepository.save({
       id: sourceFieldMetadataToUpdate.id,
       ...sourceFieldMetadataUpdateData,
+      settings: {
+        ...(sourceFieldMetadataToUpdate.settings as FieldMetadataDefaultSettings),
+        ...(isSourceFieldMetadataManyToOneRelation
+          ? {
+              joinColumnName: `${targetObjectMetadata.nameSingular}Id`,
+            }
+          : {}),
+      },
     });
 
     return {
