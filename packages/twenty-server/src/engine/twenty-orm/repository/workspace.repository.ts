@@ -27,7 +27,7 @@ import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/works
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
-import { WorkspaceQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-query-builder';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -58,11 +58,11 @@ export class WorkspaceRepository<
   override createQueryBuilder<U extends T>(
     alias?: string,
     queryRunner?: QueryRunner,
-  ): WorkspaceQueryBuilder<U> {
+  ): WorkspaceSelectQueryBuilder<U> {
     const queryBuilder = super.createQueryBuilder(
       alias,
       queryRunner,
-    ) as unknown as WorkspaceQueryBuilder<U>;
+    ) as unknown as WorkspaceSelectQueryBuilder<U>;
     const isPermissionsV2Enabled =
       this.featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
 
@@ -73,7 +73,7 @@ export class WorkspaceRepository<
         throw new Error('Object records permissions are required');
       }
 
-      return new WorkspaceQueryBuilder(
+      return new WorkspaceSelectQueryBuilder(
         queryBuilder,
         this.objectRecordsPermissions,
         this.shouldBypassPermissionChecks,

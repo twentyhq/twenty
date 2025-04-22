@@ -1,23 +1,28 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import {
+  DeleteQueryBuilder,
+  InsertQueryBuilder,
   ObjectLiteral,
   SelectQueryBuilder,
   UpdateQueryBuilder,
   UpdateResult,
 } from 'typeorm';
+import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
 
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.util';
 import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
+import { WorkspaceInsertQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-insert-query-builder';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
-import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
+import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
 
-export class WorkspaceUpdateQueryBuilder<
+export class WorkspaceSoftDeleteQueryBuilder<
   Entity extends ObjectLiteral,
-> extends UpdateQueryBuilder<Entity> {
+> extends SoftDeleteQueryBuilder<Entity> {
   private objectRecordsPermissions: ObjectRecordsPermissions;
   private shouldBypassPermissionChecks: boolean;
+
   constructor(
-    queryBuilder: UpdateQueryBuilder<Entity>,
+    queryBuilder: SoftDeleteQueryBuilder<Entity>,
     objectRecordsPermissions: ObjectRecordsPermissions,
     shouldBypassPermissionChecks: boolean,
   ) {
@@ -46,31 +51,31 @@ export class WorkspaceUpdateQueryBuilder<
     );
   }
 
-  override delete(): WorkspaceDeleteQueryBuilder<Entity> {
+  override update(): UpdateQueryBuilder<Entity> {
+    const updateQueryBuilder = super.update();
+
+    return new WorkspaceUpdateQueryBuilder(
+      updateQueryBuilder,
+      this.objectRecordsPermissions,
+      this.shouldBypassPermissionChecks,
+    );
+  }
+
+  override insert(): InsertQueryBuilder<Entity> {
+    const insertQueryBuilder = super.insert();
+
+    return new WorkspaceInsertQueryBuilder(
+      insertQueryBuilder,
+      this.objectRecordsPermissions,
+      this.shouldBypassPermissionChecks,
+    );
+  }
+
+  override delete(): DeleteQueryBuilder<Entity> {
     const deleteQueryBuilder = super.delete();
 
-    return new WorkspaceDeleteQueryBuilder<Entity>(
+    return new WorkspaceDeleteQueryBuilder(
       deleteQueryBuilder,
-      this.objectRecordsPermissions,
-      this.shouldBypassPermissionChecks,
-    );
-  }
-
-  override softDelete(): WorkspaceSoftDeleteQueryBuilder<Entity> {
-    const softDeleteQueryBuilder = super.softDelete();
-
-    return new WorkspaceSoftDeleteQueryBuilder<Entity>(
-      softDeleteQueryBuilder,
-      this.objectRecordsPermissions,
-      this.shouldBypassPermissionChecks,
-    );
-  }
-
-  override restore(): WorkspaceSoftDeleteQueryBuilder<Entity> {
-    const restoreQueryBuilder = super.restore();
-
-    return new WorkspaceSoftDeleteQueryBuilder<Entity>(
-      restoreQueryBuilder,
       this.objectRecordsPermissions,
       this.shouldBypassPermissionChecks,
     );

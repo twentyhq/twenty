@@ -1,23 +1,28 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import {
+  DeleteQueryBuilder,
+  DeleteResult,
+  InsertQueryBuilder,
   ObjectLiteral,
   SelectQueryBuilder,
   UpdateQueryBuilder,
-  UpdateResult,
 } from 'typeorm';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.util';
-import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
+import { WorkspaceInsertQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-insert-query-builder';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
+import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
 
-export class WorkspaceUpdateQueryBuilder<
+export class WorkspaceDeleteQueryBuilder<
   Entity extends ObjectLiteral,
-> extends UpdateQueryBuilder<Entity> {
+> extends DeleteQueryBuilder<Entity> {
   private objectRecordsPermissions: ObjectRecordsPermissions;
   private shouldBypassPermissionChecks: boolean;
+
   constructor(
-    queryBuilder: UpdateQueryBuilder<Entity>,
+    queryBuilder: DeleteQueryBuilder<Entity>,
     objectRecordsPermissions: ObjectRecordsPermissions,
     shouldBypassPermissionChecks: boolean,
   ) {
@@ -26,7 +31,7 @@ export class WorkspaceUpdateQueryBuilder<
     this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
   }
 
-  override execute(): Promise<UpdateResult> {
+  override execute(): Promise<DeleteResult> {
     validateQueryIsPermittedOrThrow(
       this.expressionMap,
       this.objectRecordsPermissions,
@@ -46,11 +51,31 @@ export class WorkspaceUpdateQueryBuilder<
     );
   }
 
-  override delete(): WorkspaceDeleteQueryBuilder<Entity> {
-    const deleteQueryBuilder = super.delete();
+  override update(): WorkspaceUpdateQueryBuilder<Entity>;
 
-    return new WorkspaceDeleteQueryBuilder<Entity>(
-      deleteQueryBuilder,
+  override update(
+    updateSet: QueryDeepPartialEntity<Entity>,
+  ): WorkspaceUpdateQueryBuilder<Entity>;
+
+  override update(
+    updateSet?: QueryDeepPartialEntity<Entity>,
+  ): UpdateQueryBuilder<Entity> {
+    const updateQueryBuilder = updateSet
+      ? super.update(updateSet)
+      : super.update();
+
+    return new WorkspaceUpdateQueryBuilder<Entity>(
+      updateQueryBuilder,
+      this.objectRecordsPermissions,
+      this.shouldBypassPermissionChecks,
+    );
+  }
+
+  override insert(): InsertQueryBuilder<Entity> {
+    const insertQueryBuilder = super.insert();
+
+    return new WorkspaceInsertQueryBuilder(
+      insertQueryBuilder,
       this.objectRecordsPermissions,
       this.shouldBypassPermissionChecks,
     );

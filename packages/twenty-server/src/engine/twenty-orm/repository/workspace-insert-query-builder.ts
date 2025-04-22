@@ -1,23 +1,25 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import {
+  InsertQueryBuilder,
   ObjectLiteral,
   SelectQueryBuilder,
   UpdateQueryBuilder,
-  UpdateResult,
 } from 'typeorm';
 
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.util';
 import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
+import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
 
-export class WorkspaceUpdateQueryBuilder<
+export class WorkspaceInsertQueryBuilder<
   Entity extends ObjectLiteral,
-> extends UpdateQueryBuilder<Entity> {
+> extends InsertQueryBuilder<Entity> {
   private objectRecordsPermissions: ObjectRecordsPermissions;
   private shouldBypassPermissionChecks: boolean;
+
   constructor(
-    queryBuilder: UpdateQueryBuilder<Entity>,
+    queryBuilder: InsertQueryBuilder<Entity>,
     objectRecordsPermissions: ObjectRecordsPermissions,
     shouldBypassPermissionChecks: boolean,
   ) {
@@ -26,7 +28,7 @@ export class WorkspaceUpdateQueryBuilder<
     this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
   }
 
-  override execute(): Promise<UpdateResult> {
+  override execute(): Promise<any> {
     validateQueryIsPermittedOrThrow(
       this.expressionMap,
       this.objectRecordsPermissions,
@@ -41,6 +43,16 @@ export class WorkspaceUpdateQueryBuilder<
 
     return new WorkspaceSelectQueryBuilder(
       selectQueryBuilder,
+      this.objectRecordsPermissions,
+      this.shouldBypassPermissionChecks,
+    );
+  }
+
+  override update(): UpdateQueryBuilder<Entity> {
+    const updateQueryBuilder = super.update();
+
+    return new WorkspaceUpdateQueryBuilder(
+      updateQueryBuilder,
       this.objectRecordsPermissions,
       this.shouldBypassPermissionChecks,
     );
