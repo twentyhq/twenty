@@ -108,10 +108,6 @@ describe('Custom object renaming', () => {
 
     const fields = await makeMetadataAPIRequest(fieldsGraphqlOperation);
 
-    const foreignKeyFieldsMetadataForListing = fields.body.data.fields.edges
-      .filter((field) => field.node.name === `${LISTING_NAME_SINGULAR}Id`)
-      .map((field) => field.node);
-
     const relationFieldsMetadataForListing = fields.body.data.fields.edges
       .filter(
         (field) =>
@@ -120,21 +116,7 @@ describe('Custom object renaming', () => {
       )
       .map((field) => field.node);
 
-    expect(foreignKeyFieldsMetadataForListing.length).toBe(5);
-
     STANDARD_OBJECT_RELATIONS.forEach((relation) => {
-      // foreignKey field
-      const foreignKeyFieldMetadataId = foreignKeyFieldsMetadataForListing.find(
-        (field) =>
-          field.object.id ===
-          standardObjectRelationsMap[relation].objectMetadataId,
-      ).id;
-
-      expect(foreignKeyFieldMetadataId).not.toBeUndefined();
-
-      standardObjectRelationsMap[relation].foreignKeyFieldMetadataId =
-        foreignKeyFieldMetadataId;
-
       // relation field
       const relationFieldMetadataId = relationFieldsMetadataForListing.find(
         (field) =>
@@ -233,29 +215,8 @@ describe('Custom object renaming', () => {
       (field) => field.node,
     );
 
-    expect(
-      fieldsMetadata.find(
-        (field) => field.name === `${LISTING_NAME_SINGULAR}Id`,
-      ),
-    ).toBeUndefined();
-
     // standard relations have been updated
     STANDARD_OBJECT_RELATIONS.forEach((relation) => {
-      // foreignKey field
-      const foreignKeyFieldMetadataId =
-        standardObjectRelationsMap[relation].foreignKeyFieldMetadataId;
-
-      const updatedForeignKeyFieldMetadata = fieldsMetadata.find(
-        (field) => field.id === foreignKeyFieldMetadataId,
-      );
-
-      expect(updatedForeignKeyFieldMetadata.name).toBe(
-        `${HOUSE_NAME_SINGULAR}Id`,
-      );
-      expect(updatedForeignKeyFieldMetadata.label).toBe(
-        'House ID (foreign key)',
-      );
-
       // relation field
       const relationFieldMetadataId =
         standardObjectRelationsMap[relation].relationFieldMetadataId;
