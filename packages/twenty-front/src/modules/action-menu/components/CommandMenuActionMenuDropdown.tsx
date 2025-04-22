@@ -7,6 +7,9 @@ import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-men
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
+import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -41,6 +44,16 @@ export const CommandMenuActionMenuDropdown = () => {
     [toggleDropdown],
   );
 
+  const recordSelectionActions = actions.filter(
+    (action) => action.scope === ActionScope.RecordSelection,
+  );
+
+  const selectableItemIdArray = recordSelectionActions.map(
+    (action) => action.key,
+  );
+
+  const { setSelectedItemId } = useSelectableList(actionMenuId);
+
   return (
     <Dropdown
       dropdownId={getRightDrawerActionMenuDropdownIdFromActionMenuId(
@@ -56,13 +69,24 @@ export const CommandMenuActionMenuDropdown = () => {
       }
       dropdownPlacement="top-end"
       dropdownOffset={{ y: parseInt(theme.spacing(2), 10) }}
+      onOpen={() => {
+        setSelectedItemId(selectableItemIdArray[0]);
+      }}
       dropdownComponents={
         <DropdownMenuItemsContainer>
-          {actions
-            .filter((action) => action.scope === ActionScope.RecordSelection)
-            .map((action) => (
-              <ActionComponent action={action} key={action.key} />
+          <SelectableList
+            selectableListInstanceId={actionMenuId}
+            hotkeyScope={
+              CommandMenuActionMenuDropdownHotkeyScope.CommandMenuActionMenuDropdown
+            }
+            selectableItemIdArray={selectableItemIdArray}
+          >
+            {recordSelectionActions.map((action) => (
+              <SelectableItem itemId={action.key} key={action.key}>
+                <ActionComponent action={action} />
+              </SelectableItem>
             ))}
+          </SelectableList>
         </DropdownMenuItemsContainer>
       }
     />

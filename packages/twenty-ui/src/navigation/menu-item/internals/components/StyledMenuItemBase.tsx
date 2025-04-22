@@ -125,6 +125,7 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
   disabled?: boolean;
   isIconDisplayedOnHoverOnly?: boolean;
   cursor?: 'drag' | 'default' | 'not-allowed';
+  selected?: boolean;
 }>`
   ${({ isIconDisplayedOnHoverOnly, theme }) =>
     isIconDisplayedOnHoverOnly &&
@@ -140,6 +141,15 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
           opacity: 1;
           position: static;
         }
+      }
+    `};
+
+  ${({ selected, theme }) =>
+    selected &&
+    css`
+      background: ${theme.background.transparent.light};
+      &:hover {
+        background: ${theme.background.transparent.medium};
       }
     `};
 

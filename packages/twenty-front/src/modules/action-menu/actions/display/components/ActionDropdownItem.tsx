@@ -1,5 +1,14 @@
 import { ActionDisplayProps } from '@/action-menu/actions/display/components/ActionDisplay';
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
+import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { useSelectableListListenToEnterHotkeyOnItem } from '@/ui/layout/selectable-list/hooks/useSelectableListListenToEnterHotkeyOnItem';
+import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
+import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
+import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -22,12 +31,36 @@ export const ActionDropdownItem = ({
     }
   };
 
+  const selectableListInstanceId = useAvailableComponentInstanceIdOrThrow(
+    SelectableListComponentInstanceContext,
+  );
+
+  const isSelected = useRecoilComponentFamilyValueV2(
+    isSelectedItemIdComponentFamilySelector,
+    action.key,
+    selectableListInstanceId,
+  );
+
+  const { actionMenuType } = useContext(ActionMenuContext);
+
+  useSelectableListListenToEnterHotkeyOnItem({
+    hotkeyScope:
+      actionMenuType === 'command-menu-show-page-action-menu-dropdown'
+        ? AppHotkeyScope.CommandMenuOpen
+        : '',
+    itemId: action.key,
+    onEnter: handleClick,
+  });
+
   return (
-    <MenuItem
-      key={action.key}
-      LeftIcon={action.Icon}
-      onClick={handleClick}
-      text={getActionLabel(action.label)}
-    />
+    <SelectableItem itemId={action.key}>
+      <MenuItem
+        selected={isSelected}
+        key={action.key}
+        LeftIcon={action.Icon}
+        onClick={handleClick}
+        text={getActionLabel(action.label)}
+      />
+    </SelectableItem>
   );
 };
