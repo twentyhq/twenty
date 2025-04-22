@@ -70,35 +70,36 @@ export class WorkspacePermissionsCacheService {
       workspaceId,
     );
 
-    let currentRolesPermissions: ObjectRecordsPermissionsByRoleId | undefined =
-      undefined;
+    try {
+      let currentRolesPermissions: ObjectRecordsPermissionsByRoleId | undefined;
 
-    if (roleIds) {
-      currentRolesPermissions =
-        await this.workspacePermissionsCacheStorageService.getRolesPermissions(
+      if (roleIds) {
+        currentRolesPermissions =
+          await this.workspacePermissionsCacheStorageService.getRolesPermissions(
+            workspaceId,
+          );
+      }
+
+      const recomputedRolesPermissions =
+        await this.getObjectRecordPermissionsForRoles({
           workspaceId,
-        );
-    }
+          isPermissionsV2Enabled,
+          roleIds,
+        });
 
-    const recomputedRolesPermissions =
-      await this.getObjectRecordPermissionsForRoles({
+      const freshObjectRecordsPermissionsByRoleId = roleIds
+        ? { ...currentRolesPermissions, ...recomputedRolesPermissions }
+        : recomputedRolesPermissions;
+
+      await this.workspacePermissionsCacheStorageService.setRolesPermissions(
         workspaceId,
-        isPermissionsV2Enabled,
-        roleIds,
-      });
-
-    const freshObjectRecordsPermissionsByRoleId = roleIds
-      ? { ...currentRolesPermissions, ...recomputedRolesPermissions }
-      : recomputedRolesPermissions;
-
-    await this.workspacePermissionsCacheStorageService.setRolesPermissions(
-      workspaceId,
-      freshObjectRecordsPermissionsByRoleId,
-    );
-
-    await this.workspacePermissionsCacheStorageService.removeRolesPermissionsOngoingCachingLock(
-      workspaceId,
-    );
+        freshObjectRecordsPermissionsByRoleId,
+      );
+    } finally {
+      await this.workspacePermissionsCacheStorageService.removeRolesPermissionsOngoingCachingLock(
+        workspaceId,
+      );
+    }
   }
 
   async recomputeUserWorkspaceRoleMapCache({
@@ -121,19 +122,21 @@ export class WorkspacePermissionsCacheService {
       workspaceId,
     );
 
-    const freshUserWorkspaceRoleMap =
-      await this.getUserWorkspaceRoleMapFromDatabase({
+    try {
+      const freshUserWorkspaceRoleMap =
+        await this.getUserWorkspaceRoleMapFromDatabase({
+          workspaceId,
+        });
+
+      await this.workspacePermissionsCacheStorageService.setUserWorkspaceRoleMap(
         workspaceId,
-      });
-
-    await this.workspacePermissionsCacheStorageService.setUserWorkspaceRoleMap(
-      workspaceId,
-      freshUserWorkspaceRoleMap,
-    );
-
-    await this.workspacePermissionsCacheStorageService.removeUserWorkspaceRoleMapOngoingCachingLock(
-      workspaceId,
-    );
+        freshUserWorkspaceRoleMap,
+      );
+    } finally {
+      await this.workspacePermissionsCacheStorageService.removeUserWorkspaceRoleMapOngoingCachingLock(
+        workspaceId,
+      );
+    }
   }
 
   async getRolesPermissionsFromCache({

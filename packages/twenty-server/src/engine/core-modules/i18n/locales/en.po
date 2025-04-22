@@ -98,6 +98,11 @@ msgstr "A note target"
 msgid "A person"
 msgstr "A person"
 
+#. js-lingui-id: 5OWXGy
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "A product that can be sold"
+msgstr "A product that can be sold"
+
 #. js-lingui-id: mkFXEH
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "A task"
@@ -641,9 +646,15 @@ msgid "Charge recurrence"
 msgstr "Charge recurrence"
 
 #. js-lingui-id: Kb+0BT
+#: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Charges"
 msgstr "Charges"
+
+#. js-lingui-id: hlvAAR
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Charges using this product"
+msgstr "Charges using this product"
 
 #. js-lingui-id: 3wV73y
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -784,6 +795,11 @@ msgstr "Contact’s X/Twitter account"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Context"
 msgstr "Context"
+
+#. js-lingui-id: I99Miw
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Cost"
+msgstr "Cost"
 
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1759,6 +1775,7 @@ msgstr "Messaging provider refresh token"
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -2071,6 +2088,7 @@ msgstr "Point of Contact"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -2112,6 +2130,7 @@ msgid "Preferred language"
 msgstr "Preferred language"
 
 #. js-lingui-id: a7u1N9
+#: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Price"
 msgstr "Price"
@@ -2122,9 +2141,55 @@ msgid "Probability"
 msgstr "Probability"
 
 #. js-lingui-id: K47k8R
+#: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Product"
 msgstr "Product"
+
+#. js-lingui-id: bodmtG
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Product cost"
+msgstr "Product cost"
+
+#. js-lingui-id: vpqv+B
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Product linked to this charge"
+msgstr "Product linked to this charge"
+
+#. js-lingui-id: mZW+k8
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Product name"
+msgstr "Product name"
+
+#. js-lingui-id: Q033BY
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Product Name"
+msgstr "Product Name"
+
+#. js-lingui-id: jGuXaa
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Product record position"
+msgstr "Product record position"
+
+#. js-lingui-id: rjawDw
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Product sale price"
+msgstr "Product sale price"
+
+#. js-lingui-id: RTFwCi
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Product status (active products can be used in charges)"
+msgstr "Product status (active products can be used in charges)"
+
+#. js-lingui-id: C74sUy
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Product unit of measure (e.g., kg, unit, liter)"
+msgstr "Product unit of measure (e.g., kg, unit, liter)"
+
+#. js-lingui-id: N0qXpE
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Products"
+msgstr "Products"
 
 #. js-lingui-id: CrfRPa
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -2236,6 +2301,7 @@ msgstr "Start Date"
 
 #. js-lingui-id: uAQUqI
 #: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/product/standard-objects/product.workspace-entity.ts
 msgid "Status"
 msgstr "Status"
 
@@ -2243,6 +2309,12 @@ msgstr "Status"
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Statuses"
 msgstr "Statuses"
+
+#. js-lingui-id: g4jxXh
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
+msgid "Sub field name"
+msgstr "Sub field name"
 
 #. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -2657,6 +2729,11 @@ msgstr "Traceables"
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Type"
 msgstr "Type"
+
+#. js-lingui-id: aSwfbR
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Unit"
+msgstr "Unit"
 
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts

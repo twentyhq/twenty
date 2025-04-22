@@ -1,5 +1,6 @@
 import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
+import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordTitleCellId } from '@/object-record/record-title-cell/utils/getRecordTitleCellId';
 import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
@@ -21,13 +22,15 @@ export const useRecordTitleCell = () => {
       ({
         recordId,
         fieldMetadataId,
+        containerType,
       }: {
         recordId: string;
         fieldMetadataId: string;
+        containerType: RecordTitleCellContainerType;
       }) => {
         set(
           isInlineCellInEditModeScopedState(
-            getRecordTitleCellId(recordId, fieldMetadataId),
+            getRecordTitleCellId(recordId, fieldMetadataId, containerType),
           ),
           false,
         );
@@ -44,15 +47,17 @@ export const useRecordTitleCell = () => {
       ({
         recordId,
         fieldMetadataId,
+        containerType,
         customEditHotkeyScopeForField,
       }: {
         recordId: string;
         fieldMetadataId: string;
+        containerType: RecordTitleCellContainerType;
         customEditHotkeyScopeForField?: HotkeyScope;
       }) => {
         set(
           isInlineCellInEditModeScopedState(
-            getRecordTitleCellId(recordId, fieldMetadataId),
+            getRecordTitleCellId(recordId, fieldMetadataId, containerType),
           ),
           true,
         );

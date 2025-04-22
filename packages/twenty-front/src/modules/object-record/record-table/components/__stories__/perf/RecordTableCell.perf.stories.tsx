@@ -93,7 +93,7 @@ const meta: Meta = {
                     onOpenTableCell: () => {},
                     onMoveFocus: () => {},
                     onCloseTableCell: () => {},
-                    onMoveSoftFocusToCurrentCell: () => {},
+                    onMoveHoverToCurrentCell: () => {},
                     onActionMenuDropdownOpened: () => {},
                     onCellMouseEnter: () => {},
                   }}
@@ -122,10 +122,7 @@ const meta: Meta = {
                       <RecordTableCellContext.Provider
                         value={{
                           columnDefinition: mockPerformance.fieldDefinition,
-                          columnIndex: 0,
                           cellPosition: { row: 0, column: 0 },
-                          hasSoftFocus: false,
-                          isInEditMode: false,
                         }}
                       >
                         <FieldContext.Provider

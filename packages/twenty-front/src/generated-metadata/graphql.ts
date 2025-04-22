@@ -626,6 +626,15 @@ export type CustomDomainValidRecords = {
   records: Array<CustomDomainRecord>;
 };
 
+/** Database Event Action */
+export enum DatabaseEventAction {
+  CREATED = 'CREATED',
+  DELETED = 'DELETED',
+  DESTROYED = 'DESTROYED',
+  RESTORED = 'RESTORED',
+  UPDATED = 'UPDATED'
+}
+
 export type DateFilter = {
   eq?: InputMaybe<Scalars['Date']['input']>;
   gt?: InputMaybe<Scalars['Date']['input']>;
@@ -1830,6 +1839,21 @@ export type ObjectStandardOverrides = {
   translations?: Maybe<Scalars['JSON']['output']>;
 };
 
+export type OnDbEventDto = {
+  __typename?: 'OnDbEventDTO';
+  action: DatabaseEventAction;
+  eventDate: Scalars['DateTime']['output'];
+  objectNameSingular: Scalars['String']['output'];
+  record: Scalars['JSON']['output'];
+  updatedFields?: Maybe<Array<Scalars['String']['output']>>;
+};
+
+export type OnDbEventInput = {
+  action?: InputMaybe<DatabaseEventAction>;
+  objectNameSingular?: InputMaybe<Scalars['String']['input']>;
+  recordId?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** Onboarding status */
 export enum OnboardingStatus {
   COMPLETED = 'COMPLETED',
@@ -2570,6 +2594,16 @@ export type SubmitFormStepInput = {
   stepId: Scalars['String']['input'];
   /** Workflow run ID */
   workflowRunId: Scalars['String']['input'];
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  onDbEvent: OnDbEventDto;
+};
+
+
+export type SubscriptionOnDbEventArgs = {
+  input: OnDbEventInput;
 };
 
 export enum SubscriptionInterval {

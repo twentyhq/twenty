@@ -118,7 +118,7 @@ export class WorkflowVisualizerPage {
       .getByTestId(`row-id-${this.workflowId}`)
       .getByRole('link', { name: this.workflowName });
 
-    await workflowLink.click();
+    await workflowLink.click({ force: true });
 
     await this.waitForWorkflowVisualizerLoad();
   }

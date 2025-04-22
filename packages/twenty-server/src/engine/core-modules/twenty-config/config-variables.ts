@@ -662,17 +662,6 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ExceptionHandler,
-    description: 'Release version for Sentry logging',
-  })
-  @ValidateIf(
-    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
-  )
-  @IsString()
-  @IsOptional()
-  SENTRY_RELEASE: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ExceptionHandler,
     description: 'Environment name for Sentry logging',
   })
   @ValidateIf(

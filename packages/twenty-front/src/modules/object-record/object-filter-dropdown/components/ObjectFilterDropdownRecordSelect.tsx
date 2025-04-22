@@ -22,8 +22,8 @@ import { RelationFilterValue } from '@/views/view-filter-value/types/RelationFil
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 import { IconUserCircle } from 'twenty-ui/display';
+import { v4 } from 'uuid';
 
 export const EMPTY_FILTER_VALUE: string = JSON.stringify({
   isCurrentWorkspaceMemberSelected: false,
@@ -235,6 +235,7 @@ export const ObjectFilterDropdownRecordSelect = ({
             duplicateFilterInCurrentRecordFilters.recordFilterGroupId,
           positionInRecordFilterGroup:
             duplicateFilterInCurrentRecordFilters.positionInRecordFilterGroup,
+          subFieldName: duplicateFilterInCurrentRecordFilters.subFieldName,
         });
       } else {
         applyRecordFilter({
@@ -250,6 +251,7 @@ export const ObjectFilterDropdownRecordSelect = ({
           recordFilterGroupId: selectedFilter?.recordFilterGroupId,
           positionInRecordFilterGroup:
             selectedFilter?.positionInRecordFilterGroup,
+          subFieldName: selectedFilter?.subFieldName,
         });
       }
     }
