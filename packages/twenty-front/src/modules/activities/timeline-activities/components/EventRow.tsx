@@ -13,6 +13,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { isDefined } from 'twenty-shared/utils';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -90,6 +91,15 @@ export const EventRow = ({
   event,
   mainObjectMetadataItem,
 }: EventRowProps) => {
+  // What about being deleted ? I think this should be displayed as well but we loose it here
+  // TO check prastoin
+  if (
+    !isDefined(event.linkedRecordId) ||
+    !isDefined(event.linkedObjectMetadataId)
+  ) {
+    return null;
+  }
+
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { recordId } = useContext(TimelineActivityContext);

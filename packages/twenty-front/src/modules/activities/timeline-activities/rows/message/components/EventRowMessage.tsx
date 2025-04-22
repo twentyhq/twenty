@@ -49,10 +49,12 @@ export const EventRowMessage = ({
         <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
       </StyledRowContainer>
       <EventCard isOpen={isOpen}>
-        <EventCardMessage
-          messageId={event.linkedRecordId}
-          authorFullName={authorFullName}
-        />
+        {event.linkedRecordId && (
+          <EventCardMessage
+            messageId={event.linkedRecordId}
+            authorFullName={authorFullName}
+          />
+        )}
       </EventCard>
     </StyledEventRowMessageContainer>
   );

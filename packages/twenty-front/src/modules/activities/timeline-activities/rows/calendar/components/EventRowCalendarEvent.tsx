@@ -45,9 +45,11 @@ export const EventRowCalendarEvent = ({
         </StyledEventRowItemAction>
         <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
       </StyledRowContainer>
-      <EventCard isOpen={isOpen}>
-        <EventCardCalendarEvent calendarEventId={event.linkedRecordId} />
-      </EventCard>
+      {event.linkedRecordId && (
+        <EventCard isOpen={isOpen}>
+          <EventCardCalendarEvent calendarEventId={event.linkedRecordId} />
+        </EventCard>
+      )}
     </StyledEventRowCalendarEventContainer>
   );
 };

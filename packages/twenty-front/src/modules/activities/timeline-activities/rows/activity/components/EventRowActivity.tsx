@@ -9,8 +9,8 @@ import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordIn
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { isNonEmptyString } from '@sniptt/guards';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 type EventRowActivityProps = EventRowDynamicComponentProps;
 
@@ -98,12 +98,16 @@ export const EventRowActivity = ({
             {`${eventAction} a related ${eventObject}`}
           </StyledEventRowItemAction>
           <StyledLinkedActivity
-            onClick={() =>
+            onClick={() => {
+              if (!event.linkedRecordId) {
+                return;
+              }
+              
               openRecordInCommandMenu({
                 recordId: event.linkedRecordId,
                 objectNameSingular,
-              })
-            }
+              });
+            }}
           >
             <OverflowingTextWithTooltip text={activityTitle} />
           </StyledLinkedActivity>
