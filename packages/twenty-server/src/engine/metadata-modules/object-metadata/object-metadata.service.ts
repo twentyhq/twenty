@@ -371,8 +371,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     input: DeleteOneObjectInput,
     workspaceId: string,
   ): Promise<ObjectMetadataEntity> {
+    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsNewRelationEnabled,
+      workspaceId,
+    );
+
     const objectMetadata = await this.objectMetadataRepository.findOne({
       relations: [
+        'fields',
+        'fields.object',
+        'fields.relationTargetFieldMetadata',
+        'fields.relationTargetFieldMetadata.object',
         'fromRelations.fromFieldMetadata',
         'fromRelations.toFieldMetadata',
         'toRelations.fromFieldMetadata',
@@ -404,6 +413,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await this.objectMetadataMigrationService.deleteAllRelationsAndDropTable(
         objectMetadata,
         workspaceId,
+        isNewRelationEnabled,
       );
     }
 
@@ -416,6 +426,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       workspaceId,
     );
 
+    await this.fieldMetadataRepository.delete({
+      relationTargetObjectMetadataId: objectMetadata.id,
+    });
     await this.objectMetadataRepository.delete(objectMetadata.id);
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
