@@ -1,25 +1,17 @@
-import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
-
-import pRetry from 'p-retry';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { DatabaseConfigDriverInterface } from 'src/engine/core-modules/twenty-config/drivers/interfaces/database-config-driver.interface';
 
 import { ConfigCacheService } from 'src/engine/core-modules/twenty-config/cache/config-cache.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
-import { DATABASE_CONFIG_DRIVER_RETRY_OPTIONS } from 'src/engine/core-modules/twenty-config/constants/database-config-driver-retry-options';
-import { ConfigInitializationState } from 'src/engine/core-modules/twenty-config/enums/config-initialization-state.enum';
 import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
 import { isEnvOnlyConfigVar } from 'src/engine/core-modules/twenty-config/utils/is-env-only-config-var.util';
 
 import { EnvironmentConfigDriver } from './environment-config.driver';
 
 @Injectable()
-export class DatabaseConfigDriver
-  implements DatabaseConfigDriverInterface, OnModuleDestroy
-{
-  private configInitializationState = ConfigInitializationState.NOT_INITIALIZED;
-  private configInitializationPromise: Promise<void> | null = null;
-  private abortController: AbortController | null = null;
+export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
+  private initializationPromise: Promise<void> | null = null;
   private readonly logger = new Logger(DatabaseConfigDriver.name);
 
   constructor(
@@ -29,68 +21,38 @@ export class DatabaseConfigDriver
   ) {}
 
   async initialize(): Promise<void> {
-    if (
-      this.configInitializationState === ConfigInitializationState.INITIALIZED
-    ) {
-      return Promise.resolve();
-    }
-    if (this.configInitializationPromise) {
-      return this.configInitializationPromise;
+    if (this.initializationPromise) {
+      this.logger.verbose('Config database initialization already in progress');
+
+      return this.initializationPromise;
     }
 
-    if (this.configInitializationState === ConfigInitializationState.FAILED) {
-      this.configInitializationState =
-        ConfigInitializationState.NOT_INITIALIZED;
-    }
+    this.logger.debug('Starting database config initialization');
 
-    this.configInitializationPromise = this.doInitialize();
+    const promise = this.loadAllConfigVarsFromDb()
+      .then((loadedCount) => {
+        this.logger.log(
+          `Database config ready: loaded ${loadedCount} variables`,
+        );
+      })
+      .catch((error) => {
+        this.logger.error(
+          'Failed to load database config: unable to connect to database or fetch config',
+          error instanceof Error ? error.stack : error,
+        );
+        throw error;
+      })
+      .finally(() => {
+        this.initializationPromise = null;
+      });
 
-    return this.configInitializationPromise;
-  }
+    this.initializationPromise = promise;
 
-  private async doInitialize(): Promise<void> {
-    this.abortController = new AbortController();
-
-    try {
-      this.configInitializationState = ConfigInitializationState.INITIALIZING;
-
-      await pRetry(
-        async () => {
-          if (this.abortController?.signal.aborted) {
-            throw new pRetry.AbortError('Initialization aborted');
-          }
-
-          await this.loadAllConfigVarsFromDb();
-
-          return true;
-        },
-        {
-          ...DATABASE_CONFIG_DRIVER_RETRY_OPTIONS,
-          onFailedAttempt: (error) => {
-            this.logger.error(
-              `Failed to initialize database driver (attempt ${error.attemptNumber}/${DATABASE_CONFIG_DRIVER_RETRY_OPTIONS.retries})`,
-              error instanceof Error ? error.stack : error,
-            );
-          },
-        },
-      );
-
-      this.configInitializationState = ConfigInitializationState.INITIALIZED;
-      this.logger.log('Database config driver successfully initialized');
-    } catch (error) {
-      this.logger.error(
-        'Failed to initialize database driver after maximum retries',
-        error instanceof Error ? error.stack : error,
-      );
-      this.configInitializationState = ConfigInitializationState.FAILED;
-    } finally {
-      this.configInitializationPromise = null;
-      this.abortController = null;
-    }
+    return promise;
   }
 
   get<T extends keyof ConfigVariables>(key: T): ConfigVariables[T] {
-    if (this.shouldUseEnvironment(key)) {
+    if (isEnvOnlyConfigVar(key)) {
       return this.environmentDriver.get(key);
     }
 
@@ -113,7 +75,7 @@ export class DatabaseConfigDriver
     key: T,
     value: ConfigVariables[T],
   ): Promise<void> {
-    if (this.shouldUseEnvironment(key)) {
+    if (isEnvOnlyConfigVar(key)) {
       throw new Error(
         `Cannot update environment-only variable: ${key as string}`,
       );
@@ -122,6 +84,7 @@ export class DatabaseConfigDriver
     try {
       await this.configStorage.set(key, value);
       this.configCache.set(key, value);
+      this.logger.debug(`Updated config variable: ${key as string}`);
     } catch (error) {
       this.logger.error(`Failed to update config for ${key as string}`, error);
       throw error;
@@ -134,8 +97,14 @@ export class DatabaseConfigDriver
 
       if (value !== undefined) {
         this.configCache.set(key, value);
+        this.logger.debug(
+          `Refreshed config variable in cache: ${key as string}`,
+        );
       } else {
         this.configCache.markKeyAsMissing(key);
+        this.logger.debug(
+          `Marked config variable as missing: ${key as string}`,
+        );
       }
     } catch (error) {
       this.logger.error(`Failed to fetch config for ${key as string}`, error);
@@ -151,24 +120,16 @@ export class DatabaseConfigDriver
     return this.configCache.getCacheInfo();
   }
 
-  private shouldUseEnvironment(key: keyof ConfigVariables): boolean {
-    return (
-      this.configInitializationState !==
-        ConfigInitializationState.INITIALIZED || isEnvOnlyConfigVar(key)
-    );
-  }
-
-  private async loadAllConfigVarsFromDb(): Promise<void> {
+  private async loadAllConfigVarsFromDb(): Promise<number> {
     try {
+      this.logger.debug('Fetching all config variables from database');
       const configVars = await this.configStorage.loadAll();
 
       for (const [key, value] of configVars.entries()) {
         this.configCache.set(key, value);
       }
 
-      this.logger.log(
-        `Loaded ${configVars.size} config variables from database`,
-      );
+      return configVars.size;
     } catch (error) {
       this.logger.error('Failed to load config variables from database', error);
       throw error;
@@ -176,24 +137,10 @@ export class DatabaseConfigDriver
   }
 
   private async scheduleRefresh(key: keyof ConfigVariables): Promise<void> {
-    if (
-      this.configInitializationState !== ConfigInitializationState.INITIALIZED
-    ) {
-      return;
-    }
-
     setImmediate(async () => {
       await this.fetchAndCacheConfig(key).catch((error) => {
         this.logger.error(`Failed to fetch config for ${key as string}`, error);
       });
     });
-  }
-
-  onModuleDestroy() {
-    // Abort any in-progress initialization
-    if (this.abortController) {
-      this.abortController.abort();
-      this.abortController = null;
-    }
   }
 }

@@ -166,46 +166,6 @@ describe('TwentyConfigService', () => {
   });
 
   describe('onModuleInit', () => {
-    it('should set initialization state to INITIALIZED when db config is disabled', async () => {
-      jest.spyOn(configService, 'get').mockReturnValue(false);
-
-      const newService = new TwentyConfigService(
-        configService,
-        databaseConfigDriver,
-        environmentConfigDriver,
-      );
-
-      await newService.onModuleInit();
-
-      const privateProps =
-        newService as unknown as TwentyConfigServicePrivateProps;
-
-      expect(privateProps.configInitializationState).toBe(
-        ConfigInitializationState.INITIALIZED,
-      );
-    });
-
-    it('should not change initialization state when db config is enabled', async () => {
-      jest.spyOn(configService, 'get').mockReturnValue(true);
-
-      const newService = new TwentyConfigService(
-        configService,
-        databaseConfigDriver,
-        environmentConfigDriver,
-      );
-
-      await newService.onModuleInit();
-
-      const privateProps =
-        newService as unknown as TwentyConfigServicePrivateProps;
-
-      expect(privateProps.configInitializationState).toBe(
-        ConfigInitializationState.NOT_INITIALIZED,
-      );
-    });
-  });
-
-  describe('onApplicationBootstrap', () => {
     it('should do nothing when db config is disabled', async () => {
       jest.spyOn(configService, 'get').mockReturnValue(false);
 
@@ -215,7 +175,7 @@ describe('TwentyConfigService', () => {
         environmentConfigDriver,
       );
 
-      await newService.onApplicationBootstrap();
+      await newService.onModuleInit();
 
       expect(databaseConfigDriver.initialize).not.toHaveBeenCalled();
 
@@ -234,7 +194,7 @@ describe('TwentyConfigService', () => {
         environmentConfigDriver,
       );
 
-      await newService.onApplicationBootstrap();
+      await newService.onModuleInit();
 
       expect(databaseConfigDriver.initialize).toHaveBeenCalled();
 
@@ -259,7 +219,7 @@ describe('TwentyConfigService', () => {
         environmentConfigDriver,
       );
 
-      await newService.onApplicationBootstrap();
+      await newService.onModuleInit();
 
       expect(databaseConfigDriver.initialize).toHaveBeenCalled();
 

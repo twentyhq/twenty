@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  Logger,
-  OnApplicationBootstrap,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { isString } from 'class-validator';
@@ -20,9 +15,7 @@ import { configVariableMaskSensitiveData } from 'src/engine/core-modules/twenty-
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 @Injectable()
-export class TwentyConfigService
-  implements OnModuleInit, OnApplicationBootstrap
-{
+export class TwentyConfigService implements OnModuleInit {
   private driver: DatabaseConfigDriver | EnvironmentConfigDriver;
   private configInitializationState = ConfigInitializationState.NOT_INITIALIZED;
   private readonly isConfigVarInDbEnabled: boolean;
@@ -35,11 +28,8 @@ export class TwentyConfigService
   ) {
     this.driver = this.environmentConfigDriver;
 
-    const configVarInDb = this.configService.get(
-      'IS_CONFIG_VARIABLES_IN_DB_ENABLED',
-    );
-
-    this.isConfigVarInDbEnabled = configVarInDb === true;
+    this.isConfigVarInDbEnabled =
+      this.configService.get('IS_CONFIG_VARIABLES_IN_DB_ENABLED') === true;
 
     this.logger.log(
       `Database configuration is ${this.isConfigVarInDbEnabled ? 'enabled' : 'disabled'}`,
@@ -53,16 +43,6 @@ export class TwentyConfigService
       );
       this.configInitializationState = ConfigInitializationState.INITIALIZED;
 
-      return;
-    }
-
-    this.logger.log(
-      'Database configuration is enabled, will initialize after application bootstrap',
-    );
-  }
-
-  async onApplicationBootstrap() {
-    if (!this.isConfigVarInDbEnabled) {
       return;
     }
 

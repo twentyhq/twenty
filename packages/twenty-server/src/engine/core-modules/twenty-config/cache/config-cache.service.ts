@@ -110,6 +110,10 @@ export class ConfigCacheService implements OnModuleDestroy {
     return now - entry.timestamp > entry.ttl;
   }
 
+  // Should this process be done using @nestjs/schedule?
+  // setInterval is not a good idea because it will not be able to run in a cluster?
+  // Maybe it should be a part of the DatabaseConfigDriver? -- for now kept it here to have a single place to control the cache
+
   private startCacheScavenging(): void {
     this.cacheScavengeInterval = setInterval(() => {
       this.scavengeCache();
