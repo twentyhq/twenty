@@ -69,15 +69,14 @@ export const EventsGroup = ({
       </StyledMonthSeperator>
       <StyledActivityGroupContainer>
         <StyledActivityGroupBar />
-        {group.items.map(
-          (event, index) =>
-              <EventRow
-                mainObjectMetadataItem={mainObjectMetadataItem}
-                key={index}
-                event={event}
-                isLastEvent={index === group.items.length - 1}
-              />
-        )}
+        {group.items.map((event, index) => (
+          <EventRow
+            mainObjectMetadataItem={mainObjectMetadataItem}
+            key={index}
+            event={event}
+            isLastEvent={index === group.items.length - 1}
+          />
+        ))}
       </StyledActivityGroupContainer>
     </StyledActivityGroup>
   );

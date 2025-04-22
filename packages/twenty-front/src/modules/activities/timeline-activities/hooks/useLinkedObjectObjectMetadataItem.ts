@@ -4,14 +4,13 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const useLinkedObjectObjectMetadataItem = (id: string | null) => {
-  if (id === null) {
-    return null;
-  }
-
   const objectMetadataItems: ObjectMetadataItem[] = useRecoilValue(
     objectMetadataItemsState,
   );
 
+  if (id === null) {
+    return null;
+  }
   return (
     objectMetadataItems.find(
       (objectMetadataItem) => objectMetadataItem.id === id,
