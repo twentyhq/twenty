@@ -46,11 +46,10 @@ describe('Core REST API Find One endpoint', () => {
       method: 'get',
       path: `/people/${NOT_EXISTING_PERSON_ID}`,
     })
-      .expect(200)
+      .expect(400)
       .expect((res) => {
-        const person = res.body.data.person;
-
-        expect(person).toBeNull();
+        expect(res.body.messages[0]).toContain('Record not found');
+        expect(res.body.error).toBe('BadRequestException');
       });
   });
 

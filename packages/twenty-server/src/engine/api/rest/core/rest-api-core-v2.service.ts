@@ -168,56 +168,65 @@ export class RestApiCoreServiceV2 {
       objectMetadataItemWithFieldsMaps,
     } = await this.getRepositoryAndMetadataOrFail(request);
 
-    if (recordId) {
-      return await this.findOne(
-        repository,
-        recordId,
-        objectMetadataNameSingular,
-      );
-    } else {
-      return await this.findMany(
+    const { records, isForwardPagination, hasMoreRecords, totalCount } =
+      await this.getRecords({
         request,
+        recordId,
         repository,
         dataSource,
         objectMetadata,
         objectMetadataNameSingular,
+        objectMetadataItemWithFieldsMaps,
+      });
+
+    if (recordId) {
+      const record = records?.[0];
+
+      if (!isDefined(record)) {
+        throw new BadRequestException('Record not found');
+      }
+
+      return this.formatResult({
+        operation: 'findOne',
+        objectNameSingular: objectMetadataNameSingular,
+        data: record,
+      });
+    } else {
+      return this.formatPaginatedResult(
+        records,
         objectMetadataNamePlural,
         objectMetadataItemWithFieldsMaps,
+        objectMetadata,
+        isForwardPagination,
+        hasMoreRecords,
+        totalCount,
       );
     }
   }
 
-  private async findOne(
-    repository: WorkspaceRepository<ObjectRecord>,
-    recordId: string,
-    objectMetadataNameSingular: string,
-  ) {
-    const record = await repository.findOne({
-      where: { id: recordId },
-    });
-
-    return this.formatResult({
-      operation: 'findOne',
-      objectNameSingular: objectMetadataNameSingular,
-      data: record,
-    });
-  }
-
-  private async findMany(
-    request: Request,
-    repository: WorkspaceRepository<ObjectLiteral>,
-    dataSource: WorkspaceDataSource,
-    objectMetadata: any,
-    objectMetadataNameSingular: string,
-    objectMetadataNamePlural: string,
+  private async getRecords({
+    request,
+    recordId,
+    repository,
+    dataSource,
+    objectMetadata,
+    objectMetadataNameSingular,
+    objectMetadataItemWithFieldsMaps,
+  }: {
+    request: Request;
+    recordId: string | undefined;
+    repository: WorkspaceRepository<ObjectLiteral>;
+    dataSource: WorkspaceDataSource;
+    objectMetadata: any;
+    objectMetadataNameSingular: string;
     objectMetadataItemWithFieldsMaps:
       | ObjectMetadataItemWithFieldMaps
-      | undefined,
-  ) {
+      | undefined;
+  }) {
     const qb = repository.createQueryBuilder(objectMetadataNameSingular);
 
     const inputs = this.getVariablesFactory.create(
-      undefined,
+      recordId,
       request,
       objectMetadata,
     );
@@ -270,15 +279,12 @@ export class RestApiCoreServiceV2 {
 
     const isForwardPagination = !inputs.endingBefore;
 
-    return this.formatPaginatedResult(
+    return {
       records,
-      objectMetadataNamePlural,
-      objectMetadataItemWithFieldsMaps,
-      objectMetadata,
-      isForwardPagination,
-      hasMoreRecords,
       totalCount,
-    );
+      hasMoreRecords,
+      isForwardPagination,
+    };
   }
 
   private applyDepth(
