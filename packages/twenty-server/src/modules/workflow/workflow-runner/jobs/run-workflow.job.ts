@@ -5,7 +5,6 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -31,7 +30,6 @@ export class RunWorkflowJob {
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   @Process(RunWorkflowJob.name)
@@ -109,7 +107,7 @@ export class RunWorkflowJob {
 
     await this.executeWorkflow({
       workflowRunId,
-      currentStepIndex: 0,
+      currentStepId: workflowVersion.steps[0].id,
       steps: workflowVersion.steps,
       context,
     });
@@ -134,20 +132,26 @@ export class RunWorkflowJob {
       );
     }
 
-    const lastExecutedStepIndex = workflowRun.output?.flow?.steps?.findIndex(
+    const lastExecutedStep = workflowRun.output?.flow?.steps?.find(
       (step) => step.id === lastExecutedStepId,
     );
 
-    if (lastExecutedStepIndex === undefined) {
+    if (!lastExecutedStep) {
       throw new WorkflowRunException(
         'Last executed step not found',
         WorkflowRunExceptionCode.INVALID_INPUT,
       );
     }
 
+    const nextStepId = lastExecutedStep.nextStepIds?.[0];
+
+    if (!nextStepId) {
+      return;
+    }
+
     await this.executeWorkflow({
       workflowRunId,
-      currentStepIndex: lastExecutedStepIndex + 1,
+      currentStepId: nextStepId,
       steps: workflowRun.output?.flow?.steps ?? [],
       context: workflowRun.context ?? {},
     });
@@ -155,19 +159,19 @@ export class RunWorkflowJob {
 
   private async executeWorkflow({
     workflowRunId,
-    currentStepIndex,
+    currentStepId,
     steps,
     context,
   }: {
     workflowRunId: string;
-    currentStepIndex: number;
+    currentStepId: string;
     steps: WorkflowAction[];
     context: Record<string, any>;
   }) {
     const { error, pendingEvent } =
       await this.workflowExecutorWorkspaceService.execute({
         workflowRunId,
-        currentStepIndex,
+        currentStepId,
         steps,
         context,
       });
