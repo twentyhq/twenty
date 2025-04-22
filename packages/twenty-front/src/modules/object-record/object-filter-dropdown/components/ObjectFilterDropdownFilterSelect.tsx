@@ -96,10 +96,6 @@ export const ObjectFilterDropdownFilterSelect = ({
       (fieldMetadataItem) => !visibleColumnsIds.includes(fieldMetadataItem.id),
     );
 
-  const selectableFieldMetadataItemIds = filterableFieldMetadataItems.map(
-    (fieldMetadataItem) => fieldMetadataItem.id,
-  );
-
   const { selectFilterUsedInDropdown } = useSelectFilterUsedInDropdown();
 
   const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
@@ -136,6 +132,15 @@ export const ObjectFilterDropdownFilterSelect = ({
     isDefined(currentView?.objectMetadataId) && isAdvancedFilterButtonVisible;
 
   const { t } = useLingui();
+
+  const selectableFieldMetadataItemIds = [
+    ...visibleColumnsFieldMetadataItems.map(
+      (fieldMetadataItem) => fieldMetadataItem.id,
+    ),
+    ...hiddenColumnsFieldMetadataItems.map(
+      (fieldMetadataItem) => fieldMetadataItem.id,
+    ),
+  ];
 
   return (
     <>
