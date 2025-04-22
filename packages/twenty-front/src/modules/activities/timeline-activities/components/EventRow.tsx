@@ -7,7 +7,7 @@ import { TimelineActivityContext } from '@/activities/timeline-activities/contex
 import { useLinkedObjectObjectMetadataItem } from '@/activities/timeline-activities/hooks/useLinkedObjectObjectMetadataItem';
 import { EventIconDynamicComponent } from '@/activities/timeline-activities/rows/components/EventIconDynamicComponent';
 import { EventRowDynamicComponent } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
-import { TimelineActivityWithRecord } from '@/activities/timeline-activities/types/TimelineActivity';
+import { TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { getTimelineActivityAuthorFullName } from '@/activities/timeline-activities/utils/getTimelineActivityAuthorFullName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -82,7 +82,7 @@ const StyledItemContainer = styled.div<{ isMarginBottom?: boolean }>`
 type EventRowProps = {
   mainObjectMetadataItem: ObjectMetadataItem | null;
   isLastEvent?: boolean;
-  event: TimelineActivityWithRecord;
+  event: TimelineActivity;
 };
 
 export const EventRow = ({
@@ -90,9 +90,6 @@ export const EventRow = ({
   event,
   mainObjectMetadataItem,
 }: EventRowProps) => {
-  // What about being deleted ? I think this should be displayed as well but we loose it here
-  // TO check prastoin
-
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { recordId } = useContext(TimelineActivityContext);

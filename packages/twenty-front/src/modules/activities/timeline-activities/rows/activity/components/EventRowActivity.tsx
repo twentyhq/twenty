@@ -5,6 +5,7 @@ import {
   StyledEventRowItemAction,
   StyledEventRowItemColumn,
 } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
+import { isTimeLineActivityWithRecord } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
@@ -99,7 +100,7 @@ export const EventRowActivity = ({
           </StyledEventRowItemAction>
           <StyledLinkedActivity
             onClick={() => {
-              if (!event.linkedRecordId) {
+              if (!isTimeLineActivityWithRecord(event)) {
                 return;
               }
 

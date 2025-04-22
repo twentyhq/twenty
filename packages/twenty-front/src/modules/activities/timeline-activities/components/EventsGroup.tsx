@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 
 import { EventRow } from '@/activities/timeline-activities/components/EventRow';
-import { isTimeLineActivityWithRecord } from '@/activities/timeline-activities/types/TimelineActivity';
 import { EventGroup } from '@/activities/timeline-activities/utils/groupEventsByMonth';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
@@ -72,14 +71,12 @@ export const EventsGroup = ({
         <StyledActivityGroupBar />
         {group.items.map(
           (event, index) =>
-            isTimeLineActivityWithRecord(event) && (
               <EventRow
                 mainObjectMetadataItem={mainObjectMetadataItem}
                 key={index}
                 event={event}
                 isLastEvent={index === group.items.length - 1}
               />
-            ),
         )}
       </StyledActivityGroupContainer>
     </StyledActivityGroup>
