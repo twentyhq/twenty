@@ -1,20 +1,27 @@
+import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { assertUnreachable } from 'twenty-shared/utils';
+import { undefined } from 'zod';
 
-export const buildValueFromFilter = (
-  filter: RecordFilter,
-  type: FilterableFieldType,
-) => {
+export const buildValueFromFilter = ({
+  filter,
+  type,
+  options,
+}: {
+  filter: RecordFilter;
+  type: FilterableFieldType;
+  options?: FieldMetadataItemOption[];
+}) => {
   if (isCompositeField(type)) {
     return;
   }
 
   if (type === 'RAW_JSON') {
-    throw new Error('Raw JSON is not supported');
+    return;
   }
 
   const operands = getRecordFilterOperands({
@@ -25,11 +32,16 @@ export const buildValueFromFilter = (
   }
 
   switch (type) {
-    case 'TEXT':
-    case 'RATING': // RATING not working
+    case 'TEXT': // ok
       return computeValueFromFilterText(filter.operand, filter.value);
-    case 'DATE_TIME': // test not working
-    case 'DATE': // test not working
+    case 'RATING': // ok
+      return computeValueFromFilterRating(
+        filter.operand,
+        filter.value,
+        options,
+      );
+    case 'DATE_TIME': // ok
+    case 'DATE': // ok
       return computeValueFromFilterDate(filter.operand, filter.value);
     case 'NUMBER': // ok
       return computeValueFromFilterNumber(filter.operand, filter.value);
@@ -37,9 +49,15 @@ export const buildValueFromFilter = (
       return computeValueFromFilterBoolean(filter.operand, filter.value);
     case 'ARRAY': // ok
       return computeValueFromFilterArray(filter.operand, filter.value);
-    case 'SELECT':
-    case 'MULTI_SELECT':
-    case 'RELATION':
+    case 'SELECT': // ok
+      return computeValueFromFilterSelect(
+        filter.operand,
+        filter.value,
+        options,
+      );
+    case 'MULTI_SELECT': // ok
+      return computeValueFromFilterMultiSelect(filter.operand, filter.value);
+    case 'RELATION': // TODO
       throw new Error('Type not supported');
     default:
       assertUnreachable(type);
@@ -142,5 +160,98 @@ const computeValueFromFilterArray = (
     default:
       // assertUnreachable(operand);
       return value;
+  }
+};
+
+const computeValueFromFilterRating = (
+  operand: ViewFilterOperand, // TODO: add type better scoping
+  value: string,
+  options?: FieldMetadataItemOption[],
+) => {
+  const option = options?.find((option) => option.label === value);
+  if (!option) {
+    return undefined;
+  }
+
+  switch (operand) {
+    case ViewFilterOperand.Is:
+      return option.value;
+    case ViewFilterOperand.IsNotEmpty:
+      return option.value;
+    case ViewFilterOperand.IsEmpty:
+      return undefined;
+    case ViewFilterOperand.GreaterThan:
+      return option.value;
+    case ViewFilterOperand.LessThan:
+      return option.value;
+    default:
+      // assertUnreachable(operand);
+      return undefined;
+  }
+};
+
+const computeValueFromFilterSelect = (
+  operand: ViewFilterOperand, // TODO: add type better scoping
+  value: string,
+  options?: FieldMetadataItemOption[],
+) => {
+  switch (operand) {
+    case ViewFilterOperand.Is:
+      try {
+        const valueParsed = JSON.parse(value)?.[0];
+        const option = options?.find((option) => option.value === valueParsed);
+        if (!option) {
+          return undefined;
+        }
+        return option.value;
+      } catch (error) {
+        return undefined;
+      }
+
+    case ViewFilterOperand.IsNot:
+      return undefined;
+    case ViewFilterOperand.IsNotEmpty:
+      try {
+        const valueParsed = JSON.parse(value)?.[0];
+        const option = options?.find((option) => option.value === valueParsed);
+        if (!option) {
+          return undefined;
+        }
+        return option.value;
+      } catch (error) {
+        return undefined;
+      }
+    case ViewFilterOperand.IsEmpty:
+      return undefined;
+    default:
+      // assertUnreachable(operand);
+      return undefined;
+  }
+};
+
+const computeValueFromFilterMultiSelect = (
+  operand: ViewFilterOperand, // TODO: add type better scoping
+  value: string,
+) => {
+  switch (operand) {
+    case ViewFilterOperand.Contains:
+      try {
+        return JSON.parse(value);
+      } catch (error) {
+        return undefined;
+      }
+    case ViewFilterOperand.DoesNotContain:
+      return undefined;
+    case ViewFilterOperand.IsNotEmpty:
+      try {
+        return JSON.parse(value);
+      } catch (error) {
+        return undefined;
+      }
+    case ViewFilterOperand.IsEmpty:
+      return undefined;
+    default:
+      // assertUnreachable(operand);
+      return undefined;
   }
 };

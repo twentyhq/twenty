@@ -26,10 +26,11 @@ export const useBuildRecordInputFromFilters = ({
       );
 
       if (isDefined(fieldMetadataItem)) {
-        recordInput[fieldMetadataItem.name] = buildValueFromFilter(
+        recordInput[fieldMetadataItem.name] = buildValueFromFilter({
           filter,
-          fieldMetadataItem.type as FilterableFieldType,
-        );
+          type: fieldMetadataItem.type as FilterableFieldType,
+          options: fieldMetadataItem.options ?? undefined,
+        });
       }
     });
 
