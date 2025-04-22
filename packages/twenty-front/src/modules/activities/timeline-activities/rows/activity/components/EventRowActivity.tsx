@@ -5,7 +5,7 @@ import {
   StyledEventRowItemAction,
   StyledEventRowItemColumn,
 } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
-import { isTimelineActivityWithRecord } from '@/activities/timeline-activities/types/TimelineActivity';
+import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
@@ -68,7 +68,7 @@ export const EventRowActivity = ({
 
   const eventObject = eventLinkedObject.replace('linked-', '');
 
-  if (!isTimelineActivityWithRecord(event)) {
+  if (!isTimelineActivityWithLinkedRecord(event)) {
     throw new Error('Could not find linked record id for event');
   }
 

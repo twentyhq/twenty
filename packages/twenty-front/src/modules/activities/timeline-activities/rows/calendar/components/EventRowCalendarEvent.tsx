@@ -9,7 +9,7 @@ import {
   StyledEventRowItemAction,
   StyledEventRowItemColumn,
 } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
-import { isTimelineActivityWithRecord } from '@/activities/timeline-activities/types/TimelineActivity';
+import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
 
 type EventRowCalendarEventProps = EventRowDynamicComponentProps;
 
@@ -46,7 +46,7 @@ export const EventRowCalendarEvent = ({
         </StyledEventRowItemAction>
         <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
       </StyledRowContainer>
-      {isTimelineActivityWithRecord(event) && (
+      {isTimelineActivityWithLinkedRecord(event) && (
         <EventCard isOpen={isOpen}>
           <EventCardCalendarEvent calendarEventId={event.linkedRecordId} />
         </EventCard>
