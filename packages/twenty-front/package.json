@@ -1,6 +1,5 @@
 {
   "name": "twenty-front",
-  "version": "0.50.0-canary",
   "private": true,
   "type": "module",
   "scripts": {
@@ -54,14 +53,35 @@
     "buffer": "^6.0.3",
     "docx": "^9.1.0",
     "file-saver": "^2.0.5",
-    "recoil-sync": "^0.2.0",
     "transliteration": "^2.3.5",
-    "twenty-shared": "workspace:*"
+    "twenty-shared": "workspace:*",
+    "twenty-ui": "workspace:*"
   },
   "devDependencies": {
     "@lingui/cli": "^5.1.2",
     "@lingui/swc-plugin": "^5.1.0",
     "@lingui/vite-plugin": "^5.1.2",
-    "@types/file-saver": "^2"
+    "@types/file-saver": "^2",
+    "@typescript-eslint/eslint-plugin": "6.21.0",
+    "@typescript-eslint/experimental-utils": "^5.62.0",
+    "@typescript-eslint/parser": "6.21.0",
+    "@typescript-eslint/utils": "6.21.0",
+    "eslint": "^8.53.0",
+    "eslint-config-next": "14.0.4",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-lingui": "^0.9.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-prettier": "^5.1.2",
+    "eslint-plugin-project-structure": "^3.9.1",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.4",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-storybook": "^0.6.15",
+    "eslint-plugin-unicorn": "^51.0.1",
+    "eslint-plugin-unused-imports": "^3.0.0",
+    "optionator": "^0.9.1"
   }
 }

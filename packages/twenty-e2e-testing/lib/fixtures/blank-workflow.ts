@@ -17,6 +17,7 @@ export class WorkflowVisualizerPage {
   readonly deactivateWorkflowButton: Locator;
   readonly addTriggerButton: Locator;
   readonly commandMenu: Locator;
+  readonly stepHeaderInCommandMenu: Locator;
   readonly workflowNameLabel: Locator;
   readonly triggerNode: Locator;
   readonly background: Locator;
@@ -68,6 +69,9 @@ export class WorkflowVisualizerPage {
     });
     this.addTriggerButton = page.getByText('Add a Trigger');
     this.commandMenu = page.getByTestId('command-menu');
+    this.stepHeaderInCommandMenu = this.commandMenu.getByTestId(
+      'workflow-step-header',
+    );
     this.workflowNameLabel = page
       .getByTestId('top-bar-title')
       .getByText(this.workflowName);
@@ -114,7 +118,7 @@ export class WorkflowVisualizerPage {
       .getByTestId(`row-id-${this.workflowId}`)
       .getByRole('link', { name: this.workflowName });
 
-    await workflowLink.click();
+    await workflowLink.click({ force: true });
 
     await this.waitForWorkflowVisualizerLoad();
   }

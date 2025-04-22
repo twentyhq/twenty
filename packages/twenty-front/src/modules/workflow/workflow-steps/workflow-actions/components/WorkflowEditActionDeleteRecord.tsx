@@ -1,18 +1,20 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { Select, SelectOption } from '@/ui/input/components/Select';
+import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
+import { Select } from '@/ui/input/components/Select';
 import { WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { WorkflowSingleRecordPicker } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowSingleRecordPicker';
 import { useEffect, useState } from 'react';
 
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
 import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { HorizontalSeparator, useIcons } from 'twenty-ui';
+import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { isDefined } from 'twenty-shared/utils';
+import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
-import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowEditActionDeleteRecordProps = {
   action: WorkflowDeleteRecordAction;
@@ -66,14 +68,9 @@ export const WorkflowEditActionDeleteRecord = ({
     saveAction(newFormData);
   };
 
-  const selectedObjectMetadataItemNameSingular = formData.objectName;
-
-  const selectedObjectMetadataItem = activeObjectMetadataItems.find(
-    (item) => item.nameSingular === selectedObjectMetadataItemNameSingular,
-  );
-  if (!isDefined(selectedObjectMetadataItem)) {
-    throw new Error('Should have found the metadata item');
-  }
+  const objectNameSingular = activeObjectMetadataItems.find(
+    (item) => item.nameSingular === formData.objectName,
+  )?.nameSingular;
 
   const saveAction = useDebouncedCallback(
     async (formData: DeleteRecordFormData) => {
@@ -154,16 +151,19 @@ export const WorkflowEditActionDeleteRecord = ({
 
         <HorizontalSeparator noMargin />
 
-        <WorkflowSingleRecordPicker
-          label="Record"
-          onChange={(objectRecordId) =>
-            handleFieldChange('objectRecordId', objectRecordId)
-          }
-          objectNameSingular={formData.objectName}
-          defaultValue={formData.objectRecordId}
-          testId="workflow-edit-action-record-delete-object-record-id"
-          disabled={isFormDisabled}
-        />
+        {isDefined(objectNameSingular) && (
+          <FormSingleRecordPicker
+            label="Record"
+            onChange={(objectRecordId) =>
+              handleFieldChange('objectRecordId', objectRecordId)
+            }
+            objectNameSingular={objectNameSingular}
+            defaultValue={formData.objectRecordId}
+            testId="workflow-edit-action-record-delete-object-record-id"
+            disabled={isFormDisabled}
+            VariablePicker={WorkflowVariablePicker}
+          />
+        )}
       </WorkflowStepBody>
     </>
   );

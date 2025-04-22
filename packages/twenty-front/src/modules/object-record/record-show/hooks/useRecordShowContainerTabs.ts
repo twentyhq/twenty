@@ -10,16 +10,15 @@ import { RecordLayoutTab } from '@/ui/layout/tab/types/RecordLayoutTab';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 import {
   IconCalendarEvent,
   IconHome,
   IconMail,
   IconNotes,
-  IconPrinter,
   IconSettings,
-} from 'twenty-ui';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { FeatureFlagKey } from '~/generated/graphql';
+} from 'twenty-ui/display';
 
 export const useRecordShowContainerTabs = (
   loading: boolean,
@@ -160,6 +159,9 @@ export const useRecordShowContainerTabs = (
           },
           timeline: null,
           fields: null,
+          tasks: null,
+          notes: null,
+          files: null,
         },
       },
       [CoreObjectNameSingular.WorkflowVersion]: {
@@ -179,25 +181,14 @@ export const useRecordShowContainerTabs = (
             },
           },
           timeline: null,
+          tasks: null,
+          notes: null,
+          files: null,
         },
       },
       [CoreObjectNameSingular.WorkflowRun]: {
         tabs: {
-          workflowRunOutput: {
-            title: 'Output',
-            position: 0,
-            Icon: IconPrinter,
-            cards: [{ type: CardType.WorkflowRunOutputCard }],
-            hide: {
-              ifMobile: false,
-              ifDesktop: false,
-              ifInRightDrawer: false,
-              ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
-              ifRequiredObjectsInactive: [],
-              ifRelationsMissing: [],
-            },
-          },
-          workflowRunFlow: {
+          workflowRun: {
             title: 'Flow',
             position: 0,
             Icon: IconSettings,
@@ -212,6 +203,9 @@ export const useRecordShowContainerTabs = (
             },
           },
           timeline: null,
+          tasks: null,
+          notes: null,
+          files: null,
         },
       },
     }),

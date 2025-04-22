@@ -3,8 +3,22 @@ import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
+
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { SettingsPath } from '@/types/SettingsPath';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
+
+import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
+import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
+import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import {
-  GithubVersionLink,
   IconAt,
   IconBell,
   IconBuildingSkyscraper,
@@ -19,30 +33,17 @@ import {
   IconUser,
   IconUserCircle,
   IconUsers,
-  getOsControlSymbol,
-} from 'twenty-ui';
-
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { SettingsPath } from '@/types/SettingsPath';
-import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
-import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { graphqlMocks } from '~/testing/graphqlMocks';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
-
-import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
-import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
+} from 'twenty-ui/display';
+import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import jsonPage from '../../../../../../../package.json';
 import { NavigationDrawer } from '../NavigationDrawer';
 import { NavigationDrawerItem } from '../NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '../NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '../NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '../NavigationDrawerSectionTitle';
+
 const meta: Meta<typeof NavigationDrawer> = {
   title: 'UI/Navigation/NavigationDrawer/NavigationDrawer',
   component: NavigationDrawer,
@@ -70,7 +71,7 @@ const meta: Meta<typeof NavigationDrawer> = {
     layout: 'fullscreen',
     msw: graphqlMocks,
   },
-  argTypes: { children: { control: false }, footer: { control: false } },
+  argTypes: { children: { control: false } },
 };
 
 export default meta;
@@ -78,6 +79,7 @@ type Story = StoryObj<typeof NavigationDrawer>;
 
 export const Default: Story = {
   args: {
+    title: 'Default',
     children: (
       <>
         <NavigationDrawerSection>
@@ -120,7 +122,6 @@ export const Default: Story = {
         </NavigationDrawerSection>
       </>
     ),
-    footer: null,
   },
   play: async () => {
     const canvas = within(document.body);
@@ -190,9 +191,16 @@ export const Settings: Story = {
             Icon={IconServer}
           />
         </NavigationDrawerSection>
+
+        <NavigationDrawerFixedContent>
+          <AdvancedSettingsToggle
+            isAdvancedModeEnabled={false}
+            setIsAdvancedModeEnabled={() => {}}
+            label="Advanced:"
+          />
+        </NavigationDrawerFixedContent>
       </>
     ),
-    footer: <GithubVersionLink version={jsonPage.version} />,
   },
   play: async () => {
     const canvas = within(document.body);

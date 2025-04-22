@@ -194,6 +194,8 @@ const computePackageJsonFilesAndPreconstructConfig = (
 
   return {
     preconstruct: {
+      // TODO refactor to merge in existing configuration
+      tsconfig: 'tsconfig.lib.json',
       entrypoints: [
         './index.ts',
         ...entrypoints.map((module) => `./${module}/index.ts`),

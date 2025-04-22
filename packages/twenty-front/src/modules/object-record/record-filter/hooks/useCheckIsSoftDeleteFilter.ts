@@ -1,4 +1,5 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { SOFT_DELETE_FILTER_FIELD_NAME } from '@/object-record/record-filter/constants/SoftDeleteFilterFieldName';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
@@ -29,7 +30,7 @@ export const useCheckIsSoftDeleteFilter = () => {
     }
 
     return (
-      foundFieldMetadataItem.name === 'deletedAt' &&
+      foundFieldMetadataItem.name === SOFT_DELETE_FILTER_FIELD_NAME &&
       isSoftDeleteFilterActive &&
       recordFilter.operand === RecordFilterOperand.IsNotEmpty
     );

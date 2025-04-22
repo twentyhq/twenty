@@ -8,7 +8,6 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
-import { WorkflowRunOutputVisualizer } from '@/workflow/workflow-diagram/components/WorkflowRunOutputVisualizer';
 import { WorkflowRunVisualizer } from '@/workflow/workflow-diagram/components/WorkflowRunVisualizer';
 import { WorkflowRunVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowRunVisualizerEffect';
 import { WorkflowVersionVisualizer } from '@/workflow/workflow-diagram/components/WorkflowVersionVisualizer';
@@ -16,6 +15,7 @@ import { WorkflowVersionVisualizerEffect } from '@/workflow/workflow-diagram/com
 import { WorkflowVisualizer } from '@/workflow/workflow-diagram/components/WorkflowVisualizer';
 import { WorkflowVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVisualizerEffect';
 import styled from '@emotion/styled';
+import { ListenRecordUpdatesEffect } from '@/subscription/components/ListenUpdatesEffect';
 
 const StyledGreyBox = styled.div<{ isInRightDrawer?: boolean }>`
   background: ${({ theme, isInRightDrawer }) =>
@@ -100,11 +100,13 @@ export const CardComponents: Record<CardType, CardComponentType> = {
   [CardType.WorkflowRunCard]: ({ targetableObject }) => (
     <>
       <WorkflowRunVisualizerEffect workflowRunId={targetableObject.id} />
+      <ListenRecordUpdatesEffect
+        objectNameSingular={targetableObject.targetObjectNameSingular}
+        recordId={targetableObject.id}
+        listenedFields={['status', 'output']}
+      />
 
       <WorkflowRunVisualizer workflowRunId={targetableObject.id} />
     </>
-  ),
-  [CardType.WorkflowRunOutputCard]: ({ targetableObject }) => (
-    <WorkflowRunOutputVisualizer workflowRunId={targetableObject.id} />
   ),
 };

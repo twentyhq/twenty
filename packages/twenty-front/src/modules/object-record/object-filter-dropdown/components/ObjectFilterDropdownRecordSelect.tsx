@@ -22,7 +22,7 @@ import { RelationFilterValue } from '@/views/view-filter-value/types/RelationFil
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
 import { isDefined } from 'twenty-shared/utils';
-import { IconUserCircle } from 'twenty-ui';
+import { IconUserCircle } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 
 export const EMPTY_FILTER_VALUE: string = JSON.stringify({
@@ -233,6 +233,9 @@ export const ObjectFilterDropdownRecordSelect = ({
           value: newFilterValue,
           recordFilterGroupId:
             duplicateFilterInCurrentRecordFilters.recordFilterGroupId,
+          positionInRecordFilterGroup:
+            duplicateFilterInCurrentRecordFilters.positionInRecordFilterGroup,
+          subFieldName: duplicateFilterInCurrentRecordFilters.subFieldName,
         });
       } else {
         applyRecordFilter({
@@ -246,6 +249,9 @@ export const ObjectFilterDropdownRecordSelect = ({
           fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
           value: newFilterValue,
           recordFilterGroupId: selectedFilter?.recordFilterGroupId,
+          positionInRecordFilterGroup:
+            selectedFilter?.positionInRecordFilterGroup,
+          subFieldName: selectedFilter?.subFieldName,
         });
       }
     }

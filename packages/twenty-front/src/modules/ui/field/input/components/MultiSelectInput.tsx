@@ -1,21 +1,22 @@
 import { useRef, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
-import { SelectOption } from '@/spreadsheet-import/types';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListStates';
+
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { MenuItemMultiSelectTag } from 'twenty-ui';
-import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
+import { SelectOption } from 'twenty-ui/input';
+import { MenuItemMultiSelectTag } from 'twenty-ui/navigation';
+import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type MultiSelectInputProps = {
   selectableListComponentInstanceId: string;
@@ -34,14 +35,14 @@ export const MultiSelectInput = ({
   onCancel,
   onOptionSelected,
 }: MultiSelectInputProps) => {
-  const { selectedItemIdState } = useSelectableListStates({
-    selectableListScopeId: selectableListComponentInstanceId,
-  });
   const { resetSelectedItem } = useSelectableList(
     selectableListComponentInstanceId,
   );
 
-  const selectedItemId = useRecoilValue(selectedItemIdState);
+  const selectedItemId = useRecoilComponentValueV2(
+    selectedItemIdComponentState,
+    selectableListComponentInstanceId,
+  );
   const [searchFilter, setSearchFilter] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -97,7 +98,7 @@ export const MultiSelectInput = ({
 
   return (
     <SelectableList
-      selectableListId={selectableListComponentInstanceId}
+      selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={optionIds}
       hotkeyScope={hotkeyScope}
       onEnter={(itemId) => {
@@ -128,7 +129,7 @@ export const MultiSelectInput = ({
                 selected={values?.includes(option.value) || false}
                 text={option.label}
                 color={option.color ?? 'transparent'}
-                Icon={option.icon ?? undefined}
+                Icon={option.Icon ?? undefined}
                 onClick={() =>
                   onOptionSelected(formatNewSelectedOptions(option.value))
                 }

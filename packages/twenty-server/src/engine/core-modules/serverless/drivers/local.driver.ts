@@ -48,7 +48,7 @@ export class LocalDriver implements ServerlessDriver {
 
   async delete() {}
 
-  async build(serverlessFunction: ServerlessFunctionEntity) {
+  private async build(serverlessFunction: ServerlessFunctionEntity) {
     await this.createLayerIfNotExists(serverlessFunction.layerVersion);
   }
 

@@ -1,4 +1,4 @@
-import { Field } from '@/spreadsheet-import/types';
+import { SpreadsheetImportField } from '@/spreadsheet-import/types';
 import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -17,10 +17,10 @@ describe('getFieldOptions', () => {
       value: 'Three',
     },
   ];
-  const fields: Field<'Options' | 'Name'>[] = [
+  const fields: SpreadsheetImportField<'Options' | 'Name'>[] = [
     {
       key: 'Options',
-      icon: null,
+      Icon: null,
       label: 'options',
       fieldType: {
         type: 'select',
@@ -30,7 +30,7 @@ describe('getFieldOptions', () => {
     },
     {
       key: 'Name',
-      icon: null,
+      Icon: null,
       label: 'name',
       fieldType: {
         type: 'input',

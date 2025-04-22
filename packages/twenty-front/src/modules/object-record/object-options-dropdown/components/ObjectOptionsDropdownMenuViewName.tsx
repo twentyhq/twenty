@@ -16,9 +16,8 @@ import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { OverflowingTextWithTooltip } from '@ui/display';
 import { useState } from 'react';
-import { useIcons } from 'twenty-ui';
+import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledDropdownMenuIconAndNameContainer = styled.div`
@@ -37,6 +36,7 @@ const StyledMenuTitleContainer = styled.div`
 `;
 
 const StyledMenuIconContainer = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
   align-items: center;
   display: flex;
   height: ${({ theme }) => theme.spacing(6)};
@@ -44,6 +44,7 @@ const StyledMenuIconContainer = styled.div`
   width: ${({ theme }) => theme.spacing(6)};
 `;
 const StyledMainText = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
   flex-shrink: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -51,13 +52,17 @@ const StyledMainText = styled.div`
   max-width: 100%;
 `;
 
+type ObjectOptionsDropdownMenuViewNameProps = {
+  currentView: View;
+};
+
 export const ObjectOptionsDropdownMenuViewName = ({
   currentView,
-}: {
-  currentView: View;
-}) => {
+}: ObjectOptionsDropdownMenuViewNameProps) => {
   const [viewPickerSelectedIcon, setViewPickerSelectedIcon] =
     useRecoilComponentStateV2(viewPickerSelectedIconComponentState);
+
+  setViewPickerSelectedIcon(currentView.icon);
 
   const viewPickerIsPersisting = useRecoilComponentValueV2(
     viewPickerIsPersistingComponentState,

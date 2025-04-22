@@ -47,6 +47,8 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
 
+    const { roleId } = executionArgs;
+
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
@@ -157,6 +159,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
         dataSource: executionArgs.dataSource,
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
+        roleId,
       });
     }
 

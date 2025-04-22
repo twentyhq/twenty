@@ -2,7 +2,7 @@ import { WorkflowFormAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -54,6 +54,24 @@ const mockAction: WorkflowFormAction = {
         placeholder: 'Enter number',
         settings: {},
       },
+      {
+        id: 'field-3',
+        name: 'record',
+        label: 'Record',
+        type: 'RECORD',
+        placeholder: 'Select a record',
+        settings: {
+          objectName: 'company',
+        },
+      },
+      {
+        id: 'field-4',
+        name: 'date',
+        label: 'Date',
+        type: FieldMetadataType.DATE,
+        placeholder: 'mm/dd/yyyy',
+        settings: {},
+      },
     ],
     outputSchema: {},
     errorHandlingOptions: {
@@ -78,6 +96,12 @@ export const Default: Story = {
 
     const numberField = await canvas.findByText('Number Field');
     expect(numberField).toBeVisible();
+
+    const recordField = await canvas.findByText('Record');
+    expect(recordField).toBeVisible();
+
+    const dateField = await canvas.findByText('Date');
+    expect(dateField).toBeVisible();
   },
 };
 
@@ -94,8 +118,11 @@ export const ReadonlyMode: Story = {
     const textField = await canvas.findByText('Text Field');
     expect(textField).toBeVisible();
 
-    const numberInput = await canvas.findByPlaceholderText('Number Field');
+    const numberInput = await canvas.findByPlaceholderText('Enter number');
     expect(numberInput).toBeDisabled();
+
+    const dateInput = await canvas.findByPlaceholderText('mm/dd/yyyy');
+    expect(dateInput).toBeDisabled();
 
     const submitButton = await canvas.queryByText('Submit');
     expect(submitButton).not.toBeInTheDocument();

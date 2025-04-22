@@ -1,5 +1,5 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
@@ -17,10 +17,10 @@ const StyledInput = styled(TextInput)`
 type FormUuidFieldInputProps = {
   label?: string;
   defaultValue: string | null | undefined;
-  placeholder: string;
   onChange: (value: string | null) => void;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
+  placeholder?: string;
 };
 
 export const FormUuidFieldInput = ({
@@ -94,13 +94,13 @@ export const FormUuidFieldInput = ({
       {label ? <InputLabel htmlFor={inputId}>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>
-        <FormFieldInputInputContainer
+        <FormFieldInputInnerContainer
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
             <StyledInput
               inputId={inputId}
-              placeholder={placeholder}
+              placeholder={placeholder ?? 'Enter a UUID'}
               value={draftValue.value}
               copyButton={false}
               hotkeyScope="record-create"
@@ -113,7 +113,7 @@ export const FormUuidFieldInput = ({
               onRemove={readonly ? undefined : handleUnlinkVariable}
             />
           )}
-        </FormFieldInputInputContainer>
+        </FormFieldInputInnerContainer>
 
         {VariablePicker && !readonly ? (
           <VariablePicker

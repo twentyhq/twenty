@@ -7,7 +7,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Select, SelectOption } from '@/ui/input/components/Select';
+import { Select } from '@/ui/input/components/Select';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -18,12 +18,13 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconPlus, useIcons } from 'twenty-ui';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { IconPlus, useIcons } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 
 type WorkflowEditActionSendEmailProps = {
   action: WorkflowSendEmailAction;

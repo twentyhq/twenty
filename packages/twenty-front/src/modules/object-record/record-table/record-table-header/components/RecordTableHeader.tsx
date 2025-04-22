@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableHeaderCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCell';
 import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn';
 import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderDragDropColumn';
 import { RecordTableHeaderLastColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLastColumn';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 export const FIRST_TH_WIDTH = '9px';
 
@@ -26,21 +26,21 @@ const StyledTableHead = styled.thead`
     th:nth-of-type(1) {
       position: sticky;
       left: 0;
-      z-index: 5;
+      z-index: 6;
       transition: 0.3s ease;
     }
 
     th:nth-of-type(2) {
       position: sticky;
       left: 11px;
-      z-index: 5;
+      z-index: 6;
       transition: 0.3s ease;
     }
 
     th:nth-of-type(3) {
       position: sticky;
       left: 43px;
-      z-index: 5;
+      z-index: 6;
       transition: 0.3s ease;
 
       &::after {
@@ -65,7 +65,7 @@ const StyledTableHead = styled.thead`
     th {
       position: sticky;
       top: 0;
-      z-index: 5;
+      z-index: 6;
     }
   }
 

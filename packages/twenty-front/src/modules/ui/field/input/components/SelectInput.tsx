@@ -1,6 +1,6 @@
-import { SelectOption } from '@/spreadsheet-import/types';
 import { SelectInput as SelectBaseInput } from '@/ui/input/components/SelectInput';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectOption } from 'twenty-ui/input';
 
 type SelectInputProps = {
   selectableListComponentInstanceId: string;
@@ -31,7 +31,7 @@ export const SelectInput = ({
 }: SelectInputProps) => {
   return (
     <SelectableList
-      selectableListId={selectableListComponentInstanceId}
+      selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={selectableItemIdArray}
       hotkeyScope={hotkeyScope}
       onEnter={onEnter}

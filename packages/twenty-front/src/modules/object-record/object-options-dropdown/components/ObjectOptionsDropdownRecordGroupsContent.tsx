@@ -1,14 +1,4 @@
 import { useEffect } from 'react';
-import {
-  IconChevronLeft,
-  IconCircleOff,
-  IconEyeOff,
-  IconLayoutList,
-  IconSortDescending,
-  MenuItem,
-  MenuItemNavigate,
-  MenuItemToggle,
-} from 'twenty-ui';
 
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { RecordGroupReorderConfirmationModal } from '@/object-record/record-group/components/RecordGroupReorderConfirmationModal';
@@ -28,6 +18,18 @@ import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useLingui } from '@lingui/react/macro';
+import {
+  IconChevronLeft,
+  IconCircleOff,
+  IconEyeOff,
+  IconLayoutList,
+  IconSortDescending,
+} from 'twenty-ui/display';
+import {
+  MenuItem,
+  MenuItemNavigate,
+  MenuItemToggle,
+} from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const { t } = useLingui();
@@ -97,7 +99,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           />
         }
       >
-        Group by
+        Group
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {currentView?.key !== 'INDEX' && (

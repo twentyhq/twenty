@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui';
 
 import { StyledMultipleSelectDropdownAvatarChip } from '@/object-record/select/components/StyledMultipleSelectDropdownAvatarChip';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
@@ -9,9 +7,11 @@ import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListStates';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 
 export const MultipleSelectDropdown = ({
   selectableListId,
@@ -35,13 +35,13 @@ export const MultipleSelectDropdown = ({
   loadingItems: boolean;
 }) => {
   const { closeDropdown } = useDropdown();
-  const { selectedItemIdState } = useSelectableListStates({
-    selectableListScopeId: selectableListId,
-  });
 
   const { resetSelectedItem } = useSelectableList(selectableListId);
 
-  const selectedItemId = useRecoilValue(selectedItemIdState);
+  const selectedItemId = useRecoilComponentValueV2(
+    selectedItemIdComponentState,
+    selectableListId,
+  );
 
   const handleItemSelectChange = (
     itemToSelect: SelectableItem,
@@ -90,7 +90,7 @@ export const MultipleSelectDropdown = ({
 
   return (
     <SelectableList
-      selectableListId={selectableListId}
+      selectableListInstanceId={selectableListId}
       selectableItemIdArray={selectableItemIds}
       hotkeyScope={hotkeyScope}
       onEnter={(itemId) => {

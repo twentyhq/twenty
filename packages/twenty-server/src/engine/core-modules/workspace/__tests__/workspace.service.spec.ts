@@ -8,13 +8,13 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -25,6 +25,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 
 describe('WorkspaceService', () => {
   let service: WorkspaceService;
@@ -74,14 +75,19 @@ describe('WorkspaceService', () => {
             deleteSubscriptions: jest.fn(),
           },
         },
+        {
+          provide: AnalyticsService,
+          useValue: {
+            createAnalyticsContext: jest.fn(),
+          },
+        },
         ...[
-          WorkspaceManagerService,
           WorkspaceManagerService,
           UserWorkspaceService,
           UserService,
           DomainManagerService,
           CustomDomainService,
-          EnvironmentService,
+          TwentyConfigService,
           EmailService,
           OnboardingService,
           WorkspaceInvitationService,

@@ -61,17 +61,7 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
-        key: FeatureFlagKey.IsAdvancedFiltersEnabled,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
         key: FeatureFlagKey.IsNewRelationEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsWorkflowFormActionEnabled,
         workspaceId: workspaceId,
         value: true,
       },

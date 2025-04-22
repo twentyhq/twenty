@@ -4,8 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { i18n } from '@lingui/core';
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { isDefined } from 'class-validator';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, In, Not, Repository } from 'typeorm';
 
 import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
@@ -18,7 +18,10 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
-import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+import {
+  UpdateObjectPayload,
+  UpdateOneObjectInput,
+} from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -93,6 +96,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         objectMetadataInput.workspaceId,
       );
+
+    objectMetadataInput.labelSingular = capitalize(
+      objectMetadataInput.labelSingular,
+    );
+    objectMetadataInput.labelPlural = capitalize(
+      objectMetadataInput.labelPlural,
+    );
 
     validateObjectMetadataInputNamesOrThrow(objectMetadataInput);
     validateObjectMetadataInputLabelsOrThrow(objectMetadataInput);
@@ -233,10 +243,22 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     input: UpdateOneObjectInput,
     workspaceId: string,
   ): Promise<ObjectMetadataEntity> {
-    validateObjectMetadataInputNamesOrThrow(input.update);
+    const inputId = input.id;
+
+    const inputPayload = {
+      ...input.update,
+      ...(isDefined(input.update.labelSingular)
+        ? { labelSingular: capitalize(input.update.labelSingular) }
+        : {}),
+      ...(isDefined(input.update.labelPlural)
+        ? { labelPlural: capitalize(input.update.labelPlural) }
+        : {}),
+    };
+
+    validateObjectMetadataInputNamesOrThrow(inputPayload);
 
     const existingObjectMetadata = await this.objectMetadataRepository.findOne({
-      where: { id: input.id, workspaceId: workspaceId },
+      where: { id: inputId, workspaceId: workspaceId },
     });
 
     if (!existingObjectMetadata) {
@@ -248,7 +270,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const existingObjectMetadataCombinedWithUpdateInput = {
       ...existingObjectMetadata,
-      ...input.update,
+      ...inputPayload,
     };
 
     await this.validatesNoOtherObjectWithSameNameExistsOrThrows({
@@ -273,8 +295,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }
 
     if (
-      isDefined(input.update.nameSingular) ||
-      isDefined(input.update.namePlural)
+      isDefined(inputPayload.nameSingular) ||
+      isDefined(inputPayload.namePlural)
     ) {
       validateLowerCasedAndTrimmedStringsAreDifferentOrThrow({
         inputs: [
@@ -286,12 +308,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       });
     }
 
-    const updatedObject = await super.updateOne(input.id, input.update);
+    const updatedObject = await super.updateOne(inputId, inputPayload);
 
     await this.handleObjectNameAndLabelUpdates(
       existingObjectMetadata,
       existingObjectMetadataCombinedWithUpdateInput,
-      input,
+      inputPayload,
     );
 
     const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
@@ -299,12 +321,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       workspaceId,
     );
 
-    if (input.update.isActive !== undefined) {
+    if (inputPayload.isActive !== undefined) {
       // For new relation system, the active status is stitched to the field metadata
       if (!isNewRelationEnabled) {
         await this.objectMetadataRelationService.updateObjectRelationshipsActivationStatus(
-          input.id,
-          input.update.isActive,
+          inputId,
+          inputPayload.isActive,
         );
       }
     }
@@ -312,17 +334,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       workspaceId,
     );
-    if (input.update.labelIdentifierFieldMetadataId) {
+    if (inputPayload.labelIdentifierFieldMetadataId) {
       const labelIdentifierFieldMetadata =
         await this.fieldMetadataRepository.findOneByOrFail({
-          id: input.update.labelIdentifierFieldMetadataId,
-          objectMetadataId: input.id,
+          id: inputPayload.labelIdentifierFieldMetadataId,
+          objectMetadataId: inputId,
           workspaceId: workspaceId,
         });
 
       if (isSearchableFieldType(labelIdentifierFieldMetadata.type)) {
         await this.searchVectorService.updateSearchVector(
-          input.id,
+          inputId,
           [
             {
               name: labelIdentifierFieldMetadata.name,
@@ -483,7 +505,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   private async handleObjectNameAndLabelUpdates(
     existingObjectMetadata: ObjectMetadataEntity,
     objectMetadataForUpdate: ObjectMetadataEntity,
-    input: UpdateOneObjectInput,
+    inputPayload: UpdateObjectPayload,
   ) {
     const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IsNewRelationEnabled,
@@ -550,9 +572,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
 
       if (
-        (input.update.labelPlural || input.update.icon) &&
-        (input.update.labelPlural !== existingObjectMetadata.labelPlural ||
-          input.update.icon !== existingObjectMetadata.icon)
+        (inputPayload.labelPlural || inputPayload.icon) &&
+        (inputPayload.labelPlural !== existingObjectMetadata.labelPlural ||
+          inputPayload.icon !== existingObjectMetadata.icon)
       ) {
         await this.objectMetadataRelatedRecordsService.updateObjectViews(
           objectMetadataForUpdate,

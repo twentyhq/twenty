@@ -26,7 +26,7 @@ import { useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui';
+import { IconPlus } from 'twenty-ui/display';
 
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;

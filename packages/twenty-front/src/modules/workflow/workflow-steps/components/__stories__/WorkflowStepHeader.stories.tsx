@@ -1,6 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
-import { ComponentDecorator, IconPlus, THEME_LIGHT } from 'twenty-ui';
+import { IconPlus } from 'twenty-ui/display';
+import { ComponentDecorator } from 'twenty-ui/testing';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 import { WorkflowStepHeader } from '../WorkflowStepHeader';
 
 const meta: Meta<typeof WorkflowStepHeader> = {
@@ -11,6 +13,9 @@ const meta: Meta<typeof WorkflowStepHeader> = {
   },
   argTypes: {},
   decorators: [ComponentDecorator],
+  parameters: {
+    disableHotkeyInitialization: true,
+  },
 };
 
 export default meta;
@@ -43,7 +48,6 @@ export const EditableTitle: Story = {
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-
     // First find the div with the text, then click it to activate the input
     const titleText = await canvas.findByText('Create Record');
     await userEvent.click(titleText);

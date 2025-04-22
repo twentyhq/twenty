@@ -1,12 +1,12 @@
+import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { getRecordTitleCellId } from '@/object-record/record-title-cell/utils/getRecordTitleCellId';
+import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-
 export const useRecordTitleCell = () => {
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
@@ -14,7 +14,7 @@ export const useRecordTitleCell = () => {
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope();
+  } = usePreviousHotkeyScope(INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY);
 
   const closeRecordTitleCell = useRecoilCallback(
     ({ set }) =>
@@ -64,7 +64,7 @@ export const useRecordTitleCell = () => {
           );
         } else {
           setHotkeyScopeAndMemorizePreviousScope(
-            InlineCellHotkeyScope.InlineCell,
+            TitleInputHotkeyScope.TitleInput,
           );
         }
       },

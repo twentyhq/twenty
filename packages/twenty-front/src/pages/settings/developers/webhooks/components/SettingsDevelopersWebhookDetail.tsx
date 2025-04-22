@@ -2,31 +2,30 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import {
-  Button,
-  H2Title,
-  IconBox,
-  IconButton,
-  IconNorthStar,
-  IconPlus,
-  IconRefresh,
-  IconTrash,
-  Section,
-  useIcons,
-} from 'twenty-ui';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useWebhookUpdateForm } from '@/settings/developers/hooks/useWebhookUpdateForm';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Select, SelectOption } from '@/ui/input/components/Select';
+import { Select } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { Button, IconButton, SelectOption } from 'twenty-ui/input';
+import {
+  H2Title,
+  IconBox,
+  IconNorthStar,
+  IconPlus,
+  IconRefresh,
+  IconTrash,
+  useIcons,
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;

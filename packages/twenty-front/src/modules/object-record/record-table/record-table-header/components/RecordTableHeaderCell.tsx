@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { IconPlus, LightIconButton } from 'twenty-ui';
 
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -21,6 +20,8 @@ import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/componen
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
+import { IconPlus } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
 const COLUMN_MIN_WIDTH = 104;
 

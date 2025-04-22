@@ -1,21 +1,19 @@
 import { useContext } from 'react';
-import { IconArrowUpRight, IconPencil } from 'twenty-ui';
 
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
-import { useOpenActivityTargetInlineCellEditMode } from '@/activities/inline-cell/hooks/useOpenActivityTargetInlineCellEditMode';
-import { useUpdateActivityTargetFromInlineCell } from '@/activities/inline-cell/hooks/useUpdateActivityTargetFromInlineCell';
+import { useOpenActivityTargetCellEditMode } from '@/activities/inline-cell/hooks/useOpenActivityTargetCellEditMode';
+import { useUpdateActivityTargetFromCell } from '@/activities/inline-cell/hooks/useUpdateActivityTargetFromCell';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContextProvider } from '@/object-record/record-field/components/FieldContextProvider';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
-import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
+import { IconArrowUpRight, IconPencil } from 'twenty-ui/display';
 
 type ActivityTargetsInlineCellProps = {
   activityRecordId: string;
@@ -39,18 +37,15 @@ export const ActivityTargetsInlineCell = ({
 
   const { closeInlineCell } = useInlineCell(componentInstanceId);
 
-  const { fieldDefinition } = useContext(FieldContext);
+  const { fieldDefinition, isReadOnly } = useContext(FieldContext);
 
-  const isFieldReadOnly = useIsFieldValueReadOnly();
+  const { openActivityTargetCellEditMode } =
+    useOpenActivityTargetCellEditMode();
 
-  const { openActivityTargetInlineCellEditMode } =
-    useOpenActivityTargetInlineCellEditMode();
-
-  const { updateActivityTargetFromInlineCell } =
-    useUpdateActivityTargetFromInlineCell({
-      activityObjectNameSingular,
-      activityId: activityRecordId,
-    });
+  const { updateActivityTargetFromCell } = useUpdateActivityTargetFromCell({
+    activityObjectNameSingular,
+    activityId: activityRecordId,
+  });
 
   return (
     <RecordFieldComponentInstanceContext.Provider
@@ -69,11 +64,9 @@ export const ActivityTargetsInlineCell = ({
           <RecordInlineCellContext.Provider
             value={{
               buttonIcon: IconPencil,
-              customEditHotkeyScope:
-                MultipleRecordPickerHotkeyScope.MultipleRecordPicker,
               IconLabel: showLabel ? IconArrowUpRight : undefined,
               showLabel: showLabel,
-              readonly: isFieldReadOnly,
+              readonly: isReadOnly,
               labelWidth: fieldDefinition?.labelWidth,
               editModeContent: (
                 <MultipleRecordPicker
@@ -82,7 +75,7 @@ export const ActivityTargetsInlineCell = ({
                     closeInlineCell();
                   }}
                   onChange={(morphItem) => {
-                    updateActivityTargetFromInlineCell({
+                    updateActivityTargetFromCell({
                       recordPickerInstanceId: componentInstanceId,
                       morphItem,
                       activityTargetWithTargetRecords:
@@ -102,7 +95,7 @@ export const ActivityTargetsInlineCell = ({
                 />
               ),
               onOpenEditMode: () => {
-                openActivityTargetInlineCellEditMode({
+                openActivityTargetCellEditMode({
                   recordPickerInstanceId: componentInstanceId,
                   activityTargetObjectRecords,
                 });

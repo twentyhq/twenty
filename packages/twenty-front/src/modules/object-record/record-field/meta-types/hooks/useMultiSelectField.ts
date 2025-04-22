@@ -12,7 +12,7 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { FieldMetadataType } from '~/generated/graphql';
 
 export const useMultiSelectField = () => {
-  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   assertFieldMetadata(
     FieldMetadataType.MULTI_SELECT,
@@ -45,6 +45,5 @@ export const useMultiSelectField = () => {
     draftValue,
     setDraftValue,
     setFieldValue,
-    hotkeyScope,
   };
 };

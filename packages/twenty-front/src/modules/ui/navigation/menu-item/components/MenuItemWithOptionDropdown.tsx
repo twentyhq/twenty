@@ -7,13 +7,14 @@ import {
   IconChevronRight,
   IconComponent,
   IconDotsVertical,
-  LightIconButton,
-  LightIconButtonProps,
+} from 'twenty-ui/display';
+import { LightIconButton, LightIconButtonProps } from 'twenty-ui/input';
+import {
   MenuItemAccent,
   MenuItemLeftContent,
   StyledHoverableMenuItemBase,
   StyledMenuItemLeftContent,
-} from 'twenty-ui';
+} from 'twenty-ui/navigation';
 
 export type MenuItemIconButton = {
   Wrapper?: FunctionComponent<{ iconButton: ReactElement }>;

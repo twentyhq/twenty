@@ -1,9 +1,13 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { useRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { Theme, withTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { OverflowingTextWithTooltip } from 'twenty-ui';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledDiv = styled.div`
   background: inherit;
@@ -23,21 +27,41 @@ const StyledDiv = styled.div`
   }
 `;
 
+const StyledEmptyText = withTheme(styled.div<{ theme: Theme }>`
+  color: ${({ theme }) => theme.font.color.tertiary};
+`);
+
 export const RecordTitleCellSingleTextDisplayMode = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
-
   const recordValue = useRecordValue(recordId);
+  const isEmpty =
+    recordValue?.[fieldDefinition.metadata.fieldName]?.trim() === '';
 
   const { openInlineCell } = useInlineCell();
 
+  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope(
+    INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
+  );
+
   return (
-    <StyledDiv onClick={() => openInlineCell()}>
-      <OverflowingTextWithTooltip
-        text={
-          recordValue?.[fieldDefinition.metadata.fieldName] ||
-          fieldDefinition.label
-        }
-      />
+    <StyledDiv
+      onClick={() => {
+        setHotkeyScopeAndMemorizePreviousScope(
+          TitleInputHotkeyScope.TitleInput,
+        );
+        openInlineCell();
+      }}
+    >
+      {isEmpty ? (
+        <StyledEmptyText>Untitled</StyledEmptyText>
+      ) : (
+        <OverflowingTextWithTooltip
+          text={
+            recordValue?.[fieldDefinition.metadata.fieldName] ||
+            fieldDefinition.label
+          }
+        />
+      )}
     </StyledDiv>
   );
 };

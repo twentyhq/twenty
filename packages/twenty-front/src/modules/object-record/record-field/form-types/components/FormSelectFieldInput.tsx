@@ -1,25 +1,18 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
-import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
-import { SelectOption } from '@/spreadsheet-import/types';
-import { SelectDisplay } from '@/ui/field/display/components/SelectDisplay';
-import { SelectInput } from '@/ui/field/input/components/SelectInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { Select } from '@/ui/input/components/Select';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconChevronDown, VisibilityHidden } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { SelectOption } from 'twenty-ui/input';
 
 type FormSelectFieldInputProps = {
   label?: string;
@@ -27,47 +20,8 @@ type FormSelectFieldInputProps = {
   onChange: (value: string | null) => void;
   VariablePicker?: VariablePickerComponent;
   options: SelectOption[];
-  clearLabel?: string;
   readonly?: boolean;
-  preventDisplayPadding?: boolean;
-  placeholder?: string;
 };
-
-const StyledDisplayModeReadonlyContainer = styled.div`
-  align-items: center;
-  background: transparent;
-  border: none;
-  display: flex;
-  font-family: inherit;
-  padding-inline: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
-`;
-
-const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
-  cursor: pointer;
-
-  &:hover,
-  &[data-open='true'] {
-    background-color: ${({ theme }) => theme.background.transparent.lighter};
-  }
-`;
-
-const StyledPlaceholder = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  width: 100%;
-`;
-
-const StyledSelectInputContainer = styled.div`
-  position: absolute;
-  z-index: 1;
-  top: ${({ theme }) => theme.spacing(8)};
-`;
-
-const StyledSelectDisplayContainer = styled.div`
-  display: flex;
-  width: 100%;
-`;
 
 export const FormSelectFieldInput = ({
   label,
@@ -75,20 +29,13 @@ export const FormSelectFieldInput = ({
   onChange,
   VariablePicker,
   options,
-  clearLabel,
   readonly,
-  preventDisplayPadding,
-  placeholder,
 }: FormSelectFieldInputProps) => {
   const inputId = useId();
 
   const hotkeyScope = InlineCellHotkeyScope.InlineCell;
-  const theme = useTheme();
 
-  const {
-    setHotkeyScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope();
+  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
   const [draftValue, setDraftValue] = useState<
     | {
@@ -113,7 +60,7 @@ export const FormSelectFieldInput = ({
         },
   );
 
-  const onSubmit = (option: string) => {
+  const onSelect = (option: string) => {
     setDraftValue({
       type: 'static',
       value: option,
@@ -138,37 +85,9 @@ export const FormSelectFieldInput = ({
     goBackToPreviousHotkeyScope();
   };
 
-  const [filteredOptions, setFilteredOptions] = useState<SelectOption[]>([]);
-
-  const { resetSelectedItem } = useSelectableList(
-    SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID,
-  );
-
-  const clearField = () => {
-    setDraftValue({
-      type: 'static',
-      editingMode: 'view',
-      value: '',
-    });
-
-    onChange(null);
-  };
-
   const selectedOption = options.find(
     (option) => option.value === draftValue.value,
   );
-
-  const handleClearField = () => {
-    clearField();
-
-    goBackToPreviousHotkeyScope();
-  };
-
-  const handleSubmit = (option: SelectOption) => {
-    onSubmit(option.value);
-
-    resetSelectedItem();
-  };
 
   const handleUnlinkVariable = () => {
     setDraftValue({
@@ -189,131 +108,43 @@ export const FormSelectFieldInput = ({
     onChange(variableName);
   };
 
-  const handleDisplayModeClick = () => {
-    if (draftValue.type !== 'static') {
-      throw new Error(
-        'This function can only be called when editing a static value.',
-      );
-    }
-
-    setDraftValue({
-      ...draftValue,
-      editingMode: 'edit',
-    });
-
-    setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
-  };
-
-  const handleSelectEnter = (itemId: string) => {
-    const option = filteredOptions.find((option) => option.value === itemId);
-    if (isDefined(option)) {
-      onSubmit(option.value);
-      resetSelectedItem();
-    }
-  };
-
   useScopedHotkeys(
     Key.Escape,
     () => {
       onCancel();
-      resetSelectedItem();
     },
     hotkeyScope,
-    [onCancel, resetSelectedItem],
+    [onCancel],
   );
-
-  const optionIds = [
-    `No ${label}`,
-    ...filteredOptions.map((option) => option.value),
-  ];
-
-  const placeholderText = placeholder ?? label;
 
   return (
     <FormFieldInputContainer>
       {label ? <InputLabel>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>
-        <FormFieldInputInputContainer
-          hasRightElement={isDefined(VariablePicker) && !readonly}
-        >
-          {draftValue.type === 'static' ? (
-            readonly ? (
-              <StyledDisplayModeReadonlyContainer>
-                {isDefined(selectedOption) ? (
-                  <StyledSelectDisplayContainer>
-                    <SelectDisplay
-                      color={selectedOption.color ?? 'transparent'}
-                      label={selectedOption.label}
-                      Icon={selectedOption.icon ?? undefined}
-                      preventPadding={preventDisplayPadding}
-                    />
-                  </StyledSelectDisplayContainer>
-                ) : (
-                  <StyledPlaceholder />
-                )}
-                <IconChevronDown
-                  size={theme.icon.size.md}
-                  color={theme.font.color.light}
-                />
-              </StyledDisplayModeReadonlyContainer>
-            ) : (
-              <StyledDisplayModeContainer
-                data-open={draftValue.editingMode === 'edit'}
-                onClick={handleDisplayModeClick}
-              >
-                <VisibilityHidden>Edit</VisibilityHidden>
-
-                {isDefined(selectedOption) ? (
-                  <StyledSelectDisplayContainer>
-                    <SelectDisplay
-                      color={selectedOption.color ?? 'transparent'}
-                      label={selectedOption.label}
-                      Icon={selectedOption.icon ?? undefined}
-                      preventPadding={preventDisplayPadding}
-                    />
-                  </StyledSelectDisplayContainer>
-                ) : (
-                  <StyledPlaceholder>{placeholderText}</StyledPlaceholder>
-                )}
-                <IconChevronDown
-                  size={theme.icon.size.md}
-                  color={theme.font.color.tertiary}
-                />
-              </StyledDisplayModeContainer>
-            )
-          ) : (
+        {draftValue.type === 'static' ? (
+          <Select
+            dropdownId={`${inputId}-select-display`}
+            options={options}
+            value={selectedOption?.value}
+            onChange={onSelect}
+            fullWidth
+            hasRightElement={isDefined(VariablePicker) && !readonly}
+            withSearchInput
+            disabled={readonly}
+          />
+        ) : (
+          <FormFieldInputInnerContainer
+            hasRightElement={isDefined(VariablePicker) && !readonly}
+          >
             <VariableChipStandalone
               rawVariableName={draftValue.value}
               onRemove={readonly ? undefined : handleUnlinkVariable}
             />
-          )}
-        </FormFieldInputInputContainer>
-        <StyledSelectInputContainer>
-          {!readonly &&
-            draftValue.type === 'static' &&
-            draftValue.editingMode === 'edit' && (
-              <OverlayContainer>
-                <SelectInput
-                  selectableListComponentInstanceId={
-                    SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
-                  }
-                  selectableItemIdArray={optionIds}
-                  hotkeyScope={hotkeyScope}
-                  onEnter={handleSelectEnter}
-                  onOptionSelected={handleSubmit}
-                  options={options}
-                  onCancel={onCancel}
-                  defaultOption={selectedOption}
-                  onFilterChange={setFilteredOptions}
-                  onClear={handleClearField}
-                  clearLabel={clearLabel}
-                />
-              </OverlayContainer>
-            )}
-        </StyledSelectInputContainer>
+          </FormFieldInputInnerContainer>
+        )}
 
-        {VariablePicker && !readonly && (
+        {isDefined(VariablePicker) && !readonly && (
           <VariablePicker
             inputId={inputId}
             onVariableSelect={handleVariableTagInsert}

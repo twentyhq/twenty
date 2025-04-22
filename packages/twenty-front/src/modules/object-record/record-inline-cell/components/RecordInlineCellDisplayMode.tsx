@@ -43,18 +43,21 @@ const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
   align-content: center;
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
-  padding-top: 3px;
-  padding-bottom: 3px;
-
   height: fit-content;
 
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  padding-top: 2px;
+  padding-bottom: 2px;
 `;
 
 const StyledEmptyField = styled.div`
   color: ${({ theme }) => theme.font.color.light};
+  height: 20px;
+  display: flex;
+  align-items: center;
 `;
 
 export const RecordInlineCellDisplayMode = ({
@@ -64,13 +67,8 @@ export const RecordInlineCellDisplayMode = ({
 
   const { t } = useLingui();
 
-  const {
-    editModeContentOnly,
-
-    showLabel,
-    label,
-    buttonIcon,
-  } = useRecordInlineCellContext();
+  const { editModeContentOnly, showLabel, label, buttonIcon } =
+    useRecordInlineCellContext();
 
   const isDisplayModeContentEmpty = useIsFieldEmpty();
   const showEditButton =

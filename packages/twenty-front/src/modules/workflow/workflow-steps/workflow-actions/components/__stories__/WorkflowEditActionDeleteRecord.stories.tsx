@@ -1,7 +1,7 @@
 import { WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -158,6 +158,10 @@ export const DisabledWithDefaultStaticValues: Story = {
 
     const selectedRecordToDelete = await canvas.findByText(
       `${peopleMock.name.firstName} ${peopleMock.name.lastName}`,
+      undefined,
+      {
+        timeout: 3000,
+      },
     );
 
     expect(selectedRecordToDelete).toBeVisible();

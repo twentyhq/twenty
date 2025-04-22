@@ -128,6 +128,8 @@ export const ObjectFilterDropdownSourceSelect = ({
         value: newFilterValue,
         recordFilterGroupId: selectedFilter?.recordFilterGroupId,
         subFieldName: 'source',
+        positionInRecordFilterGroup:
+          selectedFilter?.positionInRecordFilterGroup,
       });
     }
   };

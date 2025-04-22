@@ -1,5 +1,5 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { Select, SelectOption } from '@/ui/input/components/Select';
+import { Select } from '@/ui/input/components/Select';
 import {
   WorkflowManualTrigger,
   WorkflowManualTriggerAvailability,
@@ -8,10 +8,13 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { MANUAL_TRIGGER_AVAILABILITY_OPTIONS } from '@/workflow/workflow-trigger/constants/ManualTriggerAvailabilityOptions';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
+import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
+import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
 import { useTheme } from '@emotion/react';
-import { useIcons } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 
 type WorkflowEditTriggerManualFormProps = {
   trigger: WorkflowManualTrigger;
@@ -47,11 +50,10 @@ export const WorkflowEditTriggerManualForm = ({
       ? 'WHEN_RECORD_SELECTED'
       : 'EVERYWHERE';
 
-  const headerTitle = isDefined(trigger.name) ? trigger.name : 'Manual Trigger';
+  const headerTitle = trigger.name ?? getTriggerDefaultLabel(trigger);
 
-  const headerIcon = getTriggerIcon({
-    type: 'MANUAL',
-  });
+  const headerIcon = getTriggerIcon(trigger);
+  const headerType = getTriggerHeaderType(trigger);
 
   return (
     <>
@@ -69,7 +71,7 @@ export const WorkflowEditTriggerManualForm = ({
         Icon={getIcon(headerIcon)}
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
-        headerType="Trigger · Manual"
+        headerType={headerType}
         disabled={triggerOptions.readonly}
       />
       <WorkflowStepBody>

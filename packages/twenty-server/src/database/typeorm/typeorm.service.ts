@@ -2,7 +2,7 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
-import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
@@ -13,11 +13,11 @@ import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-p
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -29,12 +29,12 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
   private dataSources: Map<string, DataSource> = new Map();
   private isDatasourceInitializing: Map<string, boolean> = new Map();
 
-  constructor(private readonly environmentService: EnvironmentService) {
+  constructor(private readonly twentyConfigService: TwentyConfigService) {
     this.mainDataSource = new DataSource({
-      url: environmentService.get('PG_DATABASE_URL'),
+      url: twentyConfigService.get('PG_DATABASE_URL'),
       type: 'postgres',
       logging:
-        environmentService.get('NODE_ENV') === NodeEnvironment.development
+        twentyConfigService.get('NODE_ENV') === NodeEnvironment.development
           ? ['query', 'error']
           : ['error'],
       schema: 'core',
@@ -58,7 +58,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         TwoFactorMethod,
       ],
       metadataTableName: '_typeorm_generated_columns_and_materialized_views',
-      ssl: environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
+      ssl: twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')
         ? {
             rejectUnauthorized: false,
           }
@@ -111,14 +111,14 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     const schema = dataSource.schema;
 
     const workspaceDataSource = new DataSource({
-      url: dataSource.url ?? this.environmentService.get('PG_DATABASE_URL'),
+      url: dataSource.url ?? this.twentyConfigService.get('PG_DATABASE_URL'),
       type: 'postgres',
       logging:
-        this.environmentService.get('NODE_ENV') === NodeEnvironment.development
+        this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.development
           ? ['query', 'error']
           : ['error'],
       schema,
-      ssl: this.environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
+      ssl: this.twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')
         ? {
             rejectUnauthorized: false,
           }

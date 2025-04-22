@@ -1,4 +1,4 @@
-import { UnauthorizedException, UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -12,7 +12,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  ForbiddenError,
+  ValidationError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -136,7 +139,7 @@ export class FieldMetadataResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     if (!workspaceId) {
-      throw new UnauthorizedException();
+      throw new ForbiddenError('Could not retrieve workspace ID');
     }
 
     const fieldMetadata =

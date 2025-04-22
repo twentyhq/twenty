@@ -11,8 +11,10 @@ import {
   setSessionId,
   useEventTracker,
 } from '@/analytics/hooks/useEventTracker';
+import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
+import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
@@ -21,10 +23,12 @@ import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { isDefined } from 'twenty-shared/utils';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
-import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
-import { isDefined } from 'twenty-shared/utils';
+import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
+import { AnalyticsType } from '~/generated/graphql';
+import { getPageTitleFromPath } from '~/utils/title-utils';
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
@@ -43,6 +47,8 @@ export const PageChangeEffect = () => {
 
   const eventTracker = useEventTracker();
 
+  const { initializeQueryParamState } = useInitializeQueryParamState();
+
   //TODO: refactor useResetTableRowSelection hook to not throw when the argument `recordTableId` is an empty string
   // - replace CoreObjectNamePlural.Person
   const objectNamePlural =
@@ -50,19 +56,25 @@ export const PageChangeEffect = () => {
 
   const resetTableSelections = useResetTableRowSelection(objectNamePlural);
 
+  const { executeTasksOnAnyLocationChange } =
+    useExecuteTasksOnAnyLocationChange();
+
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
       setPreviousLocation(location.pathname);
+      executeTasksOnAnyLocationChange();
     } else {
       return;
     }
-  }, [location, previousLocation]);
+  }, [location, previousLocation, executeTasksOnAnyLocationChange]);
 
   useEffect(() => {
+    initializeQueryParamState();
+
     if (isDefined(pageChangeEffectNavigateLocation)) {
       navigate(pageChangeEffectNavigateLocation);
     }
-  }, [navigate, pageChangeEffectNavigateLocation]);
+  }, [navigate, pageChangeEffectNavigateLocation, initializeQueryParamState]);
 
   useEffect(() => {
     const isLeavingRecordIndexPage = !!matchPath(
@@ -164,13 +176,16 @@ export const PageChangeEffect = () => {
   useEffect(() => {
     setTimeout(() => {
       setSessionId();
-      eventTracker('pageview', {
-        pathname: location.pathname,
-        locale: navigator.language,
-        userAgent: window.navigator.userAgent,
-        href: window.location.href,
-        referrer: document.referrer,
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      eventTracker(AnalyticsType['PAGEVIEW'], {
+        name: getPageTitleFromPath(location.pathname),
+        properties: {
+          pathname: location.pathname,
+          locale: navigator.language,
+          userAgent: window.navigator.userAgent,
+          href: window.location.href,
+          referrer: document.referrer,
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        },
       });
     }, 500);
   }, [eventTracker, location.pathname]);

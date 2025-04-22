@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RelationFromManyFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RelationFromManyFieldDisplay';
@@ -16,6 +15,7 @@ import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDeco
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
+import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   fieldValue,
   otherPersonMock,
@@ -69,7 +69,7 @@ const meta: Meta = {
             fieldDefinition: {
               ...relationFromManyFieldDisplayMock.fieldDefinition,
             } as unknown as FieldDefinition<FieldMetadata>,
-            hotkeyScope: 'hotkey-scope',
+            isReadOnly: false,
           }}
         >
           <RelationFieldValueSetterEffect />

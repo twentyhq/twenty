@@ -93,9 +93,11 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       operand: firstOperand,
       value,
       recordFilterGroupId: existingRecordFilter?.recordFilterGroupId,
+      positionInRecordFilterGroup:
+        existingRecordFilter?.positionInRecordFilterGroup,
       type: filterType,
       label: fieldMetadataItem.label,
-      subFieldName,
+      subFieldName: subFieldName ?? null,
     });
 
     setSubFieldNameUsedInDropdown(subFieldName);

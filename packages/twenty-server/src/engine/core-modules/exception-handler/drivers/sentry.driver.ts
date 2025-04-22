@@ -50,12 +50,6 @@ export class ExceptionHandlerSentryDriver
         }
 
         const eventId = Sentry.captureException(exception, {
-          fingerprint: [
-            'graphql',
-            errorPath,
-            options?.operation?.name,
-            options?.operation?.type,
-          ],
           contexts: {
             GraphQL: {
               operationName: options?.operation?.name,

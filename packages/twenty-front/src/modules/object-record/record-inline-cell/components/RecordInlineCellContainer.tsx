@@ -1,11 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import {
-  AppTooltip,
-  OverflowingTextWithTooltip,
-  TooltipDelay,
-} from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
@@ -14,6 +9,11 @@ import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInput
 
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
+import {
+  AppTooltip,
+  OverflowingTextWithTooltip,
+  TooltipDelay,
+} from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useRecordInlineCellContext } from './RecordInlineCellContext';
 
@@ -34,11 +34,11 @@ const StyledIconContainer = styled.div`
 
 const StyledLabelAndIconContainer = styled.div`
   align-items: center;
+  align-self: flex-start;
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  height: 18px;
-  padding-top: 3px;
+  height: 24px;
 `;
 
 const StyledValueContainer = styled.div`
@@ -54,18 +54,14 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
   width: ${({ width }) => width}px;
 `;
 
-const StyledInlineCellBaseContainer = styled.div<{
-  isDisplayModeFixHeight?: boolean;
-}>`
-  align-items: flex-start;
+const StyledInlineCellBaseContainer = styled.div`
   box-sizing: border-box;
   width: 100%;
   display: flex;
   height: fit-content;
-  line-height: ${({ isDisplayModeFixHeight }) =>
-    isDisplayModeFixHeight ? `24px` : `18px`};
   gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
+  align-items: center;
   justify-content: center;
 `;
 
@@ -74,14 +70,8 @@ export const StyledSkeletonDiv = styled.div`
 `;
 
 export const RecordInlineCellContainer = () => {
-  const {
-    readonly,
-    IconLabel,
-    label,
-    labelWidth,
-    showLabel,
-    isDisplayModeFixHeight,
-  } = useRecordInlineCellContext();
+  const { readonly, IconLabel, label, labelWidth, showLabel } =
+    useRecordInlineCellContext();
 
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
@@ -111,7 +101,6 @@ export const RecordInlineCellContainer = () => {
 
   return (
     <StyledInlineCellBaseContainer
-      isDisplayModeFixHeight={isDisplayModeFixHeight}
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
     >

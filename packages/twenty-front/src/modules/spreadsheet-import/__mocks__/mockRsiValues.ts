@@ -1,15 +1,15 @@
 import { defaultSpreadsheetImportProps } from '@/spreadsheet-import/provider/components/SpreadsheetImport';
-import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import {
-  Fields,
   SpreadsheetImportDialogOptions,
+  SpreadsheetImportFields
 } from '@/spreadsheet-import/types';
-import { sleep } from '~/utils/sleep';
+import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { sleep } from '~/utils/sleep';
 
 const fields = [
   {
-    icon: null,
+    Icon: null,
     label: 'Name',
     key: 'name',
     alternateMatches: ['first name', 'first'],
@@ -26,7 +26,7 @@ const fields = [
     fieldMetadataType: FieldMetadataType.TEXT,
   },
   {
-    icon: null,
+    Icon: null,
     label: 'Surname',
     key: 'surname',
     alternateMatches: ['second name', 'last name', 'last'],
@@ -44,7 +44,7 @@ const fields = [
     description: 'Family / Last name',
   },
   {
-    icon: null,
+    Icon: null,
     label: 'Age',
     key: 'age',
     alternateMatches: ['years'],
@@ -62,7 +62,7 @@ const fields = [
     ],
   },
   {
-    icon: null,
+    Icon: null,
     label: 'Team',
     key: 'team',
     alternateMatches: ['department'],
@@ -82,7 +82,7 @@ const fields = [
     ],
   },
   {
-    icon: null,
+    Icon: null,
     label: 'Is manager',
     key: 'is_manager',
     alternateMatches: ['manages'],
@@ -92,9 +92,9 @@ const fields = [
     },
     example: 'true',
   },
-] as Fields<string>;
+] as SpreadsheetImportFields<string>;
 
-export const importedColums: Columns<string> = [
+export const importedColums: SpreadsheetColumns<string> = [
   {
     header: 'Name',
     index: 0,
@@ -156,6 +156,7 @@ export const mockRsiValues = mockComponentBehaviourForTypes({
     await sleep(4000, (resolve) => resolve(data));
     return data;
   },
+  availableFieldMetadataItems: []
 });
 
 export const editableTableInitialData = [

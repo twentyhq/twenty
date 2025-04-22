@@ -1,5 +1,5 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { Select, SelectOption } from '@/ui/input/components/Select';
+import { Select } from '@/ui/input/components/Select';
 import { WorkflowFindRecordsAction } from '@/workflow/types/Workflow';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useEffect, useState } from 'react';
@@ -9,9 +9,10 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
 import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { HorizontalSeparator, useIcons } from 'twenty-ui';
-import { useDebouncedCallback } from 'use-debounce';
 import { isDefined } from 'twenty-shared/utils';
+import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
+import { useDebouncedCallback } from 'use-debounce';
 
 type WorkflowEditActionFindRecordsProps = {
   action: WorkflowFindRecordsAction;
@@ -51,14 +52,10 @@ export const WorkflowEditActionFindRecords = ({
   });
   const isFormDisabled = actionOptions.readonly;
 
-  const selectedObjectMetadataItemNameSingular = formData.objectName;
-
-  const selectedObjectMetadataItem = activeObjectMetadataItems.find(
-    (item) => item.nameSingular === selectedObjectMetadataItemNameSingular,
-  );
-  if (!isDefined(selectedObjectMetadataItem)) {
-    throw new Error('Should have found the metadata item');
-  }
+  const selectedObjectMetadataItemNameSingular =
+    activeObjectMetadataItems.find(
+      (item) => item.nameSingular === formData.objectName,
+    )?.nameSingular ?? '';
 
   const saveAction = useDebouncedCallback(
     async (formData: FindRecordsFormData) => {
@@ -118,7 +115,7 @@ export const WorkflowEditActionFindRecords = ({
           label="Object"
           fullWidth
           disabled={isFormDisabled}
-          value={formData.objectName}
+          value={selectedObjectMetadataItemNameSingular}
           emptyOption={{ label: 'Select an option', value: '' }}
           options={availableMetadata}
           onChange={(objectName) => {

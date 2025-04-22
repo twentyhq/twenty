@@ -3,10 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import FileType from 'file-type';
-import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
@@ -28,10 +28,10 @@ import {
   SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -55,7 +55,7 @@ export class SignInUpService {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly onboardingService: OnboardingService,
     private readonly httpService: HttpService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
     private readonly userService: UserService,
     private readonly userRoleService: UserRoleService,
@@ -324,7 +324,7 @@ export class SignInUpService {
       );
     }
 
-    if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
+    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
       const workspacesCount = await this.workspaceRepository.count();
 
       // if the workspace doesn't exist it means it's the first user of the workspace
@@ -352,11 +352,14 @@ export class SignInUpService {
       }
     };
 
+    const isWorkEmailFound = isWorkEmail(email);
     const logo =
-      isWorkEmail(email) && (await isLogoUrlValid()) ? logoUrl : undefined;
+      isWorkEmailFound && (await isLogoUrlValid()) ? logoUrl : undefined;
 
     const workspaceToCreate = this.workspaceRepository.create({
-      subdomain: await this.domainManagerService.generateSubdomain(),
+      subdomain: await this.domainManagerService.generateSubdomain(
+        isWorkEmailFound ? { email } : {},
+      ),
       displayName: '',
       inviteHash: v4(),
       activationStatus: WorkspaceActivationStatus.PENDING_CREATION,

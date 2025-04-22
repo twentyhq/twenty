@@ -1,12 +1,3 @@
-import {
-  IconArrowLeft,
-  IconArrowRight,
-  IconEyeOff,
-  IconFilter,
-  IconSortDescending,
-  MenuItem,
-} from 'twenty-ui';
-
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -15,8 +6,17 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { onToggleColumnFilterComponentState } from '@/object-record/record-table/states/onToggleColumnFilterComponentState';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
+import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconEyeOff,
+  IconFilter,
+  IconSortDescending,
+} from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { ColumnDefinition } from '../../types/ColumnDefinition';
 
@@ -28,6 +28,9 @@ export const RecordTableColumnHeadDropdownMenu = ({
   column,
 }: RecordTableColumnHeadDropdownMenuProps) => {
   const { t } = useLingui();
+
+  const { toggleScrollXWrapper, toggleScrollYWrapper } =
+    useToggleScrollWrapper();
 
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
@@ -47,16 +50,21 @@ export const RecordTableColumnHeadDropdownMenu = ({
 
   const { closeDropdown } = useDropdown(column.fieldMetadataId + '-header');
 
-  const handleColumnMoveLeft = () => {
+  const closeDropdownAndToggleScroll = () => {
     closeDropdown();
+    toggleScrollXWrapper(true);
+    toggleScrollYWrapper(false);
+  };
 
+  const handleColumnMoveLeft = () => {
+    closeDropdownAndToggleScroll();
     if (!canMoveLeft) return;
 
     handleMoveTableColumn('left', column);
   };
 
   const handleColumnMoveRight = () => {
-    closeDropdown();
+    closeDropdownAndToggleScroll();
 
     if (!canMoveRight) return;
 
@@ -64,7 +72,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
   };
 
   const handleColumnVisibility = () => {
-    closeDropdown();
+    closeDropdownAndToggleScroll();
     handleColumnVisibilityChange(column);
   };
 
@@ -76,13 +84,13 @@ export const RecordTableColumnHeadDropdownMenu = ({
   );
 
   const handleSortClick = () => {
-    closeDropdown();
+    closeDropdownAndToggleScroll();
 
     onToggleColumnSort?.(column.fieldMetadataId);
   };
 
   const handleFilterClick = () => {
-    closeDropdown();
+    closeDropdownAndToggleScroll();
 
     onToggleColumnFilter?.(column.fieldMetadataId);
   };

@@ -8,23 +8,23 @@ import { TrialCard } from '@/billing/components/TrialCard';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
 import { isBillingPriceLicensed } from '@/billing/utils/isBillingPriceLicensed';
 import { billingState } from '@/client-config/states/billingState';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { Loader } from 'twenty-ui/feedback';
+import { CardPicker, MainButton } from 'twenty-ui/input';
 import {
-  ActionLink,
   CAL_LINK,
-  CardPicker,
-  Loader,
-  MainButton,
-} from 'twenty-ui';
+  ClickToActionLink,
+  TWENTY_PRICING_LINK,
+} from 'twenty-ui/navigation';
 import {
   BillingPlanKey,
   BillingPriceLicensedDto,
-  SubscriptionInterval,
   useBillingBaseProductPricesQuery,
 } from '~/generated/graphql';
-import { isDefined } from 'twenty-shared/utils';
 
 const StyledSubscriptionContainer = styled.div<{
   withLongerMarginBottom: boolean;
@@ -84,6 +84,10 @@ const StyledLinkGroup = styled.div`
   }
 `;
 
+const StyledChooseYourPlanPlaceholder = styled.div`
+  height: 566px;
+`;
+
 export const ChooseYourPlan = () => {
   const billing = useRecoilValue(billingState);
   const { t } = useLingui();
@@ -94,7 +98,7 @@ export const ChooseYourPlan = () => {
 
   const { data: plans } = useBillingBaseProductPricesQuery();
 
-  const currentPlan = billingCheckoutSession.plan || BillingPlanKey.PRO;
+  const currentPlan = billingCheckoutSession.plan;
 
   const getPlanBenefits = (planKey: BillingPlanKey) => {
     if (planKey === BillingPlanKey.ENTERPRISE) {
@@ -104,7 +108,7 @@ export const ChooseYourPlan = () => {
         t`Email integration`,
         t`Custom objects`,
         t`API & Webhooks`,
-        t`20 000 workflow node executions`,
+        t`20,000 workflow node executions`,
         t`SSO (SAML / OIDC)`,
       ];
     }
@@ -115,7 +119,7 @@ export const ChooseYourPlan = () => {
       t`Email integration`,
       t`Custom objects`,
       t`API & Webhooks`,
-      t`10 000 workflow node executions`,
+      t`10,000 workflow node executions`,
     ];
   };
 
@@ -125,10 +129,10 @@ export const ChooseYourPlan = () => {
     (plan) => plan.planKey === currentPlan,
   )?.baseProduct;
 
-  const baseProductPrice = baseProduct?.prices.find(
+  const baseProductPrice = baseProduct?.prices?.find(
     (price): price is BillingPriceLicensedDto =>
       isBillingPriceLicensed(price) &&
-      price.recurringInterval === SubscriptionInterval.Month,
+      price.recurringInterval === billingCheckoutSession.interval,
   );
 
   const hasWithoutCreditCardTrialPeriod = billing?.trialPeriods.some(
@@ -160,108 +164,93 @@ export const ChooseYourPlan = () => {
     };
   };
 
-  const handleSwitchPlan = (planKey: BillingPlanKey) => {
-    return () => {
-      if (isDefined(baseProductPrice)) {
-        setBillingCheckoutSession({
-          plan: planKey,
-          interval: baseProductPrice.recurringInterval,
-          requirePaymentMethod: billingCheckoutSession.requirePaymentMethod,
-        });
-      }
-    };
-  };
-
   const { signOut } = useAuth();
 
   const withCreditCardTrialPeriodDuration = withCreditCardTrialPeriod?.duration;
 
-  const alternatePlan =
-    currentPlan === BillingPlanKey.PRO
-      ? BillingPlanKey.ENTERPRISE
-      : BillingPlanKey.PRO;
-
-  const alternatePlanName = plans?.plans.find(
-    (plan) => plan.planKey === alternatePlan,
-  )?.baseProduct.name;
+  const planName = plans?.plans.find((plan) => plan.planKey === currentPlan)
+    ?.baseProduct.name;
 
   return (
-    isDefined(baseProductPrice) &&
-    isDefined(billing) && (
-      <>
-        <Title noMarginTop>
-          {hasWithoutCreditCardTrialPeriod
-            ? t`Choose your Trial`
-            : t`Get your subscription`}
-        </Title>
-        {hasWithoutCreditCardTrialPeriod ? (
-          <SubTitle>
-            <Trans>Cancel anytime</Trans>
-          </SubTitle>
-        ) : (
-          withCreditCardTrialPeriod && (
-            <SubTitle>
-              {t`Enjoy a ${withCreditCardTrialPeriodDuration}-days free trial`}
-            </SubTitle>
-          )
-        )}
-        <StyledSubscriptionContainer
-          withLongerMarginBottom={!hasWithoutCreditCardTrialPeriod}
-        >
-          <StyledSubscriptionPriceContainer>
-            <SubscriptionPrice
-              type={baseProductPrice.recurringInterval}
-              price={baseProductPrice.unitAmount / 100}
-            />
-          </StyledSubscriptionPriceContainer>
-          <StyledBenefitsContainer>
-            {benefits.map((benefit) => (
-              <SubscriptionBenefit key={benefit}>{benefit}</SubscriptionBenefit>
-            ))}
-          </StyledBenefitsContainer>
-        </StyledSubscriptionContainer>
-        {hasWithoutCreditCardTrialPeriod && (
-          <StyledChooseTrialContainer>
-            {billing.trialPeriods.map((trialPeriod) => (
-              <CardPicker
-                checked={
-                  billingCheckoutSession.requirePaymentMethod ===
-                  trialPeriod.isCreditCardRequired
-                }
-                handleChange={handleTrialPeriodChange(
-                  trialPeriod.isCreditCardRequired,
-                )}
-                key={trialPeriod.duration}
-              >
-                <TrialCard
-                  duration={trialPeriod.duration}
-                  withCreditCard={trialPeriod.isCreditCardRequired}
-                />
-              </CardPicker>
-            ))}
-          </StyledChooseTrialContainer>
-        )}
-        <MainButton
-          title={t`Continue`}
-          onClick={handleCheckoutSession}
-          width={200}
-          Icon={() => isSubmitting && <Loader />}
-          disabled={isSubmitting}
-        />
-        <StyledLinkGroup>
-          <ActionLink onClick={signOut}>
-            <Trans>Log out</Trans>
-          </ActionLink>
-          <span />
-          <ActionLink onClick={handleSwitchPlan(alternatePlan)}>
-            <Trans>Switch to {alternatePlanName}</Trans>
-          </ActionLink>
-          <span />
-          <ActionLink href={CAL_LINK} target="_blank" rel="noreferrer">
-            <Trans>Book a Call</Trans>
-          </ActionLink>
-        </StyledLinkGroup>
-      </>
-    )
+    <Modal.Content isVerticalCentered>
+      {isDefined(baseProductPrice) && isDefined(billing) ? (
+        <>
+          <Title noMarginTop>
+            {hasWithoutCreditCardTrialPeriod
+              ? t`Choose your Trial`
+              : t`Get your subscription`}
+          </Title>
+          {hasWithoutCreditCardTrialPeriod ? (
+            <SubTitle>{planName}</SubTitle>
+          ) : (
+            withCreditCardTrialPeriod && (
+              <SubTitle>
+                {t`Enjoy a ${withCreditCardTrialPeriodDuration}-days free trial`}
+              </SubTitle>
+            )
+          )}
+          <StyledSubscriptionContainer
+            withLongerMarginBottom={!hasWithoutCreditCardTrialPeriod}
+          >
+            <StyledSubscriptionPriceContainer>
+              <SubscriptionPrice
+                type={baseProductPrice.recurringInterval}
+                price={baseProductPrice.unitAmount / 100}
+              />
+            </StyledSubscriptionPriceContainer>
+            <StyledBenefitsContainer>
+              {benefits.map((benefit) => (
+                <SubscriptionBenefit key={benefit}>
+                  {benefit}
+                </SubscriptionBenefit>
+              ))}
+            </StyledBenefitsContainer>
+          </StyledSubscriptionContainer>
+          {hasWithoutCreditCardTrialPeriod && (
+            <StyledChooseTrialContainer>
+              {billing.trialPeriods.map((trialPeriod) => (
+                <CardPicker
+                  checked={
+                    billingCheckoutSession.requirePaymentMethod ===
+                    trialPeriod.isCreditCardRequired
+                  }
+                  handleChange={handleTrialPeriodChange(
+                    trialPeriod.isCreditCardRequired,
+                  )}
+                  key={trialPeriod.duration}
+                >
+                  <TrialCard
+                    duration={trialPeriod.duration}
+                    withCreditCard={trialPeriod.isCreditCardRequired}
+                  />
+                </CardPicker>
+              ))}
+            </StyledChooseTrialContainer>
+          )}
+          <MainButton
+            title={t`Continue`}
+            onClick={handleCheckoutSession}
+            width={200}
+            Icon={() => isSubmitting && <Loader />}
+            disabled={isSubmitting}
+          />
+          <StyledLinkGroup>
+            <ClickToActionLink onClick={signOut}>
+              <Trans>Log out</Trans>
+            </ClickToActionLink>
+            <span />
+            <ClickToActionLink href={TWENTY_PRICING_LINK}>
+              <Trans>Change Plan</Trans>
+            </ClickToActionLink>
+            <span />
+            <ClickToActionLink href={CAL_LINK} target="_blank" rel="noreferrer">
+              <Trans>Book a Call</Trans>
+            </ClickToActionLink>
+          </StyledLinkGroup>
+        </>
+      ) : (
+        <StyledChooseYourPlanPlaceholder />
+      )}
+    </Modal.Content>
   );
 };

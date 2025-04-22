@@ -1,15 +1,5 @@
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import {
-  IconApps,
-  IconButton,
-  IconButtonSize,
-  IconButtonVariant,
-  IconComponent,
-  LightIconButton,
-  useIcons,
-} from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -18,11 +8,19 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
+import { IconApps, IconComponent, useIcons } from 'twenty-ui/display';
+import {
+  IconButton,
+  IconButtonSize,
+  IconButtonVariant,
+  LightIconButton,
+} from 'twenty-ui/input';
 import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
 
 export type IconPickerProps = {
@@ -66,9 +64,10 @@ const IconPickerIcon = ({
   selectedIconKey,
   Icon,
 }: IconPickerIconProps) => {
-  const { isSelectedItemIdSelector } = useSelectableList();
-
-  const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector(iconKey));
+  const isSelectedItemId = useRecoilComponentValueV2(
+    selectedItemIdComponentState,
+    iconKey,
+  );
 
   return (
     <StyledLightIconButton
@@ -76,7 +75,7 @@ const IconPickerIcon = ({
       aria-label={convertIconKeyToLabel(iconKey)}
       size="medium"
       title={iconKey}
-      isSelected={iconKey === selectedIconKey || isSelectedItemId}
+      isSelected={iconKey === selectedIconKey || !!isSelectedItemId}
       Icon={Icon}
       onClick={onClick}
     />
@@ -174,10 +173,10 @@ export const IconPicker = ({
             size={size}
           />
         }
-        dropdownMenuWidth={176}
+        dropdownWidth={176}
         dropdownComponents={
           <SelectableList
-            selectableListId="icon-list"
+            selectableListInstanceId="icon-list"
             selectableItemIdMatrix={iconKeys2d}
             hotkeyScope={IconPickerHotkeyScope.IconPicker}
             onEnter={(iconKey) => {

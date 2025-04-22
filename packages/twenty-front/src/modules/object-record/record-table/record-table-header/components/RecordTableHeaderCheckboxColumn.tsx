@@ -1,9 +1,12 @@
 import styled from '@emotion/styled';
 
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { Checkbox } from 'twenty-ui';
+import { Checkbox } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -30,6 +33,21 @@ export const RecordTableHeaderCheckboxColumn = () => {
     allRowsSelectedStatus === 'all' || allRowsSelectedStatus === 'some';
   const indeterminate = allRowsSelectedStatus === 'some';
 
+  const { recordTableId } = useRecordTableContextOrThrow();
+
+  const isRecordTableInitialLoading = useRecoilComponentValueV2(
+    isRecordTableInitialLoadingComponentState,
+    recordTableId,
+  );
+
+  const allRecordIds = useRecoilComponentValueV2(
+    recordIndexAllRecordIdsComponentSelector,
+    recordTableId,
+  );
+
+  const recordTableIsEmpty =
+    !isRecordTableInitialLoading && allRecordIds.length === 0;
+
   const onChange = () => {
     if (checked) {
       setHasUserSelectedAllRows(false);
@@ -48,6 +66,7 @@ export const RecordTableHeaderCheckboxColumn = () => {
           checked={checked}
           onChange={onChange}
           indeterminate={indeterminate}
+          disabled={recordTableIsEmpty}
         />
       </StyledContainer>
     </StyledColumnHeaderCell>

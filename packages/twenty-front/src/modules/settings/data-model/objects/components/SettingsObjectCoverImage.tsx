@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
-import { Card, FloatingButton, IconEye } from 'twenty-ui';
 
 import { SettingsPath } from '@/types/SettingsPath';
 import { useLingui } from '@lingui/react/macro';
+import { IconEye } from 'twenty-ui/display';
+import { FloatingButton } from 'twenty-ui/input';
+import { Card } from 'twenty-ui/layout';
 import DarkCoverImage from '../../assets/cover-dark.png';
 import LightCoverImage from '../../assets/cover-light.png';
 
@@ -16,7 +18,7 @@ const StyledCoverImageContainer = styled(Card)`
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-sizing: border-box;
   display: flex;
-  height: 153px;
+  min-height: 153px;
   justify-content: center;
   position: relative;
   margin-bottom: ${({ theme }) => theme.spacing(8)};

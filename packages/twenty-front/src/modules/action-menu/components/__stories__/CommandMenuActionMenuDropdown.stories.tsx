@@ -3,27 +3,19 @@ import { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
 import { CommandMenuActionMenuDropdown } from '@/action-menu/components/CommandMenuActionMenuDropdown';
-import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-actions.mock';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import {
-  ActionMenuEntry,
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { msg } from '@lingui/core/macro';
 import { userEvent, waitFor, within } from '@storybook/test';
 import {
   ComponentDecorator,
-  IconFileExport,
-  IconHeart,
-  IconTrash,
-  MenuItemAccent,
+  RouterDecorator,
   getCanvasElementForDropdownTesting,
-} from 'twenty-ui';
+} from 'twenty-ui/testing';
+import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-
 const deleteMock = jest.fn();
 const addToFavoritesMock = jest.fn();
 const exportMock = jest.fn();
@@ -51,56 +43,31 @@ const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
             }),
             1,
           );
-
-          const map = new Map<string, ActionMenuEntry>();
-
-          set(
-            actionMenuEntriesComponentState.atomFamily({
-              instanceId: 'story-action-menu',
-            }),
-            map,
-          );
-
-          map.set('addToFavorites', {
-            type: ActionMenuEntryType.Standard,
-            scope: ActionMenuEntryScope.RecordSelection,
-            key: 'addToFavorites',
-            label: msg`Add to favorites`,
-            position: 0,
-            Icon: IconHeart,
-            onClick: addToFavoritesMock,
-          });
-
-          map.set('export', {
-            type: ActionMenuEntryType.Standard,
-            scope: ActionMenuEntryScope.RecordSelection,
-            key: 'export',
-            label: msg`Export`,
-            position: 1,
-            Icon: IconFileExport,
-            onClick: exportMock,
-          });
-
-          map.set('delete', {
-            type: ActionMenuEntryType.Standard,
-            scope: ActionMenuEntryScope.RecordSelection,
-            key: 'delete',
-            label: msg`Delete`,
-            position: 2,
-            Icon: IconTrash,
-            onClick: deleteMock,
-            accent: 'danger' as MenuItemAccent,
-          });
         }}
       >
         <ActionMenuComponentInstanceContext.Provider
           value={{ instanceId: 'story-action-menu' }}
         >
-          <Story />
+          <ActionMenuContext.Provider
+            value={{
+              isInRightDrawer: true,
+              displayType: 'dropdownItem',
+              actionMenuType: 'command-menu-show-page-action-menu-dropdown',
+              actions: createMockActionMenuActions({
+                deleteMock,
+                addToFavoritesMock,
+                exportMock,
+              }),
+            }}
+          >
+            <Story />
+          </ActionMenuContext.Provider>
         </ActionMenuComponentInstanceContext.Provider>
       </RecoilRoot>
     ),
     ComponentDecorator,
+    ContextStoreDecorator,
+    RouterDecorator,
   ],
   args: {
     actionMenuId: 'story-action-menu',

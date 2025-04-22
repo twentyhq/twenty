@@ -2,16 +2,14 @@ import { Heading } from '@/spreadsheet-import/components/Heading';
 import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import {
-  ColumnType,
-  Columns,
-} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import {
-  ImportValidationResult,
   ImportedStructuredRow,
+  SpreadsheetImportImportValidationResult,
 } from '@/spreadsheet-import/types';
+import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { Modal } from '@/ui/layout/modal/components/Modal';
@@ -27,9 +25,10 @@ import {
 // @ts-expect-error Todo: remove usage of react-data-grid`
 import { RowsChangeData } from 'react-data-grid';
 import { isDefined } from 'twenty-shared/utils';
-import { Button, IconTrash, Toggle } from 'twenty-ui';
 import { generateColumns } from './components/columns';
 import { ImportedStructuredRowMetadata } from './types';
+import { Button, Toggle } from 'twenty-ui/input';
+import { IconTrash } from 'twenty-ui/display';
 
 const StyledContent = styled(Modal.Content)`
   padding-left: ${({ theme }) => theme.spacing(6)};
@@ -74,7 +73,7 @@ const StyledNoRowsContainer = styled.div`
 
 type ValidationStepProps<T extends string> = {
   initialData: ImportedStructuredRow<T>[];
-  importedColumns: Columns<string>;
+  importedColumns: SpreadsheetColumns<string>;
   file: File;
   onBack: () => void;
   setCurrentStepState: Dispatch<SetStateAction<SpreadsheetImportStep>>;
@@ -153,13 +152,14 @@ export const ValidationStep = <T extends string>({
           const hasBeenImported =
             importedColumns.filter(
               (importColumn) =>
-                (importColumn.type === ColumnType.matched &&
+                (importColumn.type === SpreadsheetColumnType.matched &&
                   importColumn.value === column.key) ||
-                (importColumn.type === ColumnType.matchedSelect &&
+                (importColumn.type === SpreadsheetColumnType.matchedSelect &&
                   importColumn.value === column.key) ||
-                (importColumn.type === ColumnType.matchedSelectOptions &&
+                (importColumn.type ===
+                  SpreadsheetColumnType.matchedSelectOptions &&
                   importColumn.value === column.key) ||
-                (importColumn.type === ColumnType.matchedCheckbox &&
+                (importColumn.type === SpreadsheetColumnType.matchedCheckbox &&
                   importColumn.value === column.key) ||
                 column.key === 'select-row',
             ).length > 0;
@@ -214,7 +214,7 @@ export const ValidationStep = <T extends string>({
         validStructuredRows: [] as ImportedStructuredRow<T>[],
         invalidStructuredRows: [] as ImportedStructuredRow<T>[],
         allStructuredRows: data,
-      } satisfies ImportValidationResult<T>,
+      } satisfies SpreadsheetImportImportValidationResult<T>,
     );
 
     setCurrentStepState({

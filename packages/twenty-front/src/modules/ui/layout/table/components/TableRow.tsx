@@ -1,7 +1,7 @@
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledTableRow = styled('div', {
   shouldForwardProp: (prop) =>

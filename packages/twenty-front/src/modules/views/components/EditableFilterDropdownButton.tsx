@@ -8,60 +8,50 @@ import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 
 import { ObjectFilterOperandSelectAndInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterOperandSelectAndInput';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
-import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
+import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { EditableFilterDropdownButtonEffect } from '@/views/components/EditableFilterDropdownButtonEffect';
 
 type EditableFilterDropdownButtonProps = {
-  viewFilterDropdownId: string;
-  viewFilter: RecordFilter;
+  recordFilter: RecordFilter;
   hotkeyScope: HotkeyScope;
 };
 
 export const EditableFilterDropdownButton = ({
-  viewFilterDropdownId,
-  viewFilter,
+  recordFilter,
   hotkeyScope,
 }: EditableFilterDropdownButtonProps) => {
-  const { closeDropdown } = useDropdown(viewFilterDropdownId);
+  const { closeDropdown } = useDropdown(recordFilter.id);
 
   const { removeRecordFilter } = useRemoveRecordFilter();
 
   const handleRemove = () => {
     closeDropdown();
 
-    removeRecordFilter({ recordFilterId: viewFilter.id });
+    removeRecordFilter({ recordFilterId: recordFilter.id });
   };
 
   const handleDropdownClickOutside = useCallback(() => {
-    const { value, operand } = viewFilter;
-    if (
-      !value &&
-      ![
-        RecordFilterOperand.IsEmpty,
-        RecordFilterOperand.IsNotEmpty,
-        RecordFilterOperand.IsInPast,
-        RecordFilterOperand.IsInFuture,
-        RecordFilterOperand.IsToday,
-      ].includes(operand)
-    ) {
-      removeRecordFilter({ recordFilterId: viewFilter.id });
+    const recordFilterIsEmpty = isRecordFilterConsideredEmpty(recordFilter);
+
+    if (recordFilterIsEmpty) {
+      removeRecordFilter({ recordFilterId: recordFilter.id });
     }
-  }, [viewFilter, removeRecordFilter]);
+  }, [recordFilter, removeRecordFilter]);
 
   return (
     <>
-      <EditableFilterDropdownButtonEffect
-        viewFilterDropdownId={viewFilterDropdownId}
-        viewFilter={viewFilter}
-      />
+      <EditableFilterDropdownButtonEffect recordFilter={recordFilter} />
       <Dropdown
-        dropdownId={viewFilterDropdownId}
+        dropdownId={recordFilter.id}
         clickableComponent={
-          <EditableFilterChip viewFilter={viewFilter} onRemove={handleRemove} />
+          <EditableFilterChip
+            recordFilter={recordFilter}
+            onRemove={handleRemove}
+          />
         }
         dropdownComponents={
           <ObjectFilterOperandSelectAndInput
-            filterDropdownId={viewFilterDropdownId}
+            filterDropdownId={recordFilter.id}
           />
         }
         dropdownHotkeyScope={hotkeyScope}

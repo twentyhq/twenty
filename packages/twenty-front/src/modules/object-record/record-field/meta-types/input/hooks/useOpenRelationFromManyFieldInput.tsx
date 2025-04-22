@@ -6,13 +6,17 @@ import {
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
+import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilCallback } from 'recoil';
 
 export const useOpenRelationFromManyFieldInput = () => {
   const { performSearch } = useMultipleRecordPickerPerformSearch();
+
+  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
 
   const openRelationFromManyFieldInput = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -83,8 +87,12 @@ export const useOpenRelationFromManyFieldInput = () => {
           forceSearchableObjectMetadataItems: [objectMetadataItem],
           forcePickableMorphItems: pickableMorphItems,
         });
+
+        setHotkeyScopeAndMemorizePreviousScope(
+          MultipleRecordPickerHotkeyScope.MultipleRecordPicker,
+        );
       },
-    [performSearch],
+    [performSearch, setHotkeyScopeAndMemorizePreviousScope],
   );
 
   return { openRelationFromManyFieldInput };

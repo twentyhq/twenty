@@ -1,8 +1,8 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
-import { Select, SelectOption } from '@/ui/input/components/Select';
+import { Select } from '@/ui/input/components/Select';
 import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOrDefaultViewFromPrefetchedViews';
 import { WorkflowCreateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -12,11 +12,12 @@ import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-ac
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useEffect, useState } from 'react';
-import { HorizontalSeparator, useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated/graphql';
-import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowEditActionCreateRecordProps = {
   action: WorkflowCreateRecordAction;
@@ -77,17 +78,19 @@ export const WorkflowEditActionCreateRecord = ({
 
   const objectNameSingular = formData.objectName;
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const objectMetadataItem = objectMetadataItems.find(
+    (item) => item.nameSingular === objectNameSingular,
+  );
 
   const { view: indexView } = useViewOrDefaultViewFromPrefetchedViews({
-    objectMetadataItemId: objectMetadataItem.id ?? '',
+    objectMetadataItemId: objectMetadataItem?.id ?? '',
   });
 
   const viewFields = indexView?.viewFields ?? [];
 
-  const inlineFieldMetadataItems = objectMetadataItem.fields
+  const inlineFieldMetadataItems = objectMetadataItem?.fields
     .filter(
       (fieldMetadataItem) =>
         fieldMetadataItem.type !== FieldMetadataType.RELATION &&
@@ -105,15 +108,16 @@ export const WorkflowEditActionCreateRecord = ({
     })
     .sort(sortByViewFieldPosition);
 
-  const inlineFieldDefinitions = inlineFieldMetadataItems.map(
-    (fieldMetadataItem) =>
-      formatFieldMetadataItemAsFieldDefinition({
-        field: fieldMetadataItem,
-        objectMetadataItem,
-        showLabel: true,
-        labelWidth: 90,
-      }),
-  );
+  const inlineFieldDefinitions = isDefined(objectMetadataItem)
+    ? inlineFieldMetadataItems?.map((fieldMetadataItem) =>
+        formatFieldMetadataItemAsFieldDefinition({
+          field: fieldMetadataItem,
+          objectMetadataItem,
+          showLabel: true,
+          labelWidth: 90,
+        }),
+      )
+    : [];
 
   const handleFieldChange = (
     fieldName: keyof CreateRecordFormData,
@@ -204,7 +208,7 @@ export const WorkflowEditActionCreateRecord = ({
 
         <HorizontalSeparator noMargin />
 
-        {inlineFieldDefinitions.map((field) => {
+        {inlineFieldDefinitions?.map((field) => {
           const currentValue = formData[field.metadata.fieldName] as JsonValue;
 
           return (

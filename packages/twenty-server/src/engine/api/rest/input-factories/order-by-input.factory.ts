@@ -8,12 +8,20 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { checkArrayFields } from 'src/engine/api/rest/core/query-builder/utils/check-order-by.utils';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 export const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
 
 @Injectable()
 export class OrderByInputFactory {
-  create(request: Request, objectMetadata): ObjectRecordOrderBy {
+  create(
+    request: Request,
+    objectMetadata: {
+      objectMetadataMaps: ObjectMetadataMaps;
+      objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    },
+  ): ObjectRecordOrderBy {
     const orderByQuery = request.query.order_by;
 
     if (typeof orderByQuery !== 'string') {
@@ -72,7 +80,7 @@ export class OrderByInputFactory {
       result = [...result, ...resultFields];
     }
 
-    checkArrayFields(objectMetadata.objectMetadataItem, result);
+    checkArrayFields(objectMetadata.objectMetadataMapItem, result);
 
     return result;
   }

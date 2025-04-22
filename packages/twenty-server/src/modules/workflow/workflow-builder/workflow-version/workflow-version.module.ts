@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
+import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 import { WorkflowSchemaModule } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.module';
@@ -15,6 +16,7 @@ import { WorkflowVersionWorkspaceService } from 'src/modules/workflow/workflow-b
     ServerlessFunctionModule,
     WorkflowVersionStepModule,
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+    RecordPositionModule,
   ],
   providers: [WorkflowVersionWorkspaceService],
   exports: [WorkflowVersionWorkspaceService],
