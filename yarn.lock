@@ -46722,7 +46722,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-retry@npm:4, p-retry@npm:4.6.2":
+"p-retry@npm:4":
   version: 4.6.2
   resolution: "p-retry@npm:4.6.2"
   dependencies:
@@ -55084,7 +55084,6 @@ __metadata:
     monaco-editor-auto-typings: "npm:^0.4.5"
     openid-client: "npm:^5.7.0"
     otplib: "npm:^12.0.1"
-    p-retry: "npm:4.6.2"
     passport: "npm:^0.7.0"
     psl: "npm:^1.9.0"
     redis: "npm:^4.7.0"

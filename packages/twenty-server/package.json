@@ -52,7 +52,6 @@
     "monaco-editor-auto-typings": "^0.4.5",
     "openid-client": "^5.7.0",
     "otplib": "^12.0.1",
-    "p-retry": "4.6.2",
     "passport": "^0.7.0",
     "psl": "^1.9.0",
     "redis": "^4.7.0",
