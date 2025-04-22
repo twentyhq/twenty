@@ -176,7 +176,7 @@ export const PRODUCT_STANDARD_FIELD_IDS = {
   status: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c60',
   position: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c61',
   searchVector: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c62',
-  charge: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c68',
+  charges: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c68',
 };
 
 export const TRACEABLE_STANDARD_FIELD_IDS = {
