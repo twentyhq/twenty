@@ -44,7 +44,6 @@ const StyledLabelAndIconContainer = styled.div`
 const StyledValueContainer = styled.div<{ readonly: boolean }>`
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
   display: flex;
-  flex-grow: 1;
   min-width: 0;
   position: relative;
 
@@ -80,7 +79,6 @@ const StyledInlineCellBaseContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   align-items: center;
-  justify-content: center;
 `;
 
 export const StyledSkeletonDiv = styled.div`
