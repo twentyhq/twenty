@@ -5,7 +5,7 @@ import {
   StyledEventRowItemAction,
   StyledEventRowItemColumn,
 } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
-import { isTimeLineActivityWithRecord } from '@/activities/timeline-activities/types/TimelineActivity';
+import { isTimelineActivityWithRecord } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
@@ -68,7 +68,7 @@ export const EventRowActivity = ({
 
   const eventObject = eventLinkedObject.replace('linked-', '');
 
-  if (!event.linkedRecordId) {
+  if (!isTimelineActivityWithRecord(event)) {
     throw new Error('Could not find linked record id for event');
   }
 
@@ -82,11 +82,18 @@ export const EventRowActivity = ({
 
   const activityInStore = getActivityFromCache(event.linkedRecordId);
 
-  const activityTitle = isNonEmptyString(activityInStore?.title)
-    ? activityInStore?.title
-    : isNonEmptyString(event.linkedRecordCachedName)
-      ? event.linkedRecordCachedName
-      : 'Untitled';
+  const computeActivityTitle = () => {
+    if (isNonEmptyString(activityInStore?.title)) {
+      return activityInStore?.title;
+    }
+
+    if (isNonEmptyString(event.linkedRecordCachedName)) {
+      return event.linkedRecordCachedName;
+    }
+
+    return 'Untitled';
+  };
+  const activityTitle = computeActivityTitle();
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
@@ -99,16 +106,12 @@ export const EventRowActivity = ({
             {`${eventAction} a related ${eventObject}`}
           </StyledEventRowItemAction>
           <StyledLinkedActivity
-            onClick={() => {
-              if (!isTimeLineActivityWithRecord(event)) {
-                return;
-              }
-
+            onClick={() =>
               openRecordInCommandMenu({
                 recordId: event.linkedRecordId,
                 objectNameSingular,
-              });
-            }}
+              })
+            }
           >
             <OverflowingTextWithTooltip text={activityTitle} />
           </StyledLinkedActivity>
