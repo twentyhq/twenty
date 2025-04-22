@@ -68,9 +68,7 @@ export class WorkspacePermissionsCacheService {
     );
 
     try {
-      let currentRolesPermissions:
-        | ObjectRecordsPermissionsByRoleId
-        | undefined = undefined;
+      let currentRolesPermissions: ObjectRecordsPermissionsByRoleId | undefined;
 
       if (roleIds) {
         currentRolesPermissions =
@@ -129,19 +127,21 @@ export class WorkspacePermissionsCacheService {
       workspaceId,
     );
 
-    const freshUserWorkspaceRoleMap =
-      await this.getUserWorkspaceRoleMapFromDatabase({
+    try {
+      const freshUserWorkspaceRoleMap =
+        await this.getUserWorkspaceRoleMapFromDatabase({
+          workspaceId,
+        });
+
+      await this.workspacePermissionsCacheStorageService.setUserWorkspaceRoleMap(
         workspaceId,
-      });
-
-    await this.workspacePermissionsCacheStorageService.setUserWorkspaceRoleMap(
-      workspaceId,
-      freshUserWorkspaceRoleMap,
-    );
-
-    await this.workspacePermissionsCacheStorageService.removeUserWorkspaceRoleMapOngoingCachingLock(
-      workspaceId,
-    );
+        freshUserWorkspaceRoleMap,
+      );
+    } finally {
+      await this.workspacePermissionsCacheStorageService.removeUserWorkspaceRoleMapOngoingCachingLock(
+        workspaceId,
+      );
+    }
   }
 
   async getRolesPermissionsFromCache({

@@ -62,7 +62,7 @@ export const RecordBoard = () => {
     useContext(RecordBoardContext);
   const boardRef = useRef<HTMLDivElement>(null);
 
-  const { toggleClickOutsideListener } = useClickOutsideListener(
+  const { toggleClickOutside } = useClickOutsideListener(
     RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
   );
 
@@ -73,11 +73,11 @@ export const RecordBoard = () => {
   const handleDragSelectionStart = () => {
     closeDropdown(actionMenuId);
 
-    toggleClickOutsideListener(false);
+    toggleClickOutside(false);
   };
 
   const handleDragSelectionEnd = () => {
-    toggleClickOutsideListener(true);
+    toggleClickOutside(true);
   };
 
   const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(

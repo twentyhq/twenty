@@ -24,7 +24,9 @@ import { recordTableCellEditModePositionComponentState } from '@/object-record/r
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
-import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
+
+import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useNavigate } from 'react-router-dom';
@@ -46,9 +48,11 @@ export type OpenTableCellArgs = {
 };
 
 export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
-  const { getClickOutsideListenerIsActivatedState } =
-    useClickOustideListenerStates(RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID);
-
+  const clickOutsideListenerIsActivatedState =
+    useRecoilComponentCallbackStateV2(
+      clickOutsideListenerIsActivatedComponentState,
+      RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
+    );
   const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
   const setCurrentTableCellInEditModePosition = useSetRecoilComponentStateV2(
     recordTableCellEditModePositionComponentState,
@@ -58,7 +62,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
   const { setDragSelectionStartEnabled } = useDragSelect();
 
   const leaveTableFocus = useLeaveTableFocus(tableScopeId);
-  const { toggleClickOutsideListener } = useClickOutsideListener(
+  const { toggleClickOutside } = useClickOutsideListener(
     FOCUS_CLICK_OUTSIDE_LISTENER_ID,
   );
 
@@ -94,7 +98,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
           return;
         }
 
-        set(getClickOutsideListenerIsActivatedState, false);
+        set(clickOutsideListenerIsActivatedState, false);
 
         const isFirstColumnCell = cellPosition.column === 0;
 
@@ -163,7 +167,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
           ),
         });
 
-        toggleClickOutsideListener(false);
+        toggleClickOutside(false);
 
         setActiveDropdownFocusIdAndMemorizePrevious(
           getDropdownFocusIdForRecordField(
@@ -174,12 +178,12 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         );
       },
     [
-      getClickOutsideListenerIsActivatedState,
+      clickOutsideListenerIsActivatedState,
       setDragSelectionStartEnabled,
       openFieldInput,
       setCurrentTableCellInEditModePosition,
       initDraftValue,
-      toggleClickOutsideListener,
+      toggleClickOutside,
       setActiveDropdownFocusIdAndMemorizePrevious,
       leaveTableFocus,
       navigate,
