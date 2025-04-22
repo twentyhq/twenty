@@ -120,7 +120,11 @@ export const SignInUp = () => {
   ]);
 
   if (signInUpStep === SignInUpStep.EmailVerification) {
-    return <EmailVerificationSent email={searchParams.get('email')} />;
+    return (
+      <Modal.Content isVerticalCentered isHorizontalCentered>
+        <EmailVerificationSent email={searchParams.get('email')} />
+      </Modal.Content>
+    );
   }
 
   return (

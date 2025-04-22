@@ -17,8 +17,8 @@ import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
+import { useDebouncedCallback } from 'use-debounce';
 
 const StyledDropdownMenuIconAndNameContainer = styled.div`
   align-items: center;
@@ -52,11 +52,13 @@ const StyledMainText = styled.div`
   max-width: 100%;
 `;
 
+type ObjectOptionsDropdownMenuViewNameProps = {
+  currentView: View;
+};
+
 export const ObjectOptionsDropdownMenuViewName = ({
   currentView,
-}: {
-  currentView: View;
-}) => {
+}: ObjectOptionsDropdownMenuViewNameProps) => {
   const [viewPickerSelectedIcon, setViewPickerSelectedIcon] =
     useRecoilComponentStateV2(viewPickerSelectedIconComponentState);
 

@@ -13,6 +13,7 @@ import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableContextProvider } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
@@ -21,6 +22,7 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { View } from '@/views/types/View';
 import { useEffect, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { mockedViewFieldsData } from '~/testing/mock-data/view-fields';
 import { mockedViewsData } from '~/testing/mock-data/views';
 
@@ -30,6 +32,8 @@ const InternalTableStateLoaderEffect = ({
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
+
+  const { setRecordTableData } = useRecordTable();
 
   const view = useMemo(() => {
     return {
@@ -42,7 +46,11 @@ const InternalTableStateLoaderEffect = ({
 
   useEffect(() => {
     loadRecordIndexStates(view, objectMetadataItem);
-  }, [loadRecordIndexStates, objectMetadataItem, view]);
+    setRecordTableData({
+      records: getCompaniesMock(),
+      totalCount: getCompaniesMock().length,
+    });
+  }, [loadRecordIndexStates, objectMetadataItem, setRecordTableData, view]);
 
   return null;
 };
