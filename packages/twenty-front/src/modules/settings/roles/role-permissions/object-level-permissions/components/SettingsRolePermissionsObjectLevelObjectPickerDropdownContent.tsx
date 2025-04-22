@@ -19,7 +19,8 @@ export const SettingsRolePermissionsObjectLevelObjectPickerDropdownContent = ({
 }: SettingsRolePermissionsObjectLevelObjectPickerDropdownContentProps) => {
   const [searchFilter, setSearchFilter] = useState('');
 
-  const { objectMetadataItems } = useFilteredObjectMetadataItems();
+  const { alphaSortedActiveObjectMetadataItems: objectMetadataItems } =
+    useFilteredObjectMetadataItems();
 
   const { getIcon } = useIcons();
 
