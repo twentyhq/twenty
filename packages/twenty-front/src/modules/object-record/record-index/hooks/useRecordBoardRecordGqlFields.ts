@@ -1,8 +1,8 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { getObjectMetadataIdentifierFields } from '@/object-metadata/utils/getObjectMetadataIdentifierFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { generateDepthZeroRecordGqlFields } from '@/object-record/graphql/utils/generateDepthZeroRecordGqlFields';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,23 +14,10 @@ export const useRecordBoardRecordGqlFields = ({
   recordBoardId: string;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const { imageIdentifierFieldMetadataItem, labelIdentifierFieldMetadataItem } =
-    getObjectMetadataIdentifierFields({ objectMetadataItem });
-
   const recordGroupFieldMetadata = useRecoilComponentValueV2(
     recordGroupFieldMetadataComponentState,
     recordBoardId,
   );
-
-  const identifierQueryFields: Record<string, boolean> = {};
-
-  if (isDefined(labelIdentifierFieldMetadataItem)) {
-    identifierQueryFields[labelIdentifierFieldMetadataItem.name] = true;
-  }
-
-  if (isDefined(imageIdentifierFieldMetadataItem)) {
-    identifierQueryFields[imageIdentifierFieldMetadataItem.name] = true;
-  }
 
   const { objectMetadataItem: noteTargetObjectMetadataItem } =
     useObjectMetadataItem({
@@ -42,13 +29,12 @@ export const useRecordBoardRecordGqlFields = ({
       objectNameSingular: CoreObjectNameSingular.TaskTarget,
     });
 
-  const allDepthOneRecordGqlFields = generateDepthOneRecordGqlFields({
+  const allDepthZeroRecordGqlFields = generateDepthZeroRecordGqlFields({
     objectMetadataItem,
   });
 
   const recordGqlFields: Record<string, any> = {
-    ...allDepthOneRecordGqlFields,
-    ...identifierQueryFields,
+    ...allDepthZeroRecordGqlFields,
     noteTargets: generateDepthOneRecordGqlFields({
       objectMetadataItem: noteTargetObjectMetadataItem,
     }),
