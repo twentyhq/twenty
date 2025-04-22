@@ -426,9 +426,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       workspaceId,
     );
 
+    const fieldMetadataIds = objectMetadata.fields.map((field) => field.id);
+    const relationMetadataIds = objectMetadata.fields
+      .map((field) => field.relationTargetFieldMetadata?.id)
+      .filter(isDefined);
+
     await this.fieldMetadataRepository.delete({
-      relationTargetObjectMetadataId: objectMetadata.id,
+      id: In(fieldMetadataIds.concat(relationMetadataIds)),
     });
+
     await this.objectMetadataRepository.delete(objectMetadata.id);
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(

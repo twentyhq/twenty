@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
-import { Relation } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { Relation } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -15,6 +15,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { VIEW_FILTER_GROUP_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 export enum ViewFilterGroupLogicalOperator {
   AND = 'AND',
@@ -40,6 +41,7 @@ export class ViewFilterGroupWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`View`,
     inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'viewFilterGroups',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   view: Relation<ViewWorkspaceEntity>;
 
