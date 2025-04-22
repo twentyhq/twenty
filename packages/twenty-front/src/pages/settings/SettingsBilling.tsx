@@ -106,7 +106,9 @@ export const SettingsBilling = () => {
       ]}
     >
       <SettingsPageContainer>
-        <SettingsBillingMonthlyCreditsSection />
+        {hasNotCanceledCurrentSubscription && (
+          <SettingsBillingMonthlyCreditsSection />
+        )}
         <Section>
           <H2Title
             title={t`Manage your subscription`}
