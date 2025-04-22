@@ -64,6 +64,7 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
 
     const graphqlQueryParser = new GraphqlQueryParser(
       objectMetadataItemWithFieldsMaps?.fieldsByName,
+      objectMetadataItemWithFieldsMaps?.fieldsByJoinColumnName,
       objectMetadataMaps,
       featureFlagsMap,
     );
