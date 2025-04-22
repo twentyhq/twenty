@@ -25,11 +25,13 @@ export class WorkspaceGraphQLSchemaFactory {
     objectMetadataCollection: ObjectMetadataInterface[],
     workspaceResolverBuilderMethods: WorkspaceResolverBuilderMethods,
     options: WorkspaceBuildSchemaOptions = {},
+    isNewRelationEnabled = false,
   ): Promise<GraphQLSchema> {
     // Generate type definitions
     await this.typeDefinitionsGenerator.generate(
       objectMetadataCollection,
       options,
+      isNewRelationEnabled,
     );
 
     // Generate schema
