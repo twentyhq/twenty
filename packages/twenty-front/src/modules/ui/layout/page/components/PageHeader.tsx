@@ -54,7 +54,6 @@ const StyledTitleContainer = styled.div`
   display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-left: ${({ theme }) => theme.spacing(0.5)};
   margin-right: ${({ theme }) => theme.spacing(1)};
   width: 100%;
   overflow: hidden;
@@ -78,12 +77,6 @@ const StyledPageActionContainer = styled.div`
 const StyledTopBarButtonContainer = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
   margin-right: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledIconContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
 `;
 
 type PageHeaderProps = {
@@ -127,11 +120,7 @@ export const PageHeader = ({
         )}
 
         <StyledTopBarIconStyledTitleContainer>
-          {Icon && (
-            <StyledIconContainer>
-              <Icon size={theme.icon.size.md} />
-            </StyledIconContainer>
-          )}
+          {Icon && <Icon size={theme.icon.size.md} />}
           {title && (
             <StyledTitleContainer data-testid="top-bar-title">
               {typeof title === 'string' ? (

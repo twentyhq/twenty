@@ -3,8 +3,10 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
+import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
@@ -65,6 +67,13 @@ export const ObjectRecordShowPageBreadcrumb = ({
     objectRecordId,
   );
 
+  const { headerIcon: HeaderIcon } = useRecordShowPage(
+    objectNameSingular,
+    objectRecordId,
+  );
+
+  const theme = useTheme();
+
   if (loading) {
     return null;
   }
@@ -76,6 +85,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
           navigateToIndexView();
         }}
       >
+        {HeaderIcon && <HeaderIcon size={theme.icon.size.md} />}
         {capitalize(objectLabelPlural)}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>
