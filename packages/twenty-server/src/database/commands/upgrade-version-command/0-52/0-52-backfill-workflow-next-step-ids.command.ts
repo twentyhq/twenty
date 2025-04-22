@@ -11,6 +11,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 @Command({
   name: 'upgrade:0-52:backfill-workflow-next-step-ids',
@@ -76,6 +77,8 @@ export class BackfillWorkflowNextStepIdsCommand extends ActiveOrSuspendedWorkspa
         },
       });
 
+      const workflowRunsToUpdate: WorkflowRunWorkspaceEntity[] = [];
+
       for (const workflowRun of workflowRuns) {
         const flow = workflowRun.output?.flow;
 
@@ -92,17 +95,21 @@ export class BackfillWorkflowNextStepIdsCommand extends ActiveOrSuspendedWorkspa
           };
         });
 
-        await workflowRunRepository.save({
+        const updatedWorkflowRun: WorkflowRunWorkspaceEntity = {
           ...workflowRun,
           output: {
             ...workflowRun.output,
             flow: {
-              ...workflowRun.output?.flow,
+              trigger: workflowRun.output?.flow?.trigger as WorkflowTrigger,
               steps: updatedFlow,
             },
           },
-        });
+        };
+
+        workflowRunsToUpdate.push(updatedWorkflowRun);
       }
+
+      await workflowRunRepository.save(workflowRunsToUpdate);
 
       await workflowVersionRepository.save({
         ...workflowVersion,

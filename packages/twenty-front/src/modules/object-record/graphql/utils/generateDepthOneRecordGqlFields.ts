@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 export type GenerateDepthOneRecordGqlFields = {
   objectMetadataItem: ObjectMetadataItem;
 };
+
 export const generateDepthOneRecordGqlFields = ({
   objectMetadataItem,
 }: GenerateDepthOneRecordGqlFields) =>
