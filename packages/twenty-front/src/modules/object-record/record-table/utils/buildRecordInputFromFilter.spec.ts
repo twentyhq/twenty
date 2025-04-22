@@ -71,11 +71,6 @@ describe('buildValueFromFilter', () => {
         expected: mockDate,
       },
       {
-        operand: ViewFilterOperand.IsNot,
-        value: '2024-03-20T12:00:00Z',
-        expected: undefined,
-      },
-      {
         operand: ViewFilterOperand.IsAfter,
         value: '2024-03-20T12:00:00Z',
         expected: mockDate,
@@ -109,6 +104,11 @@ describe('buildValueFromFilter', () => {
         operand: ViewFilterOperand.IsEmpty,
         value: '',
         expected: undefined,
+      },
+      {
+        operand: ViewFilterOperand.IsNotEmpty,
+        value: '2024-03-20T12:00:00Z',
+        expected: mockDate,
       },
     ];
 
