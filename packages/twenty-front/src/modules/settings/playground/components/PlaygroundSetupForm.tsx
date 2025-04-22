@@ -59,7 +59,7 @@ export const PlaygroundSetupForm = () => {
     try {
       // Validate by fetching the schema (but not storing it)
       const response = await fetch(
-        `${REACT_APP_SERVER_BASE_URL}/open-api/${values.schema}`,
+        `${REACT_APP_SERVER_BASE_URL}/rest/open-api/${values.schema}`,
         {
           headers: { Authorization: `Bearer ${values.apiKeyForPlayground}` },
         },
