@@ -1,8 +1,8 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isDefined } from 'twenty-shared/utils';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
-import { isDefined } from 'twenty-shared/utils';
 
 export const sanitizeRecordInput = ({
   objectMetadataItem,
@@ -17,14 +17,30 @@ export const sanitizeRecordInput = ({
         const fieldMetadataItem = objectMetadataItem.fields.find(
           (field) => field.name === fieldName,
         );
+        const potentialJoinColumnNameFieldMetadataItem =
+          objectMetadataItem.fields.find(
+            (field) =>
+              field.type === FieldMetadataType.RELATION &&
+              field.settings.joinColumnName === fieldName,
+          );
 
-        if (!fieldMetadataItem) return undefined;
-
-        if (!fieldMetadataItem.isNullable && fieldValue == null) {
+        if (
+          !isDefined(fieldMetadataItem) &&
+          !isDefined(potentialJoinColumnNameFieldMetadataItem)
+        ) {
           return undefined;
         }
 
         if (
+          isDefined(fieldMetadataItem) &&
+          fieldMetadataItem.isNullable &&
+          fieldValue == null
+        ) {
+          return undefined;
+        }
+
+        if (
+          isDefined(fieldMetadataItem) &&
           fieldMetadataItem.type === FieldMetadataType.RELATION &&
           fieldMetadataItem.relationDefinition?.direction ===
             RelationDefinitionType.MANY_TO_ONE
@@ -42,6 +58,7 @@ export const sanitizeRecordInput = ({
         }
 
         if (
+          isDefined(fieldMetadataItem) &&
           fieldMetadataItem.type === FieldMetadataType.RELATION &&
           fieldMetadataItem.relationDefinition?.direction ===
             RelationDefinitionType.ONE_TO_MANY

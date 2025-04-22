@@ -102,7 +102,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     const toId = uuidV4();
 
     const createdRelationFieldsMetadata =
-      (await this.fieldMetadataRepository.save(
+      await this.fieldMetadataRepository.save(
         [
           this.createFieldMetadataForRelationMetadata(
             relationMetadataInput,
@@ -126,10 +126,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
                 ),
               ]),
         ].flat(),
-      )) as (
-        | FieldMetadataEntity<FieldMetadataType.RELATION>
-        | FieldMetadataEntity<FieldMetadataType.UUID>
-      )[];
+      );
 
     const createdRelationMetadata = await super.createOne({
       ...relationMetadataInput,
@@ -164,14 +161,17 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         relationType: RelationType.ONE_TO_MANY,
       } as Partial<FieldMetadataDefaultSettings>,
       relationTargetFieldMetadataId: toId,
+      relationTargetObjectMetadataId: relationMetadataInput.toObjectMetadataId,
     });
 
     await this.fieldMetadataRepository.update(toId, {
       settings: {
         relationType: RelationType.MANY_TO_ONE,
-        joinColumnName: `${relationMetadataInput.fromName}Id`,
+        joinColumnName: `${relationMetadataInput.toName}Id`,
       } as Partial<FieldMetadataDefaultSettings>,
       relationTargetFieldMetadataId: fromId,
+      relationTargetObjectMetadataId:
+        relationMetadataInput.fromObjectMetadataId,
     });
 
     await this.createWorkspaceCustomMigration(
@@ -354,7 +354,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     relationDirection: 'from' | 'to',
     isCustom: boolean,
     id?: string,
-  ): Partial<FieldMetadataEntity<FieldMetadataType.RELATION>> {
+  ) {
     return {
       ...(id && { id: id }),
       name: relationMetadataInput[`${relationDirection}Name`],
@@ -368,14 +368,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       objectMetadataId:
         relationMetadataInput[`${relationDirection}ObjectMetadataId`],
       workspaceId: relationMetadataInput.workspaceId,
-      settings: {
-        relationType:
-          relationMetadataInput.relationType as unknown as RelationType,
-        joinColumnName: `${relationMetadataInput.fromName}Id`,
-      },
-      relationTargetObjectMetadataId:
-        relationMetadataInput[`${relationDirection}ObjectMetadataId`],
-    } as Partial<FieldMetadataEntity<FieldMetadataType.RELATION>>;
+    };
   }
 
   private createForeignKeyFieldMetadata(

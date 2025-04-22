@@ -55,12 +55,6 @@ export const mapObjectMetadataToGraphQLQuery = ({
         }),
     );
 
-  console.log(
-    objectMetadataItem.nameSingular,
-    recordGqlFields,
-    gqlFieldWithFieldMetadataThatSouldBeQueried,
-  );
-
   if (!isRootLevel && computeReferences) {
     return `{
       __ref
