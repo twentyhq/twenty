@@ -161,12 +161,6 @@ export class FieldMetadataResolver {
       throw new ValidationError("Active fields can't be deleted");
     }
 
-    if (fieldMetadata.type === FieldMetadataType.RELATION) {
-      throw new ValidationError(
-        "Relation fields can't be deleted, you need to delete the RelationMetadata instead",
-      );
-    }
-
     try {
       return await this.fieldMetadataService.deleteOneField(input, workspaceId);
     } catch (error) {

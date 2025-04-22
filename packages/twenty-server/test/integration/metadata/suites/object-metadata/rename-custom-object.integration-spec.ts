@@ -4,7 +4,6 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { findManyObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-query-factory.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneRelationMetadataFactory } from 'test/integration/metadata/suites/utils/create-one-relation-metadata-factory.util';
-import { deleteOneRelationMetadataItemFactory } from 'test/integration/metadata/suites/utils/delete-one-relation-metadata-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -237,19 +236,7 @@ describe('Custom object renaming', () => {
     expect(updatedRelationFieldMetadata.name).toBe(RELATION_FROM_NAME);
   });
 
-  it('4. should delete custom relation', async () => {
-    const graphqlOperation = deleteOneRelationMetadataItemFactory({
-      idToDelete: customRelationId,
-    });
-
-    const response = await makeMetadataAPIRequest(graphqlOperation);
-
-    const deleteRelationResponse = response.body.data.deleteOneRelation;
-
-    expect(deleteRelationResponse.id).toBe(customRelationId);
-  });
-
-  it('5. should delete custom object', async () => {
+  it('4. should delete custom object', async () => {
     const { data } = await deleteOneObjectMetadata({
       input: {
         idToDelete: listingObjectId,
