@@ -31,8 +31,11 @@ const StyledEditableTitlePrefix = styled.div`
 const StyledTitle = styled.div`
   max-width: 100%;
   overflow: hidden;
-  padding-right: ${({ theme }) => theme.spacing(1)};
   width: fit-content;
+`;
+
+const StyledPaginationInformation = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
 export const ObjectRecordShowPageBreadcrumb = ({
@@ -63,10 +66,8 @@ export const ObjectRecordShowPageBreadcrumb = ({
     recordId: objectRecordId,
   });
 
-  const { navigateToIndexView } = useRecordShowPagePagination(
-    objectNameSingular,
-    objectRecordId,
-  );
+  const { navigateToIndexView, rankInView, totalCount } =
+    useRecordShowPagePagination(objectNameSingular, objectRecordId);
 
   const { headerIcon: HeaderIcon } = useRecordShowPage(
     objectNameSingular,
@@ -117,6 +118,9 @@ export const ObjectRecordShowPageBreadcrumb = ({
           <RecordTitleCell sizeVariant="xs" />
         </FieldContext.Provider>
       </StyledTitle>
+      <StyledPaginationInformation>
+        {`(${rankInView + 1}/${totalCount})`}
+      </StyledPaginationInformation>
     </StyledEditableTitleContainer>
   );
 };
