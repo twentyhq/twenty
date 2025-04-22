@@ -1,3 +1,4 @@
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -32,7 +33,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useContext, useEffect, useMemo, useRef } from 'react';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
@@ -175,6 +176,8 @@ export const WorkflowDiagramCanvasBase = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const { isInRightDrawer } = useContext(ActionMenuContext);
+
   useEffect(() => {
     if (!isDefined(containerRef.current) || !reactflow.viewportInitialized) {
       return;
@@ -250,29 +253,35 @@ export const WorkflowDiagramCanvasBase = ({
 
         console.log('on init, status =', workflowDiagramStatus);
 
-        if (workflowDiagramStatus === 'computing-dimensions') {
-          console.log('set state to DONE');
+        if (workflowDiagramStatus !== 'computing-dimensions') {
+          return;
+        }
 
-          set(workflowDiagramStatusState, 'done');
+        console.log('set state to DONE');
 
-          const workflowStepToOpenByDefault = getSnapshotValue(
-            snapshot,
-            workflowStepToOpenByDefaultState,
+        set(workflowDiagramStatusState, 'done');
+
+        if (isInRightDrawer) {
+          return;
+        }
+
+        const workflowStepToOpenByDefault = getSnapshotValue(
+          snapshot,
+          workflowStepToOpenByDefaultState,
+        );
+
+        if (isDefined(workflowStepToOpenByDefault)) {
+          const workflowId = getSnapshotValue(snapshot, workflowIdState);
+
+          set(workflowSelectedNodeState, workflowStepToOpenByDefault.id);
+
+          openWorkflowRunViewStepInCommandMenu(
+            workflowId!,
+            workflowStepToOpenByDefault.data.name,
+            getIcon(getWorkflowNodeIconKey(workflowStepToOpenByDefault.data)),
           );
 
-          if (isDefined(workflowStepToOpenByDefault)) {
-            const workflowId = getSnapshotValue(snapshot, workflowIdState);
-
-            set(workflowSelectedNodeState, workflowStepToOpenByDefault.id);
-
-            openWorkflowRunViewStepInCommandMenu(
-              workflowId!,
-              workflowStepToOpenByDefault.data.name,
-              getIcon(getWorkflowNodeIconKey(workflowStepToOpenByDefault.data)),
-            );
-
-            set(workflowStepToOpenByDefaultState, undefined);
-          }
+          set(workflowStepToOpenByDefaultState, undefined);
         }
       },
     [getIcon, openWorkflowRunViewStepInCommandMenu, reactflow],
