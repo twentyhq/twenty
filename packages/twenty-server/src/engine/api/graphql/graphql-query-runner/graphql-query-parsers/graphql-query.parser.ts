@@ -24,6 +24,7 @@ import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modu
 
 export class GraphqlQueryParser {
   private fieldMetadataMapByName: FieldMetadataMap;
+  private fieldMetadataMapByJoinColumnName: FieldMetadataMap;
   private objectMetadataMaps: ObjectMetadataMaps;
   private filterConditionParser: GraphqlQueryFilterConditionParser;
   private orderFieldParser: GraphqlQueryOrderFieldParser;
@@ -31,14 +32,17 @@ export class GraphqlQueryParser {
 
   constructor(
     fieldMetadataMapByName: FieldMetadataMap,
+    fieldMetadataMapByJoinColumnName: FieldMetadataMap,
     objectMetadataMaps: ObjectMetadataMaps,
     featureFlagsMap: FeatureFlagMap,
   ) {
     this.objectMetadataMaps = objectMetadataMaps;
     this.fieldMetadataMapByName = fieldMetadataMapByName;
+    this.fieldMetadataMapByJoinColumnName = fieldMetadataMapByJoinColumnName;
     this.featureFlagsMap = featureFlagsMap;
     this.filterConditionParser = new GraphqlQueryFilterConditionParser(
       this.fieldMetadataMapByName,
+      this.fieldMetadataMapByJoinColumnName,
       featureFlagsMap,
     );
     this.orderFieldParser = new GraphqlQueryOrderFieldParser(

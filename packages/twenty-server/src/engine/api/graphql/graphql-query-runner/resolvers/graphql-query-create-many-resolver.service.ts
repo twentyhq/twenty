@@ -44,6 +44,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       objectRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap,
     );
 
     this.apiEventEmitterService.emitCreateEvents(
@@ -301,6 +302,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     objectRecords: InsertResult,
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
     objectMetadataMaps: ObjectMetadataMaps,
+    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<ObjectRecord[]> {
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
@@ -317,6 +319,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       nonFormattedUpsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
   }
 
