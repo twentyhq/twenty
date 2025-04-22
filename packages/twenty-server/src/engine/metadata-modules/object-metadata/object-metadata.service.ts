@@ -310,15 +310,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const updatedObject = await super.updateOne(inputId, inputPayload);
 
+    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsNewRelationEnabled,
+      workspaceId,
+    );
+
     await this.handleObjectNameAndLabelUpdates(
       existingObjectMetadata,
       existingObjectMetadataCombinedWithUpdateInput,
       inputPayload,
-    );
-
-    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsNewRelationEnabled,
-      workspaceId,
     );
 
     if (inputPayload.isActive !== undefined) {

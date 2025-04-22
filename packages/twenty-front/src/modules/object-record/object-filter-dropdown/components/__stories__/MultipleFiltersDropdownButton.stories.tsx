@@ -15,16 +15,16 @@ import { tableColumnsComponentState } from '@/object-record/record-table/states/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { within } from '@storybook/test';
+import {
+  ComponentDecorator,
+  getCanvasElementForDropdownTesting,
+} from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import {
-  ComponentDecorator,
-  getCanvasElementForDropdownTesting,
-} from 'twenty-ui/testing';
 
 const meta: Meta<typeof MultipleFiltersDropdownButton> = {
   title:

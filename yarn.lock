@@ -52921,6 +52921,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"storybook-addon-mock-date@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "storybook-addon-mock-date@npm:0.6.0"
+  checksum: 10c0/24c48d65a04eb1931e39495fe42692cea428db4b66874db86ab4e9e6f99cd0bba56cd25c56c9a56b42e53a14edfd38f79bcdef4c1f0e2758096528863d32d408
+  languageName: node
+  linkType: hard
+
 "storybook-addon-pseudo-states@npm:^2.1.2":
   version: 2.2.1
   resolution: "storybook-addon-pseudo-states@npm:2.2.1"
@@ -55501,6 +55508,7 @@ __metadata:
     source-map-support: "npm:^0.5.20"
     storybook: "npm:^7.6.3"
     storybook-addon-cookie: "npm:^3.2.0"
+    storybook-addon-mock-date: "npm:^0.6.0"
     storybook-addon-pseudo-states: "npm:^2.1.2"
     storybook-dark-mode: "npm:^3.0.3"
     stripe: "npm:^17.3.1"
