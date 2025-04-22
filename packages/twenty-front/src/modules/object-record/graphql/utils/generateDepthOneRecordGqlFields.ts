@@ -3,6 +3,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 export type GenerateDepthOneRecordGqlFields = {
   objectMetadataItem: ObjectMetadataItem;
 };
+
 export const generateDepthOneRecordGqlFields = ({
   objectMetadataItem,
 }: GenerateDepthOneRecordGqlFields) =>
