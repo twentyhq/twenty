@@ -118,7 +118,12 @@ export const FieldsCard = ({
                     }),
                     useUpdateRecord: useUpdateOneObjectRecordMutation,
                     isDisplayModeFixHeight: true,
-                    isReadOnly: isRecordReadOnly,
+                    isReadOnly: isFieldValueReadOnly({
+                      objectNameSingular,
+                      fieldName: fieldMetadataItem.name,
+                      fieldType: fieldMetadataItem.type,
+                      isRecordReadOnly,
+                    }),
                   }}
                 >
                   <ActivityTargetsInlineCell
