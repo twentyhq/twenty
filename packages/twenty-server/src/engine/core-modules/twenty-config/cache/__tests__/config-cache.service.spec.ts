@@ -84,7 +84,7 @@ describe('ConfigCacheService', () => {
 
       expect(result).toBe(true);
     });
-    
+
     it('should return false for negative cache entry check when not in cache', () => {
       const key = 'NON_EXISTENT_KEY' as keyof ConfigVariables;
 
@@ -231,19 +231,21 @@ describe('ConfigCacheService', () => {
     it('should return expired keys from both positive and negative caches', () => {
       const expiredKey1 = 'EXPIRED_KEY1' as keyof ConfigVariables;
       const expiredKey2 = 'EXPIRED_KEY2' as keyof ConfigVariables;
-      const expiredNegativeKey = 'EXPIRED_NEGATIVE_KEY' as keyof ConfigVariables;
+      const expiredNegativeKey =
+        'EXPIRED_NEGATIVE_KEY' as keyof ConfigVariables;
 
       // Set up keys that will expire
       service.set(expiredKey1, 'value1');
       service.set(expiredKey2, 'value2');
       service.markKeyAsMissing(expiredNegativeKey);
-      
+
       // Make the above keys expire
       withMockedDate(CONFIG_VARIABLES_CACHE_TTL + 1, () => {
         // Add a fresh key after the time change
         const freshKey = 'FRESH_KEY' as keyof ConfigVariables;
+
         service.set(freshKey, 'value3');
-        
+
         const expiredKeys = service.getExpiredKeys();
 
         expect(expiredKeys).toContain(expiredKey1);
@@ -278,7 +280,7 @@ describe('ConfigCacheService', () => {
         const expiredKeys = service.getExpiredKeys();
 
         // Should only appear once in the result
-        expect(expiredKeys.filter(k => k === key)).toHaveLength(1);
+        expect(expiredKeys.filter((k) => k === key)).toHaveLength(1);
       });
     });
   });

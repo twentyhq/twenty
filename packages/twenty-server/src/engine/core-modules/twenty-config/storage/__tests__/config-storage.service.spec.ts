@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { DeleteResult, IsNull, Repository } from 'typeorm';
+import { DeleteResult, IsNull, Repository, In } from 'typeorm';
 
 import {
   KeyValuePair,
@@ -12,7 +12,6 @@ import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-conf
 import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { In } from 'typeorm';
 
 describe('ConfigStorageService', () => {
   let service: ConfigStorageService;
@@ -489,7 +488,9 @@ describe('ConfigStorageService', () => {
 
   describe('loadByKeys', () => {
     it('should load and convert specified config variables', async () => {
-      const keys = ['AUTH_PASSWORD_ENABLED', 'EMAIL_FROM_ADDRESS'] as Array<keyof ConfigVariables>;
+      const keys = ['AUTH_PASSWORD_ENABLED', 'EMAIL_FROM_ADDRESS'] as Array<
+        keyof ConfigVariables
+      >;
       const configVars: KeyValuePair[] = [
         createMockKeyValuePair('AUTH_PASSWORD_ENABLED', 'true'),
         createMockKeyValuePair('EMAIL_FROM_ADDRESS', 'test@example.com'),
@@ -535,7 +536,9 @@ describe('ConfigStorageService', () => {
     });
 
     it('should handle conversion errors and skip problematic entries', async () => {
-      const keys = ['AUTH_PASSWORD_ENABLED', 'PROBLEMATIC_KEY'] as Array<keyof ConfigVariables>;
+      const keys = ['AUTH_PASSWORD_ENABLED', 'PROBLEMATIC_KEY'] as Array<
+        keyof ConfigVariables
+      >;
       const configVars: KeyValuePair[] = [
         createMockKeyValuePair('AUTH_PASSWORD_ENABLED', 'true'),
         createMockKeyValuePair('PROBLEMATIC_KEY', 'bad-value'),
@@ -558,7 +561,9 @@ describe('ConfigStorageService', () => {
       expect(result.get('AUTH_PASSWORD_ENABLED' as keyof ConfigVariables)).toBe(
         true,
       );
-      expect(result.has('PROBLEMATIC_KEY' as keyof ConfigVariables)).toBe(false);
+      expect(result.has('PROBLEMATIC_KEY' as keyof ConfigVariables)).toBe(
+        false,
+      );
     });
   });
 });

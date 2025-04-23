@@ -143,7 +143,9 @@ describe('DatabaseConfigDriver', () => {
       const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
       const cachedValue = true;
 
-      jest.spyOn(configCache, 'get').mockReturnValue({ value: cachedValue, isStale: false });
+      jest
+        .spyOn(configCache, 'get')
+        .mockReturnValue({ value: cachedValue, isStale: false });
 
       const result = driver.get(key);
 
@@ -153,12 +155,14 @@ describe('DatabaseConfigDriver', () => {
 
     it('should return cached value and schedule refresh when stale', async () => {
       jest.useFakeTimers();
-      
+
       const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
       const cachedValue = true;
 
-      jest.spyOn(configCache, 'get').mockReturnValue({ value: cachedValue, isStale: true });
-      
+      jest
+        .spyOn(configCache, 'get')
+        .mockReturnValue({ value: cachedValue, isStale: true });
+
       const fetchSpy = jest
         .spyOn(driver, 'fetchAndCacheConfigVariable')
         .mockResolvedValue();
@@ -166,10 +170,10 @@ describe('DatabaseConfigDriver', () => {
       const result = driver.get(key);
 
       expect(result).toBe(cachedValue);
-      
+
       // Run immediate callbacks
       jest.runAllTimers();
-      
+
       expect(fetchSpy).toHaveBeenCalledWith(key);
     });
 
@@ -177,7 +181,9 @@ describe('DatabaseConfigDriver', () => {
       const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
       const envValue = true;
 
-      jest.spyOn(configCache, 'get').mockReturnValue({ value: undefined, isStale: false });
+      jest
+        .spyOn(configCache, 'get')
+        .mockReturnValue({ value: undefined, isStale: false });
       jest.spyOn(configCache, 'isKeyKnownMissing').mockReturnValue(true);
       jest.spyOn(environmentDriver, 'get').mockReturnValue(envValue);
 
@@ -193,7 +199,9 @@ describe('DatabaseConfigDriver', () => {
       const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
       const envValue = true;
 
-      jest.spyOn(configCache, 'get').mockReturnValue({ value: undefined, isStale: false });
+      jest
+        .spyOn(configCache, 'get')
+        .mockReturnValue({ value: undefined, isStale: false });
       jest.spyOn(configCache, 'isKeyKnownMissing').mockReturnValue(false);
       jest.spyOn(environmentDriver, 'get').mockReturnValue(envValue);
 
@@ -371,7 +379,9 @@ describe('DatabaseConfigDriver', () => {
       const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
       const envValue = true;
 
-      jest.spyOn(configCache, 'get').mockReturnValue({ value: undefined, isStale: false });
+      jest
+        .spyOn(configCache, 'get')
+        .mockReturnValue({ value: undefined, isStale: false });
       jest.spyOn(configCache, 'isKeyKnownMissing').mockReturnValue(true);
       jest.spyOn(environmentDriver, 'get').mockReturnValue(envValue);
 
@@ -422,7 +432,9 @@ describe('DatabaseConfigDriver', () => {
 
       const key = 'MISSING_KEY' as keyof ConfigVariables;
 
-      jest.spyOn(configCache, 'get').mockReturnValue({ value: undefined, isStale: false });
+      jest
+        .spyOn(configCache, 'get')
+        .mockReturnValue({ value: undefined, isStale: false });
       jest.spyOn(configCache, 'isKeyKnownMissing').mockReturnValue(false);
 
       driver.get(key);
@@ -473,9 +485,9 @@ describe('DatabaseConfigDriver', () => {
 
     it('should do nothing when there are no expired keys', async () => {
       jest.spyOn(configCache, 'getExpiredKeys').mockReturnValue([]);
-      
+
       await driver.refreshExpiredCache();
-      
+
       expect(configStorage.loadByKeys).not.toHaveBeenCalled();
     });
 
@@ -485,16 +497,16 @@ describe('DatabaseConfigDriver', () => {
         'ENV_ONLY_VAR',
         'EMAIL_FROM_ADDRESS',
       ] as Array<keyof ConfigVariables>;
-      
+
       jest.spyOn(configCache, 'getExpiredKeys').mockReturnValue(expiredKeys);
-      
+
       // Simulate one env-only var
       (isEnvOnlyConfigVar as jest.Mock).mockImplementation((key) => {
         return key === 'ENV_ONLY_VAR';
       });
-      
+
       await driver.refreshExpiredCache();
-      
+
       expect(configStorage.loadByKeys).toHaveBeenCalledWith([
         'AUTH_PASSWORD_ENABLED',
         'EMAIL_FROM_ADDRESS',
@@ -506,15 +518,19 @@ describe('DatabaseConfigDriver', () => {
         'AUTH_PASSWORD_ENABLED',
         'EMAIL_FROM_ADDRESS',
       ] as Array<keyof ConfigVariables>;
-      
+
       jest.spyOn(configCache, 'getExpiredKeys').mockReturnValue(expiredKeys);
       jest.spyOn(configStorage, 'loadByKeys').mockResolvedValue(new Map());
-      
+
       await driver.refreshExpiredCache();
-      
+
       expect(configCache.markKeyAsMissing).toHaveBeenCalledTimes(2);
-      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith('AUTH_PASSWORD_ENABLED');
-      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith('EMAIL_FROM_ADDRESS');
+      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(
+        'AUTH_PASSWORD_ENABLED',
+      );
+      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(
+        'EMAIL_FROM_ADDRESS',
+      );
     });
 
     it('should update cache with refreshed values', async () => {
@@ -523,7 +539,7 @@ describe('DatabaseConfigDriver', () => {
         'EMAIL_FROM_ADDRESS',
         'MISSING_KEY',
       ] as Array<keyof ConfigVariables>;
-      
+
       const refreshedValues = new Map<
         keyof ConfigVariables,
         ConfigVariables[keyof ConfigVariables]
@@ -531,28 +547,41 @@ describe('DatabaseConfigDriver', () => {
         ['AUTH_PASSWORD_ENABLED', true],
         ['EMAIL_FROM_ADDRESS', 'test@example.com'],
       ]);
-      
+
       jest.spyOn(configCache, 'getExpiredKeys').mockReturnValue(expiredKeys);
-      jest.spyOn(configStorage, 'loadByKeys').mockResolvedValue(refreshedValues);
-      
+      jest
+        .spyOn(configStorage, 'loadByKeys')
+        .mockResolvedValue(refreshedValues);
+
       await driver.refreshExpiredCache();
-      
+
       // Should set found values
-      expect(configCache.set).toHaveBeenCalledWith('AUTH_PASSWORD_ENABLED', true);
-      expect(configCache.set).toHaveBeenCalledWith('EMAIL_FROM_ADDRESS', 'test@example.com');
-      
+      expect(configCache.set).toHaveBeenCalledWith(
+        'AUTH_PASSWORD_ENABLED',
+        true,
+      );
+      expect(configCache.set).toHaveBeenCalledWith(
+        'EMAIL_FROM_ADDRESS',
+        'test@example.com',
+      );
+
       // Should mark missing values as missing
       expect(configCache.markKeyAsMissing).toHaveBeenCalledWith('MISSING_KEY');
     });
 
     it('should handle errors gracefully', async () => {
       const error = new Error('Database error');
-      jest.spyOn(configCache, 'getExpiredKeys').mockReturnValue(['AUTH_PASSWORD_ENABLED'] as Array<keyof ConfigVariables>);
+
+      jest
+        .spyOn(configCache, 'getExpiredKeys')
+        .mockReturnValue(['AUTH_PASSWORD_ENABLED'] as Array<
+          keyof ConfigVariables
+        >);
       jest.spyOn(configStorage, 'loadByKeys').mockRejectedValue(error);
       jest.spyOn(driver['logger'], 'error');
-      
+
       await driver.refreshExpiredCache();
-      
+
       // Should log error and not throw
       expect(driver['logger'].error).toHaveBeenCalled();
     });
