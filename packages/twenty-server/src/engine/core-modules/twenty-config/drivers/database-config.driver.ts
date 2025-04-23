@@ -56,10 +56,14 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
       return this.environmentDriver.get(key);
     }
 
-    const cachedValue = this.configCache.get(key);
+    const { value, isStale } = this.configCache.get(key);
 
-    if (cachedValue !== undefined) {
-      return cachedValue;
+    if (value !== undefined) {
+      if (isStale) {
+        this.scheduleRefresh(key);
+      }
+
+      return value;
     }
 
     if (this.configCache.isKeyKnownMissing(key)) {
@@ -91,7 +95,7 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
     }
   }
 
-  async fetchAndCacheConfig(key: keyof ConfigVariables): Promise<void> {
+  async fetchAndCacheConfigVariable(key: keyof ConfigVariables): Promise<void> {
     try {
       const value = await this.configStorage.get(key);
 
@@ -138,7 +142,7 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
 
   private async scheduleRefresh(key: keyof ConfigVariables): Promise<void> {
     setImmediate(async () => {
-      await this.fetchAndCacheConfig(key).catch((error) => {
+      await this.fetchAndCacheConfigVariable(key).catch((error) => {
         this.logger.error(`Failed to fetch config for ${key as string}`, error);
       });
     });

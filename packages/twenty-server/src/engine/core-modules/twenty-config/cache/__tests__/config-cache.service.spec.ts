@@ -47,7 +47,8 @@ describe('ConfigCacheService', () => {
       service.set(key, value);
       const result = service.get(key);
 
-      expect(result).toBe(value);
+      expect(result.value).toBe(value);
+      expect(result.isStale).toBe(false);
     });
 
     it('should return undefined for non-existent key', () => {
@@ -55,7 +56,8 @@ describe('ConfigCacheService', () => {
         'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables,
       );
 
-      expect(result).toBeUndefined();
+      expect(result.value).toBeUndefined();
+      expect(result.isStale).toBe(false);
     });
 
     it('should handle different value types', () => {
@@ -67,9 +69,9 @@ describe('ConfigCacheService', () => {
       service.set(stringKey, 'test@example.com');
       service.set(numberKey, 3000);
 
-      expect(service.get(booleanKey)).toBe(true);
-      expect(service.get(stringKey)).toBe('test@example.com');
-      expect(service.get(numberKey)).toBe(3000);
+      expect(service.get(booleanKey).value).toBe(true);
+      expect(service.get(stringKey).value).toBe('test@example.com');
+      expect(service.get(numberKey).value).toBe(3000);
     });
   });
 
@@ -82,7 +84,7 @@ describe('ConfigCacheService', () => {
 
       expect(result).toBe(true);
     });
-
+    
     it('should return false for negative cache entry check when not in cache', () => {
       const key = 'NON_EXISTENT_KEY' as keyof ConfigVariables;
 
@@ -112,8 +114,8 @@ describe('ConfigCacheService', () => {
       service.set(key2, 'test@example.com');
       service.clear(key1);
 
-      expect(service.get(key1)).toBeUndefined();
-      expect(service.get(key2)).toBe('test@example.com');
+      expect(service.get(key1).value).toBeUndefined();
+      expect(service.get(key2).value).toBe('test@example.com');
     });
 
     it('should clear all entries', () => {
@@ -124,13 +126,13 @@ describe('ConfigCacheService', () => {
       service.set(key2, 'test@example.com');
       service.clearAll();
 
-      expect(service.get(key1)).toBeUndefined();
-      expect(service.get(key2)).toBeUndefined();
+      expect(service.get(key1).value).toBeUndefined();
+      expect(service.get(key2).value).toBeUndefined();
     });
   });
 
   describe('cache expiration', () => {
-    it('should expire entries after TTL', () => {
+    it('should mark entries as stale after TTL', () => {
       const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
       const value = true;
 
@@ -139,11 +141,12 @@ describe('ConfigCacheService', () => {
       withMockedDate(CONFIG_VARIABLES_CACHE_TTL + 1, () => {
         const result = service.get(key);
 
-        expect(result).toBeUndefined();
+        expect(result.value).toBe(value);
+        expect(result.isStale).toBe(true);
       });
     });
 
-    it('should not expire entries before TTL', () => {
+    it('should not mark entries as stale before TTL', () => {
       const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
       const value = true;
 
@@ -152,7 +155,8 @@ describe('ConfigCacheService', () => {
       withMockedDate(CONFIG_VARIABLES_CACHE_TTL - 1, () => {
         const result = service.get(key);
 
-        expect(result).toBe(value);
+        expect(result.value).toBe(value);
+        expect(result.isStale).toBe(false);
       });
     });
   });
@@ -219,18 +223,18 @@ describe('ConfigCacheService', () => {
 
       service.onModuleDestroy();
 
-      expect(service.get(key)).toBeUndefined();
+      expect(service.get(key).value).toBeUndefined();
     });
   });
 
   describe('cache scavenging', () => {
     it('should have a public scavengeCache method', () => {
-      expect(typeof service.scavengeCache).toBe('function');
+      expect(typeof service.scavengeConfigVariablesCache).toBe('function');
 
       const prototype = Object.getPrototypeOf(service);
 
       expect(
-        Object.getOwnPropertyDescriptor(prototype, 'scavengeCache'),
+        Object.getOwnPropertyDescriptor(prototype, 'scavengeConfigVariablesCache'),
       ).toBeDefined();
     });
 
@@ -240,9 +244,9 @@ describe('ConfigCacheService', () => {
       service.set(key, 'test');
 
       withMockedDate(CONFIG_VARIABLES_CACHE_TTL + 1, () => {
-        service.scavengeCache();
+        service.scavengeConfigVariablesCache();
 
-        expect(service.get(key)).toBeUndefined();
+        expect(service.get(key).value).toBeUndefined();
       });
     });
 
@@ -252,9 +256,9 @@ describe('ConfigCacheService', () => {
       service.set(key, 'test');
 
       withMockedDate(CONFIG_VARIABLES_CACHE_TTL - 1, () => {
-        service.scavengeCache();
+        service.scavengeConfigVariablesCache();
 
-        expect(service.get(key)).toBe('test');
+        expect(service.get(key).value).toBe('test');
       });
     });
 
@@ -268,16 +272,16 @@ describe('ConfigCacheService', () => {
 
       service.set(validKey, 'valid-value');
 
-      service.scavengeCache();
+      service.scavengeConfigVariablesCache();
 
-      expect(service.get(expiredKey)).toBeUndefined(),
-        expect(service.get(validKey)).toBe('valid-value');
+      expect(service.get(expiredKey).value).toBeUndefined(),
+        expect(service.get(validKey).value).toBe('valid-value');
     });
 
     it('should handle empty cache when scavenging', () => {
       service.clearAll();
 
-      expect(() => service.scavengeCache()).not.toThrow();
+      expect(() => service.scavengeConfigVariablesCache()).not.toThrow();
     });
   });
 
@@ -286,14 +290,14 @@ describe('ConfigCacheService', () => {
       const key = 'EMAIL_FROM_ADDRESS' as keyof ConfigVariables;
 
       service.set(key, '');
-      expect(service.get(key)).toBe('');
+      expect(service.get(key).value).toBe('');
     });
 
     it('should handle zero values', () => {
       const key = 'NODE_PORT' as keyof ConfigVariables;
 
       service.set(key, 0);
-      expect(service.get(key)).toBe(0);
+      expect(service.get(key).value).toBe(0);
     });
 
     it('should handle clearing non-existent keys', () => {
@@ -305,7 +309,7 @@ describe('ConfigCacheService', () => {
 
       service.set(otherKey, 'test@example.com');
       service.clear(key);
-      expect(service.get(otherKey)).toBe('test@example.com');
+      expect(service.get(otherKey).value).toBe('test@example.com');
     });
 
     it('should handle empty cache operations', () => {

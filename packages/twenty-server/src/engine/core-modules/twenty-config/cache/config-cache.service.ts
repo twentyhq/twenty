@@ -28,14 +28,21 @@ export class ConfigCacheService implements OnModuleDestroy {
     this.knownMissingKeysCache = new Map();
   }
 
-  get<T extends ConfigKey>(key: T): ConfigValue<T> | undefined {
+  get<T extends ConfigKey>(
+    key: T,
+  ): { value: ConfigValue<T> | undefined; isStale: boolean } {
     const entry = this.foundConfigValuesCache.get(key);
 
-    if (entry && !this.isCacheExpired(entry)) {
-      return entry.value as ConfigValue<T>;
+    if (!entry) {
+      return { value: undefined, isStale: false };
     }
 
-    return undefined;
+    const isStale = this.isCacheExpired(entry);
+
+    return {
+      value: entry.value as ConfigValue<T>,
+      isStale,
+    };
   }
 
   isKeyKnownMissing(key: ConfigKey): boolean {
@@ -115,8 +122,8 @@ export class ConfigCacheService implements OnModuleDestroy {
    * one execution per pod with direct access to memory.
    */
   @Cron(`0 */${CONFIG_VARIABLES_CACHE_SCAVENGE_INTERVAL_MINUTES} * * * *`)
-  public scavengeCache(): void {
-    this.logger.log('Starting cache scavenging process');
+  public scavengeConfigVariablesCache(): void {
+    this.logger.log('Starting config variables cache scavenging process');
 
     const now = Date.now();
     let removedCount = 0;
@@ -138,7 +145,7 @@ export class ConfigCacheService implements OnModuleDestroy {
     }
 
     this.logger.log(
-      `Cache scavenging completed: removed ${removedCount} expired entries and ${removedMissingCount} expired missing entries`,
+      `Config variables cache scavenging completed: removed ${removedCount} expired entries and ${removedMissingCount} expired missing entries`,
     );
   }
 }
