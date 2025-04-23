@@ -1,5 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
@@ -25,6 +26,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
       envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
     }),
     TypeOrmModule.forFeature([KeyValuePair], 'core'),
+    ScheduleModule.forRoot(),
   ],
 
   providers: [

@@ -1,6 +1,7 @@
-import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 
-import { CONFIG_VARIABLES_CACHE_SCAVENGE_INTERVAL } from 'src/engine/core-modules/twenty-config/constants/config-variables-cache-scavenge-interval';
+import { CONFIG_VARIABLES_CACHE_SCAVENGE_INTERVAL_MINUTES } from 'src/engine/core-modules/twenty-config/constants/config-variables-cache-scavenge-interval';
 import { CONFIG_VARIABLES_CACHE_TTL } from 'src/engine/core-modules/twenty-config/constants/config-variables-cache-ttl';
 
 import {
@@ -12,6 +13,7 @@ import {
 
 @Injectable()
 export class ConfigCacheService implements OnModuleDestroy {
+  private readonly logger = new Logger(ConfigCacheService.name);
   private readonly foundConfigValuesCache: Map<
     ConfigKey,
     ConfigCacheEntry<ConfigKey>
@@ -20,12 +22,10 @@ export class ConfigCacheService implements OnModuleDestroy {
     ConfigKey,
     ConfigKnownMissingEntry
   >;
-  private cacheScavengeInterval: NodeJS.Timeout;
 
   constructor() {
     this.foundConfigValuesCache = new Map();
     this.knownMissingKeysCache = new Map();
-    this.startCacheScavenging();
   }
 
   get<T extends ConfigKey>(key: T): ConfigValue<T> | undefined {
@@ -96,9 +96,6 @@ export class ConfigCacheService implements OnModuleDestroy {
   }
 
   onModuleDestroy() {
-    if (this.cacheScavengeInterval) {
-      clearInterval(this.cacheScavengeInterval);
-    }
     this.clearAll();
   }
 
@@ -110,29 +107,38 @@ export class ConfigCacheService implements OnModuleDestroy {
     return now - entry.timestamp > entry.ttl;
   }
 
-  // Should this process be done using @nestjs/schedule?
-  // setInterval is not a good idea because it will not be able to run in a cluster?
-  // Maybe it should be a part of the DatabaseConfigDriver? -- for now kept it here to have a single place to control the cache
+  /**
+   * Scavenge the cache to remove expired entries.
+   *
+   * Note: While we're using @nestjs/schedule for this task, the recommended way to run
+   * distributed cron jobs is still BullMQ. This is used here because we want to have
+   * one execution per pod with direct access to memory.
+   */
+  @Cron(`0 */${CONFIG_VARIABLES_CACHE_SCAVENGE_INTERVAL_MINUTES} * * * *`)
+  public scavengeCache(): void {
+    this.logger.log('Starting cache scavenging process');
 
-  private startCacheScavenging(): void {
-    this.cacheScavengeInterval = setInterval(() => {
-      this.scavengeCache();
-    }, CONFIG_VARIABLES_CACHE_SCAVENGE_INTERVAL);
-  }
-
-  private scavengeCache(): void {
     const now = Date.now();
+    let removedCount = 0;
 
     for (const [key, entry] of this.foundConfigValuesCache.entries()) {
       if (now - entry.timestamp > entry.ttl) {
         this.foundConfigValuesCache.delete(key);
+        removedCount++;
       }
     }
+
+    let removedMissingCount = 0;
 
     for (const [key, entry] of this.knownMissingKeysCache.entries()) {
       if (now - entry.timestamp > entry.ttl) {
         this.knownMissingKeysCache.delete(key);
+        removedMissingCount++;
       }
     }
+
+    this.logger.log(
+      `Cache scavenging completed: removed ${removedCount} expired entries and ${removedMissingCount} expired missing entries`,
+    );
   }
 }

@@ -10561,15 +10561,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/schedule@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "@nestjs/schedule@npm:6.0.0"
+"@nestjs/schedule@npm:^3.0.0":
+  version: 3.0.4
+  resolution: "@nestjs/schedule@npm:3.0.4"
   dependencies:
-    cron: "npm:4.3.0"
+    cron: "npm:2.4.3"
+    uuid: "npm:9.0.1"
   peerDependencies:
-    "@nestjs/common": ^10.0.0 || ^11.0.0
-    "@nestjs/core": ^10.0.0 || ^11.0.0
-  checksum: 10c0/406d301b5a6e4e7c01eddb39865fb812a477bc01685699e3b85185c190bd3228d22b7523b4018990aa2b055b791defbaed0b9abdc368493c7acc667f63951d87
+    "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0
+    "@nestjs/core": ^8.0.0 || ^9.0.0 || ^10.0.0
+    reflect-metadata: ^0.1.12
+  checksum: 10c0/10af832f611139b586bd85714da1697276ddf51513c91cb20c82eb481c9b1741ec85560f7c55d6e560c8ab7f4665f95cb9fd77241a84f2b432b03e2819ba0f86
   languageName: node
   linkType: hard
 
@@ -22605,10 +22607,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/luxon@npm:~3.6.0":
-  version: 3.6.2
-  resolution: "@types/luxon@npm:3.6.2"
-  checksum: 10c0/7572ee52b3d3e9dd10464b90561a728b90f34b9a257751cc3ce23762693dd1d14fa98b7f103e2efe2c6f49033331f91de5681ffd65cca88618cefe555be326db
+"@types/luxon@npm:~3.3.0":
+  version: 3.3.8
+  resolution: "@types/luxon@npm:3.3.8"
+  checksum: 10c0/f2ffa31364eb94ca0474a196f533d301025a203bb2758ce0cf209f338cece0af169edea230b5c0b1a68a71adb02f369faa5ec0bd824deb8f0a08cac6803b1b06
   languageName: node
   linkType: hard
 
@@ -30220,13 +30222,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cron@npm:4.3.0":
-  version: 4.3.0
-  resolution: "cron@npm:4.3.0"
+"cron@npm:2.4.3":
+  version: 2.4.3
+  resolution: "cron@npm:2.4.3"
   dependencies:
-    "@types/luxon": "npm:~3.6.0"
-    luxon: "npm:~3.6.0"
-  checksum: 10c0/859805a56ce6af19177a0abff3688e917d2124c0fa086234333d20fd4ca6efe333af2ab4ba6ba06c3aa68c6b2eec30e375c795e97e735c70fcac126057332f10
+    "@types/luxon": "npm:~3.3.0"
+    luxon: "npm:~3.3.0"
+  checksum: 10c0/3112d4cb0aa1c1129c0bb742eec205e38948806c907e21a0680d1aa83a1270bfade9fcf090c1604529684d21a64d74eb89075e25c16d48d95cf3c5b5d032f316
   languageName: node
   linkType: hard
 
@@ -42067,10 +42069,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"luxon@npm:~3.6.0":
-  version: 3.6.1
-  resolution: "luxon@npm:3.6.1"
-  checksum: 10c0/906d57a9dc4d1de9383f2e9223e378c298607c1b4d17b6657b836a3cd120feb1c1de3b5d06d846a3417e1ca764de8476e8c23b3cd4083b5cdb870adcb06a99d5
+"luxon@npm:~3.3.0":
+  version: 3.3.0
+  resolution: "luxon@npm:3.3.0"
+  checksum: 10c0/47f8e1e96b25441c799b8aa833b3f007fb1854713bcffc8c3384eda8e61fc9af1f038474d137274d2d386492f341c8a8c992fc78c213adfb3143780feba2776c
   languageName: node
   linkType: hard
 
@@ -55083,7 +55085,7 @@ __metadata:
     "@nestjs/cli": "npm:10.3.0"
     "@nestjs/devtools-integration": "npm:^0.1.6"
     "@nestjs/graphql": "patch:@nestjs/graphql@12.1.1#./patches/@nestjs+graphql+12.1.1.patch"
-    "@nestjs/schedule": "npm:^6.0.0"
+    "@nestjs/schedule": "npm:^3.0.0"
     "@node-saml/passport-saml": "npm:^5.0.0"
     "@nx/js": "npm:18.3.3"
     "@opentelemetry/api": "npm:^1.9.0"

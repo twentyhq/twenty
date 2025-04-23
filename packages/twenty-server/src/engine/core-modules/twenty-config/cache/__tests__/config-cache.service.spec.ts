@@ -1,14 +1,12 @@
+import { ScheduleModule } from '@nestjs/schedule';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ConfigCacheService } from 'src/engine/core-modules/twenty-config/cache/config-cache.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
-import { CONFIG_VARIABLES_CACHE_SCAVENGE_INTERVAL } from 'src/engine/core-modules/twenty-config/constants/config-variables-cache-scavenge-interval';
 import { CONFIG_VARIABLES_CACHE_TTL } from 'src/engine/core-modules/twenty-config/constants/config-variables-cache-ttl';
 
 describe('ConfigCacheService', () => {
   let service: ConfigCacheService;
-  let setIntervalSpy: jest.SpyInstance;
-  let clearIntervalSpy: jest.SpyInstance;
 
   const withMockedDate = (timeOffset: number, callback: () => void) => {
     const originalNow = Date.now;
@@ -22,11 +20,10 @@ describe('ConfigCacheService', () => {
   };
 
   beforeEach(async () => {
-    jest.useFakeTimers({ doNotFake: ['setInterval', 'clearInterval'] });
-    setIntervalSpy = jest.spyOn(global, 'setInterval');
-    clearIntervalSpy = jest.spyOn(global, 'clearInterval');
+    jest.useFakeTimers();
 
     const module: TestingModule = await Test.createTestingModule({
+      imports: [ScheduleModule.forRoot()],
       providers: [ConfigCacheService],
     }).compile();
 
@@ -35,8 +32,6 @@ describe('ConfigCacheService', () => {
 
   afterEach(() => {
     service.onModuleDestroy();
-    setIntervalSpy.mockRestore();
-    clearIntervalSpy.mockRestore();
     jest.useRealTimers();
   });
 
@@ -80,7 +75,7 @@ describe('ConfigCacheService', () => {
 
   describe('negative lookup cache', () => {
     it('should check if a negative cache entry exists', () => {
-      const key = 'TEST_KEY' as any;
+      const key = 'TEST_KEY' as keyof ConfigVariables;
 
       service.markKeyAsMissing(key);
       const result = service.isKeyKnownMissing(key);
@@ -89,7 +84,7 @@ describe('ConfigCacheService', () => {
     });
 
     it('should return false for negative cache entry check when not in cache', () => {
-      const key = 'NON_EXISTENT_KEY' as any;
+      const key = 'NON_EXISTENT_KEY' as keyof ConfigVariables;
 
       const result = service.isKeyKnownMissing(key);
 
@@ -97,7 +92,7 @@ describe('ConfigCacheService', () => {
     });
 
     it('should return false for negative cache entry check when expired', () => {
-      const key = 'TEST_KEY' as any;
+      const key = 'TEST_KEY' as keyof ConfigVariables;
 
       service.markKeyAsMissing(key);
 
@@ -197,9 +192,9 @@ describe('ConfigCacheService', () => {
     });
 
     it('should properly count cache entries', () => {
-      const key1 = 'KEY1' as any;
-      const key2 = 'KEY2' as any;
-      const key3 = 'KEY3' as any;
+      const key1 = 'KEY1' as keyof ConfigVariables;
+      const key2 = 'KEY2' as keyof ConfigVariables;
+      const key3 = 'KEY3' as keyof ConfigVariables;
 
       // Add some values to the cache
       service.set(key1, 'value1');
@@ -217,73 +212,72 @@ describe('ConfigCacheService', () => {
   });
 
   describe('module lifecycle', () => {
-    it('should clean up interval on module destroy', () => {
+    it('should clear cache on module destroy', () => {
+      const key = 'TEST_KEY' as keyof ConfigVariables;
+
+      service.set(key, 'test');
+
       service.onModuleDestroy();
-      expect(clearIntervalSpy).toHaveBeenCalled();
+
+      expect(service.get(key)).toBeUndefined();
     });
   });
 
   describe('cache scavenging', () => {
-    beforeEach(() => {
-      jest.useFakeTimers({ doNotFake: ['setInterval', 'clearInterval'] });
+    it('should have a public scavengeCache method', () => {
+      expect(typeof service.scavengeCache).toBe('function');
+
+      const prototype = Object.getPrototypeOf(service);
+
+      expect(
+        Object.getOwnPropertyDescriptor(prototype, 'scavengeCache'),
+      ).toBeDefined();
     });
 
-    afterEach(() => {
-      jest.useRealTimers();
+    it('should remove expired entries when scavengeCache is called', () => {
+      const key = 'TEST_KEY' as keyof ConfigVariables;
+
+      service.set(key, 'test');
+
+      withMockedDate(CONFIG_VARIABLES_CACHE_TTL + 1, () => {
+        service.scavengeCache();
+
+        expect(service.get(key)).toBeUndefined();
+      });
     });
 
-    it('should set up scavenging interval on initialization', () => {
-      expect(setIntervalSpy).toHaveBeenCalledWith(
-        expect.any(Function),
-        CONFIG_VARIABLES_CACHE_SCAVENGE_INTERVAL,
-      );
+    it('should not remove non-expired entries when scavengeCache is called', () => {
+      const key = 'TEST_KEY' as keyof ConfigVariables;
+
+      service.set(key, 'test');
+
+      withMockedDate(CONFIG_VARIABLES_CACHE_TTL - 1, () => {
+        service.scavengeCache();
+
+        expect(service.get(key)).toBe('test');
+      });
     });
 
-    it('should clean up interval on module destroy', () => {
-      const intervalId = setIntervalSpy.mock.results[0].value;
+    it('should handle multiple entries with different expiration times', () => {
+      const expiredKey = 'EXPIRED_KEY' as keyof ConfigVariables;
+      const validKey = 'VALID_KEY' as keyof ConfigVariables;
 
-      service.onModuleDestroy();
-      expect(clearIntervalSpy).toHaveBeenCalledWith(intervalId);
+      withMockedDate(-CONFIG_VARIABLES_CACHE_TTL * 2, () => {
+        service.set(expiredKey, 'expired-value');
+      });
+
+      service.set(validKey, 'valid-value');
+
+      service.scavengeCache();
+
+      expect(service.get(expiredKey)).toBeUndefined(),
+        expect(service.get(validKey)).toBe('valid-value');
     });
 
-    it('should automatically scavenge expired entries after interval', () => {
-      const key1 = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
-      const key2 = 'EMAIL_FROM_ADDRESS' as keyof ConfigVariables;
+    it('should handle empty cache when scavenging', () => {
+      service.clearAll();
 
-      service.set(key1, true);
-      service.set(key2, 'test@example.com');
-
-      jest.advanceTimersByTime(CONFIG_VARIABLES_CACHE_TTL + 1);
-      jest.advanceTimersByTime(CONFIG_VARIABLES_CACHE_SCAVENGE_INTERVAL);
-
-      expect(service.get(key1)).toBeUndefined();
-      expect(service.get(key2)).toBeUndefined();
-    });
-
-    it('should not remove non-expired entries after interval', () => {
-      const key1 = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
-      const key2 = 'EMAIL_FROM_ADDRESS' as keyof ConfigVariables;
-
-      service.set(key1, true);
-      service.set(key2, 'test@example.com');
-
-      jest.advanceTimersByTime(CONFIG_VARIABLES_CACHE_TTL - 1);
-
-      expect(service.get(key1)).toBe(true);
-      expect(service.get(key2)).toBe('test@example.com');
-    });
-
-    it('should scavenge multiple times when multiple intervals pass', () => {
-      const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
-
-      service.set(key, true);
-
-      jest.advanceTimersByTime(
-        CONFIG_VARIABLES_CACHE_TTL +
-          CONFIG_VARIABLES_CACHE_SCAVENGE_INTERVAL * 3,
-      );
-
-      expect(service.get(key)).toBeUndefined();
+      expect(() => service.scavengeCache()).not.toThrow();
     });
   });
 
