@@ -42,17 +42,22 @@ export class MessagingSendMessageService {
 
         const fromName = data.name;
 
-        const message = [
-          isDefined(fromName)
-            ? `From: "${mimeEncode(fromName)}" <${fromEmail}>`
-            : '',
+        const headers: string[] = [];
+
+        if (isDefined(fromName)) {
+          headers.push(`From: "${mimeEncode(fromName)}" <${fromEmail}>`);
+        }
+
+        headers.push(
           `To: ${sendMessageInput.to}`,
           `Subject: ${sendMessageInput.subject}`,
           'MIME-Version: 1.0',
           'Content-Type: text/plain; charset="UTF-8"',
           '',
           sendMessageInput.body,
-        ].join('\n');
+        );
+
+        const message = headers.join('\n');
 
         const encodedMessage = Buffer.from(message).toString('base64');
 
