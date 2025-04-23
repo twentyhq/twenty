@@ -30,30 +30,6 @@ async function ensureDatabaseExists() {
     query: `CREATE DATABASE IF NOT EXISTS "${database}"`,
   });
 
-  let jsonTypeEnabled = false;
-
-  try {
-    await client.command({
-      query: `SET enable_json_type = 1`,
-    });
-    jsonTypeEnabled = true;
-  } catch (error) {
-    // Intentionally empty - will try alternative method
-  }
-
-  try {
-    await client.command({
-      query: `SET allow_experimental_json_type = 1`,
-    });
-    jsonTypeEnabled = true;
-  } catch (error) {
-    // Intentionally empty - failure handled by jsonTypeEnabled check
-  }
-
-  if (!jsonTypeEnabled) {
-    console.error('Failed to enable JSON type');
-  }
-
   await client.close();
 }
 
@@ -99,6 +75,9 @@ async function runMigrations() {
 
   const client = createClient({
     url: clickhouseUrl(),
+    clickhouse_settings: {
+      allow_experimental_json_type: 1,
+    },
   });
 
   await ensureMigrationTable(client);
