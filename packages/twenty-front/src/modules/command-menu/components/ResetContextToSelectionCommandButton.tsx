@@ -6,6 +6,8 @@ import { useResetPreviousCommandMenuContext } from '@/command-menu/hooks/useRese
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
@@ -42,17 +44,23 @@ export const ResetContextToSelectionCommandButton = () => {
   }
 
   return (
-    <CommandMenuItem
-      id={RESET_CONTEXT_TO_SELECTION}
-      Icon={IconArrowBackUp}
-      label={t`Reset to`}
-      RightComponent={
-        <CommandMenuContextRecordsChip
-          objectMetadataItemId={objectMetadataItem.id}
-          instanceId={COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID}
-        />
-      }
-      onClick={resetPreviousCommandMenuContext}
-    />
+    <SelectableItem
+      itemId={RESET_CONTEXT_TO_SELECTION}
+      hotkeyScope={AppHotkeyScope.CommandMenuOpen}
+      onEnter={resetPreviousCommandMenuContext}
+    >
+      <CommandMenuItem
+        id={RESET_CONTEXT_TO_SELECTION}
+        Icon={IconArrowBackUp}
+        label={t`Reset to`}
+        RightComponent={
+          <CommandMenuContextRecordsChip
+            objectMetadataItemId={objectMetadataItem.id}
+            instanceId={COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID}
+          />
+        }
+        onClick={resetPreviousCommandMenuContext}
+      />
+    </SelectableItem>
   );
 };

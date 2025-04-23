@@ -9,11 +9,13 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
+import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
+import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -23,7 +25,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export type ObjectFilterDropdownFilterSelectMenuItemProps = {
   fieldMetadataItemToSelect: FieldMetadataItem;
@@ -132,13 +134,18 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
   };
 
   return (
-    <MenuItemSelect
-      selected={false}
-      hovered={isSelectedItem}
-      onClick={handleClick}
-      LeftIcon={Icon}
-      text={fieldMetadataItemToSelect.label}
-      hasSubMenu={shouldShowSubMenu}
-    />
+    <SelectableItem
+      itemId={fieldMetadataItemToSelect.id}
+      hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
+      onEnter={handleClick}
+    >
+      <MenuItem
+        selected={isSelectedItem}
+        onClick={handleClick}
+        LeftIcon={Icon}
+        text={fieldMetadataItemToSelect.label}
+        hasSubMenu={shouldShowSubMenu}
+      />
+    </SelectableItem>
   );
 };

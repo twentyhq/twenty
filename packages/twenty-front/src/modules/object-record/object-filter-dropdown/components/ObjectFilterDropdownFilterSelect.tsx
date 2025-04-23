@@ -156,27 +156,23 @@ export const ObjectFilterDropdownFilterSelect = ({
         hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
         selectableItemIdArray={selectableFieldMetadataItemIds}
         selectableListInstanceId={OBJECT_FILTER_DROPDOWN_ID}
-        onEnter={handleEnter}
       >
         <DropdownMenuItemsContainer>
-          {visibleColumnsFieldMetadataItems.map(
-            (visibleFieldMetadataItem, index) => (
-              <SelectableItem
-                itemId={visibleFieldMetadataItem.id}
-                key={`visible-select-filter-${index}`}
-              >
-                <ObjectFilterDropdownFilterSelectMenuItem
-                  fieldMetadataItemToSelect={visibleFieldMetadataItem}
-                />
-              </SelectableItem>
-            ),
-          )}
+          {visibleColumnsFieldMetadataItems.map((visibleFieldMetadataItem) => (
+            <ObjectFilterDropdownFilterSelectMenuItem
+              fieldMetadataItemToSelect={visibleFieldMetadataItem}
+            />
+          ))}
           {shouldShowSeparator && <DropdownMenuSeparator />}
           {hiddenColumnsFieldMetadataItems.map(
             (hiddenFieldMetadataItem, index) => (
               <SelectableItem
                 itemId={hiddenFieldMetadataItem.id}
                 key={`hidden-select-filter-${index}`}
+                hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
+                onEnter={() => {
+                  handleEnter(hiddenFieldMetadataItem.id);
+                }}
               >
                 <ObjectFilterDropdownFilterSelectMenuItem
                   fieldMetadataItemToSelect={hiddenFieldMetadataItem}

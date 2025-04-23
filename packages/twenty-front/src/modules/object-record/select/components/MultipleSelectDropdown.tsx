@@ -93,19 +93,6 @@ export const MultipleSelectDropdown = ({
       selectableListInstanceId={selectableListId}
       selectableItemIdArray={selectableItemIds}
       hotkeyScope={hotkeyScope}
-      onEnter={(itemId) => {
-        const item = itemsInDropdown.findIndex(
-          (entity) => entity.id === itemId,
-        );
-        const itemIsSelectedInDropwdown = filteredSelectedItems.find(
-          (entity) => entity.id === itemId,
-        );
-        handleItemSelectChange(
-          itemsInDropdown[item],
-          !itemIsSelectedInDropwdown,
-        );
-        resetSelectedItem();
-      }}
     >
       <DropdownMenuItemsContainer hasMaxHeight>
         {itemsInDropdown?.map((item) => {

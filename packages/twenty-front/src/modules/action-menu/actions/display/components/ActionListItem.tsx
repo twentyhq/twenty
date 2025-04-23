@@ -2,7 +2,6 @@ import { ActionDisplayProps } from '@/action-menu/actions/display/components/Act
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
-import { useSelectableListListenToEnterHotkeyOnItem } from '@/ui/layout/selectable-list/hooks/useSelectableListListenToEnterHotkeyOnItem';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,14 +24,12 @@ export const ActionListItem = ({
     }
   };
 
-  useSelectableListListenToEnterHotkeyOnItem({
-    hotkeyScope: AppHotkeyScope.CommandMenuOpen,
-    itemId: action.key,
-    onEnter: handleClick,
-  });
-
   return (
-    <SelectableItem itemId={action.key}>
+    <SelectableItem
+      itemId={action.key}
+      hotkeyScope={AppHotkeyScope.CommandMenuOpen}
+      onEnter={handleClick}
+    >
       <CommandMenuItem
         id={action.key}
         Icon={action.Icon}

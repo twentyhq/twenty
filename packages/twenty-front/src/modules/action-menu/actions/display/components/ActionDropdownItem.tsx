@@ -2,7 +2,6 @@ import { ActionDisplayProps } from '@/action-menu/actions/display/components/Act
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
-import { useSelectableListListenToEnterHotkeyOnItem } from '@/ui/layout/selectable-list/hooks/useSelectableListListenToEnterHotkeyOnItem';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
@@ -43,17 +42,17 @@ export const ActionDropdownItem = ({
 
   const { actionMenuType } = useContext(ActionMenuContext);
 
-  useSelectableListListenToEnterHotkeyOnItem({
-    hotkeyScope:
-      actionMenuType === 'command-menu-show-page-action-menu-dropdown'
-        ? AppHotkeyScope.CommandMenuOpen
-        : '',
-    itemId: action.key,
-    onEnter: handleClick,
-  });
+  const hotkeyScope =
+    actionMenuType === 'command-menu-show-page-action-menu-dropdown'
+      ? AppHotkeyScope.CommandMenuOpen
+      : '';
 
   return (
-    <SelectableItem itemId={action.key}>
+    <SelectableItem
+      itemId={action.key}
+      hotkeyScope={hotkeyScope}
+      onEnter={handleClick}
+    >
       <MenuItem
         selected={isSelected}
         key={action.key}

@@ -167,12 +167,6 @@ export const ObjectFilterDropdownOptionSelect = () => {
       selectableListInstanceId={componentInstanceId}
       selectableItemIdArray={objectRecordsIds}
       hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
-      onEnter={(itemId) => {
-        const option = optionsInDropdown.find((option) => option.id === itemId);
-        if (isDefined(option)) {
-          handleMultipleOptionSelectChange(option, !option.isSelected);
-        }
-      }}
     >
       <DropdownMenuItemsContainer hasMaxHeight>
         {optionsInDropdown?.map((option) => (

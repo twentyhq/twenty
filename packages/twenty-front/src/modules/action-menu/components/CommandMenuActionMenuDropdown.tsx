@@ -7,7 +7,6 @@ import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-men
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -82,9 +81,7 @@ export const CommandMenuActionMenuDropdown = () => {
             selectableItemIdArray={selectableItemIdArray}
           >
             {recordSelectionActions.map((action) => (
-              <SelectableItem itemId={action.key} key={action.key}>
-                <ActionComponent action={action} />
-              </SelectableItem>
+              <ActionComponent action={action} />
             ))}
           </SelectableList>
         </DropdownMenuItemsContainer>

@@ -108,14 +108,6 @@ export const SingleRecordPickerMenuItems = ({
         selectableListInstanceId={selectableListComponentInstanceId}
         selectableItemIdArray={selectableItemIds}
         hotkeyScope={hotkeyScope}
-        onEnter={(itemId) => {
-          const recordIndex = recordsInDropdown.findIndex(
-            (record) => record.id === itemId,
-          );
-          setSelectedRecordId(itemId);
-          onRecordSelected(recordsInDropdown[recordIndex]);
-          resetSelectedItem();
-        }}
       >
         <DropdownMenuItemsContainer hasMaxHeight>
           {loading && !isFiltered ? (

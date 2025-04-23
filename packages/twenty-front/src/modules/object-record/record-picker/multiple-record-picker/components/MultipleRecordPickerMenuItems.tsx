@@ -117,7 +117,6 @@ export const MultipleRecordPickerMenuItems = ({
         selectableListInstanceId={selectableListComponentInstanceId}
         selectableItemIdArray={pickableRecordIds}
         hotkeyScope={MultipleRecordPickerHotkeyScope.MultipleRecordPicker}
-        onEnter={handleEnter}
       >
         {pickableRecordIds.map((recordId) => {
           return (

@@ -4,6 +4,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerIsSelectedComponentFamilySelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerIsSelectedComponentFamilySelector';
+import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
@@ -62,6 +63,8 @@ export const MultipleRecordPickerMenuItemContent = ({
     <StyledSelectableItem
       itemId={searchRecord.recordId}
       key={searchRecord.recordId}
+      hotkeyScope={MultipleRecordPickerHotkeyScope.MultipleRecordPicker}
+      onEnter={() => handleSelectChange(!isRecordSelectedWithObjectItem)}
     >
       <MenuItemMultiSelectAvatar
         onSelectChange={(isSelected) => handleSelectChange(isSelected)}
