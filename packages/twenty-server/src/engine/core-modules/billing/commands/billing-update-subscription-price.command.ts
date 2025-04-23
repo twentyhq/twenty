@@ -21,10 +21,10 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
-  name: 'billing:update-price-on-subscription',
-  description: 'Update price on subscription',
+  name: 'billing:update-subscription-price',
+  description: 'Update subscription price',
 })
-export class BillingUpdatePriceOnSubscriptionCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class BillingUpdateSubscriptionPriceCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   private stripePriceIdToUpdate: string;
   private newStripePriceId: string;
   private clearUsage = false;
@@ -42,7 +42,7 @@ export class BillingUpdatePriceOnSubscriptionCommand extends ActiveOrSuspendedWo
   }
 
   @Option({
-    flags: '--price-to-update [stripe_price_id]',
+    flags: '--price-to-update-id [stripe_price_id]',
     description: 'Stripe price id to update',
     required: true,
   })
@@ -53,7 +53,7 @@ export class BillingUpdatePriceOnSubscriptionCommand extends ActiveOrSuspendedWo
   }
 
   @Option({
-    flags: '--new-price [stripe_price_id]',
+    flags: '--new-price-id [stripe_price_id]',
     description: 'New Stripe price id',
     required: true,
   })
