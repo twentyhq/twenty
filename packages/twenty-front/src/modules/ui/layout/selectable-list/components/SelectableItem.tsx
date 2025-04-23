@@ -1,9 +1,10 @@
 import { ReactNode, useEffect, useRef } from 'react';
 
-import { useSelectableListListenToEnterHotkeyOnItem } from '@/ui/layout/selectable-list/hooks/useSelectableListListenToEnterHotkeyOnItem';
+import { SelectableItemHotkeyEffect } from '@/ui/layout/selectable-list/components/SelectableItemHotkeyEffect';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   height: 100%;
@@ -38,17 +39,18 @@ export const SelectableItem = ({
     }
   }, [isSelectedItemId]);
 
-  useSelectableListListenToEnterHotkeyOnItem({
-    hotkeyScope,
-    itemId,
-    onEnter: () => {
-      onEnter?.();
-    },
-  });
-
   return (
-    <StyledContainer className={className} ref={scrollRef}>
-      {children}
-    </StyledContainer>
+    <>
+      {isSelectedItemId && isDefined(onEnter) && isSelectedItemId && (
+        <SelectableItemHotkeyEffect
+          hotkeyScope={hotkeyScope}
+          itemId={itemId}
+          onEnter={onEnter}
+        />
+      )}
+      <StyledContainer className={className} ref={scrollRef}>
+        {children}
+      </StyledContainer>
+    </>
   );
 };
