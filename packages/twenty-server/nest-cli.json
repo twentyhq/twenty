@@ -28,7 +28,7 @@
       },
       {
         "include": "**/database/clickhouse/migrations/*.sql",
-        "outDir": "dist"
+        "outDir": "dist/src"
       }
     ],
     "watchAssets": true
