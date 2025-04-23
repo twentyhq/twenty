@@ -9,8 +9,6 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { userEvent, within } from '@storybook/test';
 import { SettingsExperience } from '../profile/appearance/components/SettingsExperience';
 
-Date.now = () => new Date('2022-06-13T12:33:37.000Z').getTime();
-
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsExperience',
   component: SettingsExperience,
@@ -44,15 +42,15 @@ export const DateTimeSettingsTimeFormat: Story = {
 
     await canvas.findByText('Date and time');
 
-    const timeFormatSelect = await canvas.findByText('24h (08:33)');
+    const timeFormatSelect = await canvas.findByText('24h (05:30)');
 
     await userEvent.click(timeFormatSelect);
 
-    const timeFormatOptions = await canvas.findByText('12h (8:33 AM)');
+    const timeFormatOptions = await canvas.findByText('12h (5:30 AM)');
 
     await userEvent.click(timeFormatOptions);
 
-    await canvas.findByText('12h (8:33 AM)');
+    await canvas.findByText('12h (5:30 AM)');
   },
 };
 
@@ -84,14 +82,14 @@ export const DateTimeSettingsDateFormat: Story = {
 
     await canvas.findByText('Date and time');
 
-    const timeFormatSelect = await canvas.findByText('13 Jun, 2022');
+    const timeFormatSelect = await canvas.findByText('12 Mar, 2024');
 
     await userEvent.click(timeFormatSelect);
 
-    const timeFormatOptions = await canvas.findByText('Jun 13, 2022');
+    const timeFormatOptions = await canvas.findByText('Mar 12, 2024');
 
     await userEvent.click(timeFormatOptions);
 
-    await canvas.findByText('Jun 13, 2022');
+    await canvas.findByText('Mar 12, 2024');
   },
 };

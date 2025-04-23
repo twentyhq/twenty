@@ -453,6 +453,7 @@ export class ProcessNestedRelationsHelper {
       result,
       referenceObjectMetadata,
       objectMetadataMaps,
+      false,
     );
 
     return { relationResults, relationAggregatedFieldsResult };
