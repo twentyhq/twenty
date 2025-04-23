@@ -8,6 +8,7 @@ import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolve
 import { BillingAddWorkflowSubscriptionItemCommand } from 'src/engine/core-modules/billing/commands/billing-add-workflow-subscription-item.command';
 import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
 import { BillingSyncPlansDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-plans-data.command';
+import { BillingUpdatePriceOnSubscriptionCommand } from 'src/engine/core-modules/billing/commands/billing-update-price-on-subscription.command';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
@@ -84,6 +85,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingWebhookCustomerService,
     BillingRestApiExceptionFilter,
     BillingSyncCustomerDataCommand,
+    BillingUpdatePriceOnSubscriptionCommand,
     BillingSyncPlansDataCommand,
     BillingAddWorkflowSubscriptionItemCommand,
     BillingUsageService,
