@@ -1,8 +1,6 @@
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
-export const isFilterOperandExpectingValue = (
-  operand: ViewFilterOperand | null | undefined,
-) => {
+export const isFilterOperandExpectingValue = (operand: ViewFilterOperand) => {
   switch (operand) {
     case ViewFilterOperand.IsNotNull:
     case ViewFilterOperand.IsEmpty:

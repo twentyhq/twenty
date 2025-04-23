@@ -44,8 +44,6 @@ export const EditableFilterChip = ({
     ? `${recordFilter.label} / ${subFieldLabel}`
     : recordFilter.label;
 
-  console.log(isFilterOperandExpectingValue(recordFilter.operand));
-
   const labelKey = `${fieldNameLabel}${isNonEmptyString(recordFilter.value) || !isFilterOperandExpectingValue(recordFilter.operand) ? operandLabelShort : ''}`;
 
   return (
