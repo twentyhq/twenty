@@ -4,8 +4,8 @@ import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useLis
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
-import { useResetWorkflowRunRightDrawerTabIfNeeded } from '@/workflow/workflow-diagram/hooks/useResetWorkflowRunRightDrawerTabIfNeeded';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
+import { useSetInitialWorkflowRunRightDrawerTab } from '@/workflow/workflow-diagram/hooks/useSetInitialWorkflowRunRightDrawerTab';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
 import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
@@ -133,8 +133,8 @@ export const WorkflowDiagramCanvasBase = ({
     workflowReactFlowRefState,
   );
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
-  const { resetWorkflowRunRightDrawerTabIfNeeded } =
-    useResetWorkflowRunRightDrawerTabIfNeeded();
+  const { setInitialWorkflowRunRightDrawerTab } =
+    useSetInitialWorkflowRunRightDrawerTab();
 
   const workflowDiagram = useRecoilValue(workflowDiagramState);
 
@@ -284,7 +284,7 @@ export const WorkflowDiagramCanvasBase = ({
             getIcon(getWorkflowNodeIconKey(workflowStepToOpenByDefault.data)),
           );
 
-          resetWorkflowRunRightDrawerTabIfNeeded({
+          setInitialWorkflowRunRightDrawerTab({
             workflowSelectedNode: workflowStepToOpenByDefault.id,
             stepExecutionStatus: workflowStepToOpenByDefault.data.runStatus!,
           });
@@ -297,7 +297,7 @@ export const WorkflowDiagramCanvasBase = ({
       isInRightDrawer,
       openWorkflowRunViewStepInCommandMenu,
       reactflow,
-      resetWorkflowRunRightDrawerTabIfNeeded,
+      setInitialWorkflowRunRightDrawerTab,
     ],
   );
 

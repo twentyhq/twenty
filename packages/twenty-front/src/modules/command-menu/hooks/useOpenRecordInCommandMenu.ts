@@ -22,7 +22,7 @@ import { flowState } from '@/workflow/states/flowState';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { workflowRunIdState } from '@/workflow/states/workflowRunIdState';
 import { WorkflowRun } from '@/workflow/types/Workflow';
-import { useResetWorkflowRunRightDrawerTabIfNeeded } from '@/workflow/workflow-diagram/hooks/useResetWorkflowRunRightDrawerTabIfNeeded';
+import { useSetInitialWorkflowRunRightDrawerTab } from '@/workflow/workflow-diagram/hooks/useSetInitialWorkflowRunRightDrawerTab';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
@@ -41,8 +41,8 @@ export const useOpenRecordInCommandMenu = () => {
 
   const { navigateCommandMenu } = useCommandMenu();
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
-  const { resetWorkflowRunRightDrawerTabIfNeeded } =
-    useResetWorkflowRunRightDrawerTabIfNeeded();
+  const { setInitialWorkflowRunRightDrawerTab } =
+    useSetInitialWorkflowRunRightDrawerTab();
 
   const openRecordInCommandMenu = useRecoilCallback(
     ({ set, snapshot }) => {
@@ -214,7 +214,7 @@ export const useOpenRecordInCommandMenu = () => {
             getIcon(getWorkflowNodeIconKey(stepToOpenByDefault.data)),
           );
 
-          resetWorkflowRunRightDrawerTabIfNeeded({
+          setInitialWorkflowRunRightDrawerTab({
             stepExecutionStatus: stepToOpenByDefault.data.runStatus,
             workflowSelectedNode: stepToOpenByDefault.id,
           });
@@ -226,7 +226,7 @@ export const useOpenRecordInCommandMenu = () => {
       getIcon,
       navigateCommandMenu,
       openWorkflowRunViewStepInCommandMenu,
-      resetWorkflowRunRightDrawerTabIfNeeded,
+      setInitialWorkflowRunRightDrawerTab,
       theme,
     ],
   );

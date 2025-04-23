@@ -1,7 +1,7 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
-import { useResetWorkflowRunRightDrawerTabIfNeeded } from '@/workflow/workflow-diagram/hooks/useResetWorkflowRunRightDrawerTabIfNeeded';
+import { useSetInitialWorkflowRunRightDrawerTab } from '@/workflow/workflow-diagram/hooks/useSetInitialWorkflowRunRightDrawerTab';
 import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import {
@@ -20,8 +20,8 @@ export const WorkflowRunDiagramCanvasEffect = () => {
   const workflowId = useRecoilValue(workflowIdState);
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
-  const { resetWorkflowRunRightDrawerTabIfNeeded } =
-    useResetWorkflowRunRightDrawerTabIfNeeded();
+  const { setInitialWorkflowRunRightDrawerTab } =
+    useSetInitialWorkflowRunRightDrawerTab();
 
   const handleSelectionChange = useRecoilCallback(
     ({ snapshot }) =>
@@ -60,7 +60,7 @@ export const WorkflowRunDiagramCanvasEffect = () => {
             getIcon(getWorkflowNodeIconKey(selectedNodeData)),
           );
 
-          resetWorkflowRunRightDrawerTabIfNeeded({
+          setInitialWorkflowRunRightDrawerTab({
             workflowSelectedNode: selectedNode.id,
             stepExecutionStatus: selectedNodeData.runStatus,
           });
@@ -69,7 +69,7 @@ export const WorkflowRunDiagramCanvasEffect = () => {
     [
       getIcon,
       openWorkflowRunViewStepInCommandMenu,
-      resetWorkflowRunRightDrawerTabIfNeeded,
+      setInitialWorkflowRunRightDrawerTab,
       setWorkflowSelectedNode,
       workflowId,
     ],

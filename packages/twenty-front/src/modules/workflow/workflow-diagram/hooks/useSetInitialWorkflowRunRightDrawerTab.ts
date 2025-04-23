@@ -8,8 +8,8 @@ import { WorkflowRunTabId } from '@/workflow/workflow-steps/types/WorkflowRunTab
 import { isNull } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
-export const useResetWorkflowRunRightDrawerTabIfNeeded = () => {
-  const resetWorkflowRunRightDrawerTabIfNeeded = useRecoilCallback(
+export const useSetInitialWorkflowRunRightDrawerTab = () => {
+  const setInitialWorkflowRunRightDrawerTab = useRecoilCallback(
     ({ snapshot, set }) =>
       ({
         workflowSelectedNode,
@@ -71,6 +71,6 @@ export const useResetWorkflowRunRightDrawerTabIfNeeded = () => {
   );
 
   return {
-    resetWorkflowRunRightDrawerTabIfNeeded,
+    setInitialWorkflowRunRightDrawerTab,
   };
 };
