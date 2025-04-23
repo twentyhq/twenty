@@ -9,11 +9,11 @@ import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workf
 import { WORKFLOW_VISUALIZER_EDGE_SUCCESS_CONFIGURATION } from '@/workflow/workflow-diagram/constants/WorkflowVisualizerEdgeSuccessConfiguration';
 import {
   WorkflowDiagramRunStatus,
-  WorkflowDiagramStepNodeData,
   WorkflowRunDiagram,
   WorkflowRunDiagramEdge,
   WorkflowRunDiagramNode,
   WorkflowRunDiagramNodeData,
+  WorkflowRunDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramTriggerNode';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
@@ -33,14 +33,14 @@ export const generateWorkflowRunDiagram = ({
   stepToOpenByDefault:
     | {
         id: string;
-        data: WorkflowDiagramStepNodeData;
+        data: WorkflowRunDiagramStepNodeData;
       }
     | undefined;
 } => {
   let stepToOpenByDefault:
     | {
         id: string;
-        data: WorkflowDiagramStepNodeData;
+        data: WorkflowRunDiagramStepNodeData;
       }
     | undefined = undefined;
 

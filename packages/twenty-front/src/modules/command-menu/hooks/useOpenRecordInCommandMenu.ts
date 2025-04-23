@@ -1,7 +1,7 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
-import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
 import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -22,6 +22,7 @@ import { flowState } from '@/workflow/states/flowState';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { workflowRunIdState } from '@/workflow/states/workflowRunIdState';
 import { WorkflowRun } from '@/workflow/types/Workflow';
+import { useResetWorkflowRunRightDrawerTabIfNeeded } from '@/workflow/workflow-diagram/hooks/useResetWorkflowRunRightDrawerTabIfNeeded';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
@@ -35,11 +36,13 @@ import { v4 } from 'uuid';
 
 export const useOpenRecordInCommandMenu = () => {
   const apolloClient = useApolloClient();
-
-  const { navigateCommandMenu } = useCommandMenu();
-
   const theme = useTheme();
   const { getIcon } = useIcons();
+
+  const { navigateCommandMenu } = useCommandMenu();
+  const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
+  const { resetWorkflowRunRightDrawerTabIfNeeded } =
+    useResetWorkflowRunRightDrawerTabIfNeeded();
 
   const openRecordInCommandMenu = useRecoilCallback(
     ({ set, snapshot }) => {
@@ -205,23 +208,27 @@ export const useOpenRecordInCommandMenu = () => {
           });
           set(workflowSelectedNodeState, stepToOpenByDefault.id);
 
-          const pageId = v4();
-
-          set(
-            workflowIdComponentState.atomFamily({ instanceId: pageId }),
+          openWorkflowRunViewStepInCommandMenu(
             workflowRunRecord.workflowId,
+            stepToOpenByDefault.data.name,
+            getIcon(getWorkflowNodeIconKey(stepToOpenByDefault.data)),
           );
 
-          navigateCommandMenu({
-            page: CommandMenuPages.WorkflowRunStepView,
-            pageTitle: stepToOpenByDefault.data.name,
-            pageIcon: getIcon(getWorkflowNodeIconKey(stepToOpenByDefault.data)),
-            pageId,
+          resetWorkflowRunRightDrawerTabIfNeeded({
+            stepExecutionStatus: stepToOpenByDefault.data.runStatus,
+            workflowSelectedNode: stepToOpenByDefault.id,
           });
         }
       };
     },
-    [apolloClient.cache, getIcon, navigateCommandMenu, theme],
+    [
+      apolloClient.cache,
+      getIcon,
+      navigateCommandMenu,
+      openWorkflowRunViewStepInCommandMenu,
+      resetWorkflowRunRightDrawerTabIfNeeded,
+      theme,
+    ],
   );
 
   return {
