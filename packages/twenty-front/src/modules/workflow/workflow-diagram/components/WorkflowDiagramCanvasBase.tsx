@@ -154,6 +154,14 @@ export const WorkflowDiagramCanvasBase = ({
 
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
 
+  const setWorkflowReactFlowRef = useRecoilCallback(
+    ({ set }) =>
+      (node: HTMLDivElement | null) => {
+        set(workflowReactFlowRefState, { current: node });
+      },
+    [],
+  );
+
   const handleEdgesChange = (
     edgeChanges: Array<EdgeChange<WorkflowDiagramEdge>>,
   ) => {
@@ -306,11 +314,7 @@ export const WorkflowDiagramCanvasBase = ({
       <WorkflowDiagramCustomMarkers />
 
       <ReactFlow
-        ref={(node) => {
-          if (isDefined(node)) {
-            setWorkflowReactFlowRefState({ current: node });
-          }
-        }}
+        ref={setWorkflowReactFlowRef}
         onInit={handleInit}
         minZoom={defaultFitViewOptions.minZoom}
         maxZoom={defaultFitViewOptions.maxZoom}
