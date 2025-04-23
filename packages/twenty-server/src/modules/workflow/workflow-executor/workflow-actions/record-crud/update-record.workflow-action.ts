@@ -77,6 +77,7 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
       where: {
         nameSingular: workflowActionInput.objectName,
       },
+      relations: ['fields'],
     });
 
     if (!objectMetadata) {

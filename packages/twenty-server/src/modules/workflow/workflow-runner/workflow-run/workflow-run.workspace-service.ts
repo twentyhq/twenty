@@ -340,6 +340,7 @@ export class WorkflowRunWorkspaceService {
         nameSingular: 'workflowRun',
         workspaceId,
       },
+      relations: ['fields'],
     });
 
     if (!objectMetadata) {
