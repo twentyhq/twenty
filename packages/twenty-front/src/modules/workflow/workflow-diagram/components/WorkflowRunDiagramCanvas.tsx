@@ -42,7 +42,9 @@ export const WorkflowRunDiagramCanvas = ({
         );
 
         if (workflowDiagramStatus !== 'computing-dimensions') {
-          return;
+          throw new Error(
+            'Sequence error: reactflow should be considered initialized only when the workflow diagram status is computing-dimensions.',
+          );
         }
 
         set(workflowDiagramStatusState, 'done');
