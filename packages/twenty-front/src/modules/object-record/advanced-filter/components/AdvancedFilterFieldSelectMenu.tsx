@@ -11,7 +11,6 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
@@ -76,10 +75,6 @@ export const AdvancedFilterFieldSelectMenu = ({
       (fieldMetadataItem) => !visibleColumnsIds.includes(fieldMetadataItem.id),
     );
 
-  const selectableFieldMetadataItemIds = filterableFieldMetadataItems.map(
-    (fieldMetadataItem) => fieldMetadataItem.id,
-  );
-
   const { resetSelectedItem } = useSelectableList(OBJECT_FILTER_DROPDOWN_ID);
 
   const { selectFieldUsedInAdvancedFilterDropdown } =
@@ -97,18 +92,6 @@ export const AdvancedFilterFieldSelectMenu = ({
   const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
     fieldMetadataItemIdUsedInDropdownComponentState,
   );
-
-  const handleEnter = (fieldMetadataItemId: string) => {
-    const selectedFieldMetadataItem = filterableFieldMetadataItems.find(
-      (fieldMetadataItem) => fieldMetadataItem.id === fieldMetadataItemId,
-    );
-
-    if (!isDefined(selectedFieldMetadataItem)) {
-      return;
-    }
-
-    handleFieldMetadataItemSelect(selectedFieldMetadataItem);
-  };
 
   const handleFieldMetadataItemSelect = (
     selectedFieldMetadataItem: FieldMetadataItem,
@@ -138,13 +121,25 @@ export const AdvancedFilterFieldSelectMenu = ({
     visibleColumnsFieldMetadataItems.length > 0 &&
     hiddenColumnsFieldMetadataItems.length > 0;
 
+  const { advancedFilterFieldSelectDropdownId } =
+    useAdvancedFilterFieldSelectDropdown(recordFilterId);
+
+  const selectableItemIdArray = [
+    ...visibleColumnsFieldMetadataItems.map(
+      (fieldMetadataItem) => fieldMetadataItem.id,
+    ),
+    ...hiddenColumnsFieldMetadataItems.map(
+      (fieldMetadataItem) => fieldMetadataItem.id,
+    ),
+  ];
+
   return (
     <>
       <AdvancedFilterFieldSelectSearchInput />
       <SelectableList
-        hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
-        selectableItemIdArray={selectableFieldMetadataItemIds}
-        selectableListInstanceId={OBJECT_FILTER_DROPDOWN_ID}
+        hotkeyScope={advancedFilterFieldSelectDropdownId}
+        selectableItemIdArray={selectableItemIdArray}
+        selectableListInstanceId={advancedFilterFieldSelectDropdownId}
       >
         <DropdownMenuItemsContainer>
           {visibleColumnsFieldMetadataItems.map(
@@ -152,7 +147,7 @@ export const AdvancedFilterFieldSelectMenu = ({
               <SelectableListItem
                 itemId={visibleFieldMetadataItem.id}
                 key={`visible-select-filter-${index}`}
-                hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
+                hotkeyScope={advancedFilterFieldSelectDropdownId}
                 onEnter={() => {
                   handleFieldMetadataItemSelect(visibleFieldMetadataItem);
                 }}
