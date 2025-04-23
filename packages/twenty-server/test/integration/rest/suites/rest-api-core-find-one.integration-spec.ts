@@ -2,6 +2,7 @@ import {
   NOT_EXISTING_PERSON_ID,
   PERSON_1_ID,
 } from 'test/integration/constants/mock-person-ids.constants';
+import { COMPANY_1_ID } from 'test/integration/constants/mock-company-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
@@ -18,10 +19,19 @@ describe('Core REST API Find One endpoint', () => {
 
     await makeRestAPIRequest({
       method: 'post',
+      path: '/companies',
+      body: {
+        id: COMPANY_1_ID,
+      },
+    });
+
+    await makeRestAPIRequest({
+      method: 'post',
       path: '/people',
       body: {
         id: PERSON_1_ID,
         city: personCity,
+        companyId: COMPANY_1_ID,
       },
     });
   });

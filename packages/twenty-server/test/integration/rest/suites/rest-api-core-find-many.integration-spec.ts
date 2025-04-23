@@ -5,6 +5,7 @@ import {
 } from 'test/integration/constants/mock-person-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
+import { COMPANY_1_ID } from 'test/integration/constants/mock-company-ids.constants';
 
 describe('Core REST API Find Many endpoint', () => {
   const testPersonIds = [PERSON_1_ID, PERSON_2_ID, PERSON_3_ID];
@@ -23,6 +24,14 @@ describe('Core REST API Find Many endpoint', () => {
       });
     }
 
+    await makeRestAPIRequest({
+      method: 'post',
+      path: '/companies',
+      body: {
+        id: COMPANY_1_ID,
+      },
+    });
+
     let index = 0;
 
     for (const personId of testPersonIds) {
@@ -37,6 +46,7 @@ describe('Core REST API Find Many endpoint', () => {
           id: personId,
           city: city,
           position: index,
+          companyId: COMPANY_1_ID,
         },
       });
       index++;

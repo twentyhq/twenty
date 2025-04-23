@@ -31,14 +31,15 @@ export class GetVariablesFactory {
       objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     },
   ): QueryVariables {
+    const depth = this.depthInputFactory.create(request);
+
     if (id) {
-      return { filter: { id: { eq: id } } };
+      return { filter: { id: { eq: id } }, depth };
     }
 
     const limit = this.limitInputFactory.create(request);
     const endingBefore = this.endingBeforeInputFactory.create(request);
     const startingAfter = this.startingAfterInputFactory.create(request);
-    const depth = this.depthInputFactory.create(request);
 
     return {
       filter: this.filterInputFactory.create(request, objectMetadata),
