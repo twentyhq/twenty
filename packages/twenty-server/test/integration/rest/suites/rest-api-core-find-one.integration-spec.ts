@@ -6,6 +6,8 @@ import { COMPANY_1_ID } from 'test/integration/constants/mock-company-ids.consta
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
+const testPrimaryLinkUrl = 'http://test';
+
 describe('Core REST API Find One endpoint', () => {
   let personCity: string;
 
@@ -22,6 +24,9 @@ describe('Core REST API Find One endpoint', () => {
       path: '/companies',
       body: {
         id: COMPANY_1_ID,
+        domainName: {
+          primaryLinkUrl: testPrimaryLinkUrl,
+        },
       },
     });
 
@@ -88,6 +93,9 @@ describe('Core REST API Find One endpoint', () => {
         const person = res.body.data.person;
 
         expect(person.company).toBeDefined();
+        expect(person.company.domainName.primaryLinkUrl).toBe(
+          testPrimaryLinkUrl,
+        );
         expect(person.company.people).not.toBeDefined();
       });
   });
