@@ -10,13 +10,18 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
-  name: 'billing:Update-price-on-subscription',
+  name: 'billing:update-price-on-subscription',
   description: 'Update price on subscription',
 })
 export class BillingUpdatePriceOnSubscriptionCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
@@ -30,6 +35,7 @@ export class BillingUpdatePriceOnSubscriptionCommand extends ActiveOrSuspendedWo
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(BillingSubscription, 'core')
     protected readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
@@ -70,21 +76,23 @@ export class BillingUpdatePriceOnSubscriptionCommand extends ActiveOrSuspendedWo
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const subscription = await this.billingSubscriptionRepository.findOneOrFail(
-      {
-        where: {
-          workspaceId,
-        },
-        relations: ['billingSubscriptionItems'],
-      },
-    );
-
-    const subscriptionItemToReplace =
-      subscription.billingSubscriptionItems.find(
-        (item) => item.stripePriceId === this.stripePriceIdToUpdate,
+    const subscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        { workspaceId },
       );
 
-    if (!isDefined(subscriptionItemToReplace)) {
+    if (!isDefined(subscription)) {
+      throw new BillingException(
+        `No subscription found for workspace ${workspaceId}`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      );
+    }
+
+    const subscriptionItemToUpdate = subscription.billingSubscriptionItems.find(
+      (item) => item.stripePriceId === this.stripePriceIdToUpdate,
+    );
+
+    if (!isDefined(subscriptionItemToUpdate)) {
       this.logger.log(`No price to update for workspace ${workspaceId}`);
 
       return;
@@ -92,21 +100,21 @@ export class BillingUpdatePriceOnSubscriptionCommand extends ActiveOrSuspendedWo
 
     if (!options.dryRun) {
       await this.stripeSubscriptionItemService.deleteSubscriptionItem(
-        subscriptionItemToReplace.stripeSubscriptionItemId,
+        subscriptionItemToUpdate.stripeSubscriptionItemId,
         this.clearUsage,
       );
 
       await this.stripeSubscriptionItemService.createSubscriptionItem(
         subscription.stripeSubscriptionId,
         this.newStripePriceId,
-        isDefined(subscriptionItemToReplace.quantity)
-          ? subscriptionItemToReplace.quantity
+        isDefined(subscriptionItemToUpdate.quantity)
+          ? subscriptionItemToUpdate.quantity
           : undefined,
       );
     }
 
     this.logger.log(
-      `Update subscription replacing price ${subscriptionItemToReplace.stripePriceId} by ${this.newStripePriceId} with clear usage ${this.clearUsage} - workspace ${workspaceId}`,
+      `Update subscription replacing price ${subscriptionItemToUpdate.stripePriceId} by ${this.newStripePriceId} with clear usage ${this.clearUsage} - workspace ${workspaceId}`,
     );
   }
 }
