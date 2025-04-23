@@ -10,7 +10,6 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -21,9 +20,9 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
   description: 'Update price on subscription',
 })
 export class BillingUpdatePriceOnSubscriptionCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
-  private StripePriceIdToMigrate: string;
+  private stripePriceIdToUpdate: string;
   private newStripePriceId: string;
-  private clearUsage: boolean;
+  private clearUsage = false;
 
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -31,8 +30,6 @@ export class BillingUpdatePriceOnSubscriptionCommand extends ActiveOrSuspendedWo
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(BillingSubscription, 'core')
     protected readonly billingSubscriptionRepository: Repository<BillingSubscription>,
-    @InjectRepository(BillingProduct, 'core')
-    protected readonly billingProductRepository: Repository<BillingProduct>,
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
@@ -44,7 +41,7 @@ export class BillingUpdatePriceOnSubscriptionCommand extends ActiveOrSuspendedWo
     required: true,
   })
   parseStripePriceIdToMigrate(val: string): string {
-    this.StripePriceIdToMigrate = val;
+    this.stripePriceIdToUpdate = val;
 
     return val;
   }
@@ -84,7 +81,7 @@ export class BillingUpdatePriceOnSubscriptionCommand extends ActiveOrSuspendedWo
 
     const subscriptionItemToReplace =
       subscription.billingSubscriptionItems.find(
-        (item) => item.stripePriceId === this.StripePriceIdToMigrate,
+        (item) => item.stripePriceId === this.stripePriceIdToUpdate,
       );
 
     if (!isDefined(subscriptionItemToReplace)) {
@@ -96,7 +93,7 @@ export class BillingUpdatePriceOnSubscriptionCommand extends ActiveOrSuspendedWo
     if (!options.dryRun) {
       await this.stripeSubscriptionItemService.deleteSubscriptionItem(
         subscriptionItemToReplace.stripeSubscriptionItemId,
-        !!this.clearUsage,
+        this.clearUsage,
       );
 
       await this.stripeSubscriptionItemService.createSubscriptionItem(
@@ -109,7 +106,7 @@ export class BillingUpdatePriceOnSubscriptionCommand extends ActiveOrSuspendedWo
     }
 
     this.logger.log(
-      `Update subscription replacing price ${subscriptionItemToReplace.stripePriceId} by ${this.newStripePriceId} with clear usage ${!!this.clearUsage} - workspace ${workspaceId}`,
+      `Update subscription replacing price ${subscriptionItemToReplace.stripePriceId} by ${this.newStripePriceId} with clear usage ${this.clearUsage} - workspace ${workspaceId}`,
     );
   }
 }
