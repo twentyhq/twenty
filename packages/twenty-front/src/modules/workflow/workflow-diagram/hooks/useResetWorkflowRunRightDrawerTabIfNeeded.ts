@@ -1,9 +1,9 @@
 import { getIsInputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsInputTabDisabled';
 import { getIsOutputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsOutputTabDisabled';
+import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { WorkflowDiagramRunStatus } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
 import { WorkflowRunTabId } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
 import { isNull } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
@@ -18,10 +18,15 @@ export const useResetWorkflowRunRightDrawerTabIfNeeded = () => {
         workflowSelectedNode: string;
         stepExecutionStatus: WorkflowDiagramRunStatus;
       }) => {
+        const commandMenuPageInfo = getSnapshotValue(
+          snapshot,
+          commandMenuPageInfoState,
+        );
+
         const activeWorkflowRunRightDrawerTab = getSnapshotValue(
           snapshot,
           activeTabIdComponentState.atomFamily({
-            instanceId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
+            instanceId: commandMenuPageInfo.instanceId,
           }),
         ) as WorkflowRunTabId | null;
 
@@ -40,7 +45,7 @@ export const useResetWorkflowRunRightDrawerTabIfNeeded = () => {
 
           set(
             activeTabIdComponentState.atomFamily({
-              instanceId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
+              instanceId: commandMenuPageInfo.instanceId,
             }),
             defaultTabId,
           );
@@ -56,7 +61,7 @@ export const useResetWorkflowRunRightDrawerTabIfNeeded = () => {
         ) {
           set(
             activeTabIdComponentState.atomFamily({
-              instanceId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
+              instanceId: commandMenuPageInfo.instanceId,
             }),
             WorkflowRunTabId.NODE,
           );
