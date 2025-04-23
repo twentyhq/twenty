@@ -10561,6 +10561,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nestjs/schedule@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@nestjs/schedule@npm:6.0.0"
+  dependencies:
+    cron: "npm:4.3.0"
+  peerDependencies:
+    "@nestjs/common": ^10.0.0 || ^11.0.0
+    "@nestjs/core": ^10.0.0 || ^11.0.0
+  checksum: 10c0/406d301b5a6e4e7c01eddb39865fb812a477bc01685699e3b85185c190bd3228d22b7523b4018990aa2b055b791defbaed0b9abdc368493c7acc667f63951d87
+  languageName: node
+  linkType: hard
+
 "@nestjs/schematics@npm:^10.0.1":
   version: 10.1.3
   resolution: "@nestjs/schematics@npm:10.1.3"
@@ -22593,6 +22605,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/luxon@npm:~3.6.0":
+  version: 3.6.2
+  resolution: "@types/luxon@npm:3.6.2"
+  checksum: 10c0/7572ee52b3d3e9dd10464b90561a728b90f34b9a257751cc3ce23762693dd1d14fa98b7f103e2efe2c6f49033331f91de5681ffd65cca88618cefe555be326db
+  languageName: node
+  linkType: hard
+
 "@types/markdown-it@npm:12.2.3":
   version: 12.2.3
   resolution: "@types/markdown-it@npm:12.2.3"
@@ -30198,6 +30217,16 @@ __metadata:
   dependencies:
     yup: "npm:0.32.9"
   checksum: 10c0/4c210bea21832269fd8e18e4c9e9d750b314da04bc475b8b58414a6421a4c86804a6f1a8b9eda6d357af4c43f627fa3ee372f6fbb99b849d2a9b2aef2917bddf
+  languageName: node
+  linkType: hard
+
+"cron@npm:4.3.0":
+  version: 4.3.0
+  resolution: "cron@npm:4.3.0"
+  dependencies:
+    "@types/luxon": "npm:~3.6.0"
+    luxon: "npm:~3.6.0"
+  checksum: 10c0/859805a56ce6af19177a0abff3688e917d2124c0fa086234333d20fd4ca6efe333af2ab4ba6ba06c3aa68c6b2eec30e375c795e97e735c70fcac126057332f10
   languageName: node
   linkType: hard
 
@@ -42035,6 +42064,13 @@ __metadata:
   version: 3.5.0
   resolution: "luxon@npm:3.5.0"
   checksum: 10c0/335789bba95077db831ef99894edadeb23023b3eb2137a1b56acd0d290082b691cf793143d69e30bc069ec95f0b49f36419f48e951c68014f19ffe12045e3494
+  languageName: node
+  linkType: hard
+
+"luxon@npm:~3.6.0":
+  version: 3.6.1
+  resolution: "luxon@npm:3.6.1"
+  checksum: 10c0/906d57a9dc4d1de9383f2e9223e378c298607c1b4d17b6657b836a3cd120feb1c1de3b5d06d846a3417e1ca764de8476e8c23b3cd4083b5cdb870adcb06a99d5
   languageName: node
   linkType: hard
 
@@ -55047,6 +55083,7 @@ __metadata:
     "@nestjs/cli": "npm:10.3.0"
     "@nestjs/devtools-integration": "npm:^0.1.6"
     "@nestjs/graphql": "patch:@nestjs/graphql@12.1.1#./patches/@nestjs+graphql+12.1.1.patch"
+    "@nestjs/schedule": "npm:^6.0.0"
     "@node-saml/passport-saml": "npm:^5.0.0"
     "@nx/js": "npm:18.3.3"
     "@opentelemetry/api": "npm:^1.9.0"
