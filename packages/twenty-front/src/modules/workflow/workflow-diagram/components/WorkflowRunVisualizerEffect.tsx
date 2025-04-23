@@ -1,3 +1,4 @@
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
@@ -9,7 +10,8 @@ import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflo
 import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
 import { workflowStepToOpenByDefaultState } from '@/workflow/workflow-diagram/states/workflowStepToOpenByDefaultState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
-import { useEffect } from 'react';
+import { selectWorkflowDiagramNode } from '@/workflow/workflow-diagram/utils/selectWorkflowDiagramNode';
+import { useContext, useEffect } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,6 +26,8 @@ export const WorkflowRunVisualizerEffect = ({
   const setWorkflowRunId = useSetRecoilState(workflowRunIdState);
   const setWorkflowId = useSetRecoilState(workflowIdState);
   const { populateStepsOutputSchema } = useStepsOutputSchema();
+
+  const { isInRightDrawer } = useContext(ActionMenuContext);
 
   useEffect(() => {
     setWorkflowRunId(workflowRunId);
@@ -42,9 +46,11 @@ export const WorkflowRunVisualizerEffect = ({
       ({
         workflowRunOutput,
         workflowVersionId,
+        skipNodeSelection,
       }: {
         workflowRunOutput: WorkflowRunOutput | undefined;
         workflowVersionId: string | undefined;
+        skipNodeSelection: boolean;
       }) => {
         if (!(isDefined(workflowRunOutput) && isDefined(workflowVersionId))) {
           set(flowState, undefined);
@@ -61,22 +67,31 @@ export const WorkflowRunVisualizerEffect = ({
           steps: workflowRunOutput.flow.steps,
         });
 
-        const { diagram: nextWorkflowDiagram, stepToOpenByDefault } =
+        const { diagram: baseWorkflowRunDiagram, stepToOpenByDefault } =
           generateWorkflowRunDiagram({
             trigger: workflowRunOutput.flow.trigger,
             steps: workflowRunOutput.flow.steps,
             stepsOutput: workflowRunOutput.stepsOutput,
           });
 
-        set(workflowDiagramState, nextWorkflowDiagram);
-        set(workflowDiagramStatusState, 'computing-dimensions');
+        if (skipNodeSelection) {
+          set(workflowDiagramState, baseWorkflowRunDiagram);
+        } else if (isDefined(stepToOpenByDefault)) {
+          set(
+            workflowDiagramState,
+            selectWorkflowDiagramNode({
+              diagram: baseWorkflowRunDiagram,
+              nodeIdToSelect: stepToOpenByDefault.id,
+            }),
+          );
 
-        if (isDefined(stepToOpenByDefault)) {
           set(workflowStepToOpenByDefaultState, {
             id: stepToOpenByDefault.id,
             data: stepToOpenByDefault.data,
           });
         }
+
+        set(workflowDiagramStatusState, 'computing-dimensions');
       },
     [],
   );
@@ -85,9 +100,11 @@ export const WorkflowRunVisualizerEffect = ({
     handleWorkflowRunDiagramGeneration({
       workflowRunOutput: workflowRun?.output ?? undefined,
       workflowVersionId: workflowRun?.workflowVersionId,
+      skipNodeSelection: isInRightDrawer,
     });
   }, [
     handleWorkflowRunDiagramGeneration,
+    isInRightDrawer,
     workflowRun?.output,
     workflowRun?.workflowVersionId,
   ]);

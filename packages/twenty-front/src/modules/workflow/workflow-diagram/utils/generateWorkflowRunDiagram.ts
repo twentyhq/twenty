@@ -128,7 +128,6 @@ export const generateWorkflowRunDiagram = ({
         x: xPos,
         y: yPos,
       },
-      selected: isPendingFormAction,
     });
 
     if (isPendingFormAction) {
