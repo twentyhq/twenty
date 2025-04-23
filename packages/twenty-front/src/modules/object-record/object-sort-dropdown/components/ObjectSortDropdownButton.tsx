@@ -204,6 +204,11 @@ export const ObjectSortDropdownButton = ({
     OBJECT_SORT_DROPDOWN_ID,
   );
 
+  const setSelectedItemId = useSetRecoilComponentStateV2(
+    selectedItemIdComponentState,
+    OBJECT_SORT_DROPDOWN_ID,
+  );
+
   return (
     <Dropdown
       dropdownId={OBJECT_SORT_DROPDOWN_ID}
@@ -211,7 +216,10 @@ export const ObjectSortDropdownButton = ({
       dropdownOffset={{ y: 8 }}
       clickableComponent={
         <StyledHeaderDropdownButton
-          onClick={handleButtonClick}
+          onClick={() => {
+            handleButtonClick();
+            setSelectedItemId(selectableItemIdArray[0]);
+          }}
           isUnfolded={isDropdownOpen}
         >
           <Trans>Sort</Trans>
