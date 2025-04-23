@@ -77,6 +77,7 @@ export class BillingService {
       );
 
     if (
+      !isDefined(subscription) ||
       ![SubscriptionStatus.Active, SubscriptionStatus.Trialing].includes(
         subscription.status,
       )

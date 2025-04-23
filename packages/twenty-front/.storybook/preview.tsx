@@ -62,6 +62,7 @@ const preview: Preview = {
         date: /Date$/,
       },
     },
+    mockingDate: new Date('2024-03-12T09:30:00.000Z'),
     options: {
       storySort: {
         order: ['UI', 'Modules', 'Pages'],

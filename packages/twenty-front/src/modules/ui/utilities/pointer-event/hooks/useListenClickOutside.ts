@@ -1,7 +1,9 @@
+import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
+import { clickOutsideListenerIsMouseDownInsideComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsMouseDownInsideComponentState';
+import { clickOutsideListenerMouseDownHappenedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerMouseDownHappenedComponentState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import React, { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
-
-import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
 
 const CLICK_OUTSIDE_DEBUG_MODE = false;
 
@@ -27,20 +29,30 @@ export const useListenClickOutside = <T extends Element>({
   listenerId,
   enabled = true,
 }: ClickOutsideListenerProps<T>) => {
-  const {
-    getClickOutsideListenerIsMouseDownInsideState,
-    getClickOutsideListenerIsActivatedState,
-    getClickOutsideListenerMouseDownHappenedState,
-  } = useClickOustideListenerStates(listenerId);
+  const clickOutsideListenerIsMouseDownInsideState =
+    useRecoilComponentCallbackStateV2(
+      clickOutsideListenerIsMouseDownInsideComponentState,
+      listenerId,
+    );
+  const clickOutsideListenerIsActivatedState =
+    useRecoilComponentCallbackStateV2(
+      clickOutsideListenerIsActivatedComponentState,
+      listenerId,
+    );
+  const clickOutsideListenerMouseDownHappenedState =
+    useRecoilComponentCallbackStateV2(
+      clickOutsideListenerMouseDownHappenedComponentState,
+      listenerId,
+    );
 
   const handleMouseDown = useRecoilCallback(
     ({ snapshot, set }) =>
       (event: MouseEvent | TouchEvent) => {
         const clickOutsideListenerIsActivated = snapshot
-          .getLoadable(getClickOutsideListenerIsActivatedState)
+          .getLoadable(clickOutsideListenerIsActivatedState)
           .getValue();
 
-        set(getClickOutsideListenerMouseDownHappenedState, true);
+        set(clickOutsideListenerMouseDownHappenedState, true);
 
         const isListening = clickOutsideListenerIsActivated && enabled;
 
@@ -55,7 +67,7 @@ export const useListenClickOutside = <T extends Element>({
               .some((ref) => ref.current?.contains(event.target as Node));
 
             set(
-              getClickOutsideListenerIsMouseDownInsideState,
+              clickOutsideListenerIsMouseDownInsideState,
               clickedOnAtLeastOneRef,
             );
             break;
@@ -93,7 +105,7 @@ export const useListenClickOutside = <T extends Element>({
               });
 
             set(
-              getClickOutsideListenerIsMouseDownInsideState,
+              clickOutsideListenerIsMouseDownInsideState,
               clickedOnAtLeastOneRef,
             );
             break;
@@ -105,12 +117,12 @@ export const useListenClickOutside = <T extends Element>({
         }
       },
     [
-      getClickOutsideListenerIsActivatedState,
-      getClickOutsideListenerMouseDownHappenedState,
+      clickOutsideListenerIsActivatedState,
+      clickOutsideListenerMouseDownHappenedState,
       enabled,
       mode,
       refs,
-      getClickOutsideListenerIsMouseDownInsideState,
+      clickOutsideListenerIsMouseDownInsideState,
     ],
   );
 
@@ -118,17 +130,17 @@ export const useListenClickOutside = <T extends Element>({
     ({ snapshot }) =>
       (event: MouseEvent | TouchEvent) => {
         const clickOutsideListenerIsActivated = snapshot
-          .getLoadable(getClickOutsideListenerIsActivatedState)
+          .getLoadable(clickOutsideListenerIsActivatedState)
           .getValue();
 
         const isListening = clickOutsideListenerIsActivated && enabled;
 
         const isMouseDownInside = snapshot
-          .getLoadable(getClickOutsideListenerIsMouseDownInsideState)
+          .getLoadable(clickOutsideListenerIsMouseDownInsideState)
           .getValue();
 
         const hasMouseDownHappened = snapshot
-          .getLoadable(getClickOutsideListenerMouseDownHappenedState)
+          .getLoadable(clickOutsideListenerMouseDownHappenedState)
           .getValue();
 
         const clickedElement = event.target as HTMLElement;
@@ -241,10 +253,10 @@ export const useListenClickOutside = <T extends Element>({
         }
       },
     [
-      getClickOutsideListenerIsActivatedState,
+      clickOutsideListenerIsActivatedState,
       enabled,
-      getClickOutsideListenerIsMouseDownInsideState,
-      getClickOutsideListenerMouseDownHappenedState,
+      clickOutsideListenerIsMouseDownInsideState,
+      clickOutsideListenerMouseDownHappenedState,
       mode,
       refs,
       excludeClassNames,

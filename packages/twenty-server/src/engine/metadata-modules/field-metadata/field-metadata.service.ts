@@ -10,6 +10,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource, FindOneOptions, In, Repository } from 'typeorm';
 import { v4 as uuidV4, v4 } from 'uuid';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { settings } from 'src/engine/constants/settings';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
@@ -81,6 +83,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(RelationMetadataEntity, 'metadata')
+    private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
@@ -350,9 +354,48 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         fieldMetadataId: fieldMetadata.id,
       });
 
-      await fieldMetadataRepository.delete(fieldMetadata.id);
+      if (fieldMetadata.type === FieldMetadataType.RELATION) {
+        const isManyToManyRelation =
+          (fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>)
+            .settings?.relationType === RelationType.MANY_TO_ONE;
 
-      if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+        const targetFieldMetadata =
+          await this.fieldMetadataRepository.findOneBy({
+            id: fieldMetadata.relationTargetFieldMetadataId,
+          });
+
+        if (targetFieldMetadata) {
+          await this.relationMetadataRepository.delete({
+            fromFieldMetadataId: In([fieldMetadata.id, targetFieldMetadata.id]),
+          });
+          await this.relationMetadataRepository.delete({
+            toFieldMetadataId: In([fieldMetadata.id, targetFieldMetadata.id]),
+          });
+          await fieldMetadataRepository.delete({
+            id: In([fieldMetadata.id, targetFieldMetadata.id]),
+          });
+
+          await this.workspaceMigrationService.createCustomMigration(
+            generateMigrationName(`delete-${fieldMetadata.name}`),
+            workspaceId,
+            [
+              {
+                name: computeObjectTargetTable(objectMetadata),
+                action: WorkspaceMigrationTableActionType.ALTER,
+                columns: [
+                  {
+                    action: WorkspaceMigrationColumnActionType.DROP,
+                    columnName: isManyToManyRelation
+                      ? `${(fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>).settings?.joinColumnName}`
+                      : `${(targetFieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>).settings?.joinColumnName}`,
+                  } satisfies WorkspaceMigrationColumnDrop,
+                ],
+              } satisfies WorkspaceMigrationTableAction,
+            ],
+          );
+        }
+      } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+        await fieldMetadataRepository.delete(fieldMetadata.id);
         const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
         if (!compositeType) {
@@ -383,6 +426,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           ],
         );
       } else {
+        await fieldMetadataRepository.delete(fieldMetadata.id);
         await this.workspaceMigrationService.createCustomMigration(
           generateMigrationName(`delete-${fieldMetadata.name}`),
           workspaceId,

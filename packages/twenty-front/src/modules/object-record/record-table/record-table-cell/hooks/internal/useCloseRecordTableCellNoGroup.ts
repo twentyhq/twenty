@@ -15,7 +15,7 @@ export const useCloseRecordTableCellNoGroup = () => {
 
   const { setDragSelectionStartEnabled } = useDragSelect();
 
-  const { toggleClickOutsideListener } = useClickOutsideListener(
+  const { toggleClickOutside } = useClickOutsideListener(
     FOCUS_CLICK_OUTSIDE_LISTENER_ID,
   );
 
@@ -23,7 +23,7 @@ export const useCloseRecordTableCellNoGroup = () => {
     useCloseCurrentTableCellInEditMode(recordTableId);
 
   const closeTableCellNoGroup = useCallback(() => {
-    toggleClickOutsideListener(true);
+    toggleClickOutside(true);
     setDragSelectionStartEnabled(true);
     closeCurrentTableCellInEditMode();
     setHotkeyScope(TableHotkeyScope.TableFocus);
@@ -31,7 +31,7 @@ export const useCloseRecordTableCellNoGroup = () => {
     closeCurrentTableCellInEditMode,
     setDragSelectionStartEnabled,
     setHotkeyScope,
-    toggleClickOutsideListener,
+    toggleClickOutside,
   ]);
 
   return {

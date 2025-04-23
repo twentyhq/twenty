@@ -5,6 +5,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -70,7 +71,11 @@ export const VerifyEmailEffect = () => {
   }, []);
 
   if (isError) {
-    return <EmailVerificationSent email={email} isError={true} />;
+    return (
+      <Modal.Content isVerticalCentered isHorizontalCentered>
+        <EmailVerificationSent email={email} isError={true} />
+      </Modal.Content>
+    );
   }
 
   return <></>;

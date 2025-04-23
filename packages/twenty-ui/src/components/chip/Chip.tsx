@@ -151,7 +151,7 @@ export const Chip = ({
       maxWidth={maxWidth}
     >
       {leftComponent}
-      {!isLabelHidden && label.trim() ? (
+      {!isLabelHidden && label && label.trim() ? (
         <OverflowingTextWithTooltip size={size} text={label} />
       ) : (
         <StyledDiv>Untitled</StyledDiv>

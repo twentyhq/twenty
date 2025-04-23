@@ -10,6 +10,7 @@ import {
   ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
@@ -26,6 +27,7 @@ import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.
 import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/get-variables.factory';
 import { QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
 import { Depth } from 'src/engine/api/rest/input-factories/depth-input.factory';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 interface PageInfo {
   hasNextPage?: boolean;
@@ -200,6 +202,7 @@ export class RestApiCoreServiceV2 {
         isForwardPagination,
         hasMoreRecords,
         totalCount,
+        dataSource.featureFlagMap,
       );
     }
   }
@@ -235,13 +238,14 @@ export class RestApiCoreServiceV2 {
 
     const fieldMetadataMapByName =
       objectMetadataItemWithFieldsMaps?.fieldsByName || {};
-
-    const featureFlagsMap = dataSource.featureFlagMap;
+    const fieldMetadataMapByJoinColumnName =
+      objectMetadataItemWithFieldsMaps?.fieldsByJoinColumnName || {};
 
     const graphqlQueryParser = new GraphqlQueryParser(
       fieldMetadataMapByName,
+      fieldMetadataMapByJoinColumnName,
       objectMetadata.objectMetadataMaps,
-      featureFlagsMap,
+      dataSource.featureFlagMap,
     );
 
     const filters = this.computeFilters(inputs);
@@ -357,6 +361,7 @@ export class RestApiCoreServiceV2 {
     isForwardPagination: boolean,
     hasMoreRecords: boolean,
     totalCount: number,
+    featureFlagsMap: FeatureFlagMap,
   ) {
     const hasPreviousPage = !isForwardPagination && hasMoreRecords;
 
@@ -367,6 +372,7 @@ export class RestApiCoreServiceV2 {
         finalRecords,
         objectMetadataItemWithFieldsMaps as any,
         objectMetadata.objectMetadataMaps,
+        featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
       ),
       pageInfo: {
         hasNextPage: isForwardPagination && hasMoreRecords,

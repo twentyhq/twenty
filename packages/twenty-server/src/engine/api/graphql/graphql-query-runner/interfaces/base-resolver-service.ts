@@ -130,6 +130,7 @@ export abstract class GraphqlQueryBaseResolverService<
 
       const graphqlQueryParser = new GraphqlQueryParser(
         objectMetadataItemWithFieldMaps.fieldsByName,
+        objectMetadataItemWithFieldMaps.fieldsByJoinColumnName,
         options.objectMetadataMaps,
         featureFlagsMap,
       );

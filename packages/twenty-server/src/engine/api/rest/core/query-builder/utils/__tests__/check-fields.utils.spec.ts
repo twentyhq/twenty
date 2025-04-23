@@ -31,6 +31,7 @@ describe('checkFields', () => {
     ...objectMetadataItemMock,
     fieldsById,
     fieldsByName,
+    fieldsByJoinColumnName: {},
   };
 
   it('should check field types', () => {
