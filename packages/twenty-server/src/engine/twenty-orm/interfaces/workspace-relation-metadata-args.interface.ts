@@ -84,4 +84,9 @@ export interface WorkspaceRelationMetadataArgs {
    * Is active field.
    */
   readonly isActive?: boolean;
+
+  /**
+   * Join column.
+   */
+  readonly joinColumn?: string;
 }

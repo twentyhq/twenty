@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
+import { ObjectType } from 'typeorm/common/ObjectType';
 
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
@@ -26,8 +27,8 @@ export class StandardFieldRelationFactory {
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
   ): FieldMetadataEntity<FieldMetadataType.RELATION>[] {
     return customObjectFactories.flatMap((customObjectFactory) =>
-      this.updateFieldRelationMetadata(
-        customObjectFactory,
+      this.computeFieldRelationMetadataFromDecorators(
+        customObjectFactory.metadata,
         context,
         originalObjectMetadataMap,
       ),
@@ -60,7 +61,7 @@ export class StandardFieldRelationFactory {
 
         acc.set(
           workspaceEntityMetadataArgs.standardId,
-          this.updateFieldRelationMetadata(
+          this.computeFieldRelationMetadataFromDecorators(
             standardObjectMetadata,
             context,
             originalObjectMetadataMap,
@@ -73,38 +74,87 @@ export class StandardFieldRelationFactory {
     );
   }
 
-  private updateFieldRelationMetadata(
-    workspaceEntityOrCustomRelationFactory:
-      | typeof BaseWorkspaceEntity
-      | CustomRelationFactory,
+  private computeFieldRelationMetadataFromDecorators(
+    workspaceEntityTarget: typeof BaseWorkspaceEntity,
     context: WorkspaceSyncContext,
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
   ): FieldMetadataEntity<FieldMetadataType.RELATION>[] {
-    const target =
-      'metadata' in workspaceEntityOrCustomRelationFactory
-        ? workspaceEntityOrCustomRelationFactory.metadata
-        : workspaceEntityOrCustomRelationFactory;
-    const workspaceEntity =
-      'metadata' in workspaceEntityOrCustomRelationFactory
-        ? metadataArgsStorage.filterExtendedEntities(target)
-        : metadataArgsStorage.filterEntities(target);
-    const workspaceRelationMetadataArgsCollection =
-      metadataArgsStorage.filterRelations(target);
+    const workspaceEntity = metadataArgsStorage.filterEntities(
+      workspaceEntityTarget,
+    );
+    const workspaceStaticRelationMetadataArgsCollection =
+      metadataArgsStorage.filterRelations(workspaceEntityTarget);
+
+    const workspaceDynamicRelationMetadataArgsCollection =
+      metadataArgsStorage.filterDynamicRelations(workspaceEntityTarget);
 
     if (!workspaceEntity) {
       throw new Error(
-        `Object metadata decorator not found, can't parse ${target.name}`,
+        `Object metadata decorator not found, can't parse ${workspaceEntityTarget.name}`,
       );
     }
 
     if (
-      !workspaceRelationMetadataArgsCollection ||
-      isGatedAndNotEnabled(workspaceEntity?.gate, context.featureFlags)
+      !workspaceStaticRelationMetadataArgsCollection &&
+      !workspaceDynamicRelationMetadataArgsCollection
     ) {
       return [];
     }
 
-    return workspaceRelationMetadataArgsCollection
+    if (isGatedAndNotEnabled(workspaceEntity?.gate, context.featureFlags)) {
+      return [];
+    }
+
+    const sourceObjectNameSingular = workspaceEntity.nameSingular;
+    const sourceObjectMetadata =
+      originalObjectMetadataMap[sourceObjectNameSingular];
+
+    assert(
+      sourceObjectMetadata,
+      `Source object ${sourceObjectNameSingular} not found in database while parsing ${workspaceEntityTarget.name} relations`,
+    );
+
+    const staticRelationsFromDynamicRelations =
+      workspaceDynamicRelationMetadataArgsCollection
+        .filter(
+          (workspaceDynamicRelationMetadataArgs) =>
+            !isGatedAndNotEnabled(
+              workspaceDynamicRelationMetadataArgs.gate,
+              context.featureFlags,
+            ),
+        )
+        .flatMap((workspaceDynamicRelationMetadataArgs) => {
+          const customObjectMetadataItems = Object.values(
+            originalObjectMetadataMap,
+          ).filter((objectMetadata) => objectMetadata.isCustom);
+
+          // TODO: this is hacky and needs to be simplified
+          return customObjectMetadataItems.flatMap((targetObjectMetadata) => {
+            return {
+              ...workspaceDynamicRelationMetadataArgs.argsFactory(
+                targetObjectMetadata,
+              ),
+              gate: workspaceDynamicRelationMetadataArgs.gate,
+              inverseSideTarget: () =>
+                ({
+                  name: targetObjectMetadata.nameSingular,
+                }) as ObjectType<object>,
+              target: workspaceEntityTarget,
+              inverseSideFieldKey:
+                workspaceDynamicRelationMetadataArgs.inverseSideFieldKey,
+              onDelete: workspaceDynamicRelationMetadataArgs.onDelete,
+              isPrimary: workspaceDynamicRelationMetadataArgs.isPrimary,
+              isSystem: workspaceDynamicRelationMetadataArgs.isSystem,
+              isNullable: workspaceDynamicRelationMetadataArgs.isNullable,
+              type: workspaceDynamicRelationMetadataArgs.type,
+            };
+          });
+        });
+
+    const relations = [
+      ...staticRelationsFromDynamicRelations,
+      ...workspaceStaticRelationMetadataArgsCollection,
+    ]
       .filter(
         (workspaceRelationMetadataArgs) =>
           !isGatedAndNotEnabled(
@@ -113,13 +163,6 @@ export class StandardFieldRelationFactory {
           ),
       )
       .map((workspaceRelationMetadataArgs) => {
-        // Compute reflect relation metadata
-        const sourceObjectNameSingular =
-          'object' in workspaceEntityOrCustomRelationFactory
-            ? workspaceEntityOrCustomRelationFactory.object.nameSingular
-            : convertClassNameToObjectMetadataName(
-                workspaceRelationMetadataArgs.target.name,
-              );
         const inverseSideTarget =
           workspaceRelationMetadataArgs.inverseSideTarget();
         const targetObjectNameSingular = convertClassNameToObjectMetadataName(
@@ -127,29 +170,29 @@ export class StandardFieldRelationFactory {
         );
         const sourceFieldMetadataName = workspaceRelationMetadataArgs.name;
         const targetFieldMetadataName =
-          (workspaceRelationMetadataArgs.inverseSideFieldKey as
-            | string
-            | undefined) ?? sourceObjectNameSingular;
-        const sourceObjectMetadata =
-          originalObjectMetadataMap[sourceObjectNameSingular];
-        const joinColumnsMetadataArgsCollection =
-          metadataArgsStorage.filterJoinColumns(target);
-        const joinColumnName = getJoinColumn(
-          joinColumnsMetadataArgsCollection,
-          workspaceRelationMetadataArgs,
-        );
+          workspaceRelationMetadataArgs.inverseSideFieldKey ??
+          sourceObjectNameSingular;
 
-        assert(
-          sourceObjectMetadata,
-          `Source object ${sourceObjectNameSingular} not found in databse for relation ${workspaceRelationMetadataArgs.name} of type ${workspaceRelationMetadataArgs.type}`,
-        );
+        const joinColumnsMetadataArgsCollection =
+          metadataArgsStorage.filterJoinColumns(workspaceEntityTarget);
+
+        let joinColumnName;
+
+        if (workspaceRelationMetadataArgs.joinColumn) {
+          joinColumnName = workspaceRelationMetadataArgs.joinColumn;
+        } else {
+          joinColumnName = getJoinColumn(
+            joinColumnsMetadataArgsCollection,
+            workspaceRelationMetadataArgs,
+          );
+        }
 
         const targetObjectMetadata =
           originalObjectMetadataMap[targetObjectNameSingular];
 
         assert(
           targetObjectMetadata,
-          `Target object ${targetObjectNameSingular} not found in databse for relation ${workspaceRelationMetadataArgs.name} of type ${workspaceRelationMetadataArgs.type}`,
+          `Target object ${targetObjectNameSingular} not found in database for relation ${workspaceRelationMetadataArgs.name} of type ${workspaceRelationMetadataArgs.type}`,
         );
 
         const sourceFieldMetadata = sourceObjectMetadata?.fields.find(
@@ -182,5 +225,7 @@ export class StandardFieldRelationFactory {
           relationTargetFieldMetadataId: targetFieldMetadata.id,
         } satisfies FieldMetadataEntity<FieldMetadataType.RELATION>;
       });
+
+    return relations;
   }
 }
