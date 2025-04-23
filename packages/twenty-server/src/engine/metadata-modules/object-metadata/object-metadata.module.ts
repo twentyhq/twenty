@@ -31,6 +31,7 @@ import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-s
 import { SearchVectorModule } from 'src/engine/metadata-modules/search-vector/search-vector.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
+import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
@@ -59,6 +60,7 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
         IndexMetadataModule,
         FeatureFlagModule,
         PermissionsModule,
+        WorkspacePermissionsCacheModule,
       ],
       services: [
         ObjectMetadataService,

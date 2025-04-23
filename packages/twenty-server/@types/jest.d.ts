@@ -9,6 +9,7 @@ declare module '@jest/types' {
       INVALID_ACCESS_TOKEN: string;
       MEMBER_ACCESS_TOKEN: string;
       GUEST_ACCESS_TOKEN: string;
+      API_KEY_ACCESS_TOKEN: string;
     }
   }
 }
@@ -20,6 +21,7 @@ declare global {
   const INVALID_ACCESS_TOKEN: string;
   const MEMBER_ACCESS_TOKEN: string;
   const GUEST_ACCESS_TOKEN: string;
+  const API_KEY_ACCESS_TOKEN: string;
 }
 
 export {};

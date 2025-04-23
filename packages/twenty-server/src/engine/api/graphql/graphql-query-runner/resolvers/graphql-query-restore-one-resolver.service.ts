@@ -77,6 +77,7 @@ export class GraphqlQueryRestoreOneResolverService extends GraphqlQueryBaseResol
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
         roleId,
+        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
 

@@ -73,6 +73,7 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
         roleId,
+        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
 
