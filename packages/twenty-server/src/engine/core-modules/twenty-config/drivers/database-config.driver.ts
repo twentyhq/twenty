@@ -15,6 +15,7 @@ import { EnvironmentConfigDriver } from './environment-config.driver';
 export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
   private initializationPromise: Promise<void> | null = null;
   private readonly logger = new Logger(DatabaseConfigDriver.name);
+  private readonly refreshingKeys = new Set<keyof ConfigVariables>();
 
   constructor(
     private readonly configCache: ConfigCacheService,
@@ -143,10 +144,23 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
   }
 
   private async scheduleRefresh(key: keyof ConfigVariables): Promise<void> {
+    if (this.refreshingKeys.has(key)) {
+      this.logger.debug(`Refresh for key ${key as string} already in progress`);
+
+      return;
+    }
+
+    this.refreshingKeys.add(key);
+
     setImmediate(async () => {
-      await this.fetchAndCacheConfigVariable(key).catch((error) => {
+      try {
+        await this.fetchAndCacheConfigVariable(key);
+        this.logger.debug(`Completed refresh for key ${key as string}`);
+      } catch (error) {
         this.logger.error(`Failed to fetch config for ${key as string}`, error);
-      });
+      } finally {
+        this.refreshingKeys.delete(key);
+      }
     });
   }
 
