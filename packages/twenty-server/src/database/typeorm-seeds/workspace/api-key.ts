@@ -16,9 +16,7 @@ export const seedApiKey = async (
       'name',
       'createdAt',
       'updatedAt',
-      'deletedAt',
       'expiresAt',
-      'revokedAt',
     ])
     .orIgnore()
     .values([
@@ -27,11 +25,9 @@ export const seedApiKey = async (
         name: 'My api key',
         createdAt: new Date(),
         updatedAt: new Date(),
-        deletedAt: null,
         expiresAt: new Date(
           new Date().getTime() + 1000 * 60 * 60 * 24 * 365 * 100, // In 100 years
         ),
-        revokedAt: null,
       },
     ])
     .execute();
