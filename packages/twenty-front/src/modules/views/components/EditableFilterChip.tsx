@@ -44,7 +44,11 @@ export const EditableFilterChip = ({
     ? `${recordFilter.label} / ${subFieldLabel}`
     : recordFilter.label;
 
-  const labelKey = `${fieldNameLabel}${isNonEmptyString(recordFilter.value) || !isFilterOperandExpectingValue(recordFilter.operand) ? operandLabelShort : ''}`;
+  const shouldDisplayOperandLabelShort =
+    isNonEmptyString(recordFilter.value) ||
+    !isFilterOperandExpectingValue(recordFilter.operand);
+
+  const labelKey = `${fieldNameLabel}${shouldDisplayOperandLabelShort ? operandLabelShort : ''}`;
 
   return (
     <SortOrFilterChip
