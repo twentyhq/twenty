@@ -2,7 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { createClient, ClickHouseClient } from '@clickhouse/client';
+import { ClickHouseClient, createClient } from '@clickhouse/client';
 import { config } from 'dotenv';
 
 config({
@@ -29,9 +29,30 @@ async function ensureDatabaseExists() {
   await client.command({
     query: `CREATE DATABASE IF NOT EXISTS "${database}"`,
   });
-  await client.command({
-    query: `SET enable_json_type = 1`,
-  });
+
+  let jsonTypeEnabled = false;
+
+  try {
+    await client.command({
+      query: `SET enable_json_type = 1`,
+    });
+    jsonTypeEnabled = true;
+  } catch (error) {
+    // Intentionally empty - will try alternative method
+  }
+
+  try {
+    await client.command({
+      query: `SET allow_experimental_json_type = 1`,
+    });
+    jsonTypeEnabled = true;
+  } catch (error) {
+    // Intentionally empty - failure handled by jsonTypeEnabled check
+  }
+
+  if (!jsonTypeEnabled) {
+    console.error('Failed to enable JSON type');
+  }
 
   await client.close();
 }
