@@ -8,7 +8,6 @@ import { WorkflowDiagramDefaultEdge } from '@/workflow/workflow-diagram/componen
 import { WorkflowDiagramStepNodeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeReadonly';
 import { WorkflowDiagramSuccessEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramSuccessEdge';
 import { WorkflowRunDiagramCanvasEffect } from '@/workflow/workflow-diagram/components/WorkflowRunDiagramCanvasEffect';
-import { useSetInitialWorkflowRunRightDrawerTab } from '@/workflow/workflow-diagram/hooks/useSetInitialWorkflowRunRightDrawerTab';
 import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
 import { workflowRunStepToOpenByDefaultState } from '@/workflow/workflow-diagram/states/workflowRunStepToOpenByDefaultState';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
@@ -32,8 +31,6 @@ export const WorkflowRunDiagramCanvas = ({
   });
 
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
-  const { setInitialWorkflowRunRightDrawerTab } =
-    useSetInitialWorkflowRunRightDrawerTab();
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const handleInit = useRecoilCallback(
@@ -69,13 +66,12 @@ export const WorkflowRunDiagramCanvas = ({
 
           set(workflowSelectedNodeState, workflowStepToOpenByDefault.id);
 
-          openWorkflowRunViewStepInCommandMenu(
+          openWorkflowRunViewStepInCommandMenu({
             workflowId,
-            workflowStepToOpenByDefault.data.name,
-            getIcon(getWorkflowNodeIconKey(workflowStepToOpenByDefault.data)),
-          );
-
-          setInitialWorkflowRunRightDrawerTab({
+            title: workflowStepToOpenByDefault.data.name,
+            icon: getIcon(
+              getWorkflowNodeIconKey(workflowStepToOpenByDefault.data),
+            ),
             workflowSelectedNode: workflowStepToOpenByDefault.id,
             stepExecutionStatus: workflowStepToOpenByDefault.data.runStatus,
           });
@@ -83,12 +79,7 @@ export const WorkflowRunDiagramCanvas = ({
           set(workflowRunStepToOpenByDefaultState, undefined);
         }
       },
-    [
-      getIcon,
-      isInRightDrawer,
-      openWorkflowRunViewStepInCommandMenu,
-      setInitialWorkflowRunRightDrawerTab,
-    ],
+    [getIcon, isInRightDrawer, openWorkflowRunViewStepInCommandMenu],
   );
 
   return (
