@@ -5,11 +5,11 @@ export type ConfigValue<T extends ConfigKey> = ConfigVariables[T];
 
 export interface ConfigCacheEntry<T extends ConfigKey> {
   value: ConfigValue<T>;
-  timestamp: number;
+  registeredAt: number;
   ttl: number;
 }
 
 export interface ConfigKnownMissingEntry {
-  timestamp: number;
+  registeredAt: number;
   ttl: number;
 }

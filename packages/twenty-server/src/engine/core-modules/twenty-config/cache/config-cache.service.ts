@@ -56,7 +56,7 @@ export class ConfigCacheService implements OnModuleDestroy {
   set<T extends ConfigKey>(key: T, value: ConfigValue<T>): void {
     this.foundConfigValuesCache.set(key, {
       value,
-      timestamp: Date.now(),
+      registeredAt: Date.now(),
       ttl: CONFIG_VARIABLES_CACHE_TTL,
     });
     this.knownMissingKeysCache.delete(key);
@@ -64,7 +64,7 @@ export class ConfigCacheService implements OnModuleDestroy {
 
   markKeyAsMissing(key: ConfigKey): void {
     this.knownMissingKeysCache.set(key, {
-      timestamp: Date.now(),
+      registeredAt: Date.now(),
       ttl: CONFIG_VARIABLES_CACHE_TTL,
     });
     this.foundConfigValuesCache.delete(key);
@@ -109,7 +109,7 @@ export class ConfigCacheService implements OnModuleDestroy {
   ): boolean {
     const now = Date.now();
 
-    return now - entry.timestamp > entry.ttl;
+    return now - entry.registeredAt > entry.ttl;
   }
 
   getExpiredKeys(): ConfigKey[] {
@@ -118,13 +118,13 @@ export class ConfigCacheService implements OnModuleDestroy {
     const expiredNegativeKeys: ConfigKey[] = [];
 
     for (const [key, entry] of this.foundConfigValuesCache.entries()) {
-      if (now - entry.timestamp > entry.ttl) {
+      if (now - entry.registeredAt > entry.ttl) {
         expiredPositiveKeys.push(key);
       }
     }
 
     for (const [key, entry] of this.knownMissingKeysCache.entries()) {
-      if (now - entry.timestamp > entry.ttl) {
+      if (now - entry.registeredAt > entry.ttl) {
         expiredNegativeKeys.push(key);
       }
     }
