@@ -15,7 +15,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -134,7 +134,7 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
   };
 
   return (
-    <SelectableItem
+    <SelectableListItem
       itemId={fieldMetadataItemToSelect.id}
       hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
       onEnter={handleClick}
@@ -146,6 +146,6 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
         text={fieldMetadataItemToSelect.label}
         hasSubMenu={shouldShowSubMenu}
       />
-    </SelectableItem>
+    </SelectableListItem>
   );
 };

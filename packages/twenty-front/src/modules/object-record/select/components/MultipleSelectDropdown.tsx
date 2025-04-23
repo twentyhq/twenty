@@ -6,6 +6,7 @@ import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -97,26 +98,35 @@ export const MultipleSelectDropdown = ({
       <DropdownMenuItemsContainer hasMaxHeight>
         {itemsInDropdown?.map((item) => {
           return (
-            <MenuItemMultiSelectAvatar
-              key={item.id}
-              selected={item.isSelected}
-              isKeySelected={item.id === selectedItemId}
-              onSelectChange={(newCheckedValue) => {
+            <SelectableListItem
+              itemId={item.id}
+              hotkeyScope={hotkeyScope}
+              onEnter={() => {
                 resetSelectedItem();
-                handleItemSelectChange(item, newCheckedValue);
+                handleItemSelectChange(item, !item.isSelected);
               }}
-              avatar={
-                <StyledMultipleSelectDropdownAvatarChip
-                  className="avatar-icon-container"
-                  name={item.name}
-                  avatarUrl={item.avatarUrl}
-                  LeftIcon={item.AvatarIcon}
-                  avatarType={item.avatarType}
-                  isIconInverted={item.isIconInverted}
-                  placeholderColorSeed={item.id}
-                />
-              }
-            />
+            >
+              <MenuItemMultiSelectAvatar
+                key={item.id}
+                selected={item.isSelected}
+                isKeySelected={item.id === selectedItemId}
+                onSelectChange={(newCheckedValue) => {
+                  resetSelectedItem();
+                  handleItemSelectChange(item, newCheckedValue);
+                }}
+                avatar={
+                  <StyledMultipleSelectDropdownAvatarChip
+                    className="avatar-icon-container"
+                    name={item.name}
+                    avatarUrl={item.avatarUrl}
+                    LeftIcon={item.AvatarIcon}
+                    avatarType={item.avatarType}
+                    isIconInverted={item.isIconInverted}
+                    placeholderColorSeed={item.id}
+                  />
+                }
+              />
+            </SelectableListItem>
           );
         })}
         {showNoResult && <MenuItem text="No results" />}

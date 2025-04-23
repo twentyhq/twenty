@@ -7,7 +7,7 @@ import { objectFilterDropdownSearchInputComponentState } from '@/object-record/o
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -149,7 +149,7 @@ export const AdvancedFilterFieldSelectMenu = ({
         <DropdownMenuItemsContainer>
           {visibleColumnsFieldMetadataItems.map(
             (visibleFieldMetadataItem, index) => (
-              <SelectableItem
+              <SelectableListItem
                 itemId={visibleFieldMetadataItem.id}
                 key={`visible-select-filter-${index}`}
                 hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
@@ -161,13 +161,13 @@ export const AdvancedFilterFieldSelectMenu = ({
                   fieldMetadataItemToSelect={visibleFieldMetadataItem}
                   onClick={handleFieldMetadataItemSelect}
                 />
-              </SelectableItem>
+              </SelectableListItem>
             ),
           )}
           {shouldShowSeparator && <DropdownMenuSeparator />}
           {hiddenColumnsFieldMetadataItems.map(
             (hiddenFieldMetadataItem, index) => (
-              <SelectableItem
+              <SelectableListItem
                 itemId={hiddenFieldMetadataItem.id}
                 key={`hidden-select-filter-${index}`}
                 hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
@@ -179,7 +179,7 @@ export const AdvancedFilterFieldSelectMenu = ({
                   fieldMetadataItemToSelect={hiddenFieldMetadataItem}
                   onClick={handleFieldMetadataItemSelect}
                 />
-              </SelectableItem>
+              </SelectableListItem>
             ),
           )}
         </DropdownMenuItemsContainer>

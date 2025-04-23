@@ -4,7 +4,7 @@ import { SingleRecordPickerComponentInstanceContext } from '@/object-record/reco
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
@@ -17,7 +17,7 @@ type SingleRecordPickerMenuItemProps = {
   selectedRecord?: SingleRecordPickerRecord;
 };
 
-const StyledSelectableItem = styled(SelectableItem)`
+const StyledSelectableItem = styled(SelectableListItem)`
   width: 100%;
 `;
 
@@ -45,7 +45,9 @@ export const SingleRecordPickerMenuItem = ({
       itemId={record.id}
       key={record.id}
       hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
-      onEnter={() => onRecordSelected(record)}
+      onEnter={() => {
+        onRecordSelected(record);
+      }}
     >
       <MenuItemSelectAvatar
         key={record.id}

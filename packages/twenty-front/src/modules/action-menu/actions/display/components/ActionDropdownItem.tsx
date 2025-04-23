@@ -1,7 +1,7 @@
 import { ActionDisplayProps } from '@/action-menu/actions/display/components/ActionDisplay';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
@@ -48,7 +48,7 @@ export const ActionDropdownItem = ({
       : '';
 
   return (
-    <SelectableItem
+    <SelectableListItem
       itemId={action.key}
       hotkeyScope={hotkeyScope}
       onEnter={handleClick}
@@ -60,6 +60,6 @@ export const ActionDropdownItem = ({
         onClick={handleClick}
         text={getActionLabel(action.label)}
       />
-    </SelectableItem>
+    </SelectableListItem>
   );
 };

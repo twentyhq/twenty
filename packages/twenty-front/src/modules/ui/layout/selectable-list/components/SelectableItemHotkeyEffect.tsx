@@ -1,6 +1,6 @@
 import { useSelectableListListenToEnterHotkeyOnItem } from '@/ui/layout/selectable-list/hooks/useSelectableListListenToEnterHotkeyOnItem';
 
-export const SelectableItemHotkeyEffect = ({
+export const SelectableListItemHotkeyEffect = ({
   hotkeyScope,
   itemId,
   onEnter,

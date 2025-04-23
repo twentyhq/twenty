@@ -14,6 +14,7 @@ import { singleRecordPickerSelectedIdComponentState } from '@/object-record/reco
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
@@ -120,17 +121,26 @@ export const SingleRecordPickerMenuItems = ({
                 case 'select-none': {
                   return (
                     emptyLabel && (
-                      <MenuItemSelect
-                        key={record.id}
-                        onClick={() => {
+                      <SelectableListItem
+                        itemId={record.id}
+                        hotkeyScope={hotkeyScope}
+                        onEnter={() => {
                           setSelectedRecordId(undefined);
                           onRecordSelected();
                         }}
-                        LeftIcon={EmptyIcon}
-                        text={emptyLabel}
-                        selected={isUndefined(selectedRecordId)}
-                        hovered={isSelectedSelectNoneButton}
-                      />
+                      >
+                        <MenuItemSelect
+                          key={record.id}
+                          onClick={() => {
+                            setSelectedRecordId(undefined);
+                            onRecordSelected();
+                          }}
+                          LeftIcon={EmptyIcon}
+                          text={emptyLabel}
+                          selected={isUndefined(selectedRecordId)}
+                          hovered={isSelectedSelectNoneButton}
+                        />
+                      </SelectableListItem>
                     )
                   );
                 }

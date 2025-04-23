@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useRef } from 'react';
 
-import { SelectableItemHotkeyEffect } from '@/ui/layout/selectable-list/components/SelectableItemHotkeyEffect';
+import { SelectableListItemHotkeyEffect } from '@/ui/layout/selectable-list/components/SelectableItemHotkeyEffect';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import styled from '@emotion/styled';
@@ -11,7 +11,7 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-export type SelectableItemProps = {
+export type SelectableListItemProps = {
   itemId: string;
   children: ReactNode;
   className?: string;
@@ -19,13 +19,13 @@ export type SelectableItemProps = {
   hotkeyScope: string;
 };
 
-export const SelectableItem = ({
+export const SelectableListItem = ({
   itemId,
   children,
   className,
   onEnter,
   hotkeyScope,
-}: SelectableItemProps) => {
+}: SelectableListItemProps) => {
   const isSelectedItemId = useRecoilComponentFamilyValueV2(
     isSelectedItemIdComponentFamilySelector,
     itemId,
@@ -42,7 +42,7 @@ export const SelectableItem = ({
   return (
     <>
       {isSelectedItemId && isDefined(onEnter) && isSelectedItemId && (
-        <SelectableItemHotkeyEffect
+        <SelectableListItemHotkeyEffect
           hotkeyScope={hotkeyScope}
           itemId={itemId}
           onEnter={onEnter}
