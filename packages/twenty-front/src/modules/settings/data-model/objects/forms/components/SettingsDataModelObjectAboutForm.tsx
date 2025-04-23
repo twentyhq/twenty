@@ -323,9 +323,12 @@ export const SettingsDataModelObjectAboutForm = ({
                           const isCustomObject =
                             isDefined(objectMetadataItem) &&
                             objectMetadataItem.isCustom;
-                          const beingCreatedObject =
-                            !isDefined(objectMetadataItem)
-                          if (value === true && (isCustomObject)) {
+                          const isbeingCreatedObject =
+                            !isDefined(objectMetadataItem);
+                          if (
+                            value === true &&
+                            (isCustomObject || isbeingCreatedObject)
+                          ) {
                             fillNamePluralFromLabelPlural(labelPlural);
                             fillNameSingularFromLabelSingular(labelSingular);
                           }
