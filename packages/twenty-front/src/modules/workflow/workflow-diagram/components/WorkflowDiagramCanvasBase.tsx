@@ -4,6 +4,7 @@ import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useLis
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
+import { useResetWorkflowRunRightDrawerTabIfNeeded } from '@/workflow/workflow-diagram/hooks/useResetWorkflowRunRightDrawerTabIfNeeded';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
@@ -132,6 +133,8 @@ export const WorkflowDiagramCanvasBase = ({
     workflowReactFlowRefState,
   );
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
+  const { resetWorkflowRunRightDrawerTabIfNeeded } =
+    useResetWorkflowRunRightDrawerTabIfNeeded();
 
   const workflowDiagram = useRecoilValue(workflowDiagramState);
 
@@ -281,10 +284,21 @@ export const WorkflowDiagramCanvasBase = ({
             getIcon(getWorkflowNodeIconKey(workflowStepToOpenByDefault.data)),
           );
 
+          resetWorkflowRunRightDrawerTabIfNeeded({
+            workflowSelectedNode: workflowStepToOpenByDefault.id,
+            stepExecutionStatus: workflowStepToOpenByDefault.data.runStatus!,
+          });
+
           set(workflowStepToOpenByDefaultState, undefined);
         }
       },
-    [getIcon, openWorkflowRunViewStepInCommandMenu, reactflow],
+    [
+      getIcon,
+      isInRightDrawer,
+      openWorkflowRunViewStepInCommandMenu,
+      reactflow,
+      resetWorkflowRunRightDrawerTabIfNeeded,
+    ],
   );
 
   return (
