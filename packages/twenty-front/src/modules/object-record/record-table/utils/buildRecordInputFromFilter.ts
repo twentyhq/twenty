@@ -1,38 +1,36 @@
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
-import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
+import { RecordFilterInput } from '@/object-record/record-filter/types/RecordFilter';
+import { FILTER_OPERANDS_MAP } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export const buildValueFromFilter = ({
   filter,
-  type,
   options,
 }: {
-  filter: RecordFilter;
-  type: FilterableFieldType;
+  filter: RecordFilterInput;
   options?: FieldMetadataItemOption[];
 }) => {
-  if (isCompositeField(type)) {
+  if (isCompositeField(filter.type)) {
     return;
   }
 
-  if (type === 'RAW_JSON') {
+  if (filter.type === 'RAW_JSON') {
     return;
   }
 
-  const operands = getRecordFilterOperands({
-    filterType: type,
-  });
-  if (!operands.includes(filter.operand)) {
-    throw new Error('Operand not supported for this field type');
-  }
+  switch (filter.type) {
+    case 'TEXT': {
+      // ok
+      const operands = FILTER_OPERANDS_MAP[filter.type];
 
-  switch (type) {
-    case 'TEXT': // ok
+      if (!operands.some((operand) => operand === filter.operand)) {
+        throw new Error('Operand not supported for this field type');
+      }
+
       return computeValueFromFilterText(filter.operand, filter.value);
+    }
     case 'RATING': // ok
       return computeValueFromFilterRating(
         filter.operand,
@@ -59,12 +57,12 @@ export const buildValueFromFilter = ({
     case 'RELATION': // TODO
       throw new Error('Type not supported');
     default:
-      assertUnreachable(type);
+      assertUnreachable(filter.type);
   }
 };
 
 const computeValueFromFilterText = (
-  operand: ViewFilterOperand, // TODO: add type better scoping
+  operand: (typeof FILTER_OPERANDS_MAP.TEXT)[number], // TODO: add type better scoping
   value: string,
 ) => {
   switch (operand) {
@@ -77,7 +75,7 @@ const computeValueFromFilterText = (
     case ViewFilterOperand.IsEmpty:
       return undefined;
     default:
-      // assertUnreachable(operand);
+      assertUnreachable(operand);
       return value;
   }
 };

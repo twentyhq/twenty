@@ -7,10 +7,118 @@ export type GetRecordFilterOperandsParams = {
   subFieldName?: string | null | undefined;
 };
 
+const emptyOperands = [
+  RecordFilterOperand.IsEmpty,
+  RecordFilterOperand.IsNotEmpty,
+] as const;
+
+const relationOperands = [
+  RecordFilterOperand.Is,
+  RecordFilterOperand.IsNot,
+] as const;
+
+type FilterOperandMap = {
+  [K in FilterableFieldType]: readonly RecordFilterOperand[];
+};
+
+export const FILTER_OPERANDS_MAP = {
+  TEXT: [
+    RecordFilterOperand.Contains,
+    RecordFilterOperand.DoesNotContain,
+    ...emptyOperands,
+  ],
+  EMAILS: [
+    RecordFilterOperand.Contains,
+    RecordFilterOperand.DoesNotContain,
+    ...emptyOperands,
+  ],
+  FULL_NAME: [
+    RecordFilterOperand.Contains,
+    RecordFilterOperand.DoesNotContain,
+    ...emptyOperands,
+  ],
+  ADDRESS: [
+    RecordFilterOperand.Contains,
+    RecordFilterOperand.DoesNotContain,
+    ...emptyOperands,
+  ],
+  LINKS: [
+    RecordFilterOperand.Contains,
+    RecordFilterOperand.DoesNotContain,
+    ...emptyOperands,
+  ],
+  PHONES: [
+    RecordFilterOperand.Contains,
+    RecordFilterOperand.DoesNotContain,
+    ...emptyOperands,
+  ],
+  CURRENCY: [
+    RecordFilterOperand.GreaterThan,
+    RecordFilterOperand.LessThan,
+    ...emptyOperands,
+  ],
+  NUMBER: [
+    RecordFilterOperand.GreaterThan,
+    RecordFilterOperand.LessThan,
+    ...emptyOperands,
+  ],
+  RAW_JSON: [
+    RecordFilterOperand.Contains,
+    RecordFilterOperand.DoesNotContain,
+    ...emptyOperands,
+  ],
+  DATE_TIME: [
+    RecordFilterOperand.Is,
+    RecordFilterOperand.IsRelative,
+    RecordFilterOperand.IsInPast,
+    RecordFilterOperand.IsInFuture,
+    RecordFilterOperand.IsToday,
+    RecordFilterOperand.IsBefore,
+    RecordFilterOperand.IsAfter,
+    ...emptyOperands,
+  ],
+  DATE: [
+    RecordFilterOperand.Is,
+    RecordFilterOperand.IsRelative,
+    RecordFilterOperand.IsInPast,
+    RecordFilterOperand.IsInFuture,
+    RecordFilterOperand.IsToday,
+    RecordFilterOperand.IsBefore,
+    RecordFilterOperand.IsAfter,
+    ...emptyOperands,
+  ],
+  RATING: [
+    RecordFilterOperand.Is,
+    RecordFilterOperand.GreaterThan,
+    RecordFilterOperand.LessThan,
+    ...emptyOperands,
+  ],
+  RELATION: [...relationOperands, ...emptyOperands],
+  MULTI_SELECT: [
+    RecordFilterOperand.Contains,
+    RecordFilterOperand.DoesNotContain,
+    ...emptyOperands,
+  ],
+  SELECT: [RecordFilterOperand.Is, RecordFilterOperand.IsNot, ...emptyOperands],
+  ACTOR: [
+    RecordFilterOperand.Contains,
+    RecordFilterOperand.DoesNotContain,
+    ...emptyOperands,
+  ],
+  ARRAY: [
+    RecordFilterOperand.Contains,
+    RecordFilterOperand.DoesNotContain,
+    ...emptyOperands,
+  ],
+  BOOLEAN: [RecordFilterOperand.Is],
+} as const;
+
+FILTER_OPERANDS_MAP as FilterOperandMap;
+
 export const getRecordFilterOperands = ({
   filterType,
   subFieldName,
-}: GetRecordFilterOperandsParams): RecordFilterOperand[] => {
+}: GetRecordFilterOperandsParams) => {
   const emptyOperands = [
     RecordFilterOperand.IsEmpty,
     RecordFilterOperand.IsNotEmpty,
@@ -29,7 +137,7 @@ export const getRecordFilterOperands = ({
         RecordFilterOperand.Contains,
         RecordFilterOperand.DoesNotContain,
         ...emptyOperands,
-      ];
+      ] as const;
     case 'CURRENCY':
     case 'NUMBER':
       return [
