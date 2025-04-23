@@ -39,8 +39,28 @@ const mocks: MockedResponse[] = [
               node {
                 __typename
                 avatarUrl
+                city
+                companyId
+                createdAt
+                createdBy {
+                  source
+                  workspaceMemberId
+                  name
+                  context
+                }
                 deletedAt
+                emails {
+                  primaryEmail
+                  additionalEmails
+                }
                 id
+                intro
+                jobTitle
+                linkedinLink {
+                  primaryLinkUrl
+                  primaryLinkLabel
+                  secondaryLinks
+                }
                 name {
                   firstName
                   lastName
@@ -286,6 +306,13 @@ const mocks: MockedResponse[] = [
                       updatedAt
                     }
                   }
+                }
+                performanceRating
+                phones {
+                  primaryPhoneNumber
+                  primaryPhoneCountryCode
+                  primaryPhoneCallingCode
+                  additionalPhones
                 }
                 position
                 taskTargets {
@@ -533,6 +560,19 @@ const mocks: MockedResponse[] = [
                     }
                   }
                 }
+                updatedAt
+                whatsapp {
+                  primaryPhoneNumber
+                  primaryPhoneCountryCode
+                  primaryPhoneCallingCode
+                  additionalPhones
+                }
+                workPreference
+                xLink {
+                  primaryLinkUrl
+                  primaryLinkLabel
+                  secondaryLinks
+                }
               }
               cursor
             }
@@ -625,7 +665,6 @@ describe('useLazyLoadRecordIndexTable', () => {
       await result.current.findManyRecords();
     });
 
-    expect(Array.isArray(result.current.records)).toBe(true);
-    expect(result.current.records.length).toBe(16);
+    expect(result.current.records).toHaveLength(16);
   });
 });

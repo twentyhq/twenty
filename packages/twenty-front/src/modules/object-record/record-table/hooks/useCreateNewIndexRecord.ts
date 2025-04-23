@@ -3,6 +3,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
+import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { AppPath } from '@/types/AppPath';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
@@ -47,6 +48,7 @@ export const useCreateNewIndexRecord = ({
           openRecordTitleCell({
             recordId,
             fieldMetadataId: objectMetadataItem.labelIdentifierFieldMetadataId,
+            containerType: RecordTitleCellContainerType.PageHeader,
           });
         } else {
           navigate(AppPath.RecordShowPage, {

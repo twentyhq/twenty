@@ -37,11 +37,6 @@ export class WorkspaceSchemaFactory {
       return new GraphQLSchema({});
     }
 
-    const cachedIsNewRelationEnabled =
-      await this.workspaceCacheStorageService.getIsNewRelationEnabled(
-        authContext.workspace.id,
-      );
-
     const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IsNewRelationEnabled,
       authContext.workspace.id,
@@ -76,35 +71,6 @@ export class WorkspaceSchemaFactory {
       throw new GraphqlQueryRunnerException(
         'Metadata cache version not found',
         GraphqlQueryRunnerExceptionCode.METADATA_CACHE_VERSION_NOT_FOUND,
-      );
-    }
-
-    // TODO: remove this after the feature flag is droped
-    if (
-      (isNewRelationEnabled && cachedIsNewRelationEnabled === undefined) ||
-      (isNewRelationEnabled !== cachedIsNewRelationEnabled &&
-        cachedIsNewRelationEnabled !== undefined)
-    ) {
-      // eslint-disable-next-line no-console
-      console.log(
-        chalk.yellow('Recomputing due to new relation feature flag'),
-        {
-          isNewRelationEnabled,
-        },
-      );
-
-      await this.workspaceCacheStorageService.setIsNewRelationEnabled(
-        authContext.workspace.id,
-        isNewRelationEnabled,
-      );
-
-      await this.workspaceMetadataCacheService.recomputeMetadataCache({
-        workspaceId: authContext.workspace.id,
-      });
-
-      throw new GraphqlQueryRunnerException(
-        'Metadata cache recomputation required due to relation feature flag change',
-        GraphqlQueryRunnerExceptionCode.METADATA_CACHE_FEATURE_FLAG_RECOMPUTATION_REQUIRED,
       );
     }
 
@@ -149,6 +115,8 @@ export class WorkspaceSchemaFactory {
         await this.workspaceGraphQLSchemaFactory.create(
           objectMetadataCollection,
           workspaceResolverBuilderMethodNames,
+          {},
+          isNewRelationEnabled,
         );
 
       usedScalarNames =

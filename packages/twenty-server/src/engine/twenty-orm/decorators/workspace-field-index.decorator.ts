@@ -28,6 +28,15 @@ export function WorkspaceFieldIndex(
       ...additionalDefaultColumnsForIndex,
     ];
 
+    // TODO: Remove this when we are handling properly indexes for new relation metadata
+    if (
+      process.env.SYNC_METADATA_INDEX_ENABLED === 'false' ||
+      process.env.SYNC_METADATA_INDEX_ENABLED === '' ||
+      process.env.SYNC_METADATA_INDEX_ENABLED === undefined
+    ) {
+      return;
+    }
+
     metadataArgsStorage.addIndexes({
       name: `IDX_${generateDeterministicIndexName([
         convertClassNameToObjectMetadataName(target.constructor.name),

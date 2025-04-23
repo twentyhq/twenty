@@ -10,6 +10,8 @@ import { FindManyOptions, FindOneOptions, In, Not, Repository } from 'typeorm';
 
 import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -24,6 +26,7 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { ObjectMetadataFieldRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service';
 import { ObjectMetadataMigrationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-migration.service';
 import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-related-records.service';
 import { ObjectMetadataRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-relation.service';
@@ -62,10 +65,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly searchVectorService: SearchVectorService,
     private readonly objectMetadataRelationService: ObjectMetadataRelationService,
+    private readonly objectMetadataFieldRelationService: ObjectMetadataFieldRelationService,
     private readonly objectMetadataMigrationService: ObjectMetadataMigrationService,
     private readonly objectMetadataRelatedRecordsService: ObjectMetadataRelatedRecordsService,
     private readonly indexMetadataService: IndexMetadataService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(objectMetadataRepository);
   }
@@ -183,16 +188,32 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         createdObjectMetadata.fields,
       );
 
-      const createdRelatedObjectMetadataCollection =
-        await this.objectMetadataRelationService.createRelationsAndForeignKeysMetadata(
+      const isNewRelationEnabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IsNewRelationEnabled,
           objectMetadataInput.workspaceId,
-          createdObjectMetadata,
-          {
-            primaryKeyFieldMetadataSettings:
-              objectMetadataInput.primaryKeyFieldMetadataSettings,
-            primaryKeyColumnType: objectMetadataInput.primaryKeyColumnType,
-          },
         );
+
+      let createdRelatedObjectMetadataCollection: ObjectMetadataEntity[];
+
+      if (isNewRelationEnabled) {
+        createdRelatedObjectMetadataCollection =
+          await this.objectMetadataFieldRelationService.createRelationsAndForeignKeysMetadata(
+            objectMetadataInput.workspaceId,
+            createdObjectMetadata,
+          );
+      } else {
+        createdRelatedObjectMetadataCollection =
+          await this.objectMetadataRelationService.createRelationsAndForeignKeysMetadata(
+            objectMetadataInput.workspaceId,
+            createdObjectMetadata,
+            {
+              primaryKeyFieldMetadataSettings:
+                objectMetadataInput.primaryKeyFieldMetadataSettings,
+              primaryKeyColumnType: objectMetadataInput.primaryKeyColumnType,
+            },
+          );
+      }
 
       await this.objectMetadataMigrationService.createRelationMigrations(
         createdObjectMetadata,
@@ -295,6 +316,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const updatedObject = await super.updateOne(inputId, inputPayload);
 
+    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsNewRelationEnabled,
+      workspaceId,
+    );
+
     await this.handleObjectNameAndLabelUpdates(
       existingObjectMetadata,
       existingObjectMetadataCombinedWithUpdateInput,
@@ -302,10 +328,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     );
 
     if (inputPayload.isActive !== undefined) {
-      await this.objectMetadataRelationService.updateObjectRelationshipsActivationStatus(
-        inputId,
-        inputPayload.isActive,
-      );
+      // For new relation system, the active status is stitched to the field metadata
+      if (!isNewRelationEnabled) {
+        await this.objectMetadataRelationService.updateObjectRelationshipsActivationStatus(
+          inputId,
+          inputPayload.isActive,
+        );
+      }
     }
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
@@ -348,8 +377,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     input: DeleteOneObjectInput,
     workspaceId: string,
   ): Promise<ObjectMetadataEntity> {
+    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsNewRelationEnabled,
+      workspaceId,
+    );
+
     const objectMetadata = await this.objectMetadataRepository.findOne({
       relations: [
+        'fields',
+        'fields.object',
+        'fields.relationTargetFieldMetadata',
+        'fields.relationTargetFieldMetadata.object',
         'fromRelations.fromFieldMetadata',
         'fromRelations.toFieldMetadata',
         'toRelations.fromFieldMetadata',
@@ -381,6 +419,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await this.objectMetadataMigrationService.deleteAllRelationsAndDropTable(
         objectMetadata,
         workspaceId,
+        isNewRelationEnabled,
       );
     }
 
@@ -392,6 +431,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       workspaceId,
     );
+
+    const fieldMetadataIds = objectMetadata.fields.map((field) => field.id);
+    const relationMetadataIds = objectMetadata.fields
+      .map((field) => field.relationTargetFieldMetadata?.id)
+      .filter(isDefined);
+
+    await this.fieldMetadataRepository.delete({
+      id: In(fieldMetadataIds.concat(relationMetadataIds)),
+    });
 
     await this.objectMetadataRepository.delete(objectMetadata.id);
 
@@ -488,6 +536,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     objectMetadataForUpdate: ObjectMetadataEntity,
     inputPayload: UpdateObjectPayload,
   ) {
+    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsNewRelationEnabled,
+      objectMetadataForUpdate.workspaceId,
+    );
+
     const newTargetTableName = computeObjectTargetTable(
       objectMetadataForUpdate,
     );
@@ -502,18 +555,33 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataForUpdate.workspaceId,
       );
 
-      const relationsAndForeignKeysMetadata =
-        await this.objectMetadataRelationService.updateRelationsAndForeignKeysMetadata(
-          objectMetadataForUpdate.workspaceId,
-          objectMetadataForUpdate,
-        );
+      if (isNewRelationEnabled) {
+        const relationMetadataCollection =
+          await this.objectMetadataFieldRelationService.updateRelationsAndForeignKeysMetadata(
+            objectMetadataForUpdate.workspaceId,
+            objectMetadataForUpdate,
+          );
 
-      await this.objectMetadataMigrationService.createUpdateForeignKeysMigrations(
-        existingObjectMetadata,
-        objectMetadataForUpdate,
-        relationsAndForeignKeysMetadata,
-        objectMetadataForUpdate.workspaceId,
-      );
+        await this.objectMetadataMigrationService.updateRelationMigrations(
+          existingObjectMetadata,
+          objectMetadataForUpdate,
+          relationMetadataCollection,
+          objectMetadataForUpdate.workspaceId,
+        );
+      } else {
+        const relationsAndForeignKeysMetadata =
+          await this.objectMetadataRelationService.updateRelationsAndForeignKeysMetadata(
+            objectMetadataForUpdate.workspaceId,
+            objectMetadataForUpdate,
+          );
+
+        await this.objectMetadataMigrationService.createUpdateForeignKeysMigrations(
+          existingObjectMetadata,
+          objectMetadataForUpdate,
+          relationsAndForeignKeysMetadata,
+          objectMetadataForUpdate.workspaceId,
+        );
+      }
 
       await this.objectMetadataMigrationService.recomputeEnumNames(
         objectMetadataForUpdate,

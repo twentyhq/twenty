@@ -1,14 +1,13 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/object-metadata.constants';
-import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
-} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceCustomEntity } from 'src/engine/twenty-orm/decorators/workspace-custom-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
@@ -67,7 +66,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.noteTargets,
     label: msg`Notes`,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     description: (objectMetadata) => {
       const label = objectMetadata.labelSingular;
 
@@ -83,7 +82,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.taskTargets,
     label: msg`Tasks`,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     description: (objectMetadata) => {
       const label = objectMetadata.labelSingular;
 
@@ -99,7 +98,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.favorites,
     label: msg`Favorites`,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     description: (objectMetadata) => {
       const label = objectMetadata.labelSingular;
 
@@ -116,7 +115,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.attachments,
     label: msg`Attachments`,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     description: (objectMetadata) => {
       const label = objectMetadata.labelSingular;
 
@@ -132,7 +131,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.timelineActivities,
     label: msg`Timeline Activities`,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     description: (objectMetadata) => {
       const label = objectMetadata.labelSingular;
 

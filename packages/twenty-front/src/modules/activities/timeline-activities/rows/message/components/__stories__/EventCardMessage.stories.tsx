@@ -1,11 +1,12 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { within } from '@storybook/testing-library';
 import { HttpResponse, graphql } from 'msw';
 
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { EventCardMessage } from '@/activities/timeline-activities/rows/message/components/EventCardMessage';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof EventCardMessage> = {
   title: 'Modules/TimelineActivities/Rows/Message/EventCardMessage',
@@ -32,6 +33,11 @@ export const Default: Story = {
     messageId: '1',
     authorFullName: 'John Doe',
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Mock title');
+  },
   parameters: {
     msw: {
       handlers: [
@@ -56,6 +62,11 @@ export const NotShared: Story = {
   args: {
     messageId: '1',
     authorFullName: 'John Doe',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Subject not shared');
   },
   parameters: {
     msw: {
