@@ -1,15 +1,26 @@
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
-import { RecordFilterInput } from '@/object-record/record-filter/types/RecordFilter';
+import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import {
+  RecordFilter,
+  RecordFilterInput,
+} from '@/object-record/record-filter/types/RecordFilter';
 import { FILTER_OPERANDS_MAP } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { assertUnreachable } from 'twenty-shared/utils';
+
+// const assertIsTextFiler = (
+//   filter: RecordFilterInput,
+// ): filter is RecordFilterInput<'TEXT'> => filter.type === 'TEXT';
+
+type RecordFilterToRecordInputOperand<T extends FilterableFieldType> =
+  (typeof FILTER_OPERANDS_MAP)[T][number];
 
 export const buildValueFromFilter = ({
   filter,
   options,
 }: {
-  filter: RecordFilterInput;
+  filter: RecordFilter;
   options?: FieldMetadataItemOption[];
 }) => {
   if (isCompositeField(filter.type)) {
@@ -20,40 +31,59 @@ export const buildValueFromFilter = ({
     return;
   }
 
+  const operands = FILTER_OPERANDS_MAP[filter.type];
+  if (!operands.some((operand) => operand === filter.operand)) {
+    throw new Error('Operand not supported for this field type');
+  }
+
   switch (filter.type) {
     case 'TEXT': {
-      // ok
-      const operands = FILTER_OPERANDS_MAP[filter.type];
-
-      if (!operands.some((operand) => operand === filter.operand)) {
-        throw new Error('Operand not supported for this field type');
-      }
-
-      return computeValueFromFilterText(filter.operand, filter.value);
+      // if (!assertIsTextFiler(filter)) {
+      //   throw new Error('Operand not supported for this field type');
+      // }
+      return computeValueFromFilterText(
+        filter.operand as RecordFilterInput<'TEXT'>['operand'],
+        filter.value,
+      );
     }
     case 'RATING': // ok
       return computeValueFromFilterRating(
-        filter.operand,
+        filter.operand as RecordFilterInput<'RATING'>['operand'],
         filter.value,
         options,
       );
     case 'DATE_TIME': // ok
     case 'DATE': // ok
-      return computeValueFromFilterDate(filter.operand, filter.value);
+      return computeValueFromFilterDate(
+        filter.operand as RecordFilterInput<'DATE_TIME'>['operand'],
+        filter.value,
+      );
     case 'NUMBER': // ok
-      return computeValueFromFilterNumber(filter.operand, filter.value);
+      return computeValueFromFilterNumber(
+        filter.operand as RecordFilterInput<'NUMBER'>['operand'],
+        filter.value,
+      );
     case 'BOOLEAN': // ok
-      return computeValueFromFilterBoolean(filter.operand, filter.value);
+      return computeValueFromFilterBoolean(
+        filter.operand as RecordFilterInput<'BOOLEAN'>['operand'],
+        filter.value,
+      );
     case 'ARRAY': // ok
-      return computeValueFromFilterArray(filter.operand, filter.value);
+      return computeValueFromFilterArray(
+        filter.operand as RecordFilterInput<'ARRAY'>['operand'],
+        filter.value,
+      );
     case 'SELECT': // ok
       return computeValueFromFilterSelect(
-        filter.operand,
+        filter.operand as RecordFilterInput<'SELECT'>['operand'],
         filter.value,
         options,
       );
     case 'MULTI_SELECT': // ok
-      return computeValueFromFilterMultiSelect(filter.operand, filter.value);
+      return computeValueFromFilterMultiSelect(
+        filter.operand as RecordFilterInput<'MULTI_SELECT'>['operand'],
+        filter.value,
+      );
     case 'RELATION': // TODO
       throw new Error('Type not supported');
     default:
@@ -62,7 +92,7 @@ export const buildValueFromFilter = ({
 };
 
 const computeValueFromFilterText = (
-  operand: (typeof FILTER_OPERANDS_MAP.TEXT)[number], // TODO: add type better scoping
+  operand: RecordFilterToRecordInputOperand<'TEXT'>, // TODO: add type better scoping
   value: string,
 ) => {
   switch (operand) {
@@ -81,13 +111,13 @@ const computeValueFromFilterText = (
 };
 
 const computeValueFromFilterDate = (
-  operand: ViewFilterOperand, // TODO: add type better scoping
+  operand: RecordFilterToRecordInputOperand<'DATE_TIME'>, // TODO: add type better scoping
   value: string,
 ) => {
   switch (operand) {
     case ViewFilterOperand.Is:
       return new Date(value);
-    case ViewFilterOperand.IsNot:
+    case ViewFilterOperand.IsNotEmpty:
       return new Date(value);
     case ViewFilterOperand.IsAfter:
       return new Date(value);
@@ -104,13 +134,12 @@ const computeValueFromFilterDate = (
     case ViewFilterOperand.IsEmpty:
       return undefined;
     default:
-      // assertUnreachable(operand);
-      return new Date(value);
+      assertUnreachable(operand);
   }
 };
 
 const computeValueFromFilterNumber = (
-  operand: ViewFilterOperand, // TODO: add type better scoping
+  operand: RecordFilterToRecordInputOperand<'NUMBER'>, // TODO: add type better scoping
   value: string,
 ) => {
   switch (operand) {
@@ -123,26 +152,24 @@ const computeValueFromFilterNumber = (
     case ViewFilterOperand.IsEmpty:
       return undefined;
     default:
-      // assertUnreachable(operand);
-      return Number(value);
+      assertUnreachable(operand);
   }
 };
 
 const computeValueFromFilterBoolean = (
-  operand: ViewFilterOperand, // TODO: add type better scoping
+  operand: RecordFilterToRecordInputOperand<'BOOLEAN'>,
   value: string,
 ) => {
   switch (operand) {
     case ViewFilterOperand.Is:
       return value === 'true';
     default:
-      // assertUnreachable(operand);
-      return value === 'true';
+      assertUnreachable(operand);
   }
 };
 
 const computeValueFromFilterArray = (
-  operand: ViewFilterOperand, // TODO: add type better scoping
+  operand: RecordFilterToRecordInputOperand<'ARRAY'>, // TODO: add type better scoping
   value: string,
 ) => {
   switch (operand) {
@@ -155,13 +182,12 @@ const computeValueFromFilterArray = (
     case ViewFilterOperand.IsEmpty:
       return undefined;
     default:
-      // assertUnreachable(operand);
-      return value;
+      assertUnreachable(operand);
   }
 };
 
 const computeValueFromFilterRating = (
-  operand: ViewFilterOperand, // TODO: add type better scoping
+  operand: RecordFilterToRecordInputOperand<'RATING'>, // TODO: add type better scoping
   value: string,
   options?: FieldMetadataItemOption[],
 ) => {
@@ -182,13 +208,13 @@ const computeValueFromFilterRating = (
     case ViewFilterOperand.LessThan:
       return option.value;
     default:
-      // assertUnreachable(operand);
+      assertUnreachable(operand);
       return undefined;
   }
 };
 
 const computeValueFromFilterSelect = (
-  operand: ViewFilterOperand, // TODO: add type better scoping
+  operand: RecordFilterToRecordInputOperand<'SELECT'>, // TODO: add type better scoping
   value: string,
   options?: FieldMetadataItemOption[],
 ) => {
@@ -221,13 +247,12 @@ const computeValueFromFilterSelect = (
     case ViewFilterOperand.IsEmpty:
       return undefined;
     default:
-      // assertUnreachable(operand);
-      return undefined;
+      assertUnreachable(operand);
   }
 };
 
 const computeValueFromFilterMultiSelect = (
-  operand: ViewFilterOperand, // TODO: add type better scoping
+  operand: RecordFilterToRecordInputOperand<'MULTI_SELECT'>, // TODO: add type better scoping
   value: string,
 ) => {
   switch (operand) {
@@ -248,7 +273,6 @@ const computeValueFromFilterMultiSelect = (
     case ViewFilterOperand.IsEmpty:
       return undefined;
     default:
-      // assertUnreachable(operand);
-      return undefined;
+      assertUnreachable(operand);
   }
 };

@@ -1,6 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { RecordFilterInput } from '@/object-record/record-filter/types/RecordFilter';
 import { buildValueFromFilter } from '@/object-record/record-table/utils/buildRecordInputFromFilter';
 
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -27,7 +26,7 @@ export const useBuildRecordInputFromFilters = ({
 
       if (isDefined(fieldMetadataItem)) {
         recordInput[fieldMetadataItem.name] = buildValueFromFilter({
-          filter: filter as unknown as RecordFilterInput<'TEXT'>,
+          filter,
           options: fieldMetadataItem.options ?? undefined,
         });
       }
