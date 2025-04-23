@@ -52,7 +52,7 @@ export const RecordTitleFullNameFieldDisplay = () => {
     <StyledDiv
       onClick={() => {
         setHotkeyScopeAndMemorizePreviousScope(
-          TitleInputHotkeyScope.TitleInput,
+          TitleInputHotkeyScope.TitleFullNameInput,
         );
         openInlineCell();
       }}
