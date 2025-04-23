@@ -17,6 +17,9 @@ prod-migrate-kvoipv2-db:
 prod-sync-metadata:
 	docker exec -it kvoipv2-server sh -c "yarn command:prod workspace:sync-metadata"
 
+dev-seed-workspace:
+	docker exec -it kvoipv2-server sh -c "yarn command:prod workspace:seed:dev"
+
 prod-build:
 	@cd ../.. && docker build -f ./packages/twenty-docker/twenty/Dockerfile --platform $(PLATFORM) --tag twenty:$(TAG) . && cd -
 
