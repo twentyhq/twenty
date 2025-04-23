@@ -74,21 +74,19 @@ export const WorkflowRunVisualizerEffect = ({
             stepsOutput: workflowRunOutput.stepsOutput,
           });
 
-        if (skipNodeSelection) {
-          set(workflowDiagramState, baseWorkflowRunDiagram);
-        } else if (isDefined(stepToOpenByDefault)) {
-          set(
-            workflowDiagramState,
-            selectWorkflowDiagramNode({
-              diagram: baseWorkflowRunDiagram,
-              nodeIdToSelect: stepToOpenByDefault.id,
-            }),
-          );
+        if (isDefined(stepToOpenByDefault) && !skipNodeSelection) {
+          const workflowRunDiagram = selectWorkflowDiagramNode({
+            diagram: baseWorkflowRunDiagram,
+            nodeIdToSelect: stepToOpenByDefault.id,
+          });
 
+          set(workflowDiagramState, workflowRunDiagram);
           set(workflowStepToOpenByDefaultState, {
             id: stepToOpenByDefault.id,
             data: stepToOpenByDefault.data,
           });
+        } else {
+          set(workflowDiagramState, baseWorkflowRunDiagram);
         }
 
         set(workflowDiagramStatusState, 'computing-dimensions');
