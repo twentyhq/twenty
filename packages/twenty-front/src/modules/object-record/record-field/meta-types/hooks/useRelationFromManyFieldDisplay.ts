@@ -8,10 +8,10 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditButtonWidth';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+import { isDefined } from 'twenty-shared/utils';
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldRelation } from '../../types/guards/isFieldRelation';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useRelationFromManyFieldDisplay = () => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
@@ -33,11 +33,19 @@ export const useRelationFromManyFieldDisplay = () => {
   const button = fieldDefinition.editButtonIcon;
 
   const fieldName = fieldDefinition.metadata.fieldName;
-
-  const fieldValue = useRecordFieldValue<ObjectRecord[] | undefined>(
+  console.log(
+    '[expect many items since from many] useRelationFromManyFieldDisplay for fieldName: ',
+    fieldName,
+    recordId,
+  );
+  let fieldValue = useRecordFieldValue<ObjectRecord[] | undefined>(
     recordId,
     fieldName,
   );
+  if (isDefined(fieldValue) && !Array.isArray(fieldValue)) {
+    fieldValue = [fieldValue];
+  }
+  console.log('items: ', fieldValue);
 
   const maxWidthForField =
     isDefined(button) && isDefined(maxWidth)

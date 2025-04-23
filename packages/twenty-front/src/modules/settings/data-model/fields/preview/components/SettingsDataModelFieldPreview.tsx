@@ -19,7 +19,13 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export type SettingsDataModelFieldPreviewProps = {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue' | 'options' | 'settings'
+    | 'icon'
+    | 'label'
+    | 'type'
+    | 'defaultValue'
+    | 'options'
+    | 'settings'
+    | 'relationDefinition'
   > & {
     id?: string;
     name?: string;
@@ -97,6 +103,17 @@ export const SettingsDataModelFieldPreview = ({
     previewRecord?.id ??
     `${objectMetadataItem.nameSingular}-${fieldName}-preview`;
 
+  console.log(
+    'SettingsDataModelFieldPreview',
+    fieldMetadataItem,
+    'relationObjectMetadataItem',
+    relationObjectMetadataItem,
+    'objectMetadataItem',
+    objectMetadataItem,
+    'fieldPreviewValue',
+    fieldPreviewValue,
+  );
+
   return (
     <>
       <RecordFieldComponentInstanceContext.Provider
@@ -142,6 +159,7 @@ export const SettingsDataModelFieldPreview = ({
                     relationObjectMetadataItem?.nameSingular,
                   options: fieldMetadataItem.options ?? [],
                   settings: fieldMetadataItem.settings,
+                  relationType: fieldMetadataItem.relationDefinition?.direction,
                 },
                 defaultValue: fieldMetadataItem.defaultValue,
               },
