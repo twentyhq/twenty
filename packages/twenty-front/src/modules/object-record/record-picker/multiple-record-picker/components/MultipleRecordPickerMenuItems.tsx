@@ -16,7 +16,6 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 
 export const StyledSelectableItem = styled(SelectableListItem)`
   height: 100%;
@@ -80,35 +79,6 @@ export const MultipleRecordPickerMenuItems = ({
       };
     },
     [multipleRecordPickerPickableMorphItemsState],
-  );
-
-  const handleEnter = useRecoilCallback(
-    ({ snapshot }) => {
-      return (selectedId: string) => {
-        const pickableMorphItem = snapshot
-          .getLoadable(singlePickableMorphItemFamilySelector(selectedId))
-          .getValue();
-
-        if (!isDefined(pickableMorphItem)) {
-          return;
-        }
-
-        const selectedMorphItem = {
-          ...pickableMorphItem,
-          isSelected: !pickableMorphItem.isSelected,
-        };
-
-        handleChange(selectedMorphItem);
-        onChange?.(selectedMorphItem);
-        resetSelectedItem();
-      };
-    },
-    [
-      handleChange,
-      onChange,
-      resetSelectedItem,
-      singlePickableMorphItemFamilySelector,
-    ],
   );
 
   return (
