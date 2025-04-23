@@ -1,5 +1,3 @@
-import { ModuleRef } from '@nestjs/core';
-
 import { DataSource, EntityManager } from 'typeorm';
 
 import { seedWorkspaceFavorites } from 'src/database/typeorm-seeds/workspace/favorites';
@@ -15,8 +13,6 @@ export const standardObjectsPrefillData = async (
   workspaceDataSource: DataSource,
   schemaName: string,
   objectMetadata: ObjectMetadataEntity[],
-  moduleRef: ModuleRef,
-  workspaceId: string,
 ) => {
   const objectMetadataMap = objectMetadata.reduce((acc, object) => {
     if (!object.standardId) {
@@ -42,12 +38,8 @@ export const standardObjectsPrefillData = async (
   workspaceDataSource.transaction(async (entityManager: EntityManager) => {
     await companyPrefillData(entityManager, schemaName);
     await personPrefillData(entityManager, schemaName);
-    await integrationPrefillData(
-      entityManager,
-      schemaName,
-      moduleRef,
-      workspaceId,
-    );
+    await integrationPrefillData(entityManager, schemaName);
+
     const viewDefinitionsWithId = await seedViewWithDemoData(
       entityManager,
       schemaName,

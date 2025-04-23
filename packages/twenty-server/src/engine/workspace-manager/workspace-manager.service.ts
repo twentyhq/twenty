@@ -202,8 +202,6 @@ export class WorkspaceManagerService {
       workspaceDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
-      this.moduleRef,
-      workspaceId,
     );
   }
 

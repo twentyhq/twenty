@@ -25,6 +25,7 @@ import { seedMessageParticipant } from 'src/database/typeorm-seeds/workspace/mes
 import { seedMessageThread } from 'src/database/typeorm-seeds/workspace/message-threads';
 import { seedMessage } from 'src/database/typeorm-seeds/workspace/messages';
 import { seedOpportunity } from 'src/database/typeorm-seeds/workspace/opportunities';
+import { seedIntegration } from 'src/database/typeorm-seeds/workspace/seedIntegration';
 import { seedPeople } from 'src/database/typeorm-seeds/workspace/seedPeople';
 import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspace-members';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
@@ -176,6 +177,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
 
         await seedCompanies(entityManager, dataSourceMetadata.schema);
         await seedPeople(entityManager, dataSourceMetadata.schema);
+        await seedIntegration(entityManager, dataSourceMetadata.schema);
         await seedOpportunity(entityManager, dataSourceMetadata.schema);
         await seedWorkspaceMember(
           entityManager,

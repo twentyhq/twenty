@@ -1,9 +1,9 @@
 import { EntityManager } from 'typeorm';
 
-export const STRIPE_ID = '6782bfdc-7854-4034-9b4b-33a80ef11822';
-export const INTER_ID = '5fa41d56-4b72-4bb0-be79-5c8ef5c56125';
+export const STRIPE_ID = '36d583ac-fdda-40eb-8f31-6754cde43e80';
+export const INTER_ID = '415f0acb-8f25-40b6-9b7a-c393b719c0f8';
 
-export const integrationPrefillData = async (
+export const seedIntegrationWithDemoData = async (
   entityManager: EntityManager,
   schemaName: string,
 ) => {
