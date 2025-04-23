@@ -1,7 +1,5 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 
-import { CONFIG_VARIABLES_CACHE_SCAVENGE_INTERVAL_MINUTES } from 'src/engine/core-modules/twenty-config/constants/config-variables-cache-scavenge-interval';
 import { CONFIG_VARIABLES_CACHE_TTL } from 'src/engine/core-modules/twenty-config/constants/config-variables-cache-ttl';
 
 import {
@@ -114,38 +112,23 @@ export class ConfigCacheService implements OnModuleDestroy {
     return now - entry.timestamp > entry.ttl;
   }
 
-  /**
-   * Scavenge the cache to remove expired entries.
-   *
-   * Note: While we're using @nestjs/schedule for this task, the recommended way to run
-   * distributed cron jobs is still BullMQ. This is used here because we want to have
-   * one execution per pod with direct access to memory.
-   */
-  @Cron(`0 */${CONFIG_VARIABLES_CACHE_SCAVENGE_INTERVAL_MINUTES} * * * *`)
-  public scavengeConfigVariablesCache(): void {
-    this.logger.log('Starting config variables cache scavenging process');
-
+  getExpiredKeys(): ConfigKey[] {
     const now = Date.now();
-    let removedCount = 0;
+    const expiredPositiveKeys: ConfigKey[] = [];
+    const expiredNegativeKeys: ConfigKey[] = [];
 
     for (const [key, entry] of this.foundConfigValuesCache.entries()) {
       if (now - entry.timestamp > entry.ttl) {
-        this.foundConfigValuesCache.delete(key);
-        removedCount++;
+        expiredPositiveKeys.push(key);
       }
     }
-
-    let removedMissingCount = 0;
 
     for (const [key, entry] of this.knownMissingKeysCache.entries()) {
       if (now - entry.timestamp > entry.ttl) {
-        this.knownMissingKeysCache.delete(key);
-        removedMissingCount++;
+        expiredNegativeKeys.push(key);
       }
     }
 
-    this.logger.log(
-      `Config variables cache scavenging completed: removed ${removedCount} expired entries and ${removedMissingCount} expired missing entries`,
-    );
+    return [...new Set([...expiredPositiveKeys, ...expiredNegativeKeys])];
   }
 }

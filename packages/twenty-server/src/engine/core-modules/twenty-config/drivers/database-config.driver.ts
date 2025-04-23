@@ -1,9 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 
 import { DatabaseConfigDriverInterface } from 'src/engine/core-modules/twenty-config/drivers/interfaces/database-config-driver.interface';
 
 import { ConfigCacheService } from 'src/engine/core-modules/twenty-config/cache/config-cache.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { CONFIG_VARIABLES_REFRESH_INTERVAL_MINUTES } from 'src/engine/core-modules/twenty-config/constants/config-variables-refresh-interval';
 import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
 import { isEnvOnlyConfigVar } from 'src/engine/core-modules/twenty-config/utils/is-env-only-config-var.util';
 
@@ -146,5 +148,70 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
         this.logger.error(`Failed to fetch config for ${key as string}`, error);
       });
     });
+  }
+
+  /**
+   * Proactively refreshes expired entries in the config cache.
+   * This method runs on a schedule and fetches all expired keys in one database query,
+   * then updates the cache with fresh values.
+   */
+  @Cron(`0 */${CONFIG_VARIABLES_REFRESH_INTERVAL_MINUTES} * * * *`)
+  async refreshExpiredCache(): Promise<void> {
+    try {
+      this.logger.log('Starting proactive refresh of expired config variables');
+
+      const expiredKeys = this.configCache.getExpiredKeys();
+
+      if (expiredKeys.length === 0) {
+        this.logger.debug('No expired config variables to refresh');
+
+        return;
+      }
+
+      this.logger.debug(
+        `Found ${expiredKeys.length} expired config variables to refresh`,
+      );
+
+      const refreshableKeys = expiredKeys.filter(
+        (key) => !isEnvOnlyConfigVar(key),
+      ) as Array<keyof ConfigVariables>;
+
+      if (refreshableKeys.length === 0) {
+        this.logger.debug(
+          'No refreshable config variables found (all are env-only)',
+        );
+
+        return;
+      }
+
+      const refreshedValues =
+        await this.configStorage.loadByKeys(refreshableKeys);
+
+      if (refreshedValues.size === 0) {
+        this.logger.debug('No values found for expired keys');
+
+        for (const key of refreshableKeys) {
+          this.configCache.markKeyAsMissing(key);
+        }
+
+        return;
+      }
+
+      for (const [key, value] of refreshedValues.entries()) {
+        this.configCache.set(key, value);
+      }
+
+      for (const key of refreshableKeys) {
+        if (!refreshedValues.has(key)) {
+          this.configCache.markKeyAsMissing(key);
+        }
+      }
+
+      this.logger.log(
+        `Refreshed ${refreshedValues.size} config variables in cache`,
+      );
+    } catch (error) {
+      this.logger.error('Failed to refresh expired config variables', error);
+    }
   }
 }

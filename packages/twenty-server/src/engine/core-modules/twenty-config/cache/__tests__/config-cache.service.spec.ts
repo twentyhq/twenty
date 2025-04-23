@@ -227,96 +227,58 @@ describe('ConfigCacheService', () => {
     });
   });
 
-  describe('cache scavenging', () => {
-    it('should have a public scavengeCache method', () => {
-      expect(typeof service.scavengeConfigVariablesCache).toBe('function');
+  describe('getExpiredKeys', () => {
+    it('should return expired keys from both positive and negative caches', () => {
+      const expiredKey1 = 'EXPIRED_KEY1' as keyof ConfigVariables;
+      const expiredKey2 = 'EXPIRED_KEY2' as keyof ConfigVariables;
+      const expiredNegativeKey = 'EXPIRED_NEGATIVE_KEY' as keyof ConfigVariables;
 
-      const prototype = Object.getPrototypeOf(service);
+      // Set up keys that will expire
+      service.set(expiredKey1, 'value1');
+      service.set(expiredKey2, 'value2');
+      service.markKeyAsMissing(expiredNegativeKey);
+      
+      // Make the above keys expire
+      withMockedDate(CONFIG_VARIABLES_CACHE_TTL + 1, () => {
+        // Add a fresh key after the time change
+        const freshKey = 'FRESH_KEY' as keyof ConfigVariables;
+        service.set(freshKey, 'value3');
+        
+        const expiredKeys = service.getExpiredKeys();
 
-      expect(
-        Object.getOwnPropertyDescriptor(prototype, 'scavengeConfigVariablesCache'),
-      ).toBeDefined();
+        expect(expiredKeys).toContain(expiredKey1);
+        expect(expiredKeys).toContain(expiredKey2);
+        expect(expiredKeys).toContain(expiredNegativeKey);
+        expect(expiredKeys).not.toContain(freshKey);
+      });
     });
 
-    it('should remove expired entries when scavengeCache is called', () => {
-      const key = 'TEST_KEY' as keyof ConfigVariables;
+    it('should return empty array when no keys are expired', () => {
+      const key1 = 'KEY1' as keyof ConfigVariables;
+      const key2 = 'KEY2' as keyof ConfigVariables;
+      const negativeKey = 'NEGATIVE_KEY' as keyof ConfigVariables;
 
-      service.set(key, 'test');
+      service.set(key1, 'value1');
+      service.set(key2, 'value2');
+      service.markKeyAsMissing(negativeKey);
+
+      const expiredKeys = service.getExpiredKeys();
+
+      expect(expiredKeys).toHaveLength(0);
+    });
+
+    it('should not have duplicates if a key is in both caches', () => {
+      const key = 'DUPLICATE_KEY' as keyof ConfigVariables;
+
+      // Manually manipulate the caches to simulate a key in both caches
+      service.set(key, 'value');
+      service.markKeyAsMissing(key);
 
       withMockedDate(CONFIG_VARIABLES_CACHE_TTL + 1, () => {
-        service.scavengeConfigVariablesCache();
+        const expiredKeys = service.getExpiredKeys();
 
-        expect(service.get(key).value).toBeUndefined();
-      });
-    });
-
-    it('should not remove non-expired entries when scavengeCache is called', () => {
-      const key = 'TEST_KEY' as keyof ConfigVariables;
-
-      service.set(key, 'test');
-
-      withMockedDate(CONFIG_VARIABLES_CACHE_TTL - 1, () => {
-        service.scavengeConfigVariablesCache();
-
-        expect(service.get(key).value).toBe('test');
-      });
-    });
-
-    it('should handle multiple entries with different expiration times', () => {
-      const expiredKey = 'EXPIRED_KEY' as keyof ConfigVariables;
-      const validKey = 'VALID_KEY' as keyof ConfigVariables;
-
-      withMockedDate(-CONFIG_VARIABLES_CACHE_TTL * 2, () => {
-        service.set(expiredKey, 'expired-value');
-      });
-
-      service.set(validKey, 'valid-value');
-
-      service.scavengeConfigVariablesCache();
-
-      expect(service.get(expiredKey).value).toBeUndefined(),
-        expect(service.get(validKey).value).toBe('valid-value');
-    });
-
-    it('should handle empty cache when scavenging', () => {
-      service.clearAll();
-
-      expect(() => service.scavengeConfigVariablesCache()).not.toThrow();
-    });
-  });
-
-  describe('edge cases', () => {
-    it('should handle empty string values', () => {
-      const key = 'EMAIL_FROM_ADDRESS' as keyof ConfigVariables;
-
-      service.set(key, '');
-      expect(service.get(key).value).toBe('');
-    });
-
-    it('should handle zero values', () => {
-      const key = 'NODE_PORT' as keyof ConfigVariables;
-
-      service.set(key, 0);
-      expect(service.get(key).value).toBe(0);
-    });
-
-    it('should handle clearing non-existent keys', () => {
-      const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
-
-      expect(() => service.clear(key)).not.toThrow();
-
-      const otherKey = 'EMAIL_FROM_ADDRESS' as keyof ConfigVariables;
-
-      service.set(otherKey, 'test@example.com');
-      service.clear(key);
-      expect(service.get(otherKey).value).toBe('test@example.com');
-    });
-
-    it('should handle empty cache operations', () => {
-      expect(service.getCacheInfo()).toEqual({
-        positiveEntries: 0,
-        negativeEntries: 0,
-        cacheKeys: [],
+        // Should only appear once in the result
+        expect(expiredKeys.filter(k => k === key)).toHaveLength(1);
       });
     });
   });

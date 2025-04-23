@@ -34,6 +34,7 @@ describe('DatabaseConfigDriver', () => {
             isKeyKnownMissing: jest.fn(),
             markKeyAsMissing: jest.fn(),
             getCacheInfo: jest.fn(),
+            getExpiredKeys: jest.fn(),
           },
         },
         {
@@ -42,6 +43,7 @@ describe('DatabaseConfigDriver', () => {
             get: jest.fn(),
             set: jest.fn(),
             loadAll: jest.fn(),
+            loadByKeys: jest.fn(),
           },
         },
         {
@@ -457,6 +459,102 @@ describe('DatabaseConfigDriver', () => {
         'test@example.com',
       );
       expect(configCache.set).toHaveBeenCalledWith('NODE_PORT', 3000);
+    });
+  });
+
+  describe('refreshExpiredCache', () => {
+    beforeEach(() => {
+      jest.spyOn(configStorage, 'loadAll').mockResolvedValue(new Map());
+      // Add loadByKeys mock
+      jest.spyOn(configStorage, 'loadByKeys').mockResolvedValue(new Map());
+      // Add getExpiredKeys mock
+      jest.spyOn(configCache, 'getExpiredKeys').mockReturnValue([]);
+    });
+
+    it('should do nothing when there are no expired keys', async () => {
+      jest.spyOn(configCache, 'getExpiredKeys').mockReturnValue([]);
+      
+      await driver.refreshExpiredCache();
+      
+      expect(configStorage.loadByKeys).not.toHaveBeenCalled();
+    });
+
+    it('should filter out env-only variables from expired keys', async () => {
+      const expiredKeys = [
+        'AUTH_PASSWORD_ENABLED',
+        'ENV_ONLY_VAR',
+        'EMAIL_FROM_ADDRESS',
+      ] as Array<keyof ConfigVariables>;
+      
+      jest.spyOn(configCache, 'getExpiredKeys').mockReturnValue(expiredKeys);
+      
+      // Simulate one env-only var
+      (isEnvOnlyConfigVar as jest.Mock).mockImplementation((key) => {
+        return key === 'ENV_ONLY_VAR';
+      });
+      
+      await driver.refreshExpiredCache();
+      
+      expect(configStorage.loadByKeys).toHaveBeenCalledWith([
+        'AUTH_PASSWORD_ENABLED',
+        'EMAIL_FROM_ADDRESS',
+      ]);
+    });
+
+    it('should mark all keys as missing when no values are found', async () => {
+      const expiredKeys = [
+        'AUTH_PASSWORD_ENABLED',
+        'EMAIL_FROM_ADDRESS',
+      ] as Array<keyof ConfigVariables>;
+      
+      jest.spyOn(configCache, 'getExpiredKeys').mockReturnValue(expiredKeys);
+      jest.spyOn(configStorage, 'loadByKeys').mockResolvedValue(new Map());
+      
+      await driver.refreshExpiredCache();
+      
+      expect(configCache.markKeyAsMissing).toHaveBeenCalledTimes(2);
+      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith('AUTH_PASSWORD_ENABLED');
+      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith('EMAIL_FROM_ADDRESS');
+    });
+
+    it('should update cache with refreshed values', async () => {
+      const expiredKeys = [
+        'AUTH_PASSWORD_ENABLED',
+        'EMAIL_FROM_ADDRESS',
+        'MISSING_KEY',
+      ] as Array<keyof ConfigVariables>;
+      
+      const refreshedValues = new Map<
+        keyof ConfigVariables,
+        ConfigVariables[keyof ConfigVariables]
+      >([
+        ['AUTH_PASSWORD_ENABLED', true],
+        ['EMAIL_FROM_ADDRESS', 'test@example.com'],
+      ]);
+      
+      jest.spyOn(configCache, 'getExpiredKeys').mockReturnValue(expiredKeys);
+      jest.spyOn(configStorage, 'loadByKeys').mockResolvedValue(refreshedValues);
+      
+      await driver.refreshExpiredCache();
+      
+      // Should set found values
+      expect(configCache.set).toHaveBeenCalledWith('AUTH_PASSWORD_ENABLED', true);
+      expect(configCache.set).toHaveBeenCalledWith('EMAIL_FROM_ADDRESS', 'test@example.com');
+      
+      // Should mark missing values as missing
+      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith('MISSING_KEY');
+    });
+
+    it('should handle errors gracefully', async () => {
+      const error = new Error('Database error');
+      jest.spyOn(configCache, 'getExpiredKeys').mockReturnValue(['AUTH_PASSWORD_ENABLED'] as Array<keyof ConfigVariables>);
+      jest.spyOn(configStorage, 'loadByKeys').mockRejectedValue(error);
+      jest.spyOn(driver['logger'], 'error');
+      
+      await driver.refreshExpiredCache();
+      
+      // Should log error and not throw
+      expect(driver['logger'].error).toHaveBeenCalled();
     });
   });
 });
