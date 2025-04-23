@@ -8,7 +8,7 @@ import { workflowRunIdState } from '@/workflow/states/workflowRunIdState';
 import { WorkflowRunOutput } from '@/workflow/types/Workflow';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
-import { workflowStepToOpenByDefaultState } from '@/workflow/workflow-diagram/states/workflowStepToOpenByDefaultState';
+import { workflowRunStepToOpenByDefaultState } from '@/workflow/workflow-diagram/states/workflowRunStepToOpenByDefaultState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { selectWorkflowDiagramNode } from '@/workflow/workflow-diagram/utils/selectWorkflowDiagramNode';
 import { useContext, useEffect } from 'react';
@@ -81,7 +81,7 @@ export const WorkflowRunVisualizerEffect = ({
           });
 
           set(workflowDiagramState, workflowRunDiagram);
-          set(workflowStepToOpenByDefaultState, {
+          set(workflowRunStepToOpenByDefaultState, {
             id: stepToOpenByDefault.id,
             data: stepToOpenByDefault.data,
           });

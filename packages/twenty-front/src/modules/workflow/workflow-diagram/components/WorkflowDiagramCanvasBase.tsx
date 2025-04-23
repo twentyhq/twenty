@@ -9,8 +9,8 @@ import { useSetInitialWorkflowRunRightDrawerTab } from '@/workflow/workflow-diag
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
 import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
+import { workflowRunStepToOpenByDefaultState } from '@/workflow/workflow-diagram/states/workflowRunStepToOpenByDefaultState';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
-import { workflowStepToOpenByDefaultState } from '@/workflow/workflow-diagram/states/workflowStepToOpenByDefaultState';
 import {
   WorkflowDiagramEdge,
   WorkflowDiagramEdgeType,
@@ -129,9 +129,6 @@ export const WorkflowDiagramCanvasBase = ({
   const { getIcon } = useIcons();
 
   const reactflow = useReactFlow();
-  const setWorkflowReactFlowRefState = useSetRecoilState(
-    workflowReactFlowRefState,
-  );
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
   const { setInitialWorkflowRunRightDrawerTab } =
     useSetInitialWorkflowRunRightDrawerTab();
@@ -198,11 +195,6 @@ export const WorkflowDiagramCanvasBase = ({
 
     const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
 
-    console.log('right drawer change', {
-      rightDrawerState,
-      rightDrawerWidth,
-    });
-
     let visibleRightDrawerWidth = 0;
     if (rightDrawerState === 'normal') {
       visibleRightDrawerWidth = rightDrawerWidth;
@@ -222,10 +214,10 @@ export const WorkflowDiagramCanvasBase = ({
   }, [reactflow, rightDrawerState, rightDrawerWidth]);
 
   const handleNodesChanges = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ set }) =>
       (changes: NodeChange<WorkflowDiagramNode>[]) => {
         set(workflowDiagramState, (diagram) => {
-          if (isDefined(diagram) === false) {
+          if (!isDefined(diagram)) {
             throw new Error(
               'It must be impossible for the nodes to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
             );
@@ -243,8 +235,6 @@ export const WorkflowDiagramCanvasBase = ({
   const handleInit = useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
-        console.log('on init reactflow');
-
         if (!isDefined(containerRef.current)) {
           return;
         }
@@ -262,13 +252,9 @@ export const WorkflowDiagramCanvasBase = ({
           workflowDiagramStatusState,
         );
 
-        console.log('on init, status =', workflowDiagramStatus);
-
         if (workflowDiagramStatus !== 'computing-dimensions') {
           return;
         }
-
-        console.log('set state to DONE');
 
         set(workflowDiagramStatusState, 'done');
 
@@ -278,26 +264,31 @@ export const WorkflowDiagramCanvasBase = ({
 
         const workflowStepToOpenByDefault = getSnapshotValue(
           snapshot,
-          workflowStepToOpenByDefaultState,
+          workflowRunStepToOpenByDefaultState,
         );
 
         if (isDefined(workflowStepToOpenByDefault)) {
           const workflowId = getSnapshotValue(snapshot, workflowIdState);
+          if (!isDefined(workflowId)) {
+            throw new Error(
+              'The workflow id must be set; ensure the workflow id is always set before rendering the workflow diagram.',
+            );
+          }
 
           set(workflowSelectedNodeState, workflowStepToOpenByDefault.id);
 
           openWorkflowRunViewStepInCommandMenu(
-            workflowId!,
+            workflowId,
             workflowStepToOpenByDefault.data.name,
             getIcon(getWorkflowNodeIconKey(workflowStepToOpenByDefault.data)),
           );
 
           setInitialWorkflowRunRightDrawerTab({
             workflowSelectedNode: workflowStepToOpenByDefault.id,
-            stepExecutionStatus: workflowStepToOpenByDefault.data.runStatus!,
+            stepExecutionStatus: workflowStepToOpenByDefault.data.runStatus,
           });
 
-          set(workflowStepToOpenByDefaultState, undefined);
+          set(workflowRunStepToOpenByDefaultState, undefined);
         }
       },
     [
