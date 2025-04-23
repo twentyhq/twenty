@@ -276,7 +276,7 @@ export class ObjectMetadataMigrationService {
         relationToDelete.toFieldMetadataId,
       ]);
 
-      if (relationToDelete.direction === 'from') {
+      if (relationToDelete.direction === 'from' && !isNewRelationEnabled) {
         await this.workspaceMigrationService.createCustomMigration(
           generateMigrationName(
             `delete-${RELATION_MIGRATION_PRIORITY_PREFIX}-${relationToDelete.fromObjectName}-${relationToDelete.toObjectName}`,
