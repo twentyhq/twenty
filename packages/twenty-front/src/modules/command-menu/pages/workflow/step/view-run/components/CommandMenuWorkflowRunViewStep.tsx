@@ -1,8 +1,9 @@
 import { getIsInputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsInputTabDisabled';
 import { getIsOutputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsOutputTabDisabled';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
+import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
@@ -18,7 +19,7 @@ import {
 } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
 import { getWorkflowRunStepExecutionStatus } from '@/workflow/workflow-steps/utils/getWorkflowRunStepExecutionStatus';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui/display';
 
@@ -42,11 +43,18 @@ export const CommandMenuWorkflowRunViewStep = () => {
 
   const workflowRun = useWorkflowRun({ workflowRunId });
 
-  const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
+  const commandMenuPageComponentInstance = useComponentInstanceStateContext(
+    CommandMenuPageComponentInstanceContext,
+  );
+  if (isNull(commandMenuPageComponentInstance)) {
+    throw new Error(
+      'CommandMenuPageComponentInstanceContext is not defined. This component should be used within CommandMenuPageComponentInstanceContext.',
+    );
+  }
 
   const activeTabId = useRecoilComponentValueV2(
     activeTabIdComponentState,
-    commandMenuPageInfo.instanceId,
+    commandMenuPageComponentInstance.instanceId,
   );
 
   if (!isDefined(workflowRun)) {
@@ -93,7 +101,7 @@ export const CommandMenuWorkflowRunViewStep = () => {
         <StyledTabList
           tabs={tabs}
           behaveAsLinks={false}
-          componentInstanceId={commandMenuPageInfo.instanceId}
+          componentInstanceId={commandMenuPageComponentInstance.instanceId}
         />
 
         {activeTabId === WorkflowRunTabId.OUTPUT ? (
