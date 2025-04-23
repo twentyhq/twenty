@@ -40,6 +40,7 @@ import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-
 import { SearchVectorService } from 'src/engine/metadata-modules/search-vector/search-vector.service';
 import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
@@ -68,6 +69,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly objectMetadataMigrationService: ObjectMetadataMigrationService,
     private readonly objectMetadataRelatedRecordsService: ObjectMetadataRelatedRecordsService,
     private readonly indexMetadataService: IndexMetadataService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly featureFlagService: FeatureFlagService,
   ) {
     super(objectMetadataRepository);
@@ -235,6 +237,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       objectMetadataInput.workspaceId,
     );
+
+    await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
+      workspaceId: objectMetadataInput.workspaceId,
+    });
 
     return createdObjectMetadata;
   }
@@ -440,6 +446,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       workspaceId,
     );
+
+    await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
+      workspaceId,
+    });
 
     return objectMetadata;
   }

@@ -28,10 +28,17 @@ export class WorkspaceEntityManager extends EntityManager {
 
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
+    shouldBypassPermissionChecks = false,
     roleId?: string,
   ): WorkspaceRepository<Entity> {
     const dataSource = this.connection as WorkspaceDataSource;
-    const repositoryKey = `${dataSource.getMetadata(target).name}_${roleId ?? 'default'}${dataSource.rolesPermissionsVersion ? `_${dataSource.rolesPermissionsVersion}` : ''}${dataSource.featureFlagMapVersion ? `_${dataSource.featureFlagMapVersion}` : ''}`;
+
+    const repositoryKey = this.getRepositoryKey({
+      target,
+      dataSource,
+      roleId,
+      shouldBypassPermissionChecks,
+    });
     const repoFromMap = this.repositories.get(repositoryKey);
 
     if (repoFromMap) {
@@ -53,10 +60,36 @@ export class WorkspaceEntityManager extends EntityManager {
       dataSource.featureFlagMap,
       this.queryRunner,
       objectPermissions,
+      shouldBypassPermissionChecks,
     );
 
     this.repositories.set(repositoryKey, newRepository);
 
     return newRepository;
+  }
+
+  private getRepositoryKey({
+    target,
+    dataSource,
+    roleId,
+    shouldBypassPermissionChecks,
+  }: {
+    target: EntityTarget<any>;
+    dataSource: WorkspaceDataSource;
+    shouldBypassPermissionChecks: boolean;
+    roleId?: string;
+  }) {
+    const repositoryPrefix = dataSource.getMetadata(target).name;
+    const roleIdSuffix = roleId ? `_${roleId}` : '';
+    const rolesPermissionsVersionSuffix = dataSource.rolesPermissionsVersion
+      ? `_${dataSource.rolesPermissionsVersion}`
+      : '';
+    const featureFlagMapVersionSuffix = dataSource.featureFlagMapVersion
+      ? `_${dataSource.featureFlagMapVersion}`
+      : '';
+
+    return shouldBypassPermissionChecks
+      ? `${repositoryPrefix}_bypass${featureFlagMapVersionSuffix}`
+      : `${repositoryPrefix}${roleIdSuffix}${rolesPermissionsVersionSuffix}${featureFlagMapVersionSuffix}`;
   }
 }

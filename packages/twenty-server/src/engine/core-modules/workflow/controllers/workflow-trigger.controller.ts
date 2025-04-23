@@ -6,7 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkflowTriggerRestApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-rest-api-exception.filter';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import {
+  WorkflowVersionStatus,
+  WorkflowVersionWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
   WorkflowTriggerException,
@@ -64,7 +67,7 @@ export class WorkflowTriggerController {
       workflow.lastPublishedVersionId === ''
     ) {
       throw new WorkflowTriggerException(
-        'Workflow not activated',
+        'Workflow has not been activated',
         WorkflowTriggerExceptionCode.INVALID_WORKFLOW_STATUS,
       );
     }
@@ -88,6 +91,13 @@ export class WorkflowTriggerController {
       throw new WorkflowTriggerException(
         'Workflow does not have a Webhook trigger',
         WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+      );
+    }
+
+    if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
+      throw new WorkflowTriggerException(
+        'Workflow version is not active',
+        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_STATUS,
       );
     }
 
