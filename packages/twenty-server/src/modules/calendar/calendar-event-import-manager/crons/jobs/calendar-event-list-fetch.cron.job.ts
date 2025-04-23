@@ -45,15 +45,12 @@ export class CalendarEventListFetchCronJob {
       },
     });
 
-    const shouldBypassPermissionChecks = true;
-
     for (const activeWorkspace of activeWorkspaces) {
       try {
         const calendarChannelRepository =
           await this.twentyORMGlobalManager.getRepositoryForWorkspace(
             activeWorkspace.id,
             'calendarChannel',
-            shouldBypassPermissionChecks,
           );
 
         const calendarChannels = await calendarChannelRepository.find({

@@ -13,8 +13,6 @@ export class ViewService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  private shouldBypassPermissionChecks = true;
-
   async addFieldToViews({
     workspaceId,
     fieldId,
@@ -34,7 +32,6 @@ export class ViewService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'viewField',
-        this.shouldBypassPermissionChecks,
       );
 
     for (const viewId of viewsIds) {
@@ -78,7 +75,6 @@ export class ViewService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'viewField',
-        this.shouldBypassPermissionChecks,
       );
     const viewsWithField = await viewFieldRepository.find({
       where: {
@@ -115,7 +111,6 @@ export class ViewService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'view',
-        this.shouldBypassPermissionChecks,
       );
 
     return viewRepository
@@ -138,7 +133,6 @@ export class ViewService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'view',
-        this.shouldBypassPermissionChecks,
       );
 
     await viewRepository.update(

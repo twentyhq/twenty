@@ -76,6 +76,7 @@ export class WorkspaceRepository<
       return new WorkspaceQueryBuilder(
         queryBuilder,
         this.objectRecordsPermissions,
+        this.internalContext,
         this.shouldBypassPermissionChecks,
       );
     }
