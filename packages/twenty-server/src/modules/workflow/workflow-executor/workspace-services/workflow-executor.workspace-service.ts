@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
@@ -110,15 +112,11 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
     }
 
     const shouldContinue =
-      actionOutput.result ||
+      isDefined(actionOutput.result) ||
       step.settings.errorHandlingOptions.continueOnFailure.value;
 
     if (shouldContinue) {
-      if (!step.nextStepIds?.[0]) {
-        return actionOutput;
-      }
-
-      const updatedContext = actionOutput.result
+      const updatedContext = isDefined(actionOutput.result)
         ? {
             ...context,
             [step.id]: actionOutput.result,
@@ -130,6 +128,10 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
         stepOutput,
         context: updatedContext,
       });
+
+      if (!step.nextStepIds?.[0]) {
+        return actionOutput;
+      }
 
       // TODO: handle multiple next steps
       return await this.execute({

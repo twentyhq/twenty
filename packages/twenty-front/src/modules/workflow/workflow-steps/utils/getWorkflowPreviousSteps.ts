@@ -4,15 +4,15 @@ export const getPreviousSteps = (
   steps: WorkflowStep[],
   currentStepId: string,
 ): WorkflowStep[] => {
-  const directPreviousSteps = steps.filter((step) =>
+  const parentSteps = steps.filter((step) =>
     step.nextStepIds?.includes(currentStepId),
   );
 
-  const previousSteps = directPreviousSteps
+  const grandParentSteps = parentSteps
     .map((step) => {
       return getPreviousSteps(steps, step.id);
     })
     .flat();
 
-  return Array.from(new Set([...directPreviousSteps, ...previousSteps]));
+  return Array.from(new Set([...grandParentSteps, ...parentSteps]));
 };

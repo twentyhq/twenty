@@ -16,10 +16,7 @@ export const getWorkflowPreviousStepId = ({
     return TRIGGER_STEP_ID;
   }
 
-  const stepIndex = steps.findIndex((step) => step.id === stepId);
-  if (stepIndex === -1) {
-    throw new Error('Step not found');
-  }
+  const previousStep = steps.find((step) => step.nextStepIds?.includes(stepId));
 
-  return steps[stepIndex - 1].id;
+  return previousStep?.id;
 };

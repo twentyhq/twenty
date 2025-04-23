@@ -21,7 +21,7 @@ export const baseWorkflowActionSchema = z.object({
   id: z.string(),
   name: z.string(),
   valid: z.boolean(),
-  nextStepIds: z.array(z.string()).optional(),
+  nextStepIds: z.array(z.string()).optional().nullable(),
 });
 
 export const baseTriggerSchema = z.object({
