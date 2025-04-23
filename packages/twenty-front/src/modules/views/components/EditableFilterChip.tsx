@@ -2,6 +2,7 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { getOperandLabelShort } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
+import { isFilterOperandExpectingValue } from '@/object-record/object-filter-dropdown/utils/isFilterOperandExpectingValue';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isValidSubFieldName } from '@/settings/data-model/utils/isValidSubFieldName';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
@@ -43,7 +44,9 @@ export const EditableFilterChip = ({
     ? `${recordFilter.label} / ${subFieldLabel}`
     : recordFilter.label;
 
-  const labelKey = `${fieldNameLabel}${isNonEmptyString(recordFilter.value) ? operandLabelShort : ''}`;
+  console.log(isFilterOperandExpectingValue(recordFilter.operand));
+
+  const labelKey = `${fieldNameLabel}${isNonEmptyString(recordFilter.value) || !isFilterOperandExpectingValue(recordFilter.operand) ? operandLabelShort : ''}`;
 
   return (
     <SortOrFilterChip
