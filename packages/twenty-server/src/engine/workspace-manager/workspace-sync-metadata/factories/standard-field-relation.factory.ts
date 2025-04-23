@@ -4,7 +4,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { ObjectType } from 'typeorm/common/ObjectType';
 
 import { WorkspaceDynamicRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-dynamic-relation-metadata-args.interface';
-import { WorkspaceEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-entity-metadata-args.interface';
 import { WorkspaceJoinColumnsMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-join-columns-metadata-args.interface';
 import { WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
@@ -32,10 +31,7 @@ export class StandardFieldRelationFactory {
   ): FieldMetadataEntity<FieldMetadataType.RELATION>[] {
     return customObjectFactories.flatMap((customObjectFactory) =>
       this.computeFieldRelationMetadataFromDecorators({
-        workspaceEntityMetadataArgs: {
-          ...customObjectFactory.metadata,
-          object: customObjectFactory.object,
-        },
+        objectNameSingular: customObjectFactory.object.nameSingular,
         workspaceStaticRelationMetadataArgsCollection: [],
         workspaceDynamicRelationMetadataArgsCollection: [],
         joinColumnsMetadataArgsCollection: [],
@@ -81,7 +77,7 @@ export class StandardFieldRelationFactory {
         acc.set(
           workspaceEntityMetadataArgs.standardId,
           this.computeFieldRelationMetadataFromDecorators({
-            workspaceEntityMetadataArgs,
+            objectNameSingular: workspaceEntityMetadataArgs.nameSingular,
             workspaceStaticRelationMetadataArgsCollection,
             workspaceDynamicRelationMetadataArgsCollection,
             joinColumnsMetadataArgsCollection,
@@ -97,14 +93,14 @@ export class StandardFieldRelationFactory {
   }
 
   private computeFieldRelationMetadataFromDecorators({
-    workspaceEntityMetadataArgs,
+    objectNameSingular,
     workspaceStaticRelationMetadataArgsCollection,
     workspaceDynamicRelationMetadataArgsCollection,
     joinColumnsMetadataArgsCollection,
     context,
     originalObjectMetadataMap,
   }: {
-    workspaceEntityMetadataArgs: WorkspaceEntityMetadataArgs;
+    objectNameSingular: string;
     workspaceStaticRelationMetadataArgsCollection: WorkspaceRelationMetadataArgs[];
     workspaceDynamicRelationMetadataArgsCollection: WorkspaceDynamicRelationMetadataArgs[];
     joinColumnsMetadataArgsCollection: WorkspaceJoinColumnsMetadataArgs[];
@@ -118,13 +114,11 @@ export class StandardFieldRelationFactory {
       return [];
     }
 
-    const sourceObjectNameSingular = workspaceEntityMetadataArgs.nameSingular;
-    const sourceObjectMetadata =
-      originalObjectMetadataMap[sourceObjectNameSingular];
+    const sourceObjectMetadata = originalObjectMetadataMap[objectNameSingular];
 
     assert(
       sourceObjectMetadata,
-      `Source object ${sourceObjectNameSingular} not found in database while parsing ${workspaceEntityMetadataArgs.nameSingular} relations`,
+      `Source object ${objectNameSingular} not found in database while parsing ${objectNameSingular} relations`,
     );
 
     const staticRelationsFromDynamicRelations =
@@ -183,7 +177,7 @@ export class StandardFieldRelationFactory {
         const sourceFieldMetadataName = workspaceRelationMetadataArgs.name;
         const targetFieldMetadataName =
           workspaceRelationMetadataArgs.inverseSideFieldKey ??
-          sourceObjectNameSingular;
+          objectNameSingular;
 
         let joinColumnName;
 
