@@ -150,7 +150,7 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CHATBOT_STANDARD_FIELD_IDS.whatsappIntegration,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: msg`Whatsapp Integration`,
+    label: msg`Whatsapp Integrations`,
     description: msg`Integration linked to the charge`,
     icon: 'IconPhone',
     inverseSideTarget: () => WhatsappWorkspaceEntity,
