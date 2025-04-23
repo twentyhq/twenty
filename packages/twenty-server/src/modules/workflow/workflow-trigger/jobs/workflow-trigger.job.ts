@@ -46,9 +46,16 @@ export class WorkflowTriggerJob {
           'workflow',
         );
 
-      const workflow = await workflowRepository.findOneByOrFail({
+      const workflow = await workflowRepository.findOneBy({
         id: data.workflowId,
       });
+
+      if (!workflow) {
+        throw new WorkflowTriggerException(
+          'Workflow not found',
+          WorkflowTriggerExceptionCode.NOT_FOUND,
+        );
+      }
 
       if (!workflow.lastPublishedVersionId) {
         throw new WorkflowTriggerException(
@@ -62,10 +69,16 @@ export class WorkflowTriggerJob {
           'workflowVersion',
         );
 
-      const workflowVersion = await workflowVersionRepository.findOneByOrFail({
+      const workflowVersion = await workflowVersionRepository.findOneBy({
         id: workflow.lastPublishedVersionId,
       });
 
+      if (!workflowVersion) {
+        throw new WorkflowTriggerException(
+          'Workflow version not found',
+          WorkflowTriggerExceptionCode.NOT_FOUND,
+        );
+      }
       if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
         throw new WorkflowTriggerException(
           'Workflow version is not active',
