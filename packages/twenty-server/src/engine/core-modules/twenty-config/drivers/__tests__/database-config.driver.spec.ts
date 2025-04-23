@@ -449,69 +449,69 @@ describe('DatabaseConfigDriver', () => {
     it('should not schedule multiple refreshes for the same key', async () => {
       const originalScheduleRefresh = driver['scheduleRefresh'];
       const refreshSpyFn = jest.fn();
-   
+
       const refreshingKeys = new Set<keyof ConfigVariables>();
-      
+
       driver['scheduleRefresh'] = jest.fn().mockImplementation(async (key) => {
         if (refreshingKeys.has(key)) {
           return;
         }
-        
+
         refreshingKeys.add(key);
         refreshSpyFn(key);
-        
+
         refreshingKeys.delete(key);
       });
-      
+
       const key = 'MISSING_KEY' as keyof ConfigVariables;
-      
+
       // Call multiple times in sequence
       await driver['scheduleRefresh'](key);
       await driver['scheduleRefresh'](key);
       await driver['scheduleRefresh'](key);
-      
+
       // refreshSpyFn should be called three times because we're not keeping
       // the key in refreshingKeys across calls (our mock clears it immediately)
       expect(refreshSpyFn).toHaveBeenCalledTimes(3);
-      
+
       refreshSpyFn.mockClear();
-      
+
       let isRefreshing = false;
+
       driver['scheduleRefresh'] = jest.fn().mockImplementation(async (key) => {
         if (isRefreshing) {
           return;
         }
-        
+
         isRefreshing = true;
         refreshSpyFn(key);
-        
       });
-      
+
       // Make concurrent calls
       const promise1 = driver['scheduleRefresh'](key);
       const promise2 = driver['scheduleRefresh'](key);
       const promise3 = driver['scheduleRefresh'](key);
-      
+
       await Promise.all([promise1, promise2, promise3]);
-      
+
       expect(refreshSpyFn).toHaveBeenCalledTimes(1);
       expect(refreshSpyFn).toHaveBeenCalledWith(key);
-      
+
       driver['scheduleRefresh'] = originalScheduleRefresh;
     });
-    
+
     it('should handle refresh failures and clean up', async () => {
       // Mock the internal scheduleRefresh implementation to directly test error handling
       const originalScheduleRefresh = driver['scheduleRefresh'];
       const error = new Error('Fetch error');
-      
+
       driver['scheduleRefresh'] = jest.fn().mockImplementation(async (key) => {
         if (driver['refreshingKeys'].has(key)) {
           return;
         }
-        
+
         driver['refreshingKeys'].add(key);
-        
+
         try {
           // Simulate a fetch error
           throw error;
@@ -520,13 +520,13 @@ describe('DatabaseConfigDriver', () => {
           throw e;
         }
       });
-      
+
       const key = 'MISSING_KEY' as keyof ConfigVariables;
-      
+
       await expect(driver['scheduleRefresh'](key)).rejects.toThrow(error);
-      
+
       expect(driver['refreshingKeys'].has(key)).toBe(false);
-      
+
       driver['scheduleRefresh'] = originalScheduleRefresh;
     });
 
