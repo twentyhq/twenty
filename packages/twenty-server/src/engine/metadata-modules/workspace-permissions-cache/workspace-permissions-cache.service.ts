@@ -196,7 +196,7 @@ export class WorkspacePermissionsCacheService {
     userWorkspaceId?: string;
   }): Promise<string | undefined> {
     if (!isDefined(userWorkspaceId)) {
-      return undefined;
+      return;
     }
 
     const userWorkspaceRoleMap = await this.getUserWorkspaceRoleMapFromCache({

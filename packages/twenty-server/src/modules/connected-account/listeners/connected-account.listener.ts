@@ -25,12 +25,10 @@ export class ConnectedAccountListener {
     for (const eventPayload of payload.events) {
       const workspaceMemberId = eventPayload.properties.before.accountOwnerId;
       const workspaceId = payload.workspaceId;
-      const shouldBypassPermissionChecks = true;
       const workspaceMemberRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
           workspaceId,
           'workspaceMember',
-          shouldBypassPermissionChecks,
         );
       const workspaceMember = await workspaceMemberRepository.findOneOrFail({
         where: { id: workspaceMemberId },

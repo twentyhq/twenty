@@ -37,13 +37,10 @@ export class CallWebhookJobsJob {
     // Also change the openApi schema for webhooks
     // packages/twenty-server/src/engine/core-modules/open-api/utils/computeWebhooks.utils.ts
 
-    const shouldBypassPermissionChecks = true;
-
     const webhookRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WebhookWorkspaceEntity>(
         workspaceEventBatch.workspaceId,
         'webhook',
-        shouldBypassPermissionChecks,
       );
 
     const [nameSingular, operation] = workspaceEventBatch.name.split('.');

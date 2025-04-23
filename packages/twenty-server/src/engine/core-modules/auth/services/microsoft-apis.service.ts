@@ -54,8 +54,6 @@ export class MicrosoftAPIsService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  private shouldBypassPermissionChecks = true;
-
   async refreshMicrosoftRefreshToken(input: {
     handle: string;
     workspaceMemberId: string;
@@ -77,7 +75,6 @@ export class MicrosoftAPIsService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
         workspaceId,
         'connectedAccount',
-        this.shouldBypassPermissionChecks,
       );
 
     const connectedAccount = await connectedAccountRepository.findOne({
@@ -91,21 +88,18 @@ export class MicrosoftAPIsService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarChannelWorkspaceEntity>(
         workspaceId,
         'calendarChannel',
-        this.shouldBypassPermissionChecks,
       );
 
     const messageChannelRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
         workspaceId,
         'messageChannel',
-        this.shouldBypassPermissionChecks,
       );
 
     const messageFolderRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageFolderWorkspaceEntity>(
         workspaceId,
         'messageFolder',
-        this.shouldBypassPermissionChecks,
       );
 
     const workspaceDataSource =
@@ -282,7 +276,6 @@ export class MicrosoftAPIsService {
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
             workspaceId,
             'workspaceMember',
-            this.shouldBypassPermissionChecks,
           );
 
         const workspaceMember = await workspaceMemberRepository.findOneOrFail({
