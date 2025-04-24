@@ -3,6 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -111,6 +112,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarEventWorkspaceEntity,
     inverseSideFieldKey: 'calendarEventParticipants',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   calendarEvent: Relation<CalendarEventWorkspaceEntity>;
 
@@ -125,6 +127,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'calendarEventParticipants',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
@@ -140,6 +143,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     icon: 'IconUser',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'calendarEventParticipants',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;
