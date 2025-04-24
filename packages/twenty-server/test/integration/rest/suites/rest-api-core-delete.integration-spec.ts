@@ -5,18 +5,36 @@ import {
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 
 describe('Core REST API Delete One endpoint', () => {
-  beforeAll(
-    async () =>
-      await makeRestAPIRequest({
-        method: 'post',
-        path: `/people`,
-        body: {
-          id: PERSON_1_ID,
-        },
-      }),
-  );
+  beforeEach(async () => {
+    await makeRestAPIRequest({
+      method: 'post',
+      path: `/people`,
+      body: {
+        id: PERSON_1_ID,
+      },
+    });
+  });
 
   it('should delete one person', async () => {
+    await makeRestAPIRequest({
+      method: 'delete',
+      path: `/people/${PERSON_1_ID}`,
+    })
+      .expect(200)
+      .expect((res) =>
+        expect(res.body.data.deletePerson).toEqual({ id: PERSON_1_ID }),
+      );
+  });
+
+  it('should delete one person with favorite', async () => {
+    await makeRestAPIRequest({
+      method: 'post',
+      path: `/favorites`,
+      body: {
+        personId: PERSON_1_ID,
+      },
+    });
+
     await makeRestAPIRequest({
       method: 'delete',
       path: `/people/${PERSON_1_ID}`,
