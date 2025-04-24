@@ -107,6 +107,7 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
         roleId,
+        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
 

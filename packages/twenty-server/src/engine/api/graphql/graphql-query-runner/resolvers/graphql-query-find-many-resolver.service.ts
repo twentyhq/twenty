@@ -160,6 +160,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
         roleId,
+        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
 

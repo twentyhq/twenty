@@ -12,6 +12,7 @@ import {
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
+import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -20,7 +21,6 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
-import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
@@ -28,6 +28,7 @@ import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/fact
 import { QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
 import { Depth } from 'src/engine/api/rest/input-factories/depth-input.factory';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 interface PageInfo {
   hasNextPage?: boolean;
@@ -52,6 +53,7 @@ export class RestApiCoreServiceV2 {
     private readonly getVariablesFactory: GetVariablesFactory,
     private readonly recordInputTransformerService: RecordInputTransformerService,
     protected readonly apiEventEmitterService: ApiEventEmitterService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   async delete(request: Request) {
@@ -424,7 +426,7 @@ export class RestApiCoreServiceV2 {
   }
 
   private async getRepositoryAndMetadataOrFail(request: Request) {
-    const { workspace } = request;
+    const { workspace, apiKey, userWorkspaceId } = request;
     const { object: parsedObject } = parseCorePath(request);
 
     const objectMetadata = await this.coreQueryBuilderFactory.getObjectMetadata(
@@ -440,6 +442,9 @@ export class RestApiCoreServiceV2 {
       throw new BadRequestException('Workspace not found');
     }
 
+    const dataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace(workspace.id);
+
     const objectMetadataNameSingular =
       objectMetadata.objectMetadataMapItem.nameSingular;
 
@@ -449,14 +454,19 @@ export class RestApiCoreServiceV2 {
         objectMetadataNameSingular,
       );
 
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ObjectRecord>(
-        workspace.id,
-        objectMetadataNameSingular,
-      );
+    const shouldBypassPermissionChecks = !!apiKey;
 
-    const dataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace(workspace.id);
+    const roleId =
+      await this.workspacePermissionsCacheService.getRoleIdFromUserWorkspaceId({
+        workspaceId: workspace.id,
+        userWorkspaceId,
+      });
+
+    const repository = dataSource.getRepository<ObjectRecord>(
+      objectMetadataNameSingular,
+      shouldBypassPermissionChecks,
+      roleId,
+    );
 
     return {
       objectMetadataNameSingular,

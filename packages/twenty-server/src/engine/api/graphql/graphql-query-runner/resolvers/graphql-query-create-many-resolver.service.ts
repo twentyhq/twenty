@@ -53,12 +53,15 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       objectMetadataItemWithFieldMaps,
     );
 
+    const shouldBypassPermissionChecks = executionArgs.isExecutedByApiKey;
+
     await this.processNestedRelationsIfNeeded(
       executionArgs,
       upsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
       featureFlagsMap,
+      shouldBypassPermissionChecks,
       roleId,
     );
 
@@ -329,6 +332,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
     objectMetadataMaps: ObjectMetadataMaps,
     featureFlagsMap: Record<FeatureFlagKey, boolean>,
+    shouldBypassPermissionChecks: boolean,
     roleId?: string,
   ): Promise<void> {
     if (!executionArgs.graphqlQuerySelectedFieldsResult.relations) {
@@ -346,6 +350,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       isNewRelationEnabled:
         featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
       roleId,
+      shouldBypassPermissionChecks,
     });
   }
 

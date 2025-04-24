@@ -81,7 +81,9 @@ export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends Acti
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'view',
-        failOnMetadataCacheMiss,
+        {
+          shouldFailIfMetadataNotFound: failOnMetadataCacheMiss,
+        },
       );
 
     await viewRepository.update(
