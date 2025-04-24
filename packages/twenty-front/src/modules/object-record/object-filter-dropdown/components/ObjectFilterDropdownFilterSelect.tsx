@@ -129,12 +129,14 @@ export const ObjectFilterDropdownFilterSelect = ({
         <DropdownMenuItemsContainer>
           {visibleColumnsFieldMetadataItems.map((visibleFieldMetadataItem) => (
             <ObjectFilterDropdownFilterSelectMenuItem
+              key={visibleFieldMetadataItem.id}
               fieldMetadataItemToSelect={visibleFieldMetadataItem}
             />
           ))}
           {shouldShowSeparator && <DropdownMenuSeparator />}
           {hiddenColumnsFieldMetadataItems.map((hiddenFieldMetadataItem) => (
             <ObjectFilterDropdownFilterSelectMenuItem
+              key={hiddenFieldMetadataItem.id}
               fieldMetadataItemToSelect={hiddenFieldMetadataItem}
             />
           ))}

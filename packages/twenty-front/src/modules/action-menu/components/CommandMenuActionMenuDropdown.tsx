@@ -81,7 +81,7 @@ export const CommandMenuActionMenuDropdown = () => {
             selectableItemIdArray={selectableItemIdArray}
           >
             {recordSelectionActions.map((action) => (
-              <ActionComponent action={action} />
+              <ActionComponent action={action} key={action.key} />
             ))}
           </SelectableList>
         </DropdownMenuItemsContainer>

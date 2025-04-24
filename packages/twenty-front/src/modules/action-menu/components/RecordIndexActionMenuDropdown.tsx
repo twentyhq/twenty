@@ -89,7 +89,7 @@ export const RecordIndexActionMenuDropdown = () => {
               selectableListInstanceId={dropdownId}
             >
               {recordIndexActions.map((action) => (
-                <ActionComponent action={action} />
+                <ActionComponent action={action} key={action.key} />
               ))}
               <SelectableListItem itemId="more-actions" key="more-actions">
                 <MenuItem
