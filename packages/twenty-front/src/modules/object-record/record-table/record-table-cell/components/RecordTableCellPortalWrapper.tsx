@@ -31,7 +31,7 @@ export const RecordTableCellPortalWrapper = ({
     visibleTableColumnsComponentSelector,
   );
 
-  const recordId = allRecordIds[position.row];
+  const recordId = allRecordIds.at(position.row);
   if (!isDefined(anchorElement) || !isDefined(recordId)) {
     return null;
   }
