@@ -4,13 +4,11 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
-
 export const useTriggerActionMenuDropdown = ({
   recordTableId,
 }: {
@@ -25,18 +23,15 @@ export const useTriggerActionMenuDropdown = ({
     recordTableId,
   );
 
+  const actionMenuDropdownId =
+    getActionMenuDropdownIdFromActionMenuId(actionMenuInstanceId);
+
   const recordIndexActionMenuDropdownPositionState = extractComponentState(
     recordIndexActionMenuDropdownPositionComponentState,
-    getActionMenuDropdownIdFromActionMenuId(actionMenuInstanceId),
+    actionMenuDropdownId,
   );
 
-  const isActionMenuDropdownOpenState = extractComponentState(
-    isDropdownOpenComponentState,
-    getActionMenuDropdownIdFromActionMenuId(actionMenuInstanceId),
-  );
-
-  const { setActiveDropdownFocusIdAndMemorizePrevious } =
-    useSetActiveDropdownFocusIdAndMemorizePrevious();
+  const { openDropdown } = useDropdownV2();
 
   const triggerActionMenuDropdown = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -57,19 +52,13 @@ export const useTriggerActionMenuDropdown = ({
           set(isRowSelectedFamilyState(recordId), true);
         }
 
-        set(isActionMenuDropdownOpenState, true);
-
-        const actionMenuDropdownId =
-          getActionMenuDropdownIdFromActionMenuId(actionMenuInstanceId);
-
-        setActiveDropdownFocusIdAndMemorizePrevious(actionMenuDropdownId);
+        openDropdown(actionMenuDropdownId);
       },
     [
-      isActionMenuDropdownOpenState,
-      isRowSelectedFamilyState,
       recordIndexActionMenuDropdownPositionState,
-      setActiveDropdownFocusIdAndMemorizePrevious,
-      actionMenuInstanceId,
+      isRowSelectedFamilyState,
+      openDropdown,
+      actionMenuDropdownId,
     ],
   );
 
