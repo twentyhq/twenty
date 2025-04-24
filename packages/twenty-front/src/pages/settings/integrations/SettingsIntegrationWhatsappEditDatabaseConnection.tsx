@@ -23,7 +23,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const settingsEditIntegrationWhatsappConnectionFormSchema = z.object({
   id: z.string(),
-  label: z.string().min(1),
+  name: z.string().min(1),
   phoneId: z.string(),
   businessAccountId: z.string(),
   accessToken: z.string().min(1),
@@ -76,7 +76,7 @@ export const SettingsIntegrationWhatsappEditDatabaseConnection = () => {
       ),
       defaultValues: {
         id: activeConnection?.id,
-        label: activeConnection?.label,
+        name: activeConnection?.name,
         phoneId: activeConnection?.phoneId,
         businessAccountId: activeConnection?.businessAccountId,
         appId: activeConnection?.appId,
@@ -92,7 +92,7 @@ export const SettingsIntegrationWhatsappEditDatabaseConnection = () => {
     try {
       await updateWhatsappIntegration({
         id: formValues.id,
-        label: formValues.label,
+        name: formValues.name,
         phoneId: formValues.phoneId,
         businessAccountId: formValues.businessAccountId,
         accessToken: formValues.accessToken,
@@ -110,7 +110,7 @@ export const SettingsIntegrationWhatsappEditDatabaseConnection = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={`Edit ${activeConnection?.label}`}
+      title={`Edit ${activeConnection?.name}`}
       links={[
         {
           children: 'Workspace',
@@ -124,7 +124,7 @@ export const SettingsIntegrationWhatsappEditDatabaseConnection = () => {
           children: integration.text,
           href: `${settingsIntegrationsPagePath}/whatsapp`,
         },
-        { children: `Edit ${activeConnection?.label}` },
+        { children: `Edit ${activeConnection?.name}` },
       ]}
       actionButton={
         <SaveAndCancelButtons

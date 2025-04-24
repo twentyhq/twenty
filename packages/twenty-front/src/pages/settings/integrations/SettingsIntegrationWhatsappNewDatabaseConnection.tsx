@@ -20,7 +20,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const settingsIntegrationWhatsappConnectionFormSchema = z.object({
-  label: z.string().min(1),
+  name: z.string().min(1),
   phoneId: z.string(),
   businessAccountId: z.string(),
   accessToken: z.string(),
@@ -71,7 +71,7 @@ export const SettingsIntegrationWhatsappNewDatabaseConnection = () => {
 
     try {
       await createWhatsappIntegration({
-        label: formValues.label,
+        name: formValues.name,
         phoneId: formValues.phoneId,
         businessAccountId: formValues.businessAccountId,
         accessToken: formValues.accessToken,
