@@ -6,6 +6,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { isDefined } from 'twenty-shared/utils';
 
 // do we need to test this?
 export const useTimelineActivities = (
@@ -41,7 +42,8 @@ export const useTimelineActivities = (
 
   const activityIds = timelineActivities
     .filter((timelineActivity) => timelineActivity.name.match(/note|task/i))
-    .map((timelineActivity) => timelineActivity.linkedRecordId);
+    .map((timelineActivity) => timelineActivity.linkedRecordId)
+    .filter(isDefined);
 
   const { loading: loadingLinkedObjectsTitle } =
     useLinkedObjectsTitle(activityIds);

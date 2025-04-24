@@ -2,7 +2,8 @@ import { msg } from '@lingui/core/macro';
 import { Relation } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -37,11 +38,12 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.messageChannel,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Message Channel`,
     description: msg`Message Channel`,
     icon: 'IconMessage',
     inverseSideTarget: () => MessageChannelWorkspaceEntity,
+    inverseSideFieldKey: 'messageFolders',
   })
   messageChannel: Relation<MessageChannelWorkspaceEntity>;
 

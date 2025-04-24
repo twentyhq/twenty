@@ -43,6 +43,7 @@ describe('parseFilter', () => {
     ...objectMetadataItemMock,
     fieldsById,
     fieldsByName,
+    fieldsByJoinColumnName: {},
   };
 
   it('should parse string filter test 1', () => {

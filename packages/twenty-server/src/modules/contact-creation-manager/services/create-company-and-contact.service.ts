@@ -55,6 +55,9 @@ export class CreateCompanyAndContactService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         PersonWorkspaceEntity,
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
     const workspaceMembers =

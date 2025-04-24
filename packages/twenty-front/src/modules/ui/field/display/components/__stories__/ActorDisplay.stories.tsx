@@ -37,7 +37,7 @@ export const Catalog: Story = {
         },
         {
           name: 'avatarUrl',
-          values: [null, 'https://picsum.photos/16'],
+          values: [null, 'https://picsum.photos/id/237/16/16'],
           props: (avatarUrl: string) => ({ avatarUrl }),
         },
       ],

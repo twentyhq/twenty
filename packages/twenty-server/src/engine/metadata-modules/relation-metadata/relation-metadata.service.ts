@@ -3,13 +3,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import camelCase from 'lodash.camelcase';
-import { FindOneOptions, In, Repository } from 'typeorm';
-import { v4 as uuidV4 } from 'uuid';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { FindOneOptions, In, Repository } from 'typeorm';
+import { v4 as uuidV4 } from 'uuid';
 
+import { FieldMetadataDefaultSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
@@ -20,6 +24,7 @@ import {
   RelationMetadataException,
   RelationMetadataExceptionCode,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.exception';
+import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata-name.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
@@ -34,7 +39,6 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata-name.exception';
 
 import {
   RelationMetadataEntity,
@@ -56,6 +60,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly indexMetadataService: IndexMetadataService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(relationMetadataRepository);
   }
@@ -65,6 +70,11 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
   ): Promise<RelationMetadataEntity> {
     const objectMetadataMap = await this.getObjectMetadataMap(
       relationMetadataInput,
+    );
+
+    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsNewRelationEnabled,
+      relationMetadataInput.workspaceId,
     );
 
     try {
@@ -92,26 +102,76 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     const toId = uuidV4();
 
     const createdRelationFieldsMetadata =
-      await this.fieldMetadataRepository.save([
-        this.createFieldMetadataForRelationMetadata(
-          relationMetadataInput,
-          'from',
-          isCustom,
-          fromId,
-        ),
-        this.createFieldMetadataForRelationMetadata(
-          relationMetadataInput,
-          'to',
-          isCustom,
-          toId,
-        ),
-        this.createForeignKeyFieldMetadata(relationMetadataInput, columnName),
-      ]);
+      await this.fieldMetadataRepository.save(
+        [
+          this.createFieldMetadataForRelationMetadata(
+            relationMetadataInput,
+            'from',
+            isCustom,
+            fromId,
+          ),
+          this.createFieldMetadataForRelationMetadata(
+            relationMetadataInput,
+            'to',
+            isCustom,
+            toId,
+          ),
+          // We don't want to create the join column field metadata for new relation
+          ...(isNewRelationEnabled
+            ? []
+            : [
+                this.createForeignKeyFieldMetadata(
+                  relationMetadataInput,
+                  columnName,
+                ),
+              ]),
+        ].flat(),
+      );
 
     const createdRelationMetadata = await super.createOne({
       ...relationMetadataInput,
       fromFieldMetadataId: fromId,
       toFieldMetadataId: toId,
+    });
+
+    const fromFieldMetadata = createdRelationFieldsMetadata.find(
+      (fieldMetadata) => fieldMetadata.id === fromId,
+    );
+
+    if (!fromFieldMetadata) {
+      throw new RelationMetadataException(
+        `From field metadata not found`,
+        RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND,
+      );
+    }
+
+    const toFieldMetadata = createdRelationFieldsMetadata.find(
+      (fieldMetadata) => fieldMetadata.id === toId,
+    );
+
+    if (!toFieldMetadata) {
+      throw new RelationMetadataException(
+        `To field metadata not found`,
+        RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND,
+      );
+    }
+
+    await this.fieldMetadataRepository.update(fromId, {
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      } as Partial<FieldMetadataDefaultSettings>,
+      relationTargetFieldMetadataId: toId,
+      relationTargetObjectMetadataId: relationMetadataInput.toObjectMetadataId,
+    });
+
+    await this.fieldMetadataRepository.update(toId, {
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        joinColumnName: `${relationMetadataInput.toName}Id`,
+      } as Partial<FieldMetadataDefaultSettings>,
+      relationTargetFieldMetadataId: fromId,
+      relationTargetObjectMetadataId:
+        relationMetadataInput.fromObjectMetadataId,
     });
 
     await this.createWorkspaceCustomMigration(
@@ -123,17 +183,6 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     const toObjectMetadata =
       objectMetadataMap[relationMetadataInput.toObjectMetadataId];
 
-    const foreignKeyFieldMetadata = createdRelationFieldsMetadata.find(
-      (fieldMetadata) => fieldMetadata.type === FieldMetadataType.UUID,
-    );
-
-    if (!foreignKeyFieldMetadata) {
-      throw new RelationMetadataException(
-        `ForeignKey field metadata not found`,
-        RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND,
-      );
-    }
-
     const deletedAtFieldMetadata = toObjectMetadata.fields.find(
       (fieldMetadata) =>
         fieldMetadata.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
@@ -141,16 +190,29 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
 
     this.throwIfDeletedAtFieldMetadataNotFound(deletedAtFieldMetadata);
 
-    await this.indexMetadataService.createIndexMetadata(
-      relationMetadataInput.workspaceId,
-      toObjectMetadata,
-      [
-        foreignKeyFieldMetadata,
-        deletedAtFieldMetadata as FieldMetadataEntity<FieldMetadataType>,
-      ],
-      false,
-      false,
-    );
+    if (!isNewRelationEnabled) {
+      const foreignKeyFieldMetadata = createdRelationFieldsMetadata.find(
+        (fieldMetadata) => fieldMetadata.type === FieldMetadataType.UUID,
+      );
+
+      if (!foreignKeyFieldMetadata) {
+        throw new RelationMetadataException(
+          `ForeignKey field metadata not found`,
+          RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND,
+        );
+      }
+
+      await this.indexMetadataService.createIndexMetadata(
+        relationMetadataInput.workspaceId,
+        toObjectMetadata,
+        [
+          foreignKeyFieldMetadata,
+          deletedAtFieldMetadata as FieldMetadataEntity<FieldMetadataType>,
+        ],
+        false,
+        false,
+      );
+    }
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       relationMetadataInput.workspaceId,

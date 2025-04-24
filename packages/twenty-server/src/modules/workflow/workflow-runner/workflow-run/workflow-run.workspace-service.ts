@@ -3,10 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   StepOutput,
   WorkflowRunOutput,
@@ -20,9 +24,6 @@ import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
@@ -151,7 +152,6 @@ export class WorkflowRunWorkspaceService {
 
     await this.emitWorkflowRunUpdatedEvent({
       workflowRunBefore: workflowRunToUpdate,
-      diff: partialUpdate,
       updatedFields: ['status', 'startedAt', 'context', 'output'],
     });
   }
@@ -194,7 +194,6 @@ export class WorkflowRunWorkspaceService {
 
     await this.emitWorkflowRunUpdatedEvent({
       workflowRunBefore: workflowRunToUpdate,
-      diff: partialUpdate,
       updatedFields: ['status', 'endedAt', 'output'],
     });
   }
@@ -242,7 +241,6 @@ export class WorkflowRunWorkspaceService {
 
     await this.emitWorkflowRunUpdatedEvent({
       workflowRunBefore: workflowRunToUpdate,
-      diff: partialUpdate,
       updatedFields: ['context', 'output'],
     });
   }
@@ -298,7 +296,6 @@ export class WorkflowRunWorkspaceService {
 
     await this.emitWorkflowRunUpdatedEvent({
       workflowRunBefore: workflowRunToUpdate,
-      diff: partialUpdate,
       updatedFields: ['output'],
     });
   }
@@ -328,11 +325,9 @@ export class WorkflowRunWorkspaceService {
   private async emitWorkflowRunUpdatedEvent({
     workflowRunBefore,
     updatedFields,
-    diff,
   }: {
     workflowRunBefore: WorkflowRunWorkspaceEntity;
     updatedFields: string[];
-    diff: object;
   }) {
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
 
@@ -345,6 +340,7 @@ export class WorkflowRunWorkspaceService {
         nameSingular: 'workflowRun',
         workspaceId,
       },
+      relations: ['fields'],
     });
 
     if (!objectMetadata) {
@@ -381,7 +377,12 @@ export class WorkflowRunWorkspaceService {
             after: workflowRunAfter,
             before: workflowRunBefore,
             updatedFields,
-            diff,
+            diff: objectRecordChangedValues(
+              workflowRunBefore,
+              workflowRunAfter,
+              updatedFields,
+              objectMetadata,
+            ),
           },
         },
       ],

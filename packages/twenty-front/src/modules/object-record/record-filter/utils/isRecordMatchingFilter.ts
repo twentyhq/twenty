@@ -38,9 +38,9 @@ import { isMatchingRichTextV2Filter } from '@/object-record/record-filter/utils/
 import { isMatchingSelectFilter } from '@/object-record/record-filter/utils/isMatchingSelectFilter';
 import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
 import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatchingUUIDFilter';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isEmptyObject } from '~/utils/isEmptyObject';
-import { isDefined } from 'twenty-shared/utils';
 
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,
@@ -167,9 +167,13 @@ export const isRecordMatchingFilter = ({
 
     if (isEmptyObject(filterValue)) return true;
 
-    const objectMetadataField = objectMetadataItem.fields.find(
-      (field) => field.name === filterKey,
-    );
+    const objectMetadataField =
+      objectMetadataItem.fields.find((field) => field.name === filterKey) ??
+      objectMetadataItem.fields.find(
+        (field) =>
+          field.type === FieldMetadataType.RELATION &&
+          field.settings?.joinColumnName === filterKey,
+      );
 
     if (!isDefined(objectMetadataField)) {
       throw new Error(
@@ -359,6 +363,16 @@ export const isRecordMatchingFilter = ({
         });
       }
       case FieldMetadataType.RELATION: {
+        const isJoinColumn =
+          objectMetadataField.settings?.joinColumnName === filterKey;
+
+        if (isJoinColumn) {
+          return isMatchingUUIDFilter({
+            uuidFilter: filterValue as UUIDFilter,
+            value: record[filterKey],
+          });
+        }
+
         throw new Error(
           `Not implemented yet, use UUID filter instead on the corredponding "${filterKey}Id" field`,
         );

@@ -1,9 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
@@ -28,6 +28,7 @@ import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.favorite,
@@ -54,7 +55,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   // Relations
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.forWorkspaceMember,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Workspace Member`,
     description: msg`Favorite workspace member`,
     icon: 'IconCircleUser',
@@ -69,7 +70,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.person,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Person`,
     description: msg`Favorite person`,
     icon: 'IconUser',
@@ -84,7 +85,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.company,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Company`,
     description: msg`Favorite company`,
     icon: 'IconBuildingSkyscraper',
@@ -99,7 +100,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.favoriteFolder,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Favorite Folder`,
     description: msg`The folder this favorite belongs to`,
     icon: 'IconFolder',
@@ -114,7 +115,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.opportunity,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Opportunity`,
     description: msg`Favorite opportunity`,
     icon: 'IconTargetArrow',
@@ -129,7 +130,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.workflow,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Workflow`,
     description: msg`Favorite workflow`,
     icon: 'IconSettingsAutomation',
@@ -144,7 +145,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.workflowVersion,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Workflow`,
     description: msg`Favorite workflow version`,
     icon: 'IconSettingsAutomation',
@@ -159,7 +160,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.workflowRun,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Workflow`,
     description: msg`Favorite workflow run`,
     icon: 'IconSettingsAutomation',
@@ -174,7 +175,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.task,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Task`,
     description: msg`Favorite task`,
     icon: 'IconCheckbox',
@@ -189,7 +190,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.note,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Note`,
     description: msg`Favorite note`,
     icon: 'IconNotes',
@@ -204,12 +205,13 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.view,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`View`,
     description: msg`Favorite view`,
     icon: 'IconLayoutCollage',
     inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   view: Relation<ViewWorkspaceEntity> | null;
@@ -218,7 +220,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   viewId: string;
 
   @WorkspaceDynamicRelation({
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     argsFactory: (oppositeObjectMetadata) => ({
       standardId: FAVORITE_STANDARD_FIELD_IDS.custom,
       name: oppositeObjectMetadata.nameSingular,

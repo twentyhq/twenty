@@ -36,9 +36,9 @@ export class WorkspaceRepository<
   T extends ObjectLiteral,
 > extends Repository<T> {
   private readonly internalContext: WorkspaceInternalContext;
+  private shouldBypassPermissionChecks: boolean;
   private featureFlagMap: FeatureFlagMap;
   private objectRecordsPermissions?: ObjectRecordsPermissions;
-
   constructor(
     internalContext: WorkspaceInternalContext,
     target: EntityTarget<T>,
@@ -46,11 +46,13 @@ export class WorkspaceRepository<
     featureFlagMap: FeatureFlagMap,
     queryRunner?: QueryRunner,
     objectRecordsPermissions?: ObjectRecordsPermissions,
+    shouldBypassPermissionChecks = false,
   ) {
     super(target, manager, queryRunner);
     this.internalContext = internalContext;
     this.featureFlagMap = featureFlagMap;
     this.objectRecordsPermissions = objectRecordsPermissions;
+    this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
   }
 
   override createQueryBuilder<U extends T>(
@@ -74,6 +76,8 @@ export class WorkspaceRepository<
       return new WorkspaceQueryBuilder(
         queryBuilder,
         this.objectRecordsPermissions,
+        this.internalContext,
+        this.shouldBypassPermissionChecks,
       );
     }
   }
@@ -715,7 +719,14 @@ export class WorkspaceRepository<
     objectMetadata ??= await this.getObjectMetadataFromTarget();
 
     const objectMetadataMaps = this.internalContext.objectMetadataMaps;
+    const isNewRelationEnabled =
+      this.internalContext.featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled];
 
-    return formatResult(data, objectMetadata, objectMetadataMaps) as T;
+    return formatResult(
+      data,
+      objectMetadata,
+      objectMetadataMaps,
+      isNewRelationEnabled,
+    ) as T;
   }
 }
