@@ -3,6 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -73,6 +74,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMessage',
     inverseSideTarget: () => MessageWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   message: Relation<MessageWorkspaceEntity>;
 
@@ -87,6 +89,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
@@ -102,6 +105,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCircleUser',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;

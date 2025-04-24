@@ -4,6 +4,7 @@ import { WorkflowDiagramDefaultEdge } from '@/workflow/workflow-diagram/componen
 import { WorkflowDiagramStepNodeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeReadonly';
 import { WorkflowDiagramSuccessEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramSuccessEdge';
 import { WorkflowRunDiagramCanvasEffect } from '@/workflow/workflow-diagram/components/WorkflowRunDiagramCanvasEffect';
+import { useHandleWorkflowRunDiagramCanvasInit } from '@/workflow/workflow-diagram/hooks/useHandleWorkflowRunDiagramCanvasInit';
 import { getWorkflowRunStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps';
 import { ReactFlowProvider } from '@xyflow/react';
 
@@ -15,6 +16,9 @@ export const WorkflowRunDiagramCanvas = ({
   const tagProps = getWorkflowRunStatusTagProps({
     workflowRunStatus,
   });
+
+  const { handleWorkflowRunDiagramCanvasInit } =
+    useHandleWorkflowRunDiagramCanvasInit();
 
   return (
     <ReactFlowProvider>
@@ -29,6 +33,7 @@ export const WorkflowRunDiagramCanvas = ({
         tagContainerTestId="workflow-run-status"
         tagColor={tagProps.color}
         tagText={tagProps.text}
+        onInit={handleWorkflowRunDiagramCanvasInit}
       />
 
       <WorkflowRunDiagramCanvasEffect />
