@@ -40,10 +40,6 @@ export const useFieldPreviewValue = ({
       !relationObjectMetadataItem,
   });
 
-  console.log('fieldMetadataItem', fieldMetadataItem);
-  console.log('relationObjectMetadataItem', relationObjectMetadataItem);
-  console.log('relationFieldPreviewValue', relationFieldPreviewValue);
-
   if (skip === true) return null;
 
   switch (fieldMetadataItem.type) {

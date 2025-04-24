@@ -1,3 +1,4 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -27,8 +28,16 @@ export const usePreviewRecord = ({
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
   const skip = skipFromProps || !labelIdentifierFieldMetadataItem;
 
+  const recordGqlFields =
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.NoteTarget
+      ? { id: true, note: true }
+      : objectMetadataItem.nameSingular === CoreObjectNameSingular.TaskTarget
+        ? { id: true, task: true }
+        : undefined;
+
   const { records } = useFindManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
+    recordGqlFields,
     limit: 1,
     skip,
   });
@@ -36,6 +45,8 @@ export const usePreviewRecord = ({
   if (skip) return null;
 
   const [firstRecord] = records;
+
+  console.log('firstRecord', firstRecord);
 
   if (
     isDefined(firstRecord) &&
