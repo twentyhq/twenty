@@ -1,10 +1,10 @@
 import { Transform } from 'class-transformer';
 import {
-    IsArray,
-    IsBoolean,
-    IsEnum,
-    IsNumber,
-    IsString,
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsNumber,
+  IsString,
 } from 'class-validator';
 
 import { applyBasicValidators } from 'src/engine/core-modules/twenty-config/utils/apply-basic-validators.util';
