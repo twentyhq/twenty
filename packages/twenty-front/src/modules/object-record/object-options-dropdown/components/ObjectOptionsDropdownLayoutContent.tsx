@@ -213,6 +213,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   }}
                 >
                   <MenuItemToggle
+                    selected={selectedItemId === 'Compact view'}
                     LeftIcon={IconBaselineDensitySmall}
                     onToggleChange={() =>
                       setAndPersistIsCompactModeActive(

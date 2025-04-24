@@ -17,6 +17,7 @@ const StyledToggleContainer = styled.label`
 `;
 
 type MenuItemToggleProps = {
+  selected?: boolean;
   LeftIcon?: IconComponent;
   toggled: boolean;
   text: string;
@@ -26,6 +27,7 @@ type MenuItemToggleProps = {
 };
 
 export const MenuItemToggle = ({
+  selected,
   LeftIcon,
   text,
   toggled,
@@ -35,7 +37,7 @@ export const MenuItemToggle = ({
 }: MenuItemToggleProps) => {
   const inputId = useId();
   return (
-    <StyledMenuItemBase className={className}>
+    <StyledMenuItemBase className={className} selected={selected}>
       <StyledToggleContainer htmlFor={inputId}>
         <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
         <StyledMenuItemRightContent>
