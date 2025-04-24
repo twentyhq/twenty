@@ -5,8 +5,8 @@ import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdCom
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { WorkflowDiagramRunStatus } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { WorkflowRunTabId } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
-import { isNull } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSetInitialWorkflowRunRightDrawerTab = () => {
   const setInitialWorkflowRunRightDrawerTab = useRecoilCallback(
@@ -38,7 +38,7 @@ export const useSetInitialWorkflowRunRightDrawerTab = () => {
           stepExecutionStatus,
         });
 
-        if (isNull(activeWorkflowRunRightDrawerTab)) {
+        if (!isDefined(activeWorkflowRunRightDrawerTab)) {
           const defaultTabId = isOutputTabDisabled
             ? WorkflowRunTabId.NODE
             : WorkflowRunTabId.OUTPUT;
