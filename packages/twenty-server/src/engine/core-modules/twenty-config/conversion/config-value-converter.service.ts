@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigVariablesMetadataMap } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
@@ -9,6 +9,8 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 
 @Injectable()
 export class ConfigValueConverterService {
+  private readonly logger = new Logger(ConfigValueConverterService.name);
+
   constructor(private readonly configVariables: ConfigVariables) {}
 
   convertDbValueToAppValue<T extends keyof ConfigVariables>(
@@ -25,14 +27,39 @@ export class ConfigValueConverterService {
 
     try {
       switch (configType) {
-        case 'boolean':
-          return configTransformers.boolean(dbValue) as ConfigVariables[T];
+        case 'boolean': {
+          const result = configTransformers.boolean(dbValue);
 
-        case 'number':
-          return configTransformers.number(dbValue) as ConfigVariables[T];
+          if (result === undefined) {
+            throw new Error(
+              `Value '${String(dbValue)}' cannot be converted to boolean`,
+            );
+          }
 
-        case 'string':
-          return configTransformers.string(dbValue) as ConfigVariables[T];
+          return result as ConfigVariables[T];
+        }
+
+        case 'number': {
+          const result = configTransformers.number(dbValue);
+
+          if (result === undefined) {
+            throw new Error(
+              `Value '${String(dbValue)}' cannot be converted to number`,
+            );
+          }
+
+          return result as ConfigVariables[T];
+        }
+
+        case 'string': {
+          const result = configTransformers.string(dbValue);
+
+          if (result === undefined) {
+            throw new Error(`Value cannot be converted to string`);
+          }
+
+          return result as ConfigVariables[T];
+        }
 
         case 'array': {
           const result = this.convertToArray(dbValue, options);
@@ -43,31 +70,43 @@ export class ConfigValueConverterService {
         case 'enum': {
           const result = this.convertToEnum(dbValue, options);
 
+          if (result === undefined) {
+            this.logger.warn(
+              `Enum value '${String(dbValue)}' not found in options for key ${String(key)}`,
+            );
+          }
+
           return result as ConfigVariables[T];
         }
 
         default:
+          this.logger.warn(
+            `No specific conversion for type '${configType}' of key '${String(key)}'`,
+          );
+
           return dbValue as ConfigVariables[T];
       }
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
       throw new Error(
-        `Failed to convert ${key as string} to app value: ${(error as Error).message}`,
+        `Failed to convert value for key '${String(key)}': ${errorMessage}`,
       );
     }
   }
 
   convertAppValueToDbValue<T extends keyof ConfigVariables>(
-    appValue: ConfigVariables[T],
+    appValue: ConfigVariables[T] | null | undefined,
   ): unknown {
-    if (appValue === undefined) {
+    if (appValue === undefined || appValue === null) {
       return null;
     }
 
     if (
       typeof appValue === 'string' ||
       typeof appValue === 'number' ||
-      typeof appValue === 'boolean' ||
-      appValue === null
+      typeof appValue === 'boolean'
     ) {
       return appValue;
     }
@@ -77,7 +116,13 @@ export class ConfigValueConverterService {
     }
 
     if (typeof appValue === 'object') {
-      return JSON.parse(JSON.stringify(appValue));
+      try {
+        return JSON.parse(JSON.stringify(appValue));
+      } catch (error) {
+        throw new Error(
+          `Failed to serialize object value: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
     }
 
     throw new Error(
@@ -107,7 +152,7 @@ export class ConfigValueConverterService {
       }
     }
 
-    return [];
+    return this.validateArrayAgainstOptions([value], options);
   }
 
   private validateArrayAgainstOptions(
@@ -118,13 +163,23 @@ export class ConfigValueConverterService {
       return array;
     }
 
-    return array.filter((item) => options.includes(item as string));
+    return array.filter((item) => {
+      const included = options.includes(item as string);
+
+      if (!included) {
+        this.logger.debug(
+          `Filtered out array item '${String(item)}' not in allowed options`,
+        );
+      }
+
+      return included;
+    });
   }
 
   private convertToEnum(
     value: unknown,
     options?: ConfigVariableOptions,
-  ): unknown {
+  ): unknown | undefined {
     if (!options || !Array.isArray(options) || options.length === 0) {
       return value;
     }
