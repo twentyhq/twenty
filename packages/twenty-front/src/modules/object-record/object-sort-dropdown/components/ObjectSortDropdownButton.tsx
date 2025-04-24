@@ -271,13 +271,13 @@ export const ObjectSortDropdownButton = ({
             {visibleFieldMetadataItems.map(
               (visibleFieldMetadataItem, index) => (
                 <SelectableListItem
+                  key={visibleFieldMetadataItem.id}
                   itemId={visibleFieldMetadataItem.id}
                   onEnter={() => handleAddSort(visibleFieldMetadataItem)}
                 >
                   <MenuItem
                     focused={selectedItemId === visibleFieldMetadataItem.id}
                     testId={`visible-select-sort-${index}`}
-                    key={index}
                     onClick={() => handleAddSort(visibleFieldMetadataItem)}
                     LeftIcon={getIcon(visibleFieldMetadataItem.icon)}
                     text={visibleFieldMetadataItem.label}
@@ -288,12 +288,12 @@ export const ObjectSortDropdownButton = ({
             {shouldShowSeparator && <DropdownMenuSeparator />}
             {hiddenFieldMetadataItems.map((hiddenFieldMetadataItem, index) => (
               <SelectableListItem
+                key={hiddenFieldMetadataItem.id}
                 itemId={hiddenFieldMetadataItem.id}
                 onEnter={() => handleAddSort(hiddenFieldMetadataItem)}
               >
                 <MenuItem
                   testId={`hidden-select-sort-${index}`}
-                  key={index}
                   onClick={() => handleAddSort(hiddenFieldMetadataItem)}
                   LeftIcon={getIcon(hiddenFieldMetadataItem.icon)}
                   text={hiddenFieldMetadataItem.label}
