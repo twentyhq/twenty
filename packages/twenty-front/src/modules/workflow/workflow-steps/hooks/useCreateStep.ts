@@ -1,3 +1,4 @@
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
@@ -7,8 +8,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
-import { workflowCreateStepFromParentStepIdState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdState';
-import { useRecoilValue } from 'recoil';
+import { workflowCreateStepFromParentStepIdComponentState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateStep = ({
@@ -24,8 +24,8 @@ export const useCreateStep = ({
     workflowLastCreatedStepIdComponentState,
   );
 
-  const workflowCreateStepFromParentStepId = useRecoilValue(
-    workflowCreateStepFromParentStepIdState,
+  const workflowCreateStepFromParentStepId = useRecoilComponentValueV2(
+    workflowCreateStepFromParentStepIdComponentState,
   );
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
