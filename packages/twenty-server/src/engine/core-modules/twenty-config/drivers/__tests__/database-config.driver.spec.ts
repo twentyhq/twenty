@@ -16,7 +16,7 @@ jest.mock(
 
 const CONFIG_PASSWORD_KEY = 'AUTH_PASSWORD_ENABLED';
 const CONFIG_EMAIL_KEY = 'EMAIL_FROM_ADDRESS';
-const CONFIG_ENV_ONLY_KEY = 'ENV_ONLY_VAR'; 
+const CONFIG_ENV_ONLY_KEY = 'ENV_ONLY_VAR';
 const CONFIG_PORT_KEY = 'NODE_PORT';
 
 class TestDatabaseConfigDriver extends DatabaseConfigDriver {
@@ -24,7 +24,7 @@ class TestDatabaseConfigDriver extends DatabaseConfigDriver {
   public get testAllPossibleConfigKeys(): Array<keyof ConfigVariables> {
     return this['allPossibleConfigKeys'];
   }
-  
+
   // Override Object.keys usage in constructor with our test keys
   constructor(
     configCache: ConfigCacheService,
@@ -32,8 +32,7 @@ class TestDatabaseConfigDriver extends DatabaseConfigDriver {
     environmentDriver: EnvironmentConfigDriver,
   ) {
     super(configCache, configStorage, environmentDriver);
-    
-    
+
     Object.defineProperty(this, 'allPossibleConfigKeys', {
       value: [CONFIG_PASSWORD_KEY, CONFIG_EMAIL_KEY, CONFIG_PORT_KEY],
       writable: false,
@@ -52,7 +51,7 @@ describe('DatabaseConfigDriver', () => {
     (isEnvOnlyConfigVar as jest.Mock).mockImplementation((key) => {
       return key === CONFIG_ENV_ONLY_KEY;
     });
-    
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
@@ -89,7 +88,9 @@ describe('DatabaseConfigDriver', () => {
       ],
     }).compile();
 
-    driver = module.get<TestDatabaseConfigDriver>(DatabaseConfigDriver) as TestDatabaseConfigDriver;
+    driver = module.get<TestDatabaseConfigDriver>(
+      DatabaseConfigDriver,
+    ) as TestDatabaseConfigDriver;
     configCache = module.get<ConfigCacheService>(ConfigCacheService);
     configStorage = module.get<ConfigStorageService>(ConfigStorageService);
     environmentDriver = module.get<EnvironmentConfigDriver>(
@@ -112,11 +113,14 @@ describe('DatabaseConfigDriver', () => {
     it('should have allPossibleConfigKeys properly set', () => {
       expect(driver.testAllPossibleConfigKeys).toContain(CONFIG_PASSWORD_KEY);
       expect(driver.testAllPossibleConfigKeys).toContain(CONFIG_EMAIL_KEY);
-      expect(driver.testAllPossibleConfigKeys).not.toContain(CONFIG_ENV_ONLY_KEY);
+      expect(driver.testAllPossibleConfigKeys).not.toContain(
+        CONFIG_ENV_ONLY_KEY,
+      );
     });
-    
+
     it('should initialize successfully with DB values and mark missing keys', async () => {
       const configVars = new Map();
+
       configVars.set(CONFIG_PASSWORD_KEY, true);
 
       jest.spyOn(configStorage, 'loadAll').mockResolvedValue(configVars);
@@ -124,12 +128,16 @@ describe('DatabaseConfigDriver', () => {
       await driver.initialize();
 
       expect(configStorage.loadAll).toHaveBeenCalled();
-      
+
       expect(configCache.set).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY, true);
-      
-      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(CONFIG_EMAIL_KEY);
-      
-      expect(configCache.markKeyAsMissing).not.toHaveBeenCalledWith(CONFIG_ENV_ONLY_KEY);
+
+      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(
+        CONFIG_EMAIL_KEY,
+      );
+
+      expect(configCache.markKeyAsMissing).not.toHaveBeenCalledWith(
+        CONFIG_ENV_ONLY_KEY,
+      );
     });
 
     it('should handle initialization failure', async () => {
@@ -250,7 +258,10 @@ describe('DatabaseConfigDriver', () => {
 
       await driver.update(CONFIG_PASSWORD_KEY, value);
 
-      expect(configStorage.set).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY, value);
+      expect(configStorage.set).toHaveBeenCalledWith(
+        CONFIG_PASSWORD_KEY,
+        value,
+      );
       expect(configCache.set).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY, value);
     });
 
@@ -281,7 +292,9 @@ describe('DatabaseConfigDriver', () => {
       await driver.fetchAndCacheConfigVariable(CONFIG_PASSWORD_KEY);
 
       expect(configStorage.get).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY);
-      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY);
+      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(
+        CONFIG_PASSWORD_KEY,
+      );
       expect(configCache.set).not.toHaveBeenCalled();
     });
 
@@ -296,7 +309,9 @@ describe('DatabaseConfigDriver', () => {
       await driver.fetchAndCacheConfigVariable(CONFIG_PASSWORD_KEY);
 
       expect(configStorage.get).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY);
-      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY);
+      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(
+        CONFIG_PASSWORD_KEY,
+      );
       expect(loggerSpy).toHaveBeenCalledWith(
         expect.stringContaining('Failed to fetch config'),
         error,
@@ -323,30 +338,38 @@ describe('DatabaseConfigDriver', () => {
   describe('refreshAllCache', () => {
     it('should load all config values from DB', async () => {
       const dbValues = new Map();
+
       dbValues.set(CONFIG_PASSWORD_KEY, true);
       dbValues.set(CONFIG_EMAIL_KEY, 'test@example.com');
-      
+
       jest.spyOn(configStorage, 'loadAll').mockResolvedValue(dbValues);
 
       await driver.refreshAllCache();
 
       expect(configStorage.loadAll).toHaveBeenCalled();
       expect(configCache.set).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY, true);
-      expect(configCache.set).toHaveBeenCalledWith(CONFIG_EMAIL_KEY, 'test@example.com');
+      expect(configCache.set).toHaveBeenCalledWith(
+        CONFIG_EMAIL_KEY,
+        'test@example.com',
+      );
     });
 
     it('should not affect env-only variables when found in DB', async () => {
       const dbValues = new Map();
+
       dbValues.set(CONFIG_PASSWORD_KEY, true);
       dbValues.set(CONFIG_ENV_ONLY_KEY, 'env-value');
-      
+
       jest.spyOn(configStorage, 'loadAll').mockResolvedValue(dbValues);
 
       await driver.refreshAllCache();
 
       expect(configCache.set).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY, true);
-      
-      expect(configCache.set).not.toHaveBeenCalledWith(CONFIG_ENV_ONLY_KEY, 'env-value');
+
+      expect(configCache.set).not.toHaveBeenCalledWith(
+        CONFIG_ENV_ONLY_KEY,
+        'env-value',
+      );
     });
 
     it('should mark keys as missing when not found in DB', async () => {
@@ -354,14 +377,21 @@ describe('DatabaseConfigDriver', () => {
 
       await driver.refreshAllCache();
 
-      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY);
-      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(CONFIG_EMAIL_KEY);
-      
-      expect(configCache.markKeyAsMissing).not.toHaveBeenCalledWith(CONFIG_ENV_ONLY_KEY);
+      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(
+        CONFIG_PASSWORD_KEY,
+      );
+      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(
+        CONFIG_EMAIL_KEY,
+      );
+
+      expect(configCache.markKeyAsMissing).not.toHaveBeenCalledWith(
+        CONFIG_ENV_ONLY_KEY,
+      );
     });
 
     it('should properly handle mix of found and missing keys', async () => {
       const dbValues = new Map();
+
       dbValues.set(CONFIG_PASSWORD_KEY, true);
 
       jest.spyOn(configStorage, 'loadAll').mockResolvedValue(dbValues);
@@ -369,8 +399,10 @@ describe('DatabaseConfigDriver', () => {
       await driver.refreshAllCache();
 
       expect(configCache.set).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY, true);
-      
-      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(CONFIG_EMAIL_KEY);
+
+      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(
+        CONFIG_EMAIL_KEY,
+      );
     });
 
     it('should handle errors gracefully', async () => {

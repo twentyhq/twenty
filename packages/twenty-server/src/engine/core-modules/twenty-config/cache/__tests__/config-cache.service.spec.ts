@@ -178,6 +178,7 @@ describe('ConfigCacheService', () => {
 
     it('should return empty array when no keys exist', () => {
       const allKeys = service.getAllKeys();
+
       expect(allKeys).toHaveLength(0);
     });
 
@@ -186,7 +187,7 @@ describe('ConfigCacheService', () => {
 
       // First add to positive cache
       service.set(key, 'value');
-      
+
       // Then force it into negative cache (normally this would remove from positive)
       // We're bypassing normal behavior for testing edge cases
       service['knownMissingKeysCache'].add(key);
