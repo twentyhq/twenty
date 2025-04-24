@@ -2,7 +2,7 @@ import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandM
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
+import { workflowDiagramStatusComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusComponentState';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import { WorkflowRunDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
@@ -18,6 +18,9 @@ export const WorkflowRunDiagramCanvasEffect = () => {
 
   const workflowVisualizerWorkflowIdState = useRecoilComponentCallbackStateV2(
     workflowVisualizerWorkflowIdComponentState,
+  );
+  const workflowDiagramStatusState = useRecoilComponentCallbackStateV2(
+    workflowDiagramStatusComponentState,
   );
 
   const handleSelectionChange = useRecoilCallback(
@@ -66,6 +69,7 @@ export const WorkflowRunDiagramCanvasEffect = () => {
     [
       getIcon,
       openWorkflowRunViewStepInCommandMenu,
+      workflowDiagramStatusState,
       workflowVisualizerWorkflowIdState,
     ],
   );
