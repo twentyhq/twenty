@@ -6,7 +6,7 @@ import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/componen
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
-import { workflowRunIdState } from '@/workflow/states/workflowRunIdState';
+import { workflowRunIdComponentState } from '@/workflow/states/workflowRunIdComponentState';
 import { WorkflowRun } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
@@ -22,6 +22,9 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
   const { getIcon } = useIcons();
 
   const flowState = useRecoilComponentCallbackStateV2(flowComponentState);
+  const workflowRunIdState = useRecoilComponentCallbackStateV2(
+    workflowRunIdComponentState,
+  );
 
   const runWorkflowRunOpeningInCommandMenuSideEffects = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -83,6 +86,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
       flowState,
       getIcon,
       openWorkflowRunViewStepInCommandMenu,
+      workflowRunIdState,
     ],
   );
 

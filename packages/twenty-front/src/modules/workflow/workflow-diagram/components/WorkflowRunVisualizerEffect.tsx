@@ -1,11 +1,12 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
-import { workflowRunIdState } from '@/workflow/states/workflowRunIdState';
+import { workflowRunIdComponentState } from '@/workflow/states/workflowRunIdComponentState';
 import { WorkflowRunOutput } from '@/workflow/types/Workflow';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
@@ -24,7 +25,9 @@ export const WorkflowRunVisualizerEffect = ({
   const workflowRun = useWorkflowRun({ workflowRunId });
   const workflowVersion = useWorkflowVersion(workflowRun?.workflowVersionId);
 
-  const setWorkflowRunId = useSetRecoilState(workflowRunIdState);
+  const setWorkflowRunId = useSetRecoilComponentStateV2(
+    workflowRunIdComponentState,
+  );
   const setWorkflowId = useSetRecoilState(workflowIdState);
 
   const flowState = useRecoilComponentCallbackStateV2(flowComponentState);
