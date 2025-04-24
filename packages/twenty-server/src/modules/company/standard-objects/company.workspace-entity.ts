@@ -170,7 +170,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  people: Relation<PersonWorkspaceEntity[]>;
+  people: Relation<PersonWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.accountOwner,
@@ -220,7 +220,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  opportunities: Relation<OpportunityWorkspaceEntity[]>;
+  opportunities: Relation<OpportunityWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.favorites,

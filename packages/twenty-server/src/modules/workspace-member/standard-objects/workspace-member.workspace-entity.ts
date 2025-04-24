@@ -246,7 +246,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'assignee',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  assignedTasks: Relation<TaskWorkspaceEntity[]>;
+  assignedTasks: Relation<TaskWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.favorites,
@@ -270,7 +270,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'accountOwner',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  accountOwnerForCompanies: Relation<CompanyWorkspaceEntity[]>;
+  accountOwnerForCompanies: Relation<CompanyWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredAttachments,
@@ -282,7 +282,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'author',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  authoredAttachments: Relation<AttachmentWorkspaceEntity[]>;
+  authoredAttachments: Relation<AttachmentWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.connectedAccounts,
@@ -306,7 +306,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'workspaceMember',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  messageParticipants: Relation<MessageParticipantWorkspaceEntity[]>;
+  messageParticipants: Relation<MessageParticipantWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.blocklist,
@@ -318,7 +318,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'workspaceMember',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  blocklist: Relation<BlocklistWorkspaceEntity[]>;
+  blocklist: Relation<BlocklistWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.calendarEventParticipants,
@@ -332,7 +332,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   })
   calendarEventParticipants: Relation<
     CalendarEventParticipantWorkspaceEntity[]
-  >;
+  > | null;
 
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timelineActivities,
@@ -358,7 +358,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  auditLogs: Relation<AuditLogWorkspaceEntity[]>;
+  auditLogs: Relation<AuditLogWorkspaceEntity[]> | null;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.searchVector,

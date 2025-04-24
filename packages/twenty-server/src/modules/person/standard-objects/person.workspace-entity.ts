@@ -203,7 +203,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'pointOfContact',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  pointOfContactForOpportunities: Relation<OpportunityWorkspaceEntity[]>;
+  pointOfContactForOpportunities: Relation<OpportunityWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.taskTargets,
@@ -261,7 +261,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsSystem()
-  messageParticipants: Relation<MessageParticipantWorkspaceEntity[]>;
+  messageParticipants: Relation<MessageParticipantWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.calendarEventParticipants,
@@ -275,7 +275,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   calendarEventParticipants: Relation<
     CalendarEventParticipantWorkspaceEntity[]
-  >;
+  > | null;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.timelineActivities,

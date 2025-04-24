@@ -165,7 +165,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  viewGroups: Relation<ViewGroupWorkspaceEntity[]>;
+  viewGroups: Relation<ViewGroupWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewFilters,
@@ -177,7 +177,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  viewFilters: Relation<ViewFilterWorkspaceEntity[]>;
+  viewFilters: Relation<ViewFilterWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewFilterGroups,
@@ -189,7 +189,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  viewFilterGroups: Relation<ViewFilterGroupWorkspaceEntity[]>;
+  viewFilterGroups: Relation<ViewFilterGroupWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewSorts,
@@ -201,7 +201,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  viewSorts: Relation<ViewSortWorkspaceEntity[]>;
+  viewSorts: Relation<ViewSortWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.favorites,
