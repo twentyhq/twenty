@@ -35,7 +35,7 @@ import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 export class WorkspaceRepository<
   T extends ObjectLiteral,
 > extends Repository<T> {
-  private internalContext: WorkspaceInternalContext;
+  private readonly internalContext: WorkspaceInternalContext;
   private shouldBypassPermissionChecks: boolean;
   private featureFlagMap: FeatureFlagMap;
   private objectRecordsPermissions?: ObjectRecordsPermissions;

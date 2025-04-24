@@ -40,8 +40,6 @@ export class CreateCompanyAndContactService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
-  private shouldBypassPermissionChecks = true;
-
   private async createCompaniesAndPeople(
     connectedAccount: ConnectedAccountWorkspaceEntity,
     contactsToCreate: Contact[],

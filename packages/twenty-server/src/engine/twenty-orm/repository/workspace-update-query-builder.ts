@@ -1,10 +1,5 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
-import {
-  ObjectLiteral,
-  SelectQueryBuilder,
-  UpdateQueryBuilder,
-  UpdateResult,
-} from 'typeorm';
+import { ObjectLiteral, UpdateQueryBuilder, UpdateResult } from 'typeorm';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
@@ -53,47 +48,19 @@ export class WorkspaceUpdateQueryBuilder<
     return super.execute();
   }
 
-  override select(): SelectQueryBuilder<T> {
-    const selectQueryBuilder = super.select();
-
-    return new WorkspaceSelectQueryBuilder(
-      selectQueryBuilder,
-      this.objectRecordsPermissions,
-      this.internalContext,
-      this.shouldBypassPermissionChecks,
-    );
+  override select(): WorkspaceSelectQueryBuilder<T> {
+    throw new Error('This builder cannot morph into a select builder');
   }
 
   override delete(): WorkspaceDeleteQueryBuilder<T> {
-    const deleteQueryBuilder = super.delete();
-
-    return new WorkspaceDeleteQueryBuilder<T>(
-      deleteQueryBuilder,
-      this.objectRecordsPermissions,
-      this.internalContext,
-      this.shouldBypassPermissionChecks,
-    );
+    throw new Error('This builder cannot morph into a delete builder');
   }
 
   override softDelete(): WorkspaceSoftDeleteQueryBuilder<T> {
-    const softDeleteQueryBuilder = super.softDelete();
-
-    return new WorkspaceSoftDeleteQueryBuilder<T>(
-      softDeleteQueryBuilder,
-      this.objectRecordsPermissions,
-      this.internalContext,
-      this.shouldBypassPermissionChecks,
-    );
+    throw new Error('This builder cannot morph into a soft delete builder');
   }
 
   override restore(): WorkspaceSoftDeleteQueryBuilder<T> {
-    const restoreQueryBuilder = super.restore();
-
-    return new WorkspaceSoftDeleteQueryBuilder<T>(
-      restoreQueryBuilder,
-      this.objectRecordsPermissions,
-      this.internalContext,
-      this.shouldBypassPermissionChecks,
-    );
+    throw new Error('This builder cannot morph into a soft delete builder');
   }
 }

@@ -4,26 +4,24 @@ import {
   DeleteResult,
   InsertQueryBuilder,
   ObjectLiteral,
-  SelectQueryBuilder,
 } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.util';
-import { WorkspaceInsertQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-insert-query-builder';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
 import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
 
 export class WorkspaceDeleteQueryBuilder<
-  Entity extends ObjectLiteral,
-> extends DeleteQueryBuilder<Entity> {
+  T extends ObjectLiteral,
+> extends DeleteQueryBuilder<T> {
   private objectRecordsPermissions: ObjectRecordsPermissions;
   private shouldBypassPermissionChecks: boolean;
   private internalContext: WorkspaceInternalContext;
   constructor(
-    queryBuilder: DeleteQueryBuilder<Entity>,
+    queryBuilder: DeleteQueryBuilder<T>,
     objectRecordsPermissions: ObjectRecordsPermissions,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
@@ -56,68 +54,31 @@ export class WorkspaceDeleteQueryBuilder<
     return super.execute();
   }
 
-  override select(): SelectQueryBuilder<Entity> {
-    const selectQueryBuilder = super.select();
-
-    return new WorkspaceSelectQueryBuilder(
-      selectQueryBuilder,
-      this.objectRecordsPermissions,
-      this.internalContext,
-      this.shouldBypassPermissionChecks,
-    );
+  override select(): WorkspaceSelectQueryBuilder<T> {
+    throw new Error('This builder cannot morph into a select builder');
   }
 
-  override update(): WorkspaceUpdateQueryBuilder<Entity>;
+  override update(): WorkspaceUpdateQueryBuilder<T>;
 
   override update(
-    updateSet: QueryDeepPartialEntity<Entity>,
-  ): WorkspaceUpdateQueryBuilder<Entity>;
+    updateSet: QueryDeepPartialEntity<T>,
+  ): WorkspaceUpdateQueryBuilder<T>;
 
   override update(
-    updateSet?: QueryDeepPartialEntity<Entity>,
-  ): WorkspaceUpdateQueryBuilder<Entity> {
-    const updateQueryBuilder = updateSet
-      ? super.update(updateSet)
-      : super.update();
-
-    return new WorkspaceUpdateQueryBuilder<Entity>(
-      updateQueryBuilder,
-      this.objectRecordsPermissions,
-      this.internalContext,
-      this.shouldBypassPermissionChecks,
-    );
+    _updateSet?: QueryDeepPartialEntity<T>,
+  ): WorkspaceUpdateQueryBuilder<T> {
+    throw new Error('This builder cannot morph into an update builder');
   }
 
-  override insert(): InsertQueryBuilder<Entity> {
-    const insertQueryBuilder = super.insert();
-
-    return new WorkspaceInsertQueryBuilder(
-      insertQueryBuilder,
-      this.objectRecordsPermissions,
-      this.internalContext,
-      this.shouldBypassPermissionChecks,
-    );
+  override insert(): InsertQueryBuilder<T> {
+    throw new Error('This builder cannot morph into an insert builder');
   }
 
-  override softDelete(): WorkspaceSoftDeleteQueryBuilder<Entity> {
-    const softDeleteQueryBuilder = super.softDelete();
-
-    return new WorkspaceSoftDeleteQueryBuilder<Entity>(
-      softDeleteQueryBuilder,
-      this.objectRecordsPermissions,
-      this.internalContext,
-      this.shouldBypassPermissionChecks,
-    );
+  override softDelete(): WorkspaceSoftDeleteQueryBuilder<T> {
+    throw new Error('This builder cannot morph into a soft delete builder');
   }
 
-  override restore(): WorkspaceSoftDeleteQueryBuilder<Entity> {
-    const restoreQueryBuilder = super.restore();
-
-    return new WorkspaceSoftDeleteQueryBuilder<Entity>(
-      restoreQueryBuilder,
-      this.objectRecordsPermissions,
-      this.internalContext,
-      this.shouldBypassPermissionChecks,
-    );
+  override restore(): WorkspaceSoftDeleteQueryBuilder<T> {
+    throw new Error('This builder cannot morph into a soft delete builder');
   }
 }
