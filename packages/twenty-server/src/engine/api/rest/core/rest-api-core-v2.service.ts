@@ -234,8 +234,6 @@ export class RestApiCoreServiceV2 {
       objectMetadata,
     );
 
-    const totalCount = await this.getTotalCount(qb);
-
     const fieldMetadataMapByName =
       objectMetadataItemWithFieldsMaps?.fieldsByName || {};
     const fieldMetadataMapByJoinColumnName =
@@ -257,6 +255,8 @@ export class RestApiCoreServiceV2 {
           filters,
         )
       : qb;
+
+    const totalCount = await this.getTotalCount(selectQueryBuilder);
 
     selectQueryBuilder = isDefined(inputs.orderBy)
       ? graphqlQueryParser.applyOrderToBuilder(

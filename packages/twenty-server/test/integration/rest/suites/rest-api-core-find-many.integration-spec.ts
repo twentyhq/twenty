@@ -86,6 +86,7 @@ describe('Core REST API Find Many endpoint', () => {
     expect(pageInfo.endCursor).toBeDefined();
     expect(typeof totalCount).toBe('number');
     expect(totalCount).toEqual(testPersonIds.length);
+    expect(response.body.pageInfo.hasNextPage).toBe(false);
   });
 
   it('should limit results based on the limit parameter', async () => {
@@ -99,8 +100,24 @@ describe('Core REST API Find Many endpoint', () => {
 
     expect(people).not.toBeNull();
     expect(Array.isArray(people)).toBe(true);
-    expect(people.length).toBeLessThanOrEqual(limit);
+    expect(people.length).toEqual(limit);
     expect(response.body.totalCount).toEqual(testPersonIds.length);
+    expect(response.body.pageInfo.hasNextPage).toBe(true);
+  });
+
+  it('should return filtered totalCount', async () => {
+    const response = await makeRestAPIRequest({
+      method: 'get',
+      path: `/people?filter=position[lte]:1`,
+    }).expect(200);
+
+    const people = response.body.data.people;
+
+    expect(people).not.toBeNull();
+    expect(Array.isArray(people)).toBe(true);
+    expect(people.length).toEqual(2);
+    expect(response.body.totalCount).toEqual(2);
+    expect(response.body.pageInfo.hasNextPage).toBe(false);
   });
 
   it('should filter results based on filter parameters', async () => {
