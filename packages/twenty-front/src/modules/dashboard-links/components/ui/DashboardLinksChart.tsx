@@ -1,5 +1,4 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   Bar,
@@ -10,6 +9,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import { LinklogsChartData } from '~/types/LinkLogs';
 
 const StyledChartContainer = styled.div`
   background-color: #fcfcfc;
@@ -21,17 +21,13 @@ const StyledChartContainer = styled.div`
   border-radius: 8px;
 `;
 
-type ChartData = ChartDataItem[];
-
 interface DashboardLinksChartProps {
-  chartData: ChartData;
+  chartData: LinklogsChartData;
 }
 
 export const DashboardLinksChart = ({
-  chartData,
+  chartData: { data, sourceKeyColors },
 }: DashboardLinksChartProps) => {
-  const theme = useTheme();
-  const fillColor = '#8884d8';
   return (
     <StyledChartContainer>
       <ResponsiveContainer width="100%" height="100%">
@@ -42,17 +38,15 @@ export const DashboardLinksChart = ({
             left: 20,
             bottom: 5,
           }}
-          data={chartData}
+          data={data}
         >
           <XAxis dataKey="name" />
-
           <YAxis />
-
           <Tooltip />
-
           <Legend />
-
-          <Bar dataKey="uv" fill={fillColor} name="Acessos por Fonte" />
+          {Object.entries(sourceKeyColors).map(([key, color]) => (
+            <Bar key={key} dataKey={key} stackId="a" fill={color} name={key} />
+          ))}
         </BarChart>
       </ResponsiveContainer>
     </StyledChartContainer>

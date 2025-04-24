@@ -11,7 +11,7 @@ import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { GET_DASHBOARD_LINKLOGS } from '@/dashboard-links/graphql/queries/getDashboardLinklogs';
 import { useQuery } from '@apollo/client';
 import { Query } from '~/generated-metadata/graphql';
-import groupLinkLogsData from '~/utils/groupLinkLogsData';
+import { groupLinkLogsData } from '~/utils/groupLinkLogsData';
 
 export const DashboardLinks = () => {
   const { data, loading, error } = useQuery<
