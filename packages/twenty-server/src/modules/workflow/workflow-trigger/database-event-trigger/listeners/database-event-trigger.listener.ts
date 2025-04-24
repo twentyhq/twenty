@@ -89,13 +89,10 @@ export class DatabaseEventTriggerListener {
       return;
     }
 
-    const shouldBypassPermissionChecks = true;
-
     const workflowEventListenerRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowEventListenerWorkspaceEntity>(
         workspaceId,
         'workflowEventListener',
-        shouldBypassPermissionChecks,
       );
 
     const eventListeners = await workflowEventListenerRepository.find({

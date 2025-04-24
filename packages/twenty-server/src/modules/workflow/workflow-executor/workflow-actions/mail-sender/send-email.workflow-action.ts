@@ -55,13 +55,10 @@ export class SendEmailWorkflowAction implements WorkflowExecutor {
       );
     }
 
-    const shouldBypassPermissionChecks = true;
-
     const connectedAccountRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
         workspaceId,
         'connectedAccount',
-        shouldBypassPermissionChecks,
       );
     const connectedAccount = await connectedAccountRepository.findOneBy({
       id: connectedAccountId,

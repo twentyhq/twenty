@@ -45,7 +45,6 @@ export class MessagingMessagesImportCronJob {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
     });
-    const shouldBypassPermissionChecks = true;
 
     for (const activeWorkspace of activeWorkspaces) {
       try {
@@ -53,7 +52,6 @@ export class MessagingMessagesImportCronJob {
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
             activeWorkspace.id,
             'messageChannel',
-            shouldBypassPermissionChecks,
           );
 
         const messageChannels = await messageChannelRepository.find({

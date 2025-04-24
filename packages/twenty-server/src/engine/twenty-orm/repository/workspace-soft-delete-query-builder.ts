@@ -9,6 +9,8 @@ import {
 } from 'typeorm';
 import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
 
+import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.util';
 import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
 import { WorkspaceInsertQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-insert-query-builder';
@@ -20,21 +22,36 @@ export class WorkspaceSoftDeleteQueryBuilder<
 > extends SoftDeleteQueryBuilder<Entity> {
   private objectRecordsPermissions: ObjectRecordsPermissions;
   private shouldBypassPermissionChecks: boolean;
+  private internalContext: WorkspaceInternalContext;
 
   constructor(
     queryBuilder: SoftDeleteQueryBuilder<Entity>,
     objectRecordsPermissions: ObjectRecordsPermissions,
+    internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
   ) {
     super(queryBuilder);
     this.objectRecordsPermissions = objectRecordsPermissions;
+    this.internalContext = internalContext;
     this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
+  }
+
+  override clone(): this {
+    const clonedQueryBuilder = super.clone();
+
+    return new WorkspaceSoftDeleteQueryBuilder(
+      clonedQueryBuilder,
+      this.objectRecordsPermissions,
+      this.internalContext,
+      this.shouldBypassPermissionChecks,
+    ) as this;
   }
 
   override execute(): Promise<UpdateResult> {
     validateQueryIsPermittedOrThrow(
       this.expressionMap,
       this.objectRecordsPermissions,
+      this.internalContext.objectMetadataMaps,
       this.shouldBypassPermissionChecks,
     );
 
@@ -47,6 +64,7 @@ export class WorkspaceSoftDeleteQueryBuilder<
     return new WorkspaceSelectQueryBuilder(
       selectQueryBuilder,
       this.objectRecordsPermissions,
+      this.internalContext,
       this.shouldBypassPermissionChecks,
     );
   }
@@ -57,6 +75,7 @@ export class WorkspaceSoftDeleteQueryBuilder<
     return new WorkspaceUpdateQueryBuilder(
       updateQueryBuilder,
       this.objectRecordsPermissions,
+      this.internalContext,
       this.shouldBypassPermissionChecks,
     );
   }
@@ -67,6 +86,7 @@ export class WorkspaceSoftDeleteQueryBuilder<
     return new WorkspaceInsertQueryBuilder(
       insertQueryBuilder,
       this.objectRecordsPermissions,
+      this.internalContext,
       this.shouldBypassPermissionChecks,
     );
   }
@@ -77,6 +97,7 @@ export class WorkspaceSoftDeleteQueryBuilder<
     return new WorkspaceDeleteQueryBuilder(
       deleteQueryBuilder,
       this.objectRecordsPermissions,
+      this.internalContext,
       this.shouldBypassPermissionChecks,
     );
   }

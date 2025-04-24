@@ -50,7 +50,6 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
     });
-    const shouldBypassPermissionChecks = true;
 
     for (const activeWorkspace of activeWorkspaces) {
       try {
@@ -58,7 +57,6 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
             activeWorkspace.id,
             'messageChannel',
-            shouldBypassPermissionChecks,
           );
         const messageChannels = await messageChannelRepository.find({
           select: ['id', 'syncStatus', 'connectedAccountId'],

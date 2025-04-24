@@ -27,6 +27,17 @@ export class WorkspaceSelectQueryBuilder<
     this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
   }
 
+  override clone(): this {
+    const clonedQueryBuilder = super.clone();
+
+    return new WorkspaceSelectQueryBuilder(
+      clonedQueryBuilder,
+      this.objectRecordsPermissions,
+      this.internalContext,
+      this.shouldBypassPermissionChecks,
+    ) as this;
+  }
+
   override execute(): Promise<T[]> {
     validateQueryIsPermittedOrThrow(
       this.expressionMap,
@@ -76,6 +87,7 @@ export class WorkspaceSelectQueryBuilder<
     return new WorkspaceDeleteQueryBuilder<T>(
       deleteQueryBuilder,
       this.objectRecordsPermissions,
+      this.internalContext,
       this.shouldBypassPermissionChecks,
     );
   }
@@ -86,6 +98,7 @@ export class WorkspaceSelectQueryBuilder<
     return new WorkspaceSoftDeleteQueryBuilder<T>(
       softDeleteQueryBuilder,
       this.objectRecordsPermissions,
+      this.internalContext,
       this.shouldBypassPermissionChecks,
     );
   }
@@ -96,6 +109,7 @@ export class WorkspaceSelectQueryBuilder<
     return new WorkspaceSoftDeleteQueryBuilder<T>(
       restoreQueryBuilder,
       this.objectRecordsPermissions,
+      this.internalContext,
       this.shouldBypassPermissionChecks,
     );
   }

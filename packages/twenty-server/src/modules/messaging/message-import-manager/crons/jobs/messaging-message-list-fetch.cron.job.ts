@@ -46,15 +46,12 @@ export class MessagingMessageListFetchCronJob {
       },
     });
 
-    const shouldBypassPermissionChecks = true;
-
     for (const activeWorkspace of activeWorkspaces) {
       try {
         const messageChannelRepository =
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
             activeWorkspace.id,
             'messageChannel',
-            shouldBypassPermissionChecks,
           );
 
         const messageChannels = await messageChannelRepository.find({
