@@ -102,7 +102,7 @@ export class WhatsappResolver {
       > = {
         integrationId: sendMessageInput.integrationId,
         client: {
-          phone: sendMessageInput.to.slice(1),
+          phone: sendMessageInput.to,
         },
         messages: [
           {

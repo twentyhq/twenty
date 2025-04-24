@@ -24,14 +24,18 @@ export class WhatsappController {
     private readonly whatsappService: WhatsappService,
   ) {}
 
-  @Get('/webhook/:id')
+  @Get('/webhook/:workspaceId/:id')
   async handleVerification(
+    @Param('workspaceId') workspaceId: string,
     @Param('id') id: string,
     @Query('hub.mode') mode: string,
     @Query('hub.challenge') challenge: string,
     @Query('hub.verify_token') verifyToken: string,
   ) {
-    const integration = await this.whatsappIntegrationService.findById(id);
+    const integration = await this.whatsappIntegrationService.findById(
+      id,
+      workspaceId,
+    );
 
     if (mode && verifyToken) {
       if (mode === 'subscribe' && verifyToken === integration?.verifyToken) {
@@ -46,8 +50,12 @@ export class WhatsappController {
     throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
   }
 
-  @Post('/webhook/:id')
-  async handleIncomingMessage(@Param('id') id: string, @Body() body: any) {
+  @Post('/webhook/:workspaceId/:id')
+  async handleIncomingMessage(
+    @Param('workspaceId') workspaceId: string,
+    @Param('id') id: string,
+    @Body() body: any,
+  ) {
     this.logger.log(`${id} - Received incoming message`);
 
     const isReceiving = !!body.entry[0].changes[0].value.messages;

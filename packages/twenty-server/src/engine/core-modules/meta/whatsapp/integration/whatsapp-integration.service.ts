@@ -5,7 +5,6 @@ import axios from 'axios';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { IntegrationType } from 'src/engine/core-modules/inbox/inbox.entity';
 import { InboxService } from 'src/engine/core-modules/inbox/inbox.service';
 import { CreateWhatsappIntegrationInput } from 'src/engine/core-modules/meta/whatsapp/integration/dtos/create-whatsapp-integration.input';
 import { UpdateWhatsappIntegrationInput } from 'src/engine/core-modules/meta/whatsapp/integration/dtos/update-whatsapp-integration.input';
@@ -57,22 +56,17 @@ export class WhatsappIntegrationService {
       verifyToken: v4(),
     });
 
-    await whatsappRepository.save({
-      ...createInput,
-      disabled: false,
-      sla: 30,
-      verifyToken: v4(),
-    });
+    const savedIntegration = await whatsappRepository.save(createdIntegration);
 
-    await this.inboxService.create(
-      createdIntegration,
-      IntegrationType.WHATSAPP,
-      workspace,
-    );
+    // await this.inboxService.create(
+    //   createdIntegration,
+    //   IntegrationType.WHATSAPP,
+    //   workspace,
+    // );
 
-    await this.subscribeWebhook(createdIntegration, workspaceId);
+    await this.subscribeWebhook(savedIntegration, workspaceId);
 
-    return createdIntegration;
+    return savedIntegration;
   }
 
   async findAll(workspaceId: string): Promise<WhatsappWorkspaceEntity[]> {
@@ -215,7 +209,7 @@ export class WhatsappIntegrationService {
     const { id, appId, verifyToken, appKey } = integration;
 
     const META_API_URL = this.environmentService.get('META_API_URL');
-    const META_WEBHOOK_URL = `${this.environmentService.get('META_WEBHOOK_URL')}/whatsapp/webhook/${id}/${workspaceId}`;
+    const META_WEBHOOK_URL = `${this.environmentService.get('META_WEBHOOK_URL')}/whatsapp/webhook/${workspaceId}/${id}`;
 
     const fields = 'messages';
 

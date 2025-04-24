@@ -18,7 +18,6 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { Agent } from 'src/engine/core-modules/agent/agent.entity';
-
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
