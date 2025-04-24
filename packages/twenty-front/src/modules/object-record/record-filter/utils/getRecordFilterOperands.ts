@@ -111,21 +111,12 @@ export const FILTER_OPERANDS_MAP = {
     ...emptyOperands,
   ],
   BOOLEAN: [RecordFilterOperand.Is],
-} as const;
-
-FILTER_OPERANDS_MAP as FilterOperandMap;
+} as const satisfies FilterOperandMap;
 
 export const getRecordFilterOperands = ({
   filterType,
   subFieldName,
-}: GetRecordFilterOperandsParams): RecordFilterOperand[] => {
-  const emptyOperands = [
-    RecordFilterOperand.IsEmpty,
-    RecordFilterOperand.IsNotEmpty,
-  ];
-
-  const relationOperands = [RecordFilterOperand.Is, RecordFilterOperand.IsNot];
-
+}: GetRecordFilterOperandsParams) => {
   switch (filterType) {
     case 'TEXT':
     case 'EMAILS':
@@ -133,57 +124,23 @@ export const getRecordFilterOperands = ({
     case 'ADDRESS':
     case 'LINKS':
     case 'PHONES':
-      return [
-        RecordFilterOperand.Contains,
-        RecordFilterOperand.DoesNotContain,
-        ...emptyOperands,
-      ];
+      return FILTER_OPERANDS_MAP.TEXT;
     case 'CURRENCY':
     case 'NUMBER':
-      return [
-        RecordFilterOperand.GreaterThan,
-        RecordFilterOperand.LessThan,
-        ...emptyOperands,
-      ];
+      return FILTER_OPERANDS_MAP.NUMBER;
     case 'RAW_JSON':
-      return [
-        RecordFilterOperand.Contains,
-        RecordFilterOperand.DoesNotContain,
-        ...emptyOperands,
-      ];
+      return FILTER_OPERANDS_MAP.RAW_JSON;
     case 'DATE_TIME':
     case 'DATE':
-      return [
-        RecordFilterOperand.Is,
-        RecordFilterOperand.IsRelative,
-        RecordFilterOperand.IsInPast,
-        RecordFilterOperand.IsInFuture,
-        RecordFilterOperand.IsToday,
-        RecordFilterOperand.IsBefore,
-        RecordFilterOperand.IsAfter,
-        ...emptyOperands,
-      ];
+      return FILTER_OPERANDS_MAP.DATE_TIME;
     case 'RATING':
-      return [
-        RecordFilterOperand.Is,
-        RecordFilterOperand.GreaterThan,
-        RecordFilterOperand.LessThan,
-        ...emptyOperands,
-      ];
+      return FILTER_OPERANDS_MAP.RATING;
     case 'RELATION':
-      return [...relationOperands, ...emptyOperands];
+      return FILTER_OPERANDS_MAP.RELATION;
     case 'MULTI_SELECT':
-      return [
-        RecordFilterOperand.Contains,
-        RecordFilterOperand.DoesNotContain,
-        ...emptyOperands,
-      ];
+      return FILTER_OPERANDS_MAP.MULTI_SELECT;
     case 'SELECT':
-      return [
-        RecordFilterOperand.Is,
-        RecordFilterOperand.IsNot,
-        ...emptyOperands,
-      ];
+      return FILTER_OPERANDS_MAP.SELECT;
     case 'ACTOR': {
       if (isFilterOnActorSourceSubField(subFieldName)) {
         return [
@@ -193,20 +150,12 @@ export const getRecordFilterOperands = ({
         ];
       }
 
-      return [
-        RecordFilterOperand.Contains,
-        RecordFilterOperand.DoesNotContain,
-        ...emptyOperands,
-      ];
+      return FILTER_OPERANDS_MAP.ACTOR;
     }
     case 'ARRAY':
-      return [
-        RecordFilterOperand.Contains,
-        RecordFilterOperand.DoesNotContain,
-        ...emptyOperands,
-      ];
+      return FILTER_OPERANDS_MAP.ARRAY;
     case 'BOOLEAN':
-      return [RecordFilterOperand.Is];
+      return FILTER_OPERANDS_MAP.BOOLEAN;
     default:
       return [];
   }

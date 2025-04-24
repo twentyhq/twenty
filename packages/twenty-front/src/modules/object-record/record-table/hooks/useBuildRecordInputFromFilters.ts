@@ -32,13 +32,17 @@ export const useBuildRecordInputFromFilters = ({
         return;
       }
       if (fieldMetadataItem.type === 'RELATION') {
-        recordInput[`${fieldMetadataItem.name}Id`] = buildValueFromFilter({
+        const value = buildValueFromFilter({
           filter,
           options: fieldMetadataItem.options ?? undefined,
           relationType: fieldMetadataItem.relationDefinition?.direction,
           currentWorkspaceMember: currentWorkspaceMember ?? undefined,
           label: filter.label,
         });
+        if (!isDefined(value)) {
+          return;
+        }
+        recordInput[`${fieldMetadataItem.name}Id`] = value;
       } else {
         recordInput[fieldMetadataItem.name] = buildValueFromFilter({
           filter,

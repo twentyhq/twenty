@@ -16,12 +16,5 @@ export type RecordFilter = {
   subFieldName?: string | null | undefined;
 };
 
-export type RecordFilterInput<
-  T extends FilterableFieldType = FilterableFieldType,
-> = Pick<RecordFilter, 'value'> & {
-  type: T;
-  operand: (typeof FILTER_OPERANDS_MAP)[T][number];
-};
-
 export type RecordFilterToRecordInputOperand<T extends FilterableFieldType> =
   (typeof FILTER_OPERANDS_MAP)[T][number];

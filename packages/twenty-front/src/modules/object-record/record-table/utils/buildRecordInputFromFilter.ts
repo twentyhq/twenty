@@ -4,13 +4,13 @@ import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/i
 
 import {
   RecordFilter,
-  RecordFilterInput,
   RecordFilterToRecordInputOperand,
 } from '@/object-record/record-filter/types/RecordFilter';
 import { FILTER_OPERANDS_MAP } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { parseJson } from '~/utils/parseJson';
 
 export const buildValueFromFilter = ({
   filter,
@@ -41,51 +41,51 @@ export const buildValueFromFilter = ({
   switch (filter.type) {
     case 'TEXT': {
       return computeValueFromFilterText(
-        filter.operand as RecordFilterInput<'TEXT'>['operand'],
+        filter.operand as (typeof FILTER_OPERANDS_MAP)['TEXT'][number],
         filter.value,
       );
     }
     case 'RATING':
       return computeValueFromFilterRating(
-        filter.operand as RecordFilterInput<'RATING'>['operand'],
+        filter.operand as (typeof FILTER_OPERANDS_MAP)['RATING'][number],
         filter.value,
         options,
       );
     case 'DATE_TIME':
     case 'DATE':
       return computeValueFromFilterDate(
-        filter.operand as RecordFilterInput<'DATE_TIME'>['operand'],
+        filter.operand as (typeof FILTER_OPERANDS_MAP)['DATE_TIME'][number],
         filter.value,
       );
     case 'NUMBER':
       return computeValueFromFilterNumber(
-        filter.operand as RecordFilterInput<'NUMBER'>['operand'],
+        filter.operand as (typeof FILTER_OPERANDS_MAP)['NUMBER'][number],
         filter.value,
       );
     case 'BOOLEAN':
       return computeValueFromFilterBoolean(
-        filter.operand as RecordFilterInput<'BOOLEAN'>['operand'],
+        filter.operand as (typeof FILTER_OPERANDS_MAP)['BOOLEAN'][number],
         filter.value,
       );
     case 'ARRAY':
       return computeValueFromFilterArray(
-        filter.operand as RecordFilterInput<'ARRAY'>['operand'],
+        filter.operand as (typeof FILTER_OPERANDS_MAP)['ARRAY'][number],
         filter.value,
       );
     case 'SELECT':
       return computeValueFromFilterSelect(
-        filter.operand as RecordFilterInput<'SELECT'>['operand'],
+        filter.operand as (typeof FILTER_OPERANDS_MAP)['SELECT'][number],
         filter.value,
         options,
       );
     case 'MULTI_SELECT':
       return computeValueFromFilterMultiSelect(
-        filter.operand as RecordFilterInput<'MULTI_SELECT'>['operand'],
+        filter.operand as (typeof FILTER_OPERANDS_MAP)['MULTI_SELECT'][number],
         filter.value,
       );
     case 'RELATION': {
       return computeValueFromFilterRelation(
-        filter.operand as RecordFilterInput<'RELATION'>['operand'],
+        filter.operand as (typeof FILTER_OPERANDS_MAP)['RELATION'][number],
         filter.value,
         relationType,
         currentWorkspaceMember,
@@ -120,13 +120,13 @@ const computeValueFromFilterDate = (
 ) => {
   switch (operand) {
     case ViewFilterOperand.Is:
-    case ViewFilterOperand.IsNotEmpty:
     case ViewFilterOperand.IsAfter:
     case ViewFilterOperand.IsBefore:
-    case ViewFilterOperand.IsInPast:
-    case ViewFilterOperand.IsInFuture:
       return new Date(value);
     case ViewFilterOperand.IsToday:
+    case ViewFilterOperand.IsNotEmpty:
+    case ViewFilterOperand.IsInPast:
+    case ViewFilterOperand.IsInFuture:
     case ViewFilterOperand.IsRelative:
       return new Date();
     case ViewFilterOperand.IsEmpty:
@@ -214,7 +214,7 @@ const computeValueFromFilterSelect = (
     case ViewFilterOperand.Is:
     case ViewFilterOperand.IsNotEmpty:
       try {
-        const valueParsed = JSON.parse(value)?.[0];
+        const valueParsed = parseJson<string[]>(value)?.[0];
         const option = options?.find((option) => option.value === valueParsed);
         if (!option) {
           return undefined;
@@ -239,7 +239,7 @@ const computeValueFromFilterMultiSelect = (
     case ViewFilterOperand.Contains:
     case ViewFilterOperand.IsNotEmpty:
       try {
-        return JSON.parse(value);
+        return parseJson<string[]>(value);
       } catch (error) {
         return undefined;
       }
@@ -260,17 +260,20 @@ const computeValueFromFilterRelation = (
 ) => {
   switch (operand) {
     case ViewFilterOperand.Is: {
-      const parsedValue = JSON.parse(value);
+      const parsedValue = parseJson<{
+        isCurrentWorkspaceMemberSelected: boolean;
+        selectedRecordIds: string[];
+      }>(value);
       if (
         relationType === RelationDefinitionType.MANY_TO_ONE ||
         relationType === RelationDefinitionType.ONE_TO_ONE
       ) {
         if (label === 'Assignee') {
-          return parsedValue.isCurrentWorkspaceMemberSelected
+          return parsedValue?.isCurrentWorkspaceMemberSelected
             ? currentWorkspaceMember?.id
             : undefined;
         } else {
-          return parsedValue.selectedRecordIds?.[0];
+          return parsedValue?.selectedRecordIds?.[0];
         }
       }
       return undefined; //todo
