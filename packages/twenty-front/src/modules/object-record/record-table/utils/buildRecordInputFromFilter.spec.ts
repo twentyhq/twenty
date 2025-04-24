@@ -59,7 +59,7 @@ describe('buildValueFromFilter', () => {
       'should handle $operand with value "$value"',
       ({ operand, value, expected }) => {
         const filter = createTestFilter(operand, value, 'TEXT');
-        expect(buildValueFromFilter({ filter, type: 'TEXT' })).toBe(expected);
+        expect(buildValueFromFilter({ filter })).toBe(expected);
       },
     );
   });
@@ -117,7 +117,7 @@ describe('buildValueFromFilter', () => {
       'should handle $operand with value "$value"',
       ({ operand, value, expected }) => {
         const filter = createTestFilter(operand, value, 'DATE_TIME');
-        const result = buildValueFromFilter({ filter, type: 'DATE_TIME' });
+        const result = buildValueFromFilter({ filter });
         if (expected instanceof Date) {
           expect(result).toBeInstanceOf(Date);
           expect(result).toEqual(expected);
@@ -156,7 +156,7 @@ describe('buildValueFromFilter', () => {
       'should handle $operand with value "$value"',
       ({ operand, value, expected }) => {
         const filter = createTestFilter(operand, value, 'NUMBER');
-        expect(buildValueFromFilter({ filter, type: 'NUMBER' })).toBe(expected);
+        expect(buildValueFromFilter({ filter })).toBe(expected);
       },
     );
   });
@@ -179,9 +179,7 @@ describe('buildValueFromFilter', () => {
       'should handle $operand with value "$value"',
       ({ operand, value, expected }) => {
         const filter = createTestFilter(operand, value, 'BOOLEAN');
-        expect(buildValueFromFilter({ filter, type: 'BOOLEAN' })).toBe(
-          expected,
-        );
+        expect(buildValueFromFilter({ filter })).toBe(expected);
       },
     );
   });
@@ -214,7 +212,7 @@ describe('buildValueFromFilter', () => {
       'should handle $operand with value "$value"',
       ({ operand, value, expected }) => {
         const filter = createTestFilter(operand, value, 'ARRAY');
-        expect(buildValueFromFilter({ filter, type: 'ARRAY' })).toBe(expected);
+        expect(buildValueFromFilter({ filter })).toBe(expected);
       },
     );
   });
@@ -226,7 +224,7 @@ describe('buildValueFromFilter', () => {
       'should throw error for unsupported type %s',
       (type) => {
         const filter = createTestFilter(ViewFilterOperand.Is, 'test', type);
-        expect(() => buildValueFromFilter({ filter, type })).toThrow(
+        expect(() => buildValueFromFilter({ filter })).toThrow(
           'Type not supported',
         );
       },
@@ -240,7 +238,7 @@ describe('buildValueFromFilter', () => {
       'should return undefined for composite type %s',
       (type) => {
         const filter = createTestFilter(ViewFilterOperand.Is, 'test', type);
-        expect(buildValueFromFilter({ filter, type })).toBeUndefined();
+        expect(buildValueFromFilter({ filter })).toBeUndefined();
       },
     );
   });
@@ -248,12 +246,7 @@ describe('buildValueFromFilter', () => {
   describe('RAW_JSON field type', () => {
     it('should return undefined', () => {
       const filter = createTestFilter(ViewFilterOperand.Is, 'test', 'RAW_JSON');
-      expect(
-        buildValueFromFilter({
-          filter,
-          type: 'RAW_JSON',
-        }),
-      ).toBeUndefined();
+      expect(buildValueFromFilter({ filter })).toBeUndefined();
     });
   });
 
@@ -314,7 +307,6 @@ describe('buildValueFromFilter', () => {
         expect(
           buildValueFromFilter({
             filter,
-            type: 'RATING',
             options: mockOptions as FieldMetadataItemOption[],
           }),
         ).toBe(expected);
@@ -330,7 +322,6 @@ describe('buildValueFromFilter', () => {
       expect(
         buildValueFromFilter({
           filter,
-          type: 'RATING',
           options: mockOptions as FieldMetadataItemOption[],
         }),
       ).toBeUndefined();
@@ -380,7 +371,6 @@ describe('buildValueFromFilter', () => {
         expect(
           buildValueFromFilter({
             filter,
-            type: 'SELECT',
             options: mockOptions as FieldMetadataItemOption[],
           }),
         ).toBe(expected);
@@ -396,7 +386,6 @@ describe('buildValueFromFilter', () => {
       expect(
         buildValueFromFilter({
           filter,
-          type: 'SELECT',
           options: mockOptions as FieldMetadataItemOption[],
         }),
       ).toBeUndefined();
@@ -426,9 +415,7 @@ describe('buildValueFromFilter', () => {
       'should handle $operand with value "$value"',
       ({ operand, value, expected }) => {
         const filter = createTestFilter(operand, value, 'MULTI_SELECT');
-        expect(buildValueFromFilter({ filter, type: 'MULTI_SELECT' })).toEqual(
-          expected,
-        );
+        expect(buildValueFromFilter({ filter })).toEqual(expected);
       },
     );
 
@@ -438,9 +425,7 @@ describe('buildValueFromFilter', () => {
         'invalid-json',
         'MULTI_SELECT',
       );
-      expect(
-        buildValueFromFilter({ filter, type: 'MULTI_SELECT' }),
-      ).toBeUndefined();
+      expect(buildValueFromFilter({ filter })).toBeUndefined();
     });
   });
 });
