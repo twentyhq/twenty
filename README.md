@@ -82,7 +82,7 @@ Below are a few features we have implemented to date:
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/emails-dark.png" />
       <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/emails-light.png" />
-      <img src="./packages/twenty-docs/static/img/rich-notes-light.png" alt="Companies view" />
+      <img src="./packages/twenty-docs/static/img/emails-light.png" alt="Companies view" />
     </picture>
 </p>
 
@@ -92,7 +92,7 @@ Below are a few features we have implemented to date:
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/data-dark.png" />
       <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/data-light.png" />
-      <img src="./packages/twenty-docs/static/img/rich-notes-light.png" alt="Companies view" />
+      <img src="./packages/twenty-docs/static/img/data-light.png" alt="Companies view" />
     </picture>
 </p>
 
@@ -102,7 +102,7 @@ Below are a few features we have implemented to date:
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/notes-dark.png" />
       <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/notes-light.png" />
-      <img src="./packages/twenty-docs/static/img/rich-notes-light.png" alt="Companies view" />
+      <img src="./packages/twenty-docs/static/img/notes-light.png" alt="Companies view" />
     </picture>
 </p>
 
@@ -122,7 +122,7 @@ Below are a few features we have implemented to date:
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/keyboard-dark.png" />
       <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/keyboard-light.png" />
-      <img src="./packages/twenty-docs/static/img/shortcut-navigation-light.png" alt="Companies view" />
+      <img src="./packages/twenty-docs/static/img/keyboard-dark.png" alt="Companies view" />
     </picture>
 </p>
 
@@ -132,7 +132,7 @@ Below are a few features we have implemented to date:
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/api-dark.png" />
       <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/api-light.png" />
-      <img src="./packages/twenty-docs/static/img/shortcut-navigation-light.png" alt="Companies view" />
+      <img src="./packages/twenty-docs/static/img/api-light.png" alt="Companies view" />
     </picture>
 </p>
 
