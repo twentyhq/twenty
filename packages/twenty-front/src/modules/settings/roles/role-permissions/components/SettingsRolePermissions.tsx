@@ -14,11 +14,13 @@ const StyledRolePermissionsContainer = styled.div`
 type SettingsRolePermissionsProps = {
   roleId: string;
   isEditable: boolean;
+  isCreateMode: boolean;
 };
 
 export const SettingsRolePermissions = ({
   roleId,
   isEditable,
+  isCreateMode,
 }: SettingsRolePermissionsProps) => {
   const isPermissionsV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsPermissionsV2Enabled,
@@ -30,7 +32,7 @@ export const SettingsRolePermissions = ({
         roleId={roleId}
         isEditable={isEditable}
       />
-      {isPermissionsV2Enabled && (
+      {isPermissionsV2Enabled && !isCreateMode && (
         <SettingsRolePermissionsObjectLevelSection
           roleId={roleId}
           isEditable={isEditable}

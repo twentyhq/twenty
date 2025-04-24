@@ -3,9 +3,9 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { t } from '@lingui/core/macro';
 
 export const SettingsRolePermissionsObjectLevelTableHeader = () => (
-  <TableRow>
+  <TableRow gridAutoColumns="180px 1fr 1fr">
     <TableHeader>{t`Object`}</TableHeader>
-    <TableHeader>{t`Permission overrides`}</TableHeader>
+    <TableHeader>{t`Permissions`}</TableHeader>
     <TableHeader></TableHeader>
   </TableRow>
 );
