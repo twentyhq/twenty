@@ -2,6 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
+import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
@@ -52,7 +53,9 @@ export const useTriggerActionMenuDropdown = ({
           set(isRowSelectedFamilyState(recordId), true);
         }
 
-        openDropdown(actionMenuDropdownId);
+        openDropdown(actionMenuDropdownId, {
+          scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
+        });
       },
     [
       recordIndexActionMenuDropdownPositionState,

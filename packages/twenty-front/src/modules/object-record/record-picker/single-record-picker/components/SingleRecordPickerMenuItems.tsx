@@ -122,6 +122,7 @@ export const SingleRecordPickerMenuItems = ({
                   return (
                     emptyLabel && (
                       <SelectableListItem
+                        key={record.id}
                         itemId={record.id}
                         onEnter={() => {
                           setSelectedRecordId(undefined);
@@ -129,7 +130,6 @@ export const SingleRecordPickerMenuItems = ({
                         }}
                       >
                         <MenuItemSelect
-                          key={record.id}
                           onClick={() => {
                             setSelectedRecordId(undefined);
                             onRecordSelected();
