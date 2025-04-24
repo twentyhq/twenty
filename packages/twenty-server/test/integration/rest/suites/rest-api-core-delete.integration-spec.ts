@@ -22,7 +22,9 @@ describe('Core REST API Delete One endpoint', () => {
       path: `/people/${PERSON_1_ID}`,
     })
       .expect(200)
-      .expect((res) => expect(res.body.data.deletePerson.id).toBe(PERSON_1_ID));
+      .expect((res) =>
+        expect(res.body.data.deletePerson).toEqual({ id: PERSON_1_ID }),
+      );
   });
 
   it('should return a EntityNotFoundError when trying to delete a non-existing person', async () => {
