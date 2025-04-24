@@ -70,7 +70,7 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
               selected={
                 recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
               }
-              hovered={selectedItemId === ViewOpenRecordInType.SIDE_PANEL}
+              focused={selectedItemId === ViewOpenRecordInType.SIDE_PANEL}
               onClick={() =>
                 setAndPersistOpenRecordIn(
                   ViewOpenRecordInType.SIDE_PANEL,
@@ -100,7 +100,7 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
                   currentView,
                 )
               }
-              hovered={selectedItemId === ViewOpenRecordInType.RECORD_PAGE}
+              focused={selectedItemId === ViewOpenRecordInType.RECORD_PAGE}
             />
           </SelectableListItem>
         </SelectableList>

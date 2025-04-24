@@ -109,7 +109,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
             onEnter={() => onContentChange('layout')}
           >
             <MenuItem
-              selected={selectedItemId === 'Layout'}
+              focused={selectedItemId === 'Layout'}
               onClick={() => onContentChange('layout')}
               LeftIcon={viewTypeIconMapping(
                 currentView?.type ?? ViewType.Table,
@@ -128,7 +128,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
             onEnter={() => onContentChange('fields')}
           >
             <MenuItem
-              selected={selectedItemId === 'Fields'}
+              focused={selectedItemId === 'Fields'}
               onClick={() => onContentChange('fields')}
               LeftIcon={IconListDetails}
               text={t`Fields`}
@@ -147,7 +147,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
               }
             >
               <MenuItem
-                selected={selectedItemId === 'Group'}
+                focused={selectedItemId === 'Group'}
                 onClick={() =>
                   isDefined(recordGroupFieldMetadata)
                     ? onContentChange('recordGroups')
@@ -189,7 +189,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
             }}
           >
             <MenuItem
-              selected={selectedItemId === 'Copy link to view'}
+              focused={selectedItemId === 'Copy link to view'}
               onClick={() => {
                 const currentUrl = window.location.href;
                 navigator.clipboard.writeText(currentUrl);
@@ -209,7 +209,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
               onEnter={() => handleDelete()}
             >
               <MenuItem
-                selected={selectedItemId === 'Delete view'}
+                focused={selectedItemId === 'Delete view'}
                 onClick={() => handleDelete()}
                 LeftIcon={IconTrash}
                 text={t`Delete view`}

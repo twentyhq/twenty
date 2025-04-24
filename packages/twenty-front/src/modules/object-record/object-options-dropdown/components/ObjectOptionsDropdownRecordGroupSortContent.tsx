@@ -86,7 +86,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
               LeftIcon={IconHandMove}
               text={RecordGroupSort.Manual}
               selected={recordGroupSort === RecordGroupSort.Manual}
-              hovered={selectedItemId === RecordGroupSort.Manual}
+              focused={selectedItemId === RecordGroupSort.Manual}
             />
           </SelectableListItem>
           <SelectableListItem
@@ -102,7 +102,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
               LeftIcon={IconSortAZ}
               text={RecordGroupSort.Alphabetical}
               selected={recordGroupSort === RecordGroupSort.Alphabetical}
-              hovered={selectedItemId === RecordGroupSort.Alphabetical}
+              focused={selectedItemId === RecordGroupSort.Alphabetical}
             />
           </SelectableListItem>
           <SelectableListItem
@@ -118,7 +118,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
               LeftIcon={IconSortZA}
               text={RecordGroupSort.ReverseAlphabetical}
               selected={recordGroupSort === RecordGroupSort.ReverseAlphabetical}
-              hovered={selectedItemId === RecordGroupSort.ReverseAlphabetical}
+              focused={selectedItemId === RecordGroupSort.ReverseAlphabetical}
             />
           </SelectableListItem>
         </SelectableList>

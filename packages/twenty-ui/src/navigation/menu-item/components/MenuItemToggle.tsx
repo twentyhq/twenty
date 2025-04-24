@@ -17,7 +17,7 @@ const StyledToggleContainer = styled.label`
 `;
 
 type MenuItemToggleProps = {
-  selected?: boolean;
+  focused?: boolean;
   LeftIcon?: IconComponent;
   toggled: boolean;
   text: string;
@@ -27,7 +27,7 @@ type MenuItemToggleProps = {
 };
 
 export const MenuItemToggle = ({
-  selected,
+  focused,
   LeftIcon,
   text,
   toggled,
@@ -37,7 +37,7 @@ export const MenuItemToggle = ({
 }: MenuItemToggleProps) => {
   const inputId = useId();
   return (
-    <StyledMenuItemBase className={className} selected={selected}>
+    <StyledMenuItemBase className={className} focused={focused}>
       <StyledToggleContainer htmlFor={inputId}>
         <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
         <StyledMenuItemRightContent>

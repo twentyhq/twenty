@@ -130,7 +130,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                 onEnter={() => onContentChange('recordGroupFields')}
               >
                 <MenuItem
-                  selected={selectedItemId === 'GroupBy'}
+                  focused={selectedItemId === 'GroupBy'}
                   onClick={() => onContentChange('recordGroupFields')}
                   LeftIcon={IconLayoutList}
                   text={t`Group by`}
@@ -143,7 +143,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                 onEnter={() => onContentChange('recordGroupSort')}
               >
                 <MenuItem
-                  selected={selectedItemId === 'Sort'}
+                  focused={selectedItemId === 'Sort'}
                   onClick={() => onContentChange('recordGroupSort')}
                   LeftIcon={IconSortDescending}
                   text={t`Sort`}
@@ -158,7 +158,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
             onEnter={() => handleHideEmptyRecordGroupChange()}
           >
             <MenuItemToggle
-              selected={selectedItemId === 'HideEmptyGroups'}
+              focused={selectedItemId === 'HideEmptyGroups'}
               LeftIcon={IconCircleOff}
               onToggleChange={handleHideEmptyRecordGroupChange}
               toggled={hideEmptyRecordGroup}

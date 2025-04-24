@@ -40,7 +40,7 @@ export const ActionDropdownItem = ({
   return (
     <SelectableListItem itemId={action.key} onEnter={handleClick}>
       <MenuItem
-        selected={isSelected}
+        focused={isSelected}
         key={action.key}
         LeftIcon={action.Icon}
         onClick={handleClick}

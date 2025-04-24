@@ -137,7 +137,7 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
                   }}
                 >
                   <MenuItem
-                    selected={selectedItemId === filterOperand}
+                    focused={selectedItemId === filterOperand}
                     onClick={() => {
                       handleOperandChange(filterOperand);
                     }}

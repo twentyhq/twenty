@@ -121,7 +121,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 LeftIcon={IconTable}
                 text={t`Table`}
                 selected={currentView?.type === ViewType.Table}
-                hovered={selectedItemId === ViewType.Table}
+                focused={selectedItemId === ViewType.Table}
                 onClick={async () => {
                   if (currentView?.type !== ViewType.Table) {
                     await setAndPersistViewType(ViewType.Table);
@@ -139,7 +139,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 LeftIcon={viewTypeIconMapping(ViewType.Kanban)}
                 text={t`Kanban`}
                 disabled={isDefaultView}
-                hovered={selectedItemId === ViewType.Kanban}
+                focused={selectedItemId === ViewType.Kanban}
                 contextualText={
                   isDefaultView ? (
                     <>
@@ -164,7 +164,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
               }}
             >
               <MenuItem
-                selected={selectedItemId === ViewOpenRecordInType.SIDE_PANEL}
+                focused={selectedItemId === ViewOpenRecordInType.SIDE_PANEL}
                 LeftIcon={
                   recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
                     ? IconLayoutSidebarRight
@@ -190,7 +190,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   }}
                 >
                   <MenuItem
-                    selected={selectedItemId === 'Group'}
+                    focused={selectedItemId === 'Group'}
                     onClick={() =>
                       isDefined(recordGroupFieldMetadata)
                         ? onContentChange('recordGroups')
@@ -213,7 +213,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   }}
                 >
                   <MenuItemToggle
-                    selected={selectedItemId === 'Compact view'}
+                    focused={selectedItemId === 'Compact view'}
                     LeftIcon={IconBaselineDensitySmall}
                     onToggleChange={() =>
                       setAndPersistIsCompactModeActive(

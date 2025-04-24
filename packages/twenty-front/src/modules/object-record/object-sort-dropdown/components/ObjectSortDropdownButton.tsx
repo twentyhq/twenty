@@ -237,7 +237,7 @@ export const ObjectSortDropdownButton = ({
                 {RECORD_SORT_DIRECTIONS.map((sortDirection, index) => (
                   <MenuItem
                     key={index}
-                    selected={selectedItemId === sortDirection}
+                    focused={selectedItemId === sortDirection}
                     onClick={() => handleSortDirectionClick(sortDirection)}
                     text={
                       sortDirection === 'asc' ? t`Ascending` : t`Descending`
@@ -275,7 +275,7 @@ export const ObjectSortDropdownButton = ({
                   onEnter={() => handleAddSort(visibleFieldMetadataItem)}
                 >
                   <MenuItem
-                    selected={selectedItemId === visibleFieldMetadataItem.id}
+                    focused={selectedItemId === visibleFieldMetadataItem.id}
                     testId={`visible-select-sort-${index}`}
                     key={index}
                     onClick={() => handleAddSort(visibleFieldMetadataItem)}

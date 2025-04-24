@@ -137,7 +137,7 @@ export const SingleRecordPickerMenuItems = ({
                           LeftIcon={EmptyIcon}
                           text={emptyLabel}
                           selected={isUndefined(selectedRecordId)}
-                          hovered={isSelectedSelectNoneButton}
+                          focused={isSelectedSelectNoneButton}
                         />
                       </SelectableListItem>
                     )

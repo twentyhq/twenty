@@ -192,7 +192,7 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
             }}
           >
             <MenuItem
-              selected={selectedItemId === '-1'}
+              focused={selectedItemId === '-1'}
               key={`select-filter-${-1}`}
               testId={`select-filter-${-1}`}
               onClick={() => {
@@ -218,7 +218,7 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
                 }}
               >
                 <MenuItem
-                  selected={selectedItemId === subFieldName}
+                  focused={selectedItemId === subFieldName}
                   key={`select-filter-${index}`}
                   testId={`select-filter-${index}`}
                   onClick={() => {

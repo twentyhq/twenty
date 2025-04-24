@@ -13,7 +13,7 @@ export type MenuItemBaseProps = {
   isHoverBackgroundDisabled?: boolean;
   hovered?: boolean;
   disabled?: boolean;
-  selected?: boolean;
+  focused?: boolean;
 };
 
 export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
@@ -73,13 +73,10 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
     }
   }}
 
-  ${({ selected, theme }) =>
-    selected &&
+  ${({ focused, theme }) =>
+    focused &&
     css`
       background: ${theme.background.transparent.light};
-      &:hover {
-        background: ${theme.background.transparent.medium};
-      }
     `};
 
   position: relative;

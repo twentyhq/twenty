@@ -128,7 +128,7 @@ export const AdvancedFilterSubFieldSelectMenu = ({
             }}
           >
             <MenuItem
-              selected={selectedItemId === '-1'}
+              focused={selectedItemId === '-1'}
               onClick={() => {
                 handleSelectFilter(fieldMetadataItemUsedInDropdown);
               }}
@@ -149,7 +149,7 @@ export const AdvancedFilterSubFieldSelectMenu = ({
                 }}
               >
                 <MenuItem
-                  selected={selectedItemId === subFieldName}
+                  focused={selectedItemId === subFieldName}
                   key={`select-filter-${index}`}
                   testId={`select-filter-${index}`}
                   onClick={() => {

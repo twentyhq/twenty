@@ -53,7 +53,7 @@ export const SingleRecordPickerMenuItem = ({
         onClick={() => onRecordSelected(record)}
         text={record.name}
         selected={selectedRecord?.id === record.id}
-        hovered={isSelectedItemId}
+        focused={isSelectedItemId}
         avatar={
           <Avatar
             avatarUrl={record.avatarUrl}

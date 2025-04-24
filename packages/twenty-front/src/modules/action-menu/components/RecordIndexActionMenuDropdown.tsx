@@ -98,7 +98,7 @@ export const RecordIndexActionMenuDropdown = () => {
                     closeDropdown(dropdownId);
                     openCommandMenu();
                   }}
-                  selected={selectedItemId === 'more-actions'}
+                  focused={selectedItemId === 'more-actions'}
                   text="More actions"
                 />
               </SelectableListItem>

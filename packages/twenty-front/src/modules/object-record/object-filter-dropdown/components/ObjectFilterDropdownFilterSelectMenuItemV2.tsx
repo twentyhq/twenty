@@ -38,7 +38,7 @@ export const ObjectFilterDropdownFilterSelectMenuItemV2 = ({
 
   return (
     <MenuItem
-      selected={isSelectedItem}
+      focused={isSelectedItem}
       onClick={handleClick}
       LeftIcon={Icon}
       text={fieldMetadataItemToSelect.label}
