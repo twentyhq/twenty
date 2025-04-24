@@ -116,7 +116,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
           />
         }
       >
-        Group by
+        {t`Group by`}
       </DropdownMenuHeader>
       <StyledInput
         autoFocus

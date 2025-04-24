@@ -6,6 +6,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 const getTargetEntityAndOperationType = (expressionMap: QueryExpressionMap) => {
   const mainEntity = expressionMap.aliases[0].metadata.name;
@@ -20,9 +21,25 @@ const getTargetEntityAndOperationType = (expressionMap: QueryExpressionMap) => {
 export const validateQueryIsPermittedOrThrow = (
   expressionMap: QueryExpressionMap,
   objectRecordsPermissions: ObjectRecordsPermissions,
+  objectMetadataMaps: ObjectMetadataMaps,
+  shouldBypassPermissionChecks: boolean,
 ) => {
+  if (shouldBypassPermissionChecks) {
+    return;
+  }
+
   const { mainEntity, operationType } =
     getTargetEntityAndOperationType(expressionMap);
+
+  const objectMetadataIdForEntity =
+    objectMetadataMaps.idByNameSingular[mainEntity];
+
+  const objectMetadataIsSystem =
+    objectMetadataMaps.byId[objectMetadataIdForEntity]?.isSystem === true;
+
+  if (objectMetadataIsSystem) {
+    return;
+  }
 
   const permissionsForEntity = objectRecordsPermissions[mainEntity];
 

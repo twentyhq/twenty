@@ -14,7 +14,8 @@ describe('mapFieldMetadataToGraphQLQuery', () => {
   it('should return fieldName if simpleValue', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
       objectMetadataItems: generatedMockObjectMetadataItems,
-      field: personObjectMetadataItem.fields.find(
+      gqlField: 'id',
+      fieldMetadata: personObjectMetadataItem.fields.find(
         (field) => field.name === 'id',
       )!,
     });
@@ -23,7 +24,8 @@ describe('mapFieldMetadataToGraphQLQuery', () => {
   it('should return fieldName if composite', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
       objectMetadataItems: generatedMockObjectMetadataItems,
-      field: personObjectMetadataItem.fields.find(
+      gqlField: 'name',
+      fieldMetadata: personObjectMetadataItem.fields.find(
         (field) => field.name === 'name',
       )!,
     });
@@ -39,7 +41,8 @@ describe('mapFieldMetadataToGraphQLQuery', () => {
   it('should return non relation subFields if relation', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
       objectMetadataItems: generatedMockObjectMetadataItems,
-      field: personObjectMetadataItem.fields.find(
+      gqlField: 'company',
+      fieldMetadata: personObjectMetadataItem.fields.find(
         (field) => field.name === 'company',
       )!,
     });
@@ -115,7 +118,8 @@ idealCustomerProfile
         id: true,
         idealCustomerProfile: true,
       },
-      field: personObjectMetadataItem.fields.find(
+      gqlField: 'company',
+      fieldMetadata: personObjectMetadataItem.fields.find(
         (field) => field.name === 'company',
       )!,
     });

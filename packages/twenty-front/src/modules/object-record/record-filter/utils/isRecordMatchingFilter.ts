@@ -167,9 +167,13 @@ export const isRecordMatchingFilter = ({
 
     if (isEmptyObject(filterValue)) return true;
 
-    const objectMetadataField = objectMetadataItem.fields.find(
-      (field) => field.name === filterKey,
-    );
+    const objectMetadataField =
+      objectMetadataItem.fields.find((field) => field.name === filterKey) ??
+      objectMetadataItem.fields.find(
+        (field) =>
+          field.type === FieldMetadataType.RELATION &&
+          field.settings?.joinColumnName === filterKey,
+      );
 
     if (!isDefined(objectMetadataField)) {
       throw new Error(
@@ -359,6 +363,16 @@ export const isRecordMatchingFilter = ({
         });
       }
       case FieldMetadataType.RELATION: {
+        const isJoinColumn =
+          objectMetadataField.settings?.joinColumnName === filterKey;
+
+        if (isJoinColumn) {
+          return isMatchingUUIDFilter({
+            uuidFilter: filterValue as UUIDFilter,
+            value: record[filterKey],
+          });
+        }
+
         throw new Error(
           `Not implemented yet, use UUID filter instead on the corredponding "${filterKey}Id" field`,
         );

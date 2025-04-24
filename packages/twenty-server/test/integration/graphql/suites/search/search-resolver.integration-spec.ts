@@ -54,6 +54,7 @@ describe('SearchResolver', () => {
           },
         },
       });
+
       const listingObjectMetadata = objectsMetadata.find(
         (object) => object.nameSingular === LISTING_NAME_SINGULAR,
       );

@@ -68,7 +68,7 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
         <ApiReferenceReact
           configuration={{
             spec: {
-              url: `${REACT_APP_SERVER_BASE_URL}/open-api/${schema}?token=${playgroundApiKey}`,
+              url: `${REACT_APP_SERVER_BASE_URL}/rest/open-api/${schema}?token=${playgroundApiKey}`,
             },
             authentication: {
               http: {

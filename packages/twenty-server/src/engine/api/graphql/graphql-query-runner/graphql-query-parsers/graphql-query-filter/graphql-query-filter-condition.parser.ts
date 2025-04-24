@@ -14,15 +14,19 @@ import { GraphqlQueryFilterFieldParser } from './graphql-query-filter-field.pars
 
 export class GraphqlQueryFilterConditionParser {
   private fieldMetadataMapByName: FieldMetadataMap;
+  private fieldMetadataMapByJoinColumnName: FieldMetadataMap;
   private queryFilterFieldParser: GraphqlQueryFilterFieldParser;
 
   constructor(
     fieldMetadataMapByName: FieldMetadataMap,
+    fieldMetadataMapByJoinColumnName: FieldMetadataMap,
     featureFlagsMap: FeatureFlagMap,
   ) {
     this.fieldMetadataMapByName = fieldMetadataMapByName;
+    this.fieldMetadataMapByJoinColumnName = fieldMetadataMapByJoinColumnName;
     this.queryFilterFieldParser = new GraphqlQueryFilterFieldParser(
       this.fieldMetadataMapByName,
+      this.fieldMetadataMapByJoinColumnName,
       featureFlagsMap,
     );
   }

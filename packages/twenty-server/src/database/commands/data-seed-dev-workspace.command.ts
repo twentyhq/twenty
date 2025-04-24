@@ -12,6 +12,7 @@ import {
   getDevSeedCompanyCustomFields,
   getDevSeedPeopleCustomFields,
 } from 'src/database/typeorm-seeds/metadata/fieldsMetadata';
+import { seedApiKey } from 'src/database/typeorm-seeds/workspace/api-key';
 import { seedCalendarChannels } from 'src/database/typeorm-seeds/workspace/calendar-channel';
 import { seedCalendarChannelEventAssociations } from 'src/database/typeorm-seeds/workspace/calendar-channel-event-association';
 import { seedCalendarEventParticipants } from 'src/database/typeorm-seeds/workspace/calendar-event-participants';
@@ -184,6 +185,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         );
 
         if (dataSourceMetadata.workspaceId === SEED_APPLE_WORKSPACE_ID) {
+          await seedApiKey(entityManager, dataSourceMetadata.schema);
           await seedMessageThread(entityManager, dataSourceMetadata.schema);
           await seedConnectedAccount(entityManager, dataSourceMetadata.schema);
 
