@@ -28,7 +28,6 @@ export const useCreateNewIndexRecord = ({
 
   const { openRecordTitleCell } = useRecordTitleCell();
 
-  //tododo here
   const { buildRecordInputFromFilters } = useBuildRecordInputFromFilters({
     objectMetadataItem,
   });
@@ -45,12 +44,9 @@ export const useCreateNewIndexRecord = ({
 
         await createOneRecord({
           id: recordId,
-          ...{
-            ...recordInputFromFilters,
-            ...recordInput,
-          },
+          ...recordInputFromFilters,
+          ...recordInput,
         });
-
         if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
           openRecordInCommandMenu({
             recordId,

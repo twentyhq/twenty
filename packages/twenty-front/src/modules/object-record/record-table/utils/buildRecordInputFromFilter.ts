@@ -259,20 +259,22 @@ const computeValueFromFilterRelation = (
   label?: string,
 ) => {
   switch (operand) {
-    case ViewFilterOperand.Is:
+    case ViewFilterOperand.Is: {
+      const parsedValue = JSON.parse(value);
       if (
         relationType === RelationDefinitionType.MANY_TO_ONE ||
         relationType === RelationDefinitionType.ONE_TO_ONE
       ) {
         if (label === 'Assignee') {
-          return JSON.parse(value).isCurrentWorkspaceMemberSelected
+          return parsedValue.isCurrentWorkspaceMemberSelected
             ? currentWorkspaceMember?.id
             : undefined;
         } else {
-          return JSON.parse(value).selectedRecordIds?.[0];
+          return parsedValue.selectedRecordIds?.[0];
         }
       }
-      return JSON.parse(value).selectedRecordIds;
+      return parsedValue.selectedRecordIds;
+    }
     case ViewFilterOperand.IsNot:
     case ViewFilterOperand.IsNotEmpty: // todo
     case ViewFilterOperand.IsEmpty:

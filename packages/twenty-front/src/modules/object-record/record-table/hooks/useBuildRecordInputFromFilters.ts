@@ -28,23 +28,22 @@ export const useBuildRecordInputFromFilters = ({
         (field) => field.id === filter.fieldMetadataId,
       );
 
-      if (isDefined(fieldMetadataItem)) {
-        if (fieldMetadataItem.type === 'RELATION') {
-          if (isDefined(filter.value)) {
-            recordInput[`${fieldMetadataItem.name}Id`] = buildValueFromFilter({
-              filter,
-              options: fieldMetadataItem.options ?? undefined,
-              relationType: fieldMetadataItem.relationDefinition?.direction,
-              currentWorkspaceMember: currentWorkspaceMember ?? undefined,
-              label: filter.label,
-            });
-          }
-        } else {
-          recordInput[fieldMetadataItem.name] = buildValueFromFilter({
-            filter,
-            options: fieldMetadataItem.options ?? undefined,
-          });
-        }
+      if (!isDefined(fieldMetadataItem)) {
+        return;
+      }
+      if (fieldMetadataItem.type === 'RELATION') {
+        recordInput[`${fieldMetadataItem.name}Id`] = buildValueFromFilter({
+          filter,
+          options: fieldMetadataItem.options ?? undefined,
+          relationType: fieldMetadataItem.relationDefinition?.direction,
+          currentWorkspaceMember: currentWorkspaceMember ?? undefined,
+          label: filter.label,
+        });
+      } else {
+        recordInput[fieldMetadataItem.name] = buildValueFromFilter({
+          filter,
+          options: fieldMetadataItem.options ?? undefined,
+        });
       }
     });
 

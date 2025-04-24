@@ -118,7 +118,7 @@ FILTER_OPERANDS_MAP as FilterOperandMap;
 export const getRecordFilterOperands = ({
   filterType,
   subFieldName,
-}: GetRecordFilterOperandsParams) => {
+}: GetRecordFilterOperandsParams): RecordFilterOperand[] => {
   const emptyOperands = [
     RecordFilterOperand.IsEmpty,
     RecordFilterOperand.IsNotEmpty,
@@ -137,7 +137,7 @@ export const getRecordFilterOperands = ({
         RecordFilterOperand.Contains,
         RecordFilterOperand.DoesNotContain,
         ...emptyOperands,
-      ] as const;
+      ];
     case 'CURRENCY':
     case 'NUMBER':
       return [
