@@ -195,9 +195,19 @@ const computeValueFromFilterRating = (
   switch (operand) {
     case ViewFilterOperand.Is:
     case ViewFilterOperand.IsNotEmpty:
-    case ViewFilterOperand.GreaterThan:
-    case ViewFilterOperand.LessThan:
       return option.value;
+    case ViewFilterOperand.GreaterThan: {
+      const plusOne = options?.find(
+        (opt) => opt.position === option.position + 1,
+      )?.value;
+      return plusOne ? plusOne : option.value;
+    }
+    case ViewFilterOperand.LessThan: {
+      const minusOne = options?.find(
+        (opt) => opt.position === option.position - 1,
+      )?.value;
+      return minusOne ? minusOne : option.value;
+    }
     case ViewFilterOperand.IsEmpty:
       return undefined;
     default:
