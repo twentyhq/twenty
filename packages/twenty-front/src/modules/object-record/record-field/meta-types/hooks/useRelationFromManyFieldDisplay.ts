@@ -33,19 +33,11 @@ export const useRelationFromManyFieldDisplay = () => {
   const button = fieldDefinition.editButtonIcon;
 
   const fieldName = fieldDefinition.metadata.fieldName;
-  console.log(
-    '[expect many items since from many] useRelationFromManyFieldDisplay for fieldName: ',
-    fieldName,
-    recordId,
-  );
-  let fieldValue = useRecordFieldValue<ObjectRecord[] | undefined>(
+
+  const fieldValue = useRecordFieldValue<ObjectRecord[] | undefined>(
     recordId,
     fieldName,
   );
-  if (isDefined(fieldValue) && !Array.isArray(fieldValue)) {
-    fieldValue = [fieldValue];
-  }
-  console.log('items: ', fieldValue);
 
   const maxWidthForField =
     isDefined(button) && isDefined(maxWidth)

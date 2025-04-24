@@ -4,9 +4,9 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getFieldPreviewValue';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { pascalCase } from '~/utils/string/pascalCase';
-import { isDefined } from 'twenty-shared/utils';
 
 type UsePreviewRecordParams = {
   objectMetadataItem: Pick<

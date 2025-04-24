@@ -17,6 +17,7 @@ import {
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
   FieldMetadataType,
+  RelationDefinition,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 type SettingsDataModelFieldRelationSettingsFormCardProps = {
@@ -85,7 +86,12 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
       preview={
         <StyledPreviewContent isMobile={isMobile}>
           <StyledFieldPreviewCard
-            fieldMetadataItem={fieldMetadataItem}
+            fieldMetadataItem={{
+              ...fieldMetadataItem,
+              relationDefinition: {
+                direction: relationType,
+              } as RelationDefinition,
+            }}
             shrink
             objectMetadataItem={objectMetadataItem}
             relationObjectMetadataItem={relationObjectMetadataItem}
@@ -113,6 +119,12 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
                   initialRelationFieldMetadataItem.label,
                 ) || 'Field name',
               type: FieldMetadataType.RELATION,
+              relationDefinition: {
+                direction:
+                  relationType === RelationDefinitionType.MANY_TO_ONE
+                    ? RelationDefinitionType.ONE_TO_MANY
+                    : RelationDefinitionType.MANY_TO_ONE,
+              } as RelationDefinition,
             }}
             shrink
             objectMetadataItem={relationObjectMetadataItem}

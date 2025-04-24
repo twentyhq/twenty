@@ -46,39 +46,32 @@ export const RelationFromManyFieldDisplay = () => {
         : CoreObjectNameSingular.Task;
 
     const relationFieldName = fieldName === 'noteTargets' ? 'note' : 'task';
-    console.log('fieldValue', fieldValue);
     return (
-      <>
-        rr
-        <ExpandableList isChipCountDisplayed={isFocused}>
-          {fieldValue
-            .map((record) =>
-              isDefined(record) && isDefined(record[relationFieldName]) ? (
-                <RecordChip
-                  key={record.id}
-                  objectNameSingular={objectNameSingular}
-                  record={record[relationFieldName]}
-                />
-              ) : undefined,
-            )
-            .filter(isDefined)}
-        </ExpandableList>
-      </>
+      <ExpandableList isChipCountDisplayed={isFocused}>
+        {fieldValue
+          .map((record) =>
+            isDefined(record) && isDefined(record[relationFieldName]) ? (
+              <RecordChip
+                key={record.id}
+                objectNameSingular={objectNameSingular}
+                record={record[relationFieldName]}
+              />
+            ) : undefined,
+          )
+          .filter(isDefined)}
+      </ExpandableList>
     );
   } else if (isRelationFromActivityTargets) {
     return (
-      <>
-        ssss
-        <ExpandableList isChipCountDisplayed={isFocused}>
-          {activityTargetObjectRecords.filter(isDefined).map((record) => (
-            <RecordChip
-              key={record.targetObject.id}
-              objectNameSingular={record.targetObjectMetadataItem.nameSingular}
-              record={record.targetObject}
-            />
-          ))}
-        </ExpandableList>
-      </>
+      <ExpandableList isChipCountDisplayed={isFocused}>
+        {activityTargetObjectRecords.filter(isDefined).map((record) => (
+          <RecordChip
+            key={record.targetObject.id}
+            objectNameSingular={record.targetObjectMetadataItem.nameSingular}
+            record={record.targetObject}
+          />
+        ))}
+      </ExpandableList>
     );
   } else {
     return (

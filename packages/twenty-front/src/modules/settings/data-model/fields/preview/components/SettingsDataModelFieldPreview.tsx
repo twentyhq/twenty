@@ -13,6 +13,7 @@ import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fiel
 import { SettingsDataModelSetPreviewRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetRecordEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
 import { usePreviewRecord } from '@/settings/data-model/fields/preview/hooks/usePreviewRecord';
+import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -86,10 +87,14 @@ export const SettingsDataModelFieldPreview = ({
       objectMetadataItem,
     });
 
+  console.log('objectMetadataItem', objectMetadataItem);
+
   const previewRecord = usePreviewRecord({
     objectMetadataItem,
     skip: !isLabelIdentifier,
   });
+
+  console.log('previewRecord', previewRecord);
 
   const fieldPreviewValue = useFieldPreviewValue({
     fieldMetadataItem,
@@ -97,22 +102,13 @@ export const SettingsDataModelFieldPreview = ({
     skip: isLabelIdentifier,
   });
 
+  console.log('fieldPreviewValue', fieldPreviewValue);
+
   const fieldName =
     fieldMetadataItem.name || `${fieldMetadataItem.type}-new-field`;
   const recordId =
     previewRecord?.id ??
-    `${objectMetadataItem.nameSingular}-${fieldName}-preview`;
-
-  console.log(
-    'SettingsDataModelFieldPreview',
-    fieldMetadataItem,
-    'relationObjectMetadataItem',
-    relationObjectMetadataItem,
-    'objectMetadataItem',
-    objectMetadataItem,
-    'fieldPreviewValue',
-    fieldPreviewValue,
-  );
+    `${objectMetadataItem.nameSingular}-${fieldName}-preview-${fieldMetadataItem.relationDefinition?.direction}`;
 
   return (
     <>
@@ -121,7 +117,7 @@ export const SettingsDataModelFieldPreview = ({
           instanceId: 'record-field-component-instance-id',
         }}
       >
-        {previewRecord ? (
+        {isDefined(previewRecord) ? (
           <SettingsDataModelSetPreviewRecordEffect
             fieldName={fieldName}
             record={previewRecord}
