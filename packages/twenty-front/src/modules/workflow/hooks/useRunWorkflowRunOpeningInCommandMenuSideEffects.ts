@@ -5,8 +5,8 @@ import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCac
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { workflowRunIdComponentState } from '@/workflow/states/workflowRunIdComponentState';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowRun } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
@@ -24,6 +24,9 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
   const flowState = useRecoilComponentCallbackStateV2(flowComponentState);
   const workflowRunIdState = useRecoilComponentCallbackStateV2(
     workflowRunIdComponentState,
+  );
+  const workflowVisualizerWorkflowIdState = useRecoilComponentCallbackStateV2(
+    workflowVisualizerWorkflowIdComponentState,
   );
 
   const runWorkflowRunOpeningInCommandMenuSideEffects = useRecoilCallback(
@@ -65,7 +68,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
         }
 
         set(workflowRunIdState, workflowRunRecord.id);
-        set(workflowIdState, workflowRunRecord.workflowId);
+        set(workflowVisualizerWorkflowIdState, workflowRunRecord.workflowId);
         set(flowState, {
           workflowVersionId: workflowRunRecord.workflowVersionId,
           trigger: workflowRunRecord.output.flow.trigger,
@@ -87,6 +90,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
       getIcon,
       openWorkflowRunViewStepInCommandMenu,
       workflowRunIdState,
+      workflowVisualizerWorkflowIdState,
     ],
   );
 

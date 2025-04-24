@@ -1,7 +1,8 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
 import { workflowRunStepToOpenByDefaultState } from '@/workflow/workflow-diagram/states/workflowRunStepToOpenByDefaultState';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
@@ -16,6 +17,10 @@ export const useHandleWorkflowRunDiagramCanvasInit = () => {
 
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
   const { isInRightDrawer } = useContext(ActionMenuContext);
+
+  const workflowVisualizerWorkflowIdState = useRecoilComponentCallbackStateV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
 
   const handleWorkflowRunDiagramCanvasInit = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -43,8 +48,11 @@ export const useHandleWorkflowRunDiagramCanvasInit = () => {
         );
 
         if (isDefined(workflowStepToOpenByDefault)) {
-          const workflowId = getSnapshotValue(snapshot, workflowIdState);
-          if (!isDefined(workflowId)) {
+          const workflowVisualizerWorkflowId = getSnapshotValue(
+            snapshot,
+            workflowVisualizerWorkflowIdState,
+          );
+          if (!isDefined(workflowVisualizerWorkflowId)) {
             throw new Error(
               'The workflow id must be set; ensure the workflow id is always set before rendering the workflow diagram.',
             );
@@ -53,7 +61,7 @@ export const useHandleWorkflowRunDiagramCanvasInit = () => {
           set(workflowSelectedNodeState, workflowStepToOpenByDefault.id);
 
           openWorkflowRunViewStepInCommandMenu({
-            workflowId,
+            workflowId: workflowVisualizerWorkflowId,
             title: workflowStepToOpenByDefault.data.name,
             icon: getIcon(
               getWorkflowNodeIconKey(workflowStepToOpenByDefault.data),
@@ -65,7 +73,12 @@ export const useHandleWorkflowRunDiagramCanvasInit = () => {
           set(workflowRunStepToOpenByDefaultState, undefined);
         }
       },
-    [getIcon, isInRightDrawer, openWorkflowRunViewStepInCommandMenu],
+    [
+      getIcon,
+      isInRightDrawer,
+      openWorkflowRunViewStepInCommandMenu,
+      workflowVisualizerWorkflowIdState,
+    ],
   );
 
   return {

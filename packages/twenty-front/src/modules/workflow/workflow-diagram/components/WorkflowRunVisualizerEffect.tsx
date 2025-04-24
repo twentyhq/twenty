@@ -5,8 +5,8 @@ import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { workflowRunIdComponentState } from '@/workflow/states/workflowRunIdComponentState';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowRunOutput } from '@/workflow/types/Workflow';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
@@ -14,7 +14,7 @@ import { workflowRunStepToOpenByDefaultState } from '@/workflow/workflow-diagram
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { selectWorkflowDiagramNode } from '@/workflow/workflow-diagram/utils/selectWorkflowDiagramNode';
 import { useContext, useEffect } from 'react';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowRunVisualizerEffect = ({
@@ -28,7 +28,9 @@ export const WorkflowRunVisualizerEffect = ({
   const setWorkflowRunId = useSetRecoilComponentStateV2(
     workflowRunIdComponentState,
   );
-  const setWorkflowId = useSetRecoilState(workflowIdState);
+  const setWorkflowVisualizerWorkflowId = useSetRecoilComponentStateV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
 
   const flowState = useRecoilComponentCallbackStateV2(flowComponentState);
 
@@ -45,8 +47,8 @@ export const WorkflowRunVisualizerEffect = ({
       return;
     }
 
-    setWorkflowId(workflowRun.workflowId);
-  }, [setWorkflowId, workflowRun]);
+    setWorkflowVisualizerWorkflowId(workflowRun.workflowId);
+  }, [setWorkflowVisualizerWorkflowId, workflowRun]);
 
   const handleWorkflowRunDiagramGeneration = useRecoilCallback(
     ({ set }) =>

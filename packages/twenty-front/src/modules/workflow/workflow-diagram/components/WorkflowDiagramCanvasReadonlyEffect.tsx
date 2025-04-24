@@ -1,5 +1,6 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import {
@@ -9,7 +10,7 @@ import {
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { useCallback } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
@@ -18,7 +19,9 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
   const { openWorkflowViewStepInCommandMenu } = useWorkflowCommandMenu();
 
-  const workflowId = useRecoilValue(workflowIdState);
+  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
 
   const handleSelectionChange = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
@@ -32,9 +35,9 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
 
       const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
 
-      if (isDefined(workflowId)) {
+      if (isDefined(workflowVisualizerWorkflowId)) {
         openWorkflowViewStepInCommandMenu(
-          workflowId,
+          workflowVisualizerWorkflowId,
           selectedNodeData.name,
           getIcon(getWorkflowNodeIconKey(selectedNodeData)),
         );
@@ -43,7 +46,7 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
     [
       setWorkflowSelectedNode,
       openWorkflowViewStepInCommandMenu,
-      workflowId,
+      workflowVisualizerWorkflowId,
       getIcon,
     ],
   );

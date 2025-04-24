@@ -1,6 +1,7 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import { WorkflowRunDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -15,10 +16,17 @@ export const WorkflowRunDiagramCanvasEffect = () => {
 
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
 
+  const workflowVisualizerWorkflowIdState = useRecoilComponentCallbackStateV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
+
   const handleSelectionChange = useRecoilCallback(
     ({ snapshot, set }) =>
       ({ nodes }: OnSelectionChangeParams) => {
-        const workflowId = getSnapshotValue(snapshot, workflowIdState);
+        const workflowId = getSnapshotValue(
+          snapshot,
+          workflowVisualizerWorkflowIdState,
+        );
 
         if (!isDefined(workflowId)) {
           throw new Error('Expected the workflowId to be defined.');
@@ -55,7 +63,11 @@ export const WorkflowRunDiagramCanvasEffect = () => {
           stepExecutionStatus: selectedNodeData.runStatus,
         });
       },
-    [getIcon, openWorkflowRunViewStepInCommandMenu],
+    [
+      getIcon,
+      openWorkflowRunViewStepInCommandMenu,
+      workflowVisualizerWorkflowIdState,
+    ],
   );
 
   useOnSelectionChange({
