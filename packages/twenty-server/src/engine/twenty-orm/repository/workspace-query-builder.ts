@@ -1,6 +1,8 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 
+import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 
 export class WorkspaceQueryBuilder<
@@ -9,9 +11,15 @@ export class WorkspaceQueryBuilder<
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
     objectRecordsPermissions: ObjectRecordsPermissions,
+    internalContext: WorkspaceInternalContext,
+    shouldBypassPermissionChecks: boolean,
   ) {
-    super(queryBuilder, objectRecordsPermissions);
-    this.objectRecordsPermissions = objectRecordsPermissions;
+    super(
+      queryBuilder,
+      objectRecordsPermissions,
+      internalContext,
+      shouldBypassPermissionChecks,
+    );
   }
 
   override clone(): this {
@@ -20,6 +28,8 @@ export class WorkspaceQueryBuilder<
     return new WorkspaceQueryBuilder(
       clonedQueryBuilder,
       this.objectRecordsPermissions,
+      this.internalContext,
+      this.shouldBypassPermissionChecks,
     ) as this;
   }
 }

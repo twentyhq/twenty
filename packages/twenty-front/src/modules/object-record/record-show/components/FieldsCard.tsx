@@ -8,6 +8,7 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { isFieldValueReadOnly } from '@/object-record/record-field/utils/isFieldValueReadOnly';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
@@ -117,7 +118,12 @@ export const FieldsCard = ({
                     }),
                     useUpdateRecord: useUpdateOneObjectRecordMutation,
                     isDisplayModeFixHeight: true,
-                    isReadOnly: isRecordReadOnly,
+                    isReadOnly: isFieldValueReadOnly({
+                      objectNameSingular,
+                      fieldName: fieldMetadataItem.name,
+                      fieldType: fieldMetadataItem.type,
+                      isRecordReadOnly,
+                    }),
                   }}
                 >
                   <ActivityTargetsInlineCell
@@ -154,7 +160,12 @@ export const FieldsCard = ({
                   }),
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
                   isDisplayModeFixHeight: true,
-                  isReadOnly: isRecordReadOnly,
+                  isReadOnly: isFieldValueReadOnly({
+                    objectNameSingular,
+                    fieldName: fieldMetadataItem.name,
+                    fieldType: fieldMetadataItem.type,
+                    isRecordReadOnly,
+                  }),
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider

@@ -29,7 +29,7 @@ import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing/we
 import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-price.service';
 import { BillingWebhookProductService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-subscription.service';
-@Controller('billing')
+@Controller()
 @UseFilters(BillingRestApiExceptionFilter)
 export class BillingController {
   protected readonly logger = new Logger(BillingController.name);
@@ -46,7 +46,7 @@ export class BillingController {
     private readonly billingWebhookCustomerService: BillingWebhookCustomerService,
   ) {}
 
-  @Post('/webhooks')
+  @Post(['billing/webhooks', 'webhooks/stripe'])
   async handleWebhooks(
     @Headers('stripe-signature') signature: string,
     @Req() req: RawBodyRequest<Request>,

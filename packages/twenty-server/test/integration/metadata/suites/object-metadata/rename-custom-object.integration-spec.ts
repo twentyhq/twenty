@@ -4,7 +4,6 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { findManyObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-query-factory.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneRelationMetadataFactory } from 'test/integration/metadata/suites/utils/create-one-relation-metadata-factory.util';
-import { deleteOneRelationMetadataItemFactory } from 'test/integration/metadata/suites/utils/delete-one-relation-metadata-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -14,7 +13,6 @@ const LISTING_NAME_SINGULAR = 'listing';
 
 describe('Custom object renaming', () => {
   let listingObjectId = '';
-  let customRelationId = '';
 
   const STANDARD_OBJECT_RELATIONS = [
     'noteTarget',
@@ -108,10 +106,6 @@ describe('Custom object renaming', () => {
 
     const fields = await makeMetadataAPIRequest(fieldsGraphqlOperation);
 
-    const foreignKeyFieldsMetadataForListing = fields.body.data.fields.edges
-      .filter((field) => field.node.name === `${LISTING_NAME_SINGULAR}Id`)
-      .map((field) => field.node);
-
     const relationFieldsMetadataForListing = fields.body.data.fields.edges
       .filter(
         (field) =>
@@ -120,21 +114,7 @@ describe('Custom object renaming', () => {
       )
       .map((field) => field.node);
 
-    expect(foreignKeyFieldsMetadataForListing.length).toBe(5);
-
     STANDARD_OBJECT_RELATIONS.forEach((relation) => {
-      // foreignKey field
-      const foreignKeyFieldMetadataId = foreignKeyFieldsMetadataForListing.find(
-        (field) =>
-          field.object.id ===
-          standardObjectRelationsMap[relation].objectMetadataId,
-      ).id;
-
-      expect(foreignKeyFieldMetadataId).not.toBeUndefined();
-
-      standardObjectRelationsMap[relation].foreignKeyFieldMetadataId =
-        foreignKeyFieldMetadataId;
-
       // relation field
       const relationFieldMetadataId = relationFieldsMetadataForListing.find(
         (field) =>
@@ -189,8 +169,6 @@ describe('Custom object renaming', () => {
     );
 
     // Assert
-    customRelationId = relationResponse.body.data.createOneRelationMetadata.id;
-
     relationFieldMetadataOnPersonId =
       relationResponse.body.data.createOneRelationMetadata.fromFieldMetadataId;
   });
@@ -233,29 +211,8 @@ describe('Custom object renaming', () => {
       (field) => field.node,
     );
 
-    expect(
-      fieldsMetadata.find(
-        (field) => field.name === `${LISTING_NAME_SINGULAR}Id`,
-      ),
-    ).toBeUndefined();
-
     // standard relations have been updated
     STANDARD_OBJECT_RELATIONS.forEach((relation) => {
-      // foreignKey field
-      const foreignKeyFieldMetadataId =
-        standardObjectRelationsMap[relation].foreignKeyFieldMetadataId;
-
-      const updatedForeignKeyFieldMetadata = fieldsMetadata.find(
-        (field) => field.id === foreignKeyFieldMetadataId,
-      );
-
-      expect(updatedForeignKeyFieldMetadata.name).toBe(
-        `${HOUSE_NAME_SINGULAR}Id`,
-      );
-      expect(updatedForeignKeyFieldMetadata.label).toBe(
-        'House ID (foreign key)',
-      );
-
       // relation field
       const relationFieldMetadataId =
         standardObjectRelationsMap[relation].relationFieldMetadataId;
@@ -276,19 +233,7 @@ describe('Custom object renaming', () => {
     expect(updatedRelationFieldMetadata.name).toBe(RELATION_FROM_NAME);
   });
 
-  it('4. should delete custom relation', async () => {
-    const graphqlOperation = deleteOneRelationMetadataItemFactory({
-      idToDelete: customRelationId,
-    });
-
-    const response = await makeMetadataAPIRequest(graphqlOperation);
-
-    const deleteRelationResponse = response.body.data.deleteOneRelation;
-
-    expect(deleteRelationResponse.id).toBe(customRelationId);
-  });
-
-  it('5. should delete custom object', async () => {
+  it('4. should delete custom object', async () => {
     const { data } = await deleteOneObjectMetadata({
       input: {
         idToDelete: listingObjectId,

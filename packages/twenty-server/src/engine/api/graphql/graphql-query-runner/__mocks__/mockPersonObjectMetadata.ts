@@ -29,6 +29,7 @@ export const mockPersonObjectMetadata = (
   fields: [],
   indexMetadatas: [],
   fieldsById: {},
+  fieldsByJoinColumnName: {},
   fieldsByName: {
     name: {
       id: '',

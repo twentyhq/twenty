@@ -401,7 +401,10 @@ export class WorkflowStatusesUpdateJob {
             },
             updatedFields: ['statuses'],
             diff: {
-              statuses: newWorkflowStatuses,
+              statuses: {
+                before: currentWorkflow.statuses,
+                after: newWorkflowStatuses,
+              },
             },
           },
         },
