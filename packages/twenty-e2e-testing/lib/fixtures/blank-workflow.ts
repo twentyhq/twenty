@@ -24,6 +24,8 @@ export class WorkflowVisualizerPage {
   readonly useAsDraftButton: Locator;
   readonly overrideDraftButton: Locator;
   readonly discardDraftButton: Locator;
+  readonly seeRunsButton: Locator;
+  readonly goBackInCommandMenu: Locator;
 
   #actionNames: Record<WorkflowActionType, string> = {
     'create-record': 'Create Record',
@@ -31,6 +33,7 @@ export class WorkflowVisualizerPage {
     'delete-record': 'Delete Record',
     code: 'Code',
     'send-email': 'Send Email',
+    form: 'Form',
   };
 
   #createdActionNames: Record<WorkflowActionType, string> = {
@@ -39,6 +42,7 @@ export class WorkflowVisualizerPage {
     'delete-record': 'Delete Record',
     code: 'Code - Serverless Function',
     'send-email': 'Send Email',
+    form: 'Form',
   };
 
   #triggerNames: Record<WorkflowTriggerType, string> = {
@@ -84,6 +88,10 @@ export class WorkflowVisualizerPage {
     this.discardDraftButton = page.getByRole('button', {
       name: 'Discard Draft',
     });
+    this.seeRunsButton = page.getByRole('link', { name: 'See runs' });
+    this.goBackInCommandMenu = this.commandMenu
+      .getByRole('button')
+      .and(this.commandMenu.getByTestId('command-menu-go-back-button'));
   }
 
   async createOneWorkflow() {
