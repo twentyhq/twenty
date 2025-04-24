@@ -4,12 +4,14 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+
 export const useTriggerActionMenuDropdown = ({
   recordTableId,
 }: {
@@ -34,6 +36,8 @@ export const useTriggerActionMenuDropdown = ({
 
   const { openDropdown } = useDropdownV2();
 
+  const { closeCommandMenu } = useCommandMenu();
+
   const triggerActionMenuDropdown = useRecoilCallback(
     ({ set, snapshot }) =>
       (event: React.MouseEvent, recordId: string) => {
@@ -53,6 +57,8 @@ export const useTriggerActionMenuDropdown = ({
           set(isRowSelectedFamilyState(recordId), true);
         }
 
+        closeCommandMenu();
+
         openDropdown(actionMenuDropdownId, {
           scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
         });
@@ -62,6 +68,7 @@ export const useTriggerActionMenuDropdown = ({
       isRowSelectedFamilyState,
       openDropdown,
       actionMenuDropdownId,
+      closeCommandMenu,
     ],
   );
 
