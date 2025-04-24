@@ -25,7 +25,7 @@ import { isFieldSelect } from '@/object-record/record-field/types/guards/isField
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { isWorkflowRunJsonField } from '@/object-record/record-field/meta-types/utils/isWorkflowRunJsonField';
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/types/guards/isFieldArrayValue';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
@@ -127,11 +127,11 @@ export const usePersistField = () => {
         const fieldIsArray =
           isFieldArray(fieldDefinition) && isFieldArrayValue(valueToPersist);
 
-        const isUnpersistableRawJsonField =
-          fieldDefinition.metadata.objectMetadataNameSingular ===
-            CoreObjectNameSingular.WorkflowRun &&
-          (fieldDefinition.metadata.fieldName === 'output' ||
-            fieldDefinition.metadata.fieldName === 'context');
+        const isUnpersistableRawJsonField = isWorkflowRunJsonField({
+          objectMetadataNameSingular:
+            fieldDefinition.metadata.objectMetadataNameSingular,
+          fieldName: fieldDefinition.metadata.fieldName,
+        });
 
         const isValuePersistable =
           fieldIsRelationToOneObject ||

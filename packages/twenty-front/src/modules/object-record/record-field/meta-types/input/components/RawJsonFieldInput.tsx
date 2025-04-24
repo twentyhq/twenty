@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { isWorkflowRunJsonField } from '@/object-record/record-field/meta-types/utils/isWorkflowRunJsonField';
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
@@ -131,14 +131,11 @@ export const RawJsonFieldInput = ({
     [handleShiftTab, draftValue],
   );
 
-  // FIXME: This is temporary. We'll soon introduce a new display mode for all fields and we'll have to remove this code.
-  const isWorkflowRunJsonField =
-    fieldDefinition.metadata.objectMetadataNameSingular ===
-      CoreObjectNameSingular.WorkflowRun &&
-    (fieldDefinition.metadata.fieldName === 'output' ||
-      fieldDefinition.metadata.fieldName === 'context');
-
-  const showEditingButton = !isWorkflowRunJsonField;
+  const showEditingButton = !isWorkflowRunJsonField({
+    objectMetadataNameSingular:
+      fieldDefinition.metadata.objectMetadataNameSingular,
+    fieldName: fieldDefinition.metadata.fieldName,
+  });
 
   const handleStartEditing = () => {
     setIsEditing(true);
