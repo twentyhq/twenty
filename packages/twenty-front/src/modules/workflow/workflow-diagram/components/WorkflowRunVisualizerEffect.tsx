@@ -8,7 +8,7 @@ import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowRunIdComponentState } from '@/workflow/states/workflowRunIdComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowRunOutput } from '@/workflow/types/Workflow';
-import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
+import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
 import { workflowRunStepToOpenByDefaultState } from '@/workflow/workflow-diagram/states/workflowRunStepToOpenByDefaultState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
@@ -33,6 +33,9 @@ export const WorkflowRunVisualizerEffect = ({
   );
 
   const flowState = useRecoilComponentCallbackStateV2(flowComponentState);
+  const workflowDiagramState = useRecoilComponentCallbackStateV2(
+    workflowDiagramComponentState,
+  );
 
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
@@ -100,7 +103,7 @@ export const WorkflowRunVisualizerEffect = ({
 
         set(workflowDiagramStatusState, 'computing-dimensions');
       },
-    [flowState],
+    [flowState, workflowDiagramState],
   );
 
   useEffect(() => {

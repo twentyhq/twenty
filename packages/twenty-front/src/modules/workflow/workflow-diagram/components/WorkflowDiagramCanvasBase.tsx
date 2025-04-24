@@ -1,7 +1,9 @@
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
-import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
+import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
 import {
   WorkflowDiagramEdge,
@@ -26,7 +28,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
@@ -121,7 +123,9 @@ export const WorkflowDiagramCanvasBase = ({
 
   const reactflow = useReactFlow();
 
-  const workflowDiagram = useRecoilValue(workflowDiagramState);
+  const workflowDiagram = useRecoilComponentValueV2(
+    workflowDiagramComponentState,
+  );
 
   const { nodes, edges } = useMemo(
     () =>
@@ -137,7 +141,9 @@ export const WorkflowDiagramCanvasBase = ({
     THEME_COMMON.rightDrawerWidth.replace('px', ''),
   );
 
-  const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
+  const setWorkflowDiagram = useSetRecoilComponentStateV2(
+    workflowDiagramComponentState,
+  );
 
   const setWorkflowReactFlowRef = useRecoilCallback(
     ({ set }) =>
@@ -199,24 +205,20 @@ export const WorkflowDiagramCanvasBase = ({
     );
   }, [reactflow, rightDrawerState, rightDrawerWidth]);
 
-  const handleNodesChanges = useRecoilCallback(
-    ({ set }) =>
-      (changes: NodeChange<WorkflowDiagramNode>[]) => {
-        set(workflowDiagramState, (diagram) => {
-          if (!isDefined(diagram)) {
-            throw new Error(
-              'It must be impossible for the nodes to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
-            );
-          }
+  const handleNodesChanges = (changes: NodeChange<WorkflowDiagramNode>[]) => {
+    setWorkflowDiagram((diagram) => {
+      if (!isDefined(diagram)) {
+        throw new Error(
+          'It must be impossible for the nodes to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
+        );
+      }
 
-          return {
-            ...diagram,
-            nodes: applyNodeChanges(changes, diagram.nodes),
-          };
-        });
-      },
-    [],
-  );
+      return {
+        ...diagram,
+        nodes: applyNodeChanges(changes, diagram.nodes),
+      };
+    });
+  };
 
   const handleInit = () => {
     if (!isDefined(containerRef.current)) {

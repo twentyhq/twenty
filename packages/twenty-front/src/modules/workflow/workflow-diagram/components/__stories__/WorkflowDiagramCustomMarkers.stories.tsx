@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { WorkflowDiagramCreateStepNode } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepNode';
 import { WorkflowDiagramDefaultEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramDefaultEdge';
 import { WorkflowDiagramEmptyTrigger } from '@/workflow/workflow-diagram/components/WorkflowDiagramEmptyTrigger';
@@ -13,7 +14,7 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { workflowDiagramState } from '../../states/workflowDiagramState';
+import { workflowDiagramComponentState } from '../../states/workflowDiagramComponentState';
 import { WorkflowDiagramCanvasBase } from '../WorkflowDiagramCanvasBase';
 
 const StyledContainer = styled.div`
@@ -51,63 +52,70 @@ export const DefaultEdge: Story = {
     },
   },
   decorators: [
-    (Story) => (
-      <RecoilRoot
-        initializeState={({ set }) => {
-          set(workflowDiagramState, {
-            nodes: [
-              {
-                id: 'trigger-1',
-                type: 'default',
-                position: { x: 100, y: 100 },
-                data: {
-                  nodeType: 'trigger',
-                  triggerType: 'DATABASE_EVENT',
-                  name: 'When record is created',
+    (Story) => {
+      // FIXME: Render a provider with a fixed instanceId
+      const workflowDiagramState = useRecoilComponentCallbackStateV2(
+        workflowDiagramComponentState,
+      );
+
+      return (
+        <RecoilRoot
+          initializeState={({ set }) => {
+            set(workflowDiagramState, {
+              nodes: [
+                {
+                  id: 'trigger-1',
+                  type: 'default',
+                  position: { x: 100, y: 100 },
+                  data: {
+                    nodeType: 'trigger',
+                    triggerType: 'DATABASE_EVENT',
+                    name: 'When record is created',
+                  },
                 },
-              },
-              {
-                id: 'action-1',
-                type: 'default',
-                position: { x: 300, y: 100 },
-                data: {
-                  nodeType: 'action',
-                  actionType: 'CREATE_RECORD',
-                  name: 'Create record',
+                {
+                  id: 'action-1',
+                  type: 'default',
+                  position: { x: 300, y: 100 },
+                  data: {
+                    nodeType: 'action',
+                    actionType: 'CREATE_RECORD',
+                    name: 'Create record',
+                  },
                 },
-              },
-              {
-                id: 'create-step-1',
-                type: 'create-step',
-                position: { x: 500, y: 100 },
-                data: {
-                  nodeType: 'create-step',
-                  parentNodeId: 'action-1',
+                {
+                  id: 'create-step-1',
+                  type: 'create-step',
+                  position: { x: 500, y: 100 },
+                  data: {
+                    nodeType: 'create-step',
+                    parentNodeId: 'action-1',
+                  },
                 },
-              },
-            ],
-            edges: [
-              {
-                ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-                id: 'edge-1',
-                source: 'trigger-1',
-                target: 'action-1',
-              },
-              {
-                ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-                id: 'edge-2',
-                source: 'action-1',
-                target: 'create-step-1',
-              },
-            ],
-          });
-        }}
-      >
-        <StyledContainer>
-          <Story />
-        </StyledContainer>
-      </RecoilRoot>
-    ),
+              ],
+              edges: [
+                {
+                  ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
+                  id: 'edge-1',
+                  source: 'trigger-1',
+                  target: 'action-1',
+                },
+                {
+                  ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
+                  id: 'edge-2',
+                  source: 'action-1',
+                  target: 'create-step-1',
+                },
+              ],
+            });
+          }}
+        >
+          <StyledContainer>
+            <Story />
+          </StyledContainer>
+        </RecoilRoot>
+      );
+    },
   ],
 };
 
@@ -124,49 +132,56 @@ export const SuccessEdge: Story = {
     },
   },
   decorators: [
-    (Story) => (
-      <RecoilRoot
-        initializeState={({ set }) => {
-          set(workflowDiagramState, {
-            nodes: [
-              {
-                id: 'trigger-1',
-                type: 'default',
-                position: { x: 100, y: 100 },
-                data: {
-                  nodeType: 'trigger',
-                  triggerType: 'DATABASE_EVENT',
-                  name: 'When record is created',
+    (Story) => {
+      // FIXME: Render a provider with a fixed instanceId
+      const workflowDiagramState = useRecoilComponentCallbackStateV2(
+        workflowDiagramComponentState,
+      );
+
+      return (
+        <RecoilRoot
+          initializeState={({ set }) => {
+            set(workflowDiagramState, {
+              nodes: [
+                {
+                  id: 'trigger-1',
+                  type: 'default',
+                  position: { x: 100, y: 100 },
+                  data: {
+                    nodeType: 'trigger',
+                    triggerType: 'DATABASE_EVENT',
+                    name: 'When record is created',
+                  },
                 },
-              },
-              {
-                id: 'action-1',
-                type: 'default',
-                position: { x: 300, y: 100 },
-                data: {
-                  nodeType: 'action',
-                  actionType: 'CREATE_RECORD',
-                  name: 'Create record',
+                {
+                  id: 'action-1',
+                  type: 'default',
+                  position: { x: 300, y: 100 },
+                  data: {
+                    nodeType: 'action',
+                    actionType: 'CREATE_RECORD',
+                    name: 'Create record',
+                  },
                 },
-              },
-            ],
-            edges: [
-              {
-                ...WORKFLOW_VISUALIZER_EDGE_SUCCESS_CONFIGURATION,
-                id: 'edge-1',
-                source: 'trigger-1',
-                target: 'action-1',
-                type: 'success',
-                label: '1 item',
-              },
-            ],
-          });
-        }}
-      >
-        <StyledContainer>
-          <Story />
-        </StyledContainer>
-      </RecoilRoot>
-    ),
+              ],
+              edges: [
+                {
+                  ...WORKFLOW_VISUALIZER_EDGE_SUCCESS_CONFIGURATION,
+                  id: 'edge-1',
+                  source: 'trigger-1',
+                  target: 'action-1',
+                  type: 'success',
+                  label: '1 item',
+                },
+              ],
+            });
+          }}
+        >
+          <StyledContainer>
+            <Story />
+          </StyledContainer>
+        </RecoilRoot>
+      );
+    },
   ],
 };

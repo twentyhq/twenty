@@ -8,13 +8,13 @@ import {
   WorkflowVersion,
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
-import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
+import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 
 import { addCreateStepNodes } from '@/workflow/workflow-diagram/utils/addCreateStepNodes';
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
 import { mergeWorkflowDiagrams } from '@/workflow/workflow-diagram/utils/mergeWorkflowDiagrams';
 import { useEffect } from 'react';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowDiagramEffect = ({
@@ -22,7 +22,12 @@ export const WorkflowDiagramEffect = ({
 }: {
   workflowWithCurrentVersion: WorkflowWithCurrentVersion | undefined;
 }) => {
-  const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
+  const workflowDiagramState = useRecoilComponentCallbackStateV2(
+    workflowDiagramComponentState,
+  );
+  const setWorkflowDiagram = useSetRecoilComponentStateV2(
+    workflowDiagramComponentState,
+  );
   const setFlow = useSetRecoilComponentStateV2(flowComponentState);
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
@@ -70,7 +75,7 @@ export const WorkflowDiagramEffect = ({
         set(workflowDiagramState, mergedWorkflowDiagram);
       };
     },
-    [workflowLastCreatedStepIdState],
+    [workflowLastCreatedStepIdState, workflowDiagramState],
   );
 
   const currentVersion = workflowWithCurrentVersion?.currentVersion;
