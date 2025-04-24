@@ -21,7 +21,6 @@ import { ObjectFilterDropdownFilterSelectMenuItemV2 } from '@/object-record/obje
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
-import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
@@ -147,7 +146,6 @@ export const AdvancedFilterFieldSelectMenu = ({
               <SelectableListItem
                 itemId={visibleFieldMetadataItem.id}
                 key={`visible-select-filter-${index}`}
-                hotkeyScope={advancedFilterFieldSelectDropdownId}
                 onEnter={() => {
                   handleFieldMetadataItemSelect(visibleFieldMetadataItem);
                 }}
@@ -165,7 +163,6 @@ export const AdvancedFilterFieldSelectMenu = ({
               <SelectableListItem
                 itemId={hiddenFieldMetadataItem.id}
                 key={`hidden-select-filter-${index}`}
-                hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
                 onEnter={() => {
                   handleFieldMetadataItemSelect(hiddenFieldMetadataItem);
                 }}

@@ -123,7 +123,6 @@ export const SingleRecordPickerMenuItems = ({
                     emptyLabel && (
                       <SelectableListItem
                         itemId={record.id}
-                        hotkeyScope={hotkeyScope}
                         onEnter={() => {
                           setSelectedRecordId(undefined);
                           onRecordSelected();

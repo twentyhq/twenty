@@ -91,11 +91,7 @@ export const RecordIndexActionMenuDropdown = () => {
               {recordIndexActions.map((action) => (
                 <ActionComponent action={action} />
               ))}
-              <SelectableListItem
-                itemId="more-actions"
-                key="more-actions"
-                hotkeyScope={ActionMenuDropdownHotkeyScope.ActionMenuDropdown}
-              >
+              <SelectableListItem itemId="more-actions" key="more-actions">
                 <MenuItem
                   LeftIcon={IconLayoutSidebarRightExpand}
                   onClick={() => {

@@ -7,7 +7,6 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableItem';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
@@ -46,7 +45,6 @@ export const ResetContextToSelectionCommandButton = () => {
   return (
     <SelectableListItem
       itemId={RESET_CONTEXT_TO_SELECTION}
-      hotkeyScope={AppHotkeyScope.CommandMenuOpen}
       onEnter={resetPreviousCommandMenuContext}
     >
       <CommandMenuItem

@@ -272,7 +272,6 @@ export const ObjectSortDropdownButton = ({
               (visibleFieldMetadataItem, index) => (
                 <SelectableListItem
                   itemId={visibleFieldMetadataItem.id}
-                  hotkeyScope={hotkeyScope.scope}
                   onEnter={() => handleAddSort(visibleFieldMetadataItem)}
                 >
                   <MenuItem
@@ -290,7 +289,6 @@ export const ObjectSortDropdownButton = ({
             {hiddenFieldMetadataItems.map((hiddenFieldMetadataItem, index) => (
               <SelectableListItem
                 itemId={hiddenFieldMetadataItem.id}
-                hotkeyScope={hotkeyScope.scope}
                 onEnter={() => handleAddSort(hiddenFieldMetadataItem)}
               >
                 <MenuItem

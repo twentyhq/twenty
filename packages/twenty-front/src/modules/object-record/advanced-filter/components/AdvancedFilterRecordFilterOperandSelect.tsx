@@ -132,7 +132,6 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
                 <SelectableListItem
                   itemId={filterOperand}
                   key={`select-filter-operand-${index}`}
-                  hotkeyScope={dropdownId}
                   onEnter={() => {
                     handleOperandChange(filterOperand);
                   }}

@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
-import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableItem';
@@ -44,7 +43,6 @@ export const SingleRecordPickerMenuItem = ({
     <StyledSelectableItem
       itemId={record.id}
       key={record.id}
-      hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
       onEnter={() => {
         onRecordSelected(record);
       }}

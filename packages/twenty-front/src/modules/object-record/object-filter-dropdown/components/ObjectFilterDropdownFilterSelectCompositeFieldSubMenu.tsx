@@ -187,7 +187,6 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
           <SelectableListItem
             itemId={'-1'}
             key={`select-filter-${-1}`}
-            hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
             onEnter={() => {
               handleSelectFilter(fieldMetadataItemUsedInDropdown);
             }}
@@ -211,7 +210,6 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
               <SelectableListItem
                 itemId={subFieldName}
                 key={`select-filter-${index}`}
-                hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
                 onEnter={() => {
                   handleSelectFilter(
                     fieldMetadataItemUsedInDropdown,

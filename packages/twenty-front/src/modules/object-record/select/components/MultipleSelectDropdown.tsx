@@ -100,7 +100,6 @@ export const MultipleSelectDropdown = ({
           return (
             <SelectableListItem
               itemId={item.id}
-              hotkeyScope={hotkeyScope}
               onEnter={() => {
                 resetSelectedItem();
                 handleItemSelectChange(item, !item.isSelected);

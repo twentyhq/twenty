@@ -9,7 +9,6 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
-import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
@@ -136,7 +135,6 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
   return (
     <SelectableListItem
       itemId={fieldMetadataItemToSelect.id}
-      hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
       onEnter={handleClick}
     >
       <MenuItem

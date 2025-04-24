@@ -16,7 +16,6 @@ export type SelectableListItemProps = {
   children: ReactNode;
   className?: string;
   onEnter?: () => void;
-  hotkeyScope: string;
 };
 
 export const SelectableListItem = ({
@@ -24,7 +23,6 @@ export const SelectableListItem = ({
   children,
   className,
   onEnter,
-  hotkeyScope,
 }: SelectableListItemProps) => {
   const isSelectedItemId = useRecoilComponentFamilyValueV2(
     isSelectedItemIdComponentFamilySelector,
@@ -42,11 +40,7 @@ export const SelectableListItem = ({
   return (
     <>
       {isSelectedItemId && isDefined(onEnter) && isSelectedItemId && (
-        <SelectableListItemHotkeyEffect
-          hotkeyScope={hotkeyScope}
-          itemId={itemId}
-          onEnter={onEnter}
-        />
+        <SelectableListItemHotkeyEffect itemId={itemId} onEnter={onEnter} />
       )}
       <StyledContainer className={className} ref={scrollRef}>
         {children}

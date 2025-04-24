@@ -169,7 +169,6 @@ export const ObjectFilterDropdownFilterSelect = ({
               <SelectableListItem
                 itemId={hiddenFieldMetadataItem.id}
                 key={`hidden-select-filter-${index}`}
-                hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
                 onEnter={() => {
                   handleEnter(hiddenFieldMetadataItem.id);
                 }}
