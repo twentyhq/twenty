@@ -21,13 +21,19 @@ export const useCommandMenu = () => {
   );
 
   const closeCommandMenu = useRecoilCallback(
-    ({ set }) =>
+    ({ set, snapshot }) =>
       () => {
-        set(isCommandMenuOpenedState, false);
-        set(isCommandMenuClosingState, true);
-        set(isDragSelectionStartEnabledState, true);
-        closeAnyOpenDropdown();
-        goBackToPreviousHotkeyScope();
+        const isCommandMenuOpened = snapshot
+          .getLoadable(isCommandMenuOpenedState)
+          .getValue();
+
+        if (isCommandMenuOpened) {
+          set(isCommandMenuOpenedState, false);
+          set(isCommandMenuClosingState, true);
+          set(isDragSelectionStartEnabledState, true);
+          closeAnyOpenDropdown();
+          goBackToPreviousHotkeyScope();
+        }
       },
     [closeAnyOpenDropdown, goBackToPreviousHotkeyScope],
   );
