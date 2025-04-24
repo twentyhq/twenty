@@ -22,3 +22,6 @@ export type RecordFilterInput<
   type: T;
   operand: (typeof FILTER_OPERANDS_MAP)[T][number];
 };
+
+export type RecordFilterToRecordInputOperand<T extends FilterableFieldType> =
+  (typeof FILTER_OPERANDS_MAP)[T][number];
