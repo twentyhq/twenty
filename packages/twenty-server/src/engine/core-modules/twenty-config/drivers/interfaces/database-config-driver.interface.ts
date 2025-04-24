@@ -11,9 +11,10 @@ export interface DatabaseConfigDriverInterface {
   initialize(): Promise<void>;
 
   /**
-   * Get a configuration value
+   * Get a configuration value from cache
+   * Returns undefined if not in cache
    */
-  get<T extends keyof ConfigVariables>(key: T): ConfigVariables[T];
+  get<T extends keyof ConfigVariables>(key: T): ConfigVariables[T] | undefined;
 
   /**
    * Update a configuration value in the database and cache

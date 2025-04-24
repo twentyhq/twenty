@@ -12,6 +12,7 @@ import { ConfigInitializationState } from 'src/engine/core-modules/twenty-config
 import { ConfigSource } from 'src/engine/core-modules/twenty-config/enums/config-source.enum';
 import { ConfigVariablesMaskingStrategies } from 'src/engine/core-modules/twenty-config/enums/config-variables-masking-strategies.enum';
 import { configVariableMaskSensitiveData } from 'src/engine/core-modules/twenty-config/utils/config-variable-mask-sensitive-data.util';
+import { isEnvOnlyConfigVar } from 'src/engine/core-modules/twenty-config/utils/is-env-only-config-var.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 @Injectable()
@@ -69,9 +70,25 @@ export class TwentyConfigService implements OnModuleInit {
   }
 
   get<T extends keyof ConfigVariables>(key: T): ConfigVariables[T] {
-    const value = this.driver.get(key);
+    // Environment-only variables always come from the environment driver
+    if (isEnvOnlyConfigVar(key)) {
+      return this.environmentConfigDriver.get(key);
+    }
 
-    return value;
+    // If we're using the database driver, check it first then fall back to environment
+    if (this.driver === this.databaseConfigDriver) {
+      const dbValue = this.databaseConfigDriver.get(key);
+
+      if (dbValue !== undefined) {
+        return dbValue;
+      }
+
+      // Fall back to environment if not in database
+      return this.environmentConfigDriver.get(key);
+    }
+
+    // If we're not using the database driver, use the environment driver directly
+    return this.environmentConfigDriver.get(key);
   }
 
   async update<T extends keyof ConfigVariables>(

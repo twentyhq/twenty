@@ -3,7 +3,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigCacheService } from 'src/engine/core-modules/twenty-config/cache/config-cache.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { DatabaseConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/database-config.driver';
-import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
 import { isEnvOnlyConfigVar } from 'src/engine/core-modules/twenty-config/utils/is-env-only-config-var.util';
 
@@ -29,9 +28,8 @@ class TestDatabaseConfigDriver extends DatabaseConfigDriver {
   constructor(
     configCache: ConfigCacheService,
     configStorage: ConfigStorageService,
-    environmentDriver: EnvironmentConfigDriver,
   ) {
-    super(configCache, configStorage, environmentDriver);
+    super(configCache, configStorage);
 
     Object.defineProperty(this, 'allPossibleConfigKeys', {
       value: [CONFIG_PASSWORD_KEY, CONFIG_EMAIL_KEY, CONFIG_PORT_KEY],
@@ -45,7 +43,6 @@ describe('DatabaseConfigDriver', () => {
   let driver: TestDatabaseConfigDriver;
   let configCache: ConfigCacheService;
   let configStorage: ConfigStorageService;
-  let environmentDriver: EnvironmentConfigDriver;
 
   beforeEach(async () => {
     (isEnvOnlyConfigVar as jest.Mock).mockImplementation((key) => {
@@ -69,6 +66,7 @@ describe('DatabaseConfigDriver', () => {
             markKeyAsMissing: jest.fn(),
             getCacheInfo: jest.fn(),
             getAllKeys: jest.fn(),
+            getOrFallback: jest.fn(),
           },
         },
         {
@@ -79,12 +77,6 @@ describe('DatabaseConfigDriver', () => {
             loadAll: jest.fn(),
           },
         },
-        {
-          provide: EnvironmentConfigDriver,
-          useValue: {
-            get: jest.fn(),
-          },
-        },
       ],
     }).compile();
 
@@ -93,9 +85,6 @@ describe('DatabaseConfigDriver', () => {
     ) as TestDatabaseConfigDriver;
     configCache = module.get<ConfigCacheService>(ConfigCacheService);
     configStorage = module.get<ConfigStorageService>(ConfigStorageService);
-    environmentDriver = module.get<EnvironmentConfigDriver>(
-      EnvironmentConfigDriver,
-    );
 
     jest.clearAllMocks();
   });
@@ -172,19 +161,6 @@ describe('DatabaseConfigDriver', () => {
       await driver.initialize();
     });
 
-    it('should use environment driver for env-only variables', async () => {
-      const envValue = true;
-
-      (isEnvOnlyConfigVar as jest.Mock).mockReturnValue(true);
-      jest.spyOn(environmentDriver, 'get').mockReturnValue(envValue);
-
-      const result = driver.get(CONFIG_PASSWORD_KEY);
-
-      expect(result).toBe(envValue);
-      expect(environmentDriver.get).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY);
-      expect(isEnvOnlyConfigVar).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY);
-    });
-
     it('should return cached value when available', async () => {
       const cachedValue = true;
 
@@ -196,30 +172,13 @@ describe('DatabaseConfigDriver', () => {
       expect(configCache.get).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY);
     });
 
-    it('should use environment driver when negative lookup is cached', async () => {
-      const envValue = true;
-
+    it('should return undefined when value is not in cache', async () => {
       jest.spyOn(configCache, 'get').mockReturnValue(undefined);
-      jest.spyOn(configCache, 'isKeyKnownMissing').mockReturnValue(true);
-      jest.spyOn(environmentDriver, 'get').mockReturnValue(envValue);
 
       const result = driver.get(CONFIG_PASSWORD_KEY);
 
-      expect(result).toBe(envValue);
-      expect(environmentDriver.get).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY);
-    });
-
-    it('should fallback to environment when not in cache and not known missing', async () => {
-      const envValue = true;
-
-      jest.spyOn(configCache, 'get').mockReturnValue(undefined);
-      jest.spyOn(configCache, 'isKeyKnownMissing').mockReturnValue(false);
-      jest.spyOn(environmentDriver, 'get').mockReturnValue(envValue);
-
-      const result = driver.get(CONFIG_PASSWORD_KEY);
-
-      expect(result).toBe(envValue);
-      expect(environmentDriver.get).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY);
+      expect(result).toBeUndefined();
+      expect(configCache.get).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY);
     });
 
     it('should handle different config variable types correctly', () => {

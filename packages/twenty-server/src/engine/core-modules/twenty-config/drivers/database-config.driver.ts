@@ -9,8 +9,6 @@ import { CONFIG_VARIABLES_REFRESH_CRON_INTERVAL } from 'src/engine/core-modules/
 import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
 import { isEnvOnlyConfigVar } from 'src/engine/core-modules/twenty-config/utils/is-env-only-config-var.util';
 
-import { EnvironmentConfigDriver } from './environment-config.driver';
-
 @Injectable()
 export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
   private initializationPromise: Promise<void> | null = null;
@@ -20,7 +18,6 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
   constructor(
     private readonly configCache: ConfigCacheService,
     private readonly configStorage: ConfigStorageService,
-    private readonly environmentDriver: EnvironmentConfigDriver,
   ) {
     const allKeys = Object.keys(new ConfigVariables()) as Array<
       keyof ConfigVariables
@@ -64,22 +61,8 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
     return promise;
   }
 
-  get<T extends keyof ConfigVariables>(key: T): ConfigVariables[T] {
-    if (isEnvOnlyConfigVar(key)) {
-      return this.environmentDriver.get(key);
-    }
-
-    const value = this.configCache.get(key);
-
-    if (value !== undefined) {
-      return value;
-    }
-
-    if (this.configCache.isKeyKnownMissing(key)) {
-      return this.environmentDriver.get(key);
-    }
-
-    return this.environmentDriver.get(key);
+  get<T extends keyof ConfigVariables>(key: T): ConfigVariables[T] | undefined {
+    return this.configCache.get(key);
   }
 
   async update<T extends keyof ConfigVariables>(

@@ -8,6 +8,7 @@ import { ConfigInitializationState } from 'src/engine/core-modules/twenty-config
 import { ConfigSource } from 'src/engine/core-modules/twenty-config/enums/config-source.enum';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { isEnvOnlyConfigVar } from 'src/engine/core-modules/twenty-config/utils/is-env-only-config-var.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 jest.mock('src/utils/typed-reflect', () => ({
@@ -26,6 +27,13 @@ jest.mock(
         chars: 5,
       },
     },
+  }),
+);
+
+jest.mock(
+  'src/engine/core-modules/twenty-config/utils/is-env-only-config-var.util',
+  () => ({
+    isEnvOnlyConfigVar: jest.fn(),
   }),
 );
 
@@ -234,18 +242,57 @@ describe('TwentyConfigService', () => {
   });
 
   describe('get', () => {
-    it('should delegate to the active driver', () => {
-      const key = 'TEST_VAR' as keyof ConfigVariables;
-      const expectedValue = 'test value';
+    const key = 'TEST_VAR' as keyof ConfigVariables;
+    const expectedValue = 'test value';
 
+    beforeEach(() => {
+      (isEnvOnlyConfigVar as jest.Mock).mockReturnValue(false);
+    });
+
+    it('should use environment driver for environment-only variables', () => {
+      (isEnvOnlyConfigVar as jest.Mock).mockReturnValue(true);
+      jest.spyOn(environmentConfigDriver, 'get').mockReturnValue(expectedValue);
+
+      const result = service.get(key);
+
+      expect(result).toBe(expectedValue);
+      expect(environmentConfigDriver.get).toHaveBeenCalledWith(key);
+    });
+
+    it('should use database driver when it is active and value is found', () => {
       jest.spyOn(databaseConfigDriver, 'get').mockReturnValue(expectedValue);
-
       setPrivateProps(service, { driver: databaseConfigDriver });
 
       const result = service.get(key);
 
       expect(result).toBe(expectedValue);
       expect(databaseConfigDriver.get).toHaveBeenCalledWith(key);
+      expect(environmentConfigDriver.get).not.toHaveBeenCalled();
+    });
+
+    it('should fall back to environment driver when database driver is active but value is not found', () => {
+      const envValue = 'env value';
+
+      jest.spyOn(databaseConfigDriver, 'get').mockReturnValue(undefined);
+      jest.spyOn(environmentConfigDriver, 'get').mockReturnValue(envValue);
+      setPrivateProps(service, { driver: databaseConfigDriver });
+
+      const result = service.get(key);
+
+      expect(result).toBe(envValue);
+      expect(databaseConfigDriver.get).toHaveBeenCalledWith(key);
+      expect(environmentConfigDriver.get).toHaveBeenCalledWith(key);
+    });
+
+    it('should use environment driver when it is active', () => {
+      jest.spyOn(environmentConfigDriver, 'get').mockReturnValue(expectedValue);
+      setPrivateProps(service, { driver: environmentConfigDriver });
+
+      const result = service.get(key);
+
+      expect(result).toBe(expectedValue);
+      expect(environmentConfigDriver.get).toHaveBeenCalledWith(key);
+      expect(databaseConfigDriver.get).not.toHaveBeenCalled();
     });
   });
 
