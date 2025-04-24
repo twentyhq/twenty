@@ -3,7 +3,7 @@ import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/componen
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowDiagramStatusComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusComponentState';
-import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { WorkflowRunDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
@@ -21,6 +21,9 @@ export const WorkflowRunDiagramCanvasEffect = () => {
   );
   const workflowDiagramStatusState = useRecoilComponentCallbackStateV2(
     workflowDiagramStatusComponentState,
+  );
+  const workflowSelectedNodeState = useRecoilComponentCallbackStateV2(
+    workflowSelectedNodeComponentState,
   );
 
   const handleSelectionChange = useRecoilCallback(
@@ -71,6 +74,7 @@ export const WorkflowRunDiagramCanvasEffect = () => {
       openWorkflowRunViewStepInCommandMenu,
       workflowDiagramStatusState,
       workflowVisualizerWorkflowIdState,
+      workflowSelectedNodeState,
     ],
   );
 

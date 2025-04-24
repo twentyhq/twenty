@@ -8,7 +8,7 @@ import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowRunIdComponentState } from '@/workflow/states/workflowRunIdComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowRun } from '@/workflow/types/Workflow';
-import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { useApolloClient } from '@apollo/client';
@@ -27,6 +27,9 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
   );
   const workflowVisualizerWorkflowIdState = useRecoilComponentCallbackStateV2(
     workflowVisualizerWorkflowIdComponentState,
+  );
+  const workflowSelectedNodeState = useRecoilComponentCallbackStateV2(
+    workflowSelectedNodeComponentState,
   );
 
   const runWorkflowRunOpeningInCommandMenuSideEffects = useRecoilCallback(
@@ -91,6 +94,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
       openWorkflowRunViewStepInCommandMenu,
       workflowRunIdState,
       workflowVisualizerWorkflowIdState,
+      workflowSelectedNodeState,
     ],
   );
 

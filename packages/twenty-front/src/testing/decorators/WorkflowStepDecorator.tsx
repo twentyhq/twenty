@@ -4,10 +4,9 @@ import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowS
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
-import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { Decorator } from '@storybook/react';
 import { useEffect, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 import {
   getWorkflowMock,
   getWorkflowNodeIdMock,
@@ -17,7 +16,9 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
   const setWorkflowVisualizerWorkflowId = useSetRecoilComponentStateV2(
     workflowVisualizerWorkflowIdComponentState,
   );
-  const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
+  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
+    workflowSelectedNodeComponentState,
+  );
   const setFlow = useSetRecoilComponentStateV2(flowComponentState);
   const workflowVersion = getWorkflowMock().versions.edges[0]
     .node as WorkflowVersion;

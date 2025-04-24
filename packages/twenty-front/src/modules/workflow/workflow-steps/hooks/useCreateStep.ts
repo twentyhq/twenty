@@ -5,10 +5,10 @@ import {
   WorkflowStepType,
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
-import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdState';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateStep = ({
@@ -17,7 +17,9 @@ export const useCreateStep = ({
   workflow: WorkflowWithCurrentVersion;
 }) => {
   const { createWorkflowVersionStep } = useCreateWorkflowVersionStep();
-  const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
+  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
+    workflowSelectedNodeComponentState,
+  );
   const setWorkflowLastCreatedStepId = useSetRecoilComponentStateV2(
     workflowLastCreatedStepIdComponentState,
   );
