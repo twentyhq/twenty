@@ -5,7 +5,6 @@ import {
   InsertQueryBuilder,
   ObjectLiteral,
   SelectQueryBuilder,
-  UpdateQueryBuilder,
 } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -76,7 +75,7 @@ export class WorkspaceDeleteQueryBuilder<
 
   override update(
     updateSet?: QueryDeepPartialEntity<Entity>,
-  ): UpdateQueryBuilder<Entity> {
+  ): WorkspaceUpdateQueryBuilder<Entity> {
     const updateQueryBuilder = updateSet
       ? super.update(updateSet)
       : super.update();

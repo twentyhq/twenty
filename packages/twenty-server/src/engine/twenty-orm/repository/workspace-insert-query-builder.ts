@@ -1,10 +1,5 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
-import {
-  InsertQueryBuilder,
-  ObjectLiteral,
-  SelectQueryBuilder,
-  UpdateQueryBuilder,
-} from 'typeorm';
+import { InsertQueryBuilder, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
@@ -66,7 +61,7 @@ export class WorkspaceInsertQueryBuilder<
     );
   }
 
-  override update(): UpdateQueryBuilder<Entity> {
+  override update(): WorkspaceUpdateQueryBuilder<Entity> {
     const updateQueryBuilder = super.update();
 
     return new WorkspaceUpdateQueryBuilder(

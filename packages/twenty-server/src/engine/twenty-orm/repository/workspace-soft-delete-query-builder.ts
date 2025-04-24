@@ -4,7 +4,6 @@ import {
   InsertQueryBuilder,
   ObjectLiteral,
   SelectQueryBuilder,
-  UpdateQueryBuilder,
   UpdateResult,
 } from 'typeorm';
 import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
@@ -69,7 +68,7 @@ export class WorkspaceSoftDeleteQueryBuilder<
     );
   }
 
-  override update(): UpdateQueryBuilder<Entity> {
+  override update(): WorkspaceUpdateQueryBuilder<Entity> {
     const updateQueryBuilder = super.update();
 
     return new WorkspaceUpdateQueryBuilder(

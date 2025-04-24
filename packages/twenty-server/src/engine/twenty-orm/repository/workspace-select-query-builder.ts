@@ -1,5 +1,5 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
-import { ObjectLiteral, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
+import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -39,23 +39,13 @@ export class WorkspaceSelectQueryBuilder<
   }
 
   override execute(): Promise<T[]> {
-    validateQueryIsPermittedOrThrow(
-      this.expressionMap,
-      this.objectRecordsPermissions,
-      this.internalContext.objectMetadataMaps,
-      this.shouldBypassPermissionChecks,
-    );
+    this.validatePermissions();
 
     return super.execute();
   }
 
   override getMany(): Promise<T[]> {
-    validateQueryIsPermittedOrThrow(
-      this.expressionMap,
-      this.objectRecordsPermissions,
-      this.internalContext.objectMetadataMaps,
-      this.shouldBypassPermissionChecks,
-    );
+    this.validatePermissions();
 
     return super.getMany();
   }
@@ -68,7 +58,7 @@ export class WorkspaceSelectQueryBuilder<
 
   override update(
     updateSet?: QueryDeepPartialEntity<T>,
-  ): UpdateQueryBuilder<T> {
+  ): WorkspaceUpdateQueryBuilder<T> {
     const updateQueryBuilder = updateSet
       ? super.update(updateSet)
       : super.update();
@@ -110,6 +100,15 @@ export class WorkspaceSelectQueryBuilder<
       restoreQueryBuilder,
       this.objectRecordsPermissions,
       this.internalContext,
+      this.shouldBypassPermissionChecks,
+    );
+  }
+
+  private validatePermissions(): void {
+    validateQueryIsPermittedOrThrow(
+      this.expressionMap,
+      this.objectRecordsPermissions,
+      this.internalContext.objectMetadataMaps,
       this.shouldBypassPermissionChecks,
     );
   }
