@@ -152,7 +152,7 @@ export class WorkspaceSyncFieldMetadataRelationService {
   ): Promise<void> {
     // Create standard field metadata map
     const standardFieldMetadataRelationCollection =
-      this.standardFieldRelationFactory.createFieldRelationForStandardObject(
+      this.standardFieldRelationFactory.computeRelationFieldsForStandardObject(
         standardObjectMetadataDefinitions,
         context,
         originalObjectMetadataMapByName,
@@ -198,7 +198,7 @@ export class WorkspaceSyncFieldMetadataRelationService {
   ): Promise<void> {
     // Create standard field metadata collection
     const customFieldMetadataRelationCollection =
-      this.standardFieldRelationFactory.createFieldRelationForCustomObject(
+      this.standardFieldRelationFactory.computeRelationFieldsForCustomObject(
         customObjectMetadataCollection.map((objectMetadata) => ({
           object: objectMetadata,
           metadata: CustomWorkspaceEntity,
