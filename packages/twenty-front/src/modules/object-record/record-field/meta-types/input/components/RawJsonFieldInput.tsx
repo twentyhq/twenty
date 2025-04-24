@@ -132,12 +132,13 @@ export const RawJsonFieldInput = ({
   );
 
   // FIXME: This is temporary. We'll soon introduce a new display mode for all fields and we'll have to remove this code.
-  const isWorkflowRunOutputField =
+  const isWorkflowRunJsonField =
     fieldDefinition.metadata.objectMetadataNameSingular ===
       CoreObjectNameSingular.WorkflowRun &&
-    fieldDefinition.metadata.fieldName === 'output';
+    (fieldDefinition.metadata.fieldName === 'output' ||
+      fieldDefinition.metadata.fieldName === 'context');
 
-  const showEditingButton = !isWorkflowRunOutputField;
+  const showEditingButton = !isWorkflowRunJsonField;
 
   const handleStartEditing = () => {
     setIsEditing(true);

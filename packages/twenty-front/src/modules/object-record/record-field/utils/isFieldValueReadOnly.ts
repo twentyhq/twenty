@@ -27,7 +27,7 @@ export const isFieldValueReadOnly = ({
 
   if (
     objectNameSingular === CoreObjectNameSingular.WorkflowRun &&
-    fieldName === 'output'
+    (fieldName === 'output' || fieldName === 'context')
   ) {
     return false;
   }
