@@ -35,6 +35,11 @@ export class ConfigValueConverterService {
               `Value '${String(dbValue)}' cannot be converted to boolean`,
             );
           }
+          if (typeof result !== 'boolean') {
+            throw new Error(
+              `Expected boolean for key ${key}, got ${typeof result}`,
+            );
+          }
 
           return result as ConfigVariables[T];
         }
@@ -47,6 +52,11 @@ export class ConfigValueConverterService {
               `Value '${String(dbValue)}' cannot be converted to number`,
             );
           }
+          if (typeof result !== 'number') {
+            throw new Error(
+              `Expected number for key ${key}, got ${typeof result}`,
+            );
+          }
 
           return result as ConfigVariables[T];
         }
@@ -55,7 +65,14 @@ export class ConfigValueConverterService {
           const result = configTransformers.string(dbValue);
 
           if (result === undefined) {
-            throw new Error(`Value cannot be converted to string`);
+            throw new Error(
+              `Value '${String(dbValue)}' cannot be converted to string`,
+            );
+          }
+          if (typeof result !== 'string') {
+            throw new Error(
+              `Expected string for key ${key}, got ${typeof result}`,
+            );
           }
 
           return result as ConfigVariables[T];
@@ -64,6 +81,12 @@ export class ConfigValueConverterService {
         case 'array': {
           const result = this.convertToArray(dbValue, options);
 
+          if (!Array.isArray(result)) {
+            throw new Error(
+              `Expected array for key ${key}, got ${typeof result}`,
+            );
+          }
+
           return result as ConfigVariables[T];
         }
 
@@ -71,8 +94,8 @@ export class ConfigValueConverterService {
           const result = this.convertToEnum(dbValue, options);
 
           if (result === undefined) {
-            this.logger.warn(
-              `Enum value '${String(dbValue)}' not found in options for key ${String(key)}`,
+            throw new Error(
+              `Invalid enum value for key ${key}: ${String(dbValue)}`,
             );
           }
 
@@ -80,18 +103,11 @@ export class ConfigValueConverterService {
         }
 
         default:
-          this.logger.warn(
-            `No specific conversion for type '${configType}' of key '${String(key)}'`,
-          );
-
           return dbValue as ConfigVariables[T];
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-
       throw new Error(
-        `Failed to convert value for key '${String(key)}': ${errorMessage}`,
+        `Failed to convert ${key as string} to app value: ${(error as Error).message}`,
       );
     }
   }
