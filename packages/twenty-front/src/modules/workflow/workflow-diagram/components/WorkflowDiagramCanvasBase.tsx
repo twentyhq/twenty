@@ -4,7 +4,6 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
-import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
 import {
   WorkflowDiagramEdge,
   WorkflowDiagramEdgeType,
@@ -28,7 +27,6 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
@@ -145,14 +143,6 @@ export const WorkflowDiagramCanvasBase = ({
     workflowDiagramComponentState,
   );
 
-  const setWorkflowReactFlowRef = useRecoilCallback(
-    ({ set }) =>
-      (node: HTMLDivElement | null) => {
-        set(workflowReactFlowRefState, { current: node });
-      },
-    [],
-  );
-
   const handleEdgesChange = (
     edgeChanges: Array<EdgeChange<WorkflowDiagramEdge>>,
   ) => {
@@ -241,7 +231,6 @@ export const WorkflowDiagramCanvasBase = ({
       <WorkflowDiagramCustomMarkers />
 
       <ReactFlow
-        ref={setWorkflowReactFlowRef}
         onInit={handleInit}
         minZoom={defaultFitViewOptions.minZoom}
         maxZoom={defaultFitViewOptions.maxZoom}
