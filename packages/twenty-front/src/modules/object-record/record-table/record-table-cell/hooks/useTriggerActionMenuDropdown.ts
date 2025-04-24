@@ -7,6 +7,7 @@ import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/get
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
+import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -33,6 +34,9 @@ export const useTriggerActionMenuDropdown = ({
     actionMenuDropdownId,
   );
 
+  const { setActiveDropdownFocusIdAndMemorizePrevious } =
+    useSetActiveDropdownFocusIdAndMemorizePrevious();
+
   const { openDropdown } = useDropdownV2();
 
   const { closeCommandMenu } = useCommandMenu();
@@ -57,6 +61,8 @@ export const useTriggerActionMenuDropdown = ({
         }
 
         closeCommandMenu();
+
+        setActiveDropdownFocusIdAndMemorizePrevious(actionMenuDropdownId);
 
         openDropdown(actionMenuDropdownId, {
           scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
