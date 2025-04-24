@@ -1,9 +1,11 @@
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { buildValueFromFilter } from '@/object-record/record-table/utils/buildRecordInputFromFilter';
 
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useBuildRecordInputFromFilters = ({
@@ -16,6 +18,8 @@ export const useBuildRecordInputFromFilters = ({
     currentRecordFiltersComponentState,
   );
 
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
   const buildRecordInputFromFilters = (): Partial<ObjectRecord> => {
     const recordInput: Partial<ObjectRecord> = {};
 
@@ -25,10 +29,22 @@ export const useBuildRecordInputFromFilters = ({
       );
 
       if (isDefined(fieldMetadataItem)) {
-        recordInput[fieldMetadataItem.name] = buildValueFromFilter({
-          filter,
-          options: fieldMetadataItem.options ?? undefined,
-        });
+        if (fieldMetadataItem.type === 'RELATION') {
+          if (isDefined(filter.value)) {
+            recordInput[`${fieldMetadataItem.name}Id`] = buildValueFromFilter({
+              filter,
+              options: fieldMetadataItem.options ?? undefined,
+              relationType: fieldMetadataItem.relationDefinition?.direction,
+              currentWorkspaceMember: currentWorkspaceMember ?? undefined,
+              label: filter.label,
+            });
+          }
+        } else {
+          recordInput[fieldMetadataItem.name] = buildValueFromFilter({
+            filter,
+            options: fieldMetadataItem.options ?? undefined,
+          });
+        }
       }
     });
 

@@ -1,3 +1,4 @@
+import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
 
@@ -9,13 +10,20 @@ import {
 import { FILTER_OPERANDS_MAP } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { assertUnreachable } from 'twenty-shared/utils';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 export const buildValueFromFilter = ({
   filter,
   options,
+  relationType,
+  currentWorkspaceMember,
+  label,
 }: {
   filter: RecordFilter;
   options?: FieldMetadataItemOption[];
+  relationType?: RelationDefinitionType;
+  currentWorkspaceMember?: CurrentWorkspaceMember;
+  label?: string;
 }) => {
   if (isCompositeField(filter.type)) {
     return;
@@ -75,11 +83,15 @@ export const buildValueFromFilter = ({
         filter.operand as RecordFilterInput<'MULTI_SELECT'>['operand'],
         filter.value,
       );
-    case 'RELATION': // TODO
+    case 'RELATION': {
       return computeValueFromFilterRelation(
         filter.operand as RecordFilterInput<'RELATION'>['operand'],
         filter.value,
+        relationType,
+        currentWorkspaceMember,
+        label,
       );
+    }
     default:
       assertUnreachable(filter.type);
   }
@@ -242,12 +254,27 @@ const computeValueFromFilterMultiSelect = (
 const computeValueFromFilterRelation = (
   operand: RecordFilterToRecordInputOperand<'RELATION'>,
   value: string,
+  relationType?: RelationDefinitionType,
+  currentWorkspaceMember?: CurrentWorkspaceMember,
+  label?: string,
 ) => {
   switch (operand) {
     case ViewFilterOperand.Is:
-      return JSON.parse(value).selectedRecordIds; //TODO
+      if (
+        relationType === RelationDefinitionType.MANY_TO_ONE ||
+        relationType === RelationDefinitionType.ONE_TO_ONE
+      ) {
+        if (label === 'Assignee') {
+          return JSON.parse(value).isCurrentWorkspaceMemberSelected
+            ? currentWorkspaceMember?.id
+            : undefined;
+        } else {
+          return JSON.parse(value).selectedRecordIds?.[0];
+        }
+      }
+      return JSON.parse(value).selectedRecordIds;
     case ViewFilterOperand.IsNot:
-    case ViewFilterOperand.IsNotEmpty: //TODO
+    case ViewFilterOperand.IsNotEmpty: // todo
     case ViewFilterOperand.IsEmpty:
       return undefined;
     default:
