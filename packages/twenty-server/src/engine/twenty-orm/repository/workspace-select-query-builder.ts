@@ -1,10 +1,12 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
-import { ObjectLiteral, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
+import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.util';
+import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
+import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
 import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
 
 export class WorkspaceSelectQueryBuilder<
@@ -25,6 +27,29 @@ export class WorkspaceSelectQueryBuilder<
     this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
   }
 
+  override clone(): this {
+    const clonedQueryBuilder = super.clone();
+
+    return new WorkspaceSelectQueryBuilder(
+      clonedQueryBuilder,
+      this.objectRecordsPermissions,
+      this.internalContext,
+      this.shouldBypassPermissionChecks,
+    ) as this;
+  }
+
+  override execute(): Promise<T[]> {
+    this.validatePermissions();
+
+    return super.execute();
+  }
+
+  override getMany(): Promise<T[]> {
+    this.validatePermissions();
+
+    return super.getMany();
+  }
+
   override update(): WorkspaceUpdateQueryBuilder<T>;
 
   override update(
@@ -33,7 +58,7 @@ export class WorkspaceSelectQueryBuilder<
 
   override update(
     updateSet?: QueryDeepPartialEntity<T>,
-  ): UpdateQueryBuilder<T> {
+  ): WorkspaceUpdateQueryBuilder<T> {
     const updateQueryBuilder = updateSet
       ? super.update(updateSet)
       : super.update();
@@ -46,25 +71,45 @@ export class WorkspaceSelectQueryBuilder<
     );
   }
 
-  override execute(): Promise<T[]> {
-    validateQueryIsPermittedOrThrow(
-      this.expressionMap,
+  override delete(): WorkspaceDeleteQueryBuilder<T> {
+    const deleteQueryBuilder = super.delete();
+
+    return new WorkspaceDeleteQueryBuilder<T>(
+      deleteQueryBuilder,
       this.objectRecordsPermissions,
-      this.internalContext.objectMetadataMaps,
+      this.internalContext,
       this.shouldBypassPermissionChecks,
     );
-
-    return super.execute();
   }
 
-  override getMany(): Promise<T[]> {
+  override softDelete(): WorkspaceSoftDeleteQueryBuilder<T> {
+    const softDeleteQueryBuilder = super.softDelete();
+
+    return new WorkspaceSoftDeleteQueryBuilder<T>(
+      softDeleteQueryBuilder,
+      this.objectRecordsPermissions,
+      this.internalContext,
+      this.shouldBypassPermissionChecks,
+    );
+  }
+
+  override restore(): WorkspaceSoftDeleteQueryBuilder<T> {
+    const restoreQueryBuilder = super.restore();
+
+    return new WorkspaceSoftDeleteQueryBuilder<T>(
+      restoreQueryBuilder,
+      this.objectRecordsPermissions,
+      this.internalContext,
+      this.shouldBypassPermissionChecks,
+    );
+  }
+
+  private validatePermissions(): void {
     validateQueryIsPermittedOrThrow(
       this.expressionMap,
       this.objectRecordsPermissions,
       this.internalContext.objectMetadataMaps,
       this.shouldBypassPermissionChecks,
     );
-
-    return super.getMany();
   }
 }
