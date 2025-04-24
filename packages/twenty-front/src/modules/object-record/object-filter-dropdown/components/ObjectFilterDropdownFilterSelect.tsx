@@ -12,12 +12,8 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
-import { useSelectFilterUsedInDropdown } from '@/object-record/object-filter-dropdown/hooks/useSelectFilterUsedInDropdown';
-import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
@@ -94,32 +90,6 @@ export const ObjectFilterDropdownFilterSelect = ({
     .filter(
       (fieldMetadataItem) => !visibleColumnsIds.includes(fieldMetadataItem.id),
     );
-
-  const { selectFilterUsedInDropdown } = useSelectFilterUsedInDropdown();
-
-  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
-    fieldMetadataItemIdUsedInDropdownComponentState,
-  );
-
-  const { resetSelectedItem } = useSelectableList(OBJECT_FILTER_DROPDOWN_ID);
-
-  const handleEnter = (fieldMetadataItemId: string) => {
-    const selectedFieldMetadataItem = filterableFieldMetadataItems.find(
-      (fieldMetadataItem) => fieldMetadataItem.id === fieldMetadataItemId,
-    );
-
-    if (!isDefined(selectedFieldMetadataItem)) {
-      return;
-    }
-
-    resetSelectedItem();
-
-    selectFilterUsedInDropdown({
-      fieldMetadataItemId,
-    });
-
-    setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemId);
-  };
 
   const shouldShowSeparator =
     visibleColumnsFieldMetadataItems.length > 0 &&
