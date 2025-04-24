@@ -306,6 +306,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
           <SettingsRolePermissions
             roleId={roleId}
             isEditable={isRoleEditable}
+            isCreateMode={isCreateMode}
           />
         )}
         {activeTabId === SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.SETTINGS && (
