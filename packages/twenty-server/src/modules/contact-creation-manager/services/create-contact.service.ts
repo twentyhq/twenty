@@ -77,13 +77,14 @@ export class CreateContactService {
     transactionManager?: EntityManager,
   ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
     if (contactsToCreate.length === 0) return [];
-    const shouldBypassPermissionChecks = true;
 
     const personRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         PersonWorkspaceEntity,
-        shouldBypassPermissionChecks,
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
     const lastPersonPosition = await this.getLastPersonPosition(

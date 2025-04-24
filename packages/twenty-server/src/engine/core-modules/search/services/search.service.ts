@@ -74,6 +74,7 @@ export class SearchService {
 
     const queryParser = new GraphqlQueryParser(
       objectMetadataItem.fieldsByName,
+      objectMetadataItem.fieldsByJoinColumnName,
       generateObjectMetadataMaps([objectMetadataItem]),
       featureFlagMap,
     );

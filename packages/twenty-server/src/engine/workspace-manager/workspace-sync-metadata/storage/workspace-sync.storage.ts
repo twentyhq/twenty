@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { ComputedPartialWorkspaceEntity } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 
@@ -26,6 +28,20 @@ export class WorkspaceSyncStorage {
     id: string;
   })[] = [];
   private readonly _fieldMetadataDeleteCollection: FieldMetadataEntity[] = [];
+
+  // Field relation metadata
+  private readonly _fieldRelationMetadataCreateCollection: (Partial<
+    ComputedPartialFieldMetadata<FieldMetadataType.RELATION>
+  > & {
+    id: string;
+  })[] = [];
+  private readonly _fieldRelationMetadataUpdateCollection: (Partial<
+    ComputedPartialFieldMetadata<FieldMetadataType.RELATION>
+  > & {
+    id: string;
+  })[] = [];
+  private readonly _fieldRelationMetadataDeleteCollection: FieldMetadataEntity<FieldMetadataType.RELATION>[] =
+    [];
 
   // Relation metadata
   private readonly _relationMetadataCreateCollection: Partial<RelationMetadataEntity>[] =
@@ -66,6 +82,18 @@ export class WorkspaceSyncStorage {
 
   get fieldMetadataDeleteCollection() {
     return this._fieldMetadataDeleteCollection;
+  }
+
+  get fieldRelationMetadataCreateCollection() {
+    return this._fieldRelationMetadataCreateCollection;
+  }
+
+  get fieldRelationMetadataUpdateCollection() {
+    return this._fieldRelationMetadataUpdateCollection;
+  }
+
+  get fieldRelationMetadataDeleteCollection() {
+    return this._fieldRelationMetadataDeleteCollection;
   }
 
   get relationMetadataCreateCollection() {
@@ -116,6 +144,28 @@ export class WorkspaceSyncStorage {
 
   addDeleteFieldMetadata(field: FieldMetadataEntity) {
     this._fieldMetadataDeleteCollection.push(field);
+  }
+
+  addCreateFieldRelationMetadata(
+    field: Partial<ComputedPartialFieldMetadata<FieldMetadataType.RELATION>> & {
+      id: string;
+    },
+  ) {
+    this._fieldRelationMetadataCreateCollection.push(field);
+  }
+
+  addUpdateFieldRelationMetadata(
+    field: Partial<ComputedPartialFieldMetadata<FieldMetadataType.RELATION>> & {
+      id: string;
+    },
+  ) {
+    this._fieldRelationMetadataUpdateCollection.push(field);
+  }
+
+  addDeleteFieldRelationMetadata(
+    field: FieldMetadataEntity<FieldMetadataType.RELATION>,
+  ) {
+    this._fieldRelationMetadataDeleteCollection.push(field);
   }
 
   addCreateRelationMetadata(relation: Partial<RelationMetadataEntity>) {

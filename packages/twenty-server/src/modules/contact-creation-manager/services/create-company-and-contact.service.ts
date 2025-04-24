@@ -57,7 +57,9 @@ export class CreateCompanyAndContactService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         PersonWorkspaceEntity,
-        this.shouldBypassPermissionChecks,
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
     const workspaceMembers =
@@ -192,7 +194,6 @@ export class CreateCompanyAndContactService {
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           WorkspaceMemberWorkspaceEntity,
-          this.shouldBypassPermissionChecks,
         );
 
       const workspaceMember = await workspaceMemberRepository.findOne({

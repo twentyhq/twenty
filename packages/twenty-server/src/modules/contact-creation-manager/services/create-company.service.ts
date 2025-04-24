@@ -44,13 +44,14 @@ export class CreateCompanyService {
     if (companies.length === 0) {
       return {};
     }
-    const shouldBypassPermissionChecks = true;
 
     const companyRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         CompanyWorkspaceEntity,
-        shouldBypassPermissionChecks,
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
     // Avoid creating duplicate companies

@@ -51,11 +51,16 @@ export class TypeDefinitionsGenerator {
   async generate(
     objectMetadataCollection: ObjectMetadataInterface[],
     options: WorkspaceBuildSchemaOptions,
+    isNewRelationEnabled: boolean,
   ) {
     // Generate composite type objects first because they can be used in dynamic objects
     await this.generateCompositeTypeDefs(options);
     // Generate metadata objects
-    await this.generateMetadataTypeDefs(objectMetadataCollection, options);
+    await this.generateMetadataTypeDefs(
+      objectMetadataCollection,
+      options,
+      isNewRelationEnabled,
+    );
   }
 
   /**
@@ -155,6 +160,7 @@ export class TypeDefinitionsGenerator {
   private async generateMetadataTypeDefs(
     dynamicObjectMetadataCollection: ObjectMetadataInterface[],
     options: WorkspaceBuildSchemaOptions,
+    isNewRelationEnabled: boolean,
   ) {
     this.logger.log(
       `Generating metadata objects: [${dynamicObjectMetadataCollection
@@ -164,9 +170,17 @@ export class TypeDefinitionsGenerator {
 
     // Generate dynamic objects
     this.generateEnumTypeDefs(dynamicObjectMetadataCollection, options);
-    this.generateObjectTypeDefs(dynamicObjectMetadataCollection, options);
+    this.generateObjectTypeDefs(
+      dynamicObjectMetadataCollection,
+      options,
+      isNewRelationEnabled,
+    );
     this.generatePaginationTypeDefs(dynamicObjectMetadataCollection, options);
-    this.generateInputTypeDefs(dynamicObjectMetadataCollection, options);
+    this.generateInputTypeDefs(
+      dynamicObjectMetadataCollection,
+      options,
+      isNewRelationEnabled,
+    );
     await this.generateExtendedObjectTypeDefs(
       dynamicObjectMetadataCollection,
       options,
@@ -176,12 +190,14 @@ export class TypeDefinitionsGenerator {
   private generateObjectTypeDefs(
     objectMetadataCollection: ObjectMetadataInterface[] | CompositeType[],
     options: WorkspaceBuildSchemaOptions,
+    isNewRelationEnabled: boolean,
   ) {
     const objectTypeDefs = objectMetadataCollection.map((objectMetadata) =>
       this.objectTypeDefinitionFactory.create(
         objectMetadata,
         ObjectTypeDefinitionKind.Plain,
         options,
+        isNewRelationEnabled,
       ),
     );
 
@@ -209,6 +225,7 @@ export class TypeDefinitionsGenerator {
   private generateInputTypeDefs(
     objectMetadataCollection: ObjectMetadataInterface[],
     options: WorkspaceBuildSchemaOptions,
+    isNewRelationEnabled: boolean,
   ) {
     const inputTypeDefs = objectMetadataCollection
       .map((objectMetadata) => {
@@ -226,24 +243,28 @@ export class TypeDefinitionsGenerator {
             objectMetadata,
             InputTypeDefinitionKind.Create,
             options,
+            isNewRelationEnabled,
           ),
           // Input type for update
           this.inputTypeDefinitionFactory.create(
             optionalExtendedObjectMetadata,
             InputTypeDefinitionKind.Update,
             options,
+            isNewRelationEnabled,
           ),
           // Filter input type
           this.inputTypeDefinitionFactory.create(
             optionalExtendedObjectMetadata,
             InputTypeDefinitionKind.Filter,
             options,
+            isNewRelationEnabled,
           ),
           // OrderBy input type
           this.inputTypeDefinitionFactory.create(
             optionalExtendedObjectMetadata,
             InputTypeDefinitionKind.OrderBy,
             options,
+            isNewRelationEnabled,
           ),
         ];
       })

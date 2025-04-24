@@ -5,8 +5,10 @@ import { WorkspaceDynamicRelationMetadataArgsFactory } from 'src/engine/twenty-o
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-export type PartialFieldMetadata = Omit<
-  FieldMetadataInterface,
+export type PartialFieldMetadata<
+  T extends FieldMetadataType = FieldMetadataType,
+> = Omit<
+  FieldMetadataInterface<T>,
   'id' | 'label' | 'description' | 'objectMetadataId'
 > & {
   standardId: string;
@@ -31,6 +33,10 @@ export type PartialComputedFieldMetadata = {
   objectMetadataId?: string;
 };
 
-export type ComputedPartialFieldMetadata = {
-  [K in keyof PartialFieldMetadata]: ExcludeFunctions<PartialFieldMetadata[K]>;
+export type ComputedPartialFieldMetadata<
+  T extends FieldMetadataType = FieldMetadataType,
+> = {
+  [K in keyof PartialFieldMetadata<T>]: ExcludeFunctions<
+    PartialFieldMetadata<T>[K]
+  >;
 };

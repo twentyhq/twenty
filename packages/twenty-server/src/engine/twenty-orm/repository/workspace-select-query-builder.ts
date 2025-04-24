@@ -1,7 +1,8 @@
-import { Entity } from '@microsoft/microsoft-graph-types';
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import { ObjectLiteral, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+
+import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.util';
 import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
@@ -13,137 +14,39 @@ export class WorkspaceSelectQueryBuilder<
 > extends SelectQueryBuilder<T> {
   objectRecordsPermissions: ObjectRecordsPermissions;
   shouldBypassPermissionChecks: boolean;
+  internalContext: WorkspaceInternalContext;
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
     objectRecordsPermissions: ObjectRecordsPermissions,
+    internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
   ) {
     super(queryBuilder);
     this.objectRecordsPermissions = objectRecordsPermissions;
+    this.internalContext = internalContext;
     this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
-  }
-
-  override clone(): this {
-    const clonedQueryBuilder = super.clone();
-
-    return new WorkspaceSelectQueryBuilder(
-      clonedQueryBuilder,
-      this.objectRecordsPermissions,
-      this.shouldBypassPermissionChecks,
-    ) as this;
   }
 
   override execute(): Promise<T[]> {
     validateQueryIsPermittedOrThrow(
       this.expressionMap,
       this.objectRecordsPermissions,
+      this.internalContext.objectMetadataMaps,
       this.shouldBypassPermissionChecks,
     );
 
     return super.execute();
   }
 
-  override getOne(): Promise<T | null> {
-    validateQueryIsPermittedOrThrow(
-      this.expressionMap,
-      this.objectRecordsPermissions,
-      this.shouldBypassPermissionChecks,
-    );
-
-    return super.getOne();
-  }
-
-  override getOneOrFail(): Promise<T> {
-    validateQueryIsPermittedOrThrow(
-      this.expressionMap,
-      this.objectRecordsPermissions,
-      this.shouldBypassPermissionChecks,
-    );
-
-    return super.getOneOrFail();
-  }
-
   override getMany(): Promise<T[]> {
     validateQueryIsPermittedOrThrow(
       this.expressionMap,
       this.objectRecordsPermissions,
+      this.internalContext.objectMetadataMaps,
       this.shouldBypassPermissionChecks,
     );
 
     return super.getMany();
-  }
-
-  override getManyAndCount(): Promise<[T[], number]> {
-    validateQueryIsPermittedOrThrow(
-      this.expressionMap,
-      this.objectRecordsPermissions,
-      this.shouldBypassPermissionChecks,
-    );
-
-    return super.getManyAndCount();
-  }
-
-  override getRawOne<U = any>(): Promise<U | undefined> {
-    validateQueryIsPermittedOrThrow(
-      this.expressionMap,
-      this.objectRecordsPermissions,
-      this.shouldBypassPermissionChecks,
-    );
-
-    return super.getRawOne<U>();
-  }
-
-  override getRawMany<U = any>(): Promise<U[]> {
-    validateQueryIsPermittedOrThrow(
-      this.expressionMap,
-      this.objectRecordsPermissions,
-      this.shouldBypassPermissionChecks,
-    );
-
-    return super.getRawMany<U>();
-  }
-
-  override getRawAndEntities<U = any>(): Promise<{
-    entities: T[];
-    raw: U[];
-  }> {
-    validateQueryIsPermittedOrThrow(
-      this.expressionMap,
-      this.objectRecordsPermissions,
-      this.shouldBypassPermissionChecks,
-    );
-
-    return super.getRawAndEntities();
-  }
-
-  override getCount(): Promise<number> {
-    validateQueryIsPermittedOrThrow(
-      this.expressionMap,
-      this.objectRecordsPermissions,
-      this.shouldBypassPermissionChecks,
-    );
-
-    return super.getCount();
-  }
-
-  override getExists(): Promise<boolean> {
-    validateQueryIsPermittedOrThrow(
-      this.expressionMap,
-      this.objectRecordsPermissions,
-      this.shouldBypassPermissionChecks,
-    );
-
-    return super.getExists();
-  }
-
-  override stream(): Promise<any> {
-    validateQueryIsPermittedOrThrow(
-      this.expressionMap,
-      this.objectRecordsPermissions,
-      this.shouldBypassPermissionChecks,
-    );
-
-    return super.stream();
   }
 
   override update(): WorkspaceUpdateQueryBuilder<T>;
@@ -162,6 +65,7 @@ export class WorkspaceSelectQueryBuilder<
     return new WorkspaceUpdateQueryBuilder<T>(
       updateQueryBuilder,
       this.objectRecordsPermissions,
+      this.internalContext,
       this.shouldBypassPermissionChecks,
     );
   }
@@ -176,20 +80,20 @@ export class WorkspaceSelectQueryBuilder<
     );
   }
 
-  override softDelete(): WorkspaceSoftDeleteQueryBuilder<Entity> {
+  override softDelete(): WorkspaceSoftDeleteQueryBuilder<T> {
     const softDeleteQueryBuilder = super.softDelete();
 
-    return new WorkspaceSoftDeleteQueryBuilder<Entity>(
+    return new WorkspaceSoftDeleteQueryBuilder<T>(
       softDeleteQueryBuilder,
       this.objectRecordsPermissions,
       this.shouldBypassPermissionChecks,
     );
   }
 
-  override restore(): WorkspaceSoftDeleteQueryBuilder<Entity> {
+  override restore(): WorkspaceSoftDeleteQueryBuilder<T> {
     const restoreQueryBuilder = super.restore();
 
-    return new WorkspaceSoftDeleteQueryBuilder<Entity>(
+    return new WorkspaceSoftDeleteQueryBuilder<T>(
       restoreQueryBuilder,
       this.objectRecordsPermissions,
       this.shouldBypassPermissionChecks,

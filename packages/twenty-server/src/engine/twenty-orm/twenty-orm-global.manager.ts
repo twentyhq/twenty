@@ -15,22 +15,31 @@ export class TwentyORMGlobalManager {
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     workspaceEntity: Type<T>,
-    shouldBypassPermissionChecks?: boolean,
-    shouldFailIfMetadataNotFound?: boolean,
+    options?: {
+      shouldBypassPermissionChecks?: boolean;
+      shouldFailIfMetadataNotFound?: boolean;
+    },
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     objectMetadataName: string,
-    shouldBypassPermissionChecks?: boolean,
-    shouldFailIfMetadataNotFound?: boolean,
+    options?: {
+      shouldBypassPermissionChecks?: boolean;
+      shouldFailIfMetadataNotFound?: boolean;
+    },
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     workspaceEntityOrobjectMetadataName: Type<T> | string,
-    shouldBypassPermissionChecks = false,
-    shouldFailIfMetadataNotFound = true,
+    options: {
+      shouldBypassPermissionChecks?: boolean;
+      shouldFailIfMetadataNotFound?: boolean;
+    } = {
+      shouldBypassPermissionChecks: false,
+      shouldFailIfMetadataNotFound: true,
+    },
   ): Promise<WorkspaceRepository<T>> {
     let objectMetadataName: string;
 
@@ -45,12 +54,12 @@ export class TwentyORMGlobalManager {
     const workspaceDataSource = await this.workspaceDataSourceFactory.create(
       workspaceId,
       null,
-      shouldFailIfMetadataNotFound,
+      options.shouldFailIfMetadataNotFound,
     );
 
     const repository = workspaceDataSource.getRepository<T>(
       objectMetadataName,
-      shouldBypassPermissionChecks,
+      options.shouldBypassPermissionChecks,
     );
 
     return repository;

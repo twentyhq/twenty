@@ -40,9 +40,9 @@ test('The workflow run visualizer shows the executed draft version without the l
 
   await page.goto(executionPageUrl!);
 
-  const workflowRunName = page.getByText(
-    `#1 - ${workflowVisualizer.workflowName}`,
-  );
+  const workflowRunName = page
+    .getByText(`#1 - ${workflowVisualizer.workflowName}`)
+    .nth(1);
 
   await expect(workflowRunName).toBeVisible();
 

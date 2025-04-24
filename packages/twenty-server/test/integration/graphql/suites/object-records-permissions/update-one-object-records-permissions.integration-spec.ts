@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
@@ -56,7 +57,7 @@ describe('updateOneObjectRecordsPermissions', () => {
         gqlFields: PERSON_GQL_FIELDS,
         recordId: personId,
         data: {
-          jobTitle: 'Solutions architect',
+          jobTitle: 'Senior Software Engineer',
         },
       });
 
@@ -66,13 +67,27 @@ describe('updateOneObjectRecordsPermissions', () => {
       expect(response.body.data.updatePerson).toBeDefined();
       expect(response.body.data.updatePerson.id).toBe(personId);
       expect(response.body.data.updatePerson.jobTitle).toBe(
-        'Solutions architect',
+        'Senior Software Engineer',
       );
     });
   });
 
   describe('permissions V2 enabled', () => {
+    const personId = randomUUID();
+    let allPetsViewId: string;
+
     beforeAll(async () => {
+      const createPersonOperation = createOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: PERSON_GQL_FIELDS,
+        data: {
+          id: personId,
+          jobTitle: 'Software Engineer',
+        },
+      });
+
+      await makeGraphqlAPIRequest(createPersonOperation);
+
       const enablePermissionsQuery = updateFeatureFlagFactory(
         SEED_APPLE_WORKSPACE_ID,
         'IsPermissionsV2Enabled',
@@ -80,6 +95,22 @@ describe('updateOneObjectRecordsPermissions', () => {
       );
 
       await makeGraphqlAPIRequest(enablePermissionsQuery);
+
+      const findAllPetsViewOperation = findOneOperationFactory({
+        objectMetadataSingularName: 'view',
+        gqlFields: 'id',
+        filter: {
+          icon: {
+            eq: 'IconCat',
+          },
+        },
+      });
+
+      const findAllPetsViewResponse = await makeGraphqlAPIRequest(
+        findAllPetsViewOperation,
+      );
+
+      allPetsViewId = findAllPetsViewResponse.body.data.view.id;
     });
 
     afterAll(async () => {
@@ -90,21 +121,21 @@ describe('updateOneObjectRecordsPermissions', () => {
       );
 
       await makeGraphqlAPIRequest(disablePermissionsQuery);
-    });
 
-    it('should throw a permission error when user does not have permission (guest role)', async () => {
-      const personId = randomUUID();
-      const createGraphqlOperation = createOneOperationFactory({
-        objectMetadataSingularName: 'person',
-        gqlFields: PERSON_GQL_FIELDS,
+      const updateViewOperation = updateOneOperationFactory({
+        objectMetadataSingularName: 'view',
+        gqlFields: 'id',
+        recordId: allPetsViewId,
         data: {
-          id: personId,
+          icon: 'IconCat',
         },
       });
 
-      await makeGraphqlAPIRequest(createGraphqlOperation);
+      await makeGraphqlAPIRequest(updateViewOperation);
+    });
 
-      const updateGraphqlOperation = updateOneOperationFactory({
+    it('should throw a permission error when user does not have permission (guest role)', async () => {
+      const graphqlOperation = updateOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS,
         recordId: personId,
@@ -113,9 +144,8 @@ describe('updateOneObjectRecordsPermissions', () => {
         },
       });
 
-      const response = await makeGraphqlAPIRequestWithGuestRole(
-        updateGraphqlOperation,
-      );
+      const response =
+        await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
 
       expect(response.body.data).toStrictEqual({ updatePerson: null });
       expect(response.body.errors).toBeDefined();
@@ -125,67 +155,65 @@ describe('updateOneObjectRecordsPermissions', () => {
       expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
     });
 
-    it('should update an object record when user has permission (admin role)', async () => {
-      const personId = randomUUID();
-      const createGraphqlOperation = createOneOperationFactory({
-        objectMetadataSingularName: 'person',
-        gqlFields: PERSON_GQL_FIELDS,
+    it('should allow to update a system object record even without update permission (guest role)', async () => {
+      const graphqlOperation = updateOneOperationFactory({
+        objectMetadataSingularName: 'view',
+        gqlFields: `
+          id
+          icon
+        `,
+        recordId: allPetsViewId,
         data: {
-          id: personId,
+          icon: 'IconDog',
         },
       });
 
-      await makeGraphqlAPIRequest(createGraphqlOperation);
+      const response =
+        await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
 
-      const updateGraphqlOperation = updateOneOperationFactory({
+      expect(response.body.data).toBeDefined();
+      expect(response.body.data.updateView).toBeDefined();
+      expect(response.body.data.updateView.id).toBe(allPetsViewId);
+      expect(response.body.data.updateView.icon).toBe('IconDog');
+    });
+
+    it('should update an object record when user has permission (admin role)', async () => {
+      const graphqlOperation = updateOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS,
         recordId: personId,
         data: {
-          jobTitle: 'Intermediary Software Engineer',
+          jobTitle: 'Senior Software Engineer',
         },
       });
 
-      const response = await makeGraphqlAPIRequest(updateGraphqlOperation);
+      const response = await makeGraphqlAPIRequest(graphqlOperation);
 
       expect(response.body.data).toBeDefined();
       expect(response.body.data.updatePerson).toBeDefined();
       expect(response.body.data.updatePerson.id).toBe(personId);
       expect(response.body.data.updatePerson.jobTitle).toBe(
-        'Intermediary Software Engineer',
+        'Senior Software Engineer',
       );
     });
 
     it('should update an object record when executed by api key', async () => {
-      const personId = randomUUID();
-      const createGraphqlOperation = createOneOperationFactory({
-        objectMetadataSingularName: 'person',
-        gqlFields: PERSON_GQL_FIELDS,
-        data: {
-          id: personId,
-        },
-      });
-
-      await makeGraphqlAPIRequest(createGraphqlOperation);
-
-      const updateGraphqlOperation = updateOneOperationFactory({
+      const graphqlOperation = updateOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS,
         recordId: personId,
         data: {
-          jobTitle: 'Junior Software Engineer',
+          jobTitle: 'Senior Software Engineer',
         },
       });
 
-      const response = await makeGraphqlAPIRequestWithApiKey(
-        updateGraphqlOperation,
-      );
+      const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
 
       expect(response.body.data).toBeDefined();
       expect(response.body.data.updatePerson).toBeDefined();
       expect(response.body.data.updatePerson.id).toBe(personId);
       expect(response.body.data.updatePerson.jobTitle).toBe(
-        'Junior Software Engineer',
+        'Senior Software Engineer',
       );
     });
   });

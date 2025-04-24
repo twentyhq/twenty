@@ -8,7 +8,6 @@ import {
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-
 @WorkspaceQueryHook(`view.deleteOne`)
 export class ViewDeleteOnePreQueryHook implements WorkspaceQueryHookInstance {
   constructor(
@@ -21,12 +20,10 @@ export class ViewDeleteOnePreQueryHook implements WorkspaceQueryHookInstance {
     payload: DeleteOneResolverArgs,
   ): Promise<DeleteOneResolverArgs> {
     const targettedViewId = payload.id;
-    const shouldBypassPermissionChecks = true;
     const viewRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         authContext.workspace.id,
         'view',
-        shouldBypassPermissionChecks,
       );
 
     const view = await viewRepository.findOne({

@@ -11,27 +11,15 @@ export const seedApiKey = async (
   await entityManager
     .createQueryBuilder()
     .insert()
-    .into(`${schemaName}.${tableName}`, [
-      'id',
-      'name',
-      'createdAt',
-      'updatedAt',
-      'deletedAt',
-      'expiresAt',
-      'revokedAt',
-    ])
+    .into(`${schemaName}.${tableName}`, ['id', 'name', 'expiresAt'])
     .orIgnore()
     .values([
       {
         id: API_KEY_ID,
         name: 'My api key',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
         expiresAt: new Date(
           new Date().getTime() + 1000 * 60 * 60 * 24 * 365 * 100, // In 100 years
         ),
-        revokedAt: null,
       },
     ])
     .execute();

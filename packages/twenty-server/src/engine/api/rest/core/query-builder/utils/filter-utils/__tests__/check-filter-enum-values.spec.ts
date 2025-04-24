@@ -33,6 +33,7 @@ describe('checkFilterEnumValues', () => {
     ...objectMetadataItemMock,
     fieldsById,
     fieldsByName,
+    fieldsByJoinColumnName: {},
   };
 
   it('should check properly', () => {

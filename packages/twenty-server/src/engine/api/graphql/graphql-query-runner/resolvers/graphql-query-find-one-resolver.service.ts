@@ -59,6 +59,7 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
       nonFormattedObjectRecord,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     if (!objectRecord) {

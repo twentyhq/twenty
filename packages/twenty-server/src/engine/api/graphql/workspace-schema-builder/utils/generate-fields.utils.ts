@@ -8,11 +8,12 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/object-type-definition.factory';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type TypeFactory<T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind> =
   {
@@ -40,13 +41,21 @@ export const generateFields = <
   kind: T,
   options: WorkspaceBuildSchemaOptions,
   typeFactory: TypeFactory<T>,
+  isNewRelationEnabled = false,
 ): T extends InputTypeDefinitionKind
   ? GraphQLInputFieldConfigMap
   : GraphQLFieldConfigMap<any, any> => {
   const fields = {};
 
   for (const fieldMetadata of objectMetadata.fields) {
-    if (isRelationFieldMetadataType(fieldMetadata.type)) {
+    if (
+      isFieldMetadataInterfaceOfType(
+        fieldMetadata,
+        FieldMetadataType.RELATION,
+      ) &&
+      (fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE ||
+        !isNewRelationEnabled)
+    ) {
       continue;
     }
 
@@ -79,6 +88,25 @@ export const generateFields = <
       options,
       typeFactoryOptions,
     );
+
+    if (
+      isFieldMetadataInterfaceOfType(
+        fieldMetadata,
+        FieldMetadataType.RELATION,
+      ) &&
+      fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
+    ) {
+      const joinColumnName = fieldMetadata.settings?.joinColumnName;
+
+      if (!joinColumnName) {
+        throw new Error('Join column name is not defined');
+      }
+
+      fields[joinColumnName] = {
+        type,
+        description: fieldMetadata.description,
+      };
+    }
 
     fields[fieldMetadata.name] = {
       type,
