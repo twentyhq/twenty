@@ -359,6 +359,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUserCircle',
     inverseSideTarget: () => ConnectedAccountWorkspaceEntity,
     inverseSideFieldKey: 'messageChannels',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   connectedAccount: Relation<ConnectedAccountWorkspaceEntity>;
 

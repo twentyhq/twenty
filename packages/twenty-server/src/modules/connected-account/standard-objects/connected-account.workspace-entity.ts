@@ -117,6 +117,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUserCircle',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'connectedAccounts',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   accountOwner: Relation<WorkspaceMemberWorkspaceEntity>;
 

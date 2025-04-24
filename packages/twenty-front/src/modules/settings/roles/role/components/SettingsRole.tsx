@@ -29,6 +29,7 @@ import {
   Role,
   useCreateOneRoleMutation,
   useUpdateOneRoleMutation,
+  useUpsertObjectPermissionsMutation,
   useUpsertSettingPermissionsMutation,
 } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -67,6 +68,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const [createRole] = useCreateOneRoleMutation();
   const [updateRole] = useUpdateOneRoleMutation();
   const [upsertSettingPermissions] = useUpsertSettingPermissionsMutation();
+  const [upsertObjectPermissions] = useUpsertObjectPermissionsMutation();
 
   const { addWorkspaceMembersToRole } = useUpdateWorkspaceMemberRole(roleId);
 
@@ -142,25 +144,54 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
           },
         },
         onCompleted: async (data) => {
-          await addWorkspaceMembersToRole({
-            roleId: data.createOneRole.id,
-            workspaceMemberIds: settingsDraftRole.workspaceMembers.map(
-              (member) => member.id,
-            ),
-          });
+          if (isDefined(dirtyFields.workspaceMembers)) {
+            await addWorkspaceMembersToRole({
+              roleId: data.createOneRole.id,
+              workspaceMemberIds: settingsDraftRole.workspaceMembers.map(
+                (member) => member.id,
+              ),
+            });
+          }
 
-          await upsertSettingPermissions({
-            variables: {
-              upsertSettingPermissionsInput: {
-                roleId: data.createOneRole.id,
-                settingPermissionKeys:
-                  settingsDraftRole.settingPermissions?.map(
-                    (settingPermission) => settingPermission.setting,
-                  ) ?? [],
+          if (isDefined(dirtyFields.settingPermissions)) {
+            await upsertSettingPermissions({
+              variables: {
+                upsertSettingPermissionsInput: {
+                  roleId: data.createOneRole.id,
+                  settingPermissionKeys:
+                    settingsDraftRole.settingPermissions?.map(
+                      (settingPermission) => settingPermission.setting,
+                    ) ?? [],
+                },
               },
-            },
-            refetchQueries: [getOperationName(GET_ROLES) ?? ''],
-          });
+              refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+            });
+          }
+
+          if (isDefined(dirtyFields.objectPermissions)) {
+            await upsertObjectPermissions({
+              variables: {
+                upsertObjectPermissionsInput: {
+                  roleId: data.createOneRole.id,
+                  objectPermissions:
+                    settingsDraftRole.objectPermissions?.map(
+                      (objectPermission) => ({
+                        objectMetadataId: objectPermission.objectMetadataId,
+                        canReadObjectRecords:
+                          objectPermission.canReadObjectRecords,
+                        canUpdateObjectRecords:
+                          objectPermission.canUpdateObjectRecords,
+                        canSoftDeleteObjectRecords:
+                          objectPermission.canSoftDeleteObjectRecords,
+                        canDestroyObjectRecords:
+                          objectPermission.canDestroyObjectRecords,
+                      }),
+                    ) ?? [],
+                },
+              },
+              refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+            });
+          }
 
           navigateSettings(SettingsPath.RoleDetail, {
             roleId: data.createOneRole.id,
@@ -200,6 +231,30 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
               settingPermissionKeys:
                 settingsDraftRole.settingPermissions?.map(
                   (settingPermission) => settingPermission.setting,
+                ) ?? [],
+            },
+          },
+          refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+        });
+      }
+
+      if (isDefined(dirtyFields.objectPermissions)) {
+        await upsertObjectPermissions({
+          variables: {
+            upsertObjectPermissionsInput: {
+              roleId: roleId,
+              objectPermissions:
+                settingsDraftRole.objectPermissions?.map(
+                  (objectPermission) => ({
+                    objectMetadataId: objectPermission.objectMetadataId,
+                    canReadObjectRecords: objectPermission.canReadObjectRecords,
+                    canUpdateObjectRecords:
+                      objectPermission.canUpdateObjectRecords,
+                    canSoftDeleteObjectRecords:
+                      objectPermission.canSoftDeleteObjectRecords,
+                    canDestroyObjectRecords:
+                      objectPermission.canDestroyObjectRecords,
+                  }),
                 ) ?? [],
             },
           },
@@ -251,6 +306,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
           <SettingsRolePermissions
             roleId={roleId}
             isEditable={isRoleEditable}
+            isCreateMode={isCreateMode}
           />
         )}
         {activeTabId === SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.SETTINGS && (
