@@ -12,7 +12,7 @@ export class UpdateWhatsappIntegrationInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  label?: string;
+  name?: string;
 
   @Field({ nullable: true })
   @IsOptional()

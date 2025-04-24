@@ -543,9 +543,8 @@ export type CreateWhatsappIntegrationInput = {
   appId: Scalars['String'];
   appKey: Scalars['String'];
   businessAccountId: Scalars['String'];
-  label: Scalars['String'];
+  name: Scalars['String'];
   phoneId: Scalars['String'];
-  workspaceId: Scalars['ID'];
 };
 
 export type CreateWorkflowVersionStepInput = {
@@ -1061,7 +1060,7 @@ export type Mutation = {
   createSector: Sector;
   createStripeIntegration: StripeIntegration;
   createTelephony: Telephony;
-  createWhatsappIntegration: WhatsappIntegration;
+  createWhatsappIntegration: WhatsappWorkspaceEntity;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteAgent: Agent;
@@ -1123,8 +1122,8 @@ export type Mutation = {
   updateSector: Sector;
   updateStripeIntegration: StripeIntegration;
   updateTelephony: Telephony;
-  updateWhatsappIntegration: WhatsappIntegration;
-  updateWhatsappIntegrationServiceLevel: WhatsappIntegration;
+  updateWhatsappIntegration: WhatsappWorkspaceEntity;
+  updateWhatsappIntegrationServiceLevel: WhatsappWorkspaceEntity;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionStep: WorkflowAction;
   updateWorkspace: Workspace;
@@ -1857,8 +1856,8 @@ export type Query = {
   sectorsByWorkspace: Array<Sector>;
   validatePasswordResetToken: ValidatePasswordResetToken;
   versionInfo: VersionInfo;
-  whatsappIntegrationById: WhatsappIntegration;
-  whatsappIntegrationsByWorkspace: Array<WhatsappIntegration>;
+  whatsappIntegrationById: WhatsappWorkspaceEntity;
+  whatsappIntegrationsByWorkspace: Array<WhatsappWorkspaceEntity>;
 };
 
 
@@ -2023,11 +2022,6 @@ export type QueryValidatePasswordResetTokenArgs = {
 
 export type QueryWhatsappIntegrationByIdArgs = {
   integrationId: Scalars['String'];
-};
-
-
-export type QueryWhatsappIntegrationsByWorkspaceArgs = {
-  workspaceId: Scalars['String'];
 };
 
 export type QueueMetricsData = {
@@ -2792,7 +2786,7 @@ export type UpdateWhatsappIntegrationInput = {
   appKey?: InputMaybe<Scalars['String']>;
   businessAccountId?: InputMaybe<Scalars['String']>;
   id: Scalars['String'];
-  label?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
   phoneId?: InputMaybe<Scalars['String']>;
 };
 
@@ -2954,6 +2948,20 @@ export type WhatsappIntegration = {
 export type WhatsappTemplatesResponse = {
   __typename?: 'WhatsappTemplatesResponse';
   templates: Array<Template>;
+};
+
+export type WhatsappWorkspaceEntity = {
+  __typename?: 'WhatsappWorkspaceEntity';
+  accessToken: Scalars['String'];
+  appId: Scalars['String'];
+  appKey: Scalars['String'];
+  businessAccountId: Scalars['String'];
+  disabled: Scalars['Boolean'];
+  id: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  phoneId: Scalars['String'];
+  sla: Scalars['Float'];
+  verifyToken: Scalars['String'];
 };
 
 export type WorkerQueueMetrics = {
@@ -3526,7 +3534,7 @@ export type CreateWhatsappIntegrationMutationVariables = Exact<{
 }>;
 
 
-export type CreateWhatsappIntegrationMutation = { __typename?: 'Mutation', createWhatsappIntegration: { __typename?: 'WhatsappIntegration', id: any, label: string, phoneId: string, businessAccountId: string, accessToken: string, appId: string, appKey: string, disabled: boolean, workspace: { __typename?: 'Workspace', id: any } } };
+export type CreateWhatsappIntegrationMutation = { __typename?: 'Mutation', createWhatsappIntegration: { __typename?: 'WhatsappWorkspaceEntity', name?: string | null, phoneId: string, businessAccountId: string, accessToken: string, appId: string, appKey: string } };
 
 export type ToggleWhatsappIntegrationStatusMutationVariables = Exact<{
   integrationId: Scalars['String'];
@@ -3540,14 +3548,12 @@ export type UpdateWhatsappIntegrationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateWhatsappIntegrationMutation = { __typename?: 'Mutation', updateWhatsappIntegration: { __typename?: 'WhatsappIntegration', id: any, label: string, phoneId: string, businessAccountId: string, accessToken: string, appId: string, appKey: string, disabled: boolean } };
+export type UpdateWhatsappIntegrationMutation = { __typename?: 'Mutation', updateWhatsappIntegration: { __typename?: 'WhatsappWorkspaceEntity', id: string, name?: string | null, phoneId: string, businessAccountId: string, accessToken: string, appId: string, appKey: string } };
 
-export type WhatsappIntegrationsByWorkspaceQueryVariables = Exact<{
-  workspaceId: Scalars['String'];
-}>;
+export type WhatsappIntegrationsByWorkspaceQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type WhatsappIntegrationsByWorkspaceQuery = { __typename?: 'Query', whatsappIntegrationsByWorkspace: Array<{ __typename?: 'WhatsappIntegration', id: any, label: string, phoneId: string, businessAccountId: string, appId: string, appKey: string, disabled: boolean, sla: number, workspace: { __typename?: 'Workspace', id: any } }> };
+export type WhatsappIntegrationsByWorkspaceQuery = { __typename?: 'Query', whatsappIntegrationsByWorkspace: Array<{ __typename?: 'WhatsappWorkspaceEntity', id: string, name?: string | null, phoneId: string, businessAccountId: string, appId: string, appKey: string, disabled: boolean, sla: number }> };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -3722,7 +3728,7 @@ export type UpdateWhatsappIntegrationServiceLevelMutationVariables = Exact<{
 }>;
 
 
-export type UpdateWhatsappIntegrationServiceLevelMutation = { __typename?: 'Mutation', updateWhatsappIntegrationServiceLevel: { __typename?: 'WhatsappIntegration', label: string, sla: number } };
+export type UpdateWhatsappIntegrationServiceLevelMutation = { __typename?: 'Mutation', updateWhatsappIntegrationServiceLevel: { __typename?: 'WhatsappWorkspaceEntity', name?: string | null, sla: number } };
 
 export type CreateTelephonyMutationVariables = Exact<{
   createTelephonyInput: CreateTelephonyInput;
@@ -6358,17 +6364,12 @@ export type InterIntegrationsByWorkspaceQueryResult = Apollo.QueryResult<InterIn
 export const CreateWhatsappIntegrationDocument = gql`
     mutation CreateWhatsappIntegration($createInput: CreateWhatsappIntegrationInput!) {
   createWhatsappIntegration(createInput: $createInput) {
-    id
-    label
+    name
     phoneId
     businessAccountId
     accessToken
     appId
     appKey
-    disabled
-    workspace {
-      id
-    }
   }
 }
     `;
@@ -6433,13 +6434,12 @@ export const UpdateWhatsappIntegrationDocument = gql`
     mutation UpdateWhatsappIntegration($updateInput: UpdateWhatsappIntegrationInput!) {
   updateWhatsappIntegration(updateInput: $updateInput) {
     id
-    label
+    name
     phoneId
     businessAccountId
     accessToken
     appId
     appKey
-    disabled
   }
 }
     `;
@@ -6470,19 +6470,16 @@ export type UpdateWhatsappIntegrationMutationHookResult = ReturnType<typeof useU
 export type UpdateWhatsappIntegrationMutationResult = Apollo.MutationResult<UpdateWhatsappIntegrationMutation>;
 export type UpdateWhatsappIntegrationMutationOptions = Apollo.BaseMutationOptions<UpdateWhatsappIntegrationMutation, UpdateWhatsappIntegrationMutationVariables>;
 export const WhatsappIntegrationsByWorkspaceDocument = gql`
-    query WhatsappIntegrationsByWorkspace($workspaceId: String!) {
-  whatsappIntegrationsByWorkspace(workspaceId: $workspaceId) {
+    query WhatsappIntegrationsByWorkspace {
+  whatsappIntegrationsByWorkspace {
     id
-    label
+    name
     phoneId
     businessAccountId
     appId
     appKey
     disabled
     sla
-    workspace {
-      id
-    }
   }
 }
     `;
@@ -6499,11 +6496,10 @@ export const WhatsappIntegrationsByWorkspaceDocument = gql`
  * @example
  * const { data, loading, error } = useWhatsappIntegrationsByWorkspaceQuery({
  *   variables: {
- *      workspaceId: // value for 'workspaceId'
  *   },
  * });
  */
-export function useWhatsappIntegrationsByWorkspaceQuery(baseOptions: Apollo.QueryHookOptions<WhatsappIntegrationsByWorkspaceQuery, WhatsappIntegrationsByWorkspaceQueryVariables>) {
+export function useWhatsappIntegrationsByWorkspaceQuery(baseOptions?: Apollo.QueryHookOptions<WhatsappIntegrationsByWorkspaceQuery, WhatsappIntegrationsByWorkspaceQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<WhatsappIntegrationsByWorkspaceQuery, WhatsappIntegrationsByWorkspaceQueryVariables>(WhatsappIntegrationsByWorkspaceDocument, options);
       }
@@ -7410,7 +7406,7 @@ export type SectorsByWorkspaceQueryResult = Apollo.QueryResult<SectorsByWorkspac
 export const UpdateWhatsappIntegrationServiceLevelDocument = gql`
     mutation UpdateWhatsappIntegrationServiceLevel($integrationId: String!, $sla: Int!) {
   updateWhatsappIntegrationServiceLevel(integrationId: $integrationId, sla: $sla) {
-    label
+    name
     sla
   }
 }

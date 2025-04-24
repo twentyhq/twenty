@@ -608,9 +608,8 @@ export type CreateWhatsappIntegrationInput = {
   appId: Scalars['String']['input'];
   appKey: Scalars['String']['input'];
   businessAccountId: Scalars['String']['input'];
-  label: Scalars['String']['input'];
+  name: Scalars['String']['input'];
   phoneId: Scalars['String']['input'];
-  workspaceId: Scalars['ID']['input'];
 };
 
 export type CreateWorkflowVersionStepInput = {
@@ -1140,7 +1139,7 @@ export type Mutation = {
   createSector: Sector;
   createStripeIntegration: StripeIntegration;
   createTelephony: Telephony;
-  createWhatsappIntegration: WhatsappIntegration;
+  createWhatsappIntegration: WhatsappWorkspaceEntity;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean']['output'];
   deleteAgent: Agent;
@@ -1208,8 +1207,8 @@ export type Mutation = {
   updateSector: Sector;
   updateStripeIntegration: StripeIntegration;
   updateTelephony: Telephony;
-  updateWhatsappIntegration: WhatsappIntegration;
-  updateWhatsappIntegrationServiceLevel: WhatsappIntegration;
+  updateWhatsappIntegration: WhatsappWorkspaceEntity;
+  updateWhatsappIntegrationServiceLevel: WhatsappWorkspaceEntity;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionStep: WorkflowAction;
   updateWorkspace: Workspace;
@@ -1996,8 +1995,8 @@ export type Query = {
   sectorsByWorkspace: Array<Sector>;
   validatePasswordResetToken: ValidatePasswordResetToken;
   versionInfo: VersionInfo;
-  whatsappIntegrationById: WhatsappIntegration;
-  whatsappIntegrationsByWorkspace: Array<WhatsappIntegration>;
+  whatsappIntegrationById: WhatsappWorkspaceEntity;
+  whatsappIntegrationsByWorkspace: Array<WhatsappWorkspaceEntity>;
 };
 
 
@@ -2215,11 +2214,6 @@ export type QueryValidatePasswordResetTokenArgs = {
 
 export type QueryWhatsappIntegrationByIdArgs = {
   integrationId: Scalars['String']['input'];
-};
-
-
-export type QueryWhatsappIntegrationsByWorkspaceArgs = {
-  workspaceId: Scalars['String']['input'];
 };
 
 export type QueueMetricsData = {
@@ -3006,7 +3000,7 @@ export type UpdateWhatsappIntegrationInput = {
   appKey?: InputMaybe<Scalars['String']['input']>;
   businessAccountId?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
-  label?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
   phoneId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -3178,6 +3172,20 @@ export type WhatsappIntegration = {
 export type WhatsappTemplatesResponse = {
   __typename?: 'WhatsappTemplatesResponse';
   templates: Array<Template>;
+};
+
+export type WhatsappWorkspaceEntity = {
+  __typename?: 'WhatsappWorkspaceEntity';
+  accessToken: Scalars['String']['output'];
+  appId: Scalars['String']['output'];
+  appKey: Scalars['String']['output'];
+  businessAccountId: Scalars['String']['output'];
+  disabled: Scalars['Boolean']['output'];
+  id: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  phoneId: Scalars['String']['output'];
+  sla: Scalars['Float']['output'];
+  verifyToken: Scalars['String']['output'];
 };
 
 export type WorkerQueueMetrics = {

@@ -6,13 +6,12 @@ export const UPDATE_WHATSAPP_INTEGRATION = gql`
   ) {
     updateWhatsappIntegration(updateInput: $updateInput) {
       id
-      label
+      name
       phoneId
       businessAccountId
       accessToken
       appId
       appKey
-      disabled
     }
   }
 `;

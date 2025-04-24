@@ -163,7 +163,7 @@ export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
               alt={'Whatsapp'}
               //alt={platform === 'whatsapp' ? 'Whatsapp' : 'Messenger'}
             />
-            {integration?.label}
+            {integration?.name}
           </StyledIntegrationCard>
           {isAdmin && chat.agent !== 'empty' && (
             <StyledIntegrationCard isSelected={isSelected}>

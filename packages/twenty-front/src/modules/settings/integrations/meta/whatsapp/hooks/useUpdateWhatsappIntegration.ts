@@ -53,3 +53,5 @@ export const useUpdateWhatsappIntegration = (): UpdateWhatsappIntegration => {
     error,
   };
 };
+
+// null value in column "label" of relation "whatsappIntegration" violates not-null constraint
