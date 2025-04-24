@@ -71,9 +71,10 @@ export const useTriggerActionMenuDropdown = ({
     [
       recordIndexActionMenuDropdownPositionState,
       isRowSelectedFamilyState,
-      openDropdown,
-      actionMenuDropdownId,
       closeCommandMenu,
+      setActiveDropdownFocusIdAndMemorizePrevious,
+      actionMenuDropdownId,
+      openDropdown,
     ],
   );
 
