@@ -20,6 +20,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
+import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
 import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
 import { isDefined } from 'twenty-shared/utils';
 import { IconUserCircle } from 'twenty-ui/display';
@@ -63,14 +64,24 @@ export const ObjectFilterDropdownRecordSelect = ({
 
   const { applyRecordFilter } = useApplyRecordFilter(viewComponentId);
 
-  const { isCurrentWorkspaceMemberSelected } = jsonRelationFilterValueSchema
-    .catch({
-      isCurrentWorkspaceMemberSelected: false,
-      selectedRecordIds: simpleRelationFilterValueSchema.parse(
-        selectedFilter?.value,
-      ),
-    })
-    .parse(selectedFilter?.value);
+  let isCurrentWorkspaceMemberSelected: boolean;
+
+  try {
+    const relationFilterValue = relationFilterValueSchema.parse(
+      selectedFilter?.value,
+    );
+
+    isCurrentWorkspaceMemberSelected = relationFilterValue.includes(
+      '{{CURRENT_WORKSPACE_MEMBER}}',
+    );
+  } catch {
+    const jsonRelationFilterValueParseResult =
+      jsonRelationFilterValueSchema.parse(selectedFilter?.value);
+
+    isCurrentWorkspaceMemberSelected =
+      jsonRelationFilterValueParseResult.isCurrentWorkspaceMemberSelected ??
+      false;
+  }
 
   if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
     throw new Error('fieldMetadataItemUsedInFilterDropdown is not defined');
@@ -203,11 +214,14 @@ export const ObjectFilterDropdownRecordSelect = ({
     if (isDefined(selectedOperandInDropdown)) {
       const newFilterValue =
         newSelectedRecordIds.length > 0 || newIsCurrentWorkspaceMemberSelected
-          ? JSON.stringify({
-              isCurrentWorkspaceMemberSelected:
-                newIsCurrentWorkspaceMemberSelected,
-              selectedRecordIds: newSelectedRecordIds,
-            } satisfies RelationFilterValue)
+          ? JSON.stringify(
+              [
+                ...newSelectedRecordIds,
+                newIsCurrentWorkspaceMemberSelected
+                  ? '{{CURRENT_WORKSPACE_MEMBER}}'
+                  : undefined,
+              ].filter(isDefined),
+            )
           : '';
 
       const duplicateFilterInCurrentRecordFilters =

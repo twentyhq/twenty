@@ -43,6 +43,7 @@ import { RecordFilterGroup } from '@/object-record/record-filter-group/types/Rec
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { isDefined } from 'twenty-shared/utils';
+import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
 
 type ComputeFilterRecordGqlOperationFilterParams = {
   filterValueDependencies: RecordFilterValueDependencies;
@@ -306,22 +307,28 @@ export const computeFilterRecordGqlOperationFilter = ({
           );
       }
     case 'RELATION': {
-      const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
-        jsonRelationFilterValueSchema
-          .catch({
-            isCurrentWorkspaceMemberSelected: false,
-            selectedRecordIds: simpleRelationFilterValueSchema.parse(
-              filter.value,
-            ),
-          })
-          .parse(filter.value);
+      let recordIds;
 
-      const recordIds = isCurrentWorkspaceMemberSelected
-        ? [
-            ...selectedRecordIds,
-            filterValueDependencies.currentWorkspaceMemberId,
-          ]
-        : selectedRecordIds;
+      try {
+        const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
+          jsonRelationFilterValueSchema.parse(filter.value);
+
+        recordIds = isCurrentWorkspaceMemberSelected
+          ? [
+              ...selectedRecordIds,
+              filterValueDependencies.currentWorkspaceMemberId,
+            ]
+          : selectedRecordIds;
+      } catch {
+        const relationFilterValue = relationFilterValueSchema.parse(
+          filter.value,
+        );
+        recordIds = relationFilterValue.map((item) =>
+          item === '{{CURRENT_WORKSPACE_MEMBER}}'
+            ? filterValueDependencies.currentWorkspaceMemberId
+            : item,
+        );
+      }
 
       if (recordIds.length === 0) return;
 
