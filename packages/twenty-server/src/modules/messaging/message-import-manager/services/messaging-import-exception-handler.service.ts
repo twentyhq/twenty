@@ -50,6 +50,7 @@ export class MessageImportExceptionHandlerService {
           workspaceId,
         );
         break;
+      case MessageImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
       case MessageImportDriverExceptionCode.TEMPORARY_ERROR:
         await this.handleTemporaryException(
           syncStep,
@@ -71,7 +72,6 @@ export class MessageImportExceptionHandlerService {
         );
         break;
       case MessageImportDriverExceptionCode.UNKNOWN:
-      case MessageImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
       default:
         await this.handleUnknownException(
           exception,
