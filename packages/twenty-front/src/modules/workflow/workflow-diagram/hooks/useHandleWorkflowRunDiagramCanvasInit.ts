@@ -4,7 +4,7 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowDiagramStatusComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusComponentState';
-import { workflowRunStepToOpenByDefaultState } from '@/workflow/workflow-diagram/states/workflowRunStepToOpenByDefaultState';
+import { workflowRunStepToOpenByDefaultComponentState } from '@/workflow/workflow-diagram/states/workflowRunStepToOpenByDefaultComponentState';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { useContext } from 'react';
@@ -23,6 +23,9 @@ export const useHandleWorkflowRunDiagramCanvasInit = () => {
   );
   const workflowDiagramStatusState = useRecoilComponentCallbackStateV2(
     workflowDiagramStatusComponentState,
+  );
+  const workflowRunStepToOpenByDefaultState = useRecoilComponentCallbackStateV2(
+    workflowRunStepToOpenByDefaultComponentState,
   );
 
   const handleWorkflowRunDiagramCanvasInit = useRecoilCallback(
@@ -82,6 +85,7 @@ export const useHandleWorkflowRunDiagramCanvasInit = () => {
       openWorkflowRunViewStepInCommandMenu,
       workflowVisualizerWorkflowIdState,
       workflowDiagramStatusState,
+      workflowRunStepToOpenByDefaultState,
     ],
   );
 

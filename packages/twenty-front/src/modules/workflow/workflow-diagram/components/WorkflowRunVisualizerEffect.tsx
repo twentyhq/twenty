@@ -10,7 +10,7 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { WorkflowRunOutput } from '@/workflow/types/Workflow';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramStatusComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusComponentState';
-import { workflowRunStepToOpenByDefaultState } from '@/workflow/workflow-diagram/states/workflowRunStepToOpenByDefaultState';
+import { workflowRunStepToOpenByDefaultComponentState } from '@/workflow/workflow-diagram/states/workflowRunStepToOpenByDefaultComponentState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { selectWorkflowDiagramNode } from '@/workflow/workflow-diagram/utils/selectWorkflowDiagramNode';
 import { useContext, useEffect } from 'react';
@@ -38,6 +38,9 @@ export const WorkflowRunVisualizerEffect = ({
   );
   const workflowDiagramStatusState = useRecoilComponentCallbackStateV2(
     workflowDiagramStatusComponentState,
+  );
+  const workflowRunStepToOpenByDefaultState = useRecoilComponentCallbackStateV2(
+    workflowRunStepToOpenByDefaultComponentState,
   );
 
   const { populateStepsOutputSchema } = useStepsOutputSchema();
@@ -106,7 +109,12 @@ export const WorkflowRunVisualizerEffect = ({
 
         set(workflowDiagramStatusState, 'computing-dimensions');
       },
-    [flowState, workflowDiagramState, workflowDiagramStatusState],
+    [
+      flowState,
+      workflowDiagramState,
+      workflowDiagramStatusState,
+      workflowRunStepToOpenByDefaultState,
+    ],
   );
 
   useEffect(() => {
