@@ -66,12 +66,7 @@ export class AgentService {
   async findAll(workspaceId: string): Promise<Agent[]> {
     return await this.agentRepository.find({
       where: { workspace: { id: workspaceId } },
-      relations: [
-        'workspace',
-        'sectors',
-        'inboxes',
-        'inboxes.whatsappIntegration',
-      ],
+      relations: ['workspace', 'sectors', 'inboxes'],
       order: {
         createdAt: 'DESC',
       },

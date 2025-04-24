@@ -3,12 +3,7 @@ import { IntegrationType } from '@/settings/service-center/types/IntegrationType
 export type Inbox = {
   id: string;
   integrationType: IntegrationType;
-  whatsappIntegration?: {
-    id: string;
-    label: string;
-    phoneId: string;
-    disabled: boolean;
-  };
+  whatsappIntegrationId?: string;
   // messengerIntegration?: {
   //   id: string;
   //   label: string;

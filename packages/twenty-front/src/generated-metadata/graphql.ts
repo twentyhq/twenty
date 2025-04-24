@@ -943,7 +943,7 @@ export type Inbox = {
   agents: Array<Agent>;
   id: Scalars['UUID']['output'];
   integrationType: IntegrationType;
-  whatsappIntegration?: Maybe<WhatsappIntegration>;
+  whatsappIntegrationId: Scalars['String']['output'];
   workspace: Workspace;
 };
 
@@ -3152,21 +3152,6 @@ export type VersionInfo = {
   __typename?: 'VersionInfo';
   currentVersion?: Maybe<Scalars['String']['output']>;
   latestVersion: Scalars['String']['output'];
-};
-
-export type WhatsappIntegration = {
-  __typename?: 'WhatsappIntegration';
-  accessToken: Scalars['String']['output'];
-  appId: Scalars['String']['output'];
-  appKey: Scalars['String']['output'];
-  businessAccountId: Scalars['String']['output'];
-  disabled: Scalars['Boolean']['output'];
-  id: Scalars['UUID']['output'];
-  label: Scalars['String']['output'];
-  phoneId: Scalars['String']['output'];
-  sla: Scalars['Float']['output'];
-  verifyToken: Scalars['String']['output'];
-  workspace: Workspace;
 };
 
 export type WhatsappTemplatesResponse = {

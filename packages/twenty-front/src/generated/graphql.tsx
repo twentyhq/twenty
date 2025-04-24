@@ -866,7 +866,7 @@ export type Inbox = {
   agents: Array<Agent>;
   id: Scalars['UUID'];
   integrationType: IntegrationType;
-  whatsappIntegration?: Maybe<WhatsappIntegration>;
+  whatsappIntegrationId: Scalars['String'];
   workspace: Workspace;
 };
 
@@ -2930,21 +2930,6 @@ export type VersionInfo = {
   latestVersion: Scalars['String'];
 };
 
-export type WhatsappIntegration = {
-  __typename?: 'WhatsappIntegration';
-  accessToken: Scalars['String'];
-  appId: Scalars['String'];
-  appKey: Scalars['String'];
-  businessAccountId: Scalars['String'];
-  disabled: Scalars['Boolean'];
-  id: Scalars['UUID'];
-  label: Scalars['String'];
-  phoneId: Scalars['String'];
-  sla: Scalars['Float'];
-  verifyToken: Scalars['String'];
-  workspace: Workspace;
-};
-
 export type WhatsappTemplatesResponse = {
   __typename?: 'WhatsappTemplatesResponse';
   templates: Array<Template>;
@@ -3685,14 +3670,14 @@ export type AgentsByWorkspaceQueryVariables = Exact<{
 }>;
 
 
-export type AgentsByWorkspaceQuery = { __typename?: 'Query', agentsByWorkspace: Array<{ __typename?: 'Agent', id: any, isAdmin: boolean, isActive: boolean, memberId: string, workspace: { __typename?: 'Workspace', id: any, displayName?: string | null }, sectors: Array<{ __typename?: 'Sector', id: any, name: string }>, inboxes: Array<{ __typename?: 'Inbox', id: any, integrationType: IntegrationType, whatsappIntegration?: { __typename?: 'WhatsappIntegration', id: any, label: string, phoneId: string, disabled: boolean } | null }> }> };
+export type AgentsByWorkspaceQuery = { __typename?: 'Query', agentsByWorkspace: Array<{ __typename?: 'Agent', id: any, isAdmin: boolean, isActive: boolean, memberId: string, workspace: { __typename?: 'Workspace', id: any, displayName?: string | null }, sectors: Array<{ __typename?: 'Sector', id: any, name: string }>, inboxes: Array<{ __typename?: 'Inbox', id: any, integrationType: IntegrationType, whatsappIntegrationId: string }> }> };
 
 export type InboxesByWorkspaceQueryVariables = Exact<{
   workspaceId: Scalars['String'];
 }>;
 
 
-export type InboxesByWorkspaceQuery = { __typename?: 'Query', inboxesByWorkspace: Array<{ __typename?: 'Inbox', id: any, integrationType: IntegrationType, workspace: { __typename?: 'Workspace', id: any, displayName?: string | null }, whatsappIntegration?: { __typename?: 'WhatsappIntegration', id: any, label: string, phoneId: string, disabled: boolean } | null }> };
+export type InboxesByWorkspaceQuery = { __typename?: 'Query', inboxesByWorkspace: Array<{ __typename?: 'Inbox', id: any, integrationType: IntegrationType, whatsappIntegrationId: string, workspace: { __typename?: 'Workspace', id: any, displayName?: string | null } }> };
 
 export type CreateSectorMutationVariables = Exact<{
   createInput: CreateSectorInput;
@@ -7171,12 +7156,7 @@ export const AgentsByWorkspaceDocument = gql`
     inboxes {
       id
       integrationType
-      whatsappIntegration {
-        id
-        label
-        phoneId
-        disabled
-      }
+      whatsappIntegrationId
     }
   }
 }
@@ -7218,12 +7198,7 @@ export const InboxesByWorkspaceDocument = gql`
       id
       displayName
     }
-    whatsappIntegration {
-      id
-      label
-      phoneId
-      disabled
-    }
+    whatsappIntegrationId
   }
 }
     `;

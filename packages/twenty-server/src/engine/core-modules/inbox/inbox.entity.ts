@@ -4,7 +4,6 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   Entity,
-  JoinColumn,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -13,7 +12,6 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Agent } from 'src/engine/core-modules/agent/agent.entity';
-import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum IntegrationType {
@@ -41,13 +39,9 @@ export class Inbox {
   })
   integrationType: IntegrationType;
 
-  @Field(() => WhatsappIntegration, { nullable: true })
-  @ManyToOne(() => WhatsappIntegration, {
-    nullable: true,
-    onDelete: 'SET NULL',
-  })
-  @JoinColumn({ name: 'whatsappIntegrationId' })
-  whatsappIntegration: Relation<WhatsappIntegration>;
+  @Field({ nullable: false })
+  @Column({ nullable: false })
+  whatsappIntegrationId: string;
 
   @Field(() => Workspace)
   @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
