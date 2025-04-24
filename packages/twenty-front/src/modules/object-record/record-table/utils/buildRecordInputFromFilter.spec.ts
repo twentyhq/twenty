@@ -2,6 +2,8 @@ import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataIt
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { buildValueFromFilter } from './buildRecordInputFromFilter';
 
 // TODO: fix the dates, and test the not supported types
@@ -218,7 +220,7 @@ describe('buildValueFromFilter', () => {
   });
 
   describe('Unsupported field types', () => {
-    const unsupportedTypes: FilterableFieldType[] = ['RELATION'];
+    const unsupportedTypes: FilterableFieldType[] = [];
 
     it.each(unsupportedTypes)(
       'should throw error for unsupported type %s',
@@ -227,6 +229,87 @@ describe('buildValueFromFilter', () => {
         expect(() => buildValueFromFilter({ filter })).toThrow(
           'Type not supported',
         );
+      },
+    );
+  });
+
+  describe('RELATION field type', () => {
+    const mockCurrentWorkspaceMember = {
+      id: 'current-workspace-member-id',
+      name: { firstName: 'John', lastName: 'Doe' },
+      locale: 'en',
+      colorScheme: 'Light' as ColorScheme,
+      avatarUrl: '',
+      dateFormat: null,
+      timeFormat: null,
+      timeZone: null,
+    };
+
+    const testCases = [
+      {
+        operand: ViewFilterOperand.Is,
+        value: JSON.stringify({
+          isCurrentWorkspaceMemberSelected: false,
+          selectedRecordIds: ['record-1'],
+        }),
+        relationType: RelationDefinitionType.MANY_TO_ONE,
+        label: 'belongs to one',
+        expected: 'record-1',
+      },
+      {
+        operand: ViewFilterOperand.Is,
+        value: JSON.stringify({
+          isCurrentWorkspaceMemberSelected: true,
+          selectedRecordIds: ['record-1'],
+        }),
+        relationType: RelationDefinitionType.MANY_TO_ONE,
+        label: 'Assignee',
+        expected: 'current-workspace-member-id',
+      },
+      {
+        operand: ViewFilterOperand.Is,
+        value: JSON.stringify({
+          isCurrentWorkspaceMemberSelected: false,
+          selectedRecordIds: ['record-1', 'record-2'],
+        }),
+        relationType: RelationDefinitionType.MANY_TO_MANY,
+        label: 'hasmany',
+        expected: undefined,
+      },
+      {
+        operand: ViewFilterOperand.IsNot,
+        value: JSON.stringify({
+          isCurrentWorkspaceMemberSelected: false,
+          selectedRecordIds: ['record-1'],
+        }),
+        relationType: RelationDefinitionType.MANY_TO_ONE,
+        label: 'Assignee',
+        expected: undefined,
+      },
+      {
+        operand: ViewFilterOperand.IsEmpty,
+        value: JSON.stringify({
+          isCurrentWorkspaceMemberSelected: false,
+          selectedRecordIds: ['record-1'],
+        }),
+        relationType: RelationDefinitionType.MANY_TO_ONE,
+        label: 'Assignee',
+        expected: undefined,
+      },
+    ];
+
+    it.each(testCases)(
+      'should handle $operand with value "$value" for $relationType relation',
+      ({ operand, value, relationType, label, expected }) => {
+        const filter = createTestFilter(operand, value, 'RELATION');
+        expect(
+          buildValueFromFilter({
+            filter,
+            relationType,
+            currentWorkspaceMember: mockCurrentWorkspaceMember,
+            label,
+          }),
+        ).toEqual(expected);
       },
     );
   });

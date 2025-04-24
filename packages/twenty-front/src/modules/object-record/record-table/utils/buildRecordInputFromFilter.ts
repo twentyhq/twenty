@@ -273,7 +273,7 @@ const computeValueFromFilterRelation = (
           return parsedValue.selectedRecordIds?.[0];
         }
       }
-      return parsedValue.selectedRecordIds;
+      return undefined; //todo
     }
     case ViewFilterOperand.IsNot:
     case ViewFilterOperand.IsNotEmpty: // todo
