@@ -100,11 +100,9 @@ export const MatchColumnToFieldSelect = ({
     (option) => option.value === DO_NOT_IMPORT_OPTION_KEY,
   );
 
-  const shouldDisplaySubFieldMetadataItemSelect = isDefined(
-    selectedFieldMetadataItem?.type,
-  )
-    ? isCompositeFieldType(selectedFieldMetadataItem?.type)
-    : false;
+  const shouldDisplaySubFieldMetadataItemSelect =
+    isDefined(selectedFieldMetadataItem?.type) &&
+    isCompositeFieldType(selectedFieldMetadataItem?.type);
 
   return (
     <Dropdown
