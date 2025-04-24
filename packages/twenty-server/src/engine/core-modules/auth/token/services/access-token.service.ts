@@ -72,6 +72,9 @@ export class AccessTokenService {
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
           workspaceId,
           'workspaceMember',
+          {
+            shouldFailIfMetadataNotFound: false,
+          },
         );
 
       const workspaceMember = await workspaceMemberRepository.findOne({
