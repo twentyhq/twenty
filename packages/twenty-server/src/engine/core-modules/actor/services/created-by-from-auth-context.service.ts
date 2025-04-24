@@ -36,13 +36,10 @@ export class CreatedByFromAuthContextService {
     if (isDefined(user)) {
       this.logger.warn("User doesn't have a workspace member id in the token");
 
-      const shouldBypassPermissionChecks = true;
-
       const workspaceMemberRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
           workspace.id,
           'workspaceMember',
-          shouldBypassPermissionChecks,
         );
 
       const workspaceMember = await workspaceMemberRepository.findOneOrFail({
