@@ -208,7 +208,8 @@ export const SettingsObjectFieldEdit = () => {
                 fieldMetadataItem={fieldMetadataItem}
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
                 canToggleSyncLabelWithName={
-                  fieldMetadataItem.type !== FieldMetadataType.RELATION && fieldMetadataItem.isCustom === true
+                  fieldMetadataItem.type !== FieldMetadataType.RELATION &&
+                  fieldMetadataItem.isCustom === true
                 }
               />
             </Section>
