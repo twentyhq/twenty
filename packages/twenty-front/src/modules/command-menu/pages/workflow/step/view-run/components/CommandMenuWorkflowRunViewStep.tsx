@@ -1,3 +1,4 @@
+import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
 import { getIsInputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsInputTabDisabled';
 import { getIsOutputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsOutputTabDisabled';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
@@ -9,7 +10,9 @@ import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
+import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
+import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { WorkflowRunStepInputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepInputDetail';
 import { WorkflowRunStepNodeDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepNodeDetail';
 import { WorkflowRunStepOutputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepOutputDetail';
@@ -37,6 +40,25 @@ const StyledTabList = styled(TabList)`
 type TabId = WorkflowRunTabIdType;
 
 export const CommandMenuWorkflowRunViewStep = () => {
+  const workflowId = useRecoilComponentValueV2(workflowIdComponentState);
+
+  console.log('workflowId in CommandMenuWorkflowRunViewStep', workflowId);
+
+  return (
+    <WorkflowVisualizerComponentInstanceContext.Provider
+      value={{
+        instanceId: getWorkflowVisualizerComponentInstanceId({
+          id: workflowId,
+          isInRightDrawer: true,
+        }),
+      }}
+    >
+      <Child />
+    </WorkflowVisualizerComponentInstanceContext.Provider>
+  );
+};
+
+const Child = () => {
   const flow = useFlowOrThrow();
   const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
   const workflowRunId = useWorkflowRunIdOrThrow();
