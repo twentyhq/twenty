@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
+
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
@@ -54,11 +56,13 @@ export class TraceableEventListener {
 
     await Promise.all(
       traceableEntities.map(async (traceable) => {
-        const generatedUrl = this.generateTraceableUrl(traceable);
+        if (isDefined(traceable?.websiteUrl)) {
+          const generatedUrl = this.generateTraceableUrl(traceable);
 
-        traceable.generatedUrl = generatedUrl;
+          traceable.generatedUrl = generatedUrl;
 
-        await traceableRepository.save(traceable);
+          await traceableRepository.save(traceable);
+        }
 
         const existingLog = await linklogsRepository.findOneBy({
           linkId: traceable.id,
@@ -67,7 +71,7 @@ export class TraceableEventListener {
         if (existingLog) {
           existingLog.userAgent = `${traceable.id}`;
           existingLog.utmSource = traceable.campaignSource || '';
-          existingLog.utmMedium = 'cpc';
+          existingLog.utmMedium = traceable.meansOfCommunication || '';
           existingLog.utmCampaign = traceable.campaignName || '';
           existingLog.linkName = traceable.linkName || '';
           existingLog.uv = 10;
