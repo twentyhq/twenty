@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { FindOptionsWhere, In, IsNull, Repository } from 'typeorm';
+import { FindOptionsWhere, IsNull, Repository } from 'typeorm';
 
 import {
   KeyValuePair,
@@ -23,20 +23,11 @@ export class ConfigStorageService implements ConfigStorageInterface {
   ) {}
 
   private getConfigVariableWhereClause(
-    key?: string | string[],
+    key?: string,
   ): FindOptionsWhere<KeyValuePair> {
-    if (Array.isArray(key) && key.length > 0) {
-      return {
-        type: KeyValuePairType.CONFIG_VARIABLE,
-        key: In(key),
-        userId: IsNull(),
-        workspaceId: IsNull(),
-      };
-    }
-
     return {
       type: KeyValuePairType.CONFIG_VARIABLE,
-      ...(key && !Array.isArray(key) ? { key } : {}),
+      ...(key ? { key } : {}),
       userId: IsNull(),
       workspaceId: IsNull(),
     };
@@ -168,50 +159,6 @@ export class ConfigStorageService implements ConfigStorageInterface {
       return result;
     } catch (error) {
       this.logger.error('Failed to load all config variables', error);
-      throw error;
-    }
-  }
-
-  async loadByKeys<T extends keyof ConfigVariables>(
-    keys: T[],
-  ): Promise<Map<T, ConfigVariables[T]>> {
-    try {
-      if (keys.length === 0) {
-        return new Map();
-      }
-
-      const configVars = await this.keyValuePairRepository.find({
-        where: this.getConfigVariableWhereClause(keys as string[]),
-      });
-
-      const result = new Map<T, ConfigVariables[T]>();
-
-      for (const configVar of configVars) {
-        if (configVar.value !== null) {
-          const key = configVar.key as T;
-
-          try {
-            const value = this.configValueConverter.convertDbValueToAppValue(
-              configVar.value,
-              key,
-            );
-
-            if (value !== undefined) {
-              result.set(key, value);
-            }
-          } catch (error) {
-            this.logger.error(
-              `Failed to convert value to app type for key ${key as string}`,
-              error,
-            );
-            continue;
-          }
-        }
-      }
-
-      return result;
-    } catch (error) {
-      this.logger.error('Failed to load config variables by keys', error);
       throw error;
     }
   }

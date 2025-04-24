@@ -5,7 +5,7 @@ import { DatabaseConfigDriverInterface } from 'src/engine/core-modules/twenty-co
 
 import { ConfigCacheService } from 'src/engine/core-modules/twenty-config/cache/config-cache.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
-import { CONFIG_VARIABLES_REFRESH_INTERVAL_MINUTES } from 'src/engine/core-modules/twenty-config/constants/config-variables-refresh-interval';
+import { CONFIG_VARIABLES_REFRESH_CRON_INTERVAL } from 'src/engine/core-modules/twenty-config/constants/config-variables-refresh-cron-interval.constants';
 import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
 import { isEnvOnlyConfigVar } from 'src/engine/core-modules/twenty-config/utils/is-env-only-config-var.util';
 
@@ -15,32 +15,42 @@ import { EnvironmentConfigDriver } from './environment-config.driver';
 export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
   private initializationPromise: Promise<void> | null = null;
   private readonly logger = new Logger(DatabaseConfigDriver.name);
-  private readonly refreshingKeys = new Set<keyof ConfigVariables>();
+  private readonly allPossibleConfigKeys: Array<keyof ConfigVariables>;
 
   constructor(
     private readonly configCache: ConfigCacheService,
     private readonly configStorage: ConfigStorageService,
     private readonly environmentDriver: EnvironmentConfigDriver,
-  ) {}
+  ) {
+    const allKeys = Object.keys(new ConfigVariables()) as Array<
+      keyof ConfigVariables
+    >;
+
+    this.allPossibleConfigKeys = allKeys.filter(
+      (key) => !isEnvOnlyConfigVar(key),
+    );
+  }
 
   async initialize(): Promise<void> {
     if (this.initializationPromise) {
-      this.logger.verbose('Config database initialization already in progress');
+      this.logger.verbose(
+        '[INIT] Config database initialization already in progress',
+      );
 
       return this.initializationPromise;
     }
 
-    this.logger.debug('Starting database config initialization');
+    this.logger.debug('[INIT] Starting database config initialization');
 
     const promise = this.loadAllConfigVarsFromDb()
       .then((loadedCount) => {
         this.logger.log(
-          `Database config ready: loaded ${loadedCount} variables`,
+          `[INIT] Database config ready: loaded ${loadedCount} variables`,
         );
       })
       .catch((error) => {
         this.logger.error(
-          'Failed to load database config: unable to connect to database or fetch config',
+          '[INIT] Failed to load database config: unable to connect to database or fetch config',
           error instanceof Error ? error.stack : error,
         );
         throw error;
@@ -59,21 +69,15 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
       return this.environmentDriver.get(key);
     }
 
-    const { value, isStale } = this.configCache.get(key);
+    const value = this.configCache.get(key);
 
     if (value !== undefined) {
-      if (isStale) {
-        this.scheduleRefresh(key);
-      }
-
       return value;
     }
 
     if (this.configCache.isKeyKnownMissing(key)) {
       return this.environmentDriver.get(key);
     }
-
-    this.scheduleRefresh(key);
 
     return this.environmentDriver.get(key);
   }
@@ -91,9 +95,12 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
     try {
       await this.configStorage.set(key, value);
       this.configCache.set(key, value);
-      this.logger.debug(`Updated config variable: ${key as string}`);
+      this.logger.debug(`[UPDATE] Updated config variable: ${key as string}`);
     } catch (error) {
-      this.logger.error(`Failed to update config for ${key as string}`, error);
+      this.logger.error(
+        `[UPDATE] Failed to update config for ${key as string}`,
+        error,
+      );
       throw error;
     }
   }
@@ -105,16 +112,19 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
       if (value !== undefined) {
         this.configCache.set(key, value);
         this.logger.debug(
-          `Refreshed config variable in cache: ${key as string}`,
+          `[FETCH] Refreshed config variable in cache: ${key as string}`,
         );
       } else {
         this.configCache.markKeyAsMissing(key);
         this.logger.debug(
-          `Marked config variable as missing: ${key as string}`,
+          `[FETCH] Marked config variable as missing: ${key as string}`,
         );
       }
     } catch (error) {
-      this.logger.error(`Failed to fetch config for ${key as string}`, error);
+      this.logger.error(
+        `[FETCH] Failed to fetch config for ${key as string}`,
+        error,
+      );
       this.configCache.markKeyAsMissing(key);
     }
   }
@@ -129,103 +139,76 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
 
   private async loadAllConfigVarsFromDb(): Promise<number> {
     try {
-      this.logger.debug('Fetching all config variables from database');
+      this.logger.debug('[INIT] Fetching all config variables from database');
       const configVars = await this.configStorage.loadAll();
+
+      this.logger.debug(
+        `[INIT] Checking ${this.allPossibleConfigKeys.length} possible config variables`,
+      );
 
       for (const [key, value] of configVars.entries()) {
         this.configCache.set(key, value);
       }
 
+      for (const key of this.allPossibleConfigKeys) {
+        if (!configVars.has(key)) {
+          this.configCache.markKeyAsMissing(key);
+        }
+      }
+
+      const missingKeysCount =
+        this.allPossibleConfigKeys.length - configVars.size;
+
+      this.logger.debug(
+        `[INIT] Initial cache state: ${configVars.size} found values, ${missingKeysCount} missing values`,
+      );
+
       return configVars.size;
     } catch (error) {
-      this.logger.error('Failed to load config variables from database', error);
+      this.logger.error(
+        '[INIT] Failed to load config variables from database',
+        error,
+      );
       throw error;
     }
   }
 
-  private async scheduleRefresh(key: keyof ConfigVariables): Promise<void> {
-    if (this.refreshingKeys.has(key)) {
-      this.logger.debug(`Refresh for key ${key as string} already in progress`);
-
-      return;
-    }
-
-    this.refreshingKeys.add(key);
-
-    setImmediate(async () => {
-      try {
-        await this.fetchAndCacheConfigVariable(key);
-        this.logger.debug(`Completed refresh for key ${key as string}`);
-      } catch (error) {
-        this.logger.error(`Failed to fetch config for ${key as string}`, error);
-      } finally {
-        this.refreshingKeys.delete(key);
-      }
-    });
-  }
-
   /**
-   * Proactively refreshes expired entries in the config cache.
-   * This method runs on a schedule and fetches all expired keys in one database query,
+   * Refreshes all database-backed config variables.
+   * This method runs on a schedule and fetches all configs in one database query,
    * then updates the cache with fresh values.
    */
-  @Cron(`0 */${CONFIG_VARIABLES_REFRESH_INTERVAL_MINUTES} * * * *`)
-  async refreshExpiredCache(): Promise<void> {
+  @Cron(CONFIG_VARIABLES_REFRESH_CRON_INTERVAL)
+  async refreshAllCache(): Promise<void> {
     try {
-      this.logger.log('Starting proactive refresh of expired config variables');
+      this.logger.log('[REFRESH] Starting refresh of all config variables');
 
-      const expiredKeys = this.configCache.getExpiredKeys();
-
-      if (expiredKeys.length === 0) {
-        this.logger.debug('No expired config variables to refresh');
-
-        return;
-      }
+      const dbValues = await this.configStorage.loadAll();
 
       this.logger.debug(
-        `Found ${expiredKeys.length} expired config variables to refresh`,
+        `[REFRESH] Checking ${this.allPossibleConfigKeys.length} possible config variables`,
       );
 
-      const refreshableKeys = expiredKeys.filter(
-        (key) => !isEnvOnlyConfigVar(key),
-      ) as Array<keyof ConfigVariables>;
-
-      if (refreshableKeys.length === 0) {
-        this.logger.debug(
-          'No refreshable config variables found (all are env-only)',
-        );
-
-        return;
-      }
-
-      const refreshedValues =
-        await this.configStorage.loadByKeys(refreshableKeys);
-
-      if (refreshedValues.size === 0) {
-        this.logger.debug('No values found for expired keys');
-
-        for (const key of refreshableKeys) {
-          this.configCache.markKeyAsMissing(key);
+      for (const [key, value] of dbValues.entries()) {
+        if (!isEnvOnlyConfigVar(key)) {
+          this.configCache.set(key, value);
         }
-
-        return;
       }
 
-      for (const [key, value] of refreshedValues.entries()) {
-        this.configCache.set(key, value);
-      }
-
-      for (const key of refreshableKeys) {
-        if (!refreshedValues.has(key)) {
+      for (const key of this.allPossibleConfigKeys) {
+        if (!dbValues.has(key)) {
           this.configCache.markKeyAsMissing(key);
         }
       }
+
+      const missingKeysCount =
+        this.allPossibleConfigKeys.length - dbValues.size;
 
       this.logger.log(
-        `Refreshed ${refreshedValues.size} config variables in cache`,
+        `[REFRESH] Refreshed config cache: ${dbValues.size} found values, ${missingKeysCount} missing values`,
       );
     } catch (error) {
-      this.logger.error('Failed to refresh expired config variables', error);
+      this.logger.error('[REFRESH] Failed to refresh config variables', error);
     }
   }
 }

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { DeleteResult, IsNull, Repository, In } from 'typeorm';
+import { DeleteResult, IsNull, Repository } from 'typeorm';
 
 import {
   KeyValuePair,
@@ -483,87 +483,6 @@ describe('ConfigStorageService', () => {
 
         await expect(promise).rejects.toThrow('Database operation timed out');
       });
-    });
-  });
-
-  describe('loadByKeys', () => {
-    it('should load and convert specified config variables', async () => {
-      const keys = ['AUTH_PASSWORD_ENABLED', 'EMAIL_FROM_ADDRESS'] as Array<
-        keyof ConfigVariables
-      >;
-      const configVars: KeyValuePair[] = [
-        createMockKeyValuePair('AUTH_PASSWORD_ENABLED', 'true'),
-        createMockKeyValuePair('EMAIL_FROM_ADDRESS', 'test@example.com'),
-      ];
-
-      jest.spyOn(keyValuePairRepository, 'find').mockResolvedValue(configVars);
-
-      (
-        configValueConverter.convertDbValueToAppValue as jest.Mock
-      ).mockImplementation((value, key) => {
-        if (key === 'AUTH_PASSWORD_ENABLED') return true;
-        if (key === 'EMAIL_FROM_ADDRESS') return 'test@example.com';
-
-        return value;
-      });
-
-      const result = await service.loadByKeys(keys);
-
-      expect(result.size).toBe(2);
-      expect(result.get('AUTH_PASSWORD_ENABLED' as keyof ConfigVariables)).toBe(
-        true,
-      );
-      expect(result.get('EMAIL_FROM_ADDRESS' as keyof ConfigVariables)).toBe(
-        'test@example.com',
-      );
-      expect(keyValuePairRepository.find).toHaveBeenCalledWith({
-        where: {
-          type: KeyValuePairType.CONFIG_VARIABLE,
-          key: In(keys),
-          userId: IsNull(),
-          workspaceId: IsNull(),
-        },
-      });
-    });
-
-    it('should return empty map when no keys are provided', async () => {
-      const keys: Array<keyof ConfigVariables> = [];
-
-      const result = await service.loadByKeys(keys);
-
-      expect(result.size).toBe(0);
-      expect(keyValuePairRepository.find).not.toHaveBeenCalled();
-    });
-
-    it('should handle conversion errors and skip problematic entries', async () => {
-      const keys = ['AUTH_PASSWORD_ENABLED', 'PROBLEMATIC_KEY'] as Array<
-        keyof ConfigVariables
-      >;
-      const configVars: KeyValuePair[] = [
-        createMockKeyValuePair('AUTH_PASSWORD_ENABLED', 'true'),
-        createMockKeyValuePair('PROBLEMATIC_KEY', 'bad-value'),
-      ];
-
-      jest.spyOn(keyValuePairRepository, 'find').mockResolvedValue(configVars);
-
-      (
-        configValueConverter.convertDbValueToAppValue as jest.Mock
-      ).mockImplementation((value, key) => {
-        if (key === 'AUTH_PASSWORD_ENABLED') return true;
-        if (key === 'PROBLEMATIC_KEY') throw new Error('Conversion error');
-
-        return value;
-      });
-
-      const result = await service.loadByKeys(keys);
-
-      expect(result.size).toBe(1);
-      expect(result.get('AUTH_PASSWORD_ENABLED' as keyof ConfigVariables)).toBe(
-        true,
-      );
-      expect(result.has('PROBLEMATIC_KEY' as keyof ConfigVariables)).toBe(
-        false,
-      );
     });
   });
 });

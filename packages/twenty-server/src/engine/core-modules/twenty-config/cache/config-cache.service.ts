@@ -1,11 +1,8 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 
-import { CONFIG_VARIABLES_CACHE_TTL } from 'src/engine/core-modules/twenty-config/constants/config-variables-cache-ttl';
-
 import {
   ConfigCacheEntry,
   ConfigKey,
-  ConfigKnownMissingEntry,
   ConfigValue,
 } from './interfaces/config-cache-entry.interface';
 
@@ -16,57 +13,34 @@ export class ConfigCacheService implements OnModuleDestroy {
     ConfigKey,
     ConfigCacheEntry<ConfigKey>
   >;
-  private readonly knownMissingKeysCache: Map<
-    ConfigKey,
-    ConfigKnownMissingEntry
-  >;
+  private readonly knownMissingKeysCache: Set<ConfigKey>;
 
   constructor() {
     this.foundConfigValuesCache = new Map();
-    this.knownMissingKeysCache = new Map();
+    this.knownMissingKeysCache = new Set();
   }
 
-  get<T extends ConfigKey>(
-    key: T,
-  ): { value: ConfigValue<T> | undefined; isStale: boolean } {
+  get<T extends ConfigKey>(key: T): ConfigValue<T> | undefined {
     const entry = this.foundConfigValuesCache.get(key);
 
     if (!entry) {
-      return { value: undefined, isStale: false };
+      return undefined;
     }
 
-    const isStale = this.isCacheExpired(entry);
-
-    return {
-      value: entry.value as ConfigValue<T>,
-      isStale,
-    };
+    return entry.value as ConfigValue<T>;
   }
 
   isKeyKnownMissing(key: ConfigKey): boolean {
-    const entry = this.knownMissingKeysCache.get(key);
-
-    if (entry && !this.isCacheExpired(entry)) {
-      return true;
-    }
-
-    return false;
+    return this.knownMissingKeysCache.has(key);
   }
 
   set<T extends ConfigKey>(key: T, value: ConfigValue<T>): void {
-    this.foundConfigValuesCache.set(key, {
-      value,
-      registeredAt: Date.now(),
-      ttl: CONFIG_VARIABLES_CACHE_TTL,
-    });
+    this.foundConfigValuesCache.set(key, { value });
     this.knownMissingKeysCache.delete(key);
   }
 
   markKeyAsMissing(key: ConfigKey): void {
-    this.knownMissingKeysCache.set(key, {
-      registeredAt: Date.now(),
-      ttl: CONFIG_VARIABLES_CACHE_TTL,
-    });
+    this.knownMissingKeysCache.add(key);
     this.foundConfigValuesCache.delete(key);
   }
 
@@ -85,18 +59,10 @@ export class ConfigCacheService implements OnModuleDestroy {
     negativeEntries: number;
     cacheKeys: string[];
   } {
-    const validPositiveEntries = Array.from(
-      this.foundConfigValuesCache.entries(),
-    ).filter(([_, entry]) => !this.isCacheExpired(entry));
-
-    const validNegativeEntries = Array.from(
-      this.knownMissingKeysCache.entries(),
-    ).filter(([_, entry]) => !this.isCacheExpired(entry));
-
     return {
-      positiveEntries: validPositiveEntries.length,
-      negativeEntries: validNegativeEntries.length,
-      cacheKeys: validPositiveEntries.map(([key]) => key),
+      positiveEntries: this.foundConfigValuesCache.size,
+      negativeEntries: this.knownMissingKeysCache.size,
+      cacheKeys: Array.from(this.foundConfigValuesCache.keys()),
     };
   }
 
@@ -104,31 +70,10 @@ export class ConfigCacheService implements OnModuleDestroy {
     this.clearAll();
   }
 
-  private isCacheExpired(
-    entry: ConfigCacheEntry<ConfigKey> | ConfigKnownMissingEntry,
-  ): boolean {
-    const now = Date.now();
+  getAllKeys(): ConfigKey[] {
+    const positiveKeys = Array.from(this.foundConfigValuesCache.keys());
+    const negativeKeys = Array.from(this.knownMissingKeysCache);
 
-    return now - entry.registeredAt > entry.ttl;
-  }
-
-  getExpiredKeys(): ConfigKey[] {
-    const now = Date.now();
-    const expiredPositiveKeys: ConfigKey[] = [];
-    const expiredNegativeKeys: ConfigKey[] = [];
-
-    for (const [key, entry] of this.foundConfigValuesCache.entries()) {
-      if (now - entry.registeredAt > entry.ttl) {
-        expiredPositiveKeys.push(key);
-      }
-    }
-
-    for (const [key, entry] of this.knownMissingKeysCache.entries()) {
-      if (now - entry.registeredAt > entry.ttl) {
-        expiredNegativeKeys.push(key);
-      }
-    }
-
-    return [...new Set([...expiredPositiveKeys, ...expiredNegativeKeys])];
+    return [...new Set([...positiveKeys, ...negativeKeys])];
   }
 }
