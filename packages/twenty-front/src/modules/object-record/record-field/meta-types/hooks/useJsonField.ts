@@ -7,6 +7,7 @@ import { FieldJsonValue } from '@/object-record/record-field/types/FieldMetadata
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { usePrecomputedJsonDraftValue } from '@/object-record/record-field/meta-types/hooks/usePrecomputedJsonDraftValue';
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
@@ -33,6 +34,16 @@ export const useJsonField = () => {
   const persistField = usePersistField();
 
   const persistJsonField = (nextValue: string) => {
+    const skipPersisting =
+      fieldDefinition.metadata.objectMetadataNameSingular ===
+        CoreObjectNameSingular.WorkflowRun &&
+      (fieldDefinition.metadata.fieldName === 'output' ||
+        fieldDefinition.metadata.fieldName === 'context');
+
+    if (skipPersisting) {
+      return;
+    }
+
     if (!nextValue) persistField(null);
 
     try {
