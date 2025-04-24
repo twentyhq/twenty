@@ -143,25 +143,17 @@ Below are a few features we have implemented to date:
 - [TypeScript](https://www.typescriptlang.org/)
 - [Nx](https://nx.dev/)
 - [NestJS](https://nestjs.com/), with [BullMQ](https://bullmq.io/), [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/)
-- [React](https://reactjs.org/), with [Recoil](https://recoiljs.org/) and [Emotion](https://emotion.sh/)
-- [Lingui](https://lingui.dev/)
+- [React](https://reactjs.org/), with [Recoil](https://recoiljs.org/), [Emotion](https://emotion.sh/) and [Lingui](https://lingui.dev/)
+
 
 
 # Thanks
 
 <p align="center">
-  <a href="https://www.chromatic.com/">
-    <img src="./packages/twenty-website/public/images/readme/chromatic.png" height="30" alt="Chromatic" />
-  </a>
-  <a href="https://greptile.com">
-    <img src="./packages/twenty-website/public/images/readme/greptile.png" height="30" alt="Greptile" />
-  </a>
-  <a href="https://sentry.io/">
-    <img src="./packages/twenty-website/public/images/readme/sentry.png" height="30" alt="Sentry" />
-  </a>
-  <a href="https://crowdin.com/">
-    <img src="./packages/twenty-website/public/images/readme/crowdin.png" height="30" alt="Crowdin" />
-  </a>
+  <a href="https://www.chromatic.com/"><img src="./packages/twenty-website/public/images/readme/chromatic.png" height="30" alt="Chromatic" /></a>
+  <a href="https://greptile.com"><img src="./packages/twenty-website/public/images/readme/greptile.png" height="30" alt="Greptile" /></a>
+  <a href="https://sentry.io/"><img src="./packages/twenty-website/public/images/readme/sentry.png" height="30" alt="Sentry" /></a>
+  <a href="https://crowdin.com/"><img src="./packages/twenty-website/public/images/readme/crowdin.png" height="30" alt="Crowdin" /></a>
 </p>
 
   Thanks to these amazing services that we use and recommend for UI testing (Chromatic), code review (Greptile), catching bugs (Sentry) and translating (Crowdin).
