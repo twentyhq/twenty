@@ -342,12 +342,14 @@ export class TelephonyResolver {
     try {
       const result = await this.pabxService.createCompany(input);
 
+      console.log('result: ', result.data.data);
+
       return {
         success: true,
         message: `Company created successfully: ${input.nome}`,
       };
     } catch (error) {
-      console.error('Error creating PABX company:', error);
+      console.error('Error creating PABX company:', error.response.data);
 
       return {
         success: false,

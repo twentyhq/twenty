@@ -133,8 +133,8 @@ export class PabxService implements PabxServiceInterface {
       this.logger.log(`Creating company with name: ${data.nome}`);
 
       const createCompanyResponse = await this.pabxAxiosInstance.post(
-        '/empresas',
-        data,
+        '/inserir_cliente',
+        { dados: data },
       );
 
       this.logger.log(`Company created successfully: ${data.nome}`);
