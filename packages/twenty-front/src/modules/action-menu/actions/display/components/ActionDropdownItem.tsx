@@ -1,5 +1,6 @@
 import { ActionDisplayProps } from '@/action-menu/actions/display/components/ActionDisplay';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
@@ -45,7 +46,9 @@ export const ActionDropdownItem = ({
   const hotkeyScope =
     actionMenuType === 'command-menu-show-page-action-menu-dropdown'
       ? AppHotkeyScope.CommandMenuOpen
-      : '';
+      : actionMenuType === 'index-page-action-menu-dropdown'
+        ? ActionMenuDropdownHotkeyScope.ActionMenuDropdown
+        : '';
 
   return (
     <SelectableListItem
