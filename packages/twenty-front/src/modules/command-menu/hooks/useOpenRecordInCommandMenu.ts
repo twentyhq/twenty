@@ -11,20 +11,24 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { useRunWorkflowRunOpeningInCommandMenuSideEffects } from '@/workflow/hooks/useRunWorkflowRunOpeningInCommandMenuSideEffects';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
-import { v4 } from 'uuid';
 import { capitalize } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { v4 } from 'uuid';
 
 export const useOpenRecordInCommandMenu = () => {
-  const { navigateCommandMenu } = useCommandMenu();
-
   const theme = useTheme();
   const { getIcon } = useIcons();
+
+  const { navigateCommandMenu } = useCommandMenu();
+  const { runWorkflowRunOpeningInCommandMenuSideEffects } =
+    useRunWorkflowRunOpeningInCommandMenuSideEffects();
 
   const openRecordInCommandMenu = useRecoilCallback(
     ({ set, snapshot }) => {
@@ -147,9 +151,21 @@ export const useOpenRecordInCommandMenu = () => {
           pageId: pageComponentInstanceId,
           resetNavigationStack: false,
         });
+
+        if (objectNameSingular === CoreObjectNameSingular.WorkflowRun) {
+          runWorkflowRunOpeningInCommandMenuSideEffects({
+            objectMetadataItem,
+            recordId,
+          });
+        }
       };
     },
-    [getIcon, navigateCommandMenu, theme],
+    [
+      getIcon,
+      navigateCommandMenu,
+      runWorkflowRunOpeningInCommandMenuSideEffects,
+      theme,
+    ],
   );
 
   return {
