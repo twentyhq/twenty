@@ -249,7 +249,8 @@ const computeValueFromFilterMultiSelect = (
     case ViewFilterOperand.Contains:
     case ViewFilterOperand.IsNotEmpty:
       try {
-        return parseJson<string[]>(value);
+        const parsedValue = parseJson<string[]>(value);
+        return parsedValue ? parsedValue : undefined;
       } catch (error) {
         return undefined;
       }

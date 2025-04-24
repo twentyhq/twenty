@@ -360,12 +360,12 @@ describe('buildValueFromFilter', () => {
       {
         operand: ViewFilterOperand.GreaterThan,
         value: 'Rating 1',
-        expected: 'RATING_1',
+        expected: 'RATING_2',
       },
       {
         operand: ViewFilterOperand.LessThan,
         value: 'Rating 2',
-        expected: 'RATING_2',
+        expected: 'RATING_1',
       },
     ];
 
