@@ -219,20 +219,6 @@ describe('buildValueFromFilter', () => {
     );
   });
 
-  describe('Unsupported field types', () => {
-    const unsupportedTypes: FilterableFieldType[] = [];
-
-    it.each(unsupportedTypes)(
-      'should throw error for unsupported type %s',
-      (type) => {
-        const filter = createTestFilter(ViewFilterOperand.Is, 'test', type);
-        expect(() => buildValueFromFilter({ filter })).toThrow(
-          'Type not supported',
-        );
-      },
-    );
-  });
-
   describe('RELATION field type', () => {
     const mockCurrentWorkspaceMember = {
       id: 'current-workspace-member-id',
