@@ -82,7 +82,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
   const selectableItemIdArray = [
     'Layout',
     'Fields',
-    ...(isDefaultView ? [] : ['Group', 'Compact view']),
+    ...(isDefaultView ? [] : ['Group']),
     'Copy link to view',
     ...(isDefaultView ? [] : ['Delete view']),
   ];
