@@ -30,19 +30,6 @@ export class ConfigCacheService implements OnModuleDestroy {
     return entry.value as ConfigValue<T>;
   }
 
-  getOrFallback<T extends ConfigKey, R>(
-    key: T,
-    fallbackFn: () => R,
-  ): ConfigValue<T> | R {
-    const value = this.get(key);
-
-    if (value !== undefined) {
-      return value;
-    }
-
-    return fallbackFn();
-  }
-
   isKeyKnownMissing(key: ConfigKey): boolean {
     return this.knownMissingKeysCache.has(key);
   }

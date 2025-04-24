@@ -30,12 +30,7 @@ export class ConfigValueConverterService {
         case 'boolean': {
           const result = configTransformers.boolean(dbValue);
 
-          if (result === undefined) {
-            throw new Error(
-              `Value '${String(dbValue)}' cannot be converted to boolean`,
-            );
-          }
-          if (typeof result !== 'boolean') {
+          if (result !== undefined && typeof result !== 'boolean') {
             throw new Error(
               `Expected boolean for key ${key}, got ${typeof result}`,
             );
@@ -47,12 +42,7 @@ export class ConfigValueConverterService {
         case 'number': {
           const result = configTransformers.number(dbValue);
 
-          if (result === undefined) {
-            throw new Error(
-              `Value '${String(dbValue)}' cannot be converted to number`,
-            );
-          }
-          if (typeof result !== 'number') {
+          if (result !== undefined && typeof result !== 'number') {
             throw new Error(
               `Expected number for key ${key}, got ${typeof result}`,
             );
@@ -64,12 +54,7 @@ export class ConfigValueConverterService {
         case 'string': {
           const result = configTransformers.string(dbValue);
 
-          if (result === undefined) {
-            throw new Error(
-              `Value '${String(dbValue)}' cannot be converted to string`,
-            );
-          }
-          if (typeof result !== 'string') {
+          if (result !== undefined && typeof result !== 'string') {
             throw new Error(
               `Expected string for key ${key}, got ${typeof result}`,
             );
@@ -81,7 +66,7 @@ export class ConfigValueConverterService {
         case 'array': {
           const result = this.convertToArray(dbValue, options);
 
-          if (!Array.isArray(result)) {
+          if (result !== undefined && !Array.isArray(result)) {
             throw new Error(
               `Expected array for key ${key}, got ${typeof result}`,
             );
@@ -92,12 +77,6 @@ export class ConfigValueConverterService {
 
         case 'enum': {
           const result = this.convertToEnum(dbValue, options);
-
-          if (result === undefined) {
-            throw new Error(
-              `Invalid enum value for key ${key}: ${String(dbValue)}`,
-            );
-          }
 
           return result as ConfigVariables[T];
         }

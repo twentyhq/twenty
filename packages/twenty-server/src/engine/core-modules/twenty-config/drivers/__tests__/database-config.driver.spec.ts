@@ -66,7 +66,6 @@ describe('DatabaseConfigDriver', () => {
             markKeyAsMissing: jest.fn(),
             getCacheInfo: jest.fn(),
             getAllKeys: jest.fn(),
-            getOrFallback: jest.fn(),
           },
         },
         {

@@ -70,24 +70,20 @@ export class TwentyConfigService implements OnModuleInit {
   }
 
   get<T extends keyof ConfigVariables>(key: T): ConfigVariables[T] {
-    // Environment-only variables always come from the environment driver
     if (isEnvOnlyConfigVar(key)) {
       return this.environmentConfigDriver.get(key);
     }
 
-    // If we're using the database driver, check it first then fall back to environment
     if (this.driver === this.databaseConfigDriver) {
-      const dbValue = this.databaseConfigDriver.get(key);
+      const cachedValueFromDb = this.databaseConfigDriver.get(key);
 
-      if (dbValue !== undefined) {
-        return dbValue;
+      if (cachedValueFromDb !== undefined) {
+        return cachedValueFromDb;
       }
 
-      // Fall back to environment if not in database
       return this.environmentConfigDriver.get(key);
     }
 
-    // If we're not using the database driver, use the environment driver directly
     return this.environmentConfigDriver.get(key);
   }
 

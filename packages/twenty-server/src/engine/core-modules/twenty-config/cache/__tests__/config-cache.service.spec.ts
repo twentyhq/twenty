@@ -61,31 +61,6 @@ describe('ConfigCacheService', () => {
     });
   });
 
-  describe('getOrFallback', () => {
-    it('should return cached value when available', () => {
-      const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
-      const value = true;
-      const fallbackFn = jest.fn().mockReturnValue(false);
-
-      service.set(key, value);
-      const result = service.getOrFallback(key, fallbackFn);
-
-      expect(result).toBe(value);
-      expect(fallbackFn).not.toHaveBeenCalled();
-    });
-
-    it('should call fallback function when value not in cache', () => {
-      const key = 'NON_EXISTENT_KEY' as keyof ConfigVariables;
-      const fallbackValue = 'fallback value';
-      const fallbackFn = jest.fn().mockReturnValue(fallbackValue);
-
-      const result = service.getOrFallback(key, fallbackFn);
-
-      expect(result).toBe(fallbackValue);
-      expect(fallbackFn).toHaveBeenCalledTimes(1);
-    });
-  });
-
   describe('negative lookup cache', () => {
     it('should check if a negative cache entry exists', () => {
       const key = 'TEST_KEY' as keyof ConfigVariables;
