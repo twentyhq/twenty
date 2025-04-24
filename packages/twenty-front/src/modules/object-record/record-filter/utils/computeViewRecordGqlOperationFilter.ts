@@ -39,9 +39,12 @@ import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/valid
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 
+import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import { isEmptinessOperand } from '@/object-record/record-filter/utils/isEmptinessOperand';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type ComputeFilterRecordGqlOperationFilterParams = {
@@ -61,14 +64,11 @@ export const computeFilterRecordGqlOperationFilter = ({
     (field) => field.id === filter.fieldMetadataId,
   );
 
-  const compositeFieldName = filter.subFieldName;
+  const subFieldName = filter.subFieldName;
 
-  const isCompositeFieldFiter = isNonEmptyString(compositeFieldName);
+  const isSubFieldFilter = isNonEmptyString(subFieldName);
 
-  const isEmptinessOperand = [
-    RecordFilterOperand.IsEmpty,
-    RecordFilterOperand.IsNotEmpty,
-  ].includes(filter.operand);
+  const isAnEmptinessOperand = isEmptinessOperand(filter.operand);
 
   const isDateOperandWithoutValue = [
     RecordFilterOperand.IsInPast,
@@ -85,7 +85,7 @@ export const computeFilterRecordGqlOperationFilter = ({
   const isFilterValueEmpty = !isDefined(filter.value) || filter.value === '';
 
   const shouldSkipFiltering =
-    !isEmptinessOperand && !isDateOperandWithoutValue && isFilterValueEmpty;
+    !isAnEmptinessOperand && !isDateOperandWithoutValue && isFilterValueEmpty;
 
   if (shouldSkipFiltering) {
     return;
@@ -98,7 +98,7 @@ export const computeFilterRecordGqlOperationFilter = ({
   const filterHasEmptinessOperands =
     !filterTypesThatHaveNoEmptinessOperand.includes(filterType);
 
-  if (filterHasEmptinessOperands && isEmptinessOperand) {
+  if (filterHasEmptinessOperands && isAnEmptinessOperand) {
     const emptyOperationFilter = getEmptyRecordGqlOperationFilter({
       operand: filter.operand,
       correspondingField,
@@ -357,25 +357,82 @@ export const computeFilterRecordGqlOperationFilter = ({
           );
       }
     }
-    case 'CURRENCY':
-      switch (filter.operand) {
-        case RecordFilterOperand.GreaterThan:
-          return {
-            [correspondingField.name]: {
-              amountMicros: { gte: parseFloat(filter.value) * 1000000 },
-            } as CurrencyFilter,
-          };
-        case RecordFilterOperand.LessThan:
-          return {
-            [correspondingField.name]: {
-              amountMicros: { lte: parseFloat(filter.value) * 1000000 },
-            } as CurrencyFilter,
-          };
-        default:
-          throw new Error(
-            `Unknown operand ${filter.operand} for ${filterType} filter`,
-          );
+    case 'CURRENCY': {
+      if (
+        isExpectedSubFieldName(
+          FieldMetadataType.CURRENCY,
+          'currencyCode',
+          subFieldName,
+        )
+      ) {
+        const parsedCurrencyCodes = JSON.parse(filter.value) as string[];
+
+        if (parsedCurrencyCodes.length === 0) return {};
+
+        const gqlFilter: RecordGqlOperationFilter = {
+          [correspondingField.name]: {
+            currencyCode: { in: parsedCurrencyCodes },
+          } as CurrencyFilter,
+        };
+
+        switch (filter.operand) {
+          case RecordFilterOperand.Is:
+            return gqlFilter;
+          case RecordFilterOperand.IsNot:
+            return {
+              not: gqlFilter,
+            };
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filterType} / ${subFieldName} filter`,
+            );
+        }
+      } else if (
+        isExpectedSubFieldName(
+          FieldMetadataType.CURRENCY,
+          'amountMicros',
+          subFieldName,
+        )
+      ) {
+        switch (filter.operand) {
+          case RecordFilterOperand.GreaterThan:
+            return {
+              [correspondingField.name]: {
+                amountMicros: { gte: parseFloat(filter.value) * 1000000 },
+              } as CurrencyFilter,
+            };
+          case RecordFilterOperand.LessThan:
+            return {
+              [correspondingField.name]: {
+                amountMicros: { lte: parseFloat(filter.value) * 1000000 },
+              } as CurrencyFilter,
+            };
+          case RecordFilterOperand.Is:
+            return {
+              [correspondingField.name]: {
+                amountMicros: { eq: parseFloat(filter.value) * 1000000 },
+              } as CurrencyFilter,
+            };
+          case RecordFilterOperand.IsNot:
+            return {
+              not: {
+                [correspondingField.name]: {
+                  amountMicros: { eq: parseFloat(filter.value) * 1000000 },
+                } as CurrencyFilter,
+              },
+            };
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filterType} / ${subFieldName}  filter`,
+            );
+        }
+      } else {
+        throw new Error(
+          `Unknown subfield ${subFieldName} for ${filterType} filter`,
+        );
       }
+    }
+
     case 'LINKS': {
       const linksFilters = generateILikeFiltersForCompositeFields(
         filter.value,
@@ -385,21 +442,21 @@ export const computeFilterRecordGqlOperationFilter = ({
 
       switch (filter.operand) {
         case RecordFilterOperand.Contains:
-          if (!isCompositeFieldFiter) {
+          if (!isSubFieldFilter) {
             return {
               or: linksFilters,
             };
           } else {
             return {
               [correspondingField.name]: {
-                [compositeFieldName]: {
+                [subFieldName]: {
                   ilike: `%${filter.value}%`,
                 },
               },
             };
           }
         case RecordFilterOperand.DoesNotContain:
-          if (!isCompositeFieldFiter) {
+          if (!isSubFieldFilter) {
             return {
               and: linksFilters.map((filter) => {
                 return {
@@ -411,7 +468,7 @@ export const computeFilterRecordGqlOperationFilter = ({
             return {
               not: {
                 [correspondingField.name]: {
-                  [compositeFieldName]: {
+                  [subFieldName]: {
                     ilike: `%${filter.value}%`,
                   },
                 },
@@ -432,21 +489,21 @@ export const computeFilterRecordGqlOperationFilter = ({
       );
       switch (filter.operand) {
         case RecordFilterOperand.Contains:
-          if (!isCompositeFieldFiter) {
+          if (!isSubFieldFilter) {
             return {
               or: fullNameFilters,
             };
           } else {
             return {
               [correspondingField.name]: {
-                [compositeFieldName]: {
+                [subFieldName]: {
                   ilike: `%${filter.value}%`,
                 },
               },
             };
           }
         case RecordFilterOperand.DoesNotContain:
-          if (!isCompositeFieldFiter) {
+          if (!isSubFieldFilter) {
             return {
               and: fullNameFilters.map((filter) => {
                 return {
@@ -458,7 +515,7 @@ export const computeFilterRecordGqlOperationFilter = ({
             return {
               not: {
                 [correspondingField.name]: {
-                  [compositeFieldName]: {
+                  [subFieldName]: {
                     ilike: `%${filter.value}%`,
                   },
                 },
@@ -474,7 +531,7 @@ export const computeFilterRecordGqlOperationFilter = ({
     case 'ADDRESS':
       switch (filter.operand) {
         case RecordFilterOperand.Contains:
-          if (!isCompositeFieldFiter) {
+          if (!isSubFieldFilter) {
             return {
               or: [
                 {
@@ -524,14 +581,14 @@ export const computeFilterRecordGqlOperationFilter = ({
           } else {
             return {
               [correspondingField.name]: {
-                [compositeFieldName]: {
+                [subFieldName]: {
                   ilike: `%${filter.value}%`,
                 } as AddressFilter,
               },
             };
           }
         case RecordFilterOperand.DoesNotContain:
-          if (!isCompositeFieldFiter) {
+          if (!isSubFieldFilter) {
             return {
               and: [
                 {
@@ -567,7 +624,7 @@ export const computeFilterRecordGqlOperationFilter = ({
             return {
               not: {
                 [correspondingField.name]: {
-                  [compositeFieldName]: {
+                  [subFieldName]: {
                     ilike: `%${filter.value}%`,
                   } as AddressFilter,
                 },

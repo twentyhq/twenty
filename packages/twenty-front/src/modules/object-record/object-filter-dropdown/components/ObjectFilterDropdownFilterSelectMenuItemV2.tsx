@@ -1,7 +1,7 @@
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
@@ -28,7 +28,9 @@ export const ObjectFilterDropdownFilterSelectMenuItemV2 = ({
 
   const Icon = getIcon(fieldMetadataItemToSelect.icon);
 
-  const shouldShowSubMenu = isCompositeField(fieldMetadataItemToSelect.type);
+  const shouldShowSubMenu = isCompositeFieldType(
+    fieldMetadataItemToSelect.type,
+  );
 
   const handleClick = () => {
     resetSelectedItem();

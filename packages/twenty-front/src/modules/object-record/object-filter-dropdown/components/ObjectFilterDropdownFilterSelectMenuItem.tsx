@@ -9,7 +9,7 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
-import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
@@ -112,7 +112,9 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
 
   const Icon = getIcon(fieldMetadataItemToSelect.icon);
 
-  const shouldShowSubMenu = isCompositeField(fieldMetadataItemToSelect.type);
+  const shouldShowSubMenu = isCompositeFieldType(
+    fieldMetadataItemToSelect.type,
+  );
 
   const handleClick = () => {
     resetSelectedItem();
@@ -121,7 +123,7 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
       fieldMetadataItemToSelect.type,
     );
 
-    if (isCompositeField(filterType)) {
+    if (isCompositeFieldType(filterType)) {
       setObjectFilterDropdownSubMenuFieldType(filterType);
 
       setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemToSelect.id);

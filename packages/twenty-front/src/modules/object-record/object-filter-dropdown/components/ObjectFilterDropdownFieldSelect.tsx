@@ -52,13 +52,13 @@ export const StyledInput = styled.input`
   }
 `;
 
-type ObjectFilterDropdownFilterSelectProps = {
+type ObjectFilterDropdownFieldSelectProps = {
   isAdvancedFilterButtonVisible?: boolean;
 };
 
-export const ObjectFilterDropdownFilterSelect = ({
+export const ObjectFilterDropdownFieldSelect = ({
   isAdvancedFilterButtonVisible,
-}: ObjectFilterDropdownFilterSelectProps) => {
+}: ObjectFilterDropdownFieldSelectProps) => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const [objectFilterDropdownSearchInput, setObjectFilterDropdownSearchInput] =

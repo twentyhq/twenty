@@ -1,6 +1,8 @@
+import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { ViewFilterOperand as RecordFilterOperand } from '@/views/types/ViewFilterOperand';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export type GetRecordFilterOperandsParams = {
   filterType: FilterableFieldType;
@@ -30,7 +32,39 @@ export const getRecordFilterOperands = ({
         RecordFilterOperand.DoesNotContain,
         ...emptyOperands,
       ];
-    case 'CURRENCY':
+    case 'CURRENCY': {
+      if (
+        isExpectedSubFieldName(
+          FieldMetadataType.CURRENCY,
+          'currencyCode',
+          subFieldName,
+        )
+      ) {
+        return [
+          RecordFilterOperand.Is,
+          RecordFilterOperand.IsNot,
+          ...emptyOperands,
+        ];
+      } else if (
+        isExpectedSubFieldName(
+          FieldMetadataType.CURRENCY,
+          'amountMicros',
+          subFieldName,
+        )
+      ) {
+        return [
+          RecordFilterOperand.GreaterThan,
+          RecordFilterOperand.LessThan,
+          RecordFilterOperand.Is,
+          RecordFilterOperand.IsNot,
+          ...emptyOperands,
+        ];
+      } else {
+        throw new Error(
+          `Unknown subfield name ${subFieldName} for ${filterType} filter`,
+        );
+      }
+    }
     case 'NUMBER':
       return [
         RecordFilterOperand.GreaterThan,

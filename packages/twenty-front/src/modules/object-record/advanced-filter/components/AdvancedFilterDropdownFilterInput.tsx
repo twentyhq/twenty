@@ -7,12 +7,15 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 
 import { AdvancedFilterDropdownDateInput } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownDateInput';
 import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect';
+import { ObjectFilterDropdownCurrencySelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect';
 import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
+import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 type AdvancedFilterDropdownFilterInputProps = {
   filterDropdownId?: string;
@@ -65,6 +68,18 @@ export const AdvancedFilterDropdownFilterInput = ({
         </>
       )}
       {filterType === 'BOOLEAN' && <ObjectFilterDropdownBooleanSelect />}
+      {filterType === 'CURRENCY' &&
+        (isExpectedSubFieldName(
+          FieldMetadataType.CURRENCY,
+          'currencyCode',
+          subFieldNameUsedInDropdown,
+        ) ? (
+          <>
+            <ObjectFilterDropdownCurrencySelect dropdownWidth={280} />
+          </>
+        ) : (
+          <></>
+        ))}
     </>
   );
 };

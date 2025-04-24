@@ -5,7 +5,9 @@ import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advance
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
+import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
+import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
@@ -13,6 +15,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
 import styled from '@emotion/styled';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledValueDropdownContainer = styled.div`
@@ -42,6 +45,10 @@ export const AdvancedFilterValueInput = ({
     objectFilterDropdownSearchInputComponentState,
   );
 
+  const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
+    subFieldNameUsedInDropdownComponentState,
+  );
+
   const operandHasNoInput =
     recordFilter && !configurableViewFilterOperands.has(recordFilter.operand);
 
@@ -68,9 +75,14 @@ export const AdvancedFilterValueInput = ({
         <AdvancedFilterValueInputDropdownButtonClickableSelect
           recordFilterId={recordFilterId}
         />
-      ) : isDefined(filterType) &&
-        (TEXT_FILTER_TYPES.includes(filterType) ||
-          NUMBER_FILTER_TYPES.includes(filterType)) ? (
+      ) : (isDefined(filterType) &&
+          (TEXT_FILTER_TYPES.includes(filterType) ||
+            NUMBER_FILTER_TYPES.includes(filterType))) ||
+        isExpectedSubFieldName(
+          FieldMetadataType.CURRENCY,
+          'amountMicros',
+          subFieldNameUsedInDropdown,
+        ) ? (
         <AdvancedFilterDropdownTextInput recordFilter={recordFilter} />
       ) : (
         <Dropdown

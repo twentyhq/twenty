@@ -23,7 +23,7 @@ import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
-import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -119,7 +119,7 @@ export const AdvancedFilterFieldSelectMenu = ({
       selectedFieldMetadataItem.type,
     );
 
-    if (isCompositeField(filterType)) {
+    if (isCompositeFieldType(filterType)) {
       setObjectFilterDropdownSubMenuFieldType(filterType);
 
       setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);

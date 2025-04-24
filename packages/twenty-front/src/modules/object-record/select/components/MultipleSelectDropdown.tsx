@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { StyledMultipleSelectDropdownAvatarChip } from '@/object-record/select/components/StyledMultipleSelectDropdownAvatarChip';
@@ -56,19 +55,10 @@ export const MultipleSelectDropdown = ({
     );
   };
 
-  const [itemsInDropdown, setItemInDropdown] = useState([
+  const itemsInDropdown = [
     ...(filteredSelectedItems ?? []),
     ...(itemsToSelect ?? []),
-  ]);
-
-  useEffect(() => {
-    if (!loadingItems) {
-      setItemInDropdown([
-        ...(filteredSelectedItems ?? []),
-        ...(itemsToSelect ?? []),
-      ]);
-    }
-  }, [itemsToSelect, filteredSelectedItems, loadingItems]);
+  ];
 
   useScopedHotkeys(
     [Key.Escape],
