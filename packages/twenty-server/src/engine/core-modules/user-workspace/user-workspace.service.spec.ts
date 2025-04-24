@@ -652,7 +652,7 @@ describe('UserWorkspaceService', () => {
 
       expect(
         twentyORMGlobalManager.getRepositoryForWorkspace,
-      ).toHaveBeenCalledWith(workspaceId, 'workspaceMember', true);
+      ).toHaveBeenCalledWith(workspaceId, 'workspaceMember');
       expect(workspaceMemberRepository.findOne).toHaveBeenCalledWith({
         where: {
           id: workspaceMemberId,
