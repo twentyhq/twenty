@@ -1,6 +1,7 @@
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
-import { flowState } from '@/workflow/states/flowState';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
@@ -15,7 +16,7 @@ export const WorkflowVersionVisualizerEffect = ({
 }) => {
   const workflowVersion = useWorkflowVersion(workflowVersionId);
 
-  const setFlow = useSetRecoilState(flowState);
+  const setFlow = useSetRecoilComponentStateV2(flowComponentState);
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
   const setWorkflowId = useSetRecoilState(workflowIdState);
   const { populateStepsOutputSchema } = useStepsOutputSchema();

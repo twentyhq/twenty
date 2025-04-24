@@ -1,8 +1,9 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
-import { flowState } from '@/workflow/states/flowState';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { workflowRunIdState } from '@/workflow/states/workflowRunIdState';
 import { WorkflowRunOutput } from '@/workflow/types/Workflow';
@@ -25,6 +26,9 @@ export const WorkflowRunVisualizerEffect = ({
 
   const setWorkflowRunId = useSetRecoilState(workflowRunIdState);
   const setWorkflowId = useSetRecoilState(workflowIdState);
+
+  const flowState = useRecoilComponentCallbackStateV2(flowComponentState);
+
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
@@ -91,7 +95,7 @@ export const WorkflowRunVisualizerEffect = ({
 
         set(workflowDiagramStatusState, 'computing-dimensions');
       },
-    [],
+    [flowState],
   );
 
   useEffect(() => {

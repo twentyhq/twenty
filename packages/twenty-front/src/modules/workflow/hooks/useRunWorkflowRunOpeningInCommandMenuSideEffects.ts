@@ -2,8 +2,9 @@ import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandM
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { flowState } from '@/workflow/states/flowState';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { workflowRunIdState } from '@/workflow/states/workflowRunIdState';
 import { WorkflowRun } from '@/workflow/types/Workflow';
@@ -19,6 +20,8 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
   const apolloClient = useApolloClient();
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
   const { getIcon } = useIcons();
+
+  const flowState = useRecoilComponentCallbackStateV2(flowComponentState);
 
   const runWorkflowRunOpeningInCommandMenuSideEffects = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -75,7 +78,12 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           stepExecutionStatus: stepToOpenByDefault.data.runStatus,
         });
       },
-    [apolloClient.cache, getIcon, openWorkflowRunViewStepInCommandMenu],
+    [
+      apolloClient.cache,
+      flowState,
+      getIcon,
+      openWorkflowRunViewStepInCommandMenu,
+    ],
   );
 
   return {
