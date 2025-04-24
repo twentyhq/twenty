@@ -1,7 +1,9 @@
 import { getIsInputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsInputTabDisabled';
 import { getIsOutputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsOutputTabDisabled';
+import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
@@ -11,13 +13,13 @@ import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hook
 import { WorkflowRunStepInputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepInputDetail';
 import { WorkflowRunStepNodeDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepNodeDetail';
 import { WorkflowRunStepOutputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepOutputDetail';
-import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
 import {
   WorkflowRunTabId,
   WorkflowRunTabIdType,
 } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
 import { getWorkflowRunStepExecutionStatus } from '@/workflow/workflow-steps/utils/getWorkflowRunStepExecutionStatus';
 import styled from '@emotion/styled';
+import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui/display';
 
@@ -41,9 +43,18 @@ export const CommandMenuWorkflowRunViewStep = () => {
 
   const workflowRun = useWorkflowRun({ workflowRunId });
 
+  const commandMenuPageComponentInstance = useComponentInstanceStateContext(
+    CommandMenuPageComponentInstanceContext,
+  );
+  if (isNull(commandMenuPageComponentInstance)) {
+    throw new Error(
+      'CommandMenuPageComponentInstanceContext is not defined. This component should be used within CommandMenuPageComponentInstanceContext.',
+    );
+  }
+
   const activeTabId = useRecoilComponentValueV2(
     activeTabIdComponentState,
-    WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
+    commandMenuPageComponentInstance.instanceId,
   );
 
   if (!isDefined(workflowRun)) {
@@ -90,9 +101,7 @@ export const CommandMenuWorkflowRunViewStep = () => {
         <StyledTabList
           tabs={tabs}
           behaveAsLinks={false}
-          componentInstanceId={
-            WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID
-          }
+          componentInstanceId={commandMenuPageComponentInstance.instanceId}
         />
 
         {activeTabId === WorkflowRunTabId.OUTPUT ? (

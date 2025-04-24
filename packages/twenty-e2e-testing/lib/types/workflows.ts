@@ -9,4 +9,5 @@ export type WorkflowActionType =
   | 'update-record'
   | 'delete-record'
   | 'code'
-  | 'send-email';
+  | 'send-email'
+  | 'form';
