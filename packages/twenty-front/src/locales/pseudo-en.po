@@ -2328,6 +2328,7 @@ msgstr ""
 
 #. js-lingui-id: ALoP4W
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "Group by"
 msgstr ""
 
