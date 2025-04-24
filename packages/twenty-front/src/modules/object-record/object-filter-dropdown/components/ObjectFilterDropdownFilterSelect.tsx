@@ -11,7 +11,6 @@ import { objectFilterDropdownSearchInputComponentState } from '@/object-record/o
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -164,21 +163,11 @@ export const ObjectFilterDropdownFilterSelect = ({
             />
           ))}
           {shouldShowSeparator && <DropdownMenuSeparator />}
-          {hiddenColumnsFieldMetadataItems.map(
-            (hiddenFieldMetadataItem, index) => (
-              <SelectableListItem
-                itemId={hiddenFieldMetadataItem.id}
-                key={`hidden-select-filter-${index}`}
-                onEnter={() => {
-                  handleEnter(hiddenFieldMetadataItem.id);
-                }}
-              >
-                <ObjectFilterDropdownFilterSelectMenuItem
-                  fieldMetadataItemToSelect={hiddenFieldMetadataItem}
-                />
-              </SelectableListItem>
-            ),
-          )}
+          {hiddenColumnsFieldMetadataItems.map((hiddenFieldMetadataItem) => (
+            <ObjectFilterDropdownFilterSelectMenuItem
+              fieldMetadataItemToSelect={hiddenFieldMetadataItem}
+            />
+          ))}
         </DropdownMenuItemsContainer>
       </SelectableList>
       {shouldShowAdvancedFilterButton && <AdvancedFilterButton />}
