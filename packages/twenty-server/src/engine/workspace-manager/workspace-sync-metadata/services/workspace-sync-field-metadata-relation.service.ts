@@ -173,7 +173,7 @@ export class WorkspaceSyncFieldMetadataRelationService {
         );
 
       const originalObjectMetadata =
-        originalObjectMetadataMap[workspaceEntityMetadataArgs.nameSingular];
+        originalObjectMetadataMap[workspaceEntityMetadataArgs.standardId];
 
       const originalFieldRelationMetadataCollection =
         (originalObjectMetadata?.fields.filter(

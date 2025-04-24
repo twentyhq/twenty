@@ -94,7 +94,7 @@ export class StandardFieldRelationFactory {
           settings: {
             relationType: workspaceRelationMetadataArgs.type,
             onDelete:
-              workspaceRelationMetadataArgs.type === RelationType.ONE_TO_MANY
+              workspaceRelationMetadataArgs.type === RelationType.MANY_TO_ONE
                 ? workspaceRelationMetadataArgs.onDelete
                 : undefined,
             joinColumnName,
@@ -214,7 +214,7 @@ export class StandardFieldRelationFactory {
                 relationType: workspaceDynamicRelationMetadataArgs.type,
                 onDelete:
                   workspaceDynamicRelationMetadataArgs.type ===
-                  RelationType.ONE_TO_MANY
+                  RelationType.MANY_TO_ONE
                     ? workspaceDynamicRelationMetadataArgs.onDelete
                     : undefined,
                 joinColumnName: relationMetadataArgs.joinColumn,
@@ -288,7 +288,7 @@ export class StandardFieldRelationFactory {
           settings: {
             relationType: workspaceRelationMetadataArgs.type,
             onDelete:
-              workspaceRelationMetadataArgs.type === RelationType.ONE_TO_MANY
+              workspaceRelationMetadataArgs.type === RelationType.MANY_TO_ONE
                 ? workspaceRelationMetadataArgs.onDelete
                 : undefined,
             joinColumnName,
