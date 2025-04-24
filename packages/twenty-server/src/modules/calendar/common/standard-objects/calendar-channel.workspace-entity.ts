@@ -307,6 +307,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUserCircle',
     inverseSideTarget: () => ConnectedAccountWorkspaceEntity,
     inverseSideFieldKey: 'calendarChannels',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   connectedAccount: Relation<ConnectedAccountWorkspaceEntity>;
 
