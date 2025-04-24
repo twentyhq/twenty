@@ -13,7 +13,7 @@ import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isReco
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/workflow-diagram/states/workflowDiagramTriggerNodeSelectionState';
+import { workflowDiagramTriggerNodeSelectionComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramTriggerNodeSelectionComponentState';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
@@ -47,8 +47,8 @@ export const WorkflowVariablesDropdownFieldItems = ({
     activeTabIdComponentState,
     'workflow-serverless-function-tab-list-component-id',
   );
-  const setWorkflowDiagramTriggerNodeSelection = useSetRecoilState(
-    workflowDiagramTriggerNodeSelectionState,
+  const setWorkflowDiagramTriggerNodeSelection = useSetRecoilComponentStateV2(
+    workflowDiagramTriggerNodeSelectionComponentState,
   );
 
   const getDisplayedSubStepFields = () => {
