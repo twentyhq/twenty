@@ -213,7 +213,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]> | null;
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.probabilityDeprecated,

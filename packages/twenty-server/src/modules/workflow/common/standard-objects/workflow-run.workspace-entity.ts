@@ -171,7 +171,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'runs',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  workflowVersion: Relation<WorkflowVersionWorkspaceEntity> | null;
+  workflowVersion: Relation<WorkflowVersionWorkspaceEntity>;
 
   @WorkspaceJoinColumn('workflowVersion')
   workflowVersionId: string;

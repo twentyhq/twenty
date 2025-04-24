@@ -147,7 +147,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  taskTargets: Relation<TaskTargetWorkspaceEntity[]> | null;
+  taskTargets: Relation<TaskTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: TASK_STANDARD_FIELD_IDS.attachments,
@@ -159,7 +159,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  attachments: Relation<AttachmentWorkspaceEntity[]> | null;
+  attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: TASK_STANDARD_FIELD_IDS.assignee,
@@ -187,7 +187,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]> | null;
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: TASK_STANDARD_FIELD_IDS.favorites,

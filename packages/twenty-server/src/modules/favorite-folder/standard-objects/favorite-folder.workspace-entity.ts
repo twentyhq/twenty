@@ -13,7 +13,6 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { FAVORITE_FOLDER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
-import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.favoriteFolder,
@@ -55,6 +54,5 @@ export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  @WorkspaceIsNullable()
-  favorites: Relation<FavoriteWorkspaceEntity[]> | null;
+  favorites: Relation<FavoriteWorkspaceEntity[]>;
 }

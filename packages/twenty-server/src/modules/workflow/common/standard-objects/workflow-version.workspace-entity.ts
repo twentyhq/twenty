@@ -145,7 +145,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  runs: Relation<WorkflowRunWorkspaceEntity> | null;
+  runs: Relation<WorkflowRunWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.favorites,

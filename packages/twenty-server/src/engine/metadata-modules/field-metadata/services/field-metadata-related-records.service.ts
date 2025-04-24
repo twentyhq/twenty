@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntityManager, In } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 
 import {
   FieldMetadataComplexOption,
@@ -52,7 +51,7 @@ export class FieldMetadataRelatedRecordsService {
       );
 
     for (const view of views) {
-      if (!isDefined(view.viewGroups) || view.viewGroups.length === 0) {
+      if (view.viewGroups.length === 0) {
         continue;
       }
 
@@ -113,10 +112,6 @@ export class FieldMetadataRelatedRecordsService {
     viewGroupRepository: WorkspaceRepository<ViewGroupWorkspaceEntity>,
     transactionManager?: EntityManager,
   ): Promise<void> {
-    if (!isDefined(view.viewGroups)) {
-      return;
-    }
-
     const noValueGroup = view.viewGroups.find(
       (group) => group.fieldValue === '',
     );

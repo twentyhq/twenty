@@ -108,7 +108,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  noteTargets: Relation<NoteTargetWorkspaceEntity[]> | null;
+  noteTargets: Relation<NoteTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.attachments,
@@ -120,7 +120,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  attachments: Relation<AttachmentWorkspaceEntity[]> | null;
+  attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.timelineActivities,
@@ -132,7 +132,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]> | null;
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.favorites,
