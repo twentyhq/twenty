@@ -1,32 +1,27 @@
-name: 'PR Preview Environment'
+name: 'Preview Environment Keep Alive'
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number'
+        required: true
+      pr_head_sha:
+        description: 'PR head SHA'
+        required: true
+      repo_full_name:
+        description: 'Repository full name (owner/repo)'
+        required: true
 
 jobs:
-  changed-files-check:
-    uses: ./.github/workflows/changed-files.yaml
-    with:
-      files: |
-        .github/workflows/preview-environments.yaml
-        packages/twenty-docker/**
-        docker-compose.yml
-        packages/twenty-server/**
-        packages/twenty-front/**
-  
   preview-environment:
-    needs: changed-files-check
-    if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 310
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout PR
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.pr_head_sha }}
       
       - name: Run compose setup
         run: |
@@ -99,8 +94,7 @@ jobs:
           echo "🔗 Preview URL: ${{ steps.expose-tunnel.outputs.tunnel-url }}"
           echo "⏱️ This environment will be available for 5 hours"
       
-      - name: Find existing comment or create new one
-        if: github.event_name == 'pull_request'
+      - name: Post comment on PR
         uses: actions/github-script@v6
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
@@ -117,7 +111,7 @@ jobs:
             const {data: comments} = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
+              issue_number: ${{ inputs.pr_number }},
             });
             
             // Find our comment
@@ -137,7 +131,7 @@ jobs:
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
+                issue_number: ${{ inputs.pr_number }},
                 body: commentBody
               });
               console.log('Created new comment');
