@@ -38,7 +38,7 @@ export type SettingsDataModelFieldPreviewProps = {
 };
 
 const StyledFieldPreview = styled.div<{ shrink?: boolean }>`
-  align-items: flex-start;
+  align-items: center;
   background-color: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -154,6 +154,7 @@ export const SettingsDataModelFieldPreview = ({
                 defaultValue: fieldMetadataItem.defaultValue,
               },
               isReadOnly: false,
+              disableChipClick: true,
             }}
           >
             {fieldMetadataItem.type === FieldMetadataType.BOOLEAN ? (

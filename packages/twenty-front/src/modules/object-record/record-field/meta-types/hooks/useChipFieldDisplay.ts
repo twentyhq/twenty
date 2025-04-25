@@ -18,6 +18,7 @@ export const useChipFieldDisplay = () => {
     isLabelIdentifier,
     labelIdentifierLink,
     isLabelIdentifierCompact,
+    disableChipClick,
   } = useContext(FieldContext);
 
   const { chipGeneratorPerObjectPerField } = useContext(
@@ -48,5 +49,6 @@ export const useChipFieldDisplay = () => {
     isLabelIdentifier,
     labelIdentifierLink,
     isLabelIdentifierCompact,
+    disableChipClick,
   };
 };
