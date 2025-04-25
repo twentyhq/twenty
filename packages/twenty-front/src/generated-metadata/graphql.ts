@@ -517,6 +517,15 @@ export type CustomDomainValidRecords = {
   records: Array<CustomDomainRecord>;
 };
 
+/** Database Event Action */
+export enum DatabaseEventAction {
+  CREATED = 'CREATED',
+  DELETED = 'DELETED',
+  DESTROYED = 'DESTROYED',
+  RESTORED = 'RESTORED',
+  UPDATED = 'UPDATED'
+}
+
 export type DateFilter = {
   eq?: InputMaybe<Scalars['Date']['input']>;
   gt?: InputMaybe<Scalars['Date']['input']>;
@@ -1004,7 +1013,7 @@ export type Mutation = {
   uploadImage: Scalars['String']['output'];
   uploadProfilePicture: Scalars['String']['output'];
   uploadWorkspaceLogo: Scalars['String']['output'];
-  upsertOneObjectPermission: ObjectPermission;
+  upsertObjectPermissions: Array<ObjectPermission>;
   upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
@@ -1368,8 +1377,8 @@ export type MutationUploadWorkspaceLogoArgs = {
 };
 
 
-export type MutationUpsertOneObjectPermissionArgs = {
-  upsertObjectPermissionInput: UpsertObjectPermissionInput;
+export type MutationUpsertObjectPermissionsArgs = {
+  upsertObjectPermissionsInput: UpsertObjectPermissionsInput;
 };
 
 
@@ -1481,6 +1490,14 @@ export type ObjectPermission = {
   roleId: Scalars['String']['output'];
 };
 
+export type ObjectPermissionInput = {
+  canDestroyObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  objectMetadataId: Scalars['String']['input'];
+};
+
 export type ObjectRecordFilterInput = {
   and?: InputMaybe<Array<ObjectRecordFilterInput>>;
   createdAt?: InputMaybe<DateFilter>;
@@ -1498,6 +1515,21 @@ export type ObjectStandardOverrides = {
   labelPlural?: Maybe<Scalars['String']['output']>;
   labelSingular?: Maybe<Scalars['String']['output']>;
   translations?: Maybe<Scalars['JSON']['output']>;
+};
+
+export type OnDbEventDto = {
+  __typename?: 'OnDbEventDTO';
+  action: DatabaseEventAction;
+  eventDate: Scalars['DateTime']['output'];
+  objectNameSingular: Scalars['String']['output'];
+  record: Scalars['JSON']['output'];
+  updatedFields?: Maybe<Array<Scalars['String']['output']>>;
+};
+
+export type OnDbEventInput = {
+  action?: InputMaybe<DatabaseEventAction>;
+  objectNameSingular?: InputMaybe<Scalars['String']['input']>;
+  recordId?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** Onboarding status */
@@ -2090,6 +2122,16 @@ export type SubmitFormStepInput = {
   workflowRunId: Scalars['String']['input'];
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  onDbEvent: OnDbEventDto;
+};
+
+
+export type SubscriptionOnDbEventArgs = {
+  input: OnDbEventInput;
+};
+
 export enum SubscriptionInterval {
   Day = 'Day',
   Month = 'Month',
@@ -2321,12 +2363,8 @@ export type UpdateWorkspaceInput = {
   subdomain?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type UpsertObjectPermissionInput = {
-  canDestroyObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canReadObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  objectMetadataId: Scalars['String']['input'];
+export type UpsertObjectPermissionsInput = {
+  objectPermissions: Array<ObjectPermissionInput>;
   roleId: Scalars['String']['input'];
 };
 

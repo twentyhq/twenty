@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
@@ -37,6 +38,7 @@ export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCheckbox',
     inverseSideTarget: () => TaskWorkspaceEntity,
     inverseSideFieldKey: 'taskTargets',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   task: Relation<TaskWorkspaceEntity> | null;
@@ -52,6 +54,7 @@ export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'taskTargets',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
@@ -67,6 +70,7 @@ export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'taskTargets',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   company: Relation<CompanyWorkspaceEntity> | null;
@@ -82,6 +86,7 @@ export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'taskTargets',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   opportunity: Relation<OpportunityWorkspaceEntity> | null;
@@ -101,6 +106,7 @@ export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
     }),
     inverseSideTarget: () => CustomWorkspaceEntity,
     inverseSideFieldKey: 'taskTargets',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   custom: Relation<CustomWorkspaceEntity>;
 }

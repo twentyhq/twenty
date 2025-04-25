@@ -3,6 +3,7 @@ import { Relation } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -44,6 +45,7 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMessage',
     inverseSideTarget: () => MessageChannelWorkspaceEntity,
     inverseSideFieldKey: 'messageFolders',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   messageChannel: Relation<MessageChannelWorkspaceEntity>;
 

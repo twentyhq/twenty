@@ -3,6 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
@@ -69,6 +70,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCircleUser',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'authoredAttachments',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   author: Relation<WorkspaceMemberWorkspaceEntity> | null;
@@ -84,6 +86,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconNotes',
     inverseSideTarget: () => TaskWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   task: Relation<TaskWorkspaceEntity> | null;
@@ -99,6 +102,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconNotes',
     inverseSideTarget: () => NoteWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   note: Relation<NoteWorkspaceEntity> | null;
@@ -114,6 +118,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
@@ -129,6 +134,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   company: Relation<CompanyWorkspaceEntity> | null;
@@ -144,6 +150,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   opportunity: Relation<OpportunityWorkspaceEntity> | null;
@@ -163,6 +170,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     }),
     inverseSideTarget: () => CustomWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   custom: Relation<CustomWorkspaceEntity>;
 }
