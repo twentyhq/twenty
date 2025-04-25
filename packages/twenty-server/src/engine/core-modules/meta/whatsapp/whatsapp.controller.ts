@@ -86,7 +86,7 @@ export class WhatsappController {
     if (isReceiving) {
       const lastMessage = {
         createdAt: new Date(),
-        from: body.entry[0].changes[0].value.messages[0].from,
+        from: body.entry[0].changes[0].value.contacts[0].profile.name,
         message: mediaId
           ? fileUrl
           : body.entry[0].changes[0].value.messages[0].text.body,

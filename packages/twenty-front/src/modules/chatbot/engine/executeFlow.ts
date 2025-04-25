@@ -21,13 +21,19 @@ export class ExecuteFlow {
     sendMessage: (input: SendMessageInput) => void,
     integrationId: string,
     recipient: string,
+    chatbotName: string,
     onFinish?: (finalNode: Node, matchedInputs?: string[]) => void,
   ) {
     this.nodes = chatbotFlow.nodes;
     this.currentNodeId = this.findStartNode()?.id;
 
     this.handlers = {
-      textInput: new TextInputHandler(sendMessage, integrationId, recipient),
+      textInput: new TextInputHandler(
+        sendMessage,
+        integrationId,
+        recipient,
+        chatbotName,
+      ),
       logicInput: new CondicionalInputHandler(),
     };
 

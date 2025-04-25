@@ -28,6 +28,7 @@ import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
 import { sort } from '@/chat/utils/sort';
 import { ExecuteFlow } from '@/chatbot/engine/executeFlow';
 import { GET_CHATBOT_FLOW_BY_ID } from '@/chatbot/graphql/query/getChatbotFlowById';
+import { GET_CHATBOTS } from '@/chatbot/graphql/query/getChatbots';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
 import { useFindAllAgents } from '@/settings/service-center/agents/hooks/useFindAllAgents';
@@ -246,6 +247,15 @@ export const CallCenterProvider = ({
           const chatbotId = integration?.chatbot?.id;
           if (!chatbotId) continue;
 
+          const { data: chatbotData } = await apolloClient.query({
+            query: GET_CHATBOTS,
+            variables: { chatbotId },
+          });
+
+          const findChatbot = chatbotData?.getChatbots?.find(
+            (bot: any) => bot.id === chatbotId,
+          );
+
           // Change the way the request is made to chatbot flow
           const { data } = await apolloClient.query({
             query: GET_CHATBOT_FLOW_BY_ID,
@@ -259,6 +269,7 @@ export const CallCenterProvider = ({
             sendWhatsappMessage,
             chat.integrationId,
             chat.client.phone ?? '',
+            findChatbot.name,
             (_, matchedInputs) => {
               // Refactoring so that the node takes the id of the chosen sector directly will remove all the current complex logic
               if (matchedInputs && matchedInputs.length) {
@@ -274,6 +285,7 @@ export const CallCenterProvider = ({
                     statusEnum.Waiting,
                     sendWhatsappEventMessage,
                     sectors,
+                    findChatbot.name,
                   );
                 }
               }
@@ -284,7 +296,7 @@ export const CallCenterProvider = ({
         }
 
         executor.setIncomingMessage(last.message);
-        executor.runFlowWithLog();
+        executor.runFlow();
         processedMessageKeys.current.add(messageKey);
       }
     };

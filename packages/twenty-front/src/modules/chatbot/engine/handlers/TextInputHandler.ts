@@ -8,6 +8,7 @@ export class TextInputHandler implements NodeHandler {
     private sendMessage: (input: SendMessageInput) => void,
     private integrationId: string,
     private recipient: string,
+    private chatbotName: string,
   ) {}
 
   process(node: Node): string | null {
@@ -22,6 +23,7 @@ export class TextInputHandler implements NodeHandler {
         to: this.recipient,
         type: MessageType.TEXT,
         message: formattedText,
+        from: this.chatbotName,
       });
     }
 

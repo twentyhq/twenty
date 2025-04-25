@@ -94,7 +94,7 @@ export class WhatsappResolver {
     if (sendMessageConfirmation) {
       const lastMessage = {
         createdAt: new Date(),
-        from: 'system',
+        from: sendMessageInput.from,
         message: sendMessageInput.fileId
           ? sendMessageInput.fileId
           : sendMessageInput.message || '',

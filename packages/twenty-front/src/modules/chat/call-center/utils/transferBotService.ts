@@ -11,6 +11,7 @@ export const transferBotService = (
   currentStatus: statusEnum,
   sendWhatsappEventMessage: (input: SendEventMessageInput) => void,
   sectors: Sector[],
+  chatbotName: string,
 ) => {
   const sector = sectors.find(
     (s: Sector) => s.id === chosenSector || s.name === chosenSector,
@@ -23,10 +24,10 @@ export const transferBotService = (
     sector: { id: sector.id, name: sector.name },
     eventStatus: MessageType.TRANSFER,
     status: currentStatus,
-    from: 'system',
+    from: chatbotName,
     integrationId,
     to: phone,
     type: MessageType.TRANSFER,
-    message: `Bot ${MessageEventType.TRANSFER} ${sector.name} (${today.toISOString().split('T')[0].replaceAll('-', '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`,
+    message: `${chatbotName} ${MessageEventType.TRANSFER} ${sector.name} (${today.toISOString().split('T')[0].replaceAll('-', '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`,
   });
 };
