@@ -6,7 +6,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useIcons } from 'twenty-ui/display';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export type ObjectFilterDropdownFilterSelectMenuItemV2Props = {
   fieldMetadataItemToSelect: FieldMetadataItem;
@@ -37,9 +37,8 @@ export const ObjectFilterDropdownFilterSelectMenuItemV2 = ({
   };
 
   return (
-    <MenuItemSelect
-      selected={false}
-      hovered={isSelectedItem}
+    <MenuItem
+      focused={isSelectedItem}
       onClick={handleClick}
       LeftIcon={Icon}
       text={fieldMetadataItemToSelect.label}

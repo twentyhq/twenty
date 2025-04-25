@@ -7,6 +7,7 @@ import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -93,43 +94,38 @@ export const MultipleSelectDropdown = ({
       selectableListInstanceId={selectableListId}
       selectableItemIdArray={selectableItemIds}
       hotkeyScope={hotkeyScope}
-      onEnter={(itemId) => {
-        const item = itemsInDropdown.findIndex(
-          (entity) => entity.id === itemId,
-        );
-        const itemIsSelectedInDropwdown = filteredSelectedItems.find(
-          (entity) => entity.id === itemId,
-        );
-        handleItemSelectChange(
-          itemsInDropdown[item],
-          !itemIsSelectedInDropwdown,
-        );
-        resetSelectedItem();
-      }}
     >
       <DropdownMenuItemsContainer hasMaxHeight>
         {itemsInDropdown?.map((item) => {
           return (
-            <MenuItemMultiSelectAvatar
-              key={item.id}
-              selected={item.isSelected}
-              isKeySelected={item.id === selectedItemId}
-              onSelectChange={(newCheckedValue) => {
+            <SelectableListItem
+              itemId={item.id}
+              onEnter={() => {
                 resetSelectedItem();
-                handleItemSelectChange(item, newCheckedValue);
+                handleItemSelectChange(item, !item.isSelected);
               }}
-              avatar={
-                <StyledMultipleSelectDropdownAvatarChip
-                  className="avatar-icon-container"
-                  name={item.name}
-                  avatarUrl={item.avatarUrl}
-                  LeftIcon={item.AvatarIcon}
-                  avatarType={item.avatarType}
-                  isIconInverted={item.isIconInverted}
-                  placeholderColorSeed={item.id}
-                />
-              }
-            />
+            >
+              <MenuItemMultiSelectAvatar
+                key={item.id}
+                selected={item.isSelected}
+                isKeySelected={item.id === selectedItemId}
+                onSelectChange={(newCheckedValue) => {
+                  resetSelectedItem();
+                  handleItemSelectChange(item, newCheckedValue);
+                }}
+                avatar={
+                  <StyledMultipleSelectDropdownAvatarChip
+                    className="avatar-icon-container"
+                    name={item.name}
+                    avatarUrl={item.avatarUrl}
+                    LeftIcon={item.AvatarIcon}
+                    avatarType={item.avatarType}
+                    isIconInverted={item.isIconInverted}
+                    placeholderColorSeed={item.id}
+                  />
+                }
+              />
+            </SelectableListItem>
           );
         })}
         {showNoResult && <MenuItem text="No results" />}

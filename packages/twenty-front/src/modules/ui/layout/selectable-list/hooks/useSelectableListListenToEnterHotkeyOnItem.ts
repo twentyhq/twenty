@@ -39,8 +39,5 @@ export const useSelectableListListenToEnterHotkeyOnItem = ({
     ),
     hotkeyScope,
     [itemId, onEnter],
-    {
-      preventDefault: false,
-    },
   );
 };
