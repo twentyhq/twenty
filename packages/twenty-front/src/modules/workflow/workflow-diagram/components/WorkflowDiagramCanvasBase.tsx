@@ -1,4 +1,6 @@
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
+import { WorkflowDiagramCanvasContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasContainer';
+import { WorkflowDiagramCanvasStatusTagContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasStatusTagContainer';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
@@ -11,7 +13,6 @@ import {
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import {
   Background,
   EdgeChange,
@@ -30,50 +31,6 @@ import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
-
-const StyledResetReactflowStyles = styled.div`
-  height: 100%;
-  width: 100%;
-  position: relative;
-
-  /* Below we reset the default styling of Reactflow */
-  .react-flow__node-input,
-  .react-flow__node-default,
-  .react-flow__node-output,
-  .react-flow__node-group {
-    padding: 0;
-    width: auto;
-    text-align: start;
-    white-space: nowrap;
-  }
-
-  .react-flow__handle {
-    min-height: 0;
-    min-width: 0;
-  }
-  .react-flow__handle-top {
-    transform: translate(-50%, -50%);
-  }
-  .react-flow__handle-bottom {
-    transform: translate(-50%, 100%);
-  }
-  .react-flow__handle.connectionindicator {
-    cursor: pointer;
-  }
-
-  --xy-node-border-radius: none;
-  --xy-node-border: none;
-  --xy-node-background-color: none;
-  --xy-node-boxshadow-hover: none;
-  --xy-node-boxshadow-selected: none;
-`;
-
-const StyledStatusTagContainer = styled.div`
-  left: 0;
-  top: 0;
-  position: absolute;
-  padding: ${({ theme }) => theme.spacing(4)};
-`;
 
 const defaultFitViewOptions = {
   minZoom: 1,
@@ -218,14 +175,14 @@ export const WorkflowDiagramCanvasBase = ({
     [],
   );
 
-  const handleInit = () => {
+  const handleInit = async () => {
     if (!isDefined(containerRef.current)) {
       return;
     }
 
     const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
 
-    reactflow.setViewport({
+    await reactflow.setViewport({
       x: containerRef.current.offsetWidth / 2 - flowBounds.width / 2,
       y: 150,
       zoom: defaultFitViewOptions.maxZoom,
@@ -235,7 +192,7 @@ export const WorkflowDiagramCanvasBase = ({
   };
 
   return (
-    <StyledResetReactflowStyles ref={containerRef}>
+    <WorkflowDiagramCanvasContainer ref={containerRef}>
       <WorkflowDiagramCustomMarkers />
 
       <ReactFlow
@@ -267,9 +224,9 @@ export const WorkflowDiagramCanvasBase = ({
         {children}
       </ReactFlow>
 
-      <StyledStatusTagContainer data-testid={tagContainerTestId}>
+      <WorkflowDiagramCanvasStatusTagContainer data-testid={tagContainerTestId}>
         <Tag color={tagColor} text={tagText} />
-      </StyledStatusTagContainer>
-    </StyledResetReactflowStyles>
+      </WorkflowDiagramCanvasStatusTagContainer>
+    </WorkflowDiagramCanvasContainer>
   );
 };

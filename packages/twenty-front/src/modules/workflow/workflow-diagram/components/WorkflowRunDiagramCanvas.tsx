@@ -1,5 +1,6 @@
 import { WorkflowRunStatus } from '@/workflow/types/Workflow';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
+import { WorkflowDiagramCanvasLoader } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasLoader';
 import { WorkflowDiagramDefaultEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramDefaultEdge';
 import { WorkflowDiagramStepNodeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeReadonly';
 import { WorkflowDiagramSuccessEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramSuccessEdge';
@@ -21,22 +22,28 @@ export const WorkflowRunDiagramCanvas = ({
     useHandleWorkflowRunDiagramCanvasInit();
 
   return (
-    <ReactFlowProvider>
-      <WorkflowDiagramCanvasBase
-        nodeTypes={{
-          default: WorkflowDiagramStepNodeReadonly,
-        }}
-        edgeTypes={{
-          default: WorkflowDiagramDefaultEdge,
-          success: WorkflowDiagramSuccessEdge,
-        }}
-        tagContainerTestId="workflow-run-status"
-        tagColor={tagProps.color}
-        tagText={tagProps.text}
-        onInit={handleWorkflowRunDiagramCanvasInit}
-      />
+    <WorkflowDiagramCanvasLoader
+      canvasComponent={
+        <ReactFlowProvider>
+          <WorkflowDiagramCanvasBase
+            nodeTypes={{
+              default: WorkflowDiagramStepNodeReadonly,
+            }}
+            edgeTypes={{
+              default: WorkflowDiagramDefaultEdge,
+              success: WorkflowDiagramSuccessEdge,
+            }}
+            tagContainerTestId="workflow-run-status"
+            tagColor={tagProps.color}
+            tagText={tagProps.text}
+            onInit={handleWorkflowRunDiagramCanvasInit}
+          />
 
-      <WorkflowRunDiagramCanvasEffect />
-    </ReactFlowProvider>
+          <WorkflowRunDiagramCanvasEffect />
+        </ReactFlowProvider>
+      }
+      skeletonTagColor={tagProps.color}
+      skeletonTagText={tagProps.text}
+    />
   );
 };
