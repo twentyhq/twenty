@@ -59,7 +59,7 @@ export const RelationFromManyFieldDisplay = () => {
         return {
           ...record,
           [relationFieldName]: {
-            id: '',
+            id: 'fallback-id',
             title: pascalCase(relationFieldName),
           },
         };
