@@ -13,6 +13,7 @@ jobs:
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |
+        .github/workflows/preview-environments.yaml
         packages/twenty-docker/**
         docker-compose.yml
         packages/twenty-server/**
