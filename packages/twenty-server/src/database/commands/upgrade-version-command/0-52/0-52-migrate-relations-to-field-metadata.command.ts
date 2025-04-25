@@ -129,8 +129,14 @@ export class MigrateRelationsToFieldMetadataCommand extends ActiveOrSuspendedWor
       ...fieldMetadata,
       settings: {
         relationType,
-        onDelete: relationMetadata.onDeleteAction,
-        joinColumnName: joinColumnFieldMetadata?.name,
+        onDelete:
+          relationType === RelationType.MANY_TO_ONE
+            ? relationMetadata.onDeleteAction
+            : undefined,
+        joinColumnName:
+          relationType === RelationType.MANY_TO_ONE
+            ? joinColumnFieldMetadata?.name
+            : undefined,
       },
       relationTargetFieldMetadataId,
       relationTargetObjectMetadataId,

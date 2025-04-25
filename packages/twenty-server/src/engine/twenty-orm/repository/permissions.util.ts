@@ -69,6 +69,7 @@ export const validateQueryIsPermittedOrThrow = (
         );
       }
       break;
+    case 'restore':
     case 'soft-delete':
       if (!permissionsForEntity?.canSoftDelete) {
         throw new PermissionsException(

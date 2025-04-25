@@ -1,5 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
+import { isWorkflowRunJsonField } from '@/object-record/record-field/meta-types/utils/isWorkflowRunJsonField';
 import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 
@@ -26,8 +27,10 @@ export const isFieldValueReadOnly = ({
   }
 
   if (
-    objectNameSingular === CoreObjectNameSingular.WorkflowRun &&
-    fieldName === 'output'
+    isWorkflowRunJsonField({
+      objectMetadataNameSingular: objectNameSingular,
+      fieldName,
+    })
   ) {
     return false;
   }

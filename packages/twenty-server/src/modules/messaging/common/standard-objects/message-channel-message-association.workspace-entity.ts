@@ -3,6 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -93,6 +94,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     icon: 'IconHash',
     inverseSideTarget: () => MessageChannelWorkspaceEntity,
     inverseSideFieldKey: 'messageChannelMessageAssociations',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   messageChannel: Relation<MessageChannelWorkspaceEntity> | null;
@@ -108,6 +110,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     icon: 'IconHash',
     inverseSideTarget: () => MessageWorkspaceEntity,
     inverseSideFieldKey: 'messageChannelMessageAssociations',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   message: Relation<MessageWorkspaceEntity> | null;

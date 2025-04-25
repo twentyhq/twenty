@@ -169,6 +169,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconVersions',
     inverseSideTarget: () => WorkflowVersionWorkspaceEntity,
     inverseSideFieldKey: 'runs',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   workflowVersion: Relation<WorkflowVersionWorkspaceEntity>;
 
@@ -183,6 +184,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'runs',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   workflow: Relation<WorkflowWorkspaceEntity>;
 

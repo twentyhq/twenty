@@ -61,6 +61,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCircleUser',
     inverseSideFieldKey: 'favorites',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   forWorkspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
@@ -76,6 +77,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
@@ -91,6 +93,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   company: Relation<CompanyWorkspaceEntity> | null;
@@ -106,6 +109,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconFolder',
     inverseSideTarget: () => FavoriteFolderWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   favoriteFolder: Relation<FavoriteFolderWorkspaceEntity> | null;
@@ -121,6 +125,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   opportunity: Relation<OpportunityWorkspaceEntity> | null;
@@ -136,6 +141,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   workflow: Relation<WorkflowWorkspaceEntity> | null;
@@ -151,6 +157,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowVersionWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   workflowVersion: Relation<WorkflowVersionWorkspaceEntity> | null;
@@ -166,6 +173,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowRunWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   workflowRun: Relation<WorkflowRunWorkspaceEntity> | null;
@@ -181,6 +189,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCheckbox',
     inverseSideTarget: () => TaskWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   task: Relation<TaskWorkspaceEntity> | null;
@@ -196,6 +205,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconNotes',
     inverseSideTarget: () => NoteWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   note: Relation<NoteWorkspaceEntity> | null;
@@ -231,6 +241,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     }),
     inverseSideTarget: () => CustomWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   custom: Relation<CustomWorkspaceEntity>;
 }

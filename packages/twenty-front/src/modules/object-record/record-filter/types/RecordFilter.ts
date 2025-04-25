@@ -1,4 +1,5 @@
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import { FILTER_OPERANDS_MAP } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 export type RecordFilter = {
@@ -14,3 +15,6 @@ export type RecordFilter = {
   label: string;
   subFieldName?: string | null | undefined;
 };
+
+export type RecordFilterToRecordInputOperand<T extends FilterableFieldType> =
+  (typeof FILTER_OPERANDS_MAP)[T][number];
