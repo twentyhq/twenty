@@ -33,9 +33,7 @@ export const RecordTableBodyEffectsWrapper = ({
       )}
       {isAtLeastOneRecordSelected && <RecordTableBodyEscapeHotkeyEffect />}
       {isRecordTableFocusActive && <RecordTableBodyFocusKeyboardEffect />}
-      {isRecordTableFocusActive && (
-        <RecordTableBodyFocusClickOutsideEffect tableBodyRef={tableBodyRef} />
-      )}
+      <RecordTableBodyFocusClickOutsideEffect tableBodyRef={tableBodyRef} />
     </>
   );
 };
