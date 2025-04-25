@@ -48,5 +48,6 @@ export const useChipFieldDisplay = () => {
     isLabelIdentifier,
     labelIdentifierLink,
     isLabelIdentifierCompact,
+    fieldDefinition,
   };
 };
