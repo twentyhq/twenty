@@ -17,6 +17,9 @@ import { isCompositeTypeFilterableByAnySubField } from '@/object-record/record-f
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { IconApps, IconChevronLeft, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -74,6 +77,14 @@ export const AdvancedFilterSubFieldSelectMenu = ({
     setObjectFilterDropdownIsSelectingCompositeField(false);
   };
 
+  const { advancedFilterFieldSelectDropdownId } =
+    useAdvancedFilterFieldSelectDropdown(recordFilterId);
+
+  const selectedItemId = useRecoilComponentValueV2(
+    selectedItemIdComponentState,
+    advancedFilterFieldSelectDropdownId,
+  );
+
   if (!isDefined(objectFilterDropdownSubMenuFieldType)) {
     return null;
   }
@@ -92,6 +103,11 @@ export const AdvancedFilterSubFieldSelectMenu = ({
       fieldMetadataItemUsedInDropdown.type,
     );
 
+  const selectableItemIdArray = [
+    '-1',
+    ...subFieldNames.map((subFieldName) => subFieldName),
+  ];
+
   return (
     <>
       <DropdownMenuHeader
@@ -105,20 +121,44 @@ export const AdvancedFilterSubFieldSelectMenu = ({
         {getFilterableFieldTypeLabel(objectFilterDropdownSubMenuFieldType)}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
-        {compositeFieldTypeIsFilterableByAnySubField && (
-          <MenuItem
+      <SelectableList
+          hotkeyScope={advancedFilterFieldSelectDropdownId}
+          selectableItemIdArray={selectableItemIdArray}
+          selectableListInstanceId={advancedFilterFieldSelectDropdownId}
+        >
+          {compositeFieldTypeIsFilterableByAnySubField && (
+          <SelectableListItem
+            itemId={'-1'}
             key={`select-filter-${-1}`}
-            testId={`select-filter-${-1}`}
-            onClick={() => {
+            onEnter={() => {
               handleSelectFilter(fieldMetadataItemUsedInDropdown);
             }}
-            LeftIcon={IconApps}
-            text={`Any ${getFilterableFieldTypeLabel(objectFilterDropdownSubMenuFieldType)} field`}
-          />
-        )}
+          >
+        <MenuItem
+          key={`select-filter-${-1}`}
+          testId={`select-filter-${-1}`}
+          focused={selectedItemId === '-1'}
+          onClick={() => {
+            handleSelectFilter(fieldMetadataItemUsedInDropdown);
+          }}
+          LeftIcon={IconApps}
+          text={`Any ${getFilterableFieldTypeLabel(objectFilterDropdownSubMenuFieldType)} field`}
+        />
+        </SelectableListItem>)}
         {subFieldsAreFilterable &&
           subFieldNames.map((subFieldName, index) => (
+            <SelectableListItem
+                itemId={subFieldName}
+                key={`select-filter-${index}`}
+                onEnter={() => {
+                  handleSelectFilter(
+                    fieldMetadataItemUsedInDropdown,
+                    subFieldName,
+                  );
+                }}
+              >
             <MenuItem
+            focused={selectedItemId === subFieldName}
               key={`select-filter-${index}`}
               testId={`select-filter-${index}`}
               onClick={() => {
@@ -138,7 +178,9 @@ export const AdvancedFilterSubFieldSelectMenu = ({
                   fieldMetadataItemUsedInDropdown?.icon,
               )}
             />
+            </SelectableListItem>
           ))}
+          </SelectableList>
       </DropdownMenuItemsContainer>
     </>
   );

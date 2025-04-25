@@ -7,7 +7,6 @@ import { useMatchingCommandMenuActions } from '@/command-menu/hooks/useMatchingC
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
@@ -89,9 +88,7 @@ export const CommandMenu = () => {
     >
       {isDefined(previousContextStoreCurrentObjectMetadataItemId) && (
         <CommandGroup heading={t`Context`}>
-          <SelectableItem itemId={RESET_CONTEXT_TO_SELECTION}>
-            <ResetContextToSelectionCommandButton />
-          </SelectableItem>
+          <ResetContextToSelectionCommandButton />
         </CommandGroup>
       )}
     </CommandMenuList>

@@ -14,6 +14,7 @@ import { singleRecordPickerSelectedIdComponentState } from '@/object-record/reco
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
@@ -108,14 +109,6 @@ export const SingleRecordPickerMenuItems = ({
         selectableListInstanceId={selectableListComponentInstanceId}
         selectableItemIdArray={selectableItemIds}
         hotkeyScope={hotkeyScope}
-        onEnter={(itemId) => {
-          const recordIndex = recordsInDropdown.findIndex(
-            (record) => record.id === itemId,
-          );
-          setSelectedRecordId(itemId);
-          onRecordSelected(recordsInDropdown[recordIndex]);
-          resetSelectedItem();
-        }}
       >
         <DropdownMenuItemsContainer hasMaxHeight>
           {loading && !isFiltered ? (
@@ -128,17 +121,25 @@ export const SingleRecordPickerMenuItems = ({
                 case 'select-none': {
                   return (
                     emptyLabel && (
-                      <MenuItemSelect
+                      <SelectableListItem
                         key={record.id}
-                        onClick={() => {
+                        itemId={record.id}
+                        onEnter={() => {
                           setSelectedRecordId(undefined);
                           onRecordSelected();
                         }}
-                        LeftIcon={EmptyIcon}
-                        text={emptyLabel}
-                        selected={isUndefined(selectedRecordId)}
-                        hovered={isSelectedSelectNoneButton}
-                      />
+                      >
+                        <MenuItemSelect
+                          onClick={() => {
+                            setSelectedRecordId(undefined);
+                            onRecordSelected();
+                          }}
+                          LeftIcon={EmptyIcon}
+                          text={emptyLabel}
+                          selected={isUndefined(selectedRecordId)}
+                          focused={isSelectedSelectNoneButton}
+                        />
+                      </SelectableListItem>
                     )
                   );
                 }

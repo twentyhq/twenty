@@ -1,6 +1,7 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { StyledInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFieldSelect';
+import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
@@ -10,9 +11,9 @@ import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-rec
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
+import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { getFilterableFieldTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFilterableFieldTypeLabel';
-import { ICON_NAME_BY_SUB_FIELD } from '@/object-record/record-filter/constants/IconNameBySubField';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { areCompositeTypeSubFieldsFilterable } from '@/object-record/record-filter/utils/areCompositeTypeSubFieldsFilterable';
 import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
@@ -22,6 +23,9 @@ import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/con
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -133,6 +137,10 @@ export const ObjectFilterDropdownSubFieldSelect = () => {
     setObjectFilterDropdownFilterIsSelected(false);
     setSubFieldNameUsedInDropdown(null);
   };
+  const selectedItemId = useRecoilComponentValueV2(
+    selectedItemIdComponentState,
+    OBJECT_FILTER_DROPDOWN_ID,
+  );
 
   if (!isDefined(objectFilterDropdownSubMenuFieldType)) {
     return null;
@@ -177,20 +185,42 @@ export const ObjectFilterDropdownSubFieldSelect = () => {
         }
       />
       <DropdownMenuItemsContainer>
-        {compositeFieldTypeFilterableByAnySubField && (
-          <MenuItem
+      <SelectableList
+          hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
+          selectableItemIdArray={['-1', ...options]}
+          selectableListInstanceId={OBJECT_FILTER_DROPDOWN_ID}
+        >
+          <SelectableListItem
+            itemId={'-1'}
             key={`select-filter-${-1}`}
-            testId={`select-filter-${-1}`}
-            onClick={() => {
+            onEnter={() => {
               handleSelectFilter(fieldMetadataItemUsedInDropdown);
             }}
-            LeftIcon={IconApps}
-            text={`Any ${getFilterableFieldTypeLabel(objectFilterDropdownSubMenuFieldType)} field`}
-          />
-        )}
+          >
+        <MenuItem
+          key={`select-filter-${-1}`}
+          testId={`select-filter-${-1}`}
+          onClick={() => {
+            handleSelectFilter(fieldMetadataItemUsedInDropdown);
+          }}
+          LeftIcon={IconApps}
+          text={`Any ${getFilterableFieldTypeLabel(objectFilterDropdownSubMenuFieldType)} field`}
+        />
+        </SelectableListItem>
         {subFieldsAreFilterable &&
           options.map((subFieldName, index) => (
+            <SelectableListItem
+                itemId={subFieldName}
+                key={`select-filter-${index}`}
+                onEnter={() => {
+                  handleSelectFilter(
+                    fieldMetadataItemUsedInDropdown,
+                    subFieldName,
+                  );
+                }}
+              >
             <MenuItem
+            focused={selectedItemId === subFieldName}
               key={`select-filter-${index}`}
               testId={`select-filter-${index}`}
               onClick={() => {
@@ -205,12 +235,11 @@ export const ObjectFilterDropdownSubFieldSelect = () => {
                 objectFilterDropdownSubMenuFieldType,
                 subFieldName,
               )}
-              LeftIcon={getIcon(
-                ICON_NAME_BY_SUB_FIELD[subFieldName] ??
-                  fieldMetadataItemUsedInDropdown?.icon,
-              )}
+              LeftIcon={getIcon(fieldMetadataItemUsedInDropdown?.icon)}
             />
+            </SelectableListItem>
           ))}
+          </SelectableList>
       </DropdownMenuItemsContainer>
     </>
   );

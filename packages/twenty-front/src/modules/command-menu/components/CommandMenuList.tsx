@@ -4,8 +4,6 @@ import { ActionGroupConfig } from '@/command-menu/components/CommandMenu';
 import { CommandMenuDefaultSelectionEffect } from '@/command-menu/components/CommandMenuDefaultSelectionEffect';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
-import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
-import { useResetPreviousCommandMenuContext } from '@/command-menu/hooks/useResetPreviousCommandMenuContext';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
@@ -64,9 +62,6 @@ export const CommandMenuList = ({
   loading = false,
   noResults = false,
 }: CommandMenuListProps) => {
-  const { resetPreviousCommandMenuContext } =
-    useResetPreviousCommandMenuContext();
-
   const setHasUserSelectedCommand = useSetRecoilState(
     hasUserSelectedCommandState,
   );
@@ -82,12 +77,6 @@ export const CommandMenuList = ({
             selectableListInstanceId="command-menu-list"
             hotkeyScope={AppHotkeyScope.CommandMenuOpen}
             selectableItemIdArray={selectableItemIds}
-            onEnter={(itemId) => {
-              if (itemId === RESET_CONTEXT_TO_SELECTION) {
-                resetPreviousCommandMenuContext();
-                return;
-              }
-            }}
             onSelect={() => {
               setHasUserSelectedCommand(true);
             }}
