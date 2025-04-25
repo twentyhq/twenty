@@ -22,7 +22,7 @@ jobs:
   preview-environment:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
-    timeout-minutes: 60
+    timeout-minutes: 310
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
