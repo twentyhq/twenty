@@ -153,8 +153,7 @@ export const SettingsDataModelFieldPreview = ({
                 },
                 defaultValue: fieldMetadataItem.defaultValue,
               },
-              isReadOnly: false,
-              disableChipClick: true,
+              isReadOnly: true,
             }}
           >
             {fieldMetadataItem.type === FieldMetadataType.BOOLEAN ? (

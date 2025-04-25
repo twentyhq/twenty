@@ -14,10 +14,11 @@ export const AvatarChip = ({
   maxWidth,
   placeholderColorSeed,
   size,
+  variant = ChipVariant.Transparent,
 }: AvatarChipProps) => (
   <Chip
     label={name}
-    variant={ChipVariant.Transparent}
+    variant={variant}
     size={size}
     leftComponent={
       <AvatarChipsLeftComponent

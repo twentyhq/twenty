@@ -33,7 +33,6 @@ export type GenericFieldContextType = {
   displayedMaxRows?: number;
   isDisplayModeFixHeight?: boolean;
   isReadOnly: boolean;
-  disableChipClick?: boolean;
   onOpenEditMode?: () => void;
   onCloseEditMode?: () => void;
 };
