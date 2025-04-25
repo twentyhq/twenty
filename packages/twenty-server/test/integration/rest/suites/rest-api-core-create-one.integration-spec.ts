@@ -126,6 +126,12 @@ describe('Core REST API Create One endpoint', () => {
       method: 'post',
       path: `/people`,
       body: requestBody,
+    });
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: `/people`,
+      body: requestBody,
     })
       .expect(400)
       .expect((res) => {
