@@ -1,6 +1,9 @@
+import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { ViewFilterOperand as RecordFilterOperand } from '@/views/types/ViewFilterOperand';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export type GetRecordFilterOperandsParams = {
   filterType: FilterableFieldType;
@@ -19,6 +22,15 @@ const relationOperands = [
 
 type FilterOperandMap = {
   [K in FilterableFieldType]: readonly RecordFilterOperand[];
+};
+
+// TODO: we would need to refactor the typing of SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS first
+//   with types like FieldCurrencyValue being derived from a central constant value and not being created like that
+//   in order to narrow down the possible subfield names for each field type
+type CompositeFieldFilterOperandMap = {
+  [K in FilterableFieldType]: Partial<{
+    [S in CompositeFieldSubFieldName]: readonly RecordFilterOperand[];
+  }>;
 };
 
 export const FILTER_OPERANDS_MAP = {
@@ -113,6 +125,23 @@ export const FILTER_OPERANDS_MAP = {
   BOOLEAN: [RecordFilterOperand.Is],
 } as const satisfies FilterOperandMap;
 
+export const COMPOSITE_FIELD_FILTER_OPERANDS_MAP = {
+  CURRENCY: {
+    currencyCode: [
+      RecordFilterOperand.Is,
+      RecordFilterOperand.IsNot,
+      ...emptyOperands,
+    ],
+    amountMicros: [
+      RecordFilterOperand.GreaterThan,
+      RecordFilterOperand.LessThan,
+      RecordFilterOperand.Is,
+      RecordFilterOperand.IsNot,
+      ...emptyOperands,
+    ],
+  },
+} as const satisfies Partial<CompositeFieldFilterOperandMap>;
+
 export const getRecordFilterOperands = ({
   filterType,
   subFieldName,
@@ -125,7 +154,29 @@ export const getRecordFilterOperands = ({
     case 'LINKS':
     case 'PHONES':
       return FILTER_OPERANDS_MAP.TEXT;
-    case 'CURRENCY':
+    case 'CURRENCY': {
+      if (
+        isExpectedSubFieldName(
+          FieldMetadataType.CURRENCY,
+          'currencyCode',
+          subFieldName,
+        )
+      ) {
+        return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.CURRENCY.currencyCode;
+      } else if (
+        isExpectedSubFieldName(
+          FieldMetadataType.CURRENCY,
+          'amountMicros',
+          subFieldName,
+        )
+      ) {
+        return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.CURRENCY.amountMicros;
+      } else {
+        throw new Error(
+          `Unknown subfield name ${subFieldName} for ${filterType} filter`,
+        );
+      }
+    }
     case 'NUMBER':
       return FILTER_OPERANDS_MAP.NUMBER;
     case 'RAW_JSON':

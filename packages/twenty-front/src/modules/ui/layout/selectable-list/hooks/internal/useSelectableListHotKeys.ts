@@ -3,7 +3,6 @@ import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
-import { selectableListOnEnterComponentState } from '@/ui/layout/selectable-list/states/selectableListOnEnterComponentState';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -146,36 +145,5 @@ export const useSelectableListHotKeys = (
     () => handleSelect('right'),
     hotkeyScope,
     [],
-  );
-
-  useScopedHotkeys(
-    Key.Enter,
-    useRecoilCallback(
-      ({ snapshot }) =>
-        () => {
-          const selectedItemId = getSnapshotValue(
-            snapshot,
-            selectedItemIdComponentState.atomFamily({
-              instanceId: instanceId,
-            }),
-          );
-          const onEnter = getSnapshotValue(
-            snapshot,
-            selectableListOnEnterComponentState.atomFamily({
-              instanceId: instanceId,
-            }),
-          );
-
-          if (isNonEmptyString(selectedItemId)) {
-            onEnter?.(selectedItemId);
-          }
-        },
-      [instanceId],
-    ),
-    hotkeyScope,
-    [],
-    {
-      preventDefault: false,
-    },
   );
 };

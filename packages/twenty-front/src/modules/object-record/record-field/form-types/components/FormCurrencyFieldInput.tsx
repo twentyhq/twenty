@@ -5,7 +5,7 @@ import { FormSelectFieldInput } from '@/object-record/record-field/form-types/co
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { FormFieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
-import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
+import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useMemo } from 'react';
 import { IconCircleOff } from 'twenty-ui/display';
@@ -26,21 +26,13 @@ export const FormCurrencyFieldInput = ({
   readonly,
 }: FormCurrencyFieldInputProps) => {
   const currencies = useMemo(() => {
-    const currencies = Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(
-      ([key, { Icon, label }]) => ({
-        value: key,
-        Icon,
-        label: `${label} (${key})`,
-      }),
-    );
-
     return [
       {
         label: 'No currency',
         value: '',
         Icon: IconCircleOff,
       },
-      ...currencies,
+      ...CURRENCIES,
     ];
   }, []);
 

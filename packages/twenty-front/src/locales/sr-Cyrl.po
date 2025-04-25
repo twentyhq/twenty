@@ -3241,9 +3241,9 @@ msgstr "Нису пронађени подаци"
 #~ msgstr "No Result"
 
 #. js-lingui-id: Ev2r9A
-#: src/modules/spreadsheet-import/components/MatchColumnSelect.tsx
-#~ msgid "No results"
-#~ msgstr ""
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
+msgid "No results"
+msgstr ""
 
 #. js-lingui-id: MA3x23
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
@@ -3931,10 +3931,15 @@ msgstr "Пронађи додељеног члана тима..."
 msgid "Search an index..."
 msgstr "Претражите индекс..."
 
+#. js-lingui-id: sSARNY
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
+msgid "Search currency"
+msgstr ""
+
 #. js-lingui-id: 7taA9j
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFieldSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
 msgid "Search fields"
 msgstr "Претражите поља"

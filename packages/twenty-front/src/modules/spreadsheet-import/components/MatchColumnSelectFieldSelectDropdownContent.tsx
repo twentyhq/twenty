@@ -1,5 +1,5 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -94,7 +94,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
             }
             LeftIcon={getIcon(field.icon)}
             text={field.label}
-            hasSubMenu={isCompositeField(field.type)}
+            hasSubMenu={isCompositeFieldType(field.type)}
           />
         ))}
       </DropdownMenuItemsContainer>

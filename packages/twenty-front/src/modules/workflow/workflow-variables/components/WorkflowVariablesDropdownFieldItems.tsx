@@ -141,7 +141,7 @@ export const WorkflowVariablesDropdownFieldItems = ({
           <MenuItemSelect
             key={key}
             selected={false}
-            hovered={false}
+            focused={false}
             onClick={() => handleSelectField(key)}
             text={subStep.label || key}
             hasSubMenu={!subStep.isLeaf}
