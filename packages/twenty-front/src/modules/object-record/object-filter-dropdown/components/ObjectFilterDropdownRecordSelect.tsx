@@ -1,3 +1,4 @@
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import {
   getFilterTypeFromFieldType,
@@ -22,6 +23,7 @@ import { RelationFilterValue } from '@/views/view-filter-value/types/RelationFil
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
 import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconUserCircle } from 'twenty-ui/display';
 import { v4 } from 'uuid';
@@ -63,6 +65,9 @@ export const ObjectFilterDropdownRecordSelect = ({
   );
 
   const { applyRecordFilter } = useApplyRecordFilter(viewComponentId);
+
+  const { id: currentWorkspaceMemberId } =
+    useRecoilValue(currentWorkspaceMemberState) ?? {};
 
   let isCurrentWorkspaceMemberSelected: boolean;
 
@@ -166,6 +171,9 @@ export const ObjectFilterDropdownRecordSelect = ({
     const isItemCurrentWorkspaceMember =
       itemToSelect.id === CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID;
 
+    const isItemCurrentWorkspaceMemberId =
+      itemToSelect.id === currentWorkspaceMemberId;
+
     const selectedRecordIdsWithAddedRecord = [
       ...selectedRecordIds,
       itemToSelect.id,
@@ -183,7 +191,9 @@ export const ObjectFilterDropdownRecordSelect = ({
 
     const newIsCurrentWorkspaceMemberSelected = isItemCurrentWorkspaceMember
       ? isNewSelectedValue
-      : isCurrentWorkspaceMemberSelected;
+      : isItemCurrentWorkspaceMemberId
+        ? false
+        : isCurrentWorkspaceMemberSelected;
 
     const selectedRecordNames = [
       ...recordsToSelect,

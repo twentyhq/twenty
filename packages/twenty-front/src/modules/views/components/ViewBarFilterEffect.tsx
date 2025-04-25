@@ -9,7 +9,6 @@ import { objectFilterDropdownSelectedOptionValuesComponentState } from '@/object
 import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
-import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
 import { isDefined } from 'twenty-shared/utils';
 import { relationFilterValueSchema } from '../view-filter-value/validation-schemas/relationFilterValueSchema';
 

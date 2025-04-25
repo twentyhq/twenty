@@ -9,8 +9,9 @@ const relationFilterValueArraySchema = z.array(relationFilterValueItemSchema);
 
 export const relationFilterValueSchema = z
   .string()
+  .optional()
   .transform((value, ctx) => {
-    if (value === '') {
+    if (value === '' || value === undefined) {
       return [];
     }
 
