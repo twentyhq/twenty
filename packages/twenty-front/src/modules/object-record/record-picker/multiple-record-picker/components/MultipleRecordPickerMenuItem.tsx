@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useRecordPickerGetSearchRecordAndObjectMetadataItemFromRecordId } from '@/object-record/record-picker/hooks/useRecordPickerGetSearchRecordAndObjectMetadataItemFromRecordId';
 import { MultipleRecordPickerMenuItemContent } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItemContent';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isDefined } from 'twenty-shared/utils';
 
 export const StyledSelectableItem = styled(SelectableListItem)`

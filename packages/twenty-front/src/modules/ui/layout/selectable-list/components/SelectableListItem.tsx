@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useRef } from 'react';
 
-import { SelectableListItemHotkeyEffect } from '@/ui/layout/selectable-list/components/SelectableItemHotkeyEffect';
+import { SelectableListItemHotkeyEffect } from '@/ui/layout/selectable-list/components/SelectableListItemHotkeyEffect';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import styled from '@emotion/styled';

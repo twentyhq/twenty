@@ -1,6 +1,6 @@
 import { ActionDisplayProps } from '@/action-menu/actions/display/components/ActionDisplay';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';

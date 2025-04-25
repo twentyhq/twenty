@@ -4,7 +4,7 @@ import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-pic
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useCallback } from 'react';

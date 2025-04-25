@@ -9,8 +9,8 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
