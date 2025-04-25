@@ -60,6 +60,17 @@ export const useRecordTitleCell = () => {
         containerType: RecordTitleCellContainerType;
         customEditHotkeyScopeForField?: HotkeyScope;
       }) => {
+        if (isDefined(customEditHotkeyScopeForField)) {
+          setHotkeyScopeAndMemorizePreviousScope(
+            customEditHotkeyScopeForField.scope,
+            customEditHotkeyScopeForField.customScopes,
+          );
+        } else {
+          setHotkeyScopeAndMemorizePreviousScope(
+            TitleInputHotkeyScope.TitleInput,
+          );
+        }
+
         const recordTitleCellId = getRecordTitleCellId(
           recordId,
           fieldMetadataId,
@@ -84,17 +95,6 @@ export const useRecordTitleCell = () => {
           fieldDefinition,
           fieldComponentInstanceId: recordTitleCellId,
         });
-
-        if (isDefined(customEditHotkeyScopeForField)) {
-          setHotkeyScopeAndMemorizePreviousScope(
-            customEditHotkeyScopeForField.scope,
-            customEditHotkeyScopeForField.customScopes,
-          );
-        } else {
-          setHotkeyScopeAndMemorizePreviousScope(
-            TitleInputHotkeyScope.TitleInput,
-          );
-        }
       },
     [initFieldInputDraftValue, setHotkeyScopeAndMemorizePreviousScope],
   );
