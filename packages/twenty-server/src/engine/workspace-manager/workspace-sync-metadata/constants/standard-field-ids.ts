@@ -180,14 +180,14 @@ export const PRODUCT_STANDARD_FIELD_IDS = {
 };
 
 export const TRACEABLE_STANDARD_FIELD_IDS = {
-  linkName: '20202020-1234-5678-9abc-def123456789',
+  name: '20202020-0707-4245-9105-6b568abfab9f',
   websiteUrl: '20202020-9876-5432-1abc-def654321fed',
   campaignName: '20202020-abcd-ef12-3456-7890abcdef12',
   campaignSource: '20202020-5678-90ab-cdef-1234567890ab',
   meansOfCommunication: '20202020-4321-8765-cba9-fed123456789',
   keyword: '20202020-8e7d-6c5b-4a3a-2b1c0d9e8f7a',
   campaignContent: '20202020-e52a-4e7c-9445-c9390d78bcb3',
-  generatedUrl: '20202020-4d3c-2b1a-0f9e-8d7c6b5a4b3c',
+  generatedUrl: '20202020-e611-4874-ba80-3d45cf541b2a',
   position: '20202020-1a2b-3c4d-5e6f-7a8b9c0d1e2f',
   timelineActivities: '20202020-b751-43e3-a9f0-186288344f21',
   searchVector: '20202020-8c9d-7e6f-5a4b-3c2d1e0f9a8b',

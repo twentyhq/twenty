@@ -1,13 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
-import { LinkLogsWorkspaceEntity } from 'src/modules/linklogs/standard-objects/linklog.workspace-entity';
 import { TraceableWorkspaceEntity } from 'src/modules/traceable/standard-objects/traceable.workspace-entity';
 
 @Injectable()
@@ -16,6 +16,7 @@ export class TraceableEventListener {
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @OnDatabaseBatchEvent('traceable', DatabaseEventAction.UPDATED)
@@ -40,12 +41,6 @@ export class TraceableEventListener {
         'traceable',
       );
 
-    const linklogsRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<LinkLogsWorkspaceEntity>(
-        workspaceId,
-        'linkLogs',
-      );
-
     const traceableEntities = await Promise.all(
       events.map((event) =>
         traceableRepository.findOneByOrFail({
@@ -57,53 +52,28 @@ export class TraceableEventListener {
     await Promise.all(
       traceableEntities.map(async (traceable) => {
         if (isDefined(traceable?.websiteUrl)) {
-          const generatedUrl = this.generateTraceableUrl(traceable);
+          const generatedUrl = this.generateTraceableUrl(
+            traceable,
+            workspaceId,
+          );
 
           traceable.generatedUrl = generatedUrl;
 
-          await traceableRepository.save(traceable);
+          return traceableRepository.save(traceable);
         }
-
-        const existingLog = await linklogsRepository.findOneBy({
-          linkId: traceable.id,
-        });
-
-        if (existingLog) {
-          existingLog.userAgent = `${traceable.id}`;
-          existingLog.utmSource = traceable.campaignSource || '';
-          existingLog.utmMedium = traceable.meansOfCommunication || '';
-          existingLog.utmCampaign = traceable.campaignName || '';
-          existingLog.linkName = traceable.linkName || '';
-          existingLog.uv = 10;
-          await linklogsRepository.save(existingLog);
-        } else {
-          const traceableAccessLog = linklogsRepository.create({
-            userAgent: `${traceable.id}`,
-            linkId: traceable.id,
-            utmSource: traceable.campaignSource || '',
-            utmMedium: 'cpc',
-            utmCampaign: traceable.campaignName || '',
-            userIp: null,
-            linkName: traceable.linkName || '',
-            uv: 10,
-          });
-
-          await linklogsRepository.save(traceableAccessLog);
-        }
-
-        return traceable;
       }),
     );
-
-    await traceableRepository.find();
 
     return;
   }
 
   private generateTraceableUrl(
     traceable: TraceableWorkspaceEntity,
+    workspaceId: string,
   ): TraceableWorkspaceEntity['generatedUrl'] {
-    const websiteUrl = traceable.websiteUrl?.primaryLinkUrl || '';
+    const websiteUrl = this.normalizeUrl(
+      traceable.websiteUrl?.primaryLinkUrl as string,
+    ) as string;
     const campaignName = traceable.campaignName || '';
     const campaignSource = traceable.campaignSource || '';
     const meansOfCommunication = traceable.meansOfCommunication || '';
@@ -116,6 +86,51 @@ export class TraceableEventListener {
       meansOfCommunication,
     )}&utm_term=${encodeURIComponent(keyworkd)}&utm_content=${encodeURIComponent(campaignContent)}`;
 
-    return url;
+    const baseUrl = this.twentyConfigService.get('SERVER_URL');
+
+    return {
+      primaryLinkLabel: url,
+      primaryLinkUrl: `${baseUrl}/traceable/r/${workspaceId}/${traceable.id}`,
+      secondaryLinks: null,
+    };
+  }
+
+  normalizeUrl(url: string): string {
+    if (!url) throw new BadRequestException('URL is required');
+
+    try {
+      // Add https:// if no protocol exists
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = `https://${url}`;
+      }
+
+      const parsedUrl = new URL(url);
+
+      // Remove trailing slash from pathname
+      parsedUrl.pathname = parsedUrl.pathname.replace(/\/+$/, '');
+
+      // Sort query parameters alphabetically
+      if (parsedUrl.search) {
+        const params = Array.from(parsedUrl.searchParams.entries());
+
+        params.sort((a, b) => a[0].localeCompare(b[0]));
+        parsedUrl.search = '';
+        params.forEach(([key, value]) => {
+          parsedUrl.searchParams.append(key, value);
+        });
+      }
+
+      // Remove default ports (e.g., :443 for HTTPS)
+      if (parsedUrl.port === '443' && parsedUrl.protocol === 'https:') {
+        parsedUrl.port = '';
+      } else if (parsedUrl.port === '80' && parsedUrl.protocol === 'http:') {
+        parsedUrl.port = '';
+      }
+
+      // Return normalized URL without trailing slash
+      return parsedUrl.toString().replace(/\/$/, '');
+    } catch (error) {
+      throw new BadRequestException('Invalid URL provided');
+    }
   }
 }

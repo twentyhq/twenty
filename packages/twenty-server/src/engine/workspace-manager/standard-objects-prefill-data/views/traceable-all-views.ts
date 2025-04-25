@@ -19,7 +19,7 @@ export const tracaebleAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.traceable].fields[
-            TRACEABLE_STANDARD_FIELD_IDS.linkName
+            TRACEABLE_STANDARD_FIELD_IDS.name
           ],
         position: 0,
         isVisible: true,

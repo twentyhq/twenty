@@ -25,7 +25,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
-const NAME_FIELD_NAME = 'linkName';
+const NAME_FIELD_NAME = 'name';
 
 export const SEARCH_FIELDS_FOR_TRACEABLE: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
@@ -38,18 +38,18 @@ export const SEARCH_FIELDS_FOR_TRACEABLE: FieldTypeAndNameMetadata[] = [
   labelPlural: msg`Traceables`,
   description: msg`A traceable link`,
   icon: 'IconLink',
-  labelIdentifierStandardId: TRACEABLE_STANDARD_FIELD_IDS.linkName,
+  labelIdentifierStandardId: TRACEABLE_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsNotAuditLogged()
 export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.linkName,
+    standardId: TRACEABLE_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Traceable Link Name`,
     description: msg`The name of the traceable link`,
     icon: 'IconLink',
   })
-  linkName: string;
+  name: string;
 
   @WorkspaceField({
     standardId: TRACEABLE_STANDARD_FIELD_IDS.websiteUrl,
@@ -107,12 +107,12 @@ export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: TRACEABLE_STANDARD_FIELD_IDS.generatedUrl,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.LINKS,
     label: msg`Generated URL`,
     description: msg`The final URL with UTM parameters`,
     icon: 'IconLink',
   })
-  generatedUrl: string | null;
+  generatedUrl: LinksMetadata | null;
 
   @WorkspaceField({
     standardId: TRACEABLE_STANDARD_FIELD_IDS.position,
