@@ -426,8 +426,8 @@ describe('TwentyConfigService', () => {
 
     it('should return cache stats when database driver is active', () => {
       const cacheStats = {
-        positiveEntries: 2,
-        negativeEntries: 1,
+        foundConfigValues: 2,
+        knownMissingKeys: 1,
         cacheKeys: ['TEST_VAR', 'SENSITIVE_VAR'],
       };
 

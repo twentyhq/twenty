@@ -55,13 +55,13 @@ export class ConfigCacheService implements OnModuleDestroy {
   }
 
   getCacheInfo(): {
-    positiveEntries: number;
-    negativeEntries: number;
+    foundConfigValues: number;
+    knownMissingKeys: number;
     cacheKeys: string[];
   } {
     return {
-      positiveEntries: this.foundConfigValuesCache.size,
-      negativeEntries: this.knownMissingKeysCache.size,
+      foundConfigValues: this.foundConfigValuesCache.size,
+      knownMissingKeys: this.knownMissingKeysCache.size,
       cacheKeys: Array.from(this.foundConfigValuesCache.keys()),
     };
   }
@@ -71,9 +71,9 @@ export class ConfigCacheService implements OnModuleDestroy {
   }
 
   getAllKeys(): ConfigKey[] {
-    const positiveKeys = Array.from(this.foundConfigValuesCache.keys());
-    const negativeKeys = Array.from(this.knownMissingKeysCache);
+    const foundKeys = Array.from(this.foundConfigValuesCache.keys());
+    const missingKeys = Array.from(this.knownMissingKeysCache);
 
-    return [...new Set([...positiveKeys, ...negativeKeys])];
+    return [...new Set([...foundKeys, ...missingKeys])];
   }
 }

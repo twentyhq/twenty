@@ -33,8 +33,8 @@ export interface DatabaseConfigDriverInterface {
    * Get information about the cache state
    */
   getCacheInfo(): {
-    positiveEntries: number;
-    negativeEntries: number;
+    foundConfigValues: number;
+    knownMissingKeys: number;
     cacheKeys: string[];
   };
 }

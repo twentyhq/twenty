@@ -174,8 +174,8 @@ export class TwentyConfigService {
   getCacheInfo(): {
     usingDatabaseDriver: boolean;
     cacheStats?: {
-      positiveEntries: number;
-      negativeEntries: number;
+      foundConfigValues: number;
+      knownMissingKeys: number;
       cacheKeys: string[];
     };
   } {

@@ -106,8 +106,8 @@ export class DatabaseConfigDriver
   }
 
   getCacheInfo(): {
-    positiveEntries: number;
-    negativeEntries: number;
+    foundConfigValues: number;
+    knownMissingKeys: number;
     cacheKeys: string[];
   } {
     return this.configCache.getCacheInfo();

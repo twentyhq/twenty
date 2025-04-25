@@ -261,8 +261,8 @@ describe('DatabaseConfigDriver', () => {
   describe('cache operations', () => {
     it('should return cache info', () => {
       const cacheInfo = {
-        positiveEntries: 2,
-        negativeEntries: 1,
+        foundConfigValues: 2,
+        knownMissingKeys: 1,
         cacheKeys: [CONFIG_PASSWORD_KEY, CONFIG_EMAIL_KEY],
       };
 

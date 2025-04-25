@@ -118,8 +118,8 @@ describe('ConfigCacheService', () => {
 
       const info = service.getCacheInfo();
 
-      expect(info.positiveEntries).toBe(2);
-      expect(info.negativeEntries).toBe(1);
+      expect(info.foundConfigValues).toBe(2);
+      expect(info.knownMissingKeys).toBe(1);
       expect(info.cacheKeys).toContain(key1);
       expect(info.cacheKeys).toContain(key2);
       expect(info.cacheKeys).not.toContain(key3);
@@ -138,8 +138,8 @@ describe('ConfigCacheService', () => {
 
       const cacheInfo = service.getCacheInfo();
 
-      expect(cacheInfo.positiveEntries).toBe(2);
-      expect(cacheInfo.negativeEntries).toBe(1);
+      expect(cacheInfo.foundConfigValues).toBe(2);
+      expect(cacheInfo.knownMissingKeys).toBe(1);
       expect(cacheInfo.cacheKeys).toContain(key1);
       expect(cacheInfo.cacheKeys).toContain(key2);
       expect(service.isKeyKnownMissing(key3)).toBe(true);
