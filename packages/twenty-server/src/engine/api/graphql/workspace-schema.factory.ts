@@ -5,6 +5,8 @@ import chalk from 'chalk';
 import { GraphQLSchema, printSchema } from 'graphql';
 import { gql } from 'graphql-tag';
 
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
@@ -19,6 +21,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class WorkspaceSchemaFactory {
@@ -30,6 +33,7 @@ export class WorkspaceSchemaFactory {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async createGraphQLSchema(authContext: AuthContext): Promise<GraphQLSchema> {
@@ -42,7 +46,10 @@ export class WorkspaceSchemaFactory {
       authContext.workspace.id,
     );
 
-    if (isNewRelationEnabled) {
+    if (
+      isNewRelationEnabled &&
+      this.twentyConfigService.get('NODE_ENV') !== NodeEnvironment.test
+    ) {
       // eslint-disable-next-line no-console
       console.log(
         chalk.yellow('🚧 New relation schema generation is enabled 🚧'),

@@ -16,8 +16,13 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
+import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 describe('people resolvers (integration)', () => {
+  beforeAll(async () => {
+    await deleteAllRecords('person');
+  });
+
   it('1. should create and return people', async () => {
     const personCity1 = generateRecordName(PERSON_1_ID);
     const personCity2 = generateRecordName(PERSON_2_ID);

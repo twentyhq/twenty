@@ -6,6 +6,7 @@ import {
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { COMPANY_1_ID } from 'test/integration/constants/mock-company-ids.constants';
+import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 const testPrimaryLinkUrl = 'http://test';
 
@@ -14,17 +15,7 @@ describe('Core REST API Find Many endpoint', () => {
   const testPersonCities: Record<string, string> = {};
 
   beforeAll(async () => {
-    const response = await makeRestAPIRequest({
-      method: 'get',
-      path: '/people',
-    }).expect(200);
-
-    for (const person of response.body.data.people) {
-      await makeRestAPIRequest({
-        method: 'delete',
-        path: `/people/${person.id}`,
-      });
-    }
+    await deleteAllRecords('person');
 
     await makeRestAPIRequest({
       method: 'post',

@@ -3,8 +3,13 @@ import {
   PERSON_1_ID,
 } from 'test/integration/constants/mock-person-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 describe('Core REST API Delete One endpoint', () => {
+  beforeAll(async () => {
+    await deleteAllRecords('person');
+  });
+
   beforeEach(async () => {
     await makeRestAPIRequest({
       method: 'post',

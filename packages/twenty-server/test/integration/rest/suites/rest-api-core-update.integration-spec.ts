@@ -4,13 +4,11 @@ import {
 } from 'test/integration/constants/mock-person-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
+import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 describe('Core REST API Update One endpoint', () => {
   beforeAll(async () => {
-    await makeRestAPIRequest({
-      method: 'delete',
-      path: `/people/${PERSON_1_ID}`,
-    });
+    await deleteAllRecords('person');
     await makeRestAPIRequest({
       method: 'post',
       path: `/people`,

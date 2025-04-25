@@ -1,6 +1,8 @@
 import { JestConfigWithTsJest } from 'ts-jest';
 import 'tsconfig-paths/register';
 
+import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
+
 import { createApp } from './create-app';
 
 export default async (_, projectConfig: JestConfigWithTsJest) => {
@@ -12,5 +14,8 @@ export default async (_, projectConfig: JestConfigWithTsJest) => {
 
   await app.listen(projectConfig.globals.APP_PORT);
 
+  await rawDataSource.initialize();
+
   global.app = app;
+  global.testDataSource = rawDataSource;
 };

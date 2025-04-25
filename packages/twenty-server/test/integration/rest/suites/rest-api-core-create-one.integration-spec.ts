@@ -1,15 +1,12 @@
 import { PERSON_1_ID } from 'test/integration/constants/mock-person-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
 describe('Core REST API Create One endpoint', () => {
-  beforeAll(
-    async () =>
-      await makeRestAPIRequest({
-        method: 'delete',
-        path: `/people/${PERSON_1_ID}`,
-      }),
-  );
+  beforeAll(async () => {
+    await deleteAllRecords('person');
+  });
 
   it('should create a new person', async () => {
     const personCity = generateRecordName(PERSON_1_ID);
