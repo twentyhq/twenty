@@ -81,6 +81,11 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
   const relationType = watchFormValue('relation.type', initialRelationType);
   const relationTypeConfig = RELATION_TYPES[relationType];
 
+  const oppositeRelationType =
+    relationType === RelationDefinitionType.MANY_TO_ONE
+      ? RelationDefinitionType.ONE_TO_MANY
+      : RelationDefinitionType.MANY_TO_ONE;
+
   return (
     <SettingsDataModelPreviewFormCard
       preview={
@@ -120,10 +125,7 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
                 ) || 'Field name',
               type: FieldMetadataType.RELATION,
               relationDefinition: {
-                direction:
-                  relationType === RelationDefinitionType.MANY_TO_ONE
-                    ? RelationDefinitionType.ONE_TO_MANY
-                    : RelationDefinitionType.MANY_TO_ONE,
+                direction: oppositeRelationType,
               } as RelationDefinition,
             }}
             shrink
