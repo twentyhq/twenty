@@ -1,5 +1,4 @@
 import { Injectable, Logger, Optional } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 
 import { isString } from 'class-validator';
 
@@ -22,10 +21,10 @@ export class TwentyConfigService {
   constructor(
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
     @Optional() private readonly databaseConfigDriver: DatabaseConfigDriver,
-    private readonly configService: ConfigService,
   ) {
-    const isConfigVariablesInDbEnabled =
-      this.configService.get('IS_CONFIG_VARIABLES_IN_DB_ENABLED') === 'true';
+    const isConfigVariablesInDbEnabled = this.environmentConfigDriver.get(
+      'IS_CONFIG_VARIABLES_IN_DB_ENABLED',
+    );
 
     this.isDatabaseDriverActive =
       isConfigVariablesInDbEnabled && !!this.databaseConfigDriver;

@@ -1,6 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { ConfigVariablesMetadataMap } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { ConfigVariableOptions } from 'src/engine/core-modules/twenty-config/types/config-variable-options.type';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/types/config-variable-type.type';
@@ -11,7 +12,10 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 export class ConfigValueConverterService {
   private readonly logger = new Logger(ConfigValueConverterService.name);
 
-  constructor(private readonly configVariables: ConfigVariables) {}
+  constructor(
+    @Inject(CONFIG_VARIABLES_INSTANCE_TOKEN)
+    private readonly configVariables: ConfigVariables,
+  ) {}
 
   convertDbValueToAppValue<T extends keyof ConfigVariables>(
     dbValue: unknown,

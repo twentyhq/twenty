@@ -5,11 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { ConfigCacheService } from 'src/engine/core-modules/twenty-config/cache/config-cache.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
 import { DatabaseConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/database-config.driver';
 import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
-
-const CONFIG_VARIABLES_INSTANCE = new ConfigVariables();
 
 @Module({})
 export class DatabaseConfigModule {
@@ -26,8 +25,8 @@ export class DatabaseConfigModule {
         ConfigStorageService,
         ConfigValueConverterService,
         {
-          provide: ConfigVariables,
-          useValue: CONFIG_VARIABLES_INSTANCE,
+          provide: CONFIG_VARIABLES_INSTANCE_TOKEN,
+          useValue: new ConfigVariables(),
         },
       ],
       exports: [DatabaseConfigDriver],

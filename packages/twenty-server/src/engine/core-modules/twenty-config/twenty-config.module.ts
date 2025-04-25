@@ -5,6 +5,7 @@ import {
   ConfigVariables,
   validate,
 } from 'src/engine/core-modules/twenty-config/config-variables';
+import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { DatabaseConfigModule } from 'src/engine/core-modules/twenty-config/drivers/database-config.module';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 import { ConfigurableModuleClass } from 'src/engine/core-modules/twenty-config/twenty-config.module-definition';
@@ -37,7 +38,7 @@ export class TwentyConfigModule extends ConfigurableModuleClass {
         TwentyConfigService,
         EnvironmentConfigDriver,
         {
-          provide: ConfigVariables,
+          provide: CONFIG_VARIABLES_INSTANCE_TOKEN,
           useValue: new ConfigVariables(),
         },
       ],
