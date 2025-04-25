@@ -41,6 +41,8 @@ export const RecordChip = ({
     record,
   });
 
+  console.log('recordChipData', recordChipData);
+
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);

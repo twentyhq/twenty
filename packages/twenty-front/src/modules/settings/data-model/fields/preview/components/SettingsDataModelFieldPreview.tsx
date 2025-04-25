@@ -87,22 +87,16 @@ export const SettingsDataModelFieldPreview = ({
       objectMetadataItem,
     });
 
-  console.log('objectMetadataItem', objectMetadataItem);
-
   const previewRecord = usePreviewRecord({
     objectMetadataItem,
     skip: !isLabelIdentifier,
   });
-
-  console.log('previewRecord', previewRecord);
 
   const fieldPreviewValue = useFieldPreviewValue({
     fieldMetadataItem,
     relationObjectMetadataItem,
     skip: isLabelIdentifier,
   });
-
-  console.log('fieldPreviewValue', fieldPreviewValue);
 
   const fieldName =
     fieldMetadataItem.name || `${fieldMetadataItem.type}-new-field`;

@@ -8,6 +8,7 @@ import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/me
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { isDefined } from 'twenty-shared/utils';
+import { pascalCase } from '~/utils/string/pascalCase';
 
 export const RelationFromManyFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useRelationFromManyFieldDisplay();
@@ -46,18 +47,39 @@ export const RelationFromManyFieldDisplay = () => {
         : CoreObjectNameSingular.Task;
 
     const relationFieldName = fieldName === 'noteTargets' ? 'note' : 'task';
+    const formattedRecords = fieldValue.map((record) => {
+      if (!isDefined(record)) {
+        return undefined;
+      }
+
+      if (!isDefined(record[relationFieldName])) {
+        return {
+          ...record,
+          [relationFieldName]: {
+            id: '',
+            title: pascalCase(relationFieldName),
+          },
+        };
+      }
+
+      return record;
+    });
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
-        {fieldValue
-          .map((record) =>
-            isDefined(record) && isDefined(record[relationFieldName]) ? (
+        {formattedRecords
+          .map((record) => {
+            if (!isDefined(record)) {
+              return undefined;
+            }
+
+            return (
               <RecordChip
                 key={record.id}
                 objectNameSingular={objectNameSingular}
                 record={record[relationFieldName]}
               />
-            ) : undefined,
-          )
+            );
+          })
           .filter(isDefined)}
       </ExpandableList>
     );
