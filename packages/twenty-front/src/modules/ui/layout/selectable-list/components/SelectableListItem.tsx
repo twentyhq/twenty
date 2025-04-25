@@ -39,7 +39,7 @@ export const SelectableListItem = ({
 
   return (
     <>
-      {isSelectedItemId && isDefined(onEnter) && isSelectedItemId && (
+      {isSelectedItemId && isDefined(onEnter) && (
         <SelectableListItemHotkeyEffect itemId={itemId} onEnter={onEnter} />
       )}
       <StyledContainer className={className} ref={scrollRef}>

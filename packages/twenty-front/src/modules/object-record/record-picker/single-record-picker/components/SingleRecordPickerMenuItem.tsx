@@ -48,7 +48,6 @@ export const SingleRecordPickerMenuItem = ({
       }}
     >
       <MenuItemSelectAvatar
-        key={record.id}
         testId="menu-item"
         onClick={() => onRecordSelected(record)}
         text={record.name}

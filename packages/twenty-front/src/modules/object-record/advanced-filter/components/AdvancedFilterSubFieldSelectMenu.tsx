@@ -153,12 +153,10 @@ export const AdvancedFilterSubFieldSelectMenu = ({
                   key={`select-filter-${index}`}
                   testId={`select-filter-${index}`}
                   onClick={() => {
-                    if (isDefined(fieldMetadataItemUsedInDropdown)) {
-                      handleSelectFilter(
-                        fieldMetadataItemUsedInDropdown,
-                        subFieldName,
-                      );
-                    }
+                    handleSelectFilter(
+                      fieldMetadataItemUsedInDropdown,
+                      subFieldName,
+                    );
                   }}
                   text={getCompositeSubFieldLabel(
                     objectFilterDropdownSubMenuFieldType,

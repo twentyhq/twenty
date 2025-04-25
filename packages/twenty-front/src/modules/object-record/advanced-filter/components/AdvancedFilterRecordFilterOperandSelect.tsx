@@ -125,7 +125,9 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
           <DropdownMenuItemsContainer>
             <SelectableList
               hotkeyScope={dropdownId}
-              selectableItemIdArray={operandsForFilterType}
+              selectableItemIdArray={operandsForFilterType.map(
+                (operand) => operand,
+              )}
               selectableListInstanceId={dropdownId}
             >
               {operandsForFilterType.map((filterOperand, index) => (

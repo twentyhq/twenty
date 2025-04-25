@@ -1,7 +1,5 @@
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
-import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
-
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -35,8 +33,10 @@ export const AdvancedFilterFieldSelectMenu = ({
 }: AdvancedFilterFieldSelectMenuProps) => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
-  const { closeAdvancedFilterFieldSelectDropdown } =
-    useAdvancedFilterFieldSelectDropdown(recordFilterId);
+  const {
+    closeAdvancedFilterFieldSelectDropdown,
+    advancedFilterFieldSelectDropdownId,
+  } = useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
   const [objectFilterDropdownSearchInput] = useRecoilComponentStateV2(
     objectFilterDropdownSearchInputComponentState,
@@ -74,7 +74,9 @@ export const AdvancedFilterFieldSelectMenu = ({
       (fieldMetadataItem) => !visibleColumnsIds.includes(fieldMetadataItem.id),
     );
 
-  const { resetSelectedItem } = useSelectableList(OBJECT_FILTER_DROPDOWN_ID);
+  const { resetSelectedItem } = useSelectableList(
+    advancedFilterFieldSelectDropdownId,
+  );
 
   const { selectFieldUsedInAdvancedFilterDropdown } =
     useSelectFieldUsedInAdvancedFilterDropdown();
@@ -119,9 +121,6 @@ export const AdvancedFilterFieldSelectMenu = ({
   const shouldShowSeparator =
     visibleColumnsFieldMetadataItems.length > 0 &&
     hiddenColumnsFieldMetadataItems.length > 0;
-
-  const { advancedFilterFieldSelectDropdownId } =
-    useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
   const selectableItemIdArray = [
     ...visibleColumnsFieldMetadataItems.map(
