@@ -41,7 +41,7 @@ export function applyBasicValidators(
       break;
 
     case 'enum':
-      if (options && Array.isArray(options)) {
+      if (options) {
         IsEnum(options)(target, propertyKey);
       }
       break;

@@ -1,4 +1,3 @@
-import { ScheduleModule } from '@nestjs/schedule';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ConfigCacheService } from 'src/engine/core-modules/twenty-config/cache/config-cache.service';
@@ -9,7 +8,6 @@ describe('ConfigCacheService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ScheduleModule.forRoot()],
       providers: [ConfigCacheService],
     }).compile();
 

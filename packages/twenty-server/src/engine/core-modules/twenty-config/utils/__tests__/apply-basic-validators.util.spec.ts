@@ -1,10 +1,10 @@
 import { Transform } from 'class-transformer';
 import {
-  IsArray,
-  IsBoolean,
-  IsEnum,
-  IsNumber,
-  IsString,
+    IsArray,
+    IsBoolean,
+    IsEnum,
+    IsNumber,
+    IsString,
 } from 'class-validator';
 
 import { applyBasicValidators } from 'src/engine/core-modules/twenty-config/utils/apply-basic-validators.util';
@@ -112,12 +112,25 @@ describe('applyBasicValidators', () => {
   });
 
   describe('enum type', () => {
-    it('should apply enum validator with options', () => {
+    it('should apply enum validator with string array options', () => {
       const enumOptions = ['option1', 'option2', 'option3'];
 
       applyBasicValidators('enum', mockTarget, mockPropertyKey, enumOptions);
 
       expect(IsEnum).toHaveBeenCalledWith(enumOptions);
+      expect(Transform).not.toHaveBeenCalled(); // Enum doesn't need a transform
+    });
+
+    it('should apply enum validator with enum object options', () => {
+      enum TestEnum {
+        Option1 = 'value1',
+        Option2 = 'value2',
+        Option3 = 'value3',
+      }
+
+      applyBasicValidators('enum', mockTarget, mockPropertyKey, TestEnum);
+
+      expect(IsEnum).toHaveBeenCalledWith(TestEnum);
       expect(Transform).not.toHaveBeenCalled(); // Enum doesn't need a transform
     });
 

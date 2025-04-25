@@ -9,6 +9,8 @@ import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-conf
 import { DatabaseConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/database-config.driver';
 import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
 
+const CONFIG_VARIABLES_INSTANCE = new ConfigVariables();
+
 @Module({})
 export class DatabaseConfigModule {
   static forRoot(): DynamicModule {
@@ -25,7 +27,7 @@ export class DatabaseConfigModule {
         ConfigValueConverterService,
         {
           provide: ConfigVariables,
-          useValue: new ConfigVariables(),
+          useValue: CONFIG_VARIABLES_INSTANCE,
         },
       ],
       exports: [DatabaseConfigDriver],

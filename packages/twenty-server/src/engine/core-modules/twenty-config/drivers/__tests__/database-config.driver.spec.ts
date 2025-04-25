@@ -344,15 +344,31 @@ describe('DatabaseConfigDriver', () => {
       );
     });
 
-    it('should handle errors gracefully', async () => {
+    it('should handle errors gracefully and verify cache remains unchanged', async () => {
       const error = new Error('Database error');
 
       jest.spyOn(configStorage, 'loadAll').mockRejectedValue(error);
       jest.spyOn(driver['logger'], 'error').mockImplementation();
 
+      const mockCacheState = new Map();
+
+      mockCacheState.set(CONFIG_PASSWORD_KEY, false);
+      jest
+        .spyOn(configCache, 'getAllKeys')
+        .mockReturnValue([CONFIG_PASSWORD_KEY]);
+      jest
+        .spyOn(configCache, 'get')
+        .mockImplementation((key) => mockCacheState.get(key));
+
       await driver.refreshAllCache();
 
       expect(driver['logger'].error).toHaveBeenCalled();
+      expect(configStorage.loadAll).toHaveBeenCalled();
+
+      expect(configCache.set).not.toHaveBeenCalled();
+      expect(configCache.markKeyAsMissing).not.toHaveBeenCalled();
+      expect(configCache.clear).not.toHaveBeenCalled();
+      expect(configCache.clearAll).not.toHaveBeenCalled();
     });
   });
 });

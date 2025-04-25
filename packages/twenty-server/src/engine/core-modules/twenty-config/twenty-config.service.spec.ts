@@ -219,6 +219,20 @@ describe('TwentyConfigService', () => {
       expect(environmentConfigDriver.get).toHaveBeenCalledWith(key);
     });
 
+    it('should return undefined when key does not exist in any driver', () => {
+      const nonExistentKey = 'NON_EXISTENT_KEY' as keyof ConfigVariables;
+
+      jest.spyOn(databaseConfigDriver, 'get').mockReturnValue(undefined);
+      jest.spyOn(environmentConfigDriver, 'get').mockReturnValue(undefined);
+      setPrivateProps(service, { isDatabaseDriverActive: true });
+
+      const result = service.get(nonExistentKey);
+
+      expect(result).toBeUndefined();
+      expect(databaseConfigDriver.get).toHaveBeenCalledWith(nonExistentKey);
+      expect(environmentConfigDriver.get).toHaveBeenCalledWith(nonExistentKey);
+    });
+
     it('should use database driver when isDatabaseDriverActive is true and value is found', () => {
       jest.spyOn(databaseConfigDriver, 'get').mockReturnValue(expectedValue);
       setPrivateProps(service, { isDatabaseDriverActive: true });
@@ -332,7 +346,7 @@ describe('TwentyConfigService', () => {
             SENSITIVE_VAR: 'sensitive_data_123',
           };
 
-          return values[keyStr] || '';
+          return values[keyStr] || undefined;
         });
 
       jest
@@ -348,7 +362,7 @@ describe('TwentyConfigService', () => {
             SENSITIVE_VAR: 'sensitive_data_123',
           };
 
-          return values[keyStr] || '';
+          return values[keyStr] || undefined;
         });
     };
 

@@ -2,11 +2,10 @@ import { LogLevel } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
-
-import { ConfigValueConverterService } from './config-value-converter.service';
 
 // Mock configTransformers for type validation tests
 jest.mock(
