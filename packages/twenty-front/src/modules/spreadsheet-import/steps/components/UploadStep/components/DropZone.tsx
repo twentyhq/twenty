@@ -156,7 +156,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
           <StyledText>
             <Trans>Upload .xlsx, .xls or .csv file</Trans>
           </StyledText>
-          <MainButton onMouseDown={open} title={t`Select file`} />
+          <MainButton onClick={open} title={t`Select file`} />
         </>
       )}
     </StyledContainer>
