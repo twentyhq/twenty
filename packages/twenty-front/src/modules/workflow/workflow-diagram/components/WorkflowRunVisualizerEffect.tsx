@@ -5,8 +5,8 @@ import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
-import { workflowRunIdComponentState } from '@/workflow/states/workflowRunIdComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
 import { WorkflowRunOutput } from '@/workflow/types/Workflow';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramStatusComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusComponentState';
@@ -26,7 +26,7 @@ export const WorkflowRunVisualizerEffect = ({
   const workflowVersion = useWorkflowVersion(workflowRun?.workflowVersionId);
 
   const setWorkflowRunId = useSetRecoilComponentStateV2(
-    workflowRunIdComponentState,
+    workflowVisualizerWorkflowRunIdComponentState,
   );
   const setWorkflowVisualizerWorkflowId = useSetRecoilComponentStateV2(
     workflowVisualizerWorkflowIdComponentState,

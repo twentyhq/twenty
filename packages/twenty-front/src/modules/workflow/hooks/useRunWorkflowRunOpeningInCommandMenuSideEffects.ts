@@ -4,8 +4,8 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
-import { workflowRunIdComponentState } from '@/workflow/states/workflowRunIdComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
 import { WorkflowRun } from '@/workflow/types/Workflow';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
@@ -60,7 +60,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
         }
 
         set(
-          workflowRunIdComponentState.atomFamily({
+          workflowVisualizerWorkflowRunIdComponentState.atomFamily({
             instanceId: getWorkflowVisualizerComponentInstanceId({
               id: recordId,
               isInRightDrawer: true,
@@ -102,6 +102,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
 
         openWorkflowRunViewStepInCommandMenu({
           workflowId: workflowRunRecord.workflowId,
+          workflowRunId: workflowRunRecord.id,
           title: stepToOpenByDefault.data.name,
           icon: getIcon(getWorkflowNodeIconKey(stepToOpenByDefault.data)),
           workflowSelectedNode: stepToOpenByDefault.id,

@@ -1,4 +1,4 @@
-import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
+import { useCommandMenuWorkflowRunIdOrThrow } from '@/command-menu/pages/workflow/step/view-run/hooks/useCommandMenuWorkflowRunIdOrThrow';
 import { getIsInputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsInputTabDisabled';
 import { getIsOutputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsOutputTabDisabled';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
@@ -40,15 +40,13 @@ const StyledTabList = styled(TabList)`
 type TabId = WorkflowRunTabIdType;
 
 export const CommandMenuWorkflowRunViewStep = () => {
-  const workflowId = useRecoilComponentValueV2(workflowIdComponentState);
-
-  console.log('workflowId in CommandMenuWorkflowRunViewStep', workflowId);
+  const workflowRunId = useCommandMenuWorkflowRunIdOrThrow();
 
   return (
     <WorkflowVisualizerComponentInstanceContext.Provider
       value={{
         instanceId: getWorkflowVisualizerComponentInstanceId({
-          id: workflowId,
+          id: workflowRunId,
           isInRightDrawer: true,
         }),
       }}

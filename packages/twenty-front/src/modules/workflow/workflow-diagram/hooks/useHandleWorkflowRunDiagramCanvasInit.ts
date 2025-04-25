@@ -2,6 +2,7 @@ import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowDiagramStatusComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusComponentState';
 import { workflowRunStepToOpenByDefaultComponentState } from '@/workflow/workflow-diagram/states/workflowRunStepToOpenByDefaultComponentState';
@@ -17,6 +18,8 @@ export const useHandleWorkflowRunDiagramCanvasInit = () => {
 
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
   const { isInRightDrawer } = useContext(ActionMenuContext);
+
+  const workflowRunId = useWorkflowRunIdOrThrow();
 
   const workflowVisualizerWorkflowIdState = useRecoilComponentCallbackStateV2(
     workflowVisualizerWorkflowIdComponentState,
@@ -71,6 +74,7 @@ export const useHandleWorkflowRunDiagramCanvasInit = () => {
 
           openWorkflowRunViewStepInCommandMenu({
             workflowId: workflowVisualizerWorkflowId,
+            workflowRunId,
             title: workflowStepToOpenByDefault.data.name,
             icon: getIcon(
               getWorkflowNodeIconKey(workflowStepToOpenByDefault.data),
@@ -83,13 +87,14 @@ export const useHandleWorkflowRunDiagramCanvasInit = () => {
         }
       },
     [
-      getIcon,
-      isInRightDrawer,
-      openWorkflowRunViewStepInCommandMenu,
-      workflowVisualizerWorkflowIdState,
       workflowDiagramStatusState,
+      isInRightDrawer,
       workflowRunStepToOpenByDefaultState,
+      workflowVisualizerWorkflowIdState,
       workflowSelectedNodeState,
+      openWorkflowRunViewStepInCommandMenu,
+      workflowRunId,
+      getIcon,
     ],
   );
 
