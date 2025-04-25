@@ -1,6 +1,6 @@
 import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 
 import {
   RecordFilter,
@@ -25,7 +25,7 @@ export const buildValueFromFilter = ({
   currentWorkspaceMember?: CurrentWorkspaceMember;
   label?: string;
 }) => {
-  if (isCompositeField(filter.type)) {
+  if (isCompositeFieldType(filter.type)) {
     return;
   }
 
