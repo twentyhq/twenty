@@ -367,7 +367,7 @@ export const computeFilterRecordGqlOperationFilter = ({
       ) {
         const parsedCurrencyCodes = JSON.parse(filter.value) as string[];
 
-        if (parsedCurrencyCodes.length === 0) return {};
+        if (parsedCurrencyCodes.length === 0) return undefined;
 
         const gqlFilter: RecordGqlOperationFilter = {
           [correspondingField.name]: {

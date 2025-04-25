@@ -970,7 +970,7 @@ describe('should work as expected for the different field types', () => {
     };
 
     const ARRFilterIs: RecordFilter = {
-      id: 'company-ARR-filter-is-less-than',
+      id: 'company-ARR-filter-is',
       value: '1000',
       fieldMetadataId: companyMockARRFieldMetadataId?.id,
       displayValue: '1000',
@@ -984,7 +984,7 @@ describe('should work as expected for the different field types', () => {
     };
 
     const ARRFilterIsNot: RecordFilter = {
-      id: 'company-ARR-filter-is-less-than',
+      id: 'company-ARR-filter-is-not',
       value: '1000',
       fieldMetadataId: companyMockARRFieldMetadataId?.id,
       displayValue: '1000',

@@ -14,6 +14,7 @@ import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { getFilterableFieldTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFilterableFieldTypeLabel';
+import { ICON_NAME_BY_SUB_FIELD } from '@/object-record/record-filter/constants/IconNameBySubField';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { areCompositeTypeSubFieldsFilterable } from '@/object-record/record-filter/utils/areCompositeTypeSubFieldsFilterable';
 import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
@@ -185,31 +186,35 @@ export const ObjectFilterDropdownSubFieldSelect = () => {
         }
       />
       <DropdownMenuItemsContainer>
-      <SelectableList
+        <SelectableList
           hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
           selectableItemIdArray={['-1', ...options]}
           selectableListInstanceId={OBJECT_FILTER_DROPDOWN_ID}
         >
-          <SelectableListItem
-            itemId={'-1'}
-            key={`select-filter-${-1}`}
-            onEnter={() => {
-              handleSelectFilter(fieldMetadataItemUsedInDropdown);
-            }}
-          >
-        <MenuItem
-          key={`select-filter-${-1}`}
-          testId={`select-filter-${-1}`}
-          onClick={() => {
-            handleSelectFilter(fieldMetadataItemUsedInDropdown);
-          }}
-          LeftIcon={IconApps}
-          text={`Any ${getFilterableFieldTypeLabel(objectFilterDropdownSubMenuFieldType)} field`}
-        />
-        </SelectableListItem>
-        {subFieldsAreFilterable &&
-          options.map((subFieldName, index) => (
+          {compositeFieldTypeFilterableByAnySubField ? (
             <SelectableListItem
+              itemId={'-1'}
+              key={`select-filter-${-1}`}
+              onEnter={() => {
+                handleSelectFilter(fieldMetadataItemUsedInDropdown);
+              }}
+            >
+              <MenuItem
+                key={`select-filter-${-1}`}
+                testId={`select-filter-${-1}`}
+                onClick={() => {
+                  handleSelectFilter(fieldMetadataItemUsedInDropdown);
+                }}
+                LeftIcon={IconApps}
+                text={`Any ${getFilterableFieldTypeLabel(objectFilterDropdownSubMenuFieldType)} field`}
+              />
+            </SelectableListItem>
+          ) : (
+            <></>
+          )}
+          {subFieldsAreFilterable &&
+            options.map((subFieldName, index) => (
+              <SelectableListItem
                 itemId={subFieldName}
                 key={`select-filter-${index}`}
                 onEnter={() => {
@@ -219,27 +224,30 @@ export const ObjectFilterDropdownSubFieldSelect = () => {
                   );
                 }}
               >
-            <MenuItem
-            focused={selectedItemId === subFieldName}
-              key={`select-filter-${index}`}
-              testId={`select-filter-${index}`}
-              onClick={() => {
-                if (isDefined(fieldMetadataItemUsedInDropdown)) {
-                  handleSelectFilter(
-                    fieldMetadataItemUsedInDropdown,
+                <MenuItem
+                  focused={selectedItemId === subFieldName}
+                  key={`select-filter-${index}`}
+                  testId={`select-filter-${index}`}
+                  onClick={() => {
+                    if (isDefined(fieldMetadataItemUsedInDropdown)) {
+                      handleSelectFilter(
+                        fieldMetadataItemUsedInDropdown,
+                        subFieldName,
+                      );
+                    }
+                  }}
+                  text={getCompositeSubFieldLabel(
+                    objectFilterDropdownSubMenuFieldType,
                     subFieldName,
-                  );
-                }
-              }}
-              text={getCompositeSubFieldLabel(
-                objectFilterDropdownSubMenuFieldType,
-                subFieldName,
-              )}
-              LeftIcon={getIcon(fieldMetadataItemUsedInDropdown?.icon)}
-            />
-            </SelectableListItem>
-          ))}
-          </SelectableList>
+                  )}
+                  LeftIcon={getIcon(
+                    ICON_NAME_BY_SUB_FIELD[subFieldName] ??
+                      fieldMetadataItemUsedInDropdown?.icon,
+                  )}
+                />
+              </SelectableListItem>
+            ))}
+        </SelectableList>
       </DropdownMenuItemsContainer>
     </>
   );

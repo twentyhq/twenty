@@ -72,7 +72,7 @@ export const AdvancedFilterDropdownFilterInput = ({
         (isExpectedSubFieldName(
           FieldMetadataType.CURRENCY,
           'currencyCode',
-          subFieldNameUsedInDropdown,
+          recordFilter.subFieldName,
         ) ? (
           <>
             <ObjectFilterDropdownCurrencySelect dropdownWidth={280} />

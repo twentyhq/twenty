@@ -16,6 +16,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { useLingui } from '@lingui/react/macro';
 import { ChangeEvent, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
@@ -103,7 +104,7 @@ export const ObjectFilterDropdownCurrencySelect = ({
 
     const filterDisplayValue =
       selectedItemNames.length > MAX_ITEMS_TO_DISPLAY
-        ? `${selectedItemNames.length} source types`
+        ? `${selectedItemNames.length} currencies`
         : selectedItemNames.join(', ');
 
     if (
@@ -119,7 +120,7 @@ export const ObjectFilterDropdownCurrencySelect = ({
         findDuplicateRecordFilterInNonAdvancedRecordFilters({
           recordFilters: currentRecordFilters,
           fieldMetadataItemId: fieldMetadataItemUsedInFilterDropdown.id,
-          subFieldName: 'source',
+          subFieldName: 'currencyCode',
         });
 
       const filterIsAlreadyInCurrentRecordFilters = isDefined(
@@ -153,13 +154,15 @@ export const ObjectFilterDropdownCurrencySelect = ({
     filteredSelectedItems.length === 0 &&
     searchText !== '';
 
+  const { t } = useLingui();
+
   return (
     <>
       <DropdownMenuSearchInput
         autoFocus
         type="text"
         value={searchText}
-        placeholder={'Search currency'}
+        placeholder={t`Search currency`}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           setSearchText(event.target.value);
         }}
@@ -210,7 +213,7 @@ export const ObjectFilterDropdownCurrencySelect = ({
             />
           );
         })}
-        {showNoResult && <MenuItem text="No results" />}
+        {showNoResult && <MenuItem text={t`No results`} />}
       </DropdownMenuItemsContainer>
     </>
   );

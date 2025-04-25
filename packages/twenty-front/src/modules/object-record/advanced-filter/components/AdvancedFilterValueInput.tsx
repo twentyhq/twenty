@@ -67,6 +67,16 @@ export const AdvancedFilterValueInput = ({
       ? ({ y: -33, x: 0 } satisfies DropdownOffset)
       : DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET;
 
+  const showFilterTextInput =
+    (isDefined(filterType) &&
+      (TEXT_FILTER_TYPES.includes(filterType) ||
+        NUMBER_FILTER_TYPES.includes(filterType))) ||
+    isExpectedSubFieldName(
+      FieldMetadataType.CURRENCY,
+      'amountMicros',
+      recordFilter.subFieldName,
+    );
+
   return (
     <StyledValueDropdownContainer>
       {operandHasNoInput ? (
@@ -75,14 +85,7 @@ export const AdvancedFilterValueInput = ({
         <AdvancedFilterValueInputDropdownButtonClickableSelect
           recordFilterId={recordFilterId}
         />
-      ) : (isDefined(filterType) &&
-          (TEXT_FILTER_TYPES.includes(filterType) ||
-            NUMBER_FILTER_TYPES.includes(filterType))) ||
-        isExpectedSubFieldName(
-          FieldMetadataType.CURRENCY,
-          'amountMicros',
-          subFieldNameUsedInDropdown,
-        ) ? (
+      ) : showFilterTextInput ? (
         <AdvancedFilterDropdownTextInput recordFilter={recordFilter} />
       ) : (
         <Dropdown
