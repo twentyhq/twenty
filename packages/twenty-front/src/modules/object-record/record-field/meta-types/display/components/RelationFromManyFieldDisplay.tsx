@@ -51,10 +51,6 @@ export const RelationFromManyFieldDisplay = () => {
 
     const relationFieldName = fieldName === 'noteTargets' ? 'note' : 'task';
     const formattedRecords = fieldValue.map((record) => {
-      if (!isDefined(record)) {
-        return undefined;
-      }
-
       if (!isDefined(record[relationFieldName])) {
         return {
           ...record,
