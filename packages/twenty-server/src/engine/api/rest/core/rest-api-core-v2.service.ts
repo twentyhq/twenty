@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
+import { In, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
@@ -272,14 +272,19 @@ export class RestApiCoreServiceV2 {
       ? graphqlQueryParser.applyLimitToBuilder(selectQueryBuilder, inputs.limit)
       : selectQueryBuilder;
 
-    selectQueryBuilder = this.applyDepth(
-      selectQueryBuilder,
-      objectMetadataNameSingular,
-      objectMetadata.objectMetadataMapItem,
-      inputs.depth,
-    );
+    const recordIds = await selectQueryBuilder
+      .select(`${objectMetadataNameSingular}.id`)
+      .getMany();
 
-    const records = await selectQueryBuilder.getMany();
+    const relations = this.getRelations({
+      objectMetadata: objectMetadata.objectMetadataMapItem,
+      depth: inputs.depth,
+    });
+
+    const records = await repository.find({
+      where: { id: In(recordIds.map((record) => record.id)) },
+      relations,
+    });
 
     const hasMoreRecords = records.length < totalCount;
 
@@ -293,26 +298,26 @@ export class RestApiCoreServiceV2 {
     };
   }
 
-  private applyDepth(
-    query: SelectQueryBuilder<ObjectLiteral>,
-    objectMetadataNameSingular: string,
-    objectMetadata: ObjectMetadataInterface,
-    depth: Depth | undefined,
-  ) {
+  private getRelations({
+    objectMetadata,
+    depth,
+  }: {
+    objectMetadata: ObjectMetadataInterface;
+    depth: Depth | undefined;
+  }) {
     if (!isDefined(depth) || depth === 0) {
-      return query;
+      return [];
     }
+
+    const relations: string[] = [];
 
     objectMetadata.fields.forEach((field) => {
       if (field.type === FieldMetadataType.RELATION) {
-        query.leftJoinAndSelect(
-          `${objectMetadataNameSingular}.${field.name}`,
-          field.name,
-        );
+        relations.push(`${field.name}`);
       }
     });
 
-    return query;
+    return relations;
   }
 
   private computeFilters(inputs: QueryVariables) {
