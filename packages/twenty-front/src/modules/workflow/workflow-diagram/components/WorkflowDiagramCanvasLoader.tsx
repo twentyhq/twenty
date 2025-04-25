@@ -42,14 +42,12 @@ export const WorkflowDiagramCanvasLoader = ({
       </StyledCanvasComponentWrapper>
 
       {workflowDiagramStatus !== 'done' && (
-        <div style={{ height: '100%' }}>
-          <ReactFlowProvider>
-            <WorkflowDiagramCanvasSkeleton
-              tagColor={skeletonTagColor}
-              tagText={skeletonTagText}
-            />
-          </ReactFlowProvider>
-        </div>
+        <ReactFlowProvider>
+          <WorkflowDiagramCanvasSkeleton
+            tagColor={skeletonTagColor}
+            tagText={skeletonTagText}
+          />
+        </ReactFlowProvider>
       )}
     </StyledContainer>
   );
