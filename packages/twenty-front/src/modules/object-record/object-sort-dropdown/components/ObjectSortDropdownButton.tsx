@@ -293,6 +293,7 @@ export const ObjectSortDropdownButton = ({
                 onEnter={() => handleAddSort(hiddenFieldMetadataItem)}
               >
                 <MenuItem
+                  focused={selectedItemId === hiddenFieldMetadataItem.id}
                   testId={`hidden-select-sort-${index}`}
                   onClick={() => handleAddSort(hiddenFieldMetadataItem)}
                   LeftIcon={getIcon(hiddenFieldMetadataItem.icon)}
