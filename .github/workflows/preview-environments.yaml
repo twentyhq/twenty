@@ -51,7 +51,25 @@ jobs:
           echo "Docker compose build..."
           cd packages/twenty-docker/
           docker compose build
+        working-directory: ./
+      
+      - name: Create Tunnel
+        id: expose-tunnel
+        uses: codetalkio/expose-tunnel@v1.5.0
+        with:
+          service: bore.pub
+          port: 3000
+      
+      - name: Start services with correct SERVER_URL
+        run: |
+          cd packages/twenty-docker/
           
+          # Update the SERVER_URL with the tunnel URL
+          echo "Setting SERVER_URL to ${{ steps.expose-tunnel.outputs.tunnel-url }}"
+          sed -i '/SERVER_URL=/d' .env
+          echo "SERVER_URL=${{ steps.expose-tunnel.outputs.tunnel-url }}" >> .env
+          
+          # Start the services
           echo "Docker compose up..."
           docker compose up -d || {
               echo "Docker compose failed to start"
@@ -74,13 +92,6 @@ jobs:
           
           echo "All services are up and running!"
         working-directory: ./
-      
-      - name: Create Tunnel
-        id: expose-tunnel
-        uses: codetalkio/expose-tunnel@v1.5.0
-        with:
-          service: bore.pub
-          port: 3000
       
       - name: Output tunnel URL to logs
         run: |
