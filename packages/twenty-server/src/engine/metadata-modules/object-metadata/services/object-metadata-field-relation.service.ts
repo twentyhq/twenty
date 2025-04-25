@@ -100,7 +100,6 @@ export class ObjectMetadataFieldRelationService {
         ...sourceFieldMetadata,
         settings: {
           relationType: RelationType.ONE_TO_MANY,
-          onDelete: RelationOnDeleteAction.CASCADE,
         },
         relationTargetObjectMetadataId: targetObjectMetadata.id,
         relationTargetFieldMetadataId: targetFieldMetadata.id,
