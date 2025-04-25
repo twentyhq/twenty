@@ -84,6 +84,16 @@ export class WhatsappController {
     }
 
     if (isReceiving) {
+      if (mediaId) {
+        fileUrl = await this.whatsappService.downloadMedia(
+          mediaId,
+          id,
+          body.entry[0].changes[0].value.messages[0].from,
+          messages.type,
+          workspaceId,
+        );
+      }
+
       const lastMessage = {
         createdAt: new Date(),
         from: body.entry[0].changes[0].value.contacts[0].profile.name,
@@ -92,15 +102,6 @@ export class WhatsappController {
           : body.entry[0].changes[0].value.messages[0].text.body,
         type: body.entry[0].changes[0].value.messages[0].type,
       };
-
-      if (mediaId) {
-        fileUrl = await this.whatsappService.downloadMedia(
-          mediaId,
-          id,
-          body.entry[0].changes[0].value.messages[0].from,
-          messages.type,
-        );
-      }
 
       const whatsappIntegration: Omit<
         WhatsappDocument,

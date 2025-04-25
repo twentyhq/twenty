@@ -170,6 +170,7 @@ export class WhatsappService {
 
   async getWhatsappTemplates(
     integrationId: string,
+    workspaceId: string,
   ): Promise<WhatsappTemplatesResponse> {
     if (!integrationId) {
       // eslint-disable-next-line no-console
@@ -178,7 +179,13 @@ export class WhatsappService {
       return { templates: [] };
     }
 
-    const integration = await this.whatsappIntegrationRepository.findOne({
+    const whatsappRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
+        workspaceId,
+        'whatsapp',
+      );
+
+    const integration = await whatsappRepository.findOne({
       where: { id: integrationId },
     });
 
@@ -398,10 +405,16 @@ export class WhatsappService {
     integrationId: string,
     phoneNumber: string,
     type: string,
+    workspaceId: string,
   ) {
-    const integration = await this.whatsappIntegrationRepository.findOne({
+    const whatsappRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
+        workspaceId,
+        'whatsapp',
+      );
+
+    const integration = await whatsappRepository.findOne({
       where: { id: integrationId },
-      relations: ['workspace'],
     });
 
     if (!integration) {
@@ -445,7 +458,7 @@ export class WhatsappService {
       };
 
       const fileUrl = await this.googleStorageService.uploadFileToBucket(
-        integration.workspace.id,
+        workspaceId,
         type,
         file,
         false,

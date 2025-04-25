@@ -179,7 +179,13 @@ export class WhatsappResolver {
   }
 
   @Query(() => WhatsappTemplatesResponse)
-  getWhatsappTemplates(@Args('integrationId') integrationId: string) {
-    return this.whatsappService.getWhatsappTemplates(integrationId);
+  getWhatsappTemplates(
+    @Args('integrationId') integrationId: string,
+    @AuthWorkspace() workspace: Workspace,
+  ) {
+    return this.whatsappService.getWhatsappTemplates(
+      integrationId,
+      workspace.id,
+    );
   }
 }
