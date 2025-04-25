@@ -24,6 +24,10 @@ export const WorkflowDiagramCanvasEditable = ({
     workflowDiagramStatusState,
   );
 
+  const handleInit = () => {
+    setWorkflowDiagramStatus('done');
+  };
+
   return (
     <WorkflowDiagramCanvasLoader
       canvasComponent={
@@ -40,9 +44,7 @@ export const WorkflowDiagramCanvasEditable = ({
             tagContainerTestId="workflow-visualizer-status"
             tagColor={tagProps.color}
             tagText={tagProps.text}
-            onInit={() => {
-              setWorkflowDiagramStatus('done');
-            }}
+            onInit={handleInit}
           />
 
           <WorkflowDiagramCanvasEditableEffect />
