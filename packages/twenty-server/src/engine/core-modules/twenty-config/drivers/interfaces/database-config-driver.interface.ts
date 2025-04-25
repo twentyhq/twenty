@@ -2,14 +2,9 @@ import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-va
 
 /**
  * Interface for drivers that support database-backed configuration
- * with caching and initialization capabilities
+ * with caching capabilities
  */
 export interface DatabaseConfigDriverInterface {
-  /**
-   * Initialize the driver
-   */
-  initialize(): Promise<void>;
-
   /**
    * Get a configuration value from cache
    * Returns undefined if not in cache
@@ -33,4 +28,13 @@ export interface DatabaseConfigDriverInterface {
    * Refreshes all entries in the config cache
    */
   refreshAllCache(): Promise<void>;
+
+  /**
+   * Get information about the cache state
+   */
+  getCacheInfo(): {
+    positiveEntries: number;
+    negativeEntries: number;
+    cacheKeys: string[];
+  };
 }

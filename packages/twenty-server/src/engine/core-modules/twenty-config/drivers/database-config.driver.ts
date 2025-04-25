@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 
 import { DatabaseConfigDriverInterface } from 'src/engine/core-modules/twenty-config/drivers/interfaces/database-config-driver.interface';
@@ -10,8 +10,9 @@ import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/stor
 import { isEnvOnlyConfigVar } from 'src/engine/core-modules/twenty-config/utils/is-env-only-config-var.util';
 
 @Injectable()
-export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
-  private initializationPromise: Promise<void> | null = null;
+export class DatabaseConfigDriver
+  implements DatabaseConfigDriverInterface, OnModuleInit
+{
   private readonly logger = new Logger(DatabaseConfigDriver.name);
   private readonly allPossibleConfigKeys: Array<keyof ConfigVariables>;
 
@@ -26,39 +27,29 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
     this.allPossibleConfigKeys = allKeys.filter(
       (key) => !isEnvOnlyConfigVar(key),
     );
+
+    this.logger.debug(
+      '[INIT] Database config driver created, monitoring keys: ' +
+        this.allPossibleConfigKeys.length,
+    );
   }
 
-  async initialize(): Promise<void> {
-    if (this.initializationPromise) {
-      this.logger.verbose(
-        '[INIT] Config database initialization already in progress',
+  async onModuleInit(): Promise<void> {
+    try {
+      this.logger.log('[INIT] Loading initial config variables from database');
+      const loadedCount = await this.loadAllConfigVarsFromDb();
+
+      this.logger.log(
+        `[INIT] Config variables loaded: ${loadedCount} values found, ${this.allPossibleConfigKeys.length - loadedCount} missing`,
       );
-
-      return this.initializationPromise;
+    } catch (error) {
+      this.logger.error(
+        '[INIT] Failed to load config variables from database, falling back to environment variables',
+        error instanceof Error ? error.stack : error,
+      );
+      // Don't rethrow to allow the application to continue
+      // The driver's cache will be empty but the service will fall back to env vars
     }
-
-    this.logger.debug('[INIT] Starting database config initialization');
-
-    const promise = this.loadAllConfigVarsFromDb()
-      .then((loadedCount) => {
-        this.logger.log(
-          `[INIT] Database config ready: loaded ${loadedCount} variables`,
-        );
-      })
-      .catch((error) => {
-        this.logger.error(
-          '[INIT] Failed to load database config: unable to connect to database or fetch config',
-          error instanceof Error ? error.stack : error,
-        );
-        throw error;
-      })
-      .finally(() => {
-        this.initializationPromise = null;
-      });
-
-    this.initializationPromise = promise;
-
-    return promise;
   }
 
   get<T extends keyof ConfigVariables>(key: T): ConfigVariables[T] | undefined {
@@ -78,10 +69,12 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
     try {
       await this.configStorage.set(key, value);
       this.configCache.set(key, value);
-      this.logger.debug(`[UPDATE] Updated config variable: ${key as string}`);
+      this.logger.debug(
+        `[UPDATE] Config variable ${key as string} updated successfully`,
+      );
     } catch (error) {
       this.logger.error(
-        `[UPDATE] Failed to update config for ${key as string}`,
+        `[UPDATE] Failed to update config variable ${key as string}`,
         error,
       );
       throw error;
@@ -95,17 +88,17 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
       if (value !== undefined) {
         this.configCache.set(key, value);
         this.logger.debug(
-          `[FETCH] Refreshed config variable in cache: ${key as string}`,
+          `[FETCH] Config variable ${key as string} loaded from database`,
         );
       } else {
         this.configCache.markKeyAsMissing(key);
         this.logger.debug(
-          `[FETCH] Marked config variable as missing: ${key as string}`,
+          `[FETCH] Config variable ${key as string} not found in database, marked as missing`,
         );
       }
     } catch (error) {
       this.logger.error(
-        `[FETCH] Failed to fetch config for ${key as string}`,
+        `[FETCH] Failed to fetch config variable ${key as string} from database`,
         error,
       );
       this.configCache.markKeyAsMissing(key);
@@ -122,11 +115,11 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
 
   private async loadAllConfigVarsFromDb(): Promise<number> {
     try {
-      this.logger.debug('[INIT] Fetching all config variables from database');
+      this.logger.debug('[LOAD] Fetching all config variables from database');
       const configVars = await this.configStorage.loadAll();
 
       this.logger.debug(
-        `[INIT] Checking ${this.allPossibleConfigKeys.length} possible config variables`,
+        `[LOAD] Processing ${this.allPossibleConfigKeys.length} possible config variables`,
       );
 
       for (const [key, value] of configVars.entries()) {
@@ -143,13 +136,13 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
         this.allPossibleConfigKeys.length - configVars.size;
 
       this.logger.debug(
-        `[INIT] Initial cache state: ${configVars.size} found values, ${missingKeysCount} missing values`,
+        `[LOAD] Cached ${configVars.size} config variables, marked ${missingKeysCount} keys as missing`,
       );
 
       return configVars.size;
     } catch (error) {
       this.logger.error(
-        '[INIT] Failed to load config variables from database',
+        '[LOAD] Failed to load config variables from database',
         error,
       );
       throw error;
@@ -164,12 +157,14 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
   @Cron(CONFIG_VARIABLES_REFRESH_CRON_INTERVAL)
   async refreshAllCache(): Promise<void> {
     try {
-      this.logger.log('[REFRESH] Starting refresh of all config variables');
+      this.logger.debug(
+        '[REFRESH] Starting scheduled refresh of config variables',
+      );
 
       const dbValues = await this.configStorage.loadAll();
 
       this.logger.debug(
-        `[REFRESH] Checking ${this.allPossibleConfigKeys.length} possible config variables`,
+        `[REFRESH] Processing ${this.allPossibleConfigKeys.length} possible config variables`,
       );
 
       for (const [key, value] of dbValues.entries()) {
@@ -188,10 +183,11 @@ export class DatabaseConfigDriver implements DatabaseConfigDriverInterface {
         this.allPossibleConfigKeys.length - dbValues.size;
 
       this.logger.log(
-        `[REFRESH] Refreshed config cache: ${dbValues.size} found values, ${missingKeysCount} missing values`,
+        `[REFRESH] Config variables refreshed: ${dbValues.size} values updated, ${missingKeysCount} marked as missing`,
       );
     } catch (error) {
       this.logger.error('[REFRESH] Failed to refresh config variables', error);
+      // Error is caught and logged but not rethrown to prevent the cron job from crashing
     }
   }
 }

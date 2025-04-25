@@ -4,7 +4,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { DatabaseConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/database-config.driver';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
-import { ConfigInitializationState } from 'src/engine/core-modules/twenty-config/enums/config-initialization-state.enum';
 import { ConfigSource } from 'src/engine/core-modules/twenty-config/enums/config-source.enum';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -38,9 +37,7 @@ jest.mock(
 );
 
 type TwentyConfigServicePrivateProps = {
-  driver: DatabaseConfigDriver | EnvironmentConfigDriver;
-  isConfigVarInDbEnabled: boolean;
-  configInitializationState: ConfigInitializationState;
+  isDatabaseDriverActive: boolean;
 };
 
 const mockConfigVarMetadata = {
@@ -61,20 +58,14 @@ const mockConfigVarMetadata = {
   },
 };
 
-const setupTestModule = async () => {
+// Setup with database driver
+const setupTestModule = async (isDatabaseConfigEnabled = true) => {
   const module: TestingModule = await Test.createTestingModule({
     providers: [
       TwentyConfigService,
       {
-        provide: ConfigService,
-        useValue: {
-          get: jest.fn(),
-        },
-      },
-      {
         provide: DatabaseConfigDriver,
         useValue: {
-          initialize: jest.fn().mockResolvedValue(undefined),
           get: jest.fn(),
           update: jest.fn(),
           getCacheInfo: jest.fn(),
@@ -86,17 +77,64 @@ const setupTestModule = async () => {
           get: jest.fn(),
         },
       },
+      {
+        provide: ConfigService,
+        useValue: {
+          get: jest.fn().mockImplementation((key) => {
+            if (key === 'IS_CONFIG_VARIABLES_IN_DB_ENABLED') {
+              return isDatabaseConfigEnabled ? 'true' : 'false';
+            }
+
+            return null;
+          }),
+        },
+      },
     ],
   }).compile();
 
   return {
     service: module.get<TwentyConfigService>(TwentyConfigService),
-    configService: module.get<ConfigService>(ConfigService),
     databaseConfigDriver:
       module.get<DatabaseConfigDriver>(DatabaseConfigDriver),
     environmentConfigDriver: module.get<EnvironmentConfigDriver>(
       EnvironmentConfigDriver,
     ),
+    configService: module.get<ConfigService>(ConfigService),
+  };
+};
+
+// Setup without database driver
+const setupTestModuleWithoutDb = async () => {
+  const module: TestingModule = await Test.createTestingModule({
+    providers: [
+      TwentyConfigService,
+      {
+        provide: EnvironmentConfigDriver,
+        useValue: {
+          get: jest.fn(),
+        },
+      },
+      {
+        provide: ConfigService,
+        useValue: {
+          get: jest.fn().mockImplementation((key) => {
+            if (key === 'IS_CONFIG_VARIABLES_IN_DB_ENABLED') {
+              return 'false';
+            }
+
+            return null;
+          }),
+        },
+      },
+    ],
+  }).compile();
+
+  return {
+    service: module.get<TwentyConfigService>(TwentyConfigService),
+    environmentConfigDriver: module.get<EnvironmentConfigDriver>(
+      EnvironmentConfigDriver,
+    ),
+    configService: module.get<ConfigService>(ConfigService),
   };
 };
 
@@ -114,15 +152,13 @@ const setPrivateProps = (
 
 describe('TwentyConfigService', () => {
   let service: TwentyConfigService;
-  let configService: ConfigService;
   let databaseConfigDriver: DatabaseConfigDriver;
   let environmentConfigDriver: EnvironmentConfigDriver;
 
   beforeEach(async () => {
-    const testModule = await setupTestModule();
+    const testModule = await setupTestModule(true);
 
     service = testModule.service;
-    configService = testModule.configService;
     databaseConfigDriver = testModule.databaseConfigDriver;
     environmentConfigDriver = testModule.environmentConfigDriver;
 
@@ -140,104 +176,28 @@ describe('TwentyConfigService', () => {
   });
 
   describe('constructor', () => {
-    it('should initialize with environment driver when database config is disabled', () => {
-      jest.spyOn(configService, 'get').mockReturnValue(false);
+    it('should set isDatabaseDriverActive to false when database config is disabled', async () => {
+      const { service, configService } = await setupTestModuleWithoutDb();
 
-      const newService = new TwentyConfigService(
-        configService,
-        databaseConfigDriver,
-        environmentConfigDriver,
+      // Verify ConfigService was called with the right parameter
+      expect(configService.get).toHaveBeenCalledWith(
+        'IS_CONFIG_VARIABLES_IN_DB_ENABLED',
       );
 
-      const privateProps =
-        newService as unknown as TwentyConfigServicePrivateProps;
-
-      expect(privateProps.driver).toBe(environmentConfigDriver);
-      expect(privateProps.isConfigVarInDbEnabled).toBe(false);
+      // Test behavior that results from the configuration
+      expect(service.getCacheInfo().usingDatabaseDriver).toBe(false);
     });
 
-    it('should initialize with environment driver initially when database config is enabled', () => {
-      jest.spyOn(configService, 'get').mockReturnValue(true);
+    it('should set isDatabaseDriverActive to true when database config is enabled and driver is available', async () => {
+      const { service, configService } = await setupTestModule(true);
 
-      const newService = new TwentyConfigService(
-        configService,
-        databaseConfigDriver,
-        environmentConfigDriver,
+      // Verify ConfigService was called with the right parameter
+      expect(configService.get).toHaveBeenCalledWith(
+        'IS_CONFIG_VARIABLES_IN_DB_ENABLED',
       );
 
-      const privateProps =
-        newService as unknown as TwentyConfigServicePrivateProps;
-
-      expect(privateProps.driver).toBe(environmentConfigDriver);
-      expect(privateProps.isConfigVarInDbEnabled).toBe(true);
-    });
-  });
-
-  describe('onModuleInit', () => {
-    it('should do nothing when db config is disabled', async () => {
-      jest.spyOn(configService, 'get').mockReturnValue(false);
-
-      const newService = new TwentyConfigService(
-        configService,
-        databaseConfigDriver,
-        environmentConfigDriver,
-      );
-
-      await newService.onModuleInit();
-
-      expect(databaseConfigDriver.initialize).not.toHaveBeenCalled();
-
-      const privateProps =
-        newService as unknown as TwentyConfigServicePrivateProps;
-
-      expect(privateProps.driver).toBe(environmentConfigDriver);
-    });
-
-    it('should initialize database driver when db config is enabled', async () => {
-      jest.spyOn(configService, 'get').mockReturnValue(true);
-
-      const newService = new TwentyConfigService(
-        configService,
-        databaseConfigDriver,
-        environmentConfigDriver,
-      );
-
-      await newService.onModuleInit();
-
-      expect(databaseConfigDriver.initialize).toHaveBeenCalled();
-
-      const privateProps =
-        newService as unknown as TwentyConfigServicePrivateProps;
-
-      expect(privateProps.driver).toBe(databaseConfigDriver);
-      expect(privateProps.configInitializationState).toBe(
-        ConfigInitializationState.INITIALIZED,
-      );
-    });
-
-    it('should fall back to environment driver when database initialization fails', async () => {
-      jest.spyOn(configService, 'get').mockReturnValue(true);
-      jest
-        .spyOn(databaseConfigDriver, 'initialize')
-        .mockRejectedValue(new Error('DB initialization failed'));
-
-      const newService = new TwentyConfigService(
-        configService,
-        databaseConfigDriver,
-        environmentConfigDriver,
-      );
-
-      await newService.onModuleInit();
-
-      expect(databaseConfigDriver.initialize).toHaveBeenCalled();
-
-      const privateProps =
-        newService as unknown as TwentyConfigServicePrivateProps;
-
-      expect(privateProps.driver).toBe(environmentConfigDriver);
-      expect(privateProps.configInitializationState).toBe(
-        ConfigInitializationState.FAILED,
-      );
+      // Test behavior that results from the configuration
+      expect(service.getCacheInfo().usingDatabaseDriver).toBe(true);
     });
   });
 
@@ -259,9 +219,9 @@ describe('TwentyConfigService', () => {
       expect(environmentConfigDriver.get).toHaveBeenCalledWith(key);
     });
 
-    it('should use database driver when it is active and value is found', () => {
+    it('should use database driver when isDatabaseDriverActive is true and value is found', () => {
       jest.spyOn(databaseConfigDriver, 'get').mockReturnValue(expectedValue);
-      setPrivateProps(service, { driver: databaseConfigDriver });
+      setPrivateProps(service, { isDatabaseDriverActive: true });
 
       const result = service.get(key);
 
@@ -275,7 +235,7 @@ describe('TwentyConfigService', () => {
 
       jest.spyOn(databaseConfigDriver, 'get').mockReturnValue(undefined);
       jest.spyOn(environmentConfigDriver, 'get').mockReturnValue(envValue);
-      setPrivateProps(service, { driver: databaseConfigDriver });
+      setPrivateProps(service, { isDatabaseDriverActive: true });
 
       const result = service.get(key);
 
@@ -284,9 +244,9 @@ describe('TwentyConfigService', () => {
       expect(environmentConfigDriver.get).toHaveBeenCalledWith(key);
     });
 
-    it('should use environment driver when it is active', () => {
+    it('should use environment driver when isDatabaseDriverActive is false', () => {
       jest.spyOn(environmentConfigDriver, 'get').mockReturnValue(expectedValue);
-      setPrivateProps(service, { driver: environmentConfigDriver });
+      setPrivateProps(service, { isDatabaseDriverActive: false });
 
       const result = service.get(key);
 
@@ -297,41 +257,21 @@ describe('TwentyConfigService', () => {
   });
 
   describe('update', () => {
-    const setupUpdateTest = (
-      props: Partial<TwentyConfigServicePrivateProps>,
-    ) => {
-      setPrivateProps(service, {
-        isConfigVarInDbEnabled: true,
-        configInitializationState: ConfigInitializationState.INITIALIZED,
-        driver: databaseConfigDriver,
-        ...props,
-      });
-    };
-
-    it('should throw error when database config is disabled', async () => {
-      setupUpdateTest({ isConfigVarInDbEnabled: false });
+    it('should throw error when database driver is not active', async () => {
+      setPrivateProps(service, { isDatabaseDriverActive: false });
 
       await expect(
         service.update('TEST_VAR' as keyof ConfigVariables, 'new value'),
       ).rejects.toThrow(
-        'Database configuration is disabled, cannot update configuration',
-      );
-    });
-
-    it('should throw error when not initialized', async () => {
-      setupUpdateTest({
-        configInitializationState: ConfigInitializationState.NOT_INITIALIZED,
-      });
-
-      await expect(
-        service.update('TEST_VAR' as keyof ConfigVariables, 'new value'),
-      ).rejects.toThrow(
-        'TwentyConfigService not initialized, cannot update configuration',
+        'Database configuration is disabled or unavailable, cannot update configuration',
       );
     });
 
     it('should throw error when updating environment-only variable', async () => {
-      setupUpdateTest({});
+      setPrivateProps(service, { isDatabaseDriverActive: true });
+      (TypedReflect.getMetadata as jest.Mock).mockReturnValue({
+        ENV_ONLY_VAR: { isEnvOnly: true },
+      });
 
       await expect(
         service.update('ENV_ONLY_VAR' as keyof ConfigVariables, 'new value'),
@@ -340,26 +280,27 @@ describe('TwentyConfigService', () => {
       );
     });
 
-    it('should throw error when driver is not DatabaseConfigDriver', async () => {
-      setupUpdateTest({ driver: environmentConfigDriver });
-
-      await expect(
-        service.update('TEST_VAR' as keyof ConfigVariables, 'new value'),
-      ).rejects.toThrow(
-        'Database driver not initialized, cannot update configuration',
-      );
-    });
-
-    it('should update config when all conditions are met', async () => {
+    it('should update config when database driver is active', async () => {
       const key = 'TEST_VAR' as keyof ConfigVariables;
       const newValue = 'new value';
 
-      setupUpdateTest({});
+      setPrivateProps(service, { isDatabaseDriverActive: true });
       jest.spyOn(databaseConfigDriver, 'update').mockResolvedValue(undefined);
 
       await service.update(key, newValue);
 
       expect(databaseConfigDriver.update).toHaveBeenCalledWith(key, newValue);
+    });
+
+    it('should propagate errors from database driver', async () => {
+      const error = new Error('Database error');
+
+      setPrivateProps(service, { isDatabaseDriverActive: true });
+      jest.spyOn(databaseConfigDriver, 'update').mockRejectedValue(error);
+
+      await expect(
+        service.update('TEST_VAR' as keyof ConfigVariables, 'new value'),
+      ).rejects.toThrow(error);
     });
   });
 
@@ -415,11 +356,9 @@ describe('TwentyConfigService', () => {
       setupDriverMocks();
     });
 
-    it('should return all config variables with environment source when using environment driver', () => {
+    it('should return all config variables with environment source when database driver is not active', () => {
       setPrivateProps(service, {
-        driver: environmentConfigDriver,
-        isConfigVarInDbEnabled: false,
-        configInitializationState: ConfigInitializationState.INITIALIZED,
+        isDatabaseDriverActive: false,
       });
 
       const result = service.getAll();
@@ -445,11 +384,9 @@ describe('TwentyConfigService', () => {
       expect(result.SENSITIVE_VAR.value).toBe('********a_123');
     });
 
-    it('should return config variables with database source when using database driver', () => {
+    it('should return config variables with database source when database driver is active', () => {
       setPrivateProps(service, {
-        driver: databaseConfigDriver,
-        isConfigVarInDbEnabled: true,
-        configInitializationState: ConfigInitializationState.INITIALIZED,
+        isDatabaseDriverActive: true,
       });
 
       const result = service.getAll();
@@ -475,38 +412,27 @@ describe('TwentyConfigService', () => {
   });
 
   describe('getCacheInfo', () => {
-    const setupCacheInfoTest = (
-      props: Partial<TwentyConfigServicePrivateProps>,
-    ) => {
+    it('should return basic info when database driver is not active', () => {
       setPrivateProps(service, {
-        driver: environmentConfigDriver,
-        isConfigVarInDbEnabled: false,
-        configInitializationState: ConfigInitializationState.INITIALIZED,
-        ...props,
+        isDatabaseDriverActive: false,
       });
-    };
-
-    it('should return basic info when not using database driver', () => {
-      setupCacheInfoTest({});
 
       const result = service.getCacheInfo();
 
       expect(result).toEqual({
         usingDatabaseDriver: false,
-        initializationState: 'INITIALIZED',
       });
     });
 
-    it('should return cache stats when using database driver', () => {
+    it('should return cache stats when database driver is active', () => {
       const cacheStats = {
         positiveEntries: 2,
         negativeEntries: 1,
         cacheKeys: ['TEST_VAR', 'SENSITIVE_VAR'],
       };
 
-      setupCacheInfoTest({
-        driver: databaseConfigDriver,
-        isConfigVarInDbEnabled: true,
+      setPrivateProps(service, {
+        isDatabaseDriverActive: true,
       });
 
       jest
@@ -517,7 +443,6 @@ describe('TwentyConfigService', () => {
 
       expect(result).toEqual({
         usingDatabaseDriver: true,
-        initializationState: 'INITIALIZED',
         cacheStats,
       });
     });

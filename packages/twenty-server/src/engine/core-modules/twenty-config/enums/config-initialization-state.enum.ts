@@ -1,6 +1,0 @@
-export enum ConfigInitializationState {
-  NOT_INITIALIZED = 'NOT_INITIALIZED',
-  INITIALIZING = 'INITIALIZING',
-  INITIALIZED = 'INITIALIZED',
-  FAILED = 'FAILED',
-}

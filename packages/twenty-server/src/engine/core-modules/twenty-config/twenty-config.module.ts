@@ -1,46 +1,47 @@
-import { Global, Module } from '@nestjs/common';
+import { DynamicModule, Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ScheduleModule } from '@nestjs/schedule';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { ConfigCacheService } from 'src/engine/core-modules/twenty-config/cache/config-cache.service';
 import {
   ConfigVariables,
   validate,
 } from 'src/engine/core-modules/twenty-config/config-variables';
-import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
-import { DatabaseConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/database-config.driver';
+import { DatabaseConfigModule } from 'src/engine/core-modules/twenty-config/drivers/database-config.module';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
-import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
 import { ConfigurableModuleClass } from 'src/engine/core-modules/twenty-config/twenty-config.module-definition';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Global()
-@Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      expandVariables: true,
-      validate,
-      envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
-    }),
-    TypeOrmModule.forFeature([KeyValuePair], 'core'),
-    ScheduleModule.forRoot(),
-  ],
+@Module({})
+export class TwentyConfigModule extends ConfigurableModuleClass {
+  static forRoot(): DynamicModule {
+    const isConfigVariablesInDbEnabled =
+      process.env.IS_CONFIG_VARIABLES_IN_DB_ENABLED === 'true';
 
-  providers: [
-    TwentyConfigService,
-    EnvironmentConfigDriver,
-    DatabaseConfigDriver,
-    ConfigCacheService,
-    ConfigStorageService,
-    ConfigValueConverterService,
-    {
-      provide: ConfigVariables,
-      useValue: new ConfigVariables(),
-    },
-  ],
-  exports: [TwentyConfigService],
-})
-export class TwentyConfigModule extends ConfigurableModuleClass {}
+    const imports = [
+      ConfigModule.forRoot({
+        isGlobal: true,
+        expandVariables: true,
+        validate,
+        envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
+      }),
+    ];
+
+    if (isConfigVariablesInDbEnabled) {
+      imports.push(DatabaseConfigModule.forRoot());
+    }
+
+    return {
+      module: TwentyConfigModule,
+      imports,
+      providers: [
+        TwentyConfigService,
+        EnvironmentConfigDriver,
+        {
+          provide: ConfigVariables,
+          useValue: new ConfigVariables(),
+        },
+      ],
+      exports: [TwentyConfigService],
+    };
+  }
+}

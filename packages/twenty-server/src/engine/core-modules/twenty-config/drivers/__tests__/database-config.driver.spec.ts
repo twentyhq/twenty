@@ -113,7 +113,7 @@ describe('DatabaseConfigDriver', () => {
 
       jest.spyOn(configStorage, 'loadAll').mockResolvedValue(configVars);
 
-      await driver.initialize();
+      await driver.onModuleInit();
 
       expect(configStorage.loadAll).toHaveBeenCalled();
 
@@ -128,38 +128,21 @@ describe('DatabaseConfigDriver', () => {
       );
     });
 
-    it('should handle initialization failure', async () => {
+    it('should handle initialization failure gracefully', async () => {
       const error = new Error('DB error');
 
       jest.spyOn(configStorage, 'loadAll').mockRejectedValue(error);
       jest.spyOn(driver['logger'], 'error').mockImplementation();
 
-      await expect(driver.initialize()).rejects.toThrow(error);
+      // Should not throw because we're handling errors internally now
+      await driver.onModuleInit();
 
       expect(driver['logger'].error).toHaveBeenCalled();
-    });
-
-    it('should handle concurrent initialization calls', async () => {
-      jest.spyOn(configStorage, 'loadAll').mockResolvedValue(new Map());
-
-      const promises = [
-        driver.initialize(),
-        driver.initialize(),
-        driver.initialize(),
-      ];
-
-      await Promise.all(promises);
-
-      expect(configStorage.loadAll).toHaveBeenCalledTimes(1);
+      expect(configStorage.loadAll).toHaveBeenCalled();
     });
   });
 
   describe('get', () => {
-    beforeEach(async () => {
-      jest.spyOn(configStorage, 'loadAll').mockResolvedValue(new Map());
-      await driver.initialize();
-    });
-
     it('should return cached value when available', async () => {
       const cachedValue = true;
 
@@ -206,8 +189,6 @@ describe('DatabaseConfigDriver', () => {
 
   describe('update', () => {
     beforeEach(async () => {
-      jest.spyOn(configStorage, 'loadAll').mockResolvedValue(new Map());
-      await driver.initialize();
       (isEnvOnlyConfigVar as jest.Mock).mockReturnValue(false);
     });
 
