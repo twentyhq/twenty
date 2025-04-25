@@ -1,4 +1,3 @@
-/* eslint-disable project-structure/folder-structure */
 import {
   CondicionalState,
   ExtendedLogicNodeData,

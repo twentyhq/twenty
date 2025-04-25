@@ -1,9 +1,10 @@
-/* eslint-disable project-structure/folder-structure */
-// ExecuteFlow.ts
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { ChatbotFlowInput } from '@/chatbot/types/chatbotFlow.type';
 import { Node } from '@xyflow/react';
 
+import { SendMessageInput } from '@/chat/call-center/types/SendMessage';
 import { CondicionalInputHandler } from '@/chatbot/engine/handlers/CondicionalInputHandler';
+import { LogicData } from '@/chatbot/types/LogicNodeDataType';
 import { NodeHandler } from './handlers/NodeHandler';
 import { TextInputHandler } from './handlers/TextInputHandler';
 
@@ -11,15 +12,26 @@ export class ExecuteFlow {
   private nodes: Node[];
   private currentNodeId?: string;
   private incomingMessage = '';
+  private handlers: Record<string, NodeHandler>;
+  private onFinish?: (finalNode: Node, matchedInputs?: string[]) => void;
+  private chosenGroupInputs: string[] = [];
 
-  private handlers: Record<string, NodeHandler> = {
-    textInput: new TextInputHandler(),
-    logicInput: new CondicionalInputHandler(),
-  };
-
-  constructor(chatbotFlow: ChatbotFlowInput) {
+  constructor(
+    chatbotFlow: ChatbotFlowInput,
+    sendMessage: (input: SendMessageInput) => void,
+    integrationId: string,
+    recipient: string,
+    onFinish?: (finalNode: Node, matchedInputs?: string[]) => void,
+  ) {
     this.nodes = chatbotFlow.nodes;
     this.currentNodeId = this.findStartNode()?.id;
+
+    this.handlers = {
+      textInput: new TextInputHandler(sendMessage, integrationId, recipient),
+      logicInput: new CondicionalInputHandler(),
+    };
+
+    this.onFinish = onFinish;
   }
 
   private findStartNode(): Node | undefined {
@@ -28,6 +40,10 @@ export class ExecuteFlow {
 
   private findNodeById(id: string): Node | undefined {
     return this.nodes.find((node) => node.id === id);
+  }
+
+  public setIncomingMessage(input: string) {
+    this.incomingMessage = input;
   }
 
   public runFlow(): void {
@@ -45,7 +61,25 @@ export class ExecuteFlow {
         incomingMessage: this.incomingMessage,
       });
 
-      if (!nextNodeId) break;
+      if (currentNode.type === 'logicInput' && nextNodeId) {
+        const logic = (currentNode.data as { logic: LogicData }).logic;
+        const { logicNodeData } = logic;
+
+        const matchedGroup = logicNodeData.find((group) =>
+          group.some((item) => item.outgoingNodeId === nextNodeId),
+        );
+
+        if (matchedGroup) {
+          this.chosenGroupInputs = matchedGroup.map((item) => item.inputText);
+        }
+      }
+
+      if (!nextNodeId) {
+        if (this.onFinish && currentNode.type === 'textInput') {
+          this.onFinish(currentNode, this.chosenGroupInputs);
+        }
+        break;
+      }
 
       this.currentNodeId = nextNodeId;
     }
@@ -80,15 +114,29 @@ export class ExecuteFlow {
         incomingMessage: this.incomingMessage,
       });
 
-      if (!nextNodeId) break;
+      if (currentNode.type === 'logicInput' && nextNodeId) {
+        const logic = (currentNode.data as { logic: LogicData }).logic;
+        const { logicNodeData } = logic;
+
+        const matchedGroup = logicNodeData.find((group) =>
+          group.some((item) => item.outgoingNodeId === nextNodeId),
+        );
+
+        if (matchedGroup) {
+          this.chosenGroupInputs = matchedGroup.map((item) => item.inputText);
+        }
+      }
+
+      if (!nextNodeId) {
+        if (this.onFinish && currentNode.type === 'textInput') {
+          this.onFinish(currentNode, this.chosenGroupInputs);
+        }
+        break;
+      }
 
       this.currentNodeId = nextNodeId;
     }
 
     console.log(trace);
-  }
-
-  public setIncomingMessage(input: string) {
-    this.incomingMessage = input;
   }
 }

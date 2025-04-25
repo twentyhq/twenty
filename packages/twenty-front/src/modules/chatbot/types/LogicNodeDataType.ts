@@ -13,3 +13,8 @@ export type ExtendedLogicNodeData = LogicNodeData & {
   outgoingEdgeId?: string;
   outgoingNodeId?: string;
 };
+
+export interface LogicData {
+  logicNodes: number[];
+  logicNodeData: ExtendedLogicNodeData[][];
+}

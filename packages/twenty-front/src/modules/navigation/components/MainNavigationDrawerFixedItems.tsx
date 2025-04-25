@@ -81,7 +81,7 @@ export const MainNavigationDrawerFixedItems = () => {
         />
         <ChatNavigationNavItem />
         <NavigationDrawerItem
-          label="Bot"
+          label="Chatbot"
           to={chatbotPath}
           onClick={() => {
             setNavigationMemorizedUrl(location.pathname + location.search);

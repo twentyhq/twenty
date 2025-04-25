@@ -1,10 +1,8 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 /* eslint-disable no-constant-condition */
-import { ExecuteFlow } from '@/chatbot/engine/executeFlow';
 import { useGetChatbotFlowById } from '@/chatbot/hooks/useGetChatbotFlowById';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { useValidateChatbotFlow } from '@/chatbot/hooks/useValidateChatbotFlow';
-import { ChatbotFlowInput } from '@/chatbot/types/chatbotFlow.type';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { useTheme } from '@emotion/react';
@@ -261,16 +259,6 @@ export const BotDiagramBase = ({
       { duration: 300 },
     );
   }, [reactflow, rightDrawerState, rightDrawerWidth]);
-
-  const chatbotFlowO: ChatbotFlowInput = {
-    nodes,
-    edges,
-    chatbotId,
-  };
-
-  const flow = new ExecuteFlow(chatbotFlowO);
-  flow.setIncomingMessage('geral');
-  flow.runFlowWithLog();
 
   return (
     <StyledResetReactflowStyles ref={containerRef}>
