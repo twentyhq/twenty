@@ -1,0 +1,125 @@
+import { InjectRepository } from '@nestjs/typeorm';
+
+import chalk from 'chalk';
+import { Command } from 'nest-commander';
+import { In, Repository } from 'typeorm';
+import { z } from 'zod';
+import { FieldMetadataType } from 'twenty-shared/types';
+
+import {
+  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
+  RunOnWorkspaceArgs,
+} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+
+const relationFilterValueSchemaObject = z.object({
+  isCurrentWorkspaceMemberSelected: z.boolean().optional(),
+  selectedRecordIds: z.array(z.string()),
+});
+
+const jsonRelationFilterValueSchema = z
+  .string()
+  .transform((value, ctx) => {
+    try {
+      return JSON.parse(value);
+    } catch (error) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: (error as Error).message,
+      });
+
+      return z.NEVER;
+    }
+  })
+  .pipe(relationFilterValueSchemaObject);
+
+@Command({
+  name: 'upgrade:0-53:standardize-relation-filter-syntax',
+  description: 'Standardize relation filter syntax',
+})
+export class StandardizeRelationFilterSyntaxCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+  constructor(
+    @InjectRepository(Workspace, 'core')
+    protected readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(FieldMetadataEntity, 'metadata')
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+  ) {
+    super(workspaceRepository, twentyORMGlobalManager);
+  }
+
+  override async runOnWorkspace({
+    index,
+    total,
+    workspaceId,
+  }: RunOnWorkspaceArgs): Promise<void> {
+    this.logger.log(
+      `Running command for workspace ${workspaceId} ${index + 1}/${total}`,
+    );
+
+    try {
+      const viewFilterRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+          workspaceId,
+          'viewFilter',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const relationFieldMetadata = await this.fieldMetadataRepository.find({
+        where: {
+          workspaceId,
+          type: FieldMetadataType.RELATION,
+        },
+      });
+
+      const relationFieldMetadataIds = relationFieldMetadata.map(
+        (fieldMetadata) => fieldMetadata.id,
+      );
+
+      const relationViewFilters = await viewFilterRepository.find({
+        where: {
+          fieldMetadataId: In(relationFieldMetadataIds),
+        },
+      });
+
+      for (const relationViewFilter of relationViewFilters) {
+        await viewFilterRepository.update(relationViewFilter.id, {
+          ...relationViewFilter,
+          value: this.convertRelationViewFilterValue(relationViewFilter.value),
+        });
+      }
+
+      this.logger.log(
+        chalk.green(`Command completed for workspace ${workspaceId}.`),
+      );
+    } catch (error) {
+      this.logger.error(
+        `Error running command for workspace ${workspaceId}: ${error}`,
+      );
+      throw error;
+    }
+  }
+
+  private convertRelationViewFilterValue(value: string): string {
+    const jsonRelationFilterValueResult =
+      jsonRelationFilterValueSchema.safeParse(value);
+
+    if (!jsonRelationFilterValueResult.success) {
+      return value;
+    }
+
+    const { selectedRecordIds, isCurrentWorkspaceMemberSelected } =
+      jsonRelationFilterValueResult.data;
+
+    if (isCurrentWorkspaceMemberSelected) {
+      return JSON.stringify([
+        ...selectedRecordIds,
+        '{{CURRENT_WORKSPACE_MEMBER}}',
+      ]);
+    }
+
+    return JSON.stringify(selectedRecordIds);
+  }
+}
