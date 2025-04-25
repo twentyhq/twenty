@@ -135,6 +135,7 @@ export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'whatsappIntegrations',
   })
   @WorkspaceIsNullable()
+  @Field(() => ChatbotWorkspaceEntity, { nullable: true })
   chatbot: Relation<ChatbotWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('chatbot')

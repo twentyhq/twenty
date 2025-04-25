@@ -8,4 +8,8 @@ export type IWhatsappIntegration = {
   appKey: string;
   disabled: boolean;
   sla: number;
+  chatbot?: {
+    id: string;
+    name: string;
+  };
 };

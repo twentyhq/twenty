@@ -11,6 +11,10 @@ export const GET_ALL_WHATSAPP_INTEGRATIONS = gql`
       appKey
       disabled
       sla
+      chatbot {
+        id
+        name
+      }
     }
   }
 `;

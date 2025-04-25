@@ -81,7 +81,7 @@ export class WhatsappIntegrationService {
       throw new Error('Whatsapp repository not found');
     }
 
-    return await whatsappRepository.find();
+    return await whatsappRepository.find({ relations: ['chatbot'] });
   }
 
   async findById(
