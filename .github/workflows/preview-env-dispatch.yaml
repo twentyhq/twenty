@@ -27,8 +27,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger preview environment workflow
-        uses: benc-uk/workflow-dispatch@v1
+        uses: peter-evans/repository-dispatch@v2
         with:
-          workflow: preview-env-keepalive.yaml
           token: ${{ secrets.GITHUB_TOKEN }}
-          inputs: '{"pr_number": "${{ github.event.pull_request.number }}", "pr_head_sha": "${{ github.event.pull_request.head.sha }}", "repo_full_name": "${{ github.repository }}"}' 
+          repository: ${{ github.repository }}
+          event-type: preview-environment
+          client-payload: '{"pr_number": "${{ github.event.pull_request.number }}", "pr_head_sha": "${{ github.event.pull_request.head.sha }}", "repo_full_name": "${{ github.repository }}"}' 

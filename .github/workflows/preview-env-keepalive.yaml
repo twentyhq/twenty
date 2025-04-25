@@ -1,17 +1,8 @@
 name: 'Preview Environment Keep Alive'
 
 on:
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: 'PR number'
-        required: true
-      pr_head_sha:
-        description: 'PR head SHA'
-        required: true
-      repo_full_name:
-        description: 'Repository full name (owner/repo)'
-        required: true
+  repository_dispatch:
+    types: [preview-environment]
 
 jobs:
   preview-environment:
@@ -21,7 +12,7 @@ jobs:
       - name: Checkout PR
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.pr_head_sha }}
+          ref: ${{ github.event.client_payload.pr_head_sha }}
       
       - name: Run compose setup
         run: |
@@ -111,7 +102,7 @@ jobs:
             const {data: comments} = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: ${{ inputs.pr_number }},
+              issue_number: ${{ github.event.client_payload.pr_number }},
             });
             
             // Find our comment
@@ -131,7 +122,7 @@ jobs:
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: ${{ inputs.pr_number }},
+                issue_number: ${{ github.event.client_payload.pr_number }},
                 body: commentBody
               });
               console.log('Created new comment');
