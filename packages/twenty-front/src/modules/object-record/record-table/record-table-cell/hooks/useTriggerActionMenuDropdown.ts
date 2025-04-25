@@ -6,8 +6,7 @@ import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDro
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
-import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -34,10 +33,7 @@ export const useTriggerActionMenuDropdown = ({
     actionMenuDropdownId,
   );
 
-  const { setActiveDropdownFocusIdAndMemorizePrevious } =
-    useSetActiveDropdownFocusIdAndMemorizePrevious();
-
-  const { openDropdown } = useDropdownV2();
+  const { openDropdown } = useDropdown(actionMenuDropdownId);
 
   const { closeCommandMenu } = useCommandMenu();
 
@@ -62,9 +58,7 @@ export const useTriggerActionMenuDropdown = ({
 
         closeCommandMenu();
 
-        setActiveDropdownFocusIdAndMemorizePrevious(actionMenuDropdownId);
-
-        openDropdown(actionMenuDropdownId, {
+        openDropdown({
           scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
         });
       },
@@ -72,8 +66,6 @@ export const useTriggerActionMenuDropdown = ({
       recordIndexActionMenuDropdownPositionState,
       isRowSelectedFamilyState,
       closeCommandMenu,
-      setActiveDropdownFocusIdAndMemorizePrevious,
-      actionMenuDropdownId,
       openDropdown,
     ],
   );
