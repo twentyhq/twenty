@@ -1,3 +1,5 @@
+import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
+import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
@@ -8,6 +10,7 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+
 export const useRecordTitleCell = () => {
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
@@ -42,8 +45,10 @@ export const useRecordTitleCell = () => {
     [goBackToPreviousDropdownFocusId, goBackToPreviousHotkeyScope],
   );
 
+  const initFieldInputDraftValue = useInitDraftValueV2();
+
   const openRecordTitleCell = useRecoilCallback(
-    ({ set }) =>
+    ({ set, snapshot }) =>
       ({
         recordId,
         fieldMetadataId,
@@ -55,12 +60,30 @@ export const useRecordTitleCell = () => {
         containerType: RecordTitleCellContainerType;
         customEditHotkeyScopeForField?: HotkeyScope;
       }) => {
-        set(
-          isInlineCellInEditModeScopedState(
-            getRecordTitleCellId(recordId, fieldMetadataId, containerType),
-          ),
-          true,
+        const recordTitleCellId = getRecordTitleCellId(
+          recordId,
+          fieldMetadataId,
+          containerType,
         );
+        set(isInlineCellInEditModeScopedState(recordTitleCellId), true);
+
+        const recordIndexFieldDefinitions = snapshot
+          .getLoadable(recordIndexFieldDefinitionsState)
+          .getValue();
+
+        const fieldDefinition = recordIndexFieldDefinitions.find(
+          (field) => field.fieldMetadataId === fieldMetadataId,
+        );
+
+        if (!fieldDefinition) {
+          return;
+        }
+
+        initFieldInputDraftValue({
+          recordId,
+          fieldDefinition,
+          fieldComponentInstanceId: recordTitleCellId,
+        });
 
         if (isDefined(customEditHotkeyScopeForField)) {
           setHotkeyScopeAndMemorizePreviousScope(
@@ -73,7 +96,7 @@ export const useRecordTitleCell = () => {
           );
         }
       },
-    [setHotkeyScopeAndMemorizePreviousScope],
+    [initFieldInputDraftValue, setHotkeyScopeAndMemorizePreviousScope],
   );
 
   return {

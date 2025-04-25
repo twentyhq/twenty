@@ -4,7 +4,6 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
-import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { RecordTitleCellTextFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellTextFieldInput';
 import { RecordTitleFullNameFieldInput } from '@/object-record/record-title-cell/components/RecordTitleFullNameFieldInput';
 import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
@@ -30,13 +29,10 @@ export const RecordTitleCellFieldInput = ({
   onClickOutside,
 }: RecordTitleCellFieldInputProps) => {
   const { fieldDefinition } = useContext(FieldContext);
-  const { openInlineCell } = useInlineCell();
 
   if (!isFieldText(fieldDefinition) && !isFieldFullName(fieldDefinition)) {
     throw new Error('Field definition is not a text or full name field');
   }
-
-  openInlineCell();
 
   return (
     <>
