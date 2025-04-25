@@ -7,8 +7,7 @@ import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-re
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { COMPANY_1_ID } from 'test/integration/constants/mock-company-ids.constants';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
-
-const testPrimaryLinkUrl = 'http://test';
+import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 
 describe('Core REST API Find Many endpoint', () => {
   const testPersonIds = [PERSON_1_ID, PERSON_2_ID, PERSON_3_ID];
@@ -23,7 +22,7 @@ describe('Core REST API Find Many endpoint', () => {
       body: {
         id: COMPANY_1_ID,
         domainName: {
-          primaryLinkUrl: testPrimaryLinkUrl,
+          primaryLinkUrl: TEST_PRIMARY_LINK_URL,
         },
       },
     });
@@ -258,7 +257,9 @@ describe('Core REST API Find Many endpoint', () => {
     const person = people[0];
 
     expect(person.company).toBeDefined();
-    expect(person.company.domainName.primaryLinkUrl).toBe(testPrimaryLinkUrl);
+    expect(person.company.domainName.primaryLinkUrl).toBe(
+      TEST_PRIMARY_LINK_URL,
+    );
 
     expect(person.company.people).not.toBeDefined();
   });

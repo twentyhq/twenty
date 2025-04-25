@@ -5,15 +5,28 @@ import {
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { COMPANY_1_ID } from 'test/integration/constants/mock-company-ids.constants';
+import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 
 describe('Core REST API Update One endpoint', () => {
   beforeAll(async () => {
     await deleteAllRecords('person');
     await makeRestAPIRequest({
       method: 'post',
+      path: '/companies',
+      body: {
+        id: COMPANY_1_ID,
+        domainName: {
+          primaryLinkUrl: TEST_PRIMARY_LINK_URL,
+        },
+      },
+    });
+    await makeRestAPIRequest({
+      method: 'post',
       path: `/people`,
       body: {
         id: PERSON_1_ID,
+        companyId: COMPANY_1_ID,
       },
     });
   });
@@ -52,7 +65,96 @@ describe('Core REST API Update One endpoint', () => {
         expect(updatedPerson.city).toBe(updatedData.city);
 
         expect(updatedPerson.jobTitle).toBe('');
-        expect(updatedPerson.companyId).toBe(null);
+        expect(updatedPerson.companyId).toBe(COMPANY_1_ID);
+      });
+  });
+
+  it('should support depth 0 parameter', async () => {
+    const updatedData = {
+      name: {
+        firstName: 'Updated',
+        lastName: 'Person',
+      },
+      emails: {
+        primaryEmail: 'updated@example.com',
+        additionalEmails: ['extra@example.com'],
+      },
+      city: generateRecordName(PERSON_1_ID),
+    };
+
+    await makeRestAPIRequest({
+      method: 'patch',
+      path: `/people/${PERSON_1_ID}?depth=0`,
+      body: updatedData,
+    })
+      .expect(200)
+      .expect((res) => {
+        const updatedPerson = res.body.data.updatePerson;
+
+        expect(updatedPerson.companyId).toBeDefined();
+        expect(updatedPerson.company).not.toBeDefined();
+      });
+  });
+
+  it('should support depth 1 parameter', async () => {
+    const updatedData = {
+      name: {
+        firstName: 'Updated',
+        lastName: 'Person',
+      },
+      emails: {
+        primaryEmail: 'updated@example.com',
+        additionalEmails: ['extra@example.com'],
+      },
+      city: generateRecordName(PERSON_1_ID),
+    };
+
+    await makeRestAPIRequest({
+      method: 'patch',
+      path: `/people/${PERSON_1_ID}?depth=1`,
+      body: updatedData,
+    })
+      .expect(200)
+      .expect((res) => {
+        const updatedPerson = res.body.data.updatePerson;
+
+        expect(updatedPerson.company).toBeDefined();
+        expect(updatedPerson.company.domainName.primaryLinkUrl).toBe(
+          TEST_PRIMARY_LINK_URL,
+        );
+        expect(updatedPerson.company.people).not.toBeDefined();
+      });
+  });
+
+  it('should support depth 2 parameter', async () => {
+    const updatedData = {
+      name: {
+        firstName: 'Updated',
+        lastName: 'Person',
+      },
+      emails: {
+        primaryEmail: 'updated@example.com',
+        additionalEmails: ['extra@example.com'],
+      },
+      city: generateRecordName(PERSON_1_ID),
+    };
+
+    await makeRestAPIRequest({
+      method: 'patch',
+      path: `/people/${PERSON_1_ID}?depth=2`,
+      body: updatedData,
+    })
+      .expect(200)
+      .expect((res) => {
+        const updatedPerson = res.body.data.updatePerson;
+
+        expect(updatedPerson.company.people).toBeDefined();
+
+        const depth2Person = updatedPerson.company.people.find(
+          (p) => p.id === updatedPerson.id,
+        );
+
+        expect(depth2Person).toBeDefined();
       });
   });
 
