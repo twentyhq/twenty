@@ -8,8 +8,6 @@ describe('ConfigCacheService', () => {
   let service: ConfigCacheService;
 
   beforeEach(async () => {
-    jest.useFakeTimers();
-
     const module: TestingModule = await Test.createTestingModule({
       imports: [ScheduleModule.forRoot()],
       providers: [ConfigCacheService],
@@ -20,7 +18,6 @@ describe('ConfigCacheService', () => {
 
   afterEach(() => {
     service.onModuleDestroy();
-    jest.useRealTimers();
   });
 
   it('should be defined', () => {
@@ -190,7 +187,7 @@ describe('ConfigCacheService', () => {
 
       // Then force it into negative cache (normally this would remove from positive)
       // We're bypassing normal behavior for testing edge cases
-      service['knownMissingKeysCache'].add(key);
+      service.addToMissingKeysForTesting(key);
 
       const allKeys = service.getAllKeys();
 

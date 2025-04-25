@@ -57,6 +57,7 @@ import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
+    TwentyConfigModule.forRoot(),
     HealthModule,
     AnalyticsModule,
     AuthModule,
@@ -81,7 +82,6 @@ import { FileModule } from './file/file.module';
     AdminPanelModule,
     LabModule,
     RoleModule,
-    TwentyConfigModule.forRoot(),
     RedisClientModule,
     WorkspaceQueryRunnerModule,
     SubscriptionsModule,

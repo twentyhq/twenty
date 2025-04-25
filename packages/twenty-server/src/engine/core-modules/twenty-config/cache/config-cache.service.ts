@@ -76,4 +76,11 @@ export class ConfigCacheService implements OnModuleDestroy {
 
     return [...new Set([...foundKeys, ...missingKeys])];
   }
+
+  /**
+   * Helper method for testing edge cases
+   */
+  addToMissingKeysForTesting(key: ConfigKey): void {
+    this.knownMissingKeysCache.add(key);
+  }
 }
