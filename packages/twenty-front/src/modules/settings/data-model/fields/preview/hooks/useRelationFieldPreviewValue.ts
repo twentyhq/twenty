@@ -15,9 +15,8 @@ type UseRelationFieldPreviewParams = {
 export const useRelationFieldPreviewValue = ({
   relationObjectMetadataItem,
   skip,
-}: UseRelationFieldPreviewParams) => {
+}: UseRelationFieldPreviewParams) =>
   usePreviewRecord({
     objectMetadataItem: relationObjectMetadataItem,
     skip,
   });
-};
