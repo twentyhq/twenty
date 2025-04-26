@@ -2,6 +2,7 @@ import { LogLevel } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
@@ -39,7 +40,7 @@ describe('ConfigValueConverterService', () => {
       providers: [
         ConfigValueConverterService,
         {
-          provide: ConfigVariables,
+          provide: CONFIG_VARIABLES_INSTANCE_TOKEN,
           useValue: mockConfigVariables,
         },
       ],
