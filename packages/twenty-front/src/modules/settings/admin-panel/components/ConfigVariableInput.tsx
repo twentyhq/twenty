@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useMemo } from 'react';
 
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -33,6 +32,8 @@ type ConfigVariableInputProps = {
   placeholder?: string;
 };
 
+// can be diff components, if possible refactor
+// rename?
 export const ConfigVariableInput = ({
   value,
   onChange,
@@ -41,56 +42,45 @@ export const ConfigVariableInput = ({
   disabled,
   placeholder,
 }: ConfigVariableInputProps) => {
-  // For array type, we need to convert between string and array
-  const arrayValue = useMemo(() => {
-    if (type !== 'array' || !value) return [];
+  const arrayValue =
+    type === 'array' && value
+      ? (() => {
+          try {
+            return JSON.parse(value);
+          } catch {
+            return [];
+          }
+        })()
+      : [];
 
-    try {
-      // Parse JSON string to array
-      return JSON.parse(value);
-    } catch {
-      return [];
-    }
-  }, [type, value]);
+  const selectOptions =
+    options && Array.isArray(options)
+      ? options.map((option) => ({
+          value: String(option),
+          label: String(option),
+        }))
+      : [];
 
-  // Create select options from the provided options array
-  const selectOptions = useMemo(() => {
-    if (!options || !Array.isArray(options)) return [];
+  const booleanOptions = [
+    { value: 'true', label: 'true' },
+    { value: 'false', label: 'false' },
+  ];
 
-    return options.map((option) => ({
-      value: String(option),
-      label: String(option),
-    }));
-  }, [options]);
-
-  // Boolean options
-  const booleanOptions = useMemo(
-    () => [
-      { value: 'true', label: 'true' },
-      { value: 'false', label: 'false' },
-    ],
-    [],
-  );
-
-  // Check if a value is selected in the multi-select
   const isValueSelected = (optionValue: string) => {
     if (!arrayValue || !Array.isArray(arrayValue)) return false;
     return arrayValue.includes(optionValue);
   };
 
-  // Handle selection change for multi-select
   const handleMultiSelectChange = (optionValue: string) => {
     let newValues = [...arrayValue];
 
     if (isValueSelected(optionValue)) {
-      // Remove if already selected
       newValues = newValues.filter((val) => val !== optionValue);
     } else {
-      // Add if not selected
       newValues.push(optionValue);
     }
 
-    // Convert back to JSON string
+    // this is probable not what we want, probably the reason multi select value is not being correctly parsed after saving?
     onChange(JSON.stringify(newValues));
   };
 
