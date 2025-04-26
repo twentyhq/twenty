@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 
 describe('EnvironmentConfigDriver', () => {
@@ -17,6 +18,10 @@ describe('EnvironmentConfigDriver', () => {
           useValue: {
             get: jest.fn(),
           },
+        },
+        {
+          provide: CONFIG_VARIABLES_INSTANCE_TOKEN,
+          useValue: new ConfigVariables(),
         },
       ],
     }).compile();
