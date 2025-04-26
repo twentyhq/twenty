@@ -318,11 +318,18 @@ export type ComputeStepOutputSchemaInput = {
   step: Scalars['JSON'];
 };
 
+export enum ConfigSource {
+  DATABASE = 'DATABASE',
+  DEFAULT = 'DEFAULT',
+  ENVIRONMENT = 'ENVIRONMENT'
+}
+
 export type ConfigVariable = {
   __typename?: 'ConfigVariable';
   description: Scalars['String'];
   isSensitive: Scalars['Boolean'];
   name: Scalars['String'];
+  source: ConfigSource;
   value: Scalars['String'];
 };
 
@@ -2731,7 +2738,7 @@ export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookup
 export type GetConfigVariablesGroupedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetConfigVariablesGroupedQuery = { __typename?: 'Query', getConfigVariablesGrouped: { __typename?: 'ConfigVariablesOutput', groups: Array<{ __typename?: 'ConfigVariablesGroupData', name: ConfigVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'ConfigVariable', name: string, description: string, value: string, isSensitive: boolean }> }> } };
+export type GetConfigVariablesGroupedQuery = { __typename?: 'Query', getConfigVariablesGrouped: { __typename?: 'ConfigVariablesOutput', groups: Array<{ __typename?: 'ConfigVariablesGroupData', name: ConfigVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'ConfigVariable', name: string, description: string, value: string, isSensitive: boolean, source: ConfigSource }> }> } };
 
 export type GetVersionInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4819,6 +4826,7 @@ export const GetConfigVariablesGroupedDocument = gql`
         description
         value
         isSensitive
+        source
       }
     }
   }

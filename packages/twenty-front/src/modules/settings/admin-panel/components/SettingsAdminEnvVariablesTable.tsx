@@ -5,18 +5,14 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import { ConfigVariable } from '~/generated/graphql';
 
 const StyledTableBody = styled(TableBody)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 type SettingsAdminEnvVariablesTableProps = {
-  variables: Array<{
-    name: string;
-    description: string;
-    value: string;
-    isSensitive: boolean;
-  }>;
+  variables: ConfigVariable[];
 };
 
 export const SettingsAdminEnvVariablesTable = ({

@@ -9,14 +9,10 @@ import { useState } from 'react';
 import { IconChevronRight, IconEye, IconEyeOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { ConfigVariable } from '~/generated/graphql';
 
 type SettingsAdminEnvVariablesRowProps = {
-  variable: {
-    name: string;
-    description: string;
-    value: string;
-    isSensitive: boolean;
-  };
+  variable: ConfigVariable;
   isExpanded: boolean;
   onExpandToggle: (name: string) => void;
 };
@@ -104,6 +100,12 @@ export const SettingsAdminEnvVariablesRow = ({
       ),
     },
     {
+      // this is temporary
+      // TODO: remove this once we have a better way to display the source
+      label: 'Source',
+      value: <SettingsAdminEnvCopyableText text={variable.source} />,
+    },
+    {
       label: 'Value',
       value: (
         <StyledValueContainer>
@@ -141,6 +143,7 @@ export const SettingsAdminEnvVariablesRow = ({
         <StyledTruncatedCell align="right">
           <StyledEllipsisLabel>{displayValue}</StyledEllipsisLabel>
         </StyledTruncatedCell>
+
         <TableCell align="right">
           <StyledButton
             onClick={(e) => {

@@ -127,7 +127,9 @@ export class AdminPanelService {
     const rawEnvVars = this.twentyConfigService.getAll();
     const groupedData = new Map<ConfigVariablesGroup, ConfigVariable[]>();
 
-    for (const [varName, { value, metadata }] of Object.entries(rawEnvVars)) {
+    for (const [varName, { value, metadata, source }] of Object.entries(
+      rawEnvVars,
+    )) {
       const { group, description } = metadata;
 
       const envVar: ConfigVariable = {
@@ -135,6 +137,7 @@ export class AdminPanelService {
         description,
         value: String(value),
         isSensitive: metadata.isSensitive ?? false,
+        source,
       };
 
       if (!groupedData.has(group)) {

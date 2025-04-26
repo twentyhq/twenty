@@ -137,16 +137,23 @@ export class TwentyConfigService {
       let source = ConfigSource.ENVIRONMENT;
 
       if (!this.isDatabaseDriverActive || envMetadata.isEnvOnly) {
-        if (value === configVars[key as keyof ConfigVariables]) {
-          source = ConfigSource.DEFAULT;
-        }
-      } else {
-        const dbValue = value;
-
         source =
-          dbValue !== configVars[key as keyof ConfigVariables]
-            ? ConfigSource.DATABASE
-            : ConfigSource.DEFAULT;
+          value === configVars[key as keyof ConfigVariables]
+            ? ConfigSource.DEFAULT
+            : ConfigSource.ENVIRONMENT;
+      } else {
+        const dbValue = this.databaseConfigDriver.get(
+          key as keyof ConfigVariables,
+        );
+
+        if (dbValue !== undefined) {
+          source = ConfigSource.DATABASE;
+        } else {
+          source =
+            value === configVars[key as keyof ConfigVariables]
+              ? ConfigSource.DEFAULT
+              : ConfigSource.ENVIRONMENT;
+        }
       }
 
       if (isString(value) && key in CONFIG_VARIABLES_MASKING_CONFIG) {

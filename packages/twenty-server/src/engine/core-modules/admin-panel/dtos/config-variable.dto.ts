@@ -1,4 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+
+import { ConfigSource } from 'src/engine/core-modules/twenty-config/enums/config-source.enum';
+
+registerEnumType(ConfigSource, {
+  name: 'ConfigSource',
+});
 
 @ObjectType()
 export class ConfigVariable {
@@ -13,4 +19,7 @@ export class ConfigVariable {
 
   @Field()
   isSensitive: boolean;
+
+  @Field()
+  source: ConfigSource;
 }
