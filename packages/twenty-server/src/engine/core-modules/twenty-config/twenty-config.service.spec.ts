@@ -60,6 +60,16 @@ const mockConfigVarMetadata = {
 
 // Setup with database driver
 const setupTestModule = async (isDatabaseConfigEnabled = true) => {
+  const configServiceMock = {
+    get: jest.fn().mockImplementation((key) => {
+      if (key === 'IS_CONFIG_VARIABLES_IN_DB_ENABLED') {
+        return isDatabaseConfigEnabled ? 'true' : 'false';
+      }
+
+      return undefined;
+    }),
+  };
+
   const module: TestingModule = await Test.createTestingModule({
     providers: [
       TwentyConfigService,
@@ -74,20 +84,14 @@ const setupTestModule = async (isDatabaseConfigEnabled = true) => {
       {
         provide: EnvironmentConfigDriver,
         useValue: {
-          get: jest.fn(),
+          get: jest.fn().mockImplementation((key) => {
+            return configServiceMock.get(key);
+          }),
         },
       },
       {
         provide: ConfigService,
-        useValue: {
-          get: jest.fn().mockImplementation((key) => {
-            if (key === 'IS_CONFIG_VARIABLES_IN_DB_ENABLED') {
-              return isDatabaseConfigEnabled ? 'true' : 'false';
-            }
-
-            return null;
-          }),
-        },
+        useValue: configServiceMock,
       },
     ],
   }).compile();
@@ -105,26 +109,30 @@ const setupTestModule = async (isDatabaseConfigEnabled = true) => {
 
 // Setup without database driver
 const setupTestModuleWithoutDb = async () => {
+  const configServiceMock = {
+    get: jest.fn().mockImplementation((key) => {
+      if (key === 'IS_CONFIG_VARIABLES_IN_DB_ENABLED') {
+        return 'false';
+      }
+
+      return undefined;
+    }),
+  };
+
   const module: TestingModule = await Test.createTestingModule({
     providers: [
       TwentyConfigService,
       {
         provide: EnvironmentConfigDriver,
         useValue: {
-          get: jest.fn(),
+          get: jest.fn().mockImplementation((key) => {
+            return configServiceMock.get(key);
+          }),
         },
       },
       {
         provide: ConfigService,
-        useValue: {
-          get: jest.fn().mockImplementation((key) => {
-            if (key === 'IS_CONFIG_VARIABLES_IN_DB_ENABLED') {
-              return 'false';
-            }
-
-            return null;
-          }),
-        },
+        useValue: configServiceMock,
       },
     ],
   }).compile();
@@ -177,26 +185,23 @@ describe('TwentyConfigService', () => {
 
   describe('constructor', () => {
     it('should set isDatabaseDriverActive to false when database config is disabled', async () => {
-      const { service, configService } = await setupTestModuleWithoutDb();
+      const { service, environmentConfigDriver } =
+        await setupTestModuleWithoutDb();
 
-      // Verify ConfigService was called with the right parameter
-      expect(configService.get).toHaveBeenCalledWith(
+      expect(environmentConfigDriver.get).toHaveBeenCalledWith(
         'IS_CONFIG_VARIABLES_IN_DB_ENABLED',
       );
 
-      // Test behavior that results from the configuration
       expect(service.getCacheInfo().usingDatabaseDriver).toBe(false);
     });
 
     it('should set isDatabaseDriverActive to true when database config is enabled and driver is available', async () => {
-      const { service, configService } = await setupTestModule(true);
+      const { service, environmentConfigDriver } = await setupTestModule(true);
 
-      // Verify ConfigService was called with the right parameter
-      expect(configService.get).toHaveBeenCalledWith(
+      expect(environmentConfigDriver.get).toHaveBeenCalledWith(
         'IS_CONFIG_VARIABLES_IN_DB_ENABLED',
       );
 
-      // Test behavior that results from the configuration
       expect(service.getCacheInfo().usingDatabaseDriver).toBe(true);
     });
   });
@@ -236,6 +241,8 @@ describe('TwentyConfigService', () => {
     it('should use database driver when isDatabaseDriverActive is true and value is found', () => {
       jest.spyOn(databaseConfigDriver, 'get').mockReturnValue(expectedValue);
       setPrivateProps(service, { isDatabaseDriverActive: true });
+
+      jest.clearAllMocks();
 
       const result = service.get(key);
 

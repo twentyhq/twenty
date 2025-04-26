@@ -1,10 +1,10 @@
 import { Transform } from 'class-transformer';
 import {
-  IsArray,
-  IsBoolean,
-  IsEnum,
-  IsNumber,
-  IsString,
+    IsArray,
+    IsBoolean,
+    IsEnum,
+    IsNumber,
+    IsString,
 } from 'class-validator';
 
 import { ConfigVariableOptions } from 'src/engine/core-modules/twenty-config/types/config-variable-options.type';
@@ -41,7 +41,7 @@ export function applyBasicValidators(
       break;
 
     case 'enum':
-      if (options) {
+      if (options && Array.isArray(options)) {
         IsEnum(options)(target, propertyKey);
       }
       break;
