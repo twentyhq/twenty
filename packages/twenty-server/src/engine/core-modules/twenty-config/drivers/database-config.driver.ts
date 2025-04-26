@@ -157,6 +157,11 @@ export class DatabaseConfigDriver
     }
   }
 
+  async delete(key: keyof ConfigVariables): Promise<void> {
+    await this.configStorage.delete(key);
+    this.configCache.markKeyAsMissing(key);
+  }
+
   /**
    * Refreshes all database-backed config variables.
    * This method runs on a schedule and fetches all configs in one database query,

@@ -2,11 +2,26 @@ import styled from '@emotion/styled';
 import { useMemo } from 'react';
 
 import { Select } from '@/ui/input/components/Select';
+import { SelectControl } from '@/ui/input/components/SelectControl';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { MenuItemMultiSelect } from 'twenty-ui/navigation';
 
 const StyledContainer = styled.div`
   width: 100%;
+`;
+
+const StyledArrayContainer = styled.div`
+  width: 100%;
+`;
+
+const StyledDropdownButtonContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  flex-wrap: wrap;
 `;
 
 type ConfigVariableInputProps = {
@@ -28,14 +43,13 @@ export const ConfigVariableInput = ({
 }: ConfigVariableInputProps) => {
   // For array type, we need to convert between string and array
   const arrayValue = useMemo(() => {
-    if (type !== 'array' || !value) return '';
+    if (type !== 'array' || !value) return [];
 
     try {
-      // Pretty print JSON for better readability
-      const parsed = JSON.parse(value);
-      return JSON.stringify(parsed, null, 2);
+      // Parse JSON string to array
+      return JSON.parse(value);
     } catch {
-      return value;
+      return [];
     }
   }, [type, value]);
 
@@ -52,11 +66,33 @@ export const ConfigVariableInput = ({
   // Boolean options
   const booleanOptions = useMemo(
     () => [
-      { value: 'true', label: 'True' },
-      { value: 'false', label: 'False' },
+      { value: 'true', label: 'true' },
+      { value: 'false', label: 'false' },
     ],
     [],
   );
+
+  // Check if a value is selected in the multi-select
+  const isValueSelected = (optionValue: string) => {
+    if (!arrayValue || !Array.isArray(arrayValue)) return false;
+    return arrayValue.includes(optionValue);
+  };
+
+  // Handle selection change for multi-select
+  const handleMultiSelectChange = (optionValue: string) => {
+    let newValues = [...arrayValue];
+
+    if (isValueSelected(optionValue)) {
+      // Remove if already selected
+      newValues = newValues.filter((val) => val !== optionValue);
+    } else {
+      // Add if not selected
+      newValues.push(optionValue);
+    }
+
+    // Convert back to JSON string
+    onChange(JSON.stringify(newValues));
+  };
 
   switch (type) {
     case 'boolean':
@@ -87,22 +123,68 @@ export const ConfigVariableInput = ({
 
     case 'array':
       return (
-        <TextArea
-          value={arrayValue}
-          onChange={(text) => {
-            try {
-              // Validate JSON format when changing
-              JSON.parse(text);
-              onChange(text);
-            } catch {
-              // If not valid JSON, still update the visible text for editing
-              onChange(text);
-            }
-          }}
-          disabled={disabled}
-          placeholder={placeholder || 'Enter JSON array'}
-          minRows={3}
-        />
+        <StyledArrayContainer>
+          {options && Array.isArray(options) ? (
+            <>
+              <Dropdown
+                dropdownId="config-variable-array-dropdown"
+                dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
+                dropdownPlacement="bottom-start"
+                dropdownOffset={{
+                  y: 8,
+                }}
+                clickableComponent={
+                  <SelectControl
+                    selectedOption={{
+                      value: '',
+                      label:
+                        arrayValue.length > 0
+                          ? `${arrayValue.length} selected`
+                          : 'Select options',
+                    }}
+                    isDisabled={disabled}
+                    hasRightElement={false}
+                    selectSizeVariant="default"
+                  />
+                }
+                dropdownComponents={
+                  <DropdownMenuItemsContainer>
+                    {selectOptions.map((option) => (
+                      <MenuItemMultiSelect
+                        key={option.value}
+                        text={option.label}
+                        selected={isValueSelected(option.value)}
+                        className="config-variable-array-menu-item-multi-select"
+                        onSelectChange={() =>
+                          handleMultiSelectChange(option.value)
+                        }
+                      />
+                    ))}
+                  </DropdownMenuItemsContainer>
+                }
+              />
+              {arrayValue.length > 0 && (
+                <StyledDropdownButtonContainer>
+                  <TextArea
+                    value={value}
+                    onChange={(text) => onChange(text)}
+                    disabled={true}
+                    placeholder={placeholder || 'Enter JSON array'}
+                    minRows={3}
+                  />
+                </StyledDropdownButtonContainer>
+              )}
+            </>
+          ) : (
+            <TextArea
+              value={value}
+              onChange={(text) => onChange(text)}
+              disabled={disabled}
+              placeholder={placeholder || 'Enter JSON array'}
+              minRows={3}
+            />
+          )}
+        </StyledArrayContainer>
       );
 
     case 'enum':

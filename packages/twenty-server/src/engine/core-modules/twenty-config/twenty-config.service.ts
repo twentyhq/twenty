@@ -221,4 +221,13 @@ export class TwentyConfigService {
 
     return result;
   }
+
+  async delete(key: keyof ConfigVariables): Promise<void> {
+    if (!this.isDatabaseDriverActive) {
+      throw new Error(
+        'Database configuration is disabled or unavailable, cannot delete configuration',
+      );
+    }
+    await this.databaseConfigDriver.delete(key);
+  }
 }

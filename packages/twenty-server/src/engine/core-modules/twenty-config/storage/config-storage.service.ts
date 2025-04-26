@@ -53,7 +53,6 @@ export class ConfigStorageService implements ConfigStorageInterface {
       }
 
       const appSecret = this.environmentConfigDriver.get('APP_SECRET');
-
       const metadata = TypedReflect.getMetadata(
         'config-variables',
         ConfigVariables,
@@ -64,16 +63,27 @@ export class ConfigStorageService implements ConfigStorageInterface {
           `Fetching config for ${key as string} in database: ${result?.value}`,
         );
 
+        // First convert DB value to app value type
         const value = this.configValueConverter.convertDbValueToAppValue(
           result.value,
           key,
         );
 
-        // Only decrypt if it's a sensitive string value
-        // we assume the sensitive values are always strings -- which is true for now
-
-        if (metadata?.isSensitive && metadata.type === 'string') {
-          return decryptText(value as string, appSecret) as ConfigVariables[T];
+        // Then decrypt if sensitive and is a string
+        if (
+          metadata?.isSensitive &&
+          metadata.type === 'string' &&
+          typeof value === 'string'
+        ) {
+          try {
+            return decryptText(value, appSecret) as ConfigVariables[T];
+          } catch (error) {
+            this.logger.error(
+              `Failed to decrypt value for key ${key as string}`,
+              error,
+            );
+            // Fall back to the original value if decryption fails
+          }
         }
 
         return value;
@@ -95,30 +105,40 @@ export class ConfigStorageService implements ConfigStorageInterface {
     value: ConfigVariables[T],
   ): Promise<void> {
     try {
-      let processedValue;
-
       const appSecret = this.environmentConfigDriver.get('APP_SECRET');
-
       const metadata = TypedReflect.getMetadata(
         'config-variables',
         ConfigVariables,
       )?.[key as string];
 
-      if (metadata?.isSensitive) {
-        processedValue = encryptText(value as string, appSecret);
-      } else {
-        processedValue = value;
-      }
+      // First convert to DB storage format
+      let dbValue;
 
       try {
-        processedValue =
-          this.configValueConverter.convertAppValueToDbValue(value);
+        dbValue = this.configValueConverter.convertAppValueToDbValue(value);
       } catch (error) {
         this.logger.error(
           `Failed to convert value to storage type for key ${key as string}`,
           error,
         );
         throw error;
+      }
+
+      // Then encrypt if sensitive and is string
+      if (
+        metadata?.isSensitive &&
+        metadata.type === 'string' &&
+        typeof dbValue === 'string'
+      ) {
+        try {
+          dbValue = encryptText(dbValue, appSecret);
+        } catch (error) {
+          this.logger.error(
+            `Failed to encrypt value for key ${key as string}`,
+            error,
+          );
+          // Keep the original value if encryption fails
+        }
       }
 
       const existingRecord = await this.keyValuePairRepository.findOne({
@@ -128,12 +148,12 @@ export class ConfigStorageService implements ConfigStorageInterface {
       if (existingRecord) {
         await this.keyValuePairRepository.update(
           { id: existingRecord.id },
-          { value: processedValue },
+          { value: dbValue },
         );
       } else {
         await this.keyValuePairRepository.insert({
           key: key as string,
-          value: processedValue,
+          value: dbValue,
           userId: null,
           workspaceId: null,
           type: KeyValuePairType.CONFIG_VARIABLE,

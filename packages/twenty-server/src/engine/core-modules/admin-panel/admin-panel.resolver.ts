@@ -124,6 +124,10 @@ export class AdminPanelResolver {
     return this.adminService.getVersionInfo();
   }
 
+  // Database Config Variables
+  // needs rework, this is probably not the best place to keep this?
+  // can refactor admin panel resolver into multiple resolvers
+
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
   @Query(() => ConfigVariable)
   async getDatabaseConfigVariable(
@@ -152,6 +156,16 @@ export class AdminPanelResolver {
     value: ConfigVariables[keyof ConfigVariables],
   ): Promise<boolean> {
     await this.twentyConfigService.update(key, value);
+
+    return true;
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async deleteDatabaseConfigVariable(
+    @Args('key', { type: () => String }) key: keyof ConfigVariables,
+  ): Promise<boolean> {
+    await this.twentyConfigService.delete(key);
 
     return true;
   }
