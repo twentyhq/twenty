@@ -18,6 +18,8 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -33,6 +35,7 @@ export class AdminPanelResolver {
     private adminService: AdminPanelService,
     private adminPanelHealthService: AdminPanelHealthService,
     private featureFlagService: FeatureFlagService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
@@ -118,5 +121,29 @@ export class AdminPanelResolver {
   @Query(() => VersionInfo)
   async versionInfo(): Promise<VersionInfo> {
     return this.adminService.getVersionInfo();
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async createDatabaseConfigVariable(
+    @Args('key', { type: () => String }) key: keyof ConfigVariables,
+    @Args('value', { type: () => String })
+    value: ConfigVariables[keyof ConfigVariables],
+  ): Promise<boolean> {
+    await this.twentyConfigService.set(key, value);
+
+    return true;
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async updateDatabaseConfigVariable(
+    @Args('key', { type: () => String }) key: keyof ConfigVariables,
+    @Args('value', { type: () => String })
+    value: ConfigVariables[keyof ConfigVariables],
+  ): Promise<boolean> {
+    await this.twentyConfigService.update(key, value);
+
+    return true;
   }
 }

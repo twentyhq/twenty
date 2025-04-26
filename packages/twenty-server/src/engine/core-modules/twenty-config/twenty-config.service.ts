@@ -66,6 +66,13 @@ export class TwentyConfigService {
     return this.environmentConfigDriver.get(key);
   }
 
+  async set<T extends keyof ConfigVariables>(
+    key: T,
+    value: ConfigVariables[T],
+  ): Promise<void> {
+    await this.databaseConfigDriver.set(key, value);
+  }
+
   async update<T extends keyof ConfigVariables>(
     key: T,
     value: ConfigVariables[T],

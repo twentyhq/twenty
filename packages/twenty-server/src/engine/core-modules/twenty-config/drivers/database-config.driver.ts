@@ -56,6 +56,14 @@ export class DatabaseConfigDriver
     return this.configCache.get(key);
   }
 
+  async set<T extends keyof ConfigVariables>(
+    key: T,
+    value: ConfigVariables[T],
+  ): Promise<void> {
+    await this.configStorage.set(key, value);
+    this.configCache.set(key, value);
+  }
+
   async update<T extends keyof ConfigVariables>(
     key: T,
     value: ConfigVariables[T],
