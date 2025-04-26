@@ -18,24 +18,26 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useTheme } from '@emotion/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    H3Title,
-    IconEye,
-    IconEyeOff,
-    IconPlus,
-    IconRefreshDot,
-    IconTrash,
-    Status,
+  H3Title,
+  IconEye,
+  IconEyeOff,
+  IconPlus,
+  IconRefreshDot,
+  IconTrash,
+  Status,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
-    ConfigSource,
-    useCreateDatabaseConfigVariableMutation,
-    useDeleteDatabaseConfigVariableMutation,
-    useGetConfigVariablesGroupedQuery,
-    useUpdateDatabaseConfigVariableMutation,
+  ConfigSource,
+  useCreateDatabaseConfigVariableMutation,
+  useDeleteDatabaseConfigVariableMutation,
+  useGetConfigVariablesGroupedQuery,
+  useUpdateDatabaseConfigVariableMutation,
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
+// is this how form are used in codebase?
+// TODO : check for codebase patterns
 const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
@@ -132,10 +134,13 @@ export const SettingsAdminEnvVariableDetails = () => {
     | ConfigVariableWithTypes
     | undefined;
 
+  // is this how validation are used in codebase?
+  // TODO: keep an eye on this
   const validationSchema = z.object({
     value: z.string(),
   });
 
+  // same here
   const {
     handleSubmit,
     setValue,
@@ -231,8 +236,14 @@ export const SettingsAdminEnvVariableDetails = () => {
           href: getSettingsPath(SettingsPath.AdminPanel),
         },
         {
-          children: t`Environment Variable`,
+          children: t`Admin Panel`,
           href: getSettingsPath(SettingsPath.AdminPanel),
+        },
+        {
+          children: t`Environment Variable`,
+          // this is a bit of a hack
+          // @ts-expect-error - We need to allow anchor links in the submenu
+          href: getSettingsPath(SettingsPath.AdminPanel + '#env-variables'),
         },
         {
           children: variable.name,
@@ -299,9 +310,9 @@ export const SettingsAdminEnvVariableDetails = () => {
                     onClick={handleToggleVisibility}
                   >
                     {showSensitiveValue ? (
-                      <IconEyeOff size={16} />
+                      <IconEyeOff size={theme.icon.size.md} />
                     ) : (
-                      <IconEye size={16} />
+                      <IconEye size={theme.icon.size.md} />
                     )}
                   </StyledEyeButton>
                 )}

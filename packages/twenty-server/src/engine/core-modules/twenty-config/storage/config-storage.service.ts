@@ -40,6 +40,10 @@ export class ConfigStorageService implements ConfigStorageInterface {
     };
   }
 
+  // TODO: DRY this up
+  // TODO: add tests for encryption/decryption
+  // recheck encryption/decryption flow
+
   async get<T extends keyof ConfigVariables>(
     key: T,
   ): Promise<ConfigVariables[T] | undefined> {
