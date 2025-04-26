@@ -327,9 +327,12 @@ export enum ConfigSource {
 export type ConfigVariable = {
   __typename?: 'ConfigVariable';
   description: Scalars['String'];
+  isEnvOnly: Scalars['Boolean'];
   isSensitive: Scalars['Boolean'];
   name: Scalars['String'];
+  options?: Maybe<Scalars['JSON']>;
   source: ConfigSource;
+  type?: Maybe<Scalars['String']>;
   value: Scalars['String'];
 };
 
@@ -1506,6 +1509,7 @@ export type Query = {
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
+  getDatabaseConfigVariable: ConfigVariable;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
@@ -1558,6 +1562,11 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
+};
+
+
+export type QueryGetDatabaseConfigVariableArgs = {
+  key: Scalars['String'];
 };
 
 
@@ -2738,7 +2747,14 @@ export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookup
 export type GetConfigVariablesGroupedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetConfigVariablesGroupedQuery = { __typename?: 'Query', getConfigVariablesGrouped: { __typename?: 'ConfigVariablesOutput', groups: Array<{ __typename?: 'ConfigVariablesGroupData', name: ConfigVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'ConfigVariable', name: string, description: string, value: string, isSensitive: boolean, source: ConfigSource }> }> } };
+export type GetConfigVariablesGroupedQuery = { __typename?: 'Query', getConfigVariablesGrouped: { __typename?: 'ConfigVariablesOutput', groups: Array<{ __typename?: 'ConfigVariablesGroupData', name: ConfigVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'ConfigVariable', name: string, description: string, value: string, isSensitive: boolean, isEnvOnly: boolean, type?: string | null, options?: any | null, source: ConfigSource }> }> } };
+
+export type GetDatabaseConfigVariableQueryVariables = Exact<{
+  key: Scalars['String'];
+}>;
+
+
+export type GetDatabaseConfigVariableQuery = { __typename?: 'Query', getDatabaseConfigVariable: { __typename?: 'ConfigVariable', name: string, description: string, value: string, isSensitive: boolean, isEnvOnly: boolean, type?: string | null, options?: any | null, source: ConfigSource } };
 
 export type GetVersionInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4826,6 +4842,9 @@ export const GetConfigVariablesGroupedDocument = gql`
         description
         value
         isSensitive
+        isEnvOnly
+        type
+        options
         source
       }
     }
@@ -4859,6 +4878,48 @@ export function useGetConfigVariablesGroupedLazyQuery(baseOptions?: Apollo.LazyQ
 export type GetConfigVariablesGroupedQueryHookResult = ReturnType<typeof useGetConfigVariablesGroupedQuery>;
 export type GetConfigVariablesGroupedLazyQueryHookResult = ReturnType<typeof useGetConfigVariablesGroupedLazyQuery>;
 export type GetConfigVariablesGroupedQueryResult = Apollo.QueryResult<GetConfigVariablesGroupedQuery, GetConfigVariablesGroupedQueryVariables>;
+export const GetDatabaseConfigVariableDocument = gql`
+    query GetDatabaseConfigVariable($key: String!) {
+  getDatabaseConfigVariable(key: $key) {
+    name
+    description
+    value
+    isSensitive
+    isEnvOnly
+    type
+    options
+    source
+  }
+}
+    `;
+
+/**
+ * __useGetDatabaseConfigVariableQuery__
+ *
+ * To run a query within a React component, call `useGetDatabaseConfigVariableQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDatabaseConfigVariableQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDatabaseConfigVariableQuery({
+ *   variables: {
+ *      key: // value for 'key'
+ *   },
+ * });
+ */
+export function useGetDatabaseConfigVariableQuery(baseOptions: Apollo.QueryHookOptions<GetDatabaseConfigVariableQuery, GetDatabaseConfigVariableQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDatabaseConfigVariableQuery, GetDatabaseConfigVariableQueryVariables>(GetDatabaseConfigVariableDocument, options);
+      }
+export function useGetDatabaseConfigVariableLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDatabaseConfigVariableQuery, GetDatabaseConfigVariableQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDatabaseConfigVariableQuery, GetDatabaseConfigVariableQueryVariables>(GetDatabaseConfigVariableDocument, options);
+        }
+export type GetDatabaseConfigVariableQueryHookResult = ReturnType<typeof useGetDatabaseConfigVariableQuery>;
+export type GetDatabaseConfigVariableLazyQueryHookResult = ReturnType<typeof useGetDatabaseConfigVariableLazyQuery>;
+export type GetDatabaseConfigVariableQueryResult = Apollo.QueryResult<GetDatabaseConfigVariableQuery, GetDatabaseConfigVariableQueryVariables>;
 export const GetVersionInfoDocument = gql`
     query GetVersionInfo {
   versionInfo {

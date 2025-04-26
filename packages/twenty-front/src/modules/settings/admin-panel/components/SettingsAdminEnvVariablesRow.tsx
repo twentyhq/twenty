@@ -1,15 +1,23 @@
 import { SettingsAdminEnvCopyableText } from '@/settings/admin-panel/components/SettingsAdminEnvCopyableText';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
+import { SettingsPath } from '@/types/SettingsPath';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { IconChevronRight, IconEye, IconEyeOff } from 'twenty-ui/display';
+import { Link } from 'react-router-dom';
+import {
+  IconChevronRight,
+  IconEye,
+  IconEyeOff,
+  IconPencil,
+} from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { ConfigVariable } from '~/generated/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsAdminEnvVariablesRowProps = {
   variable: ConfigVariable;
@@ -62,6 +70,16 @@ const StyledExpandableContainer = styled.div`
   width: 100%;
   padding-top: ${({ theme }) => theme.spacing(2)};
   padding-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledBottomActionsContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
 `;
 
 export const SettingsAdminEnvVariablesRow = ({
@@ -166,6 +184,20 @@ export const SettingsAdminEnvVariablesRow = ({
             items={environmentVariablesDetails}
             gridAutoColumns="1fr 4fr"
           />
+          <StyledBottomActionsContainer>
+            <StyledLink
+              to={getSettingsPath(SettingsPath.AdminPanelEnvVariableDetails, {
+                variableName: variable.name,
+              })}
+            >
+              <LightIconButton
+                Icon={IconPencil}
+                size="small"
+                accent="tertiary"
+                title="Edit Variable"
+              />
+            </StyledLink>
+          </StyledBottomActionsContainer>
         </StyledExpandableContainer>
       </AnimatedExpandableContainer>
     </>

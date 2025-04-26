@@ -3,6 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
+import { ConfigVariable } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
 import { ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
 import { ImpersonateInput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.input';
 import { ImpersonateOutput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.output';
@@ -121,6 +122,14 @@ export class AdminPanelResolver {
   @Query(() => VersionInfo)
   async versionInfo(): Promise<VersionInfo> {
     return this.adminService.getVersionInfo();
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Query(() => ConfigVariable)
+  async getDatabaseConfigVariable(
+    @Args('key', { type: () => String }) key: keyof ConfigVariables,
+  ): Promise<ConfigVariable> {
+    return this.adminService.getConfigVariable(key);
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)

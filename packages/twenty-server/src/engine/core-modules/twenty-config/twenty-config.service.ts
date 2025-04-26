@@ -70,6 +70,22 @@ export class TwentyConfigService {
     key: T,
     value: ConfigVariables[T],
   ): Promise<void> {
+    if (!this.isDatabaseDriverActive) {
+      throw new Error(
+        'Database configuration is disabled or unavailable, cannot set configuration',
+      );
+    }
+
+    const metadata =
+      TypedReflect.getMetadata('config-variables', ConfigVariables) ?? {};
+    const envMetadata = metadata[key];
+
+    if (envMetadata?.isEnvOnly) {
+      throw new Error(
+        `Cannot create environment-only variable: ${key as string}`,
+      );
+    }
+
     await this.databaseConfigDriver.set(key, value);
   }
 
