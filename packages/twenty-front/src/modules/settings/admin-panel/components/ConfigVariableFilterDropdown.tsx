@@ -7,7 +7,7 @@ import { IconSettings } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { ConfigVariableOptionsDropdownContent } from './ConfigVariableOptionsDropdownContent';
 
-interface ConfigVariableFilterDropdownProps {
+type ConfigVariableFilterDropdownProps = {
   sourceFilter: ConfigVariableSourceFilter;
   groupFilter: ConfigVariableGroupFilter;
   groupOptions: { value: string; label: string }[];
@@ -15,7 +15,7 @@ interface ConfigVariableFilterDropdownProps {
   onSourceFilterChange: (source: ConfigVariableSourceFilter) => void;
   onGroupFilterChange: (group: ConfigVariableGroupFilter) => void;
   onShowHiddenChange: (value: boolean) => void;
-}
+};
 
 export const ConfigVariableFilterDropdown = ({
   sourceFilter,

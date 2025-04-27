@@ -9,14 +9,14 @@ const StyledChipContainer = styled.div`
   margin-top: 8px;
 `;
 
-interface ConfigVariableFilterContainerProps {
+type ConfigVariableFilterContainerProps = {
   children: React.ReactNode;
   activeChips: {
     label: string;
     onRemove: () => void;
     source?: ConfigVariableSourceFilter;
   }[];
-}
+};
 
 export const ConfigVariableFilterContainer = ({
   children,

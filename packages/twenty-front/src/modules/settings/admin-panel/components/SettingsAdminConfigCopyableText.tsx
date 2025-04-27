@@ -6,6 +6,13 @@ import { useLingui } from '@lingui/react/macro';
 import { IconCopy, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 
+type SettingsAdminConfigCopyableTextProps = {
+  text: string;
+  displayText?: React.ReactNode;
+  multiline?: boolean;
+  maxRows?: number;
+};
+
 const StyledEllipsisLabel = styled.div`
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -25,12 +32,7 @@ export const SettingsAdminConfigCopyableText = ({
   displayText,
   multiline = false,
   maxRows,
-}: {
-  text: string;
-  displayText?: React.ReactNode;
-  multiline?: boolean;
-  maxRows?: number;
-}) => {
+}: SettingsAdminConfigCopyableTextProps) => {
   const { enqueueSnackBar } = useSnackBar();
   const theme = useTheme();
   const { t } = useLingui();
