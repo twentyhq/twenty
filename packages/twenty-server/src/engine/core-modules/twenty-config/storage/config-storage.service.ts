@@ -210,11 +210,23 @@ export class ConfigStorageService implements ConfigStorageInterface {
               key,
             );
 
-            if (metadata?.isSensitive && metadata.type === 'string') {
-              value = decryptText(
-                value as string,
-                appSecret,
-              ) as ConfigVariables[keyof ConfigVariables];
+            if (
+              metadata?.isSensitive &&
+              metadata.type === 'string' &&
+              typeof value === 'string'
+            ) {
+              try {
+                value = decryptText(
+                  value,
+                  appSecret,
+                ) as ConfigVariables[keyof ConfigVariables];
+              } catch (error) {
+                this.logger.error(
+                  `Failed to decrypt value for key ${key as string}`,
+                  error,
+                );
+                // Keep the original value if decryption fails
+              }
             }
 
             if (value !== undefined) {
