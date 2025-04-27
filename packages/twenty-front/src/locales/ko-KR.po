@@ -840,6 +840,11 @@ msgstr "비밀번호 변경"
 msgid "Change Plan"
 msgstr ""
 
+#. js-lingui-id: EYSFEW
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Change subdomain?"
+msgstr ""
+
 #. js-lingui-id: b0h4XW
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Change to yearly"
@@ -5075,6 +5080,11 @@ msgstr "이 개체에 기록을 생성할 수 있는 권한이 없습니다"
 #: src/pages/settings/SettingsBilling.tsx
 #~ msgid "You will be charged immediately for the full year."
 #~ msgstr "1년 요금이 즉시 청구됩니다."
+
+#. js-lingui-id: Cl+hUj
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "You're about to change your workspace subdomain. This action will log out all users."
+msgstr ""
 
 #. js-lingui-id: XVnj6K
 #: src/pages/settings/SettingsBilling.tsx

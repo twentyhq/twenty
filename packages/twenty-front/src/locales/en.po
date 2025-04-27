@@ -835,6 +835,11 @@ msgstr "Change Password"
 msgid "Change Plan"
 msgstr "Change Plan"
 
+#. js-lingui-id: EYSFEW
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Change subdomain?"
+msgstr "Change subdomain?"
+
 #. js-lingui-id: b0h4XW
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Change to yearly"
@@ -5070,6 +5075,11 @@ msgstr "You are not allowed to create records for this object"
 #: src/pages/settings/SettingsBilling.tsx
 #~ msgid "You will be charged immediately for the full year."
 #~ msgstr "You will be charged immediately for the full year."
+
+#. js-lingui-id: Cl+hUj
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "You're about to change your workspace subdomain. This action will log out all users."
+msgstr "You're about to change your workspace subdomain. This action will log out all users."
 
 #. js-lingui-id: XVnj6K
 #: src/pages/settings/SettingsBilling.tsx
