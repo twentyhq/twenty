@@ -170,6 +170,8 @@ export const ObjectFilterDropdownRecordSelect = ({
     const isItemCurrentWorkspaceMemberId =
       itemToSelect.id === currentWorkspaceMemberId;
 
+    const isCurrentWorkspaceMemberIdSelected = true;
+
     const selectedRecordIdsWithAddedRecord = [
       ...selectedRecordIds,
       itemToSelect.id,
@@ -179,8 +181,13 @@ export const ObjectFilterDropdownRecordSelect = ({
       (id) => id !== itemToSelect.id,
     );
 
+    const selectedRecordIdsWithRemovedCurrentWorkspaceMemberId =
+      selectedRecordIds.filter((id) => id !== currentWorkspaceMemberId);
+
     const newSelectedRecordIds = isItemCurrentWorkspaceMember
-      ? selectedRecordIds
+      ? isCurrentWorkspaceMemberIdSelected
+        ? selectedRecordIdsWithRemovedCurrentWorkspaceMemberId
+        : selectedRecordIds
       : isNewSelectedValue
         ? selectedRecordIdsWithAddedRecord
         : selectedRecordIdsWithRemovedRecord;
