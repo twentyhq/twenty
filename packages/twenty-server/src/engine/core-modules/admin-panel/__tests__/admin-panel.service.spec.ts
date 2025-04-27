@@ -168,7 +168,7 @@ describe('AdminPanelService', () => {
           },
         },
         RATE_LIMIT_TTL: {
-          value: '60',
+          value: 60,
           metadata: {
             group: 'RATE_LIMITING',
             description: 'Rate limit TTL',
@@ -221,7 +221,7 @@ describe('AdminPanelService', () => {
             variables: [
               {
                 name: 'RATE_LIMIT_TTL',
-                value: '60',
+                value: 60,
                 description: 'Rate limit TTL',
                 isSensitive: false,
               },

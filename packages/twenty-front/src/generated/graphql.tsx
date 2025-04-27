@@ -333,7 +333,7 @@ export type ConfigVariable = {
   options?: Maybe<Scalars['JSON']>;
   source: ConfigSource;
   type?: Maybe<Scalars['String']>;
-  value: Scalars['String'];
+  value?: Maybe<Scalars['JSON']>;
 };
 
 export enum ConfigVariablesGroup {
@@ -986,7 +986,7 @@ export type MutationCreateApprovedAccessDomainArgs = {
 
 export type MutationCreateDatabaseConfigVariableArgs = {
   key: Scalars['String'];
-  value: Scalars['String'];
+  value: Scalars['JSON'];
 };
 
 
@@ -1188,7 +1188,7 @@ export type MutationTrackAnalyticsArgs = {
 
 export type MutationUpdateDatabaseConfigVariableArgs = {
   key: Scalars['String'];
-  value: Scalars['String'];
+  value: Scalars['JSON'];
 };
 
 
@@ -2720,7 +2720,7 @@ export type SkipSyncEmailOnboardingStepMutation = { __typename?: 'Mutation', ski
 
 export type CreateDatabaseConfigVariableMutationVariables = Exact<{
   key: Scalars['String'];
-  value: Scalars['String'];
+  value: Scalars['JSON'];
 }>;
 
 
@@ -2735,7 +2735,7 @@ export type DeleteDatabaseConfigVariableMutation = { __typename?: 'Mutation', de
 
 export type UpdateDatabaseConfigVariableMutationVariables = Exact<{
   key: Scalars['String'];
-  value: Scalars['String'];
+  value: Scalars['JSON'];
 }>;
 
 
@@ -2760,14 +2760,14 @@ export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookup
 export type GetConfigVariablesGroupedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetConfigVariablesGroupedQuery = { __typename?: 'Query', getConfigVariablesGrouped: { __typename?: 'ConfigVariablesOutput', groups: Array<{ __typename?: 'ConfigVariablesGroupData', name: ConfigVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'ConfigVariable', name: string, description: string, value: string, isSensitive: boolean, isEnvOnly: boolean, type?: string | null, options?: any | null, source: ConfigSource }> }> } };
+export type GetConfigVariablesGroupedQuery = { __typename?: 'Query', getConfigVariablesGrouped: { __typename?: 'ConfigVariablesOutput', groups: Array<{ __typename?: 'ConfigVariablesGroupData', name: ConfigVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'ConfigVariable', name: string, description: string, value?: any | null, isSensitive: boolean, isEnvOnly: boolean, type?: string | null, options?: any | null, source: ConfigSource }> }> } };
 
 export type GetDatabaseConfigVariableQueryVariables = Exact<{
   key: Scalars['String'];
 }>;
 
 
-export type GetDatabaseConfigVariableQuery = { __typename?: 'Query', getDatabaseConfigVariable: { __typename?: 'ConfigVariable', name: string, description: string, value: string, isSensitive: boolean, isEnvOnly: boolean, type?: string | null, options?: any | null, source: ConfigSource } };
+export type GetDatabaseConfigVariableQuery = { __typename?: 'Query', getDatabaseConfigVariable: { __typename?: 'ConfigVariable', name: string, description: string, value?: any | null, isSensitive: boolean, isEnvOnly: boolean, type?: string | null, options?: any | null, source: ConfigSource } };
 
 export type GetVersionInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4688,7 +4688,7 @@ export type SkipSyncEmailOnboardingStepMutationHookResult = ReturnType<typeof us
 export type SkipSyncEmailOnboardingStepMutationResult = Apollo.MutationResult<SkipSyncEmailOnboardingStepMutation>;
 export type SkipSyncEmailOnboardingStepMutationOptions = Apollo.BaseMutationOptions<SkipSyncEmailOnboardingStepMutation, SkipSyncEmailOnboardingStepMutationVariables>;
 export const CreateDatabaseConfigVariableDocument = gql`
-    mutation CreateDatabaseConfigVariable($key: String!, $value: String!) {
+    mutation CreateDatabaseConfigVariable($key: String!, $value: JSON!) {
   createDatabaseConfigVariable(key: $key, value: $value)
 }
     `;
@@ -4751,7 +4751,7 @@ export type DeleteDatabaseConfigVariableMutationHookResult = ReturnType<typeof u
 export type DeleteDatabaseConfigVariableMutationResult = Apollo.MutationResult<DeleteDatabaseConfigVariableMutation>;
 export type DeleteDatabaseConfigVariableMutationOptions = Apollo.BaseMutationOptions<DeleteDatabaseConfigVariableMutation, DeleteDatabaseConfigVariableMutationVariables>;
 export const UpdateDatabaseConfigVariableDocument = gql`
-    mutation UpdateDatabaseConfigVariable($key: String!, $value: String!) {
+    mutation UpdateDatabaseConfigVariable($key: String!, $value: JSON!) {
   updateDatabaseConfigVariable(key: $key, value: $value)
 }
     `;

@@ -18,8 +18,8 @@ export class ConfigVariable {
   @Field()
   description: string;
 
-  @Field()
-  value: string;
+  @Field(() => GraphQLJSON, { nullable: true })
+  value: string | number | boolean | string[] | null;
 
   @Field()
   isSensitive: boolean;

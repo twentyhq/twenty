@@ -137,7 +137,7 @@ export class AdminPanelService {
       const envVar: ConfigVariable = {
         name: varName,
         description,
-        value: String(value),
+        value: value ?? null,
         isSensitive: metadata.isSensitive ?? false,
         isEnvOnly: metadata.isEnvOnly ?? false,
         type: metadata.type,
@@ -182,7 +182,7 @@ export class AdminPanelService {
     const configVariable: ConfigVariable = {
       name: key,
       description: '',
-      value: String(value),
+      value: value ?? null,
       isSensitive: false,
       isEnvOnly: false,
       type: metadata?.type,

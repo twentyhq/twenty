@@ -18,21 +18,21 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useTheme } from '@emotion/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  H3Title,
-  IconEye,
-  IconEyeOff,
-  IconPlus,
-  IconRefreshDot,
-  IconTrash,
-  Status,
+    H3Title,
+    IconEye,
+    IconEyeOff,
+    IconPlus,
+    IconRefreshDot,
+    IconTrash,
+    Status,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
-  ConfigSource,
-  useCreateDatabaseConfigVariableMutation,
-  useDeleteDatabaseConfigVariableMutation,
-  useGetConfigVariablesGroupedQuery,
-  useUpdateDatabaseConfigVariableMutation,
+    ConfigSource,
+    useCreateDatabaseConfigVariableMutation,
+    useDeleteDatabaseConfigVariableMutation,
+    useGetConfigVariablesGroupedQuery,
+    useUpdateDatabaseConfigVariableMutation,
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -93,14 +93,14 @@ const StyledTitleContainer = styled.div`
 `;
 
 type FormValues = {
-  value: string;
+  value: string | number | boolean | string[] | null;
 };
 
 interface ConfigVariableWithTypes {
   __typename?: 'ConfigVariable' | undefined;
   name: string;
   description: string;
-  value: string;
+  value: string | number | boolean | string[] | null;
   isSensitive: boolean;
   isEnvOnly: boolean;
   type?: string;
@@ -134,13 +134,16 @@ export const SettingsAdminEnvVariableDetails = () => {
     | ConfigVariableWithTypes
     | undefined;
 
-  // is this how validation are used in codebase?
-  // TODO: keep an eye on this
   const validationSchema = z.object({
-    value: z.string(),
+    value: z.union([
+      z.string(),
+      z.number(),
+      z.boolean(),
+      z.array(z.string()),
+      z.null(),
+    ]),
   });
 
-  // same here
   const {
     handleSubmit,
     setValue,
@@ -157,8 +160,18 @@ export const SettingsAdminEnvVariableDetails = () => {
 
   const isEnvOnly = variable.isEnvOnly;
   const isFromDatabase = variable.source === ConfigSource.DATABASE;
+  const getDisplayValue = (
+    value: string | number | boolean | string[] | null,
+  ): string => {
+    if (value === null || value === undefined) return '';
+    if (Array.isArray(value)) return value.join(', ');
+    if (typeof value === 'boolean') return value ? 'true' : 'false';
+    return String(value);
+  };
   const displayValue =
-    variable.isSensitive && !showSensitiveValue ? '••••••••••' : variable.value;
+    variable.isSensitive && !showSensitiveValue
+      ? '••••••••••'
+      : getDisplayValue(variable.value);
 
   const handleToggleVisibility = () => {
     setShowSensitiveValue(!showSensitiveValue);
@@ -167,15 +180,32 @@ export const SettingsAdminEnvVariableDetails = () => {
   const currentValue = watch('value');
   const hasValueChanged = currentValue !== variable.value;
   const isValidOverride =
-    !isEnvOnly && hasValueChanged && currentValue.trim() !== '';
+    !isEnvOnly &&
+    hasValueChanged &&
+    ((typeof currentValue === 'string' && currentValue.trim() !== '') ||
+      typeof currentValue === 'boolean' ||
+      typeof currentValue === 'number' ||
+      (Array.isArray(currentValue) && currentValue.length > 0));
 
   const onSubmit = async (formData: FormValues) => {
     try {
-      if (isFromDatabase && formData.value.trim() === '') {
-        await handleRemoveOverride();
+      // If value is empty, null, or an empty array, treat as delete -- come back to this
+      if (
+        formData.value === null ||
+        formData.value === '' ||
+        (Array.isArray(formData.value) && formData.value.length === 0)
+      ) {
+        await deleteDatabaseConfigVariable({
+          variables: { key: variable.name },
+          refetchQueries: ['GetConfigVariablesGrouped'],
+        });
+        enqueueSnackBar(t`Database override removed successfully`, {
+          variant: SnackBarVariant.Success,
+        });
         return;
       }
 
+      // Otherwise, update as normal (send native type)
       if (isFromDatabase) {
         await updateDatabaseConfigVariable({
           variables: {
@@ -302,20 +332,22 @@ export const SettingsAdminEnvVariableDetails = () => {
                   value={displayValue}
                   readOnly
                   fullWidth
-                  disabled={variable.value === ''}
+                  disabled={getDisplayValue(variable.value) === ''}
                 />
-                {variable.isSensitive && variable.value !== '' && (
-                  <StyledEyeButton
-                    type="button"
-                    onClick={handleToggleVisibility}
-                  >
-                    {showSensitiveValue ? (
-                      <IconEyeOff size={theme.icon.size.md} />
-                    ) : (
-                      <IconEye size={theme.icon.size.md} />
-                    )}
-                  </StyledEyeButton>
-                )}
+                {variable.isSensitive &&
+                  variable.value !== null &&
+                  variable.value !== undefined && (
+                    <StyledEyeButton
+                      type="button"
+                      onClick={handleToggleVisibility}
+                    >
+                      {showSensitiveValue ? (
+                        <IconEyeOff size={theme.icon.size.md} />
+                      ) : (
+                        <IconEye size={theme.icon.size.md} />
+                      )}
+                    </StyledEyeButton>
+                  )}
               </StyledRow>
             </StyledInputContainer>
 

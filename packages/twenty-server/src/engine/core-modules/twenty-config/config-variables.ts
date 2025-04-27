@@ -629,7 +629,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.Logging,
     description: 'Levels of logging to be captured',
     type: 'array',
-    options: ['log', 'error', 'warn'],
+    options: ['log', 'error', 'warn', 'debug', 'verbose'],
   })
   @CastToLogLevelArray()
   @IsOptional()

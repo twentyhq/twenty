@@ -1,6 +1,8 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import GraphQLJSON from 'graphql-type-json';
+
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
 import { ConfigVariable } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
@@ -140,7 +142,7 @@ export class AdminPanelResolver {
   @Mutation(() => Boolean)
   async createDatabaseConfigVariable(
     @Args('key', { type: () => String }) key: keyof ConfigVariables,
-    @Args('value', { type: () => String })
+    @Args('value', { type: () => GraphQLJSON })
     value: ConfigVariables[keyof ConfigVariables],
   ): Promise<boolean> {
     await this.twentyConfigService.set(key, value);
@@ -152,7 +154,7 @@ export class AdminPanelResolver {
   @Mutation(() => Boolean)
   async updateDatabaseConfigVariable(
     @Args('key', { type: () => String }) key: keyof ConfigVariables,
-    @Args('value', { type: () => String })
+    @Args('value', { type: () => GraphQLJSON })
     value: ConfigVariables[keyof ConfigVariables],
   ): Promise<boolean> {
     await this.twentyConfigService.update(key, value);

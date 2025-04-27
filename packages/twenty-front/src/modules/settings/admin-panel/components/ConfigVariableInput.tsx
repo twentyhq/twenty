@@ -24,8 +24,8 @@ const StyledDropdownButtonContainer = styled.div`
 `;
 
 type ConfigVariableInputProps = {
-  value: string;
-  onChange: (value: string) => void;
+  value: string | number | boolean | string[] | null;
+  onChange: (value: string | number | boolean | string[] | null) => void;
   type?: string;
   options?: any;
   disabled?: boolean;
@@ -43,19 +43,22 @@ export const ConfigVariableInput = ({
   placeholder,
 }: ConfigVariableInputProps) => {
   const arrayValue =
-    type === 'array' && value
-      ? (() => {
-          try {
-            return JSON.parse(value);
-          } catch {
-            return [];
-          }
-        })()
-      : [];
+    type === 'array' && Array.isArray(value)
+      ? (value as string[])
+      : type === 'array' && typeof value === 'string' && value
+        ? (() => {
+            try {
+              const arr = JSON.parse(value);
+              return Array.isArray(arr) ? arr : [];
+            } catch {
+              return [];
+            }
+          })()
+        : [];
 
   const selectOptions =
     options && Array.isArray(options)
-      ? options.map((option) => ({
+      ? options.map((option: any) => ({
           value: String(option),
           label: String(option),
         }))
@@ -80,8 +83,7 @@ export const ConfigVariableInput = ({
       newValues.push(optionValue);
     }
 
-    // this is probable not what we want, probably the reason multi select value is not being correctly parsed after saving?
-    onChange(JSON.stringify(newValues));
+    onChange(newValues);
   };
 
   switch (type) {
@@ -89,8 +91,8 @@ export const ConfigVariableInput = ({
       return (
         <StyledContainer>
           <Select
-            value={value}
-            onChange={(newValue) => onChange(String(newValue))}
+            value={String(value ?? '')}
+            onChange={(newValue: string) => onChange(newValue === 'true')}
             disabled={disabled}
             options={booleanOptions}
             dropdownId="config-variable-boolean-select"
@@ -102,8 +104,11 @@ export const ConfigVariableInput = ({
     case 'number':
       return (
         <TextInput
-          value={value}
-          onChange={(text) => onChange(text)}
+          value={value !== null && value !== undefined ? String(value) : ''}
+          onChange={(text) => {
+            const num = Number(text);
+            onChange(isNaN(num) ? text : num);
+          }}
           disabled={disabled}
           placeholder={placeholder}
           type="number"
@@ -156,8 +161,17 @@ export const ConfigVariableInput = ({
               {arrayValue.length > 0 && (
                 <StyledDropdownButtonContainer>
                   <TextArea
-                    value={value}
-                    onChange={(text) => onChange(text)}
+                    value={arrayValue.join(', ')}
+                    onChange={(text) => {
+                      try {
+                        const arr = JSON.parse(text);
+                        onChange(
+                          Array.isArray(arr) ? (arr as string[]) : arrayValue,
+                        );
+                      } catch {
+                        // ignore parse error
+                      }
+                    }}
                     disabled={true}
                     placeholder={placeholder || 'Enter JSON array'}
                     minRows={3}
@@ -167,8 +181,19 @@ export const ConfigVariableInput = ({
             </>
           ) : (
             <TextArea
-              value={value}
-              onChange={(text) => onChange(text)}
+              value={
+                Array.isArray(value)
+                  ? JSON.stringify(value)
+                  : String(value ?? '')
+              }
+              onChange={(text) => {
+                try {
+                  const arr = JSON.parse(text);
+                  onChange(Array.isArray(arr) ? (arr as string[]) : value);
+                } catch {
+                  onChange(text);
+                }
+              }}
               disabled={disabled}
               placeholder={placeholder || 'Enter JSON array'}
               minRows={3}
@@ -181,8 +206,8 @@ export const ConfigVariableInput = ({
       return (
         <StyledContainer>
           <Select
-            value={value}
-            onChange={(newValue) => onChange(String(newValue))}
+            value={String(value ?? '')}
+            onChange={(newValue: string) => onChange(newValue)}
             disabled={disabled}
             options={selectOptions}
             dropdownId="config-variable-enum-select"
@@ -194,7 +219,13 @@ export const ConfigVariableInput = ({
     default:
       return (
         <TextArea
-          value={value}
+          value={
+            typeof value === 'string'
+              ? value
+              : value !== null && value !== undefined
+                ? JSON.stringify(value)
+                : ''
+          }
           onChange={(text) => onChange(text)}
           disabled={disabled}
           placeholder={placeholder || 'Enter value'}
