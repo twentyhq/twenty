@@ -8,10 +8,11 @@ import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApp
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 
+import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 type SelectFilterParams = {
   fieldMetadataItemId: string;
@@ -59,8 +60,12 @@ export const useSelectFilterUsedInDropdown = (componentInstanceId?: string) => {
 
     const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
 
+    const defaultSubFieldName =
+      getDefaultSubFieldNameForCompositeFilterableFieldType(filterType);
+
     const firstOperand = getRecordFilterOperands({
       filterType,
+      subFieldName: defaultSubFieldName,
     })[0];
 
     setSelectedOperandInDropdown(firstOperand);
@@ -79,6 +84,7 @@ export const useSelectFilterUsedInDropdown = (componentInstanceId?: string) => {
         value,
         type: filterType,
         label: fieldMetadataItem.label,
+        subFieldName: defaultSubFieldName,
       });
     }
 

@@ -1,10 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { UpsertObjectPermissionInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permission-input';
+import { UpsertObjectPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import {
   PermissionsException,
@@ -25,24 +25,29 @@ export class ObjectPermissionService {
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
-  public async upsertObjectPermission({
+  public async upsertObjectPermissions({
     workspaceId,
     input,
   }: {
     workspaceId: string;
-    input: UpsertObjectPermissionInput;
-  }): Promise<ObjectPermissionEntity | null> {
+    input: UpsertObjectPermissionsInput;
+  }): Promise<ObjectPermissionEntity[]> {
     try {
       await this.validateRoleIsEditableOrThrow({
         roleId: input.roleId,
         workspaceId,
       });
 
-      const result = await this.objectPermissionRepository.upsert(
-        {
+      const objectPermissions = input.objectPermissions.map(
+        (objectPermission) => ({
+          ...objectPermission,
+          roleId: input.roleId,
           workspaceId,
-          ...input,
-        },
+        }),
+      );
+
+      const result = await this.objectPermissionRepository.upsert(
+        objectPermissions,
         {
           conflictPaths: ['objectMetadataId', 'roleId'],
         },
@@ -61,9 +66,14 @@ export class ObjectPermissionService {
         },
       );
 
-      return this.objectPermissionRepository.findOne({
+      return this.objectPermissionRepository.find({
         where: {
-          id: objectPermissionId,
+          roleId: input.roleId,
+          objectMetadataId: In(
+            input.objectPermissions.map(
+              (objectPermission) => objectPermission.objectMetadataId,
+            ),
+          ),
         },
       });
     } catch (error) {
@@ -71,7 +81,9 @@ export class ObjectPermissionService {
         error,
         roleId: input.roleId,
         workspaceId,
-        objectMetadataId: input.objectMetadataId,
+        objectMetadataIds: input.objectPermissions.map(
+          (objectPermission) => objectPermission.objectMetadataId,
+        ),
       });
 
       throw error;
@@ -82,12 +94,12 @@ export class ObjectPermissionService {
     error,
     roleId,
     workspaceId,
-    objectMetadataId,
+    objectMetadataIds,
   }: {
     error: Error;
     roleId: string;
     workspaceId: string;
-    objectMetadataId: string;
+    objectMetadataIds: string[];
   }) {
     if (error.message.includes('violates foreign key constraint')) {
       const role = await this.roleRepository.findOne({
@@ -104,14 +116,14 @@ export class ObjectPermissionService {
         );
       }
 
-      const objectMetadata = await this.objectMetadataRepository.findOne({
+      const objectMetadata = await this.objectMetadataRepository.find({
         where: {
           workspaceId,
-          id: objectMetadataId,
+          id: In(objectMetadataIds),
         },
       });
 
-      if (!isDefined(objectMetadata)) {
+      if (objectMetadata.length !== objectMetadataIds.length) {
         throw new PermissionsException(
           PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
           PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,

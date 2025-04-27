@@ -23,7 +23,7 @@ xdescribe('Microsoft dev tests : get messages service', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [TwentyConfigModule.forRoot({})],
+      imports: [TwentyConfigModule.forRoot()],
       providers: [
         MicrosoftGetMessagesService,
         MicrosoftHandleErrorService,

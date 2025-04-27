@@ -7,6 +7,7 @@ import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/r
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
 
+import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { RecordBoardCardBody } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBody';
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
@@ -121,7 +122,9 @@ export const RecordBoardCard = () => {
       x: event.clientX,
       y: event.clientY,
     });
-    openDropdown(actionMenuDropdownId);
+    openDropdown(actionMenuDropdownId, {
+      scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
+    });
   };
 
   const handleCardClick = () => {

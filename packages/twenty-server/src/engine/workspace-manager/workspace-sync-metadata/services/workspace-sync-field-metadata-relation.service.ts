@@ -13,7 +13,7 @@ import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-syn
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
+import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { WorkspaceMigrationFieldRelationFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field-relation.factory';
 import {
   FieldMetadataUpdate,
@@ -150,26 +150,30 @@ export class WorkspaceSyncFieldMetadataRelationService {
     originalObjectMetadataMapByName: Record<string, ObjectMetadataEntity>,
     storage: WorkspaceSyncStorage,
   ): Promise<void> {
-    // Create standard field metadata map
-    const standardFieldMetadataRelationCollection =
-      this.standardFieldRelationFactory.createFieldRelationForStandardObject(
-        standardObjectMetadataDefinitions,
-        context,
-        originalObjectMetadataMapByName,
-      );
-
     // Create map of original and standard object metadata by standard ids
     const originalObjectMetadataMap = mapObjectMetadataByUniqueIdentifier(
       originalObjectMetadataCollection,
     );
 
     // Loop over all standard objects and compare them with the objects in DB
-    for (const [
-      standardObjectId,
-      standardFieldMetadataCollection,
-    ] of standardFieldMetadataRelationCollection) {
+    for (const standardObjectMetadataDefinition of standardObjectMetadataDefinitions) {
+      const workspaceEntityMetadataArgs = metadataArgsStorage.filterEntities(
+        standardObjectMetadataDefinition,
+      );
+
+      if (!workspaceEntityMetadataArgs) {
+        continue;
+      }
+
+      const standardFieldMetadataRelationCollection =
+        this.standardFieldRelationFactory.computeRelationFieldsForStandardObject(
+          standardObjectMetadataDefinition,
+          context,
+          originalObjectMetadataMapByName,
+        );
+
       const originalObjectMetadata =
-        originalObjectMetadataMap[standardObjectId];
+        originalObjectMetadataMap[workspaceEntityMetadataArgs.standardId];
 
       const originalFieldRelationMetadataCollection =
         (originalObjectMetadata?.fields.filter(
@@ -183,7 +187,7 @@ export class WorkspaceSyncFieldMetadataRelationService {
       const fieldComparatorResults =
         this.workspaceFieldRelationComparator.compare(
           originalFieldRelationMetadataCollection,
-          standardFieldMetadataCollection,
+          standardFieldMetadataRelationCollection,
         );
 
       this.storeComparatorResults(fieldComparatorResults, storage);
@@ -196,25 +200,22 @@ export class WorkspaceSyncFieldMetadataRelationService {
     originalObjectMetadataMapByName: Record<string, ObjectMetadataEntity>,
     storage: WorkspaceSyncStorage,
   ): Promise<void> {
-    // Create standard field metadata collection
-    const customFieldMetadataRelationCollection =
-      this.standardFieldRelationFactory.createFieldRelationForCustomObject(
-        customObjectMetadataCollection.map((objectMetadata) => ({
-          object: objectMetadata,
-          metadata: CustomWorkspaceEntity,
-        })),
-        context,
-        originalObjectMetadataMapByName,
-      );
-
     // Loop over all custom objects from the DB and compare their fields with standard fields
     for (const customObjectMetadata of customObjectMetadataCollection) {
-      /**
-       * COMPARE FIELD METADATA
-       */
+      const originalFieldRelationMetadataCollection =
+        (customObjectMetadata.fields.filter(
+          (field) => field.type === FieldMetadataType.RELATION,
+        ) ?? []) as FieldMetadataEntity<FieldMetadataType.RELATION>[];
+
+      const customFieldMetadataRelationCollection =
+        this.standardFieldRelationFactory.computeRelationFieldsForCustomObject(
+          customObjectMetadata,
+          originalObjectMetadataMapByName,
+        );
+
       const fieldComparatorResults =
         this.workspaceFieldRelationComparator.compare(
-          customObjectMetadata.fields as FieldMetadataEntity<FieldMetadataType.RELATION>[],
+          originalFieldRelationMetadataCollection,
           customFieldMetadataRelationCollection,
         );
 
@@ -233,9 +234,6 @@ export class WorkspaceSyncFieldMetadataRelationService {
       await objectMetadataRepository.find({
         where: {
           workspaceId: context.workspaceId,
-          fields: {
-            type: FieldMetadataType.RELATION,
-          },
         },
         relations: ['dataSource', 'fields'],
       });

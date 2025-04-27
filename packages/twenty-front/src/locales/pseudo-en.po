@@ -165,7 +165,12 @@ msgstr ""
 
 #. js-lingui-id: 09tRFp
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Ability to interact with each object"
+#~ msgid "Ability to interact with each object"
+#~ msgstr ""
+
+#. js-lingui-id: 4lzAkF
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "Ability to interact with specific objects"
 msgstr ""
 
 #. js-lingui-id: nJHSWx
@@ -221,8 +226,13 @@ msgstr ""
 
 #. js-lingui-id: 7L01XJ
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelHeader.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 msgid "Actions"
+msgstr ""
+
+#. js-lingui-id: Ws0qQB
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Actions you can perform on all objects"
 msgstr ""
 
 #. js-lingui-id: FQBaXG
@@ -294,6 +304,11 @@ msgstr ""
 #. js-lingui-id: M067Bn
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Add or remove users"
+msgstr ""
+
+#. js-lingui-id: O8tK4v
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "Add rule"
 msgstr ""
 
 #. js-lingui-id: sgXUv+
@@ -815,6 +830,11 @@ msgstr ""
 #. js-lingui-id: wRtBJP
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Change Plan"
+msgstr ""
+
+#. js-lingui-id: EYSFEW
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Change subdomain?"
 msgstr ""
 
 #. js-lingui-id: b0h4XW
@@ -2328,6 +2348,7 @@ msgstr ""
 
 #. js-lingui-id: ALoP4W
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "Group by"
 msgstr ""
 
@@ -2962,7 +2983,7 @@ msgstr ""
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelHeader.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
@@ -3217,9 +3238,9 @@ msgstr ""
 #~ msgstr ""
 
 #. js-lingui-id: Ev2r9A
-#: src/modules/spreadsheet-import/components/MatchColumnSelect.tsx
-#~ msgid "No results"
-#~ msgstr ""
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
+msgid "No results"
+msgstr ""
 
 #. js-lingui-id: MA3x23
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
@@ -3421,8 +3442,8 @@ msgstr ""
 
 #. js-lingui-id: bv8ZsZ
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "Overridden on {isOverriddenBy} {pluralizedObject}"
-msgstr ""
+#~ msgid "Overridden on {isOverriddenBy} {pluralizedObject}"
+#~ msgstr ""
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -3504,10 +3525,11 @@ msgstr ""
 
 #. js-lingui-id: UjCOlM
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
-msgid "Permission overrides"
-msgstr ""
+#~ msgid "Permission overrides"
+#~ msgstr ""
 
 #. js-lingui-id: 9cDpsw
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
 msgstr ""
@@ -3799,6 +3821,16 @@ msgstr ""
 msgid "Review your import"
 msgstr ""
 
+#. js-lingui-id: GG37FL
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
+msgid "Revoked for this object"
+msgstr ""
+
+#. js-lingui-id: 4+uhWL
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
+msgid "Revoked on {revokedBy} {pluralizedObject}"
+msgstr ""
+
 #. js-lingui-id: iSfzXo
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "Role name"
@@ -3896,10 +3928,15 @@ msgstr ""
 msgid "Search an index..."
 msgstr ""
 
+#. js-lingui-id: sSARNY
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
+msgid "Search currency"
+msgstr ""
+
 #. js-lingui-id: 7taA9j
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFieldSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
 msgid "Search fields"
 msgstr ""
@@ -4109,8 +4146,8 @@ msgstr ""
 
 #. js-lingui-id: M97je1
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "Set additional object-level permissions"
-msgstr ""
+#~ msgid "Set additional object-level permissions"
+#~ msgstr ""
 
 #. js-lingui-id: PPcets
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -5035,6 +5072,11 @@ msgstr ""
 #: src/pages/settings/SettingsBilling.tsx
 #~ msgid "You will be charged immediately for the full year."
 #~ msgstr ""
+
+#. js-lingui-id: Cl+hUj
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "You're about to change your workspace subdomain. This action will log out all users."
+msgstr ""
 
 #. js-lingui-id: XVnj6K
 #: src/pages/settings/SettingsBilling.tsx

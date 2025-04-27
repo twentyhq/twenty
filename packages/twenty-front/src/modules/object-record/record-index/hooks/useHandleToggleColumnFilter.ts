@@ -11,6 +11,7 @@ import { useSelectFilterUsedInDropdown } from '@/object-record/object-filter-dro
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -103,8 +104,14 @@ export const useHandleToggleColumnFilter = ({
 
         const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
 
+        const defaultSubFieldName =
+          getDefaultSubFieldNameForCompositeFilterableFieldType(
+            fieldMetadataItem.type,
+          );
+
         const availableOperandsForFilter = getRecordFilterOperands({
           filterType,
+          subFieldName: defaultSubFieldName,
         });
 
         const defaultOperand = availableOperandsForFilter[0];
@@ -117,6 +124,7 @@ export const useHandleToggleColumnFilter = ({
           label: fieldMetadataItem.label,
           type: filterType,
           value: '',
+          subFieldName: defaultSubFieldName,
         };
 
         upsertRecordFilter(newFilter);

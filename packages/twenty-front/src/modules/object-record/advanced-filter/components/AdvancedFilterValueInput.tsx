@@ -6,6 +6,7 @@ import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/cons
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
+import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
@@ -13,6 +14,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
 import styled from '@emotion/styled';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledValueDropdownContainer = styled.div`
@@ -60,6 +62,16 @@ export const AdvancedFilterValueInput = ({
       ? ({ y: -33, x: 0 } satisfies DropdownOffset)
       : DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET;
 
+  const showFilterTextInput =
+    (isDefined(filterType) &&
+      (TEXT_FILTER_TYPES.includes(filterType) ||
+        NUMBER_FILTER_TYPES.includes(filterType))) ||
+    isExpectedSubFieldName(
+      FieldMetadataType.CURRENCY,
+      'amountMicros',
+      recordFilter.subFieldName,
+    );
+
   return (
     <StyledValueDropdownContainer>
       {operandHasNoInput ? (
@@ -68,9 +80,7 @@ export const AdvancedFilterValueInput = ({
         <AdvancedFilterValueInputDropdownButtonClickableSelect
           recordFilterId={recordFilterId}
         />
-      ) : isDefined(filterType) &&
-        (TEXT_FILTER_TYPES.includes(filterType) ||
-          NUMBER_FILTER_TYPES.includes(filterType)) ? (
+      ) : showFilterTextInput ? (
         <AdvancedFilterDropdownTextInput recordFilter={recordFilter} />
       ) : (
         <Dropdown

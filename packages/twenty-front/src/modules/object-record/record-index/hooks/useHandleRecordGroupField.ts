@@ -134,7 +134,7 @@ export const useHandleRecordGroupField = () => {
           return;
         }
 
-        const view = await getViewFromPrefetchState(currentViewId);
+        const view = getViewFromPrefetchState(currentViewId);
 
         if (isUndefinedOrNull(view)) {
           return;

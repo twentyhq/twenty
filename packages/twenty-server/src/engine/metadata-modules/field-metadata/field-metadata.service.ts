@@ -355,7 +355,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       });
 
       if (fieldMetadata.type === FieldMetadataType.RELATION) {
-        const isManyToManyRelation =
+        const isManyToOneRelation =
           (fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>)
             .settings?.relationType === RelationType.MANY_TO_ONE;
 
@@ -385,7 +385,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
                 columns: [
                   {
                     action: WorkspaceMigrationColumnActionType.DROP,
-                    columnName: isManyToManyRelation
+                    columnName: isManyToOneRelation
                       ? `${(fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>).settings?.joinColumnName}`
                       : `${(targetFieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>).settings?.joinColumnName}`,
                   } satisfies WorkspaceMigrationColumnDrop,

@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { StyledInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
+import { StyledInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFieldSelect';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { useSearchRecordGroupField } from '@/object-record/object-options-dropdown/hooks/useSearchRecordGroupField';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
@@ -11,6 +11,7 @@ import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-gr
 import { useHandleRecordGroupField } from '@/object-record/record-index/hooks/useHandleRecordGroupField';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
@@ -19,9 +20,6 @@ import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
 import {
@@ -29,6 +27,8 @@ import {
   MenuItemSelect,
   UndecoratedLink,
 } from 'twenty-ui/navigation';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   const { t } = useLingui();
@@ -116,7 +116,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
           />
         }
       >
-        Group by
+        {t`Group by`}
       </DropdownMenuHeader>
       <StyledInput
         autoFocus

@@ -173,8 +173,13 @@ msgstr ""
 
 #. js-lingui-id: 09tRFp
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Ability to interact with each object"
-msgstr "與每個物件互動的能力"
+#~ msgid "Ability to interact with each object"
+#~ msgstr "與每個物件互動的能力"
+
+#. js-lingui-id: 4lzAkF
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "Ability to interact with specific objects"
+msgstr ""
 
 #. js-lingui-id: nJHSWx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
@@ -229,9 +234,14 @@ msgstr "操作"
 
 #. js-lingui-id: 7L01XJ
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelHeader.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 msgid "Actions"
 msgstr "操作"
+
+#. js-lingui-id: Ws0qQB
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Actions you can perform on all objects"
+msgstr ""
 
 #. js-lingui-id: FQBaXG
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -302,6 +312,11 @@ msgstr "添加選項"
 #. js-lingui-id: M067Bn
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Add or remove users"
+msgstr ""
+
+#. js-lingui-id: O8tK4v
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "Add rule"
 msgstr ""
 
 #. js-lingui-id: sgXUv+
@@ -823,6 +838,11 @@ msgstr "更改密碼"
 #. js-lingui-id: wRtBJP
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Change Plan"
+msgstr ""
+
+#. js-lingui-id: EYSFEW
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Change subdomain?"
 msgstr ""
 
 #. js-lingui-id: b0h4XW
@@ -2336,6 +2356,7 @@ msgstr ""
 
 #. js-lingui-id: ALoP4W
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "Group by"
 msgstr "分組依據"
 
@@ -2970,7 +2991,7 @@ msgstr "向右移動"
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelHeader.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
@@ -3225,9 +3246,9 @@ msgstr "未找到記錄"
 #~ msgstr "No Result"
 
 #. js-lingui-id: Ev2r9A
-#: src/modules/spreadsheet-import/components/MatchColumnSelect.tsx
-#~ msgid "No results"
-#~ msgstr ""
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
+msgid "No results"
+msgstr ""
 
 #. js-lingui-id: MA3x23
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
@@ -3429,8 +3450,8 @@ msgstr "其他工作區"
 
 #. js-lingui-id: bv8ZsZ
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "Overridden on {isOverriddenBy} {pluralizedObject}"
-msgstr ""
+#~ msgid "Overridden on {isOverriddenBy} {pluralizedObject}"
+#~ msgstr ""
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -3512,10 +3533,11 @@ msgstr "永久銷毀工作流程"
 
 #. js-lingui-id: UjCOlM
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
-msgid "Permission overrides"
-msgstr ""
+#~ msgid "Permission overrides"
+#~ msgstr ""
 
 #. js-lingui-id: 9cDpsw
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
 msgstr "權限"
@@ -3807,6 +3829,16 @@ msgstr "結果"
 msgid "Review your import"
 msgstr ""
 
+#. js-lingui-id: GG37FL
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
+msgid "Revoked for this object"
+msgstr ""
+
+#. js-lingui-id: 4+uhWL
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
+msgid "Revoked on {revokedBy} {pluralizedObject}"
+msgstr ""
+
 #. js-lingui-id: iSfzXo
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "Role name"
@@ -3904,10 +3936,15 @@ msgstr "搜尋已分配的團隊成員……"
 msgid "Search an index..."
 msgstr "搜索索引..."
 
+#. js-lingui-id: sSARNY
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
+msgid "Search currency"
+msgstr ""
+
 #. js-lingui-id: 7taA9j
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFieldSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
 msgid "Search fields"
 msgstr "搜索字段"
@@ -4117,8 +4154,8 @@ msgstr "設定此工作區的預設角色"
 
 #. js-lingui-id: M97je1
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "Set additional object-level permissions"
-msgstr ""
+#~ msgid "Set additional object-level permissions"
+#~ msgstr ""
 
 #. js-lingui-id: PPcets
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -5043,6 +5080,11 @@ msgstr "您無權在此對象中創建記錄"
 #: src/pages/settings/SettingsBilling.tsx
 #~ msgid "You will be charged immediately for the full year."
 #~ msgstr "您將立即被收取全年的費用。"
+
+#. js-lingui-id: Cl+hUj
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "You're about to change your workspace subdomain. This action will log out all users."
+msgstr ""
 
 #. js-lingui-id: XVnj6K
 #: src/pages/settings/SettingsBilling.tsx

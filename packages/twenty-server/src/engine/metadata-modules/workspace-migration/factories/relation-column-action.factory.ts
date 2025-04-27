@@ -55,6 +55,12 @@ export class RelationColumnActionFactory extends ColumnActionAbstractFactory<Fie
       return [];
     }
 
+    if (
+      currentFieldMetadata.settings.relationType === RelationType.ONE_TO_MANY
+    ) {
+      return [];
+    }
+
     const currentJoinColumnName = currentFieldMetadata.settings.joinColumnName;
     const alteredJoinColumnName = alteredFieldMetadata.settings.joinColumnName;
 

@@ -8,6 +8,7 @@ import { visibleTableColumnsComponentSelector } from '@/object-record/record-tab
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import ReactDOM from 'react-dom';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableCellPortalWrapper = ({
   position,
@@ -16,9 +17,9 @@ export const RecordTableCellPortalWrapper = ({
   position: TableCellPosition;
   children: React.ReactNode;
 }) => {
-  const anchorElement = document.body.querySelector(
+  const anchorElement = document.body.querySelector<HTMLAnchorElement>(
     `#record-table-cell-${position.column}-${position.row}`,
-  ) as HTMLElement;
+  );
 
   const allRecordIds = useRecoilComponentValueV2(
     recordIndexAllRecordIdsComponentSelector,
@@ -30,11 +31,10 @@ export const RecordTableCellPortalWrapper = ({
     visibleTableColumnsComponentSelector,
   );
 
-  if (!anchorElement) {
+  const recordId = allRecordIds.at(position.row);
+  if (!isDefined(anchorElement) || !isDefined(recordId)) {
     return null;
   }
-
-  const recordId = allRecordIds[position.row];
 
   return ReactDOM.createPortal(
     <RecordTableRowContextProvider

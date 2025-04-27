@@ -101,14 +101,6 @@ export const MultiSelectInput = ({
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={optionIds}
       hotkeyScope={hotkeyScope}
-      onEnter={(itemId) => {
-        const option = filteredOptionsInDropDown.find(
-          (option) => option.value === itemId,
-        );
-        if (isDefined(option)) {
-          onOptionSelected(formatNewSelectedOptions(option.value));
-        }
-      }}
     >
       <DropdownMenu data-select-disable ref={containerRef}>
         <DropdownMenuSearchInput

@@ -40,8 +40,8 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.CURRENCY]: {
     label: 'Currency',
     Icon: IllustrationIconCurrency,
-    subFields: ['amountMicros'],
-    filterableSubFields: ['amountMicros'],
+    subFields: ['amountMicros', 'currencyCode'],
+    filterableSubFields: ['amountMicros', 'currencyCode'],
     labelBySubField: {
       amountMicros: 'Amount',
       currencyCode: 'Currency',

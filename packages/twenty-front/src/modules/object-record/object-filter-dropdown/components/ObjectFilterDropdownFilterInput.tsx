@@ -10,6 +10,7 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect';
+import { ObjectFilterDropdownCurrencySelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect';
 import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
@@ -17,8 +18,10 @@ import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/consta
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
+import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type ObjectFilterDropdownFilterInputProps = {
@@ -104,6 +107,26 @@ export const ObjectFilterDropdownFilterInput = ({
               <>
                 <ObjectFilterDropdownTextInput />
               </>
+            ))}
+          {filterType === 'CURRENCY' &&
+            (isExpectedSubFieldName(
+              FieldMetadataType.CURRENCY,
+              'currencyCode',
+              subFieldNameUsedInDropdown,
+            ) ? (
+              <>
+                <ObjectFilterDropdownCurrencySelect />
+              </>
+            ) : isExpectedSubFieldName(
+                FieldMetadataType.CURRENCY,
+                'amountMicros',
+                subFieldNameUsedInDropdown,
+              ) ? (
+              <>
+                <ObjectFilterDropdownNumberInput />
+              </>
+            ) : (
+              <></>
             ))}
           {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
             <>

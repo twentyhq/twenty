@@ -1,9 +1,7 @@
 import { ActionDisplayProps } from '@/action-menu/actions/display/components/ActionDisplay';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
-import { useSelectableListListenToEnterHotkeyOnItem } from '@/ui/layout/selectable-list/hooks/useSelectableListListenToEnterHotkeyOnItem';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -25,14 +23,8 @@ export const ActionListItem = ({
     }
   };
 
-  useSelectableListListenToEnterHotkeyOnItem({
-    hotkeyScope: AppHotkeyScope.CommandMenuOpen,
-    itemId: action.key,
-    onEnter: handleClick,
-  });
-
   return (
-    <SelectableItem itemId={action.key}>
+    <SelectableListItem itemId={action.key} onEnter={handleClick}>
       <CommandMenuItem
         id={action.key}
         Icon={action.Icon}
@@ -42,6 +34,6 @@ export const ActionListItem = ({
         onClick={onClick}
         hotKeys={action.hotKeys}
       />
-    </SelectableItem>
+    </SelectableListItem>
   );
 };
