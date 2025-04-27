@@ -31,7 +31,7 @@ import {
   ConfigSource,
   useCreateDatabaseConfigVariableMutation,
   useDeleteDatabaseConfigVariableMutation,
-  useGetConfigVariablesGroupedQuery,
+  useGetDatabaseConfigVariableQuery,
   useUpdateDatabaseConfigVariableMutation,
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -113,8 +113,9 @@ export const SettingsAdminConfigVariableDetails = () => {
   const { t } = useLingui();
   const theme = useTheme();
 
-  const { data: configVariablesData, loading } =
-    useGetConfigVariablesGroupedQuery({
+  const { data: configVariableData, loading } =
+    useGetDatabaseConfigVariableQuery({
+      variables: { key: variableName ?? '' },
       fetchPolicy: 'network-only',
     });
 
@@ -126,9 +127,7 @@ export const SettingsAdminConfigVariableDetails = () => {
   const [deleteDatabaseConfigVariable] =
     useDeleteDatabaseConfigVariableMutation();
 
-  const variable = configVariablesData?.getConfigVariablesGrouped.groups
-    .flatMap((group) => group.variables)
-    .find((v) => v.name === variableName) as
+  const variable = configVariableData?.getDatabaseConfigVariable as
     | ConfigVariableWithTypes
     | undefined;
 
@@ -195,7 +194,7 @@ export const SettingsAdminConfigVariableDetails = () => {
       ) {
         await deleteDatabaseConfigVariable({
           variables: { key: variable.name },
-          refetchQueries: ['GetConfigVariablesGrouped'],
+          refetchQueries: ['GetDatabaseConfigVariable'],
         });
         enqueueSnackBar(t`Database override removed successfully`, {
           variant: SnackBarVariant.Success,
@@ -210,7 +209,7 @@ export const SettingsAdminConfigVariableDetails = () => {
             key: variable.name,
             value: formData.value,
           },
-          refetchQueries: ['GetConfigVariablesGrouped'],
+          refetchQueries: ['GetDatabaseConfigVariable'],
         });
       } else {
         await createDatabaseConfigVariable({
@@ -218,7 +217,7 @@ export const SettingsAdminConfigVariableDetails = () => {
             key: variable.name,
             value: formData.value,
           },
-          refetchQueries: ['GetConfigVariablesGrouped'],
+          refetchQueries: ['GetDatabaseConfigVariable'],
         });
       }
 
@@ -244,7 +243,7 @@ export const SettingsAdminConfigVariableDetails = () => {
         variables: {
           key: variable.name,
         },
-        refetchQueries: ['GetConfigVariablesGrouped'],
+        refetchQueries: ['GetDatabaseConfigVariable'],
       });
 
       enqueueSnackBar(t`Database override removed successfully`, {

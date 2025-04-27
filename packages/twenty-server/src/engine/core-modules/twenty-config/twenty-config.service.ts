@@ -200,6 +200,67 @@ export class TwentyConfigService {
     return result;
   }
 
+  getVariableWithMetadata(key: keyof ConfigVariables): {
+    value: ConfigVariables[keyof ConfigVariables];
+    metadata: ConfigVariablesMetadataOptions;
+    source: ConfigSource;
+  } | null {
+    const metadata = TypedReflect.getMetadata(
+      'config-variables',
+      ConfigVariables,
+    )?.[key as string];
+
+    if (!metadata) {
+      return null;
+    }
+
+    const configVars = new ConfigVariables();
+    let value = this.get(key) ?? '';
+    let source = ConfigSource.ENVIRONMENT;
+
+    if (!this.isDatabaseDriverActive || metadata.isEnvOnly) {
+      source =
+        value === configVars[key]
+          ? ConfigSource.DEFAULT
+          : ConfigSource.ENVIRONMENT;
+    } else {
+      const dbValue = this.databaseConfigDriver.get(key);
+
+      if (dbValue !== undefined) {
+        source = ConfigSource.DATABASE;
+      } else {
+        source =
+          value === configVars[key]
+            ? ConfigSource.DEFAULT
+            : ConfigSource.ENVIRONMENT;
+      }
+    }
+
+    if (isString(value) && key in CONFIG_VARIABLES_MASKING_CONFIG) {
+      const varMaskingConfig =
+        CONFIG_VARIABLES_MASKING_CONFIG[
+          key as keyof typeof CONFIG_VARIABLES_MASKING_CONFIG
+        ];
+      const options =
+        varMaskingConfig.strategy ===
+        ConfigVariablesMaskingStrategies.LAST_N_CHARS
+          ? { chars: varMaskingConfig.chars }
+          : undefined;
+
+      value = configVariableMaskSensitiveData(
+        value,
+        varMaskingConfig.strategy,
+        { ...options, variableName: key },
+      );
+    }
+
+    return {
+      value,
+      metadata,
+      source,
+    };
+  }
+
   getCacheInfo(): {
     usingDatabaseDriver: boolean;
     cacheStats?: {

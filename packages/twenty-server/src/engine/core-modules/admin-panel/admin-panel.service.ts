@@ -20,7 +20,6 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_GROUP_METADATA } from 'src/engine/core-modules/twenty-config/constants/config-variables-group-metadata';
-import { ConfigSource } from 'src/engine/core-modules/twenty-config/enums/config-source.enum';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -170,27 +169,27 @@ export class AdminPanelService {
   }
 
   getConfigVariable(key: string): ConfigVariable {
-    const value = this.twentyConfigService.get(key as keyof ConfigVariables);
-    const metadata = this.twentyConfigService.getMetadata(
-      key as keyof ConfigVariables,
-    );
+    const variableWithMetadata =
+      this.twentyConfigService.getVariableWithMetadata(
+        key as keyof ConfigVariables,
+      );
 
-    if (!value) {
+    if (!variableWithMetadata) {
       throw new Error(`Config variable ${key} not found`);
     }
 
-    const configVariable: ConfigVariable = {
-      name: key,
-      description: '',
-      value: value ?? null,
-      isSensitive: false,
-      isEnvOnly: false,
-      type: metadata?.type,
-      options: metadata?.options,
-      source: ConfigSource.DATABASE,
-    };
+    const { value, metadata, source } = variableWithMetadata;
 
-    return configVariable;
+    return {
+      name: key,
+      description: metadata.description ?? '',
+      value: value ?? null,
+      isSensitive: metadata.isSensitive ?? false,
+      isEnvOnly: metadata.isEnvOnly ?? false,
+      type: metadata.type,
+      options: metadata.options,
+      source,
+    };
   }
 
   async getVersionInfo(): Promise<VersionInfo> {
