@@ -12,10 +12,12 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 
+import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { ConfigVariableInput } from '@/settings/admin-panel/components/ConfigVariableInput';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useTheme } from '@emotion/react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   H3Title,
@@ -113,6 +115,10 @@ export const SettingsAdminConfigVariableDetails = () => {
   const { t } = useLingui();
   const theme = useTheme();
 
+  const isConfigVariablesInDbEnabled = useRecoilValue(
+    isConfigVariablesInDbEnabledState,
+  );
+
   const { data: configVariableData, loading } =
     useGetDatabaseConfigVariableQuery({
       variables: { key: variableName ?? '' },
@@ -157,6 +163,7 @@ export const SettingsAdminConfigVariableDetails = () => {
 
   const isEnvOnly = variable.isEnvOnly;
   const isFromDatabase = variable.source === ConfigSource.DATABASE;
+  const isReadOnly = !isConfigVariablesInDbEnabled;
   const getDisplayValue = (
     value: string | number | boolean | string[] | null,
   ): string => {
@@ -281,19 +288,20 @@ export const SettingsAdminConfigVariableDetails = () => {
       ]}
       actionButton={
         <>
-          {variable.source === ConfigSource.DATABASE && (
-            <Button
-              title={t`Remove Override`}
-              variant="secondary"
-              size="small"
-              accent="danger"
-              disabled={isSubmitting}
-              onClick={handleRemoveOverride}
-              type="submit"
-              Icon={IconTrash}
-            />
-          )}
-          {!isEnvOnly && (
+          {isConfigVariablesInDbEnabled &&
+            variable.source === ConfigSource.DATABASE && (
+              <Button
+                title={t`Remove Override`}
+                variant="secondary"
+                size="small"
+                accent="danger"
+                disabled={isSubmitting}
+                onClick={handleRemoveOverride}
+                type="submit"
+                Icon={IconTrash}
+              />
+            )}
+          {isConfigVariablesInDbEnabled && !isEnvOnly && (
             <Button
               title={isFromDatabase ? t`Update` : t`Create Override`}
               variant="primary"
@@ -351,38 +359,46 @@ export const SettingsAdminConfigVariableDetails = () => {
               </StyledRow>
             </StyledInputContainer>
 
-            <StyledInputContainer>
-              <StyledLabel>{t`Database Override Value`}</StyledLabel>
-              <ConfigVariableInput
-                value={watch('value')}
-                onChange={(value) => setValue('value', value)}
-                type={variable.type}
-                options={variable.options}
-                disabled={isEnvOnly}
-                placeholder={
-                  isEnvOnly
-                    ? t`This variable cannot be overridden`
-                    : isFromDatabase
-                      ? t`Current database value`
-                      : t`Enter value to override environment variable`
-                }
-              />
-              {!isEnvOnly && hasValueChanged && (
-                <StyledHelpText color={theme.color.blue50}>
-                  {isFromDatabase
-                    ? t`Value has been changed. Click Update to save.`
-                    : t`Value will override the environment variable.`}
-                </StyledHelpText>
-              )}
-            </StyledInputContainer>
+            {isConfigVariablesInDbEnabled && (
+              <StyledInputContainer>
+                <StyledLabel>{t`Database Override Value`}</StyledLabel>
+                <ConfigVariableInput
+                  value={watch('value')}
+                  onChange={(value) => setValue('value', value)}
+                  type={variable.type}
+                  options={variable.options}
+                  disabled={isEnvOnly}
+                  placeholder={
+                    isEnvOnly
+                      ? t`This variable cannot be overridden`
+                      : isFromDatabase
+                        ? t`Current database value`
+                        : t`Enter value to override environment variable`
+                  }
+                />
+                {!isEnvOnly && hasValueChanged && (
+                  <StyledHelpText color={theme.color.blue50}>
+                    {isFromDatabase
+                      ? t`Value has been changed. Click Update to save.`
+                      : t`Value will override the environment variable.`}
+                  </StyledHelpText>
+                )}
+              </StyledInputContainer>
+            )}
 
-            {isEnvOnly && (
+            {isReadOnly && (
+              <StyledHelpText>
+                {t`Database configuration is disabled. Variables can only be set in the environment.`}
+              </StyledHelpText>
+            )}
+
+            {isConfigVariablesInDbEnabled && isEnvOnly && (
               <StyledHelpText>
                 {t`This variable can only be set in the environment and cannot be overridden in the database.`}
               </StyledHelpText>
             )}
 
-            {!isEnvOnly && !hasValueChanged && (
+            {isConfigVariablesInDbEnabled && !isEnvOnly && !hasValueChanged && (
               <StyledHelpText>
                 {isFromDatabase
                   ? t`This value is currently stored in the database and overrides any environment variable with the same name.`
@@ -390,11 +406,12 @@ export const SettingsAdminConfigVariableDetails = () => {
               </StyledHelpText>
             )}
 
-            {variable.source === ConfigSource.DATABASE && (
-              <StyledHelpText>
-                {t`To remove the database override and fallback to the environment or default value, clear the field or use the "Remove Override" button.`}
-              </StyledHelpText>
-            )}
+            {isConfigVariablesInDbEnabled &&
+              variable.source === ConfigSource.DATABASE && (
+                <StyledHelpText>
+                  {t`To remove the database override and fallback to the environment or default value, clear the field or use the "Remove Override" button.`}
+                </StyledHelpText>
+              )}
           </>
         </StyledForm>
       </SettingsPageContainer>
