@@ -271,9 +271,12 @@ export const SettingsAdminEnvVariableDetails = () => {
         },
         {
           children: t`Environment Variable`,
-          // this is a bit of a hack
-          // @ts-expect-error - We need to allow anchor links in the submenu
-          href: getSettingsPath(SettingsPath.AdminPanel + '#env-variables'),
+          href: getSettingsPath(
+            SettingsPath.AdminPanel,
+            undefined,
+            undefined,
+            'env-variables',
+          ),
         },
         {
           children: variable.name,
