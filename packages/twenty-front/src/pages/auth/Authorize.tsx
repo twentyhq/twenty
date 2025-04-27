@@ -5,11 +5,11 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useLingui } from '@lingui/react/macro';
-import { useAuthorizeAppMutation } from '~/generated/graphql';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isDefined } from 'twenty-shared/utils';
 import { MainButton } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { useAuthorizeAppMutation } from '~/generated/graphql';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type App = { id: string; name: string; logo: string };
 
@@ -126,7 +126,7 @@ export const Authorize = () => {
           </UndecoratedLink>
           <MainButton
             title={t`Authorize`}
-            onClick={handleAuthorize}
+            onMouseDown={handleAuthorize}
             fullWidth
           />
         </StyledButtonContainer>

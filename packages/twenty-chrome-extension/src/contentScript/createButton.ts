@@ -56,7 +56,7 @@ export const createDefaultButton = (
   });
 
   div.onClickHandler = (newHandler) => {
-    div.onclick = async () => {
+    div.onmousedown = async () => {
       const store = await chrome.storage.local.get();
 
       // If an api key is not set, the options page opens up to allow the user to configure an api key.

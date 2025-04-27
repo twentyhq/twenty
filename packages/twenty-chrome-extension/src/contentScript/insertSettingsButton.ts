@@ -45,7 +45,7 @@ if (!isDefined(btn)) {
     Object.assign(div.style, divStyles);
   });
 
-  div.onclick = async () => {
+  div.onmousedown = async () => {
     chrome.runtime.sendMessage({ action: 'openSidepanel' });
     chrome.storage.local.set({ navigateSidepanel: 'settings' });
   };

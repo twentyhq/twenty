@@ -13,9 +13,14 @@ type LinkProps = {
 };
 
 export const Link = ({ value, href, color }: LinkProps) => {
+  const handleMouseDown = () => {
+    window.location.href = href;
+  };
+
   return (
     <EmailLink
       href={href}
+      onMouseDown={handleMouseDown}
       style={{
         ...linkStyle,
         color: color ?? emailTheme.font.colors.tertiary,
