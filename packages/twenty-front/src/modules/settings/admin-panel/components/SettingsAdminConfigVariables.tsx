@@ -148,7 +148,7 @@ export const SettingsAdminConfigVariables = () => {
   return (
     <>
       <Section>
-        <H2Title title={t`Environment Variables`} />
+        <H2Title title={t`Config Variables`} />
 
         <ConfigVariableFilterContainer activeChips={activeChips}>
           <StyledControlsContainer>

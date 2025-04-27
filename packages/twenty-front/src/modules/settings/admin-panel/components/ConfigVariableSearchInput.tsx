@@ -19,7 +19,7 @@ export const ConfigVariableSearchInput: FC<ConfigVariableSearchInputProps> = ({
 }) => {
   return (
     <StyledSearchInput
-      placeholder="Search environment variables"
+      placeholder="Search config variables"
       value={value}
       onChange={onChange}
       autoFocus={false}
