@@ -1,4 +1,4 @@
-import { SettingsAdminEnvVariablesRow } from '@/settings/admin-panel/components/SettingsAdminEnvVariablesRow';
+import { SettingsAdminConfigVariablesRow } from '@/settings/admin-panel/components/SettingsAdminConfigVariablesRow';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -11,13 +11,13 @@ const StyledTableBody = styled(TableBody)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
-type SettingsAdminEnvVariablesTableProps = {
+type SettingsAdminConfigVariablesTableProps = {
   variables: ConfigVariable[];
 };
 
-export const SettingsAdminEnvVariablesTable = ({
+export const SettingsAdminConfigVariablesTable = ({
   variables,
-}: SettingsAdminEnvVariablesTableProps) => {
+}: SettingsAdminConfigVariablesTableProps) => {
   const [expandedRowName, setExpandedRowName] = useState<string | null>(null);
 
   const handleExpandToggle = (name: string) => {
@@ -34,7 +34,7 @@ export const SettingsAdminEnvVariablesTable = ({
       </TableRow>
       <StyledTableBody>
         {variables.map((variable) => (
-          <SettingsAdminEnvVariablesRow
+          <SettingsAdminConfigVariablesRow
             key={variable.name}
             variable={variable}
             isExpanded={expandedRowName === variable.name}

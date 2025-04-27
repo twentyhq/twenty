@@ -1,6 +1,6 @@
 import { ConfigVariableFilterContainer } from '@/settings/admin-panel/components/ConfigVariableFilterContainer';
 import { ConfigVariableFilterDropdown } from '@/settings/admin-panel/components/ConfigVariableFilterDropdown';
-import { SettingsAdminEnvVariablesTable } from '@/settings/admin-panel/components/SettingsAdminEnvVariablesTable';
+import { SettingsAdminConfigVariablesTable } from '@/settings/admin-panel/components/SettingsAdminConfigVariablesTable';
 import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
 import { ConfigVariableSourceOptions } from '@/settings/admin-panel/constants/ConfigVariableSourceOptions';
 import { ConfigVariableGroupFilter } from '@/settings/admin-panel/types/ConfigVariableGroupFilter';
@@ -22,7 +22,7 @@ const StyledControlsContainer = styled.div`
   justify-content: space-between;
 `;
 
-export const SettingsAdminEnvVariables = () => {
+export const SettingsAdminConfigVariables = () => {
   const { data: configVariables, loading: configVariablesLoading } =
     useGetConfigVariablesGroupedQuery({
       fetchPolicy: 'network-only',
@@ -169,7 +169,7 @@ export const SettingsAdminEnvVariables = () => {
       {[...groupedVariables.entries()].map(([groupName, variables]) => (
         <div key={groupName} style={{ marginBottom: 24 }}>
           <H2Title title={groupName} />
-          <SettingsAdminEnvVariablesTable variables={variables} />
+          <SettingsAdminConfigVariablesTable variables={variables} />
         </div>
       ))}
     </>

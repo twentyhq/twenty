@@ -18,26 +18,24 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useTheme } from '@emotion/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    H3Title,
-    IconEye,
-    IconEyeOff,
-    IconPlus,
-    IconRefreshDot,
-    IconTrash,
-    Status,
+  H3Title,
+  IconEye,
+  IconEyeOff,
+  IconPlus,
+  IconRefreshDot,
+  IconTrash,
+  Status,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
-    ConfigSource,
-    useCreateDatabaseConfigVariableMutation,
-    useDeleteDatabaseConfigVariableMutation,
-    useGetConfigVariablesGroupedQuery,
-    useUpdateDatabaseConfigVariableMutation,
+  ConfigSource,
+  useCreateDatabaseConfigVariableMutation,
+  useDeleteDatabaseConfigVariableMutation,
+  useGetConfigVariablesGroupedQuery,
+  useUpdateDatabaseConfigVariableMutation,
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-// is this how form are used in codebase?
-// TODO : check for codebase patterns
 const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
@@ -108,7 +106,7 @@ interface ConfigVariableWithTypes {
   source: ConfigSource;
 }
 
-export const SettingsAdminEnvVariableDetails = () => {
+export const SettingsAdminConfigVariableDetails = () => {
   const { variableName } = useParams();
   const { enqueueSnackBar } = useSnackBar();
   const [showSensitiveValue, setShowSensitiveValue] = useState(false);

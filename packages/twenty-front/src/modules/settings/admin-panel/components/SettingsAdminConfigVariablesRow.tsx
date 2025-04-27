@@ -8,7 +8,7 @@ import { IconChevronRight } from 'twenty-ui/display';
 import { ConfigVariable } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-type SettingsAdminEnvVariablesRowProps = {
+type SettingsAdminConfigVariablesRowProps = {
   variable: ConfigVariable;
   isExpanded: boolean;
   onExpandToggle: (name: string) => void;
@@ -36,11 +36,11 @@ const StyledLink = styled(Link)`
   text-decoration: none;
 `;
 
-export const SettingsAdminEnvVariablesRow = ({
+export const SettingsAdminConfigVariablesRow = ({
   variable,
   isExpanded,
   onExpandToggle,
-}: SettingsAdminEnvVariablesRowProps) => {
+}: SettingsAdminConfigVariablesRowProps) => {
   const theme = useTheme();
 
   const displayValue =
@@ -52,7 +52,7 @@ export const SettingsAdminEnvVariablesRow = ({
 
   return (
     <StyledLink
-      to={getSettingsPath(SettingsPath.AdminPanelEnvVariableDetails, {
+      to={getSettingsPath(SettingsPath.AdminPanelConfigVariableDetails, {
         variableName: variable.name,
       })}
     >

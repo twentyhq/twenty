@@ -5,7 +5,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCallback, useState } from 'react';
 import { IconSettings } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { OptionsDropdownContent } from './OptionsDropdownContent';
+import { ConfigVariableOptionsDropdownContent } from './ConfigVariableOptionsDropdownContent';
 
 interface ConfigVariableFilterDropdownProps {
   sourceFilter: ConfigVariableSourceFilter;
@@ -51,7 +51,7 @@ export const ConfigVariableFilterDropdown = ({
         dropdownHotkeyScope={{ scope: 'env-var-options' }}
         dropdownOffset={{ x: 0, y: 10 }}
         dropdownComponents={
-          <OptionsDropdownContent
+          <ConfigVariableOptionsDropdownContent
             selectedCategory={selectedCategory}
             onSelectCategory={handleSelectCategory}
             sourceFilter={sourceFilter}

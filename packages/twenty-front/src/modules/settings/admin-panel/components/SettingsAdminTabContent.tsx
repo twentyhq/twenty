@@ -1,4 +1,4 @@
-import { SettingsAdminEnvVariables } from '@/settings/admin-panel/components/SettingsAdminEnvVariables';
+import { SettingsAdminConfigVariables } from '@/settings/admin-panel/components/SettingsAdminConfigVariables';
 import { SettingsAdminGeneral } from '@/settings/admin-panel/components/SettingsAdminGeneral';
 import { SETTINGS_ADMIN_TABS } from '@/settings/admin-panel/constants/SettingsAdminTabs';
 import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminTabsId';
@@ -15,8 +15,8 @@ export const SettingsAdminTabContent = () => {
   switch (activeTabId) {
     case SETTINGS_ADMIN_TABS.GENERAL:
       return <SettingsAdminGeneral />;
-    case SETTINGS_ADMIN_TABS.ENV_VARIABLES:
-      return <SettingsAdminEnvVariables />;
+    case SETTINGS_ADMIN_TABS.CONFIG_VARIABLES:
+      return <SettingsAdminConfigVariables />;
     case SETTINGS_ADMIN_TABS.HEALTH_STATUS:
       return <SettingsAdminHealthStatus />;
     default:

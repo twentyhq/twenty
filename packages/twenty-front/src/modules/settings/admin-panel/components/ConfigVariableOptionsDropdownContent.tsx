@@ -40,7 +40,7 @@ const StyledToggleLabel = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-interface OptionsDropdownContentProps {
+interface ConfigVariableOptionsDropdownContentProps {
   selectedCategory: ConfigVariableFilterCategory | null;
   onSelectCategory: (category: ConfigVariableFilterCategory | null) => void;
   sourceFilter: ConfigVariableSourceFilter;
@@ -52,7 +52,7 @@ interface OptionsDropdownContentProps {
   onShowHiddenChange: (value: boolean) => void;
 }
 
-export const OptionsDropdownContent = ({
+export const ConfigVariableOptionsDropdownContent = ({
   selectedCategory,
   onSelectCategory,
   sourceFilter,
@@ -62,7 +62,7 @@ export const OptionsDropdownContent = ({
   onSourceFilterChange,
   onGroupFilterChange,
   onShowHiddenChange,
-}: OptionsDropdownContentProps) => {
+}: ConfigVariableOptionsDropdownContentProps) => {
   const theme = useTheme();
 
   if (!selectedCategory) {

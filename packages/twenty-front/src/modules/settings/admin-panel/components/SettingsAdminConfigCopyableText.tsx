@@ -3,8 +3,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useDebouncedCallback } from 'use-debounce';
 import { IconCopy, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { useDebouncedCallback } from 'use-debounce';
 
 const StyledEllipsisLabel = styled.div`
   white-space: nowrap;
@@ -20,7 +20,7 @@ const StyledExpandedEllipsisLabel = styled.div`
 const StyledCopyContainer = styled.span`
   cursor: pointer;
 `;
-export const SettingsAdminEnvCopyableText = ({
+export const SettingsAdminConfigCopyableText = ({
   text,
   displayText,
   multiline = false,
