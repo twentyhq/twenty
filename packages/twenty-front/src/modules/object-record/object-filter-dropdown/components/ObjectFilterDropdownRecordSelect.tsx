@@ -70,6 +70,7 @@ export const ObjectFilterDropdownRecordSelect = ({
     useRecoilValue(currentWorkspaceMemberState) ?? {};
 
   let isCurrentWorkspaceMemberSelected: boolean;
+  let selectedRecordIds: string[];
 
   try {
     const relationFilterValue = relationFilterValueSchema.parse(
@@ -79,6 +80,9 @@ export const ObjectFilterDropdownRecordSelect = ({
     isCurrentWorkspaceMemberSelected = relationFilterValue.includes(
       '{{CURRENT_WORKSPACE_MEMBER}}',
     );
+    selectedRecordIds = relationFilterValue.filter(
+      (item) => item !== '{{CURRENT_WORKSPACE_MEMBER}}',
+    );
   } catch {
     const jsonRelationFilterValueParseResult =
       jsonRelationFilterValueSchema.parse(selectedFilter?.value);
@@ -86,6 +90,7 @@ export const ObjectFilterDropdownRecordSelect = ({
     isCurrentWorkspaceMemberSelected =
       jsonRelationFilterValueParseResult.isCurrentWorkspaceMemberSelected ??
       false;
+    selectedRecordIds = jsonRelationFilterValueParseResult.selectedRecordIds;
   }
 
   if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
@@ -124,15 +129,6 @@ export const ObjectFilterDropdownRecordSelect = ({
   const recordFilterUsedInDropdown = isDefined(recordFilterId)
     ? recordFilterPassedInProps
     : firstSimpleRecordFilterForFieldMetadataItemUsedInDropdown;
-
-  const { selectedRecordIds } = jsonRelationFilterValueSchema
-    .catch({
-      isCurrentWorkspaceMemberSelected: false,
-      selectedRecordIds: simpleRelationFilterValueSchema.parse(
-        recordFilterUsedInDropdown?.value,
-      ),
-    })
-    .parse(recordFilterUsedInDropdown?.value);
 
   const { loading, filteredSelectedRecords, recordsToSelect, selectedRecords } =
     useRecordsForSelect({
