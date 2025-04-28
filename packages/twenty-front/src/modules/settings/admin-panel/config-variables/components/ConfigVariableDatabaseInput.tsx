@@ -6,20 +6,21 @@ import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItemMultiSelect } from 'twenty-ui/navigation';
+import { ConfigVariableOptions } from '../types/ConfigVariableOptions';
 
-type ConfigVariableInputProps = {
+type ConfigVariableDatabaseInputProps = {
   label: string;
   value: string | number | boolean | string[] | null;
   onChange: (value: string | number | boolean | string[] | null) => void;
   type?: string;
-  options?: any;
+  options?: ConfigVariableOptions;
   disabled?: boolean;
   placeholder?: string;
 };
 
 // can be diff components, if possible refactor
 // rename?
-export const ConfigVariableInput = ({
+export const ConfigVariableDatabaseInput = ({
   label,
   value,
   onChange,
@@ -27,24 +28,10 @@ export const ConfigVariableInput = ({
   options,
   disabled,
   placeholder,
-}: ConfigVariableInputProps) => {
-  const arrayValue =
-    type === 'array' && Array.isArray(value)
-      ? (value as string[])
-      : type === 'array' && typeof value === 'string' && value
-        ? (() => {
-            try {
-              const arr = JSON.parse(value);
-              return Array.isArray(arr) ? arr : [];
-            } catch {
-              return [];
-            }
-          })()
-        : [];
-
+}: ConfigVariableDatabaseInputProps) => {
   const selectOptions =
     options && Array.isArray(options)
-      ? options.map((option: any) => ({
+      ? options.map((option) => ({
           value: String(option),
           label: String(option),
         }))
@@ -56,19 +43,19 @@ export const ConfigVariableInput = ({
   ];
 
   const isValueSelected = (optionValue: string) => {
-    if (!arrayValue || !Array.isArray(arrayValue)) return false;
-    return arrayValue.includes(optionValue);
+    if (!Array.isArray(value)) return false;
+    return value.includes(optionValue);
   };
 
   const handleMultiSelectChange = (optionValue: string) => {
-    let newValues = [...arrayValue];
+    if (!Array.isArray(value)) return;
 
+    let newValues = [...value];
     if (isValueSelected(optionValue)) {
       newValues = newValues.filter((val) => val !== optionValue);
     } else {
       newValues.push(optionValue);
     }
-
     onChange(newValues);
   };
 
@@ -119,8 +106,8 @@ export const ConfigVariableInput = ({
                     selectedOption={{
                       value: '',
                       label:
-                        arrayValue.length > 0
-                          ? `${arrayValue.length} selected`
+                        Array.isArray(value) && value.length > 0
+                          ? `${value.length} selected`
                           : 'Select options',
                     }}
                     isDisabled={disabled}
@@ -144,16 +131,14 @@ export const ConfigVariableInput = ({
                   </DropdownMenuItemsContainer>
                 }
               />
-              {arrayValue.length > 0 && (
+              {Array.isArray(value) && value.length > 0 && (
                 <TextArea
                   label={label}
-                  value={arrayValue.join(', ')}
+                  value={value.join(', ')}
                   onChange={(text) => {
                     try {
                       const arr = JSON.parse(text);
-                      onChange(
-                        Array.isArray(arr) ? (arr as string[]) : arrayValue,
-                      );
+                      onChange(Array.isArray(arr) ? arr : value);
                     } catch {
                       // ignore parse error
                     }
@@ -175,7 +160,7 @@ export const ConfigVariableInput = ({
               onChange={(text) => {
                 try {
                   const arr = JSON.parse(text);
-                  onChange(Array.isArray(arr) ? (arr as string[]) : value);
+                  onChange(Array.isArray(arr) ? arr : value);
                 } catch {
                   onChange(text);
                 }

@@ -13,7 +13,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
-import { ConfigVariableInput } from '@/settings/admin-panel/config-variables/components/ConfigVariableInput';
+import { ConfigVariableOptions } from '@/settings/admin-panel/config-variables/types/ConfigVariableOptions';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -39,6 +39,7 @@ import {
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
+import { ConfigVariableDatabaseInput } from '@/settings/admin-panel/config-variables/components/ConfigVariableDatabaseInput';
 const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
@@ -78,7 +79,7 @@ interface ConfigVariableWithTypes {
   isSensitive: boolean;
   isEnvOnly: boolean;
   type?: string;
-  options?: any;
+  options?: ConfigVariableOptions;
   source: ConfigSource;
 }
 
@@ -340,7 +341,7 @@ export const SettingsAdminConfigVariableDetails = () => {
 
             {isConfigVariablesInDbEnabled && !isEnvOnly && (
               <StyledInputContainer>
-                <ConfigVariableInput
+                <ConfigVariableDatabaseInput
                   label={t`Database Override Value`}
                   value={watch('value')}
                   onChange={(value) => setValue('value', value)}
