@@ -2,7 +2,7 @@ import { ConfigVariableFilterCategory } from '@/settings/admin-panel/config-vari
 import { ConfigVariableGroupFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableGroupFilter';
 import { ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { IconSettings } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { ConfigVariableOptionsDropdownContent } from './ConfigVariableOptionsDropdownContent';
@@ -29,12 +29,11 @@ export const ConfigVariableFilterDropdown = ({
   const [selectedCategory, setSelectedCategory] =
     useState<ConfigVariableFilterCategory | null>(null);
 
-  const handleSelectCategory = useCallback(
-    (category: ConfigVariableFilterCategory | null) => {
-      setSelectedCategory(category);
-    },
-    [],
-  );
+  const handleSelectCategory = (
+    category: ConfigVariableFilterCategory | null,
+  ) => {
+    setSelectedCategory(category);
+  };
 
   return (
     <Dropdown

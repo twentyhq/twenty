@@ -40,9 +40,66 @@ export class ConfigStorageService implements ConfigStorageInterface {
     };
   }
 
-  // TODO: DRY this up
-  // TODO: add tests for encryption/decryption
-  // recheck encryption/decryption flow
+  private getAppSecret(): string {
+    return this.environmentConfigDriver.get('APP_SECRET');
+  }
+
+  private getConfigMetadata<T extends keyof ConfigVariables>(key: T) {
+    return TypedReflect.getMetadata('config-variables', ConfigVariables)?.[
+      key as string
+    ];
+  }
+
+  private logAndRethrow(message: string, error: any): never {
+    this.logger.error(message, error);
+    throw error;
+  }
+
+  private async convertAndSecureValue<T extends keyof ConfigVariables>(
+    value: any,
+    key: T,
+    isDecrypt = false,
+  ): Promise<any> {
+    try {
+      const convertedValue = isDecrypt
+        ? this.configValueConverter.convertDbValueToAppValue(value, key)
+        : this.configValueConverter.convertAppValueToDbValue(value);
+
+      const metadata = this.getConfigMetadata(key);
+      const isSensitiveString =
+        metadata?.isSensitive &&
+        metadata.type === 'string' &&
+        typeof convertedValue === 'string';
+
+      if (!isSensitiveString) {
+        return convertedValue;
+      }
+
+      const appSecret = this.getAppSecret();
+
+      try {
+        return isDecrypt
+          ? decryptText(convertedValue, appSecret)
+          : encryptText(convertedValue, appSecret);
+      } catch (error) {
+        this.logger.error(
+          `Failed to ${isDecrypt ? 'decrypt' : 'encrypt'} value for key ${
+            key as string
+          }`,
+          error,
+        );
+
+        return convertedValue;
+      }
+    } catch (error) {
+      this.logAndRethrow(
+        `Failed to convert value ${
+          isDecrypt ? 'from DB' : 'to DB'
+        } for key ${key as string}`,
+        error,
+      );
+    }
+  }
 
   async get<T extends keyof ConfigVariables>(
     key: T,
@@ -56,51 +113,13 @@ export class ConfigStorageService implements ConfigStorageInterface {
         return undefined;
       }
 
-      const appSecret = this.environmentConfigDriver.get('APP_SECRET');
-      const metadata = TypedReflect.getMetadata(
-        'config-variables',
-        ConfigVariables,
-      )?.[key as string];
+      this.logger.debug(
+        `Fetching config for ${key as string} in database: ${result?.value}`,
+      );
 
-      try {
-        this.logger.debug(
-          `Fetching config for ${key as string} in database: ${result?.value}`,
-        );
-
-        // First convert DB value to app value type
-        const value = this.configValueConverter.convertDbValueToAppValue(
-          result.value,
-          key,
-        );
-
-        // Then decrypt if sensitive and is a string
-        if (
-          metadata?.isSensitive &&
-          metadata.type === 'string' &&
-          typeof value === 'string'
-        ) {
-          try {
-            return decryptText(value, appSecret) as ConfigVariables[T];
-          } catch (error) {
-            this.logger.error(
-              `Failed to decrypt value for key ${key as string}`,
-              error,
-            );
-            // Fall back to the original value if decryption fails
-          }
-        }
-
-        return value;
-      } catch (error) {
-        this.logger.error(
-          `Failed to convert value to app type for key ${key as string}`,
-          error,
-        );
-        throw error;
-      }
+      return await this.convertAndSecureValue(result.value, key, true);
     } catch (error) {
-      this.logger.error(`Failed to get config for ${key as string}`, error);
-      throw error;
+      this.logAndRethrow(`Failed to get config for ${key as string}`, error);
     }
   }
 
@@ -109,41 +128,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
     value: ConfigVariables[T],
   ): Promise<void> {
     try {
-      const appSecret = this.environmentConfigDriver.get('APP_SECRET');
-      const metadata = TypedReflect.getMetadata(
-        'config-variables',
-        ConfigVariables,
-      )?.[key as string];
-
-      // First convert to DB storage format
-      let dbValue;
-
-      try {
-        dbValue = this.configValueConverter.convertAppValueToDbValue(value);
-      } catch (error) {
-        this.logger.error(
-          `Failed to convert value to storage type for key ${key as string}`,
-          error,
-        );
-        throw error;
-      }
-
-      // Then encrypt if sensitive and is string
-      if (
-        metadata?.isSensitive &&
-        metadata.type === 'string' &&
-        typeof dbValue === 'string'
-      ) {
-        try {
-          dbValue = encryptText(dbValue, appSecret);
-        } catch (error) {
-          this.logger.error(
-            `Failed to encrypt value for key ${key as string}`,
-            error,
-          );
-          // Keep the original value if encryption fails
-        }
-      }
+      const dbValue = await this.convertAndSecureValue(value, key, false);
 
       const existingRecord = await this.keyValuePairRepository.findOne({
         where: this.getConfigVariableWhereClause(key as string),
@@ -164,8 +149,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
         });
       }
     } catch (error) {
-      this.logger.error(`Failed to set config for ${key as string}`, error);
-      throw error;
+      this.logAndRethrow(`Failed to set config for ${key as string}`, error);
     }
   }
 
@@ -175,8 +159,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
         this.getConfigVariableWhereClause(key as string),
       );
     } catch (error) {
-      this.logger.error(`Failed to delete config for ${key as string}`, error);
-      throw error;
+      this.logAndRethrow(`Failed to delete config for ${key as string}`, error);
     }
   }
 
@@ -193,48 +176,23 @@ export class ConfigStorageService implements ConfigStorageInterface {
         ConfigVariables[keyof ConfigVariables]
       >();
 
-      const appSecret = this.environmentConfigDriver.get('APP_SECRET');
-
       for (const configVar of configVars) {
         if (configVar.value !== null) {
           const key = configVar.key as keyof ConfigVariables;
 
           try {
-            const metadata = TypedReflect.getMetadata(
-              'config-variables',
-              ConfigVariables,
-            )?.[key as string];
-
-            let value = this.configValueConverter.convertDbValueToAppValue(
+            const value = await this.convertAndSecureValue(
               configVar.value,
               key,
+              true,
             );
-
-            if (
-              metadata?.isSensitive &&
-              metadata.type === 'string' &&
-              typeof value === 'string'
-            ) {
-              try {
-                value = decryptText(
-                  value,
-                  appSecret,
-                ) as ConfigVariables[keyof ConfigVariables];
-              } catch (error) {
-                this.logger.error(
-                  `Failed to decrypt value for key ${key as string}`,
-                  error,
-                );
-                // Keep the original value if decryption fails
-              }
-            }
 
             if (value !== undefined) {
               result.set(key, value);
             }
           } catch (error) {
             this.logger.error(
-              `Failed to convert value to app type for key ${key as string}`,
+              `Failed to process config value for key ${key as string}`,
               error,
             );
             continue;
@@ -244,8 +202,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
 
       return result;
     } catch (error) {
-      this.logger.error('Failed to load all config variables', error);
-      throw error;
+      this.logAndRethrow('Failed to load all config variables', error);
     }
   }
 }

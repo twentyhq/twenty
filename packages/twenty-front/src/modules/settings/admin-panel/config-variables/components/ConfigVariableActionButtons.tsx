@@ -43,7 +43,6 @@ export const ConfigVariableActionButtons = ({
             accent="danger"
             disabled={isSubmitting}
             onClick={onReset}
-            type="submit"
             Icon={IconRefreshAlert}
           />
         )}

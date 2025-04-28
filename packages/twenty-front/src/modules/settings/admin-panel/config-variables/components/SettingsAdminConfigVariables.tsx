@@ -81,7 +81,7 @@ export const SettingsAdminConfigVariables = () => {
       // Search filter
       const matchesSearch =
         v.name.toLowerCase().includes(search.toLowerCase()) ||
-        v.description.toLowerCase().includes(search.toLowerCase());
+        (v.description?.toLowerCase() || '').includes(search.toLowerCase());
 
       if (isSearching && !matchesSearch) return false;
 

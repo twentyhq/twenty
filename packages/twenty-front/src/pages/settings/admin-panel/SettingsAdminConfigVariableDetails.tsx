@@ -2,21 +2,18 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Form, useParams } from 'react-router-dom';
 
-import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
-
 import { ConfigVariableActionButtons } from '@/settings/admin-panel/config-variables/components/ConfigVariableActionButtons';
-import { ConfigVariableCurrentValue } from '@/settings/admin-panel/config-variables/components/ConfigVariableCurrentValue';
-import { ConfigVariableEditValue } from '@/settings/admin-panel/config-variables/components/ConfigVariableEditValue';
 import { ConfigVariableHelpTextEffect } from '@/settings/admin-panel/config-variables/components/ConfigVariableHelpText';
 import { ConfigVariableTitle } from '@/settings/admin-panel/config-variables/components/ConfigVariableTitle';
+import { ConfigVariableValue } from '@/settings/admin-panel/config-variables/components/ConfigVariableValue';
 import { useConfigVariableActions } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableActions';
 import { useConfigVariableForm } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableForm';
 import { ConfigVariableWithTypes } from '@/settings/admin-panel/config-variables/types/ConfigVariableWithTypes';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
+import { TextArea } from '@/ui/input/components/TextArea';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   ConfigSource,
@@ -27,24 +24,13 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 const StyledForm = styled(Form)`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
-  width: 100%;
-`;
-
-const StyledInputContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(4)};
   width: 100%;
 `;
 
 export const SettingsAdminConfigVariableDetails = () => {
   const { variableName } = useParams();
   const { t } = useLingui();
-
-  const isConfigVariablesInDbEnabled = useRecoilValue(
-    isConfigVariablesInDbEnabledState,
-  );
 
   const { data: configVariableData, loading } =
     useGetDatabaseConfigVariableQuery({
@@ -118,25 +104,24 @@ export const SettingsAdminConfigVariableDetails = () => {
         <ConfigVariableTitle name={variable.name} source={variable.source} />
 
         <StyledForm onSubmit={handleSubmit(onSubmit)}>
-          <StyledInputContainer>
-            <ConfigVariableCurrentValue variable={variable} />
-          </StyledInputContainer>
+          <ConfigVariableValue
+            variable={variable}
+            value={watch('value')}
+            onChange={(value) => setValue('value', value)}
+            disabled={isEnvOnly}
+          />
 
-          <StyledInputContainer>
-            {isConfigVariablesInDbEnabled && !isEnvOnly && (
-              <ConfigVariableEditValue
-                variable={variable}
-                value={watch('value')}
-                onChange={(value) => setValue('value', value)}
-                disabled={isEnvOnly}
-              />
-            )}
+          <TextArea
+            value={variable.description}
+            disabled
+            minRows={4}
+            label={t`Description`}
+          />
 
-            <ConfigVariableHelpTextEffect
-              variable={variable}
-              hasValueChanged={hasValueChanged}
-            />
-          </StyledInputContainer>
+          <ConfigVariableHelpTextEffect
+            variable={variable}
+            hasValueChanged={hasValueChanged}
+          />
         </StyledForm>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

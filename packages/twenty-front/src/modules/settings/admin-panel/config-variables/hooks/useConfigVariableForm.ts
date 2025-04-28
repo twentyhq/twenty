@@ -26,7 +26,7 @@ export const useConfigVariableForm = (variable?: ConfigVariableWithTypes) => {
     watch,
   } = useForm<FormValues>({
     resolver: zodResolver(validationSchema),
-    values: { value: variable?.value ?? '' },
+    values: { value: variable?.value ?? null },
   });
 
   const currentValue = watch('value');

@@ -48,6 +48,80 @@ export class TwentyConfigService {
     }
   }
 
+  private getConfigMetadata(): Record<string, ConfigVariablesMetadataOptions> {
+    return TypedReflect.getMetadata('config-variables', ConfigVariables) ?? {};
+  }
+
+  private validateDatabaseDriverActive(operation: string): void {
+    if (!this.isDatabaseDriverActive) {
+      throw new Error(
+        `Database configuration is disabled or unavailable, cannot ${operation} configuration`,
+      );
+    }
+  }
+
+  private validateNotEnvOnly<T extends keyof ConfigVariables>(
+    key: T,
+    operation: string,
+  ): void {
+    const metadata = this.getConfigMetadata();
+    const envMetadata = metadata[key as string];
+
+    if (envMetadata?.isEnvOnly) {
+      throw new Error(
+        `Cannot ${operation} environment-only variable: ${key as string}`,
+      );
+    }
+  }
+
+  private determineConfigSource<T extends keyof ConfigVariables>(
+    key: T,
+    value: ConfigVariables[T],
+    metadata: ConfigVariablesMetadataOptions,
+  ): ConfigSource {
+    const configVars = new ConfigVariables();
+
+    if (!this.isDatabaseDriverActive || metadata.isEnvOnly) {
+      return value === configVars[key]
+        ? ConfigSource.DEFAULT
+        : ConfigSource.ENVIRONMENT;
+    }
+
+    const dbValue = this.databaseConfigDriver.get(key);
+
+    if (dbValue !== undefined) {
+      return ConfigSource.DATABASE;
+    }
+
+    return value === configVars[key]
+      ? ConfigSource.DEFAULT
+      : ConfigSource.ENVIRONMENT;
+  }
+
+  private maskSensitiveValue<T extends keyof ConfigVariables>(
+    key: T,
+    value: any,
+  ): any {
+    if (!isString(value) || !(key in CONFIG_VARIABLES_MASKING_CONFIG)) {
+      return value;
+    }
+
+    const varMaskingConfig =
+      CONFIG_VARIABLES_MASKING_CONFIG[
+        key as keyof typeof CONFIG_VARIABLES_MASKING_CONFIG
+      ];
+    const options =
+      varMaskingConfig.strategy ===
+      ConfigVariablesMaskingStrategies.LAST_N_CHARS
+        ? { chars: varMaskingConfig.chars }
+        : undefined;
+
+    return configVariableMaskSensitiveData(value, varMaskingConfig.strategy, {
+      ...options,
+      variableName: key as string,
+    });
+  }
+
   get<T extends keyof ConfigVariables>(key: T): ConfigVariables[T] {
     if (isEnvOnlyConfigVar(key)) {
       return this.environmentConfigDriver.get(key);
@@ -59,8 +133,6 @@ export class TwentyConfigService {
       if (cachedValueFromDb !== undefined) {
         return cachedValueFromDb;
       }
-
-      return this.environmentConfigDriver.get(key);
     }
 
     return this.environmentConfigDriver.get(key);
@@ -70,22 +142,8 @@ export class TwentyConfigService {
     key: T,
     value: ConfigVariables[T],
   ): Promise<void> {
-    if (!this.isDatabaseDriverActive) {
-      throw new Error(
-        'Database configuration is disabled or unavailable, cannot set configuration',
-      );
-    }
-
-    const metadata =
-      TypedReflect.getMetadata('config-variables', ConfigVariables) ?? {};
-    const envMetadata = metadata[key];
-
-    if (envMetadata?.isEnvOnly) {
-      throw new Error(
-        `Cannot create environment-only variable: ${key as string}`,
-      );
-    }
-
+    this.validateDatabaseDriverActive('set');
+    this.validateNotEnvOnly(key, 'create');
     await this.databaseConfigDriver.set(key, value);
   }
 
@@ -93,21 +151,8 @@ export class TwentyConfigService {
     key: T,
     value: ConfigVariables[T],
   ): Promise<void> {
-    if (!this.isDatabaseDriverActive) {
-      throw new Error(
-        'Database configuration is disabled or unavailable, cannot update configuration',
-      );
-    }
-
-    const metadata =
-      TypedReflect.getMetadata('config-variables', ConfigVariables) ?? {};
-    const envMetadata = metadata[key];
-
-    if (envMetadata?.isEnvOnly) {
-      throw new Error(
-        `Cannot update environment-only variable: ${key as string}`,
-      );
-    }
+    this.validateDatabaseDriverActive('update');
+    this.validateNotEnvOnly(key, 'update');
 
     try {
       await this.databaseConfigDriver.update(key, value);
@@ -121,10 +166,7 @@ export class TwentyConfigService {
   getMetadata(
     key: keyof ConfigVariables,
   ): ConfigVariablesMetadataOptions | undefined {
-    const metadata =
-      TypedReflect.getMetadata('config-variables', ConfigVariables) ?? {};
-
-    return metadata[key];
+    return this.getConfigMetadata()[key as string];
   }
 
   getAll(): Record<
@@ -144,51 +186,14 @@ export class TwentyConfigService {
       }
     > = {};
 
-    const configVars = new ConfigVariables();
-    const metadata =
-      TypedReflect.getMetadata('config-variables', ConfigVariables) ?? {};
+    const metadata = this.getConfigMetadata();
 
     Object.entries(metadata).forEach(([key, envMetadata]) => {
-      let value = this.get(key as keyof ConfigVariables) ?? '';
-      let source = ConfigSource.ENVIRONMENT;
+      const typedKey = key as keyof ConfigVariables;
+      let value = this.get(typedKey) ?? '';
+      const source = this.determineConfigSource(typedKey, value, envMetadata);
 
-      if (!this.isDatabaseDriverActive || envMetadata.isEnvOnly) {
-        source =
-          value === configVars[key as keyof ConfigVariables]
-            ? ConfigSource.DEFAULT
-            : ConfigSource.ENVIRONMENT;
-      } else {
-        const dbValue = this.databaseConfigDriver.get(
-          key as keyof ConfigVariables,
-        );
-
-        if (dbValue !== undefined) {
-          source = ConfigSource.DATABASE;
-        } else {
-          source =
-            value === configVars[key as keyof ConfigVariables]
-              ? ConfigSource.DEFAULT
-              : ConfigSource.ENVIRONMENT;
-        }
-      }
-
-      if (isString(value) && key in CONFIG_VARIABLES_MASKING_CONFIG) {
-        const varMaskingConfig =
-          CONFIG_VARIABLES_MASKING_CONFIG[
-            key as keyof typeof CONFIG_VARIABLES_MASKING_CONFIG
-          ];
-        const options =
-          varMaskingConfig.strategy ===
-          ConfigVariablesMaskingStrategies.LAST_N_CHARS
-            ? { chars: varMaskingConfig.chars }
-            : undefined;
-
-        value = configVariableMaskSensitiveData(
-          value,
-          varMaskingConfig.strategy,
-          { ...options, variableName: key },
-        );
-      }
+      value = this.maskSensitiveValue(typedKey, value);
 
       result[key] = {
         value,
@@ -205,54 +210,16 @@ export class TwentyConfigService {
     metadata: ConfigVariablesMetadataOptions;
     source: ConfigSource;
   } | null {
-    const metadata = TypedReflect.getMetadata(
-      'config-variables',
-      ConfigVariables,
-    )?.[key as string];
+    const metadata = this.getMetadata(key);
 
     if (!metadata) {
       return null;
     }
 
-    const configVars = new ConfigVariables();
     let value = this.get(key) ?? '';
-    let source = ConfigSource.ENVIRONMENT;
+    const source = this.determineConfigSource(key, value, metadata);
 
-    if (!this.isDatabaseDriverActive || metadata.isEnvOnly) {
-      source =
-        value === configVars[key]
-          ? ConfigSource.DEFAULT
-          : ConfigSource.ENVIRONMENT;
-    } else {
-      const dbValue = this.databaseConfigDriver.get(key);
-
-      if (dbValue !== undefined) {
-        source = ConfigSource.DATABASE;
-      } else {
-        source =
-          value === configVars[key]
-            ? ConfigSource.DEFAULT
-            : ConfigSource.ENVIRONMENT;
-      }
-    }
-
-    if (isString(value) && key in CONFIG_VARIABLES_MASKING_CONFIG) {
-      const varMaskingConfig =
-        CONFIG_VARIABLES_MASKING_CONFIG[
-          key as keyof typeof CONFIG_VARIABLES_MASKING_CONFIG
-        ];
-      const options =
-        varMaskingConfig.strategy ===
-        ConfigVariablesMaskingStrategies.LAST_N_CHARS
-          ? { chars: varMaskingConfig.chars }
-          : undefined;
-
-      value = configVariableMaskSensitiveData(
-        value,
-        varMaskingConfig.strategy,
-        { ...options, variableName: key },
-      );
-    }
+    value = this.maskSensitiveValue(key, value);
 
     return {
       value,
@@ -284,11 +251,7 @@ export class TwentyConfigService {
   }
 
   async delete(key: keyof ConfigVariables): Promise<void> {
-    if (!this.isDatabaseDriverActive) {
-      throw new Error(
-        'Database configuration is disabled or unavailable, cannot delete configuration',
-      );
-    }
+    this.validateDatabaseDriverActive('delete');
     await this.databaseConfigDriver.delete(key);
   }
 }

@@ -12,7 +12,7 @@ type ConfigVariableDatabaseInputProps = {
   label: string;
   value: string | number | boolean | string[] | null;
   onChange: (value: string | number | boolean | string[] | null) => void;
-  type?: string;
+  type?: 'boolean' | 'number' | 'array' | 'enum' | 'string';
   options?: ConfigVariableOptions;
   disabled?: boolean;
   placeholder?: string;
@@ -134,7 +134,7 @@ export const ConfigVariableDatabaseInput = ({
               {Array.isArray(value) && value.length > 0 && (
                 <TextArea
                   label={label}
-                  value={value.join(', ')}
+                  value={JSON.stringify(value)}
                   onChange={(text) => {
                     try {
                       const arr = JSON.parse(text);
@@ -145,7 +145,6 @@ export const ConfigVariableDatabaseInput = ({
                   }}
                   disabled={true}
                   placeholder={placeholder || 'Enter JSON array'}
-                  minRows={3}
                 />
               )}
             </>
@@ -167,7 +166,6 @@ export const ConfigVariableDatabaseInput = ({
               }}
               disabled={disabled}
               placeholder={placeholder || 'Enter JSON array'}
-              minRows={3}
             />
           )}
         </>
@@ -200,7 +198,6 @@ export const ConfigVariableDatabaseInput = ({
           onChange={(text) => onChange(text)}
           disabled={disabled}
           placeholder={placeholder || 'Enter value'}
-          minRows={3}
         />
       );
 

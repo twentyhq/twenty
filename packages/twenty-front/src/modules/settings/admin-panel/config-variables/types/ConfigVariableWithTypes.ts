@@ -16,7 +16,7 @@ export type ConfigVariableWithTypes = {
   value: string | number | boolean | string[] | null;
   isSensitive: boolean;
   isEnvOnly: boolean;
-  type?: string;
+  type?: 'boolean' | 'number' | 'array' | 'enum' | 'string';
   options?: ConfigVariableOptions;
   source: ConfigSource;
 };

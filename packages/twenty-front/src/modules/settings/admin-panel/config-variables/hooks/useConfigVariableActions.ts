@@ -30,7 +30,7 @@ export const useConfigVariableActions = (variableName: string) => {
       // If value is empty, null, or an empty array, treat as delete
       if (
         value === null ||
-        value === '' ||
+        (typeof value === 'string' && value === '') ||
         (Array.isArray(value) && value.length === 0)
       ) {
         await handleDeleteVariable();
@@ -66,7 +66,7 @@ export const useConfigVariableActions = (variableName: string) => {
     }
   };
 
-  const handleDeleteVariable = async (e?: React.MouseEvent) => {
+  const handleDeleteVariable = async (e?: React.MouseEvent<HTMLElement>) => {
     if (isDefined(e)) {
       e.preventDefault();
     }

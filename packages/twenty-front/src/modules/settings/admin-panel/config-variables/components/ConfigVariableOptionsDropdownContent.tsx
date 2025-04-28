@@ -43,12 +43,7 @@ export const ConfigVariableOptionsDropdownContent = ({
   );
 
   const availableSourceOptions = ConfigVariableSourceOptions.filter(
-    (option) => {
-      if (!isConfigVariablesInDbEnabled && option.value === 'database') {
-        return false;
-      }
-      return true;
-    },
+    (option) => isConfigVariablesInDbEnabled || option.value !== 'database',
   );
 
   if (!selectedCategory) {

@@ -30,7 +30,7 @@ export const ConfigVariableFilterContainer = ({
         <StyledChipContainer>
           {activeChips.map((chip) => (
             <SortOrFilterChip
-              key={chip.label}
+              key={chip.label + chip.source}
               labelKey={chip.label}
               onRemove={chip.onRemove}
               labelValue={chip.source ?? ''}
