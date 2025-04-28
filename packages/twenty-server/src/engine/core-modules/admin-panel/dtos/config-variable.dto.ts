@@ -31,7 +31,7 @@ export class ConfigVariable {
   isEnvOnly: boolean;
 
   @Field(() => String, { nullable: true })
-  type?: ConfigVariableType;
+  type: ConfigVariableType;
 
   @Field(() => GraphQLJSON, { nullable: true })
   options?: ConfigVariableOptions;

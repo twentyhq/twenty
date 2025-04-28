@@ -15,7 +15,7 @@ export interface ConfigVariablesMetadataOptions {
   description: string;
   isSensitive?: boolean;
   isEnvOnly?: boolean;
-  type?: ConfigVariableType;
+  type: ConfigVariableType;
   options?: ConfigVariableOptions;
 }
 
@@ -51,14 +51,12 @@ export function ConfigVariablesMetadata(
       IsOptional()(target, propertyKey);
     }
 
-    if (options.type) {
-      applyBasicValidators(
-        options.type,
-        target,
-        propertyKey.toString(),
-        options.options,
-      );
-    }
+    applyBasicValidators(
+      options.type,
+      target,
+      propertyKey.toString(),
+      options.options,
+    );
 
     registerDecorator({
       name: propertyKey.toString(),

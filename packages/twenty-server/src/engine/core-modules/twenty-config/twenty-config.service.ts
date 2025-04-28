@@ -48,80 +48,6 @@ export class TwentyConfigService {
     }
   }
 
-  private getConfigMetadata(): Record<string, ConfigVariablesMetadataOptions> {
-    return TypedReflect.getMetadata('config-variables', ConfigVariables) ?? {};
-  }
-
-  private validateDatabaseDriverActive(operation: string): void {
-    if (!this.isDatabaseDriverActive) {
-      throw new Error(
-        `Database configuration is disabled or unavailable, cannot ${operation} configuration`,
-      );
-    }
-  }
-
-  private validateNotEnvOnly<T extends keyof ConfigVariables>(
-    key: T,
-    operation: string,
-  ): void {
-    const metadata = this.getConfigMetadata();
-    const envMetadata = metadata[key as string];
-
-    if (envMetadata?.isEnvOnly) {
-      throw new Error(
-        `Cannot ${operation} environment-only variable: ${key as string}`,
-      );
-    }
-  }
-
-  private determineConfigSource<T extends keyof ConfigVariables>(
-    key: T,
-    value: ConfigVariables[T],
-    metadata: ConfigVariablesMetadataOptions,
-  ): ConfigSource {
-    const configVars = new ConfigVariables();
-
-    if (!this.isDatabaseDriverActive || metadata.isEnvOnly) {
-      return value === configVars[key]
-        ? ConfigSource.DEFAULT
-        : ConfigSource.ENVIRONMENT;
-    }
-
-    const dbValue = this.databaseConfigDriver.get(key);
-
-    if (dbValue !== undefined) {
-      return ConfigSource.DATABASE;
-    }
-
-    return value === configVars[key]
-      ? ConfigSource.DEFAULT
-      : ConfigSource.ENVIRONMENT;
-  }
-
-  private maskSensitiveValue<T extends keyof ConfigVariables>(
-    key: T,
-    value: any,
-  ): any {
-    if (!isString(value) || !(key in CONFIG_VARIABLES_MASKING_CONFIG)) {
-      return value;
-    }
-
-    const varMaskingConfig =
-      CONFIG_VARIABLES_MASKING_CONFIG[
-        key as keyof typeof CONFIG_VARIABLES_MASKING_CONFIG
-      ];
-    const options =
-      varMaskingConfig.strategy ===
-      ConfigVariablesMaskingStrategies.LAST_N_CHARS
-        ? { chars: varMaskingConfig.chars }
-        : undefined;
-
-    return configVariableMaskSensitiveData(value, varMaskingConfig.strategy, {
-      ...options,
-      variableName: key as string,
-    });
-  }
-
   get<T extends keyof ConfigVariables>(key: T): ConfigVariables[T] {
     if (isEnvOnlyConfigVar(key)) {
       return this.environmentConfigDriver.get(key);
@@ -253,5 +179,79 @@ export class TwentyConfigService {
   async delete(key: keyof ConfigVariables): Promise<void> {
     this.validateDatabaseDriverActive('delete');
     await this.databaseConfigDriver.delete(key);
+  }
+
+  private getConfigMetadata(): Record<string, ConfigVariablesMetadataOptions> {
+    return TypedReflect.getMetadata('config-variables', ConfigVariables) ?? {};
+  }
+
+  private validateDatabaseDriverActive(operation: string): void {
+    if (!this.isDatabaseDriverActive) {
+      throw new Error(
+        `Database configuration is disabled or unavailable, cannot ${operation} configuration`,
+      );
+    }
+  }
+
+  private validateNotEnvOnly<T extends keyof ConfigVariables>(
+    key: T,
+    operation: string,
+  ): void {
+    const metadata = this.getConfigMetadata();
+    const envMetadata = metadata[key as string];
+
+    if (envMetadata?.isEnvOnly) {
+      throw new Error(
+        `Cannot ${operation} environment-only variable: ${key as string}`,
+      );
+    }
+  }
+
+  private determineConfigSource<T extends keyof ConfigVariables>(
+    key: T,
+    value: ConfigVariables[T],
+    metadata: ConfigVariablesMetadataOptions,
+  ): ConfigSource {
+    const configVars = new ConfigVariables();
+
+    if (!this.isDatabaseDriverActive || metadata.isEnvOnly) {
+      return value === configVars[key]
+        ? ConfigSource.DEFAULT
+        : ConfigSource.ENVIRONMENT;
+    }
+
+    const dbValue = this.databaseConfigDriver.get(key);
+
+    if (dbValue !== undefined) {
+      return ConfigSource.DATABASE;
+    }
+
+    return value === configVars[key]
+      ? ConfigSource.DEFAULT
+      : ConfigSource.ENVIRONMENT;
+  }
+
+  private maskSensitiveValue<T extends keyof ConfigVariables>(
+    key: T,
+    value: any,
+  ): any {
+    if (!isString(value) || !(key in CONFIG_VARIABLES_MASKING_CONFIG)) {
+      return value;
+    }
+
+    const varMaskingConfig =
+      CONFIG_VARIABLES_MASKING_CONFIG[
+        key as keyof typeof CONFIG_VARIABLES_MASKING_CONFIG
+      ];
+    const options =
+      varMaskingConfig.strategy ===
+      ConfigVariablesMaskingStrategies.LAST_N_CHARS
+        ? { chars: varMaskingConfig.chars }
+        : undefined;
+
+    return configVariableMaskSensitiveData(value, varMaskingConfig.strategy, {
+      ...options,
+      variableName: key as string,
+    });
   }
 }
