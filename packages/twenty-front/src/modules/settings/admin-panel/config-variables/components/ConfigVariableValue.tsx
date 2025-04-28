@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
-import { TextArea } from '@/ui/input/components/TextArea';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useRecoilValue } from 'recoil';
 import { ConfigVariableWithTypes } from '../types/ConfigVariableWithTypes';
 import { ConfigVariableDatabaseInput } from './ConfigVariableDatabaseInput';
@@ -37,7 +37,7 @@ export const ConfigVariableValue = ({
           placeholder={t`Enter a value to store in database`}
         />
       ) : (
-        <TextArea value={String(value)} disabled label={t`Value`} />
+        <TextInputV2 value={String(value)} disabled label={t`Value`} />
       )}
     </>
   );

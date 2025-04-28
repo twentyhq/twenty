@@ -78,12 +78,8 @@ export const useConfigVariableActions = (variableName: string) => {
         },
         refetchQueries: ['GetDatabaseConfigVariable'],
       });
-
-      enqueueSnackBar(t`Database override removed successfully`, {
-        variant: SnackBarVariant.Success,
-      });
     } catch (error) {
-      enqueueSnackBar(t`Failed to remove override`, {
+      enqueueSnackBar(t`Failed to remove  override`, {
         variant: SnackBarVariant.Error,
       });
     }

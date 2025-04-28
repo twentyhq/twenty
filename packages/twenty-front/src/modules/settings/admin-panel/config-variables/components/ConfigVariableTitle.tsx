@@ -1,9 +1,6 @@
 import styled from '@emotion/styled';
 
 import { H3Title } from 'twenty-ui/display';
-import { ConfigSource } from '~/generated/graphql';
-
-import { useSourceContent } from '../utils/useSourceContent';
 
 const StyledTitleContainer = styled.div`
   display: flex;
@@ -18,31 +15,20 @@ const StyledTitleRow = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledSourceIndicator = styled.div<{ color: string }>`
-  color: ${({ color }) => color};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-`;
-
 type ConfigVariableTitleProps = {
   name: string;
-  source: ConfigSource;
+  description: string;
 };
 
 export const ConfigVariableTitle = ({
   name,
-  source,
+  description,
 }: ConfigVariableTitleProps) => {
-  const sourceContent = useSourceContent(source);
-
   return (
     <StyledTitleContainer>
       <StyledTitleRow>
-        <H3Title title={name} />
+        <H3Title title={name} description={description} />
       </StyledTitleRow>
-      <StyledSourceIndicator color={sourceContent.color}>
-        {sourceContent.text}
-      </StyledSourceIndicator>
     </StyledTitleContainer>
   );
 };

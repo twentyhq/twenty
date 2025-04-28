@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import {
   IconDeviceFloppy,
-  IconPlus,
+  IconPencil,
   IconRefreshAlert,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -48,14 +48,14 @@ export const ConfigVariableActionButtons = ({
         )}
       {isConfigVariablesInDbEnabled && !variable.isEnvOnly && (
         <Button
-          title={isFromDatabase ? t`Save` : t`Save in Database`}
+          title={isFromDatabase ? t`Save` : t`Edit`}
           variant="primary"
           size="small"
           accent="blue"
           disabled={isSubmitting || !isValueValid}
           onClick={onSave}
           type="submit"
-          Icon={isFromDatabase ? IconDeviceFloppy : IconPlus}
+          Icon={isFromDatabase ? IconDeviceFloppy : IconPencil}
         />
       )}
     </>

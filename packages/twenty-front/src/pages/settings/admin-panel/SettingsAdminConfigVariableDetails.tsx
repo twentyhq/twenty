@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { Form, useParams } from 'react-router-dom';
 
-import { ConfigVariableActionButtons } from '@/settings/admin-panel/config-variables/components/ConfigVariableActionButtons';
 import { ConfigVariableHelpTextEffect } from '@/settings/admin-panel/config-variables/components/ConfigVariableHelpText';
 import { ConfigVariableTitle } from '@/settings/admin-panel/config-variables/components/ConfigVariableTitle';
 import { ConfigVariableValue } from '@/settings/admin-panel/config-variables/components/ConfigVariableValue';
@@ -12,9 +12,10 @@ import { ConfigVariableWithTypes } from '@/settings/admin-panel/config-variables
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
-import { TextArea } from '@/ui/input/components/TextArea';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { isDefined } from 'twenty-shared/utils';
+import { IconDeviceFloppy, IconPencil, IconX } from 'twenty-ui/display';
+import { Button, ButtonGroup } from 'twenty-ui/input';
 import {
   ConfigSource,
   useGetDatabaseConfigVariableQuery,
@@ -28,9 +29,26 @@ const StyledForm = styled(Form)`
   width: 100%;
 `;
 
+const StyledRow = styled.div`
+  display: flex;
+  align-items: bottom;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledValueContainer = styled.div`
+  flex: 1;
+`;
+
+const StyledButtonGroup = styled(ButtonGroup)`
+  & > :not(:first-of-type) > button {
+    border-left: none;
+  }
+`;
+
 export const SettingsAdminConfigVariableDetails = () => {
   const { variableName } = useParams();
   const { t } = useLingui();
+  const [isEditing, setIsEditing] = useState(false);
 
   const { data: configVariableData, loading } =
     useGetDatabaseConfigVariableQuery({
@@ -53,7 +71,7 @@ export const SettingsAdminConfigVariableDetails = () => {
     isValueValid,
   } = useConfigVariableForm(variable);
 
-  if (loading || !isDefined(variable)) {
+  if (loading === true || isDefined(variable) === false) {
     return <SettingsSkeletonLoader />;
   }
 
@@ -64,6 +82,16 @@ export const SettingsAdminConfigVariableDetails = () => {
     value: string | number | boolean | string[] | null;
   }) => {
     await handleUpdateVariable(formData.value, isFromDatabase);
+    setIsEditing(false);
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleResetClick = () => {
+    handleDeleteVariable();
+    setIsEditing(false);
   };
 
   return (
@@ -90,33 +118,51 @@ export const SettingsAdminConfigVariableDetails = () => {
           children: variable.name,
         },
       ]}
-      actionButton={
-        <ConfigVariableActionButtons
-          variable={variable}
-          isValueValid={isValueValid}
-          isSubmitting={isSubmitting}
-          onSave={handleSubmit(onSubmit)}
-          onReset={handleDeleteVariable}
-        />
-      }
     >
       <SettingsPageContainer>
-        <ConfigVariableTitle name={variable.name} source={variable.source} />
+        <ConfigVariableTitle
+          name={variable.name}
+          description={variable.description}
+        />
 
         <StyledForm onSubmit={handleSubmit(onSubmit)}>
-          <ConfigVariableValue
-            variable={variable}
-            value={watch('value')}
-            onChange={(value) => setValue('value', value)}
-            disabled={isEnvOnly}
-          />
+          <StyledRow>
+            <StyledValueContainer>
+              <ConfigVariableValue
+                variable={variable}
+                value={watch('value')}
+                onChange={(value) => setValue('value', value)}
+                disabled={isEnvOnly || !isEditing}
+              />
+            </StyledValueContainer>
 
-          <TextArea
-            value={variable.description}
-            disabled
-            minRows={4}
-            label={t`Description`}
-          />
+            {!isEditing ? (
+              <Button
+                Icon={IconPencil}
+                variant="primary"
+                onClick={handleEditClick}
+                type="button"
+                disabled={isEnvOnly}
+              />
+            ) : (
+              <StyledButtonGroup>
+                <Button
+                  Icon={IconDeviceFloppy}
+                  variant="primary"
+                  type="submit"
+                  disabled={isSubmitting || !isValueValid}
+                />
+                <Button
+                  Icon={IconX}
+                  variant="primary"
+                  accent="danger"
+                  onClick={handleResetClick}
+                  type="button"
+                  disabled={isSubmitting}
+                />
+              </StyledButtonGroup>
+            )}
+          </StyledRow>
 
           <ConfigVariableHelpTextEffect
             variable={variable}

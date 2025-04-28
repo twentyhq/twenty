@@ -1043,6 +1043,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Twenty server version',
     type: 'string',
+    isEnvOnly: true,
   })
   @IsOptionalOrEmptyString()
   @IsTwentySemVer()

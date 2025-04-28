@@ -1,7 +1,7 @@
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -75,7 +75,7 @@ export const ConfigVariableDatabaseInput = ({
 
     case 'number':
       return (
-        <TextInput
+        <TextInputV2
           label={label}
           value={value !== null && value !== undefined ? String(value) : ''}
           onChange={(text) => {
@@ -186,7 +186,7 @@ export const ConfigVariableDatabaseInput = ({
 
     case 'string':
       return (
-        <TextArea
+        <TextInputV2
           label={label}
           value={
             typeof value === 'string'
@@ -198,6 +198,7 @@ export const ConfigVariableDatabaseInput = ({
           onChange={(text) => onChange(text)}
           disabled={disabled}
           placeholder={placeholder || 'Enter value'}
+          fullWidth
         />
       );
 

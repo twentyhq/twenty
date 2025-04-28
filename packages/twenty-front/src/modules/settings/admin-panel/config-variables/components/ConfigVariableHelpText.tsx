@@ -32,12 +32,16 @@ export const ConfigVariableHelpTextEffect = ({
   const { t } = useLingui();
   const theme = useTheme();
   const isFromDatabase = variable.source === ConfigSource.DATABASE;
+  const isFromEnvironment = variable.source === ConfigSource.ENVIRONMENT;
   const isReadOnly = !isConfigVariablesInDbEnabled;
 
   if (isReadOnly) {
     return (
       <StyledHelpText>
-        {t`Database configuration is disabled. Variables can only be set in the environment.`}
+        {t`Database configuration is disabled.`}
+        {isFromEnvironment
+          ? t`The current value is coming from the server's environment, it may be a different value on the worker.`
+          : t`The current value is the default application value. Variables can only be set in the environment.`}
       </StyledHelpText>
     );
   }
@@ -76,6 +80,9 @@ export const ConfigVariableHelpTextEffect = ({
       return (
         <StyledHelpText>
           {t`You can set a custom value that will be stored in the database.`}
+          {isFromEnvironment
+            ? t`The current value is coming from the server's environment, it may be a different value on the worker.`
+            : t`The current value is the default application value.`}
         </StyledHelpText>
       );
     }
