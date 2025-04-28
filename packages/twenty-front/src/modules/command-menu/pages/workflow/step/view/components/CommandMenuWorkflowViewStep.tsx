@@ -1,4 +1,4 @@
-import { useCommandMenuWorkflowVersionIdOrThrow } from '@/command-menu/pages/workflow/step/edit/hooks/useCommandMenuWorkflowVersionIdOrThrow';
+import { useCommandMenuWorkflowVersionIdOrThrow } from '@/command-menu/pages/workflow/step/view/hooks/useCommandMenuWorkflowVersionIdOrThrow';
 import { CommandMenuWorkflowViewStepContent } from '@/command-menu/pages/workflow/step/view/components/CommandMenuWorkflowViewStepContent';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
