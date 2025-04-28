@@ -117,6 +117,10 @@ You should run all commands in the following steps from the root of the project.
     ```bash
       make postgres-on-docker
     ```
+    Note: In some cases when using Docker, you may need to manually grant permissions to the `twenty` user.
+    ```bash
+      psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE \"default\" TO twenty;" -c "GRANT ALL PRIVILEGES ON DATABASE \"test\" TO twenty;"
+    ```
   </ArticleTab>
   <ArticleTab>
     <b>Option 1 (preferred):</b> To provision your database locally with `brew`:
@@ -130,6 +134,10 @@ You should run all commands in the following steps from the root of the project.
     <b>Option 2:</b> If you have docker installed:
     ```bash
       make postgres-on-docker
+    ```
+    Note: In some cases when using Docker, you may need to manually grant permissions to the `twenty` user.
+    ```bash
+      psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE \"default\" TO twenty;" -c "GRANT ALL PRIVILEGES ON DATABASE \"test\" TO twenty;"
     ```
   </ArticleTab>
   <ArticleTab>
@@ -147,6 +155,10 @@ You should run all commands in the following steps from the root of the project.
     Only use this option if you are comfortable with the extra steps involved, including turning on [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
     ```bash
       make postgres-on-docker
+    ```
+    Note: In some cases when using Docker, you may need to manually grant permissions to the `twenty` user.
+    ```bash
+      psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE \"default\" TO twenty;" -c "GRANT ALL PRIVILEGES ON DATABASE \"test\" TO twenty;"
     ```
   </ArticleTab>
 </ArticleTabs>
