@@ -38,10 +38,10 @@ export const ConfigVariableHelpTextEffect = ({
   if (isReadOnly) {
     return (
       <StyledHelpText>
-        {t`Database configuration is disabled.`}
+        {t`Database configuration is currently disabled. `}
         {isFromEnvironment
-          ? t`The current value is coming from the server's environment, it may be a different value on the worker.`
-          : t`The current value is the default application value. Variables can only be set in the environment.`}
+          ? t`Value is set in the server environment, it may be a different value on the worker.`
+          : t`Using default application value. Configure via environment variables.`}
       </StyledHelpText>
     );
   }
@@ -49,7 +49,7 @@ export const ConfigVariableHelpTextEffect = ({
   if (isConfigVariablesInDbEnabled && variable.isEnvOnly) {
     return (
       <StyledHelpText>
-        {t`This variable can only be set in the environment and cannot be modified here.`}
+        {t`This setting can only be configured through environment variables.`}
       </StyledHelpText>
     );
   }
@@ -58,8 +58,8 @@ export const ConfigVariableHelpTextEffect = ({
     return (
       <StyledHelpText color={color || theme.color.blue50}>
         {isFromDatabase
-          ? t`Value has been changed. Click Save to apply changes.`
-          : t`This value will be stored in the database.`}
+          ? t`Click Save to apply your changes.`
+          : t`This value will be saved to the database.`}
       </StyledHelpText>
     );
   }
@@ -69,20 +69,19 @@ export const ConfigVariableHelpTextEffect = ({
       return (
         <>
           <StyledHelpText>
-            {t`This value is stored in the database and takes precedence over environment variables.`}
+            {t`This database value overrides environment settings. `}
           </StyledHelpText>
           <StyledHelpText>
-            {t`To remove this custom value and revert to the environment or default value, clear the field or use the "Reset to Default" button.`}
+            {t`Clear the field or "X" to revert to environment/default value.`}
           </StyledHelpText>
         </>
       );
     } else {
       return (
         <StyledHelpText>
-          {t`You can set a custom value that will be stored in the database.`}
           {isFromEnvironment
-            ? t`The current value is coming from the server's environment, it may be a different value on the worker.`
-            : t`The current value is the default application value.`}
+            ? t`Current value from server environment. Set a custom value to override.`
+            : t`Using default value. Set a custom value to override.`}
         </StyledHelpText>
       );
     }
