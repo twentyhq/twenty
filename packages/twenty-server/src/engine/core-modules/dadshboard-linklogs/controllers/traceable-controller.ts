@@ -21,14 +21,15 @@ export class TraceableController {
     @Param('workspaceId') workspaceId: string,
     @Param('traceableId') traceableId: string,
   ) {
-    const traceable = await this.traceableService.handleLinkAccess({
-      workspaceId,
-      traceableId,
-      userAgent: req.headers['user-agent'] || '',
-      userIp: req.ip || '',
-    });
+    const { traceable, workspace } =
+      await this.traceableService.handleLinkAccess({
+        workspaceId,
+        traceableId,
+        userAgent: req.headers['user-agent'] || '',
+        userIp: req.ip || '',
+      });
 
-    const notFoundUrl = `${this.twentyConfigService.get('FRONTEND_URL') ?? this.twentyConfigService.get('SERVER_URL')}/not-found`;
+    const notFoundUrl = `${workspace?.subdomain ?? this.twentyConfigService.get('DEFAULT_SUBDOMAIN')}.${this.twentyConfigService.get('FRONTEND_URL') ?? this.twentyConfigService.get('SERVER_URL')}/not-found`;
 
     return res.redirect(
       302,

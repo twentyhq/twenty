@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'class-validator';
 import { Repository } from 'typeorm';
 
+import { HandleLinkAccessResult } from 'src/engine/core-modules/dadshboard-linklogs/interfaces/traceable.interface';
+
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { LinkLogsWorkspaceEntity } from 'src/modules/linklogs/standard-objects/linklog.workspace-entity';
@@ -24,7 +26,7 @@ export class TraceableService {
     traceableId: string;
     userAgent: string;
     userIp: string;
-  }): Promise<TraceableWorkspaceEntity | null> {
+  }): Promise<HandleLinkAccessResult> {
     const { workspaceId, traceableId, userAgent, userIp } = input;
 
     const traceableRepository =
@@ -38,7 +40,7 @@ export class TraceableService {
         `Missing workspaceId in payload ${JSON.stringify(input)}`,
       );
 
-      return null;
+      return { workspace: null, traceable: null };
     }
 
     const workspace = await this.workspaceRepository.findOneBy({
@@ -48,7 +50,10 @@ export class TraceableService {
     if (!isDefined(workspace)) {
       this.logger.error(`Workspace not fond ${JSON.stringify(input)}`);
 
-      return null;
+      return {
+        traceable: null,
+        workspace: null,
+      };
     }
 
     const traceable = await traceableRepository.findOneBy({
@@ -58,7 +63,10 @@ export class TraceableService {
     if (!isDefined(traceable)) {
       this.logger.error(`Traceable not fond ${JSON.stringify(input)}`);
 
-      return null;
+      return {
+        workspace,
+        traceable: null,
+      };
     }
 
     const linklogsRepository =
@@ -80,6 +88,9 @@ export class TraceableService {
 
     await linklogsRepository.save(traceableAccessLog);
 
-    return traceable;
+    return {
+      workspace,
+      traceable,
+    };
   }
 }
