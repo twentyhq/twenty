@@ -15,7 +15,7 @@ import { pascalCase } from '~/utils/string/pascalCase';
 export const RelationFromManyFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useRelationFromManyFieldDisplay();
   const { isFocused } = useFieldFocus();
-  const { isReadOnly } = useContext(FieldContext);
+  const { disableChipClick } = useContext(FieldContext);
 
   const { fieldName, objectMetadataNameSingular } = fieldDefinition.metadata;
 
@@ -76,7 +76,7 @@ export const RelationFromManyFieldDisplay = () => {
                 key={record.id}
                 objectNameSingular={objectNameSingular}
                 record={record[relationFieldName]}
-                forceDisableClick={isReadOnly}
+                forceDisableClick={disableChipClick}
               />
             );
           })
@@ -91,7 +91,7 @@ export const RelationFromManyFieldDisplay = () => {
             key={record.targetObject.id}
             objectNameSingular={record.targetObjectMetadataItem.nameSingular}
             record={record.targetObject}
-            forceDisableClick={isReadOnly}
+            forceDisableClick={disableChipClick}
           />
         ))}
       </ExpandableList>
@@ -104,7 +104,7 @@ export const RelationFromManyFieldDisplay = () => {
             key={record.id}
             objectNameSingular={objectNameSingular}
             record={record}
-            forceDisableClick={isReadOnly}
+            forceDisableClick={disableChipClick}
           />
         ))}
       </ExpandableList>

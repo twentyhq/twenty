@@ -4,10 +4,10 @@ import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-que
 import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CanAccessCalendarEventService } from 'src/modules/calendar/common/query-hooks/calendar-event/services/can-access-calendar-event.service';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @WorkspaceQueryHook({
   key: `calendarEvent.findMany`,
