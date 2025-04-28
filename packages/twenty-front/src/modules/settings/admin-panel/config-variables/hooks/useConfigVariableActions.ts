@@ -4,9 +4,9 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    useCreateDatabaseConfigVariableMutation,
-    useDeleteDatabaseConfigVariableMutation,
-    useUpdateDatabaseConfigVariableMutation,
+  useCreateDatabaseConfigVariableMutation,
+  useDeleteDatabaseConfigVariableMutation,
+  useUpdateDatabaseConfigVariableMutation,
 } from '~/generated/graphql';
 
 type ConfigVariableValue = string | number | boolean | string[] | null;
