@@ -1,9 +1,10 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { getOperandLabelShort } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
-import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
-import { isFilterOperandExpectingValue } from '@/object-record/object-filter-dropdown/utils/isFilterOperandExpectingValue';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { isEmptinessOperand } from '@/object-record/record-filter/utils/isEmptinessOperand';
+import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { isValidSubFieldName } from '@/settings/data-model/utils/isValidSubFieldName';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -27,11 +28,12 @@ export const EditableFilterChip = ({
   const FieldMetadataItemIcon = getIcon(fieldMetadataItem.icon);
 
   const operandLabelShort = getOperandLabelShort(recordFilter.operand);
+  const operandIsEmptiness = isEmptinessOperand(recordFilter.operand);
 
   const recordFilterSubFieldName = recordFilter.subFieldName;
 
   const subFieldLabel =
-    isCompositeField(fieldMetadataItem.type) &&
+    isCompositeFieldType(fieldMetadataItem.type) &&
     isNonEmptyString(recordFilterSubFieldName) &&
     isValidSubFieldName(recordFilterSubFieldName)
       ? getCompositeSubFieldLabel(
@@ -44,11 +46,9 @@ export const EditableFilterChip = ({
     ? `${recordFilter.label} / ${subFieldLabel}`
     : recordFilter.label;
 
-  const shouldDisplayOperandLabelShort =
-    isNonEmptyString(recordFilter.value) ||
-    !isFilterOperandExpectingValue(recordFilter.operand);
+  const recordFilterIsEmpty = isRecordFilterConsideredEmpty(recordFilter);
 
-  const labelKey = `${fieldNameLabel}${shouldDisplayOperandLabelShort ? operandLabelShort : ''}`;
+  const labelKey = `${fieldNameLabel}${!operandIsEmptiness && !recordFilterIsEmpty ? operandLabelShort : operandIsEmptiness ? ` ${operandLabelShort}` : ''}`;
 
   return (
     <SortOrFilterChip

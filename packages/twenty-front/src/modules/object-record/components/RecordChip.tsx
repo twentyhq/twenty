@@ -9,6 +9,7 @@ import {
   AvatarChip,
   AvatarChipVariant,
   ChipSize,
+  ChipVariant,
   LinkAvatarChip,
 } from 'twenty-ui/components';
 import { isModifiedEvent } from 'twenty-ui/utilities';
@@ -56,6 +57,7 @@ export const RecordChip = ({
         avatarType={recordChipData.avatarType}
         avatarUrl={recordChipData.avatarUrl ?? ''}
         className={className}
+        variant={ChipVariant.Static}
       />
     );
   }

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ReadonlyDeep } from 'type-fest';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { getSubFieldOptionKey } from '@/object-record/spreadsheet-import/utils/getSubFieldOptionKey';
 import { MatchColumnSelectFieldSelectDropdownContent } from '@/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent';
 import { MatchColumnSelectSubFieldSelectDropdownContent } from '@/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent';
@@ -40,7 +40,7 @@ export const MatchColumnToFieldSelect = ({
   ) => {
     setSelectedFieldMetadataItem(selectedFieldMetadataItem);
 
-    if (!isCompositeField(selectedFieldMetadataItem.type)) {
+    if (!isCompositeFieldType(selectedFieldMetadataItem.type)) {
       const correspondingOption = options.find(
         (option) => option.value === selectedFieldMetadataItem.name,
       );
@@ -100,11 +100,9 @@ export const MatchColumnToFieldSelect = ({
     (option) => option.value === DO_NOT_IMPORT_OPTION_KEY,
   );
 
-  const shouldDisplaySubFieldMetadataItemSelect = isDefined(
-    selectedFieldMetadataItem?.type,
-  )
-    ? isCompositeField(selectedFieldMetadataItem?.type)
-    : false;
+  const shouldDisplaySubFieldMetadataItemSelect =
+    isDefined(selectedFieldMetadataItem?.type) &&
+    isCompositeFieldType(selectedFieldMetadataItem?.type);
 
   return (
     <Dropdown

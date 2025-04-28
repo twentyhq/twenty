@@ -4,7 +4,10 @@ import { AvatarChipVariant } from '@ui/components/avatar-chip/types/AvatarChipsV
 import { ChipVariant } from '@ui/components/chip/Chip';
 import { LinkChip, LinkChipProps } from '@ui/components/chip/LinkChip';
 
-export type LinkAvatarChipProps = Omit<AvatarChipsCommonProps, 'clickable'> & {
+export type LinkAvatarChipProps = Omit<
+  AvatarChipsCommonProps,
+  'clickable' | 'variant'
+> & {
   to: string;
   onClick?: LinkChipProps['onClick'];
   variant?: AvatarChipVariant;

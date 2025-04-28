@@ -319,7 +319,7 @@ export const isRecordMatchingFilter = ({
       case FieldMetadataType.CURRENCY: {
         return isMatchingCurrencyFilter({
           currencyFilter: filterValue as CurrencyFilter,
-          value: record[filterKey].amountMicros,
+          value: record[filterKey],
         });
       }
       case FieldMetadataType.ACTOR: {
