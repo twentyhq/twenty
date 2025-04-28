@@ -9,6 +9,7 @@ import { PabxServiceInterface } from 'src/engine/core-modules/telephony/interfac
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { InsereEmpresa } from 'src/engine/core-modules/telephony/types/Create/InsereEmpresa.type';
+import { InsereTronco } from 'src/engine/core-modules/telephony/types/Create/InsereTronco.type';
 import { ExtetionBody } from 'src/engine/core-modules/telephony/types/Extention.type';
 import { ListExtentionsArgs } from 'src/engine/core-modules/telephony/types/pabx.type';
 
@@ -137,12 +138,37 @@ export class PabxService implements PabxServiceInterface {
         { dados: data },
       );
 
+      console.log('createCompanyResponse: ', createCompanyResponse.data);
+
       this.logger.log(`Company created successfully: ${data.nome}`);
 
       return createCompanyResponse;
     } catch (error) {
       this.logger.error(
         `Failed to create company: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
+  };
+
+  createTrunk: (data: InsereTronco) => Promise<AxiosResponse> = async (
+    data,
+  ) => {
+    try {
+      this.logger.log(`Creating trunk with name: ${data.nome}`);
+
+      const createTrunkResponse = await this.pabxAxiosInstance.post(
+        '/inserir_tronco',
+        { dados: data },
+      );
+
+      this.logger.log(`Trunk created successfully: ${data.nome}`);
+
+      return createTrunkResponse;
+    } catch (error) {
+      this.logger.error(
+        `Failed to create trunk: ${error.message}`,
         error.stack,
       );
       throw error;

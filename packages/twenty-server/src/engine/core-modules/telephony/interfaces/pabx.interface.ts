@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios';
 
 import { InsereEmpresa } from 'src/engine/core-modules/telephony/types/Create/InsereEmpresa.type';
+import { InsereTronco } from 'src/engine/core-modules/telephony/types/Create/InsereTronco.type';
 import { ExtetionBody } from 'src/engine/core-modules/telephony/types/Extention.type';
 import { ListExtentionsArgs } from 'src/engine/core-modules/telephony/types/pabx.type';
 
@@ -13,4 +14,5 @@ export interface PabxServiceInterface {
   listCampaigns: () => Promise<AxiosResponse>;
   listIntegrationFlows: () => Promise<AxiosResponse>;
   createCompany: (data: InsereEmpresa) => Promise<AxiosResponse>;
+  createTrunk: (data: InsereTronco) => Promise<AxiosResponse>;
 }

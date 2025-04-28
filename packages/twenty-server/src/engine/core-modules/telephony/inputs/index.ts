@@ -1,6 +1,6 @@
 import { Field, ID, InputType, Int } from '@nestjs/graphql';
 
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreateTelephonyInput {
@@ -479,4 +479,73 @@ export class CreatePabxCompanyInput {
   @IsNumber()
   @IsOptional()
   dias_aviso_remocao_mailings?: number;
+}
+
+@InputType()
+export class TarifaTroncoInput {
+  @Field(() => Int)
+  @IsNumber()
+  regiao_id: number;
+
+  @Field(() => Int)
+  @IsNumber()
+  tarifa: number;
+
+  @Field()
+  @IsString()
+  fracionamento: string;
+}
+
+@InputType()
+export class CreatePabxTrunkInput {
+  @Field(() => Int)
+  @IsNumber()
+  tronco_id: number;
+
+  @Field()
+  @IsString()
+  nome: string;
+
+  @Field()
+  @IsString()
+  endereco: string;
+
+  @Field(() => Int)
+  @IsNumber()
+  cliente_id: number;
+
+  @Field(() => Int, { nullable: true })
+  @IsNumber()
+  @IsOptional()
+  host_dinamico?: number;
+
+  @Field(() => Int, { nullable: true })
+  @IsNumber()
+  @IsOptional()
+  qtd_digitos_cortados?: number;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  insere_digitos?: string;
+
+  @Field(() => Int, { nullable: true })
+  @IsNumber()
+  @IsOptional()
+  autentica_user_pass?: number;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  usuario?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  senha?: string;
+
+  @Field(() => [TarifaTroncoInput], { nullable: true })
+  @IsArray()
+  @IsOptional()
+  tarifas?: TarifaTroncoInput[];
 }

@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 
 import {
   CreatePabxCompanyInput,
+  CreatePabxTrunkInput,
   CreateTelephonyInput,
   UpdateTelephonyInput,
 } from 'src/engine/core-modules/telephony/inputs';
@@ -23,6 +24,7 @@ import {
 } from './telephony.entity';
 
 import { PabxCompanyResponseType } from './types/Create/PabxCompanyResponse.type';
+import { PabxTrunkResponseType } from './types/Create/PabxTrunkResponse.type';
 
 @Resolver(() => Telephony)
 export class TelephonyResolver {
@@ -342,18 +344,44 @@ export class TelephonyResolver {
     try {
       const result = await this.pabxService.createCompany(input);
 
-      console.log('result: ', result.data.data);
+      console.log('result: ', result);
 
       return {
         success: true,
-        message: `Company created successfully: ${input.nome}`,
+        message: `Company created successfully: ${input.nome}, id: ${result.data.id}`,
       };
     } catch (error) {
-      console.error('Error creating PABX company:', error.response.data);
+      console.error('Error creating PABX company:', error);
 
       return {
         success: false,
         message: `Failed to create company: ${error.message}`,
+      };
+    }
+  }
+
+  @Mutation(() => PabxTrunkResponseType, { name: 'createPabxTrunk' })
+  async createPabxTrunk(
+    @AuthUser() { id: userId }: User,
+    @Args('input') input: CreatePabxTrunkInput,
+  ): Promise<PabxTrunkResponseType> {
+    if (!userId) {
+      throw new Error('User id not found');
+    }
+
+    try {
+      const result = await this.pabxService.createTrunk(input);
+
+      return {
+        success: true,
+        message: `Trunk created successfully: ${input.nome}`,
+      };
+    } catch (error) {
+      console.error('Error creating PABX trunk:', error);
+
+      return {
+        success: false,
+        message: `Failed to create trunk: ${error.message}`,
       };
     }
   }
