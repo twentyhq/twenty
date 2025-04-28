@@ -96,6 +96,9 @@ export class BackfillWorkflowNextStepIdsCommand extends ActiveOrSuspendedWorkspa
           },
           take: batchSize,
           skip: batchIndex * batchSize,
+          order: {
+            id: 'ASC',
+          },
         });
 
         for (const workflowRun of workflowRuns) {
@@ -105,8 +108,12 @@ export class BackfillWorkflowNextStepIdsCommand extends ActiveOrSuspendedWorkspa
             continue;
           }
 
+          const updatedStepsMap = new Map(
+            updatedSteps.map((step) => [step.id, step]),
+          );
+
           const updatedFlow = flow.steps.map((step) => {
-            const updatedStep = updatedSteps.find((s) => s.id === step.id);
+            const updatedStep = updatedStepsMap.get(step.id);
 
             return {
               ...step,
