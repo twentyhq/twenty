@@ -1,4 +1,3 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { Calendar } from '@/activities/calendar/components/Calendar';
 import { EmailThreads } from '@/activities/emails/components/EmailThreads';
 import { Attachments } from '@/activities/files/components/Attachments';
@@ -19,7 +18,6 @@ import { WorkflowVisualizer } from '@/workflow/workflow-diagram/components/Workf
 import { WorkflowVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVisualizerEffect';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import styled from '@emotion/styled';
-import { useContext } from 'react';
 
 const StyledGreyBox = styled.div<{ isInRightDrawer?: boolean }>`
   background: ${({ theme, isInRightDrawer }) =>
@@ -86,8 +84,6 @@ export const CardComponents: Record<CardType, CardComponentType> = {
   ),
 
   [CardType.WorkflowCard]: ({ targetableObject }) => {
-    const { isInRightDrawer } = useContext(ActionMenuContext);
-
     return (
       <WorkflowVisualizerComponentInstanceContext.Provider
         value={{
@@ -103,8 +99,6 @@ export const CardComponents: Record<CardType, CardComponentType> = {
   },
 
   [CardType.WorkflowVersionCard]: ({ targetableObject }) => {
-    const { isInRightDrawer } = useContext(ActionMenuContext);
-
     return (
       <WorkflowVisualizerComponentInstanceContext.Provider
         value={{
@@ -122,8 +116,6 @@ export const CardComponents: Record<CardType, CardComponentType> = {
   },
 
   [CardType.WorkflowRunCard]: ({ targetableObject }) => {
-    const { isInRightDrawer } = useContext(ActionMenuContext);
-
     return (
       <WorkflowVisualizerComponentInstanceContext.Provider
         value={{
