@@ -1,6 +1,6 @@
-import { ConfigVariableFilterCategory } from '@/settings/admin-panel/types/ConfigVariableFilterCategory';
-import { ConfigVariableGroupFilter } from '@/settings/admin-panel/types/ConfigVariableGroupFilter';
-import { ConfigVariableSourceFilter } from '@/settings/admin-panel/types/ConfigVariableSourceFilter';
+import { ConfigVariableFilterCategory } from '@/settings/admin-panel/config-variables/types/ConfigVariableFilterCategory';
+import { ConfigVariableGroupFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableGroupFilter';
+import { ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCallback, useState } from 'react';
 import { IconSettings } from 'twenty-ui/display';

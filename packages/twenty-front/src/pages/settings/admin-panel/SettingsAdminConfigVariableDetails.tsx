@@ -13,7 +13,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
-import { ConfigVariableInput } from '@/settings/admin-panel/components/ConfigVariableInput';
+import { ConfigVariableInput } from '@/settings/admin-panel/config-variables/components/ConfigVariableInput';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';

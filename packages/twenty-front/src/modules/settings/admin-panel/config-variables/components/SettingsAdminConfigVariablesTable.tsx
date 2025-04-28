@@ -1,4 +1,4 @@
-import { SettingsAdminConfigVariablesRow } from '@/settings/admin-panel/components/SettingsAdminConfigVariablesRow';
+import { SettingsAdminConfigVariablesRow } from '@/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesRow';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
