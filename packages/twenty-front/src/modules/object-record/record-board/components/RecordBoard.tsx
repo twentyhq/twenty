@@ -173,14 +173,21 @@ export const RecordBoard = () => {
               )
             : destinationRecordByGroupIds;
 
-        const recordBeforeId =
-          otherRecordIdsInDestinationColumn[destinationIndexInColumn - 1];
+        const isDroppedAtEnd =
+          destinationIndexInColumn >= otherRecordIdsInDestinationColumn.length;
+
+        const recordBeforeId = isDroppedAtEnd
+          ? otherRecordIdsInDestinationColumn[
+              otherRecordIdsInDestinationColumn.length - 1
+            ]
+          : otherRecordIdsInDestinationColumn[destinationIndexInColumn - 1];
         const recordBefore = recordBeforeId
           ? getSnapshotValue(snapshot, recordStoreFamilyState(recordBeforeId))
           : null;
 
-        const recordAfterId =
-          otherRecordIdsInDestinationColumn[destinationIndexInColumn];
+        const recordAfterId = isDroppedAtEnd
+          ? null
+          : otherRecordIdsInDestinationColumn[destinationIndexInColumn];
         const recordAfter = recordAfterId
           ? getSnapshotValue(snapshot, recordStoreFamilyState(recordAfterId))
           : null;
