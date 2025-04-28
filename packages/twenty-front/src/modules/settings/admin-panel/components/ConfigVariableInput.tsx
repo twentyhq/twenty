@@ -24,6 +24,7 @@ const StyledDropdownButtonContainer = styled.div`
 `;
 
 type ConfigVariableInputProps = {
+  label: string;
   value: string | number | boolean | string[] | null;
   onChange: (value: string | number | boolean | string[] | null) => void;
   type?: string;
@@ -35,6 +36,7 @@ type ConfigVariableInputProps = {
 // can be diff components, if possible refactor
 // rename?
 export const ConfigVariableInput = ({
+  label,
   value,
   onChange,
   type,
@@ -91,6 +93,7 @@ export const ConfigVariableInput = ({
       return (
         <StyledContainer>
           <Select
+            label={label}
             value={String(value ?? '')}
             onChange={(newValue: string) => onChange(newValue === 'true')}
             disabled={disabled}
@@ -104,6 +107,7 @@ export const ConfigVariableInput = ({
     case 'number':
       return (
         <TextInput
+          label={label}
           value={value !== null && value !== undefined ? String(value) : ''}
           onChange={(text) => {
             const num = Number(text);
@@ -161,6 +165,7 @@ export const ConfigVariableInput = ({
               {arrayValue.length > 0 && (
                 <StyledDropdownButtonContainer>
                   <TextArea
+                    label={label}
                     value={arrayValue.join(', ')}
                     onChange={(text) => {
                       try {
@@ -181,6 +186,7 @@ export const ConfigVariableInput = ({
             </>
           ) : (
             <TextArea
+              label={label}
               value={
                 Array.isArray(value)
                   ? JSON.stringify(value)
@@ -206,6 +212,7 @@ export const ConfigVariableInput = ({
       return (
         <StyledContainer>
           <Select
+            label={label}
             value={String(value ?? '')}
             onChange={(newValue: string) => onChange(newValue)}
             disabled={disabled}
@@ -219,6 +226,7 @@ export const ConfigVariableInput = ({
     default:
       return (
         <TextArea
+          label={label}
           value={
             typeof value === 'string'
               ? value

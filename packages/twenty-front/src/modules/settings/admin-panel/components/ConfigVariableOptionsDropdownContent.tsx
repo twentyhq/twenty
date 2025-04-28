@@ -2,43 +2,14 @@ import { ConfigVariableSourceOptions } from '@/settings/admin-panel/constants/Co
 import { ConfigVariableFilterCategory } from '@/settings/admin-panel/types/ConfigVariableFilterCategory';
 import { ConfigVariableGroupFilter } from '@/settings/admin-panel/types/ConfigVariableGroupFilter';
 import { ConfigVariableSourceFilter } from '@/settings/admin-panel/types/ConfigVariableSourceFilter';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { IconArrowLeft, IconEyeOff } from 'twenty-ui/display';
-import { Toggle } from 'twenty-ui/input';
-import { MenuItemSelectTag } from 'twenty-ui/navigation';
-
-const StyledHeaderContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-`;
-
-const StyledBackButton = styled.div`
-  align-items: center;
-  cursor: pointer;
-  display: flex;
-`;
-
-const StyledToggleContainer = styled.div`
-  align-items: center;
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  display: flex;
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledToggleLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
+import { t } from '@lingui/core/macro';
+import { IconChevronLeft, IconEye, IconEyeOff } from 'twenty-ui/display';
+import { MenuItem, MenuItemSelectTag } from 'twenty-ui/navigation';
 
 type ConfigVariableOptionsDropdownContentProps = {
   selectedCategory: ConfigVariableFilterCategory | null;
@@ -70,37 +41,55 @@ export const ConfigVariableOptionsDropdownContent = ({
       <>
         <DropdownMenuItemsContainer>
           <MenuItemSelectTag
-            text="Source"
+            text={t`Source`}
             color="transparent"
             onClick={() => onSelectCategory('source')}
           />
           <MenuItemSelectTag
-            text="Group"
+            text={t`Group`}
             color="transparent"
             onClick={() => onSelectCategory('group')}
           />
         </DropdownMenuItemsContainer>
-        <StyledToggleContainer>
-          <StyledToggleLabel>
-            <IconEyeOff size={theme.icon.size.md} />
-            Show hidden variables
-          </StyledToggleLabel>
-          <Toggle value={showHidden} onChange={onShowHiddenChange} />
-        </StyledToggleContainer>
+        <DropdownMenuSeparator />
+        <DropdownMenuItemsContainer scrollable={false}>
+          <MenuItem
+            text={
+              showHidden ? t`Hide hidden variables` : t`Show hidden variables`
+            }
+            LeftIcon={() =>
+              showHidden ? (
+                <IconEye
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                />
+              ) : (
+                <IconEyeOff
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                />
+              )
+            }
+            onClick={() => onShowHiddenChange(!showHidden)}
+          />
+        </DropdownMenuItemsContainer>
       </>
     );
   }
 
   return (
     <>
-      <StyledHeaderContainer>
-        <StyledBackButton onClick={() => onSelectCategory(null)}>
-          <IconArrowLeft size={theme.icon.size.md} />
-        </StyledBackButton>
-        {selectedCategory === 'source' && 'Select Source'}
-        {selectedCategory === 'group' && 'Select Group'}
-      </StyledHeaderContainer>
-      <DropdownMenuSeparator />
+      <DropdownMenuHeader
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={() => onSelectCategory(null)}
+            Icon={IconChevronLeft}
+          />
+        }
+      >
+        {selectedCategory === 'source' && t`Select Source`}
+        {selectedCategory === 'group' && t`Select Group`}
+      </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {selectedCategory === 'source' && (
           <>

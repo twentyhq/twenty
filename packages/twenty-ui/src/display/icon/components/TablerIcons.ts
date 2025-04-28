@@ -238,6 +238,7 @@ export {
   IconPuzzle,
   IconQuestionMark,
   IconRefresh,
+  IconRefreshAlert,
   IconRefreshDot,
   IconRelationManyToMany,
   IconRelationOneToMany,
@@ -303,7 +304,7 @@ export {
   IconWand,
   IconWebhook,
   IconWorld,
-  IconX,
+  IconX
 } from '@tabler/icons-react';
 
 export type { IconProps as TablerIconsProps } from '@tabler/icons-react';

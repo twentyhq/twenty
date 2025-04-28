@@ -15,17 +15,18 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { ConfigVariableInput } from '@/settings/admin-panel/components/ConfigVariableInput';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { TextArea } from '@/ui/input/components/TextArea';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useTheme } from '@emotion/react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   H3Title,
+  IconDeviceFloppy,
   IconEye,
   IconEyeOff,
   IconPlus,
-  IconRefreshDot,
-  IconTrash,
+  IconRefreshAlert,
   Status,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -45,38 +46,11 @@ const StyledForm = styled.form`
   width: 100%;
 `;
 
-const StyledRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledInputContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
   width: 100%;
-`;
-
-const StyledLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-`;
-
-const StyledEyeButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: ${({ theme }) => theme.spacing(1)};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
-  }
 `;
 
 const StyledHelpText = styled.div<{ color?: string }>`
@@ -167,13 +141,16 @@ export const SettingsAdminConfigVariableDetails = () => {
   const getDisplayValue = (
     value: string | number | boolean | string[] | null,
   ): string => {
-    if (value === null || value === undefined) return '';
+    if (value === null || value === undefined || value === '') return 'Not set';
     if (Array.isArray(value)) return value.join(', ');
     if (typeof value === 'boolean') return value ? 'true' : 'false';
     return String(value);
   };
   const displayValue =
-    variable.isSensitive && !showSensitiveValue
+    variable.isSensitive &&
+    !showSensitiveValue &&
+    variable.value &&
+    variable.value !== ''
       ? '••••••••••'
       : getDisplayValue(variable.value);
 
@@ -183,7 +160,7 @@ export const SettingsAdminConfigVariableDetails = () => {
 
   const currentValue = watch('value');
   const hasValueChanged = currentValue !== variable.value;
-  const isValidOverride =
+  const isValueValid =
     !isEnvOnly &&
     hasValueChanged &&
     ((typeof currentValue === 'string' && currentValue.trim() !== '') ||
@@ -238,7 +215,7 @@ export const SettingsAdminConfigVariableDetails = () => {
     }
   };
 
-  const handleRemoveOverride = async (e?: React.MouseEvent) => {
+  const handleResetDefault = async (e?: React.MouseEvent) => {
     if (isDefined(e)) {
       e.preventDefault();
     }
@@ -291,26 +268,26 @@ export const SettingsAdminConfigVariableDetails = () => {
           {isConfigVariablesInDbEnabled &&
             variable.source === ConfigSource.DATABASE && (
               <Button
-                title={t`Remove Override`}
+                title={t`Reset to Default`}
                 variant="secondary"
                 size="small"
                 accent="danger"
                 disabled={isSubmitting}
-                onClick={handleRemoveOverride}
+                onClick={handleResetDefault}
                 type="submit"
-                Icon={IconTrash}
+                Icon={IconRefreshAlert}
               />
             )}
           {isConfigVariablesInDbEnabled && !isEnvOnly && (
             <Button
-              title={isFromDatabase ? t`Update` : t`Create Override`}
+              title={isFromDatabase ? t`Save` : t`Update`}
               variant="primary"
               size="small"
               accent="blue"
-              disabled={isSubmitting || !isValidOverride}
+              disabled={isSubmitting || !isValueValid}
               onClick={handleSubmit(onSubmit)}
               type="submit"
-              Icon={isFromDatabase ? IconRefreshDot : IconPlus}
+              Icon={isFromDatabase ? IconDeviceFloppy : IconPlus}
             />
           )}
         </>
@@ -334,35 +311,42 @@ export const SettingsAdminConfigVariableDetails = () => {
         <StyledForm onSubmit={handleSubmit(onSubmit)}>
           <>
             <StyledInputContainer>
-              <StyledLabel>{t`Current Value`}</StyledLabel>
-              <StyledRow>
-                <TextInput
-                  value={displayValue}
-                  readOnly
-                  fullWidth
-                  disabled={getDisplayValue(variable.value) === ''}
-                />
-                {variable.isSensitive &&
-                  variable.value !== null &&
-                  variable.value !== undefined && (
-                    <StyledEyeButton
-                      type="button"
-                      onClick={handleToggleVisibility}
-                    >
-                      {showSensitiveValue ? (
-                        <IconEyeOff size={theme.icon.size.md} />
-                      ) : (
-                        <IconEye size={theme.icon.size.md} />
-                      )}
-                    </StyledEyeButton>
-                  )}
-              </StyledRow>
+              <TextInput
+                value={displayValue}
+                label={t`Current Value`}
+                readOnly
+                fullWidth
+                disabled={getDisplayValue(variable.value) === ''}
+                RightIcon={
+                  variable.isSensitive &&
+                  variable.value &&
+                  variable.value !== ''
+                    ? showSensitiveValue
+                      ? IconEyeOff
+                      : IconEye
+                    : undefined
+                }
+                onRightIconClick={
+                  variable.isSensitive &&
+                  variable.value &&
+                  variable.value !== ''
+                    ? handleToggleVisibility
+                    : undefined
+                }
+              />
+
+              <TextArea
+                value={variable.description}
+                disabled
+                minRows={3}
+                label={t`Description`}
+              />
             </StyledInputContainer>
 
             {isConfigVariablesInDbEnabled && (
               <StyledInputContainer>
-                <StyledLabel>{t`Database Override Value`}</StyledLabel>
                 <ConfigVariableInput
+                  label={t`Database Override Value`}
                   value={watch('value')}
                   onChange={(value) => setValue('value', value)}
                   type={variable.type}
