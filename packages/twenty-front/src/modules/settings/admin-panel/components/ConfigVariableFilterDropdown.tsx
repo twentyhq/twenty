@@ -37,33 +37,31 @@ export const ConfigVariableFilterDropdown = ({
   );
 
   return (
-    <div>
-      <Dropdown
-        clickableComponent={
-          <Button
-            variant="secondary"
-            size="medium"
-            title="Options"
-            Icon={IconSettings}
-          />
-        }
-        dropdownId="env-var-options-dropdown"
-        dropdownHotkeyScope={{ scope: 'env-var-options' }}
-        dropdownOffset={{ x: 0, y: 10 }}
-        dropdownComponents={
-          <ConfigVariableOptionsDropdownContent
-            selectedCategory={selectedCategory}
-            onSelectCategory={handleSelectCategory}
-            sourceFilter={sourceFilter}
-            groupFilter={groupFilter}
-            groupOptions={groupOptions}
-            showHidden={showHidden}
-            onSourceFilterChange={onSourceFilterChange}
-            onGroupFilterChange={onGroupFilterChange}
-            onShowHiddenChange={onShowHiddenChange}
-          />
-        }
-      />
-    </div>
+    <Dropdown
+      clickableComponent={
+        <Button
+          variant="secondary"
+          size="medium"
+          title="Options"
+          Icon={IconSettings}
+        />
+      }
+      dropdownId="env-var-options-dropdown"
+      dropdownHotkeyScope={{ scope: 'env-var-options' }}
+      dropdownOffset={{ x: 0, y: 10 }}
+      dropdownComponents={
+        <ConfigVariableOptionsDropdownContent
+          selectedCategory={selectedCategory}
+          onSelectCategory={handleSelectCategory}
+          sourceFilter={sourceFilter}
+          groupFilter={groupFilter}
+          groupOptions={groupOptions}
+          showHidden={showHidden}
+          onSourceFilterChange={onSourceFilterChange}
+          onGroupFilterChange={onGroupFilterChange}
+          onShowHiddenChange={onShowHiddenChange}
+        />
+      }
+    />
   );
 };
