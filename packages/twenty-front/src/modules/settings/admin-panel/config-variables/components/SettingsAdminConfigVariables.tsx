@@ -133,12 +133,14 @@ export const SettingsAdminConfigVariables = () => {
         ConfigVariableSourceOptions.find((o) => o.value === sourceFilter)
           ?.label || '',
       onRemove: () => setSourceFilter('all'),
+      variant: 'default' as const,
     });
   }
   if (groupFilter !== 'all') {
     activeChips.push({
       label: groupOptions.find((o) => o.value === groupFilter)?.label || '',
       onRemove: () => setGroupFilter('all'),
+      variant: 'danger' as const,
     });
   }
 

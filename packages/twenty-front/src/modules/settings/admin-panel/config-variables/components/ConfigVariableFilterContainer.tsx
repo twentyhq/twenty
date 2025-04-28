@@ -15,6 +15,7 @@ type ConfigVariableFilterContainerProps = {
     label: string;
     onRemove: () => void;
     source?: ConfigVariableSourceFilter;
+    variant?: 'default' | 'danger';
   }[];
 };
 
@@ -31,8 +32,9 @@ export const ConfigVariableFilterContainer = ({
             <SortOrFilterChip
               key={chip.label}
               labelKey={chip.label}
-              labelValue=""
               onRemove={chip.onRemove}
+              labelValue={chip.source ?? ''}
+              variant={chip.variant}
             />
           ))}
         </StyledChipContainer>
