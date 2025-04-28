@@ -1,3 +1,4 @@
+import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { ConfigVariableSourceOptions } from '@/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions';
 import { ConfigVariableFilterCategory } from '@/settings/admin-panel/config-variables/types/ConfigVariableFilterCategory';
 import { ConfigVariableGroupFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableGroupFilter';
@@ -8,6 +9,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
+import { useRecoilValue } from 'recoil';
 import { IconChevronLeft, IconEye, IconEyeOff } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelectTag } from 'twenty-ui/navigation';
 
@@ -35,6 +37,19 @@ export const ConfigVariableOptionsDropdownContent = ({
   onShowHiddenChange,
 }: ConfigVariableOptionsDropdownContentProps) => {
   const theme = useTheme();
+
+  const isConfigVariablesInDbEnabled = useRecoilValue(
+    isConfigVariablesInDbEnabledState,
+  );
+
+  const availableSourceOptions = ConfigVariableSourceOptions.filter(
+    (option) => {
+      if (!isConfigVariablesInDbEnabled && option.value === 'database') {
+        return false;
+      }
+      return true;
+    },
+  );
 
   if (!selectedCategory) {
     return (
@@ -95,7 +110,7 @@ export const ConfigVariableOptionsDropdownContent = ({
       <DropdownMenuItemsContainer>
         {selectedCategory === 'source' && (
           <>
-            {ConfigVariableSourceOptions.map((option) => (
+            {availableSourceOptions.map((option) => (
               <MenuItemSelectTag
                 key={option.value}
                 text={option.label}
