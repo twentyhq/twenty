@@ -64,16 +64,9 @@ describe('getOperandsForFilterType', () => {
     ['DATE', [...dateOperands, ...emptyOperands]],
     ['DATE_TIME', [...dateOperands, ...emptyOperands]],
     ['RELATION', [...relationOperand, ...emptyOperands]],
-    [undefined, []],
-    [null, []],
-    ['UNKNOWN_TYPE', []],
   ] satisfies (
-    | [
-        FieldType | null | undefined | 'UNKNOWN_TYPE',
-        RecordFilterOperand[],
-        CompositeFieldSubFieldName,
-      ]
-    | [FieldType | null | undefined | 'UNKNOWN_TYPE', RecordFilterOperand[]]
+    | [FieldType, RecordFilterOperand[], CompositeFieldSubFieldName]
+    | [FieldType, RecordFilterOperand[]]
   )[];
 
   testCases.forEach(([filterType, expectedOperands, subFieldName]) => {

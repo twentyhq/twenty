@@ -19,7 +19,7 @@ import { RecordTableComponentInstanceContext } from '@/object-record/record-tabl
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { onColumnsChangeComponentState } from '@/object-record/record-table/states/onColumnsChangeComponentState';
 import { onEntityCountChangeComponentState } from '@/object-record/record-table/states/onEntityCountChangeComponentState';
-import { onToggleColumnFilterComponentState } from '@/object-record/record-table/states/onToggleColumnFilterComponentState';
+
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -73,10 +73,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     recordTableId,
   );
 
-  const setOnToggleColumnFilter = useSetRecoilComponentStateV2(
-    onToggleColumnFilterComponentState,
-    recordTableId,
-  );
   const setOnToggleColumnSort = useSetRecoilComponentStateV2(
     onToggleColumnSortComponentState,
     recordTableId,
@@ -226,7 +222,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setRecordTableLastRowVisible,
     setFocusPosition,
     setHasUserSelectedAllRows,
-    setOnToggleColumnFilter,
     setOnToggleColumnSort,
   };
 };
