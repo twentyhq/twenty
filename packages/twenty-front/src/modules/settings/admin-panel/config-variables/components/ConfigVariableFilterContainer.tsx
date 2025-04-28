@@ -1,4 +1,4 @@
-import { ConfigVariableSourceFilter } from '@/settings/admin-panel/types/ConfigVariableSourceFilter';
+import { ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import styled from '@emotion/styled';
 
