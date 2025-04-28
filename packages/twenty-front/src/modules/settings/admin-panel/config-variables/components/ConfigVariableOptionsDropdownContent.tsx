@@ -18,7 +18,7 @@ type ConfigVariableOptionsDropdownContentProps = {
   onSelectCategory: (category: ConfigVariableFilterCategory | null) => void;
   sourceFilter: ConfigVariableSourceFilter;
   groupFilter: ConfigVariableGroupFilter;
-  groupOptions: { value: string; label: string }[];
+  groupOptions: { value: ConfigVariableGroupFilter; label: string }[];
   showHiddenGroupVariables: boolean;
   onSourceFilterChange: (source: ConfigVariableSourceFilter) => void;
   onGroupFilterChange: (group: ConfigVariableGroupFilter) => void;
@@ -110,11 +110,9 @@ export const ConfigVariableOptionsDropdownContent = ({
                 key={option.value}
                 text={option.label}
                 color={option.color}
-                focused={option.value === sourceFilter}
+                selected={option.value === sourceFilter}
                 onClick={() => {
-                  onSourceFilterChange(
-                    option.value as ConfigVariableSourceFilter,
-                  );
+                  onSourceFilterChange(option.value);
                   onSelectCategory(null);
                 }}
               />
@@ -128,11 +126,9 @@ export const ConfigVariableOptionsDropdownContent = ({
                 key={option.value}
                 text={option.label}
                 color="transparent"
-                focused={option.value === groupFilter}
+                selected={option.value === groupFilter}
                 onClick={() => {
-                  onGroupFilterChange(
-                    option.value as ConfigVariableGroupFilter,
-                  );
+                  onGroupFilterChange(option.value);
                   onSelectCategory(null);
                 }}
               />

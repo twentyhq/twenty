@@ -185,6 +185,17 @@ export const SettingsAdminConfigVariables = () => {
         </ConfigVariableFilterContainer>
       </Section>
 
+      {groupedVariables.size === 0 && (
+        <StyledTableContainer>
+          <Section>
+            <H2Title
+              title={t`No variables found`}
+              description={t`No config variables match your current filters. Try adjusting your filters or search criteria.`}
+            />
+          </Section>
+        </StyledTableContainer>
+      )}
+
       {[...groupedVariables.entries()].map(([groupName, groupData]) => (
         <StyledTableContainer key={groupName}>
           <H2Title title={groupName} description={groupData.description} />
