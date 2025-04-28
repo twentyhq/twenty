@@ -34,7 +34,9 @@ export const ConfigVariableValue = ({
           type={variable.type}
           options={variable.options}
           disabled={disabled}
-          placeholder={t`Enter a value to store in database`}
+          placeholder={
+            disabled ? 'Undefined' : t`Enter a value to store in database`
+          }
         />
       ) : (
         <TextInputV2 value={String(value)} disabled label={t`Value`} />
