@@ -1,5 +1,3 @@
-import styled from '@emotion/styled';
-
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -8,20 +6,6 @@ import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItemMultiSelect } from 'twenty-ui/navigation';
-
-const StyledContainer = styled.div`
-  width: 100%;
-`;
-
-const StyledArrayContainer = styled.div`
-  width: 100%;
-`;
-
-const StyledDropdownButtonContainer = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  flex-wrap: wrap;
-`;
 
 type ConfigVariableInputProps = {
   label: string;
@@ -91,17 +75,15 @@ export const ConfigVariableInput = ({
   switch (type) {
     case 'boolean':
       return (
-        <StyledContainer>
-          <Select
-            label={label}
-            value={String(value ?? '')}
-            onChange={(newValue: string) => onChange(newValue === 'true')}
-            disabled={disabled}
-            options={booleanOptions}
-            dropdownId="config-variable-boolean-select"
-            fullWidth
-          />
-        </StyledContainer>
+        <Select
+          label={label}
+          value={String(value ?? '')}
+          onChange={(newValue: string) => onChange(newValue === 'true')}
+          disabled={disabled}
+          options={booleanOptions}
+          dropdownId="config-variable-boolean-select"
+          fullWidth
+        />
       );
 
     case 'number':
@@ -122,7 +104,7 @@ export const ConfigVariableInput = ({
 
     case 'array':
       return (
-        <StyledArrayContainer>
+        <>
           {options && Array.isArray(options) ? (
             <>
               <Dropdown
@@ -163,25 +145,23 @@ export const ConfigVariableInput = ({
                 }
               />
               {arrayValue.length > 0 && (
-                <StyledDropdownButtonContainer>
-                  <TextArea
-                    label={label}
-                    value={arrayValue.join(', ')}
-                    onChange={(text) => {
-                      try {
-                        const arr = JSON.parse(text);
-                        onChange(
-                          Array.isArray(arr) ? (arr as string[]) : arrayValue,
-                        );
-                      } catch {
-                        // ignore parse error
-                      }
-                    }}
-                    disabled={true}
-                    placeholder={placeholder || 'Enter JSON array'}
-                    minRows={3}
-                  />
-                </StyledDropdownButtonContainer>
+                <TextArea
+                  label={label}
+                  value={arrayValue.join(', ')}
+                  onChange={(text) => {
+                    try {
+                      const arr = JSON.parse(text);
+                      onChange(
+                        Array.isArray(arr) ? (arr as string[]) : arrayValue,
+                      );
+                    } catch {
+                      // ignore parse error
+                    }
+                  }}
+                  disabled={true}
+                  placeholder={placeholder || 'Enter JSON array'}
+                  minRows={3}
+                />
               )}
             </>
           ) : (
@@ -205,25 +185,23 @@ export const ConfigVariableInput = ({
               minRows={3}
             />
           )}
-        </StyledArrayContainer>
+        </>
       );
 
     case 'enum':
       return (
-        <StyledContainer>
-          <Select
-            label={label}
-            value={String(value ?? '')}
-            onChange={(newValue: string) => onChange(newValue)}
-            disabled={disabled}
-            options={selectOptions}
-            dropdownId="config-variable-enum-select"
-            fullWidth
-          />
-        </StyledContainer>
+        <Select
+          label={label}
+          value={String(value ?? '')}
+          onChange={(newValue: string) => onChange(newValue)}
+          disabled={disabled}
+          options={selectOptions}
+          dropdownId="config-variable-enum-select"
+          fullWidth
+        />
       );
 
-    default:
+    case 'string':
       return (
         <TextArea
           label={label}
@@ -240,5 +218,8 @@ export const ConfigVariableInput = ({
           minRows={3}
         />
       );
+
+    default:
+      throw new Error(`Unsupported type: ${type}`);
   }
 };

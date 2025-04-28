@@ -48,7 +48,11 @@ export const SettingsAdminConfigVariablesRow = ({
       ? 'null'
       : variable.isSensitive
         ? '••••••'
-        : variable.value;
+        : typeof variable.value === 'boolean'
+          ? variable.value
+            ? 'true'
+            : 'false'
+          : variable.value;
 
   return (
     <StyledLink

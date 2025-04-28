@@ -135,11 +135,17 @@ export const SettingsAdminConfigVariables = () => {
   const groupedVariables = useMemo(() => {
     const groupMap = new Map();
     filteredVariables.forEach((v) => {
-      if (!groupMap.has(v.groupName)) groupMap.set(v.groupName, []);
-      groupMap.get(v.groupName).push(v);
+      if (!groupMap.has(v.groupName)) {
+        const group = allGroups.find((g) => g.name === v.groupName);
+        groupMap.set(v.groupName, {
+          variables: [],
+          description: group?.description || '',
+        });
+      }
+      groupMap.get(v.groupName).variables.push(v);
     });
     return groupMap;
-  }, [filteredVariables]);
+  }, [filteredVariables, allGroups]);
 
   if (configVariablesLoading) {
     return <SettingsAdminTabSkeletonLoader />;
@@ -166,10 +172,11 @@ export const SettingsAdminConfigVariables = () => {
         </ConfigVariableFilterContainer>
       </Section>
 
-      {[...groupedVariables.entries()].map(([groupName, variables]) => (
+      {[...groupedVariables.entries()].map(([groupName, groupData]) => (
         <div key={groupName} style={{ marginBottom: 24 }}>
-          <H2Title title={groupName} />
-          <SettingsAdminConfigVariablesTable variables={variables} />
+          <H2Title title={groupName} description={groupData.description} />
+
+          <SettingsAdminConfigVariablesTable variables={groupData.variables} />
         </div>
       ))}
     </>
