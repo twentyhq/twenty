@@ -3,6 +3,7 @@ import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
 import { useEffect } from 'react';
@@ -22,7 +23,12 @@ export const WorkflowVersionVisualizerEffect = ({
   const setWorkflowVisualizerWorkflowId = useSetRecoilComponentStateV2(
     workflowVisualizerWorkflowIdComponentState,
   );
+  const setWorkflowVisualizerWorkflowVersionId = useSetRecoilComponentStateV2(
+    workflowVisualizerWorkflowVersionIdComponentState,
+  );
+
   const { populateStepsOutputSchema } = useStepsOutputSchema();
+
   useEffect(() => {
     if (!isDefined(workflowVersion)) {
       setFlow(undefined);
@@ -37,7 +43,13 @@ export const WorkflowVersionVisualizerEffect = ({
     });
 
     setWorkflowVisualizerWorkflowId(workflowVersion.workflowId);
-  }, [setFlow, setWorkflowVisualizerWorkflowId, workflowVersion]);
+    setWorkflowVisualizerWorkflowVersionId(workflowVersion.id);
+  }, [
+    setFlow,
+    setWorkflowVisualizerWorkflowId,
+    setWorkflowVisualizerWorkflowVersionId,
+    workflowVersion,
+  ]);
 
   useEffect(() => {
     if (!isDefined(workflowVersion)) {

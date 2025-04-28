@@ -63,7 +63,6 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           workflowVisualizerWorkflowRunIdComponentState.atomFamily({
             instanceId: getWorkflowVisualizerComponentInstanceId({
               id: recordId,
-              isInRightDrawer: true,
             }),
           }),
           workflowRunRecord.id,
@@ -72,7 +71,6 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           workflowVisualizerWorkflowIdComponentState.atomFamily({
             instanceId: getWorkflowVisualizerComponentInstanceId({
               id: recordId,
-              isInRightDrawer: true,
             }),
           }),
           workflowRunRecord.workflowId,
@@ -81,7 +79,6 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           flowComponentState.atomFamily({
             instanceId: getWorkflowVisualizerComponentInstanceId({
               id: recordId,
-              isInRightDrawer: true,
             }),
           }),
           {

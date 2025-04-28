@@ -2,6 +2,7 @@ import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandM
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import {
@@ -24,9 +25,21 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
   const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
     workflowVisualizerWorkflowIdComponentState,
   );
+  const workflowVisualizerWorkflowVersionId = useRecoilComponentValueV2(
+    workflowVisualizerWorkflowVersionIdComponentState,
+  );
 
   const handleSelectionChange = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
+      if (
+        !(
+          isDefined(workflowVisualizerWorkflowId) &&
+          isDefined(workflowVisualizerWorkflowVersionId)
+        )
+      ) {
+        return;
+      }
+
       const selectedNode = nodes[0] as WorkflowDiagramNode | undefined;
 
       if (!isDefined(selectedNode)) {
@@ -37,18 +50,18 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
 
       const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
 
-      if (isDefined(workflowVisualizerWorkflowId)) {
-        openWorkflowViewStepInCommandMenu(
-          workflowVisualizerWorkflowId,
-          selectedNodeData.name,
-          getIcon(getWorkflowNodeIconKey(selectedNodeData)),
-        );
-      }
+      openWorkflowViewStepInCommandMenu({
+        workflowId: workflowVisualizerWorkflowId,
+        workflowVersionId: workflowVisualizerWorkflowVersionId,
+        title: selectedNodeData.name,
+        icon: getIcon(getWorkflowNodeIconKey(selectedNodeData)),
+      });
     },
     [
       setWorkflowSelectedNode,
       openWorkflowViewStepInCommandMenu,
       workflowVisualizerWorkflowId,
+      workflowVisualizerWorkflowVersionId,
       getIcon,
     ],
   );

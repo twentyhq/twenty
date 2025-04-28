@@ -1,5 +1,6 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { commandMenuWorkflowRunIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowRunIdComponentState';
+import { commandMenuWorkflowVersionIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowVersionIdComponentState';
 import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useSetInitialWorkflowRunRightDrawerTab } from '@/workflow/workflow-diagram/hooks/useSetInitialWorkflowRunRightDrawerTab';
@@ -81,15 +82,30 @@ export const useWorkflowCommandMenu = () => {
     [navigateCommandMenu],
   );
 
-  // TODO: set workflowVersionIdComponentState
   const openWorkflowViewStepInCommandMenu = useRecoilCallback(
     ({ set }) => {
-      return (workflowId: string, title: string, icon: IconComponent) => {
+      return ({
+        workflowId,
+        workflowVersionId,
+        title,
+        icon,
+      }: {
+        workflowId: string;
+        workflowVersionId: string;
+        title: string;
+        icon: IconComponent;
+      }) => {
         const pageId = v4();
 
         set(
           workflowIdComponentState.atomFamily({ instanceId: pageId }),
           workflowId,
+        );
+        set(
+          commandMenuWorkflowVersionIdComponentState.atomFamily({
+            instanceId: pageId,
+          }),
+          workflowVersionId,
         );
 
         navigateCommandMenu({

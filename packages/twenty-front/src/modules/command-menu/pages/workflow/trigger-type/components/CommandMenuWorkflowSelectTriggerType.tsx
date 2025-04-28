@@ -16,8 +16,7 @@ export const CommandMenuWorkflowSelectTriggerType = () => {
     <WorkflowVisualizerComponentInstanceContext.Provider
       value={{
         instanceId: getWorkflowVisualizerComponentInstanceId({
-          id: workflowId,
-          isInRightDrawer: true,
+          recordId: workflowId,
         }),
       }}
     >

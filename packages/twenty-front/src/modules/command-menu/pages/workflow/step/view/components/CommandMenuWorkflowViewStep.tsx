@@ -1,31 +1,20 @@
-import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
-import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
-import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
-import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
-import styled from '@emotion/styled';
-
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
+import { useCommandMenuWorkflowVersionIdOrThrow } from '@/command-menu/pages/workflow/step/edit/hooks/useCommandMenuWorkflowVersionIdOrThrow';
+import { CommandMenuWorkflowViewStepContent } from '@/command-menu/pages/workflow/step/view/components/CommandMenuWorkflowViewStepContent';
+import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
+import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
 export const CommandMenuWorkflowViewStep = () => {
-  const flow = useFlowOrThrow();
-  const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
+  const workflowVersionId = useCommandMenuWorkflowVersionIdOrThrow();
 
   return (
-    <WorkflowStepContextProvider
-      value={{ workflowVersionId: flow.workflowVersionId }}
+    <WorkflowVisualizerComponentInstanceContext.Provider
+      value={{
+        instanceId: getWorkflowVisualizerComponentInstanceId({
+          recordId: workflowVersionId,
+        }),
+      }}
     >
-      <StyledContainer>
-        <WorkflowStepDetail
-          stepId={workflowSelectedNode}
-          trigger={flow.trigger}
-          steps={flow.steps}
-          readonly
-        />
-      </StyledContainer>
-    </WorkflowStepContextProvider>
+      <CommandMenuWorkflowViewStepContent />
+    </WorkflowVisualizerComponentInstanceContext.Provider>
   );
 };

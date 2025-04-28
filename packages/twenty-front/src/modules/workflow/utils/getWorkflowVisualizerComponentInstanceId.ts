@@ -1,9 +1,7 @@
 export const getWorkflowVisualizerComponentInstanceId = ({
-  id,
-  isInRightDrawer,
+  recordId,
 }: {
-  id: string;
-  isInRightDrawer: boolean;
+  recordId: string;
 }) => {
-  return `${id}__${isInRightDrawer ? 'right-drawer' : 'show-page'}`;
+  return recordId;
 };
