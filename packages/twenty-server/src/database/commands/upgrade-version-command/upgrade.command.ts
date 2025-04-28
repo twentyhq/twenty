@@ -97,7 +97,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
 
-    const _commands_051: VersionCommands = {
+    const commands_051: VersionCommands = {
       beforeSyncMetadata: [this.upgradeCreatedByEnumCommand],
       afterSyncMetadata: [],
     };
@@ -115,7 +115,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
 
-    this.commands = _commands_053;
+    this.commands = commands_051;
   }
 
   override async runBeforeSyncMetadata(args: RunOnWorkspaceArgs) {
