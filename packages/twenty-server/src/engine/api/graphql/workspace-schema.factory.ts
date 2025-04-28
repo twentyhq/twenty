@@ -89,6 +89,7 @@ export class WorkspaceSchemaFactory {
           });
 
         objectMetadataMaps = recomputed?.recomputedObjectMetadataMaps;
+        currentCacheVersion = recomputed?.recomputedMetadataVersion;
       }
     }
 
