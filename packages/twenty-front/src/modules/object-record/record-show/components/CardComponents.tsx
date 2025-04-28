@@ -92,8 +92,7 @@ export const CardComponents: Record<CardType, CardComponentType> = {
       <WorkflowVisualizerComponentInstanceContext.Provider
         value={{
           instanceId: getWorkflowVisualizerComponentInstanceId({
-            id: targetableObject.id,
-            isInRightDrawer,
+            recordId: targetableObject.id,
           }),
         }}
       >
@@ -110,8 +109,7 @@ export const CardComponents: Record<CardType, CardComponentType> = {
       <WorkflowVisualizerComponentInstanceContext.Provider
         value={{
           instanceId: getWorkflowVisualizerComponentInstanceId({
-            id: targetableObject.id,
-            isInRightDrawer,
+            recordId: targetableObject.id,
           }),
         }}
       >
@@ -130,8 +128,7 @@ export const CardComponents: Record<CardType, CardComponentType> = {
       <WorkflowVisualizerComponentInstanceContext.Provider
         value={{
           instanceId: getWorkflowVisualizerComponentInstanceId({
-            id: targetableObject.id,
-            isInRightDrawer,
+            recordId: targetableObject.id,
           }),
         }}
       >

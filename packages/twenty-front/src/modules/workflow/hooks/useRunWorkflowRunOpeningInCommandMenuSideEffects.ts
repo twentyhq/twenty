@@ -62,7 +62,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
         set(
           workflowVisualizerWorkflowRunIdComponentState.atomFamily({
             instanceId: getWorkflowVisualizerComponentInstanceId({
-              id: recordId,
+              recordId,
             }),
           }),
           workflowRunRecord.id,
@@ -70,7 +70,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
         set(
           workflowVisualizerWorkflowIdComponentState.atomFamily({
             instanceId: getWorkflowVisualizerComponentInstanceId({
-              id: recordId,
+              recordId,
             }),
           }),
           workflowRunRecord.workflowId,
@@ -78,7 +78,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
         set(
           flowComponentState.atomFamily({
             instanceId: getWorkflowVisualizerComponentInstanceId({
-              id: recordId,
+              recordId,
             }),
           }),
           {
@@ -90,8 +90,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
         set(
           workflowSelectedNodeComponentState.atomFamily({
             instanceId: getWorkflowVisualizerComponentInstanceId({
-              id: recordId,
-              isInRightDrawer: true,
+              recordId,
             }),
           }),
           stepToOpenByDefault.id,
