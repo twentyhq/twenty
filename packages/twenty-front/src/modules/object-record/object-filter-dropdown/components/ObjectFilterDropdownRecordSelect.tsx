@@ -22,7 +22,6 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
-import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconUserCircle } from 'twenty-ui/display';
@@ -72,27 +71,6 @@ export const ObjectFilterDropdownRecordSelect = ({
   let isCurrentWorkspaceMemberSelected: boolean;
   let selectedRecordIds: string[];
 
-  try {
-    const relationFilterValue = relationFilterValueSchema.parse(
-      selectedFilter?.value,
-    );
-
-    isCurrentWorkspaceMemberSelected = relationFilterValue.includes(
-      '{{CURRENT_WORKSPACE_MEMBER}}',
-    );
-    selectedRecordIds = relationFilterValue.filter(
-      (item) => item !== '{{CURRENT_WORKSPACE_MEMBER}}',
-    );
-  } catch {
-    const jsonRelationFilterValueParseResult =
-      jsonRelationFilterValueSchema.parse(selectedFilter?.value);
-
-    isCurrentWorkspaceMemberSelected =
-      jsonRelationFilterValueParseResult.isCurrentWorkspaceMemberSelected ??
-      false;
-    selectedRecordIds = jsonRelationFilterValueParseResult.selectedRecordIds;
-  }
-
   if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
     throw new Error('fieldMetadataItemUsedInFilterDropdown is not defined');
   }
@@ -129,6 +107,27 @@ export const ObjectFilterDropdownRecordSelect = ({
   const recordFilterUsedInDropdown = isDefined(recordFilterId)
     ? recordFilterPassedInProps
     : firstSimpleRecordFilterForFieldMetadataItemUsedInDropdown;
+
+  try {
+    const relationFilterValue = relationFilterValueSchema.parse(
+      recordFilterUsedInDropdown?.value,
+    );
+
+    isCurrentWorkspaceMemberSelected = relationFilterValue.includes(
+      '{{CURRENT_WORKSPACE_MEMBER}}',
+    );
+    selectedRecordIds = relationFilterValue.filter(
+      (item) => item !== '{{CURRENT_WORKSPACE_MEMBER}}',
+    );
+  } catch {
+    const jsonRelationFilterValueParseResult =
+      jsonRelationFilterValueSchema.parse(recordFilterUsedInDropdown?.value);
+
+    isCurrentWorkspaceMemberSelected =
+      jsonRelationFilterValueParseResult.isCurrentWorkspaceMemberSelected ??
+      false;
+    selectedRecordIds = jsonRelationFilterValueParseResult.selectedRecordIds;
+  }
 
   const { loading, filteredSelectedRecords, recordsToSelect, selectedRecords } =
     useRecordsForSelect({

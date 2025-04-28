@@ -1,10 +1,16 @@
 import { z } from 'zod';
 
+/**
+ * @deprecated
+ */
 export const relationFilterValueSchemaObject = z.object({
   isCurrentWorkspaceMemberSelected: z.boolean().optional(),
   selectedRecordIds: z.array(z.string()),
 });
 
+/**
+ * @deprecated
+ */
 export const jsonRelationFilterValueSchema = z
   .string()
   .transform((value, ctx) => {
