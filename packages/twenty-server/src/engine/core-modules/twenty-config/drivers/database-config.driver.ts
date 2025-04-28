@@ -60,6 +60,10 @@ export class DatabaseConfigDriver
     key: T,
     value: ConfigVariables[T],
   ): Promise<void> {
+    if (isEnvOnlyConfigVar(key)) {
+      throw new Error(`Cannot set environment-only variable: ${key as string}`);
+    }
+
     await this.configStorage.set(key, value);
     this.configCache.set(key, value);
   }
@@ -158,6 +162,11 @@ export class DatabaseConfigDriver
   }
 
   async delete(key: keyof ConfigVariables): Promise<void> {
+    if (isEnvOnlyConfigVar(key)) {
+      throw new Error(
+        `Cannot delete environment-only variable: ${key as string}`,
+      );
+    }
     await this.configStorage.delete(key);
     this.configCache.markKeyAsMissing(key);
   }
