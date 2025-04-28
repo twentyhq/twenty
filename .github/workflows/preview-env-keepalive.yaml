@@ -33,6 +33,8 @@ jobs:
           echo "# === Randomly generated secrets ===" >> packages/twenty-docker/.env
           echo "APP_SECRET=$(openssl rand -base64 32)" >> packages/twenty-docker/.env
           echo "PG_DATABASE_PASSWORD=$(openssl rand -hex 16)" >> packages/twenty-docker/.env
+          # trying something
+          echo "CONFIG_VARIABLES_IN_DB_ENABLED=true" >> packages/twenty-docker/.env
           
           echo "Docker compose build..."
           cd packages/twenty-docker/
