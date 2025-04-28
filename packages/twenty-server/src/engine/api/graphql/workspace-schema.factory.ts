@@ -96,7 +96,7 @@ export class WorkspaceSchemaFactory {
     if (!objectMetadataMaps) {
       throw new GraphqlQueryRunnerException(
         'Object metadata collection not found',
-        GraphqlQueryRunnerExceptionCode.METADATA_CACHE_VERSION_NOT_FOUND,
+        GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_COLLECTION_NOT_FOUND,
       );
     }
 
