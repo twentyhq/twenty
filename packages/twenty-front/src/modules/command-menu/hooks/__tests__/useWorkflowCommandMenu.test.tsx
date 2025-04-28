@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
-import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
+import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
 import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
@@ -16,10 +16,10 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { act } from 'react';
+import { IconBolt, IconSettingsAutomation, useIcons } from 'twenty-ui/display';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { useWorkflowCommandMenu } from '../useWorkflowCommandMenu';
-import { IconBolt, IconSettingsAutomation, useIcons } from 'twenty-ui/display';
 
 jest.mock('uuid', () => ({
   v4: jest.fn().mockReturnValue('mocked-uuid'),
@@ -95,7 +95,7 @@ const renderHooks = () => {
         'mocked-uuid',
       );
       const workflowId = useRecoilComponentValueV2(
-        workflowIdComponentState,
+        commandMenuWorkflowIdComponentState,
         'mocked-uuid',
       );
       const { getIcon } = useIcons();
