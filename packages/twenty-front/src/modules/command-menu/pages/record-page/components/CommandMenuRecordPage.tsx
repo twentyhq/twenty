@@ -34,12 +34,16 @@ export const CommandMenuRecordPage = () => {
   );
 
   if (!viewableRecordNameSingular) {
-    throw new Error(`Object name is not defined`);
+    throw new Error(`Object name or is not defined`);
+  }
+
+  if (!viewableRecordId) {
+    throw new Error(`Record id is not defined`);
   }
 
   const { objectNameSingular, objectRecordId } = useRecordShowPage(
-    viewableRecordNameSingular ?? '',
-    viewableRecordId ?? '',
+    viewableRecordNameSingular,
+    viewableRecordId,
   );
 
   const commandMenuPageInstanceId = useComponentInstanceStateContext(
