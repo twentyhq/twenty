@@ -19,18 +19,12 @@ import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForS
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconUserCircle } from 'twenty-ui/display';
 import { v4 } from 'uuid';
-
-export const EMPTY_FILTER_VALUE: string = JSON.stringify({
-  isCurrentWorkspaceMemberSelected: false,
-  selectedRecordIds: [],
-} satisfies RelationFilterValue);
 
 export const MAX_RECORDS_TO_DISPLAY = 3;
 
@@ -169,8 +163,6 @@ export const ObjectFilterDropdownRecordSelect = ({
     const isItemCurrentWorkspaceMemberId =
       itemToSelect.id === currentWorkspaceMemberId;
 
-    const isCurrentWorkspaceMemberIdSelected = true;
-
     const selectedRecordIdsWithAddedRecord = [
       ...selectedRecordIds,
       itemToSelect.id,
@@ -180,22 +172,15 @@ export const ObjectFilterDropdownRecordSelect = ({
       (id) => id !== itemToSelect.id,
     );
 
-    const selectedRecordIdsWithRemovedCurrentWorkspaceMemberId =
-      selectedRecordIds.filter((id) => id !== currentWorkspaceMemberId);
-
     const newSelectedRecordIds = isItemCurrentWorkspaceMember
-      ? isCurrentWorkspaceMemberIdSelected
-        ? selectedRecordIdsWithRemovedCurrentWorkspaceMemberId
-        : selectedRecordIds
+      ? selectedRecordIds
       : isNewSelectedValue
         ? selectedRecordIdsWithAddedRecord
         : selectedRecordIdsWithRemovedRecord;
 
     const newIsCurrentWorkspaceMemberSelected = isItemCurrentWorkspaceMember
       ? isNewSelectedValue
-      : isItemCurrentWorkspaceMemberId
-        ? false
-        : isCurrentWorkspaceMemberSelected;
+      : isCurrentWorkspaceMemberSelected;
 
     const selectedRecordNames = [
       ...recordsToSelect,
