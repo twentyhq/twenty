@@ -8,6 +8,7 @@ import { RecordFilterGroup } from '@/object-record/record-filter-group/types/Rec
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -61,6 +62,9 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       defaultFieldMetadataItemForFilter.type,
     );
 
+    const defaultSubFieldName =
+      getDefaultSubFieldNameForCompositeFilterableFieldType(filterType);
+
     const newRecordFilter: RecordFilter = {
       id: v4(),
       fieldMetadataId: defaultFieldMetadataItemForFilter.id,
@@ -73,6 +77,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       recordFilterGroupId: recordFilterGroup.id,
       positionInRecordFilterGroup: newPositionInRecordFilterGroup,
       label: defaultFieldMetadataItemForFilter.label,
+      subFieldName: defaultSubFieldName,
     };
 
     upsertRecordFilter(newRecordFilter);
