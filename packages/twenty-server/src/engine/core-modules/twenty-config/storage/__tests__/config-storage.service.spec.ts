@@ -312,7 +312,7 @@ describe('ConfigStorageService', () => {
           group: ConfigVariablesGroup.ServerConfig,
           description: 'Test normal config',
         },
-      } as any);
+      });
 
       (
         configValueConverter.convertDbValueToAppValue as jest.Mock
