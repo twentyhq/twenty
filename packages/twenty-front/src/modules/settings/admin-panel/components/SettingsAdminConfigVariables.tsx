@@ -22,6 +22,10 @@ const StyledControlsContainer = styled.div`
   justify-content: space-between;
 `;
 
+const StyledTableContainer = styled.div`
+  margin-bottom: 24px;
+`;
+
 export const SettingsAdminConfigVariables = () => {
   const { data: configVariables, loading: configVariablesLoading } =
     useGetConfigVariablesGroupedQuery({
@@ -30,7 +34,8 @@ export const SettingsAdminConfigVariables = () => {
 
   // probably have this search logic in a hook?
   const [search, setSearch] = useState('');
-  const [showHidden, setShowHidden] = useState(false);
+  const [showHiddenGroupVariables, setShowHiddenGroupVariables] =
+    useState(false);
   const [sourceFilter, setSourceFilter] =
     useState<ConfigVariableSourceFilter>('all');
   const [groupFilter, setGroupFilter] =
@@ -94,7 +99,7 @@ export const SettingsAdminConfigVariables = () => {
       // 4. No specific group is selected (if a specific group is selected, show all its variables)
       if (
         !isSearching &&
-        !showHidden &&
+        !showHiddenGroupVariables &&
         v.isHiddenOnLoad &&
         !hasSelectedSpecificGroup
       ) {
@@ -112,7 +117,13 @@ export const SettingsAdminConfigVariables = () => {
 
       return matchesSource;
     });
-  }, [allVariables, search, showHidden, sourceFilter, groupFilter]);
+  }, [
+    allVariables,
+    search,
+    showHiddenGroupVariables,
+    sourceFilter,
+    groupFilter,
+  ]);
 
   // Build activeChips for current filters
   const activeChips = [];
@@ -163,21 +174,21 @@ export const SettingsAdminConfigVariables = () => {
               sourceFilter={sourceFilter}
               groupFilter={groupFilter}
               groupOptions={groupOptions}
-              showHidden={showHidden}
+              showHiddenGroupVariables={showHiddenGroupVariables}
               onSourceFilterChange={setSourceFilter}
               onGroupFilterChange={setGroupFilter}
-              onShowHiddenChange={setShowHidden}
+              onShowHiddenChange={setShowHiddenGroupVariables}
             />
           </StyledControlsContainer>
         </ConfigVariableFilterContainer>
       </Section>
 
       {[...groupedVariables.entries()].map(([groupName, groupData]) => (
-        <div key={groupName} style={{ marginBottom: 24 }}>
+        <StyledTableContainer key={groupName}>
           <H2Title title={groupName} description={groupData.description} />
 
           <SettingsAdminConfigVariablesTable variables={groupData.variables} />
-        </div>
+        </StyledTableContainer>
       ))}
     </>
   );

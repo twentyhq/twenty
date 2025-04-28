@@ -17,7 +17,7 @@ type ConfigVariableOptionsDropdownContentProps = {
   sourceFilter: ConfigVariableSourceFilter;
   groupFilter: ConfigVariableGroupFilter;
   groupOptions: { value: string; label: string }[];
-  showHidden: boolean;
+  showHiddenGroupVariables: boolean;
   onSourceFilterChange: (source: ConfigVariableSourceFilter) => void;
   onGroupFilterChange: (group: ConfigVariableGroupFilter) => void;
   onShowHiddenChange: (value: boolean) => void;
@@ -29,7 +29,7 @@ export const ConfigVariableOptionsDropdownContent = ({
   sourceFilter,
   groupFilter,
   groupOptions,
-  showHidden,
+  showHiddenGroupVariables,
   onSourceFilterChange,
   onGroupFilterChange,
   onShowHiddenChange,
@@ -55,22 +55,24 @@ export const ConfigVariableOptionsDropdownContent = ({
         <DropdownMenuItemsContainer scrollable={false}>
           <MenuItem
             text={
-              showHidden ? t`Hide hidden variables` : t`Show hidden variables`
+              showHiddenGroupVariables
+                ? t`Hide hidden groups`
+                : t`Show hidden groups`
             }
             LeftIcon={() =>
-              showHidden ? (
-                <IconEye
+              showHiddenGroupVariables ? (
+                <IconEyeOff
                   size={theme.icon.size.md}
                   stroke={theme.icon.stroke.sm}
                 />
               ) : (
-                <IconEyeOff
+                <IconEye
                   size={theme.icon.size.md}
                   stroke={theme.icon.stroke.sm}
                 />
               )
             }
-            onClick={() => onShowHiddenChange(!showHidden)}
+            onClick={() => onShowHiddenChange(!showHiddenGroupVariables)}
           />
         </DropdownMenuItemsContainer>
       </>

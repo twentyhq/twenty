@@ -11,7 +11,7 @@ type ConfigVariableFilterDropdownProps = {
   sourceFilter: ConfigVariableSourceFilter;
   groupFilter: ConfigVariableGroupFilter;
   groupOptions: { value: string; label: string }[];
-  showHidden: boolean;
+  showHiddenGroupVariables: boolean;
   onSourceFilterChange: (source: ConfigVariableSourceFilter) => void;
   onGroupFilterChange: (group: ConfigVariableGroupFilter) => void;
   onShowHiddenChange: (value: boolean) => void;
@@ -21,7 +21,7 @@ export const ConfigVariableFilterDropdown = ({
   sourceFilter,
   groupFilter,
   groupOptions,
-  showHidden,
+  showHiddenGroupVariables,
   onSourceFilterChange,
   onGroupFilterChange,
   onShowHiddenChange,
@@ -56,7 +56,7 @@ export const ConfigVariableFilterDropdown = ({
           sourceFilter={sourceFilter}
           groupFilter={groupFilter}
           groupOptions={groupOptions}
-          showHidden={showHidden}
+          showHiddenGroupVariables={showHiddenGroupVariables}
           onSourceFilterChange={onSourceFilterChange}
           onGroupFilterChange={onGroupFilterChange}
           onShowHiddenChange={onShowHiddenChange}
