@@ -1,4 +1,5 @@
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
@@ -47,7 +48,10 @@ export const RecordChip = ({
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
 
   // TODO temporary until we create a record show page for Workspaces members
-  if (forceDisableClick) {
+  if (
+    forceDisableClick ||
+    objectNameSingular === CoreObjectNameSingular.WorkspaceMember
+  ) {
     return (
       <AvatarChip
         size={size}
