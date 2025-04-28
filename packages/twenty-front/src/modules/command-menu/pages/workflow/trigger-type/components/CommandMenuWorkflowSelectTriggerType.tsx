@@ -12,6 +12,12 @@ export const CommandMenuWorkflowSelectTriggerType = () => {
     throw new Error('Expected workflowIdComponentState to be defined');
   }
 
+  const workflow = useWorkflowWithCurrentVersion(workflowId);
+
+  if (!isDefined(workflow)) {
+    return null;
+  }
+
   return (
     <WorkflowVisualizerComponentInstanceContext.Provider
       value={{
@@ -20,17 +26,7 @@ export const CommandMenuWorkflowSelectTriggerType = () => {
         }),
       }}
     >
-      <Child workflowId={workflowId} />
+      <CommandMenuWorkflowSelectTriggerTypeContent workflow={workflow} />
     </WorkflowVisualizerComponentInstanceContext.Provider>
   );
-};
-
-const Child = ({ workflowId }: { workflowId: string }) => {
-  const workflow = useWorkflowWithCurrentVersion(workflowId);
-
-  if (!isDefined(workflow)) {
-    return null;
-  }
-
-  return <CommandMenuWorkflowSelectTriggerTypeContent workflow={workflow} />;
 };
