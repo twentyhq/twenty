@@ -4,6 +4,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import chalk from 'chalk';
 import { GraphQLSchema, printSchema } from 'graphql';
 import { gql } from 'graphql-tag';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   GraphqlQueryRunnerException,
@@ -17,6 +18,7 @@ import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.typ
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -58,34 +60,48 @@ export class WorkspaceSchemaFactory {
       return new GraphQLSchema({});
     }
 
-    const currentCacheVersion =
+    let currentCacheVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(
         authContext.workspace.id,
       );
 
-    if (currentCacheVersion === undefined) {
-      await this.workspaceMetadataCacheService.recomputeMetadataCache({
-        workspaceId: authContext.workspace.id,
-      });
+    let objectMetadataMaps: ObjectMetadataMaps | undefined;
 
+    if (currentCacheVersion === undefined) {
+      const recomputed =
+        await this.workspaceMetadataCacheService.recomputeMetadataCache({
+          workspaceId: authContext.workspace.id,
+        });
+
+      objectMetadataMaps = recomputed?.recomputedObjectMetadataMaps;
+      currentCacheVersion = recomputed?.recomputedMetadataVersion;
+    } else {
+      objectMetadataMaps =
+        await this.workspaceCacheStorageService.getObjectMetadataMaps(
+          authContext.workspace.id,
+          currentCacheVersion,
+        );
+
+      if (!isDefined(objectMetadataMaps)) {
+        const recomputed =
+          await this.workspaceMetadataCacheService.recomputeMetadataCache({
+            workspaceId: authContext.workspace.id,
+          });
+
+        objectMetadataMaps = recomputed?.recomputedObjectMetadataMaps;
+      }
+    }
+
+    if (!objectMetadataMaps) {
       throw new GraphqlQueryRunnerException(
-        'Metadata cache version not found',
+        'Object metadata collection not found',
         GraphqlQueryRunnerExceptionCode.METADATA_CACHE_VERSION_NOT_FOUND,
       );
     }
 
-    const objectMetadataMaps =
-      await this.workspaceCacheStorageService.getObjectMetadataMaps(
-        authContext.workspace.id,
-        currentCacheVersion,
-      );
-
-    if (!objectMetadataMaps) {
-      await this.workspaceMetadataCacheService.recomputeMetadataCache({
-        workspaceId: authContext.workspace.id,
-      });
+    if (!currentCacheVersion) {
       throw new GraphqlQueryRunnerException(
-        'Object metadata collection not found',
+        'Metadata cache version not found',
         GraphqlQueryRunnerExceptionCode.METADATA_CACHE_VERSION_NOT_FOUND,
       );
     }

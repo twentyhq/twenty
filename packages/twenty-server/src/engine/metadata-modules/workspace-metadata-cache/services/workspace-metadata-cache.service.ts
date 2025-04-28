@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
 import {
   WorkspaceMetadataCacheException,
@@ -30,7 +31,13 @@ export class WorkspaceMetadataCacheService {
   }: {
     workspaceId: string;
     ignoreLock?: boolean;
-  }): Promise<void> {
+  }): Promise<
+    | {
+        recomputedObjectMetadataMaps: ObjectMetadataMaps;
+        recomputedMetadataVersion: number;
+      }
+    | undefined
+  > {
     const currentCacheVersion =
       await this.getMetadataVersionFromCache(workspaceId);
 
@@ -44,14 +51,20 @@ export class WorkspaceMetadataCacheService {
       );
     }
 
-    const isAlreadyCaching =
-      await this.workspaceCacheStorageService.getObjectMetadataOngoingCachingLock(
-        workspaceId,
-        currentDatabaseVersion,
-      );
-
-    if (!ignoreLock && isAlreadyCaching) {
+    if (currentDatabaseVersion === currentCacheVersion) {
       return;
+    }
+
+    if (!ignoreLock) {
+      const isAlreadyCaching =
+        await this.workspaceCacheStorageService.getObjectMetadataOngoingCachingLock(
+          workspaceId,
+          currentDatabaseVersion,
+        );
+
+      if (isAlreadyCaching) {
+        return;
+      }
     }
 
     if (currentCacheVersion !== undefined) {
@@ -61,40 +74,47 @@ export class WorkspaceMetadataCacheService {
       );
     }
 
-    await this.workspaceCacheStorageService.addObjectMetadataCollectionOngoingCachingLock(
-      workspaceId,
-      currentDatabaseVersion,
-    );
+    try {
+      await this.workspaceCacheStorageService.addObjectMetadataCollectionOngoingCachingLock(
+        workspaceId,
+        currentDatabaseVersion,
+      );
 
-    await this.workspaceCacheStorageService.setMetadataVersion(
-      workspaceId,
-      currentDatabaseVersion,
-    );
+      const objectMetadataItems = await this.objectMetadataRepository.find({
+        where: { workspaceId },
+        relations: [
+          'fields',
+          'fields.fromRelationMetadata',
+          'fields.toRelationMetadata',
+          'indexMetadatas',
+          'indexMetadatas.indexFieldMetadatas',
+        ],
+      });
 
-    const objectMetadataItems = await this.objectMetadataRepository.find({
-      where: { workspaceId },
-      relations: [
-        'fields',
-        'fields.fromRelationMetadata',
-        'fields.toRelationMetadata',
-        'indexMetadatas',
-        'indexMetadatas.indexFieldMetadatas',
-      ],
-    });
+      const freshObjectMetadataMaps =
+        generateObjectMetadataMaps(objectMetadataItems);
 
-    const freshObjectMetadataMaps =
-      generateObjectMetadataMaps(objectMetadataItems);
+      await this.workspaceCacheStorageService.setObjectMetadataMaps(
+        workspaceId,
+        currentDatabaseVersion,
+        freshObjectMetadataMaps,
+      );
 
-    await this.workspaceCacheStorageService.setObjectMetadataMaps(
-      workspaceId,
-      currentDatabaseVersion,
-      freshObjectMetadataMaps,
-    );
+      await this.workspaceCacheStorageService.setMetadataVersion(
+        workspaceId,
+        currentDatabaseVersion,
+      );
 
-    await this.workspaceCacheStorageService.removeObjectMetadataOngoingCachingLock(
-      workspaceId,
-      currentDatabaseVersion,
-    );
+      return {
+        recomputedObjectMetadataMaps: freshObjectMetadataMaps,
+        recomputedMetadataVersion: currentDatabaseVersion,
+      };
+    } finally {
+      await this.workspaceCacheStorageService.removeObjectMetadataOngoingCachingLock(
+        workspaceId,
+        currentDatabaseVersion,
+      );
+    }
   }
 
   private async getMetadataVersionFromDatabase(
