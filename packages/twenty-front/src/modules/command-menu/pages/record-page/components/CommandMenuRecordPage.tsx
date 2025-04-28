@@ -34,7 +34,7 @@ export const CommandMenuRecordPage = () => {
   );
 
   if (!viewableRecordNameSingular) {
-    throw new Error(`Object name or is not defined`);
+    throw new Error(`Object name is not defined`);
   }
 
   if (!viewableRecordId) {
