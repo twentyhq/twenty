@@ -335,15 +335,10 @@ export const SettingsAdminConfigVariableDetails = () => {
                 }
               />
 
-              <TextArea
-                value={variable.description}
-                disabled
-                minRows={3}
-                label={t`Description`}
-              />
+              <TextArea value={variable.description} disabled minRows={3} />
             </StyledInputContainer>
 
-            {isConfigVariablesInDbEnabled && (
+            {isConfigVariablesInDbEnabled && !isEnvOnly && (
               <StyledInputContainer>
                 <ConfigVariableInput
                   label={t`Database Override Value`}
