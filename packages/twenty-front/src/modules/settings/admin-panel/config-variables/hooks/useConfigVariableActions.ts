@@ -4,14 +4,13 @@ import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConf
 import { GET_DATABASE_CONFIG_VARIABLE } from '@/settings/admin-panel/config-variables/graphql/queries/getDatabaseConfigVariable';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ConfigVariableValue } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   useCreateDatabaseConfigVariableMutation,
   useDeleteDatabaseConfigVariableMutation,
   useUpdateDatabaseConfigVariableMutation,
 } from '~/generated/graphql';
-
-type ConfigVariableValue = string | number | boolean | string[] | null;
 
 export const useConfigVariableActions = (variableName: string) => {
   const { t } = useLingui();

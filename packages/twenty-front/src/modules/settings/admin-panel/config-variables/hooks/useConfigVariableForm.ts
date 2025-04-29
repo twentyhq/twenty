@@ -1,11 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { ConfigVariableValue } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { ConfigVariable } from '~/generated/graphql';
 
 type FormValues = {
-  value: string | number | boolean | string[] | null;
+  value: ConfigVariableValue;
 };
 
 export const useConfigVariableForm = (variable?: ConfigVariable) => {

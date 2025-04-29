@@ -1,6 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
+import { ConfigVariableValue } from 'twenty-shared/types';
 
 import { ConfigSource } from 'src/engine/core-modules/twenty-config/enums/config-source.enum';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
@@ -23,7 +24,7 @@ export class ConfigVariable {
   description: string;
 
   @Field(() => GraphQLJSON, { nullable: true })
-  value: string | number | boolean | string[] | null;
+  value: ConfigVariableValue;
 
   @Field()
   isSensitive: boolean;

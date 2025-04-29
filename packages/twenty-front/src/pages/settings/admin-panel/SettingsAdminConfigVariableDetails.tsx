@@ -5,7 +5,7 @@ import { Form, useParams } from 'react-router-dom';
 
 import { ConfigVariableHelpText } from '@/settings/admin-panel/config-variables/components/ConfigVariableHelpText';
 import { ConfigVariableTitle } from '@/settings/admin-panel/config-variables/components/ConfigVariableTitle';
-import { ConfigVariableValue } from '@/settings/admin-panel/config-variables/components/ConfigVariableValue';
+import { ConfigVariableValueInput } from '@/settings/admin-panel/config-variables/components/ConfigVariableValueInput';
 import { useConfigVariableActions } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableActions';
 import { useConfigVariableForm } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableForm';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -13,6 +13,7 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { SettingsPath } from '@/types/SettingsPath';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { ConfigVariableValue } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDeviceFloppy, IconPencil, IconX } from 'twenty-ui/display';
 import { Button, ButtonGroup } from 'twenty-ui/input';
@@ -31,12 +32,8 @@ const StyledForm = styled(Form)`
 
 const StyledRow = styled.div`
   display: flex;
-  align-items: bottom;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
 
-const StyledValueContainer = styled.div`
-  flex: 1;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledButtonGroup = styled(ButtonGroup)`
@@ -78,9 +75,7 @@ export const SettingsAdminConfigVariableDetails = () => {
   const isEnvOnly = variable.isEnvOnly;
   const isFromDatabase = variable.source === ConfigSource.DATABASE;
 
-  const onSubmit = async (formData: {
-    value: string | number | boolean | string[] | null;
-  }) => {
+  const onSubmit = async (formData: { value: ConfigVariableValue }) => {
     await handleUpdateVariable(formData.value, isFromDatabase);
     setIsEditing(false);
   };
@@ -144,14 +139,12 @@ export const SettingsAdminConfigVariableDetails = () => {
 
           <StyledForm onSubmit={handleSubmit(onSubmit)}>
             <StyledRow>
-              <StyledValueContainer>
-                <ConfigVariableValue
-                  variable={variable}
-                  value={watch('value')}
-                  onChange={(value) => setValue('value', value)}
-                  disabled={isEnvOnly || !isEditing}
-                />
-              </StyledValueContainer>
+              <ConfigVariableValueInput
+                variable={variable}
+                value={watch('value')}
+                onChange={(value) => setValue('value', value)}
+                disabled={isEnvOnly || !isEditing}
+              />
 
               {!isEditing ? (
                 <Button

@@ -5,13 +5,14 @@ import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { ConfigVariableValue } from 'twenty-shared/types';
 import { MenuItemMultiSelect } from 'twenty-ui/navigation';
 import { ConfigVariableType } from '~/generated/graphql';
 import { ConfigVariableOptions } from '../types/ConfigVariableOptions';
 
 type ConfigVariableDatabaseInputProps = {
   label: string;
-  value: string | number | boolean | string[] | null;
+  value: ConfigVariableValue;
   onChange: (value: string | number | boolean | string[] | null) => void;
   type: ConfigVariableType;
   options?: ConfigVariableOptions;

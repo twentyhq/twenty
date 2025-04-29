@@ -3,22 +3,23 @@ import { useLingui } from '@lingui/react/macro';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useRecoilValue } from 'recoil';
+import { ConfigVariableValue } from 'twenty-shared/types';
 import { ConfigVariable } from '~/generated/graphql';
 import { ConfigVariableDatabaseInput } from './ConfigVariableDatabaseInput';
 
-type ConfigVariableValueProps = {
+type ConfigVariableValueInputProps = {
   variable: ConfigVariable;
-  value: string | number | boolean | string[] | null;
+  value: ConfigVariableValue;
   onChange: (value: string | number | boolean | string[] | null) => void;
   disabled?: boolean;
 };
 
-export const ConfigVariableValue = ({
+export const ConfigVariableValueInput = ({
   variable,
   value,
   onChange,
   disabled,
-}: ConfigVariableValueProps) => {
+}: ConfigVariableValueInputProps) => {
   const { t } = useLingui();
   const isConfigVariablesInDbEnabled = useRecoilValue(
     isConfigVariablesInDbEnabledState,
@@ -39,7 +40,12 @@ export const ConfigVariableValue = ({
           }
         />
       ) : (
-        <TextInputV2 value={String(value)} disabled label={t`Value`} />
+        <TextInputV2
+          value={String(value)}
+          disabled
+          label={t`Value`}
+          fullWidth
+        />
       )}
     </>
   );
