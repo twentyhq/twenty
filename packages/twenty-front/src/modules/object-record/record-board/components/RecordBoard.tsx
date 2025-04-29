@@ -12,6 +12,7 @@ import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useR
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
+import { getBeforeAndAfterIndexRecordIds } from '@/object-record/record-board/utils/getBeforeAndAfterIndexRecordIds';
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
@@ -173,21 +174,14 @@ export const RecordBoard = () => {
               )
             : destinationRecordByGroupIds;
 
-        const isDroppedAtEnd =
-          destinationIndexInColumn >= otherRecordIdsInDestinationColumn.length;
-
-        const recordBeforeId = isDroppedAtEnd
-          ? otherRecordIdsInDestinationColumn[
-              otherRecordIdsInDestinationColumn.length - 1
-            ]
-          : otherRecordIdsInDestinationColumn[destinationIndexInColumn - 1];
+        const { recordBeforeId, recordAfterId } = getBeforeAndAfterIndexRecordIds({
+          draggedRecordIndex: destinationIndexInColumn,
+          otherRecordIds: otherRecordIdsInDestinationColumn,
+        });
         const recordBefore = recordBeforeId
           ? getSnapshotValue(snapshot, recordStoreFamilyState(recordBeforeId))
           : null;
 
-        const recordAfterId = isDroppedAtEnd
-          ? null
-          : otherRecordIdsInDestinationColumn[destinationIndexInColumn];
         const recordAfter = recordAfterId
           ? getSnapshotValue(snapshot, recordStoreFamilyState(recordAfterId))
           : null;
