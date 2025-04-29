@@ -82,17 +82,17 @@ export class TimelineCalendarEventService {
           workspaceMemberId: participant.workspaceMemberId ?? null,
           firstName:
             participant.person?.name?.firstName ||
-            participant.workspaceMember?.name.firstName ||
+            participant.workspaceMember?.name?.firstName ||
             '',
           lastName:
             participant.person?.name?.lastName ||
-            participant.workspaceMember?.name.lastName ||
+            participant.workspaceMember?.name?.lastName ||
             '',
           displayName:
             participant.person?.name?.firstName ||
             participant.person?.name?.lastName ||
-            participant.workspaceMember?.name.firstName ||
-            participant.workspaceMember?.name.lastName ||
+            participant.workspaceMember?.name?.firstName ||
+            participant.workspaceMember?.name?.lastName ||
             participant.displayName ||
             participant.handle ||
             '',
