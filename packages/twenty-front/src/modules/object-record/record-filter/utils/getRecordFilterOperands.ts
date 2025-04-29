@@ -4,6 +4,7 @@ import { FilterableFieldType } from '@/object-record/record-filter/types/Filtera
 import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { ViewFilterOperand as RecordFilterOperand } from '@/views/types/ViewFilterOperand';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 export type GetRecordFilterOperandsParams = {
   filterType: FilterableFieldType;
@@ -208,6 +209,6 @@ export const getRecordFilterOperands = ({
     case 'BOOLEAN':
       return FILTER_OPERANDS_MAP.BOOLEAN;
     default:
-      return [];
+      assertUnreachable(filterType, `Unknown filter type ${filterType}`);
   }
 };

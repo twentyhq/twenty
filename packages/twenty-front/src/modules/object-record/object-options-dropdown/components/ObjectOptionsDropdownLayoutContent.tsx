@@ -171,6 +171,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     : IconLayoutNavbar
                 }
                 text={t`Open in`}
+                onClick={() => {
+                  onContentChange('layoutOpenIn');
+                }}
                 contextualText={
                   recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
                     ? t`Side Panel`
