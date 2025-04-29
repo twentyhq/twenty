@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { ConfigVariableValue } from 'twenty-shared/types';
 import { ConfigVariable } from '~/generated/graphql';
@@ -13,6 +14,10 @@ type ConfigVariableValueInputProps = {
   onChange: (value: string | number | boolean | string[] | null) => void;
   disabled?: boolean;
 };
+
+const StyledValueContainer = styled.div`
+  width: 100%;
+`;
 
 export const ConfigVariableValueInput = ({
   variable,
@@ -26,7 +31,7 @@ export const ConfigVariableValueInput = ({
   );
 
   return (
-    <>
+    <StyledValueContainer>
       {isConfigVariablesInDbEnabled && !variable.isEnvOnly ? (
         <ConfigVariableDatabaseInput
           label={t`Value`}
@@ -47,6 +52,6 @@ export const ConfigVariableValueInput = ({
           fullWidth
         />
       )}
-    </>
+    </StyledValueContainer>
   );
 };

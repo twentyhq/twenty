@@ -93,61 +93,43 @@ export const ConfigVariableDatabaseInput = ({
       return (
         <>
           {options && Array.isArray(options) ? (
-            <>
-              <Dropdown
-                dropdownId="config-variable-array-dropdown"
-                dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
-                dropdownPlacement="bottom-start"
-                dropdownOffset={{
-                  y: 8,
-                }}
-                clickableComponent={
-                  <SelectControl
-                    selectedOption={{
-                      value: '',
-                      label:
-                        Array.isArray(value) && value.length > 0
-                          ? `${value.length} selected`
-                          : 'Select options',
-                    }}
-                    isDisabled={disabled}
-                    hasRightElement={false}
-                    selectSizeVariant="default"
-                  />
-                }
-                dropdownComponents={
-                  <DropdownMenuItemsContainer>
-                    {selectOptions.map((option) => (
-                      <MenuItemMultiSelect
-                        key={option.value}
-                        text={option.label}
-                        selected={isValueSelected(option.value)}
-                        className="config-variable-array-menu-item-multi-select"
-                        onSelectChange={() =>
-                          handleMultiSelectChange(option.value)
-                        }
-                      />
-                    ))}
-                  </DropdownMenuItemsContainer>
-                }
-              />
-              {Array.isArray(value) && value.length > 0 && (
-                <TextArea
-                  label={label}
-                  value={JSON.stringify(value)}
-                  onChange={(text) => {
-                    try {
-                      const arr = JSON.parse(text);
-                      onChange(Array.isArray(arr) ? arr : value);
-                    } catch {
-                      // ignore parse error
-                    }
+            <Dropdown
+              dropdownId="config-variable-array-dropdown"
+              dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
+              dropdownPlacement="bottom-start"
+              dropdownOffset={{
+                y: 8,
+              }}
+              clickableComponent={
+                <SelectControl
+                  selectedOption={{
+                    value: '',
+                    label:
+                      Array.isArray(value) && value.length > 0
+                        ? value.join(', ')
+                        : 'Select options',
                   }}
-                  disabled={true}
-                  placeholder={placeholder || 'Enter JSON array'}
+                  isDisabled={disabled}
+                  hasRightElement={false}
+                  selectSizeVariant="default"
                 />
-              )}
-            </>
+              }
+              dropdownComponents={
+                <DropdownMenuItemsContainer>
+                  {selectOptions.map((option) => (
+                    <MenuItemMultiSelect
+                      key={option.value}
+                      text={option.label}
+                      selected={isValueSelected(option.value)}
+                      className="config-variable-array-menu-item-multi-select"
+                      onSelectChange={() =>
+                        handleMultiSelectChange(option.value)
+                      }
+                    />
+                  ))}
+                </DropdownMenuItemsContainer>
+              }
+            />
           ) : (
             <TextArea
               label={label}

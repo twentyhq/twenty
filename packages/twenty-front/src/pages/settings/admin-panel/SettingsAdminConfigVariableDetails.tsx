@@ -22,7 +22,7 @@ import {
   IconPencil,
   IconX,
 } from 'twenty-ui/display';
-import { Button, ButtonGroup } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import {
   ConfigSource,
   useGetDatabaseConfigVariableQuery,
@@ -46,7 +46,8 @@ const StyledRow = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledButtonGroup = styled(ButtonGroup)`
+const StyledButtonContainer = styled.div`
+  display: flex;
   & > :not(:first-of-type) > button {
     border-left: none;
   }
@@ -168,16 +169,23 @@ export const SettingsAdminConfigVariableDetails = () => {
                   disabled={isEnvOnly || !isConfigVariablesInDbEnabled}
                 />
               ) : (
-                <StyledButtonGroup>
+                <StyledButtonContainer>
                   <Button
                     Icon={IconDeviceFloppy}
-                    variant="primary"
+                    variant="secondary"
+                    position="left"
                     type="submit"
+                    accent={
+                      isSubmitting || !isValueValid || !hasValueChanged
+                        ? undefined
+                        : 'blue'
+                    }
                     disabled={isSubmitting || !isValueValid || !hasValueChanged}
                   />
                   <Button
                     Icon={IconX}
-                    variant="primary"
+                    variant="secondary"
+                    position="right"
                     accent={
                       isFromDatabase && !hasValueChanged ? 'danger' : undefined
                     }
@@ -185,7 +193,7 @@ export const SettingsAdminConfigVariableDetails = () => {
                     type="button"
                     disabled={isSubmitting}
                   />
-                </StyledButtonGroup>
+                </StyledButtonContainer>
               )}
             </StyledRow>
 
