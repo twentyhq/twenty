@@ -94,9 +94,6 @@ export const ObjectFilterDropdownBooleanSelect = () => {
       selectableListInstanceId="boolean-select"
       selectableItemIdArray={options.map((option) => option.toString())}
       hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
-      onEnter={(itemId) => {
-        handleOptionSelect(itemId === 'true');
-      }}
     >
       <DropdownMenuItemsContainer hasMaxHeight>
         {options.map((option) => (

@@ -24,6 +24,8 @@ export class WorkflowVisualizerPage {
   readonly useAsDraftButton: Locator;
   readonly overrideDraftButton: Locator;
   readonly discardDraftButton: Locator;
+  readonly seeRunsButton: Locator;
+  readonly goBackInCommandMenu: Locator;
 
   #actionNames: Record<WorkflowActionType, string> = {
     'create-record': 'Create Record',
@@ -31,6 +33,7 @@ export class WorkflowVisualizerPage {
     'delete-record': 'Delete Record',
     code: 'Code',
     'send-email': 'Send Email',
+    form: 'Form',
   };
 
   #createdActionNames: Record<WorkflowActionType, string> = {
@@ -39,6 +42,7 @@ export class WorkflowVisualizerPage {
     'delete-record': 'Delete Record',
     code: 'Code - Serverless Function',
     'send-email': 'Send Email',
+    form: 'Form',
   };
 
   #triggerNames: Record<WorkflowTriggerType, string> = {
@@ -84,6 +88,10 @@ export class WorkflowVisualizerPage {
     this.discardDraftButton = page.getByRole('button', {
       name: 'Discard Draft',
     });
+    this.seeRunsButton = page.getByRole('link', { name: 'See runs' });
+    this.goBackInCommandMenu = this.commandMenu
+      .getByRole('button')
+      .and(this.commandMenu.getByTestId('command-menu-go-back-button'));
   }
 
   async createOneWorkflow() {
@@ -250,29 +258,64 @@ export class WorkflowVisualizerPage {
 
     await expect(this.#page.getByTestId('command-menu')).not.toBeVisible();
   }
+
+  async goToWorkflowsIndexPage() {
+    await this.#page.goto('/objects/workflows');
+  }
+
+  async setWorkflowsOpenInMode(mode: 'side-panel' | 'record-page') {
+    const recordTableOptionsButton = this.#page.getByText('Options');
+    await recordTableOptionsButton.click();
+
+    const layoutButton = this.#page.getByText('Layout');
+    await layoutButton.click();
+
+    const openInButton = this.#page.getByText('Open in');
+    await openInButton.click();
+
+    if (mode === 'side-panel') {
+      const openInSidePanelOption = this.#page.getByRole('option', {
+        name: 'Side Panel',
+      });
+
+      await openInSidePanelOption.click();
+    } else {
+      const openInRecordPageOption = this.#page.getByRole('option', {
+        name: 'Record Page',
+      });
+
+      await openInRecordPageOption.click();
+    }
+
+    // Close the dropdown
+    await recordTableOptionsButton.click();
+  }
 }
 
-export const test = base.extend<{ workflowVisualizer: WorkflowVisualizerPage }>(
-  {
-    workflowVisualizer: async ({ page }, use) => {
-      const workflowVisualizer = new WorkflowVisualizerPage({
-        page,
-        workflowName: 'Test Workflow',
-      });
+export const test = base.extend<{
+  workflowVisualizer: WorkflowVisualizerPage;
+}>({
+  workflowVisualizer: async ({ page }, use) => {
+    const workflowVisualizer = new WorkflowVisualizerPage({
+      page,
+      workflowName: 'Test Workflow',
+    });
 
-      await workflowVisualizer.createOneWorkflow();
-      await workflowVisualizer.goToWorkflowVisualizerPage();
+    await workflowVisualizer.createOneWorkflow();
+    await workflowVisualizer.goToWorkflowVisualizerPage();
 
-      await use(workflowVisualizer);
+    await use(workflowVisualizer);
 
-      await deleteWorkflow({
-        page,
-        workflowId: workflowVisualizer.workflowId,
-      });
-      await destroyWorkflow({
-        page,
-        workflowId: workflowVisualizer.workflowId,
-      });
-    },
+    await deleteWorkflow({
+      page,
+      workflowId: workflowVisualizer.workflowId,
+    });
+    await destroyWorkflow({
+      page,
+      workflowId: workflowVisualizer.workflowId,
+    });
+
+    await workflowVisualizer.goToWorkflowsIndexPage();
+    await workflowVisualizer.setWorkflowsOpenInMode('record-page');
   },
-);
+});

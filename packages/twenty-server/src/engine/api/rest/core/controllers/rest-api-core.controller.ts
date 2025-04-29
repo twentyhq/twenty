@@ -28,7 +28,7 @@ export class RestApiCoreController {
     private readonly restApiCoreServiceV2: RestApiCoreServiceV2,
   ) {}
 
-  @Post('/duplicates')
+  @Post('duplicates')
   @UseFilters(RestApiExceptionFilter)
   async handleApiFindDuplicates(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreService.findDuplicates(request);

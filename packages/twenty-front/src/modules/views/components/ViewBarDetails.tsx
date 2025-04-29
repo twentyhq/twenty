@@ -10,7 +10,6 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { AdvancedFilterDropdownButton } from '@/views/components/AdvancedFilterDropdownButton';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
-import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 
 import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
@@ -232,7 +231,6 @@ export const ViewBarDetails = ({
                 value={{ instanceId: recordFilter.id }}
               >
                 <DropdownScope dropdownScopeId={recordFilter.id}>
-                  <ViewBarFilterEffect filterDropdownId={recordFilter.id} />
                   <EditableFilterDropdownButton
                     recordFilter={recordFilter}
                     hotkeyScope={{

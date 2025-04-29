@@ -1,11 +1,9 @@
 import { msg } from '@lingui/core/macro';
 
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
-} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
@@ -30,7 +28,7 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 export class MessageThreadWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_THREAD_STANDARD_FIELD_IDS.messages,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Messages`,
     description: msg`Messages from the thread.`,
     icon: 'IconMessage',

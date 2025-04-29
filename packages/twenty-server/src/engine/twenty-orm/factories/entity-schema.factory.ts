@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { EntitySchema } from 'typeorm';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
@@ -14,6 +16,7 @@ export class EntitySchemaFactory {
   constructor(
     private readonly entitySchemaColumnFactory: EntitySchemaColumnFactory,
     private readonly entitySchemaRelationFactory: EntitySchemaRelationFactory,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async create(
@@ -22,13 +25,20 @@ export class EntitySchemaFactory {
     objectMetadata: ObjectMetadataItemWithFieldMaps,
     objectMetadataMaps: ObjectMetadataMaps,
   ): Promise<EntitySchema> {
+    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsNewRelationEnabled,
+      workspaceId,
+    );
+
     const columns = this.entitySchemaColumnFactory.create(
       objectMetadata.fieldsByName,
+      isNewRelationEnabled,
     );
 
     const relations = await this.entitySchemaRelationFactory.create(
       objectMetadata.fieldsByName,
       objectMetadataMaps,
+      isNewRelationEnabled,
     );
 
     const entitySchema = new EntitySchema({

@@ -6,7 +6,7 @@ import { Task } from '@/activities/types/Task';
 import { TaskRow } from './TaskRow';
 
 type TaskListProps = {
-  title?: string;
+  title: string;
   tasks: Task[];
   button?: ReactElement | false;
 };

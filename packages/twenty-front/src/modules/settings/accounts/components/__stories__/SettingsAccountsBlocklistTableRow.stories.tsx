@@ -1,10 +1,10 @@
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 
-import { mockedBlocklist } from '@/settings/accounts/components/__stories__/mockedBlocklist';
 import { SettingsAccountsBlocklistTableRow } from '@/settings/accounts/components/SettingsAccountsBlocklistTableRow';
-import { formatToHumanReadableDate } from '~/utils/date-utils';
+import { mockedBlocklist } from '@/settings/accounts/components/__stories__/mockedBlocklist';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 const onRemoveJestFn = fn();
 

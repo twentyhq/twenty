@@ -47,7 +47,9 @@ const searchCurrentStepOutputSchema = ({
   let variablePathLabel = stepOutputSchema.name;
 
   while (nextKeyIndex < path.length) {
-    if (isRecordOutputSchema(currentSubStep)) {
+    if (!isDefined(currentSubStep)) {
+      break;
+    } else if (isRecordOutputSchema(currentSubStep)) {
       const currentField = currentSubStep.fields[nextKey];
       currentSubStep = currentField?.value;
       nextKey = path[nextKeyIndex + 1];

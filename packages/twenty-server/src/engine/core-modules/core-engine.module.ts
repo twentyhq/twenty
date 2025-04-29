@@ -66,6 +66,7 @@ import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
+    TwentyConfigModule.forRoot(),
     HealthModule,
     AnalyticsModule,
     AuthModule,

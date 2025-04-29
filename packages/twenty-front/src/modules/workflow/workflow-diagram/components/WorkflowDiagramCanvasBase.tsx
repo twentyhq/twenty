@@ -26,10 +26,10 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { THEME_COMMON } from 'twenty-ui/theme';
 import { Tag, TagColor } from 'twenty-ui/components';
+import { THEME_COMMON } from 'twenty-ui/theme';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -72,7 +72,7 @@ const StyledStatusTagContainer = styled.div`
   left: 0;
   top: 0;
   position: absolute;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(4)};
 `;
 
 const defaultFitViewOptions = {
@@ -87,6 +87,7 @@ export const WorkflowDiagramCanvasBase = ({
   tagContainerTestId,
   tagColor,
   tagText,
+  onInit,
 }: {
   nodeTypes: Partial<
     Record<
@@ -114,13 +115,11 @@ export const WorkflowDiagramCanvasBase = ({
   tagContainerTestId: string;
   tagColor: TagColor;
   tagText: string;
+  onInit?: () => void;
 }) => {
   const theme = useTheme();
 
   const reactflow = useReactFlow();
-  const setWorkflowReactFlowRefState = useSetRecoilState(
-    workflowReactFlowRefState,
-  );
 
   const workflowDiagram = useRecoilValue(workflowDiagramState);
 
@@ -140,22 +139,13 @@ export const WorkflowDiagramCanvasBase = ({
 
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
 
-  const handleNodesChange = (
-    nodeChanges: Array<NodeChange<WorkflowDiagramNode>>,
-  ) => {
-    setWorkflowDiagram((diagram) => {
-      if (isDefined(diagram) === false) {
-        throw new Error(
-          'It must be impossible for the nodes to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
-        );
-      }
-
-      return {
-        ...diagram,
-        nodes: applyNodeChanges(nodeChanges, diagram.nodes),
-      };
-    });
-  };
+  const setWorkflowReactFlowRef = useRecoilCallback(
+    ({ set }) =>
+      (node: HTMLDivElement | null) => {
+        set(workflowReactFlowRefState, { current: node });
+      },
+    [],
+  );
 
   const handleEdgesChange = (
     edgeChanges: Array<EdgeChange<WorkflowDiagramEdge>>,
@@ -209,36 +199,55 @@ export const WorkflowDiagramCanvasBase = ({
     );
   }, [reactflow, rightDrawerState, rightDrawerWidth]);
 
+  const handleNodesChanges = useRecoilCallback(
+    ({ set }) =>
+      (changes: NodeChange<WorkflowDiagramNode>[]) => {
+        set(workflowDiagramState, (diagram) => {
+          if (!isDefined(diagram)) {
+            throw new Error(
+              'It must be impossible for the nodes to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
+            );
+          }
+
+          return {
+            ...diagram,
+            nodes: applyNodeChanges(changes, diagram.nodes),
+          };
+        });
+      },
+    [],
+  );
+
+  const handleInit = () => {
+    if (!isDefined(containerRef.current)) {
+      return;
+    }
+
+    const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
+
+    reactflow.setViewport({
+      x: containerRef.current.offsetWidth / 2 - flowBounds.width / 2,
+      y: 150,
+      zoom: defaultFitViewOptions.maxZoom,
+    });
+
+    onInit?.();
+  };
+
   return (
     <StyledResetReactflowStyles ref={containerRef}>
       <WorkflowDiagramCustomMarkers />
 
       <ReactFlow
-        ref={(node) => {
-          if (isDefined(node)) {
-            setWorkflowReactFlowRefState({ current: node });
-          }
-        }}
-        onInit={() => {
-          if (!isDefined(containerRef.current)) {
-            throw new Error('Expect the container ref to be defined');
-          }
-
-          const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
-
-          reactflow.setViewport({
-            x: containerRef.current.offsetWidth / 2 - flowBounds.width / 2,
-            y: 150,
-            zoom: defaultFitViewOptions.maxZoom,
-          });
-        }}
+        ref={setWorkflowReactFlowRef}
+        onInit={handleInit}
         minZoom={defaultFitViewOptions.minZoom}
         maxZoom={defaultFitViewOptions.maxZoom}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         nodes={nodes}
         edges={edges}
-        onNodesChange={handleNodesChange}
+        onNodesChange={handleNodesChanges}
         onEdgesChange={handleEdgesChange}
         onBeforeDelete={async () => {
           // Abort all non-programmatic deletions
@@ -251,6 +260,7 @@ export const WorkflowDiagramCanvasBase = ({
         nodesDraggable={false}
         nodesConnectable={false}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
+        preventScrolling={false}
       >
         <Background color={theme.border.color.medium} size={2} />
 

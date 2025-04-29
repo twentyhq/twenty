@@ -3,6 +3,8 @@ import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapField
 import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueried';
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 type MapObjectMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];
@@ -18,16 +20,40 @@ export const mapObjectMetadataToGraphQLQuery = ({
   computeReferences = false,
   isRootLevel = true,
 }: MapObjectMetadataToGraphQLQueryArgs): string => {
-  const fieldsThatShouldBeQueried =
-    objectMetadataItem?.fields
-      .filter((field) => field.isActive)
-      .sort((fieldA, fieldB) => fieldA.name.localeCompare(fieldB.name))
-      .filter((field) =>
+  const manyToOneRelationFields = objectMetadataItem?.fields
+    .filter((field) => field.isActive)
+    .filter((field) => field.type === FieldMetadataType.RELATION)
+    .filter((field) => isDefined(field.settings?.joinColumnName));
+
+  const manyToOneRelationGqlFieldWithFieldMetadata =
+    manyToOneRelationFields.map((field) => ({
+      gqlField: field.settings?.joinColumnName,
+      fieldMetadata: field,
+    }));
+
+  const gqlFieldWithFieldMetadataThatCouldBeQueried = [
+    ...objectMetadataItem.fields
+      .filter((fieldMetadata) => fieldMetadata.isActive)
+      .map((fieldMetadata) => ({
+        gqlField: fieldMetadata.name,
+        fieldMetadata,
+      })),
+    ...manyToOneRelationGqlFieldWithFieldMetadata,
+  ].sort((gqlFieldWithFieldMetadataA, gqlFieldWithFieldMetadataB) =>
+    gqlFieldWithFieldMetadataA.gqlField.localeCompare(
+      gqlFieldWithFieldMetadataB.gqlField,
+    ),
+  );
+
+  const gqlFieldWithFieldMetadataThatSouldBeQueried =
+    gqlFieldWithFieldMetadataThatCouldBeQueried.filter(
+      (gqlFieldWithFieldMetadata) =>
         shouldFieldBeQueried({
-          field,
+          gqlField: gqlFieldWithFieldMetadata.gqlField,
+          fieldMetadata: gqlFieldWithFieldMetadata.fieldMetadata,
           recordGqlFields,
         }),
-      ) ?? [];
+    );
 
   if (!isRootLevel && computeReferences) {
     return `{
@@ -37,9 +63,10 @@ export const mapObjectMetadataToGraphQLQuery = ({
 
   return `{
 __typename
-${fieldsThatShouldBeQueried
-  .map((field) => {
-    const currentRecordGqlFields = recordGqlFields?.[field.name];
+${gqlFieldWithFieldMetadataThatSouldBeQueried
+  .map((gqlFieldWithFieldMetadata) => {
+    const currentRecordGqlFields =
+      recordGqlFields?.[gqlFieldWithFieldMetadata.gqlField];
     const relationRecordGqlFields = isRecordGqlFieldsNode(
       currentRecordGqlFields,
     )
@@ -47,7 +74,8 @@ ${fieldsThatShouldBeQueried
       : undefined;
     return mapFieldMetadataToGraphQLQuery({
       objectMetadataItems,
-      field,
+      gqlField: gqlFieldWithFieldMetadata.gqlField,
+      fieldMetadata: gqlFieldWithFieldMetadata.fieldMetadata,
       relationRecordGqlFields,
       computeReferences,
     });

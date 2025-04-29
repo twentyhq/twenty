@@ -145,7 +145,7 @@ export const useRecordShowContainerTabs = (
         tabs: {
           workflow: {
             title: 'Flow',
-            position: 0,
+            position: 101,
             Icon: IconSettings,
             cards: [{ type: CardType.WorkflowCard }],
             hide: {
@@ -168,7 +168,7 @@ export const useRecordShowContainerTabs = (
         tabs: {
           workflowVersion: {
             title: 'Flow',
-            position: 0,
+            position: 101,
             Icon: IconSettings,
             cards: [{ type: CardType.WorkflowVersionCard }],
             hide: {
@@ -190,7 +190,7 @@ export const useRecordShowContainerTabs = (
         tabs: {
           workflowRun: {
             title: 'Flow',
-            position: 0,
+            position: 101,
             Icon: IconSettings,
             cards: [{ type: CardType.WorkflowRunCard }],
             hide: {

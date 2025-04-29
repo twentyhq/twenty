@@ -7,12 +7,12 @@ import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getR
 import { getRefName } from '@/object-record/cache/utils/getRefName';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isDefined } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 import { pascalCase } from '~/utils/string/pascalCase';
-import { isDefined } from 'twenty-shared/utils';
 
 export const getRecordNodeFromRecord = <T extends ObjectRecord>({
   objectMetadataItems,
@@ -51,9 +51,11 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
           return undefined;
         }
 
-        const field = objectMetadataItem.fields.find(
-          (field) => field.name === fieldName,
-        );
+        const field =
+          objectMetadataItem.fields.find((field) => field.name === fieldName) ??
+          objectMetadataItem.fields.find(
+            (field) => field.settings?.joinColumnName === fieldName,
+          );
 
         if (isUndefined(field)) {
           return undefined;
@@ -94,6 +96,12 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
 
         switch (field.type) {
           case FieldMetadataType.RELATION: {
+            const isJoinColumn = field.settings?.joinColumnName === fieldName;
+
+            if (isJoinColumn) {
+              return [fieldName, value];
+            }
+
             if (
               isUndefined(
                 field.relationDefinition?.targetObjectMetadata.nameSingular,

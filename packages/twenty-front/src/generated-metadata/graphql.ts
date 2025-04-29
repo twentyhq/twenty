@@ -1207,7 +1207,7 @@ export type Mutation = {
   uploadImage: Scalars['String']['output'];
   uploadProfilePicture: Scalars['String']['output'];
   uploadWorkspaceLogo: Scalars['String']['output'];
-  upsertOneObjectPermission: ObjectPermission;
+  upsertObjectPermissions: Array<ObjectPermission>;
   upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
@@ -1707,8 +1707,8 @@ export type MutationUploadWorkspaceLogoArgs = {
 };
 
 
-export type MutationUpsertOneObjectPermissionArgs = {
-  upsertObjectPermissionInput: UpsertObjectPermissionInput;
+export type MutationUpsertObjectPermissionsArgs = {
+  upsertObjectPermissionsInput: UpsertObjectPermissionsInput;
 };
 
 
@@ -1818,6 +1818,14 @@ export type ObjectPermission = {
   id: Scalars['String']['output'];
   objectMetadataId: Scalars['String']['output'];
   roleId: Scalars['String']['output'];
+};
+
+export type ObjectPermissionInput = {
+  canDestroyObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  objectMetadataId: Scalars['String']['input'];
 };
 
 export type ObjectRecordFilterInput = {
@@ -3034,12 +3042,8 @@ export type UpdateWorkspaceInput = {
   subdomain?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type UpsertObjectPermissionInput = {
-  canDestroyObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canReadObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  objectMetadataId: Scalars['String']['input'];
+export type UpsertObjectPermissionsInput = {
+  objectPermissions: Array<ObjectPermissionInput>;
   roleId: Scalars['String']['input'];
 };
 

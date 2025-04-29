@@ -147,6 +147,7 @@ export class WorkspaceDatasourceFactory {
             {
               workspaceId,
               objectMetadataMaps: cachedObjectMetadataMaps,
+              featureFlagsMap: cachedFeatureFlagMap,
             },
             {
               url:
@@ -293,9 +294,9 @@ export class WorkspaceDatasourceFactory {
       currentVersion: workspaceDataSource.featureFlagMapVersion,
       newVersion: cachedFeatureFlagMapVersion,
       newData: cachedFeatureFlagMap,
-      setData: (data) => workspaceDataSource.setFeatureFlagsMap(data),
+      setData: (data) => workspaceDataSource.setFeatureFlagMap(data),
       setVersion: (version) =>
-        workspaceDataSource.setFeatureFlagsMapVersion(version),
+        workspaceDataSource.setFeatureFlagMapVersion(version),
     });
   }
 

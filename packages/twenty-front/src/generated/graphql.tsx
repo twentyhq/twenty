@@ -1122,7 +1122,7 @@ export type Mutation = {
   uploadImage: Scalars['String'];
   uploadProfilePicture: Scalars['String'];
   uploadWorkspaceLogo: Scalars['String'];
-  upsertOneObjectPermission: ObjectPermission;
+  upsertObjectPermissions: Array<ObjectPermission>;
   upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
@@ -1572,8 +1572,8 @@ export type MutationUploadWorkspaceLogoArgs = {
 };
 
 
-export type MutationUpsertOneObjectPermissionArgs = {
-  upsertObjectPermissionInput: UpsertObjectPermissionInput;
+export type MutationUpsertObjectPermissionsArgs = {
+  upsertObjectPermissionsInput: UpsertObjectPermissionsInput;
 };
 
 
@@ -1683,6 +1683,14 @@ export type ObjectPermission = {
   id: Scalars['String'];
   objectMetadataId: Scalars['String'];
   roleId: Scalars['String'];
+};
+
+export type ObjectPermissionInput = {
+  canDestroyObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canReadObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  objectMetadataId: Scalars['String'];
 };
 
 export type ObjectRecordFilterInput = {
@@ -2820,12 +2828,8 @@ export type UpdateWorkspaceInput = {
   subdomain?: InputMaybe<Scalars['String']>;
 };
 
-export type UpsertObjectPermissionInput = {
-  canDestroyObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canReadObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  objectMetadataId: Scalars['String'];
+export type UpsertObjectPermissionsInput = {
+  objectPermissions: Array<ObjectPermissionInput>;
   roleId: Scalars['String'];
 };
 
@@ -3561,6 +3565,13 @@ export type UpdateWorkspaceMemberRoleMutationVariables = Exact<{
 
 
 export type UpdateWorkspaceMemberRoleMutation = { __typename?: 'Mutation', updateWorkspaceMemberRole: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, userDocument?: string | null, roles?: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean }> | null, name: { __typename?: 'FullName', firstName: string, lastName: string }, userPhone?: { __typename?: 'Phones', primaryPhoneNumber: string, primaryPhoneCountryCode: string, primaryPhoneCallingCode: string, additionalPhones?: any | null } | null } };
+
+export type UpsertObjectPermissionsMutationVariables = Exact<{
+  upsertObjectPermissionsInput: UpsertObjectPermissionsInput;
+}>;
+
+
+export type UpsertObjectPermissionsMutation = { __typename?: 'Mutation', upsertObjectPermissions: Array<{ __typename?: 'ObjectPermission', id: string, objectMetadataId: string, roleId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }> };
 
 export type UpsertSettingPermissionsMutationVariables = Exact<{
   upsertSettingPermissionsInput: UpsertSettingPermissionsInput;
@@ -6538,6 +6549,41 @@ export function useUpdateWorkspaceMemberRoleMutation(baseOptions?: Apollo.Mutati
 export type UpdateWorkspaceMemberRoleMutationHookResult = ReturnType<typeof useUpdateWorkspaceMemberRoleMutation>;
 export type UpdateWorkspaceMemberRoleMutationResult = Apollo.MutationResult<UpdateWorkspaceMemberRoleMutation>;
 export type UpdateWorkspaceMemberRoleMutationOptions = Apollo.BaseMutationOptions<UpdateWorkspaceMemberRoleMutation, UpdateWorkspaceMemberRoleMutationVariables>;
+export const UpsertObjectPermissionsDocument = gql`
+    mutation UpsertObjectPermissions($upsertObjectPermissionsInput: UpsertObjectPermissionsInput!) {
+  upsertObjectPermissions(
+    upsertObjectPermissionsInput: $upsertObjectPermissionsInput
+  ) {
+    ...ObjectPermissionFragment
+  }
+}
+    ${ObjectPermissionFragmentFragmentDoc}`;
+export type UpsertObjectPermissionsMutationFn = Apollo.MutationFunction<UpsertObjectPermissionsMutation, UpsertObjectPermissionsMutationVariables>;
+
+/**
+ * __useUpsertObjectPermissionsMutation__
+ *
+ * To run a mutation, you first call `useUpsertObjectPermissionsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpsertObjectPermissionsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upsertObjectPermissionsMutation, { data, loading, error }] = useUpsertObjectPermissionsMutation({
+ *   variables: {
+ *      upsertObjectPermissionsInput: // value for 'upsertObjectPermissionsInput'
+ *   },
+ * });
+ */
+export function useUpsertObjectPermissionsMutation(baseOptions?: Apollo.MutationHookOptions<UpsertObjectPermissionsMutation, UpsertObjectPermissionsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpsertObjectPermissionsMutation, UpsertObjectPermissionsMutationVariables>(UpsertObjectPermissionsDocument, options);
+      }
+export type UpsertObjectPermissionsMutationHookResult = ReturnType<typeof useUpsertObjectPermissionsMutation>;
+export type UpsertObjectPermissionsMutationResult = Apollo.MutationResult<UpsertObjectPermissionsMutation>;
+export type UpsertObjectPermissionsMutationOptions = Apollo.BaseMutationOptions<UpsertObjectPermissionsMutation, UpsertObjectPermissionsMutationVariables>;
 export const UpsertSettingPermissionsDocument = gql`
     mutation UpsertSettingPermissions($upsertSettingPermissionsInput: UpsertSettingPermissionsInput!) {
   upsertSettingPermissions(
