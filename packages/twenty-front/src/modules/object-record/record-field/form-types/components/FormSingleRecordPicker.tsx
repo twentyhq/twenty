@@ -11,19 +11,30 @@ import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-r
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
 
 const StyledFormSelectContainer = styled(FormFieldInputInnerContainer)`
   justify-content: space-between;
   align-items: center;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+  height: 32px;
+
+  &:hover,
+  &[data-open='true'] {
+    background-color: ${({ theme }) => theme.background.transparent.light};
+  }
+
+  cursor: pointer;
+`;
+
+const StyledIconButton = styled.div`
+  display: flex;
 `;
 
 export type RecordId = string;
@@ -58,6 +69,7 @@ export const FormSingleRecordPicker = ({
   testId,
   VariablePicker,
 }: FormSingleRecordPickerProps) => {
+  const theme = useTheme();
   const draftValue: FormSingleRecordPickerValue = isStandaloneVariableString(
     defaultValue,
   )
@@ -103,12 +115,10 @@ export const FormSingleRecordPicker = ({
 
   const handleVariableTagInsert = (variable: string) => {
     onChange?.(variable);
-    closeDropdown();
   };
 
-  const handleUnlinkVariable = () => {
-    closeDropdown();
-
+  const handleUnlinkVariable = (event?: React.MouseEvent<HTMLDivElement>) => {
+    event?.stopPropagation();
     onChange('');
   };
 
@@ -130,47 +140,44 @@ export const FormSingleRecordPicker = ({
     <FormFieldInputContainer testId={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
       <FormFieldInputRowContainer>
-        <StyledFormSelectContainer
-          hasRightElement={isDefined(VariablePicker) && !disabled}
-          preventSetHotkeyScope={true}
-        >
-          <FormSingleRecordFieldChip
-            draftValue={draftValue}
-            selectedRecord={selectedRecord}
-            objectNameSingular={objectNameSingular}
-            onRemove={handleUnlinkVariable}
-            disabled={disabled}
-          />
-          {!disabled && (
-            <DropdownScope dropdownScopeId={dropdownId}>
-              <Dropdown
-                dropdownId={dropdownId}
-                dropdownPlacement="left-start"
-                onClose={handleCloseRelationPickerDropdown}
-                onOpen={handleOpenDropdown}
-                clickableComponent={
-                  <LightIconButton
-                    className="displayOnHover"
-                    Icon={IconChevronDown}
-                    accent="tertiary"
-                  />
-                }
-                dropdownComponents={
-                  <SingleRecordPicker
-                    componentInstanceId={dropdownId}
-                    EmptyIcon={IconForbid}
-                    emptyLabel={'No ' + objectNameSingular}
-                    onCancel={() => closeDropdown()}
-                    onRecordSelected={handleRecordSelected}
-                    objectNameSingular={objectNameSingular}
-                    recordPickerInstanceId={dropdownId}
-                  />
-                }
-                dropdownHotkeyScope={{ scope: dropdownId }}
+        <Dropdown
+          dropdownId={dropdownId}
+          dropdownPlacement="bottom-start"
+          clickableComponentWidth={'100%'}
+          onClose={handleCloseRelationPickerDropdown}
+          onOpen={handleOpenDropdown}
+          clickableComponent={
+            <StyledFormSelectContainer
+              hasRightElement={isDefined(VariablePicker) && !disabled}
+              preventSetHotkeyScope={true}
+            >
+              <FormSingleRecordFieldChip
+                draftValue={draftValue}
+                selectedRecord={selectedRecord}
+                objectNameSingular={objectNameSingular}
+                onRemove={handleUnlinkVariable}
               />
-            </DropdownScope>
-          )}
-        </StyledFormSelectContainer>
+              <StyledIconButton>
+                <IconChevronDown
+                  size={theme.icon.size.md}
+                  color={theme.font.color.light}
+                />
+              </StyledIconButton>
+            </StyledFormSelectContainer>
+          }
+          dropdownComponents={
+            <SingleRecordPicker
+              componentInstanceId={dropdownId}
+              EmptyIcon={IconForbid}
+              emptyLabel={'No ' + objectNameSingular}
+              onCancel={() => closeDropdown()}
+              onRecordSelected={handleRecordSelected}
+              objectNameSingular={objectNameSingular}
+              recordPickerInstanceId={dropdownId}
+            />
+          }
+          dropdownHotkeyScope={{ scope: dropdownId }}
+        />
         {isDefined(VariablePicker) && !disabled && (
           <VariablePicker
             inputId={variablesDropdownId}

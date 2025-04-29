@@ -31,8 +31,11 @@ const StyledDropdownFallbackAnchor = styled.div`
   top: 0;
 `;
 
-const StyledClickableComponent = styled.div`
+const StyledClickableComponent = styled.div<{
+  width?: `${string}px` | `${number}%` | 'auto' | number;
+}>`
   height: fit-content;
+  width: ${({ width }) => width ?? 'auto'};
 `;
 
 export type DropdownProps = {
@@ -53,6 +56,7 @@ export type DropdownProps = {
   onClose?: () => void;
   onOpen?: () => void;
   avoidPortal?: boolean;
+  clickableComponentWidth?: `${string}px` | `${number}%` | 'auto' | number;
 };
 
 export const Dropdown = ({
@@ -70,6 +74,7 @@ export const Dropdown = ({
   onClose,
   onOpen,
   avoidPortal,
+  clickableComponentWidth = 'auto',
 }: DropdownProps) => {
   const { isDropdownOpen, toggleDropdown } = useDropdown(dropdownId);
 
@@ -159,6 +164,7 @@ export const Dropdown = ({
               aria-expanded={isDropdownOpen}
               aria-haspopup={true}
               role="button"
+              width={clickableComponentWidth}
             >
               {clickableComponent}
             </StyledClickableComponent>
