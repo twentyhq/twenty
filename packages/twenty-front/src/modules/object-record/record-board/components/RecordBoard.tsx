@@ -174,10 +174,11 @@ export const RecordBoard = () => {
               )
             : destinationRecordByGroupIds;
 
-        const { recordBeforeId, recordAfterId } = getBeforeAndAfterIndexRecordIds({
-          draggedRecordIndex: destinationIndexInColumn,
-          otherRecordIds: otherRecordIdsInDestinationColumn,
-        });
+        const { recordBeforeId, recordAfterId } =
+          getBeforeAndAfterIndexRecordIds({
+            draggedRecordIndex: destinationIndexInColumn,
+            otherRecordIds: otherRecordIdsInDestinationColumn,
+          });
         const recordBefore = recordBeforeId
           ? getSnapshotValue(snapshot, recordStoreFamilyState(recordBeforeId))
           : null;
