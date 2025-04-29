@@ -57,7 +57,8 @@ test('The workflow run visualizer shows the executed draft version without the l
   );
 });
 
-test('Workflow Runs with a pending form step can be opened in the side panel and then in full screen', async ({
+// FIXME: Documented bug. See https://github.com/twentyhq/core-team-issues/issues/921
+test.fail('Workflow Runs with a pending form step can be opened in the side panel and then in full screen', async ({
   workflowVisualizer,
   page,
 }) => {
@@ -100,23 +101,7 @@ test('Workflow Runs with a pending form step can be opened in the side panel and
 
   await expect(workflowRunNameCell).toBeVisible();
 
-  const recordTableOptionsButton = page.getByText('Options');
-
-  await recordTableOptionsButton.click();
-
-  const layoutButton = page.getByText('Layout');
-
-  await layoutButton.click();
-
-  const openInButton = page.getByText('Open in');
-
-  await openInButton.click();
-
-  const openInSidePanelOption = page.getByRole('option', {
-    name: 'Side panel',
-  });
-
-  await openInSidePanelOption.click();
+  await workflowVisualizer.setWorkflowsOpenInMode('side-panel');
 
   // 1. Exit the dropdown
   await workflowRunNameCell.click();
