@@ -4,7 +4,6 @@ import { t } from '@lingui/core/macro';
 import { IconSearch } from 'twenty-ui/display';
 
 const StyledSearchInput = styled(TextInput)`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
 
