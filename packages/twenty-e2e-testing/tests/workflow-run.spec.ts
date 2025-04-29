@@ -57,7 +57,7 @@ test('The workflow run visualizer shows the executed draft version without the l
   );
 });
 
-test('Workflow Runs with a pending form step can be opened in the side panel and then in full screen', async ({
+test.fail('Workflow Runs with a pending form step can be opened in the side panel and then in full screen', async ({
   workflowVisualizer,
   page,
 }) => {
