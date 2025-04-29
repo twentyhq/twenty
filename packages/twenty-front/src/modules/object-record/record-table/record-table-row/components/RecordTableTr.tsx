@@ -9,10 +9,13 @@ import styled from '@emotion/styled';
 import { ReactNode, forwardRef } from 'react';
 
 const StyledTr = styled.tr<{ isDragging: boolean; isActive: boolean }>`
-  border: ${({ isActive, theme }) =>
-    isActive ? `1px solid ${theme.adaptiveColors.blue4}` : 'none'};
+  border: ${({ isDragging, theme }) =>
+    isDragging
+      ? `1px solid ${theme.border.color.medium}`
+      : '1px solid transparent'};
   position: relative;
   transition: border-left-color 0.2s ease-in-out;
+
   z-index: ${({ isActive }) => (isActive ? 1 : 0)};
 
   ${({ isActive, theme }) =>
@@ -20,15 +23,16 @@ const StyledTr = styled.tr<{ isDragging: boolean; isActive: boolean }>`
       ? `
       td {
         &:not(:first-of-type) {
-          border-bottom: 1px solid ${theme.adaptiveColors.blue4};
-          border-top: 1px solid ${theme.adaptiveColors.blue4};
+          border-bottom: 1px solid ${theme.adaptiveColors.blue3};
+          border-top: 1px solid ${theme.adaptiveColors.blue3};
+          background-color: ${theme.accent.quaternary};
         }
         &:nth-of-type(2) {
-          border-left: 1px solid ${theme.adaptiveColors.blue4};
+          border-left: 1px solid ${theme.adaptiveColors.blue3};
           border-radius: ${theme.border.radius.sm} 0 0 ${theme.border.radius.sm};
         }
         &:last-of-type {
-          border-right: 1px solid ${theme.adaptiveColors.blue4};
+          border-right: 1px solid ${theme.adaptiveColors.blue3};
           border-radius: 0 ${theme.border.radius.sm} ${theme.border.radius.sm} 0;
         }
       }
