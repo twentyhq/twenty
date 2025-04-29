@@ -126,16 +126,18 @@ export class AdminPanelResolver {
     return this.adminService.getVersionInfo();
   }
 
-  // Database Config Variables
-  // needs rework, this is probably not the best place to keep this?
-  // can refactor admin panel resolver into multiple resolvers
-
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
   @Query(() => ConfigVariable)
   async getDatabaseConfigVariable(
     @Args('key', { type: () => String }) key: keyof ConfigVariables,
   ): Promise<ConfigVariable> {
-    return this.adminService.getConfigVariable(key);
+    try {
+      this.twentyConfigService.validateConfigVariableExists(key as string);
+
+      return this.adminService.getConfigVariable(key);
+    } catch (error) {
+      throw new UserInputError(error.message);
+    }
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
@@ -145,9 +147,13 @@ export class AdminPanelResolver {
     @Args('value', { type: () => GraphQLJSON })
     value: ConfigVariables[keyof ConfigVariables],
   ): Promise<boolean> {
-    await this.twentyConfigService.set(key, value);
+    try {
+      await this.twentyConfigService.set(key, value);
 
-    return true;
+      return true;
+    } catch (error) {
+      throw new UserInputError(error.message);
+    }
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
@@ -157,9 +163,13 @@ export class AdminPanelResolver {
     @Args('value', { type: () => GraphQLJSON })
     value: ConfigVariables[keyof ConfigVariables],
   ): Promise<boolean> {
-    await this.twentyConfigService.update(key, value);
+    try {
+      await this.twentyConfigService.update(key, value);
 
-    return true;
+      return true;
+    } catch (error) {
+      throw new UserInputError(error.message);
+    }
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
@@ -167,8 +177,12 @@ export class AdminPanelResolver {
   async deleteDatabaseConfigVariable(
     @Args('key', { type: () => String }) key: keyof ConfigVariables,
   ): Promise<boolean> {
-    await this.twentyConfigService.delete(key);
+    try {
+      await this.twentyConfigService.delete(key);
 
-    return true;
+      return true;
+    } catch (error) {
+      throw new UserInputError(error.message);
+    }
   }
 }

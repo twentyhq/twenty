@@ -1,8 +1,9 @@
-import { Injectable, Logger, Optional } from '@nestjs/common';
+import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 
 import { isString } from 'class-validator';
 
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { CONFIG_VARIABLES_MASKING_CONFIG } from 'src/engine/core-modules/twenty-config/constants/config-variables-masking-config';
 import { ConfigVariablesMetadataOptions } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { DatabaseConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/database-config.driver';
@@ -21,6 +22,8 @@ export class TwentyConfigService {
   constructor(
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
     @Optional() private readonly databaseConfigDriver: DatabaseConfigDriver,
+    @Inject(CONFIG_VARIABLES_INSTANCE_TOKEN)
+    private readonly configVariablesInstance: ConfigVariables,
   ) {
     const isConfigVariablesInDbEnabled = this.environmentConfigDriver.get(
       'IS_CONFIG_VARIABLES_IN_DB_ENABLED',
@@ -70,6 +73,7 @@ export class TwentyConfigService {
   ): Promise<void> {
     this.validateDatabaseDriverActive('set');
     this.validateNotEnvOnly(key, 'create');
+    this.validateConfigVariableExists(key as string);
     await this.databaseConfigDriver.set(key, value);
   }
 
@@ -79,6 +83,7 @@ export class TwentyConfigService {
   ): Promise<void> {
     this.validateDatabaseDriverActive('update');
     this.validateNotEnvOnly(key, 'update');
+    this.validateConfigVariableExists(key as string);
 
     try {
       await this.databaseConfigDriver.update(key, value);
@@ -178,6 +183,7 @@ export class TwentyConfigService {
 
   async delete(key: keyof ConfigVariables): Promise<void> {
     this.validateDatabaseDriverActive('delete');
+    this.validateConfigVariableExists(key as string);
     await this.databaseConfigDriver.delete(key);
   }
 
@@ -253,5 +259,25 @@ export class TwentyConfigService {
       ...options,
       variableName: key as string,
     });
+  }
+
+  validateConfigVariableExists(key: string): boolean {
+    const keyExists = key in this.configVariablesInstance;
+
+    if (!keyExists) {
+      throw new Error(
+        `Config variable "${key}" does not exist in ConfigVariables`,
+      );
+    }
+
+    const metadata = this.getMetadata(key as keyof ConfigVariables);
+
+    if (!metadata) {
+      throw new Error(
+        `Config variable "${key}" exists but has no metadata defined`,
+      );
+    }
+
+    return true;
   }
 }

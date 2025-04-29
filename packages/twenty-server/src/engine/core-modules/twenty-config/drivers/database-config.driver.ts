@@ -139,6 +139,10 @@ export class DatabaseConfigDriver
       }
     } catch (error) {
       // Error is caught and logged but not rethrown to prevent the cron job from crashing
+      this.logger.error(
+        'Failed to refresh config variables from database',
+        error instanceof Error ? error.stack : error,
+      );
     }
   }
 }
