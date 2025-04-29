@@ -25,6 +25,7 @@ import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropd
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 
+import { useSetRecordTableFocusPosition } from '@/object-record/record-table/hooks/internal/useSetRecordTableFocusPosition';
 import { isTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isTableRowActiveComponentFamilyState';
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -87,6 +88,8 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
     isTableRowActiveComponentFamilyState,
     tableScopeId,
   );
+
+  const setFocusPosition = useSetRecordTableFocusPosition();
 
   const openTableCell = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -154,6 +157,8 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
 
           return;
         }
+
+        setFocusPosition(cellPosition);
 
         setDragSelectionStartEnabled(false);
 
