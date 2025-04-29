@@ -13,7 +13,7 @@ const StyledHelpText = styled.div<{ color?: string }>`
   line-height: 1.5;
 `;
 
-type ConfigVariableHelpTextEffectProps = {
+type ConfigVariableHelpTextProps = {
   variable: ConfigVariableWithTypes;
   hasValueChanged: boolean;
   color?: string;
@@ -21,11 +21,11 @@ type ConfigVariableHelpTextEffectProps = {
 
 // lint is complaining that this is a Effect component when its not?
 // renamed it to have effect suffix to avoid linting error, weird
-export const ConfigVariableHelpTextEffect = ({
+export const ConfigVariableHelpText = ({
   variable,
   hasValueChanged,
   color,
-}: ConfigVariableHelpTextEffectProps) => {
+}: ConfigVariableHelpTextProps) => {
   const isConfigVariablesInDbEnabled = useRecoilValue(
     isConfigVariablesInDbEnabledState,
   );
@@ -87,5 +87,5 @@ export const ConfigVariableHelpTextEffect = ({
     }
   }
 
-  return null;
+  return <StyledHelpText>{t`This should never happen`}</StyledHelpText>;
 };

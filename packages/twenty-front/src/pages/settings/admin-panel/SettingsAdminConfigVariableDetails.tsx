@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Form, useParams } from 'react-router-dom';
 
-import { ConfigVariableHelpTextEffect } from '@/settings/admin-panel/config-variables/components/ConfigVariableHelpText';
+import { ConfigVariableHelpText } from '@/settings/admin-panel/config-variables/components/ConfigVariableHelpText';
 import { ConfigVariableTitle } from '@/settings/admin-panel/config-variables/components/ConfigVariableTitle';
 import { ConfigVariableValue } from '@/settings/admin-panel/config-variables/components/ConfigVariableValue';
 import { useConfigVariableActions } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableActions';
@@ -12,6 +12,7 @@ import { ConfigVariableWithTypes } from '@/settings/admin-panel/config-variables
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDeviceFloppy, IconPencil, IconX } from 'twenty-ui/display';
@@ -49,6 +50,7 @@ export const SettingsAdminConfigVariableDetails = () => {
   const { variableName } = useParams();
   const { t } = useLingui();
   const [isEditing, setIsEditing] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
   const { data: configVariableData, loading } =
     useGetDatabaseConfigVariableQuery({
@@ -89,87 +91,122 @@ export const SettingsAdminConfigVariableDetails = () => {
     setIsEditing(true);
   };
 
-  const handleResetClick = () => {
+  const handleXButtonClick = () => {
+    if (isFromDatabase && hasValueChanged) {
+      setValue('value', variable.value);
+      setIsEditing(false);
+      return;
+    }
+
+    if (isFromDatabase && !hasValueChanged) {
+      setIsConfirmationModalOpen(true);
+      return;
+    }
+
+    setValue('value', variable.value);
+    setIsEditing(false);
+  };
+
+  const handleConfirmReset = () => {
     handleDeleteVariable();
     setIsEditing(false);
   };
 
   return (
-    <SubMenuTopBarContainer
-      links={[
-        {
-          children: t`Other`,
-          href: getSettingsPath(SettingsPath.AdminPanel),
-        },
-        {
-          children: t`Admin Panel`,
-          href: getSettingsPath(SettingsPath.AdminPanel),
-        },
-        {
-          children: t`Config Variables`,
-          href: getSettingsPath(
-            SettingsPath.AdminPanel,
-            undefined,
-            undefined,
-            'config-variables',
-          ),
-        },
-        {
-          children: variable.name,
-        },
-      ]}
-    >
-      <SettingsPageContainer>
-        <ConfigVariableTitle
-          name={variable.name}
-          description={variable.description}
-        />
-
-        <StyledForm onSubmit={handleSubmit(onSubmit)}>
-          <StyledRow>
-            <StyledValueContainer>
-              <ConfigVariableValue
-                variable={variable}
-                value={watch('value')}
-                onChange={(value) => setValue('value', value)}
-                disabled={isEnvOnly || !isEditing}
-              />
-            </StyledValueContainer>
-
-            {!isEditing ? (
-              <Button
-                Icon={IconPencil}
-                variant="primary"
-                onClick={handleEditClick}
-                type="button"
-                disabled={isEnvOnly}
-              />
-            ) : (
-              <StyledButtonGroup>
-                <Button
-                  Icon={IconDeviceFloppy}
-                  variant="primary"
-                  type="submit"
-                  disabled={isSubmitting || !isValueValid}
-                />
-                <Button
-                  Icon={IconX}
-                  variant="primary"
-                  accent="danger"
-                  onClick={handleResetClick}
-                  type="button"
-                  disabled={isSubmitting}
-                />
-              </StyledButtonGroup>
-            )}
-          </StyledRow>
-
-          <ConfigVariableHelpTextEffect
-            variable={variable}
-            hasValueChanged={hasValueChanged}
+    <>
+      <SubMenuTopBarContainer
+        links={[
+          {
+            children: t`Other`,
+            href: getSettingsPath(SettingsPath.AdminPanel),
+          },
+          {
+            children: t`Admin Panel`,
+            href: getSettingsPath(SettingsPath.AdminPanel),
+          },
+          {
+            children: t`Config Variables`,
+            href: getSettingsPath(
+              SettingsPath.AdminPanel,
+              undefined,
+              undefined,
+              'config-variables',
+            ),
+          },
+          {
+            children: variable.name,
+          },
+        ]}
+      >
+        <SettingsPageContainer>
+          <ConfigVariableTitle
+            name={variable.name}
+            description={variable.description}
           />
-        </StyledForm>
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+
+          <StyledForm onSubmit={handleSubmit(onSubmit)}>
+            <StyledRow>
+              <StyledValueContainer>
+                <ConfigVariableValue
+                  variable={variable}
+                  value={watch('value')}
+                  onChange={(value) => setValue('value', value)}
+                  disabled={isEnvOnly || !isEditing}
+                />
+              </StyledValueContainer>
+
+              {!isEditing ? (
+                <Button
+                  Icon={IconPencil}
+                  variant="primary"
+                  onClick={handleEditClick}
+                  type="button"
+                  disabled={isEnvOnly}
+                />
+              ) : (
+                <StyledButtonGroup>
+                  <Button
+                    Icon={IconDeviceFloppy}
+                    variant="primary"
+                    type="submit"
+                    disabled={isSubmitting || !isValueValid || !hasValueChanged}
+                  />
+                  <Button
+                    Icon={IconX}
+                    variant="primary"
+                    accent={
+                      isFromDatabase && !hasValueChanged ? 'danger' : undefined
+                    }
+                    onClick={handleXButtonClick}
+                    type="button"
+                    disabled={isSubmitting}
+                  />
+                </StyledButtonGroup>
+              )}
+            </StyledRow>
+
+            <ConfigVariableHelpText
+              variable={variable}
+              hasValueChanged={hasValueChanged}
+            />
+          </StyledForm>
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+
+      <ConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        setIsOpen={(isOpen) => {
+          setIsConfirmationModalOpen(isOpen);
+          if (!isOpen) {
+            setIsEditing(false);
+          }
+        }}
+        title={t`Reset variable`}
+        subtitle={t`This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings.`}
+        onConfirmClick={handleConfirmReset}
+        confirmButtonText={t`Reset`}
+        confirmButtonAccent="danger"
+      />
+    </>
   );
 };

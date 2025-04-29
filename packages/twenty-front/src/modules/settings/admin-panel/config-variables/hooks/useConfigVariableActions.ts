@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 
+import { GET_DATABASE_CONFIG_VARIABLE } from '@/settings/admin-panel/config-variables/graphql/queries/getDatabaseConfigVariable';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,7 +28,6 @@ export const useConfigVariableActions = (variableName: string) => {
     isFromDatabase: boolean,
   ) => {
     try {
-      // If value is empty, null, or an empty array, treat as delete
       if (
         value === null ||
         (typeof value === 'string' && value === '') ||
@@ -37,14 +37,18 @@ export const useConfigVariableActions = (variableName: string) => {
         return;
       }
 
-      // Otherwise, update as normal
       if (isFromDatabase) {
         await updateDatabaseConfigVariable({
           variables: {
             key: variableName,
             value,
           },
-          refetchQueries: ['GetDatabaseConfigVariable'],
+          refetchQueries: [
+            {
+              query: GET_DATABASE_CONFIG_VARIABLE,
+              variables: { key: variableName },
+            },
+          ],
         });
       } else {
         await createDatabaseConfigVariable({
@@ -52,7 +56,12 @@ export const useConfigVariableActions = (variableName: string) => {
             key: variableName,
             value,
           },
-          refetchQueries: ['GetDatabaseConfigVariable'],
+          refetchQueries: [
+            {
+              query: GET_DATABASE_CONFIG_VARIABLE,
+              variables: { key: variableName },
+            },
+          ],
         });
       }
 
@@ -76,7 +85,12 @@ export const useConfigVariableActions = (variableName: string) => {
         variables: {
           key: variableName,
         },
-        refetchQueries: ['GetDatabaseConfigVariable'],
+        refetchQueries: [
+          {
+            query: GET_DATABASE_CONFIG_VARIABLE,
+            variables: { key: variableName },
+          },
+        ],
       });
     } catch (error) {
       enqueueSnackBar(t`Failed to remove  override`, {
