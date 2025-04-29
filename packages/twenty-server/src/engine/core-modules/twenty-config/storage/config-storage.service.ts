@@ -14,6 +14,7 @@ import {
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
+import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/types/config-variable-type.type';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 import { ConfigStorageInterface } from './interfaces/config-storage.interface';
@@ -68,7 +69,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
       const metadata = this.getConfigMetadata(key);
       const isSensitiveString =
         metadata?.isSensitive &&
-        metadata.type === 'string' &&
+        metadata.type === ConfigVariableType.STRING &&
         typeof convertedValue === 'string';
 
       if (!isSensitiveString) {

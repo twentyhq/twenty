@@ -10,6 +10,10 @@ registerEnumType(ConfigSource, {
   name: 'ConfigSource',
 });
 
+registerEnumType(ConfigVariableType, {
+  name: 'ConfigVariableType',
+});
+
 @ObjectType()
 export class ConfigVariable {
   @Field()
@@ -30,7 +34,7 @@ export class ConfigVariable {
   @Field()
   isEnvOnly: boolean;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => ConfigVariableType)
   type: ConfigVariableType;
 
   @Field(() => GraphQLJSON, { nullable: true })

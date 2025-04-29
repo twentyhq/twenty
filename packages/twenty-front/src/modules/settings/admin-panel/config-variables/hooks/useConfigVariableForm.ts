@@ -2,13 +2,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { ConfigVariableWithTypes } from '../types/ConfigVariableWithTypes';
+import { ConfigVariable } from '~/generated/graphql';
 
 type FormValues = {
   value: string | number | boolean | string[] | null;
 };
 
-export const useConfigVariableForm = (variable?: ConfigVariableWithTypes) => {
+export const useConfigVariableForm = (variable?: ConfigVariable) => {
   const validationSchema = z.object({
     value: z.union([
       z.string(),

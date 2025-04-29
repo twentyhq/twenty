@@ -8,7 +8,6 @@ import { ConfigVariableTitle } from '@/settings/admin-panel/config-variables/com
 import { ConfigVariableValue } from '@/settings/admin-panel/config-variables/components/ConfigVariableValue';
 import { useConfigVariableActions } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableActions';
 import { useConfigVariableForm } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableForm';
-import { ConfigVariableWithTypes } from '@/settings/admin-panel/config-variables/types/ConfigVariableWithTypes';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -58,8 +57,7 @@ export const SettingsAdminConfigVariableDetails = () => {
       fetchPolicy: 'network-only',
     });
 
-  const variable =
-    configVariableData?.getDatabaseConfigVariable as ConfigVariableWithTypes;
+  const variable = configVariableData?.getDatabaseConfigVariable;
 
   const { handleUpdateVariable, handleDeleteVariable } =
     useConfigVariableActions(variable?.name ?? '');

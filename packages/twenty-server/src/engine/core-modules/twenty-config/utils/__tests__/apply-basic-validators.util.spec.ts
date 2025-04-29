@@ -7,6 +7,7 @@ import {
   IsString,
 } from 'class-validator';
 
+import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/types/config-variable-type.type';
 import { applyBasicValidators } from 'src/engine/core-modules/twenty-config/utils/apply-basic-validators.util';
 import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
 
@@ -50,7 +51,11 @@ describe('applyBasicValidators', () => {
         return jest.fn();
       });
 
-      applyBasicValidators('boolean', mockTarget, mockPropertyKey);
+      applyBasicValidators(
+        ConfigVariableType.BOOLEAN,
+        mockTarget,
+        mockPropertyKey,
+      );
 
       expect(Transform).toHaveBeenCalled();
       expect(IsBoolean).toHaveBeenCalled();
@@ -81,7 +86,11 @@ describe('applyBasicValidators', () => {
         return jest.fn();
       });
 
-      applyBasicValidators('number', mockTarget, mockPropertyKey);
+      applyBasicValidators(
+        ConfigVariableType.NUMBER,
+        mockTarget,
+        mockPropertyKey,
+      );
 
       expect(Transform).toHaveBeenCalled();
       expect(IsNumber).toHaveBeenCalled();
@@ -104,7 +113,11 @@ describe('applyBasicValidators', () => {
 
   describe('string type', () => {
     it('should apply string validator', () => {
-      applyBasicValidators('string', mockTarget, mockPropertyKey);
+      applyBasicValidators(
+        ConfigVariableType.STRING,
+        mockTarget,
+        mockPropertyKey,
+      );
 
       expect(IsString).toHaveBeenCalled();
       expect(Transform).not.toHaveBeenCalled(); // String doesn't need a transform
@@ -115,7 +128,12 @@ describe('applyBasicValidators', () => {
     it('should apply enum validator with string array options', () => {
       const enumOptions = ['option1', 'option2', 'option3'];
 
-      applyBasicValidators('enum', mockTarget, mockPropertyKey, enumOptions);
+      applyBasicValidators(
+        ConfigVariableType.ENUM,
+        mockTarget,
+        mockPropertyKey,
+        enumOptions,
+      );
 
       expect(IsEnum).toHaveBeenCalledWith(enumOptions);
       expect(Transform).not.toHaveBeenCalled(); // Enum doesn't need a transform
@@ -128,14 +146,23 @@ describe('applyBasicValidators', () => {
         Option3 = 'value3',
       }
 
-      applyBasicValidators('enum', mockTarget, mockPropertyKey, TestEnum);
+      applyBasicValidators(
+        ConfigVariableType.ENUM,
+        mockTarget,
+        mockPropertyKey,
+        TestEnum,
+      );
 
       expect(IsEnum).toHaveBeenCalledWith(TestEnum);
       expect(Transform).not.toHaveBeenCalled(); // Enum doesn't need a transform
     });
 
     it('should not apply enum validator without options', () => {
-      applyBasicValidators('enum', mockTarget, mockPropertyKey);
+      applyBasicValidators(
+        ConfigVariableType.ENUM,
+        mockTarget,
+        mockPropertyKey,
+      );
 
       expect(IsEnum).not.toHaveBeenCalled();
       expect(Transform).not.toHaveBeenCalled();
@@ -144,7 +171,11 @@ describe('applyBasicValidators', () => {
 
   describe('array type', () => {
     it('should apply array validator', () => {
-      applyBasicValidators('array', mockTarget, mockPropertyKey);
+      applyBasicValidators(
+        ConfigVariableType.ARRAY,
+        mockTarget,
+        mockPropertyKey,
+      );
 
       expect(IsArray).toHaveBeenCalled();
       expect(Transform).not.toHaveBeenCalled(); // Array doesn't need a transform

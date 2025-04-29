@@ -13,11 +13,11 @@ import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-conf
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
+import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/types/config-variable-type.type';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
-// Mock the encryption/decryption functions
 jest.mock('src/engine/core-modules/auth/auth.util', () => ({
   encryptText: jest.fn((text) => `encrypted:${text}`),
   decryptText: jest.fn((text) => text.replace('encrypted:', '')),
@@ -171,7 +171,7 @@ describe('ConfigStorageService', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
         [key]: {
           isSensitive: true,
-          type: 'string',
+          type: ConfigVariableType.STRING,
           group: ConfigVariablesGroup.ServerConfig,
           description: 'Test sensitive config',
         },
@@ -205,7 +205,7 @@ describe('ConfigStorageService', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
         [key]: {
           isSensitive: true,
-          type: 'string',
+          type: ConfigVariableType.STRING,
           group: ConfigVariablesGroup.ServerConfig,
           description: 'Test sensitive config',
         },
@@ -233,7 +233,7 @@ describe('ConfigStorageService', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
         [key]: {
           isSensitive: true,
-          type: 'string',
+          type: ConfigVariableType.STRING,
           group: ConfigVariablesGroup.ServerConfig,
           description: 'Test sensitive config',
         },
@@ -270,7 +270,7 @@ describe('ConfigStorageService', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
         [key]: {
           isSensitive: true,
-          type: 'array',
+          type: ConfigVariableType.ARRAY,
           group: ConfigVariablesGroup.ServerConfig,
           description: 'Test sensitive config',
         },
@@ -297,18 +297,18 @@ describe('ConfigStorageService', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
         SENSITIVE_CONFIG_1: {
           isSensitive: true,
-          type: 'string',
+          type: ConfigVariableType.STRING,
           group: ConfigVariablesGroup.ServerConfig,
           description: 'Test sensitive config 1',
         },
         SENSITIVE_CONFIG_2: {
           isSensitive: true,
-          type: 'string',
+          type: ConfigVariableType.STRING,
           group: ConfigVariablesGroup.ServerConfig,
           description: 'Test sensitive config 2',
         },
         NORMAL_CONFIG: {
-          type: 'string',
+          type: ConfigVariableType.STRING,
           group: ConfigVariablesGroup.ServerConfig,
           description: 'Test normal config',
         },
@@ -410,7 +410,7 @@ describe('ConfigStorageService', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
         [key]: {
           isSensitive: true,
-          type: 'string',
+          type: ConfigVariableType.STRING,
           group: ConfigVariablesGroup.ServerConfig,
           description: 'Test sensitive config',
         },
@@ -445,7 +445,7 @@ describe('ConfigStorageService', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
         [key]: {
           isSensitive: true,
-          type: 'string',
+          type: ConfigVariableType.STRING,
           group: ConfigVariablesGroup.ServerConfig,
           description: 'Test sensitive config',
         },
@@ -599,12 +599,12 @@ describe('ConfigStorageService', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
         SENSITIVE_CONFIG: {
           isSensitive: true,
-          type: 'string',
+          type: ConfigVariableType.STRING,
           group: ConfigVariablesGroup.ServerConfig,
           description: 'Test sensitive config',
         },
         NORMAL_CONFIG: {
-          type: 'string',
+          type: ConfigVariableType.STRING,
           group: ConfigVariablesGroup.ServerConfig,
           description: 'Test normal config',
         },

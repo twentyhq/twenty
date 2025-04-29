@@ -8,11 +8,10 @@ import {
   IconRefreshAlert,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { ConfigSource } from '~/generated/graphql';
-import { ConfigVariableWithTypes } from '../types/ConfigVariableWithTypes';
+import { ConfigSource, ConfigVariable } from '~/generated/graphql';
 
 type ConfigVariableActionButtonsProps = {
-  variable: ConfigVariableWithTypes;
+  variable: ConfigVariable;
   isValueValid: boolean;
   isSubmitting: boolean;
   onSave: () => void;

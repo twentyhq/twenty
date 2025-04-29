@@ -19,12 +19,10 @@ const CONFIG_ENV_ONLY_KEY = 'ENV_ONLY_VAR';
 const CONFIG_PORT_KEY = 'NODE_PORT';
 
 class TestDatabaseConfigDriver extends DatabaseConfigDriver {
-  // Expose the protected/private property for testing
   public get testAllPossibleConfigKeys(): Array<keyof ConfigVariables> {
     return this['allPossibleConfigKeys'];
   }
 
-  // Override Object.keys usage in constructor with our test keys
   constructor(
     configCache: ConfigCacheService,
     configStorage: ConfigStorageService,

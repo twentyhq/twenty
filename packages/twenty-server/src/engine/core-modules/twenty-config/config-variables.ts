@@ -34,12 +34,13 @@ import { IsOptionalOrEmptyString } from 'src/engine/core-modules/twenty-config/d
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/twenty-config/decorators/is-strictly-lower-than.decorator';
 import { IsTwentySemVer } from 'src/engine/core-modules/twenty-config/decorators/is-twenty-semver.decorator';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/types/config-variable-type.type';
 
 export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
     description: 'Enable or disable password authentication for users',
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
   AUTH_PASSWORD_ENABLED = true;
@@ -48,7 +49,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.Other,
     description:
       'Prefills tim@apple.dev in the login form, used in local development for quicker sign-in',
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
   @ValidateIf((env) => env.AUTH_PASSWORD_ENABLED)
@@ -57,7 +58,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
     description: 'Require email verification for user accounts',
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
   IS_EMAIL_VERIFICATION_REQUIRED = false;
@@ -65,7 +66,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
     description: 'Duration for which the email verification token is valid',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsDuration()
   @IsOptional()
@@ -74,7 +75,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
     description: 'Duration for which the password reset token is valid',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsDuration()
   @IsOptional()
@@ -83,21 +84,21 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GoogleAuth,
     description: 'Enable or disable the Google Calendar integration',
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   CALENDAR_PROVIDER_GOOGLE_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GoogleAuth,
     description: 'Callback URL for Google Auth APIs',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GoogleAuth,
     description: 'Enable or disable Google Single Sign-On (SSO)',
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
   AUTH_GOOGLE_ENABLED = false;
@@ -106,7 +107,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.GoogleAuth,
     isSensitive: true,
     description: 'Client ID for Google authentication',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CLIENT_ID: string;
@@ -115,7 +116,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.GoogleAuth,
     isSensitive: true,
     description: 'Client secret for Google authentication',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CLIENT_SECRET: string;
@@ -124,7 +125,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.GoogleAuth,
     isSensitive: true,
     description: 'Callback URL for Google authentication',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
@@ -133,14 +134,14 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GoogleAuth,
     description: 'Enable or disable the Gmail messaging integration',
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   MESSAGING_PROVIDER_GMAIL_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
     description: 'Enable or disable Microsoft authentication',
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
   AUTH_MICROSOFT_ENABLED = false;
@@ -149,7 +150,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.MicrosoftAuth,
     isSensitive: true,
     description: 'Client ID for Microsoft authentication',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_CLIENT_ID: string;
@@ -158,7 +159,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.MicrosoftAuth,
     isSensitive: true,
     description: 'Client secret for Microsoft authentication',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_CLIENT_SECRET: string;
@@ -167,7 +168,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.MicrosoftAuth,
     isSensitive: true,
     description: 'Callback URL for Microsoft authentication',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
@@ -177,7 +178,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.MicrosoftAuth,
     isSensitive: true,
     description: 'Callback URL for Microsoft APIs',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
@@ -186,14 +187,14 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
     description: 'Enable or disable the Microsoft messaging integration',
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   MESSAGING_PROVIDER_MICROSOFT_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
     description: 'Enable or disable the Microsoft Calendar integration',
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   CALENDAR_PROVIDER_MICROSOFT_ENABLED = false;
 
@@ -202,7 +203,7 @@ export class ConfigVariables {
     isSensitive: true,
     description:
       'Legacy variable to be deprecated when all API Keys expire. Replaced by APP_KEY',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsOptional()
   ACCESS_TOKEN_SECRET: string;
@@ -210,7 +211,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
     description: 'Duration for which the access token is valid',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsDuration()
   @IsOptional()
@@ -219,7 +220,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
     description: 'Duration for which the refresh token is valid',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsOptional()
   REFRESH_TOKEN_EXPIRES_IN = '60d';
@@ -227,7 +228,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
     description: 'Cooldown period for refreshing tokens',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsDuration()
   @IsOptional()
@@ -236,7 +237,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
     description: 'Duration for which the login token is valid',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsDuration()
   @IsOptional()
@@ -245,7 +246,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
     description: 'Duration for which the file token is valid',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsDuration()
   @IsOptional()
@@ -254,7 +255,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
     description: 'Duration for which the invitation token is valid',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsDuration()
   @IsOptional()
@@ -263,35 +264,35 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
     description: 'Duration for which the short-term token is valid',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   SHORT_TERM_TOKEN_EXPIRES_IN = '5m';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EmailSettings,
     description: 'Email address used as the sender for outgoing emails',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   EMAIL_FROM_ADDRESS = 'noreply@yourdomain.com';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EmailSettings,
     description: 'Email address used for system notifications',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   EMAIL_SYSTEM_ADDRESS = 'system@yourdomain.com';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EmailSettings,
     description: 'Name used in the From header for outgoing emails',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   EMAIL_FROM_NAME = 'Felix from Twenty';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EmailSettings,
     description: 'Email driver to use for sending emails',
-    type: 'enum',
+    type: ConfigVariableType.ENUM,
     options: Object.values(EmailDriver),
   })
   EMAIL_DRIVER: EmailDriver = EmailDriver.Logger;
@@ -299,14 +300,14 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EmailSettings,
     description: 'SMTP host for sending emails',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   EMAIL_SMTP_HOST: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EmailSettings,
     description: 'Use unsecure connection for SMTP',
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
   EMAIL_SMTP_NO_TLS = false;
@@ -314,7 +315,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EmailSettings,
     description: 'SMTP port for sending emails',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   EMAIL_SMTP_PORT = 587;
@@ -322,7 +323,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EmailSettings,
     description: 'SMTP user for authentication',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   EMAIL_SMTP_USER: string;
 
@@ -330,14 +331,14 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.EmailSettings,
     isSensitive: true,
     description: 'SMTP password for authentication',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   EMAIL_SMTP_PASSWORD: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.StorageConfig,
     description: 'Type of storage to use (local or S3)',
-    type: 'enum',
+    type: ConfigVariableType.ENUM,
     options: Object.values(StorageDriverType),
   })
   @IsOptional()
@@ -346,7 +347,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.StorageConfig,
     description: 'Local path for storage when using local storage type',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.Local)
   STORAGE_LOCAL_PATH = '.local-storage';
@@ -354,7 +355,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.StorageConfig,
     description: 'S3 region for storage when using S3 storage type',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
   @IsAWSRegion()
@@ -363,7 +364,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.StorageConfig,
     description: 'S3 bucket name for storage when using S3 storage type',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
   STORAGE_S3_NAME: string;
@@ -371,7 +372,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.StorageConfig,
     description: 'S3 endpoint for storage when using S3 storage type',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
   @IsOptional()
@@ -382,7 +383,7 @@ export class ConfigVariables {
     isSensitive: true,
     description:
       'S3 access key ID for authentication when using S3 storage type',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
   @IsOptional()
@@ -393,7 +394,7 @@ export class ConfigVariables {
     isSensitive: true,
     description:
       'S3 secret access key for authentication when using S3 storage type',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
   @IsOptional()
@@ -402,7 +403,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerlessConfig,
     description: 'Type of serverless execution (local or Lambda)',
-    type: 'enum',
+    type: ConfigVariableType.ENUM,
     options: Object.values(ServerlessDriverType),
   })
   @IsOptional()
@@ -411,7 +412,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerlessConfig,
     description: 'Throttle limit for serverless function execution',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   SERVERLESS_FUNCTION_EXEC_THROTTLE_LIMIT = 10;
@@ -420,7 +421,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerlessConfig,
     description: 'Time-to-live for serverless function execution throttle',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL = 1000;
@@ -428,7 +429,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerlessConfig,
     description: 'Region for AWS Lambda functions',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
   @IsAWSRegion()
@@ -437,7 +438,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerlessConfig,
     description: 'IAM role for AWS Lambda functions',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
   SERVERLESS_LAMBDA_ROLE: string;
@@ -445,7 +446,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerlessConfig,
     description: 'Role to assume when hosting lambdas in dedicated AWS account',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
   @IsOptional()
@@ -455,7 +456,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ServerlessConfig,
     isSensitive: true,
     description: 'Access key ID for AWS Lambda functions',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
   @IsOptional()
@@ -465,7 +466,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ServerlessConfig,
     isSensitive: true,
     description: 'Secret access key for AWS Lambda functions',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
   @IsOptional()
@@ -474,7 +475,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AnalyticsConfig,
     description: 'Enable or disable analytics for telemetry',
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
   ANALYTICS_ENABLED = false;
@@ -482,7 +483,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AnalyticsConfig,
     description: 'Clickhouse host for analytics',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsOptional()
   @IsUrl({
@@ -495,7 +496,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Logging,
     description: 'Enable or disable telemetry logging',
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
   TELEMETRY_ENABLED = true;
@@ -503,7 +504,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
     description: 'Enable or disable billing features',
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
   IS_BILLING_ENABLED = false;
@@ -511,7 +512,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
     description: 'Link required for billing plan',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   BILLING_PLAN_REQUIRED_LINK: string;
@@ -519,7 +520,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
     description: 'Duration of free trial with credit card in days',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @IsOptional()
@@ -529,7 +530,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
     description: 'Duration of free trial without credit card in days',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @IsOptional()
@@ -539,7 +540,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
     description: 'Amount of money in cents to trigger a billing threshold',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
@@ -548,7 +549,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
     description: 'Amount of credits for the free trial without credit card',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
@@ -557,7 +558,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
     description: 'Amount of credits for the free trial with credit card',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
@@ -567,7 +568,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.BillingConfig,
     isSensitive: true,
     description: 'Stripe API key for billing',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   BILLING_STRIPE_API_KEY: string;
@@ -576,7 +577,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.BillingConfig,
     isSensitive: true,
     description: 'Stripe webhook secret for billing',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   BILLING_STRIPE_WEBHOOK_SECRET: string;
@@ -584,7 +585,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Url for the frontend application',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
@@ -594,7 +595,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ServerConfig,
     description:
       'Default subdomain for the frontend when multi-workspace is enabled',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.IS_MULTIWORKSPACE_ENABLED)
   DEFAULT_SUBDOMAIN = 'app';
@@ -602,7 +603,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
     description: 'ID for the Chrome extension',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsOptional()
   CHROME_EXTENSION_ID: string;
@@ -610,7 +611,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Logging,
     description: 'Enable or disable buffering for logs before sending',
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
   LOGGER_IS_BUFFER_ENABLED = true;
@@ -618,7 +619,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Logging,
     description: 'Driver used for handling exceptions (Console or Sentry)',
-    type: 'enum',
+    type: ConfigVariableType.ENUM,
     options: Object.values(ExceptionHandlerDriver),
   })
   @IsOptional()
@@ -628,7 +629,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Logging,
     description: 'Levels of logging to be captured',
-    type: 'array',
+    type: ConfigVariableType.ARRAY,
     options: ['log', 'error', 'warn', 'debug', 'verbose'],
   })
   @CastToLogLevelArray()
@@ -638,7 +639,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Metering,
     description: 'Driver used for collect metrics (OpenTelemetry or Console)',
-    type: 'array',
+    type: ConfigVariableType.ARRAY,
     options: ['OpenTelemetry', 'Console'],
   })
   @CastToMeterDriverArray()
@@ -648,7 +649,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Metering,
     description: 'Endpoint URL for the OpenTelemetry collector',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsOptional()
   OTLP_COLLECTOR_ENDPOINT_URL: string;
@@ -656,7 +657,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ExceptionHandler,
     description: 'Driver used for logging (only console for now)',
-    type: 'enum',
+    type: ConfigVariableType.ENUM,
     options: Object.values(LoggerDriverType),
   })
   @IsOptional()
@@ -665,7 +666,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ExceptionHandler,
     description: 'Data Source Name (DSN) for Sentry logging',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf(
     (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
@@ -675,7 +676,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ExceptionHandler,
     description: 'Front-end DSN for Sentry logging',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf(
     (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
@@ -684,7 +685,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ExceptionHandler,
     description: 'Environment name for Sentry logging',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf(
     (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
@@ -695,7 +696,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SupportChatConfig,
     description: 'Driver used for support chat integration',
-    type: 'enum',
+    type: ConfigVariableType.ENUM,
     options: Object.values(SupportDriver),
   })
   @IsOptional()
@@ -705,7 +706,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SupportChatConfig,
     isSensitive: true,
     description: 'Chat ID for the support front integration',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
   SUPPORT_FRONT_CHAT_ID: string;
@@ -714,7 +715,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SupportChatConfig,
     isSensitive: true,
     description: 'HMAC key for the support front integration',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
   SUPPORT_FRONT_HMAC_KEY: string;
@@ -723,7 +724,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ServerConfig,
     isSensitive: true,
     description: 'Database connection URL',
-    type: 'string',
+    type: ConfigVariableType.STRING,
     isEnvOnly: true,
   })
   @IsDefined()
@@ -740,7 +741,7 @@ export class ConfigVariables {
     description:
       'Allow connections to a database with self-signed certificates',
     isEnvOnly: true,
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
   PG_SSL_ALLOW_SELF_SIGNED = false;
@@ -749,7 +750,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Enable configuration variables to be stored in the database',
     isEnvOnly: true,
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
   IS_CONFIG_VARIABLES_IN_DB_ENABLED = false;
@@ -757,7 +758,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
     description: 'Time-to-live for cache storage in seconds',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
@@ -767,7 +768,7 @@ export class ConfigVariables {
     isSensitive: true,
     description: 'URL for cache storage (e.g., Redis connection URL)',
     isEnvOnly: true,
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsOptional()
   @IsUrl({
@@ -780,7 +781,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Node environment (development, production, etc.)',
-    type: 'enum',
+    type: ConfigVariableType.ENUM,
     options: Object.values(NodeEnvironment),
   })
   NODE_ENV: NodeEnvironment = NodeEnvironment.production;
@@ -788,7 +789,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Port for the node server',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @IsOptional()
@@ -797,7 +798,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Base URL for the server',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
@@ -808,14 +809,14 @@ export class ConfigVariables {
     isSensitive: true,
     description: 'Secret key for the application',
     isEnvOnly: true,
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   APP_SECRET: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RateLimiting,
     description: 'Maximum number of records affected by mutations',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @IsOptional()
@@ -824,7 +825,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RateLimiting,
     description: 'Time-to-live for API rate limiting in milliseconds',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   API_RATE_LIMITING_TTL = 100;
@@ -833,7 +834,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.RateLimiting,
     description:
       'Maximum number of requests allowed in the rate limiting window',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   API_RATE_LIMITING_LIMIT = 500;
@@ -841,7 +842,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SSL,
     description: 'Path to the SSL key for enabling HTTPS in local development',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsOptional()
   SSL_KEY_PATH: string;
@@ -850,7 +851,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SSL,
     description:
       'Path to the SSL certificate for enabling HTTPS in local development',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsOptional()
   SSL_CERT_PATH: string;
@@ -859,7 +860,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.CloudflareConfig,
     isSensitive: true,
     description: 'API key for Cloudflare integration',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.CLOUDFLARE_ZONE_ID)
   CLOUDFLARE_API_KEY: string;
@@ -867,7 +868,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CloudflareConfig,
     description: 'Zone ID for Cloudflare integration',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.CLOUDFLARE_API_KEY)
   CLOUDFLARE_ZONE_ID: string;
@@ -875,7 +876,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
     description: 'Random string to validate queries from Cloudflare',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsOptional()
   CLOUDFLARE_WEBHOOK_SECRET: string;
@@ -883,7 +884,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description: 'Driver for the LLM chat model',
-    type: 'enum',
+    type: ConfigVariableType.ENUM,
     options: Object.values(LLMChatModelDriver),
   })
   LLM_CHAT_MODEL_DRIVER: LLMChatModelDriver;
@@ -892,7 +893,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
     description: 'API key for OpenAI integration',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   OPENAI_API_KEY: string;
 
@@ -900,21 +901,21 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
     description: 'Secret key for Langfuse integration',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   LANGFUSE_SECRET_KEY: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description: 'Public key for Langfuse integration',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   LANGFUSE_PUBLIC_KEY: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description: 'Driver for LLM tracing',
-    type: 'enum',
+    type: ConfigVariableType.ENUM,
     options: Object.values(LLMTracingDriver),
   })
   LLM_TRACING_DRIVER: LLMTracingDriver = LLMTracingDriver.Console;
@@ -922,7 +923,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Enable or disable multi-workspace support',
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
   IS_MULTIWORKSPACE_ENABLED = false;
@@ -931,7 +932,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.Other,
     description:
       'Number of inactive days before sending a deletion warning for workspaces. Used in the workspace deletion cron job to determine when to send warning emails.',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @IsStrictlyLowerThan('WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION', {
@@ -943,7 +944,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
     description: 'Number of inactive days before soft deleting workspaces',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @IsStrictlyLowerThan('WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION', {
@@ -955,7 +956,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
     description: 'Number of inactive days before deleting workspaces',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 21;
@@ -964,7 +965,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.Other,
     description:
       'Maximum number of workspaces that can be deleted in a single execution',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @ValidateIf((env) => env.MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION > 0)
@@ -973,7 +974,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RateLimiting,
     description: 'Throttle limit for workflow execution',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   WORKFLOW_EXEC_THROTTLE_LIMIT = 500;
@@ -981,7 +982,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RateLimiting,
     description: 'Time-to-live for workflow execution throttle in milliseconds',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   WORKFLOW_EXEC_THROTTLE_TTL = 1000;
@@ -989,7 +990,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CaptchaConfig,
     description: 'Driver for captcha integration',
-    type: 'enum',
+    type: ConfigVariableType.ENUM,
     options: Object.values(CaptchaDriverType),
   })
   @IsOptional()
@@ -999,7 +1000,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.CaptchaConfig,
     isSensitive: true,
     description: 'Site key for captcha integration',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsOptional()
   CAPTCHA_SITE_KEY?: string;
@@ -1008,7 +1009,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.CaptchaConfig,
     isSensitive: true,
     description: 'Secret key for captcha integration',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsOptional()
   CAPTCHA_SECRET_KEY?: string;
@@ -1017,7 +1018,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ServerConfig,
     isSensitive: true,
     description: 'License key for the Enterprise version',
-    type: 'string',
+    type: ConfigVariableType.STRING,
   })
   @IsOptional()
   ENTERPRISE_KEY: string;
@@ -1025,7 +1026,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
     description: 'Health monitoring time window in minutes',
-    type: 'number',
+    type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @IsOptional()
@@ -1034,7 +1035,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
     description: 'Enable or disable the attachment preview feature',
-    type: 'boolean',
+    type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
   IS_ATTACHMENT_PREVIEW_ENABLED = true;
@@ -1042,7 +1043,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Twenty server version',
-    type: 'string',
+    type: ConfigVariableType.STRING,
     isEnvOnly: true,
   })
   @IsOptionalOrEmptyString()

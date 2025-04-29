@@ -3,11 +3,11 @@ import { useLingui } from '@lingui/react/macro';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useRecoilValue } from 'recoil';
-import { ConfigVariableWithTypes } from '../types/ConfigVariableWithTypes';
+import { ConfigVariable } from '~/generated/graphql';
 import { ConfigVariableDatabaseInput } from './ConfigVariableDatabaseInput';
 
 type ConfigVariableValueProps = {
-  variable: ConfigVariableWithTypes;
+  variable: ConfigVariable;
   value: string | number | boolean | string[] | null;
   onChange: (value: string | number | boolean | string[] | null) => void;
   disabled?: boolean;

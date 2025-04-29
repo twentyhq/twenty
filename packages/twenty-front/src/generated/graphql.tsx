@@ -333,9 +333,17 @@ export type ConfigVariable = {
   name: Scalars['String'];
   options?: Maybe<Scalars['JSON']>;
   source: ConfigSource;
-  type?: Maybe<Scalars['String']>;
+  type: ConfigVariableType;
   value?: Maybe<Scalars['JSON']>;
 };
+
+export enum ConfigVariableType {
+  ARRAY = 'ARRAY',
+  BOOLEAN = 'BOOLEAN',
+  ENUM = 'ENUM',
+  NUMBER = 'NUMBER',
+  STRING = 'STRING'
+}
 
 export enum ConfigVariablesGroup {
   AnalyticsConfig = 'AnalyticsConfig',
@@ -2745,14 +2753,14 @@ export type UpdateDatabaseConfigVariableMutation = { __typename?: 'Mutation', up
 export type GetConfigVariablesGroupedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetConfigVariablesGroupedQuery = { __typename?: 'Query', getConfigVariablesGrouped: { __typename?: 'ConfigVariablesOutput', groups: Array<{ __typename?: 'ConfigVariablesGroupData', name: ConfigVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'ConfigVariable', name: string, description: string, value?: any | null, isSensitive: boolean, isEnvOnly: boolean, type?: string | null, options?: any | null, source: ConfigSource }> }> } };
+export type GetConfigVariablesGroupedQuery = { __typename?: 'Query', getConfigVariablesGrouped: { __typename?: 'ConfigVariablesOutput', groups: Array<{ __typename?: 'ConfigVariablesGroupData', name: ConfigVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'ConfigVariable', name: string, description: string, value?: any | null, isSensitive: boolean, isEnvOnly: boolean, type: ConfigVariableType, options?: any | null, source: ConfigSource }> }> } };
 
 export type GetDatabaseConfigVariableQueryVariables = Exact<{
   key: Scalars['String'];
 }>;
 
 
-export type GetDatabaseConfigVariableQuery = { __typename?: 'Query', getDatabaseConfigVariable: { __typename?: 'ConfigVariable', name: string, description: string, value?: any | null, isSensitive: boolean, isEnvOnly: boolean, type?: string | null, options?: any | null, source: ConfigSource } };
+export type GetDatabaseConfigVariableQuery = { __typename?: 'Query', getDatabaseConfigVariable: { __typename?: 'ConfigVariable', name: string, description: string, value?: any | null, isSensitive: boolean, isEnvOnly: boolean, type: ConfigVariableType, options?: any | null, source: ConfigSource } };
 
 export type UpdateWorkspaceFeatureFlagMutationVariables = Exact<{
   workspaceId: Scalars['String'];

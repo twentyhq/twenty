@@ -6,20 +6,19 @@ import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItemMultiSelect } from 'twenty-ui/navigation';
+import { ConfigVariableType } from '~/generated/graphql';
 import { ConfigVariableOptions } from '../types/ConfigVariableOptions';
 
 type ConfigVariableDatabaseInputProps = {
   label: string;
   value: string | number | boolean | string[] | null;
   onChange: (value: string | number | boolean | string[] | null) => void;
-  type?: 'boolean' | 'number' | 'array' | 'enum' | 'string';
+  type: ConfigVariableType;
   options?: ConfigVariableOptions;
   disabled?: boolean;
   placeholder?: string;
 };
 
-// can be diff components, if possible refactor
-// rename?
 export const ConfigVariableDatabaseInput = ({
   label,
   value,
@@ -60,7 +59,7 @@ export const ConfigVariableDatabaseInput = ({
   };
 
   switch (type) {
-    case 'boolean':
+    case ConfigVariableType.BOOLEAN:
       return (
         <Select
           label={label}
@@ -73,7 +72,7 @@ export const ConfigVariableDatabaseInput = ({
         />
       );
 
-    case 'number':
+    case ConfigVariableType.NUMBER:
       return (
         <TextInputV2
           label={label}
@@ -89,7 +88,7 @@ export const ConfigVariableDatabaseInput = ({
         />
       );
 
-    case 'array':
+    case ConfigVariableType.ARRAY:
       return (
         <>
           {options && Array.isArray(options) ? (
@@ -171,7 +170,7 @@ export const ConfigVariableDatabaseInput = ({
         </>
       );
 
-    case 'enum':
+    case ConfigVariableType.ENUM:
       return (
         <Select
           label={label}
@@ -184,7 +183,7 @@ export const ConfigVariableDatabaseInput = ({
         />
       );
 
-    case 'string':
+    case ConfigVariableType.STRING:
       return (
         <TextInputV2
           label={label}

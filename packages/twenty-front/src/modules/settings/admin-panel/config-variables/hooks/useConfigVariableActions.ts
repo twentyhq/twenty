@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 
+import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { GET_DATABASE_CONFIG_VARIABLE } from '@/settings/admin-panel/config-variables/graphql/queries/getDatabaseConfigVariable';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -48,6 +49,9 @@ export const useConfigVariableActions = (variableName: string) => {
               query: GET_DATABASE_CONFIG_VARIABLE,
               variables: { key: variableName },
             },
+            {
+              query: GET_CLIENT_CONFIG,
+            },
           ],
         });
       } else {
@@ -60,6 +64,9 @@ export const useConfigVariableActions = (variableName: string) => {
             {
               query: GET_DATABASE_CONFIG_VARIABLE,
               variables: { key: variableName },
+            },
+            {
+              query: GET_CLIENT_CONFIG,
             },
           ],
         });
@@ -89,6 +96,9 @@ export const useConfigVariableActions = (variableName: string) => {
           {
             query: GET_DATABASE_CONFIG_VARIABLE,
             variables: { key: variableName },
+          },
+          {
+            query: GET_CLIENT_CONFIG,
           },
         ],
       });

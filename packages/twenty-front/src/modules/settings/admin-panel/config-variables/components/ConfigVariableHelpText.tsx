@@ -4,8 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { useRecoilValue } from 'recoil';
-import { ConfigSource } from '~/generated/graphql';
-import { ConfigVariableWithTypes } from '../types/ConfigVariableWithTypes';
+import { ConfigSource, ConfigVariable } from '~/generated/graphql';
 
 const StyledHelpText = styled.div<{ color?: string }>`
   color: ${({ theme, color }) => color || theme.font.color.tertiary};
@@ -14,13 +13,11 @@ const StyledHelpText = styled.div<{ color?: string }>`
 `;
 
 type ConfigVariableHelpTextProps = {
-  variable: ConfigVariableWithTypes;
+  variable: ConfigVariable;
   hasValueChanged: boolean;
   color?: string;
 };
 
-// lint is complaining that this is a Effect component when its not?
-// renamed it to have effect suffix to avoid linting error, weird
 export const ConfigVariableHelpText = ({
   variable,
   hasValueChanged,
