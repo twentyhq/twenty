@@ -92,6 +92,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.GoogleAuth,
     description: 'Callback URL for Google Auth APIs',
     type: ConfigVariableType.STRING,
+    isSensitive: true,
   })
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
 
@@ -324,6 +325,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.EmailSettings,
     description: 'SMTP user for authentication',
     type: ConfigVariableType.STRING,
+    isSensitive: true,
   })
   EMAIL_SMTP_USER: string;
 
@@ -484,6 +486,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.AnalyticsConfig,
     description: 'Clickhouse host for analytics',
     type: ConfigVariableType.STRING,
+    isSensitive: true,
   })
   @IsOptional()
   @IsUrl({
@@ -667,6 +670,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ExceptionHandler,
     description: 'Data Source Name (DSN) for Sentry logging',
     type: ConfigVariableType.STRING,
+    isSensitive: true,
   })
   @ValidateIf(
     (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
@@ -677,6 +681,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ExceptionHandler,
     description: 'Front-end DSN for Sentry logging',
     type: ConfigVariableType.STRING,
+    isSensitive: true,
   })
   @ValidateIf(
     (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
@@ -877,6 +882,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.Other,
     description: 'Random string to validate queries from Cloudflare',
     type: ConfigVariableType.STRING,
+    isSensitive: true,
   })
   @IsOptional()
   CLOUDFLARE_WEBHOOK_SECRET: string;
