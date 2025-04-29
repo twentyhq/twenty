@@ -8,7 +8,7 @@ const StyledDropdownMenuItemsExternalContainer = styled.div<{
   hasMaxHeight?: boolean;
   width: number | 'auto';
 }>`
-  --padding: ${({ theme }) => theme.spacing(1)};
+  --padding: ${({ theme }) => theme.spacing(1, 1, 0, 1)};
 
   align-items: flex-start;
   display: flex;
@@ -36,6 +36,7 @@ const StyledDropdownMenuItemsInternalContainer = styled.div`
 `;
 
 const StyledScrollWrapper = styled(ScrollWrapper)`
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
   width: 100%;
 `;
 
@@ -78,7 +79,9 @@ export const DropdownMenuItemsContainer = ({
       )}
     </StyledDropdownMenuItemsExternalContainer>
   ) : (
-    <ScrollWrapper componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}>
+    <StyledScrollWrapper
+      componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
+    >
       <StyledDropdownMenuItemsExternalContainer
         hasMaxHeight={hasMaxHeight}
         className={className}
@@ -89,6 +92,6 @@ export const DropdownMenuItemsContainer = ({
           {children}
         </StyledDropdownMenuItemsInternalContainer>
       </StyledDropdownMenuItemsExternalContainer>
-    </ScrollWrapper>
+    </StyledScrollWrapper>
   );
 };
