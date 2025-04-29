@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellDisplayMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDisplayMode';
 import { RecordTableCellEditButton } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditButton';
 import { RecordTableCellEditMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditMode';
@@ -59,11 +60,11 @@ const RecordTableCellHoveredPortalContent = () => {
   const showButton =
     !isFieldInputOnly && !isReadOnly && !(isMobile && isFirstColumn);
 
-  const { recordId } = useContext(FieldContext);
+  const { rowIndex } = useRecordTableRowContextOrThrow();
 
   const isRowActive = useRecoilComponentFamilyValueV2(
     isRecordTableRowActiveComponentFamilyState,
-    recordId,
+    rowIndex,
   );
 
   return (

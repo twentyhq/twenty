@@ -62,7 +62,7 @@ export const RecordTableTr = forwardRef<
 
   const isActive = useRecoilComponentFamilyValueV2(
     isRecordTableRowActiveComponentFamilyState,
-    recordId,
+    focusIndex,
   );
 
   return (

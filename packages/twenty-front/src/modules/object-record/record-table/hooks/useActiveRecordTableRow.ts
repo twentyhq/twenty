@@ -1,7 +1,8 @@
-import { activeRecordTableRowIdComponentState } from '@/object-record/record-table/states/activeRecordTableRowIndexComponentState';
+import { activeRecordTableRowIndexComponentState } from '@/object-record/record-table/states/activeRecordTableRowIndexComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useActiveRecordTableRow = (recordTableId?: string) => {
   const isRowActiveState = useRecoilComponentCallbackStateV2(
@@ -9,35 +10,37 @@ export const useActiveRecordTableRow = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const activeRowIdState = useRecoilComponentCallbackStateV2(
-    activeRecordTableRowIdComponentState,
+  const activeRowIndexState = useRecoilComponentCallbackStateV2(
+    activeRecordTableRowIndexComponentState,
     recordTableId,
   );
 
   const activateRecordTableRow = useRecoilCallback(
     ({ set }) =>
-      (recordId: string) => {
-        set(activeRowIdState, recordId);
+      (rowIndex: number) => {
+        set(activeRowIndexState, rowIndex);
 
-        set(isRowActiveState(recordId), true);
+        set(isRowActiveState(rowIndex), true);
       },
-    [activeRowIdState, isRowActiveState],
+    [activeRowIndexState, isRowActiveState],
   );
 
   const deactivateRecordTableRow = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
-        const activeRowId = snapshot.getLoadable(activeRowIdState).getValue();
+        const activeRowIndex = snapshot
+          .getLoadable(activeRowIndexState)
+          .getValue();
 
-        if (!activeRowId) {
+        if (!isDefined(activeRowIndex)) {
           return;
         }
 
-        set(activeRowIdState, null);
+        set(activeRowIndexState, null);
 
-        set(isRowActiveState(activeRowId), false);
+        set(isRowActiveState(activeRowIndex), false);
       },
-    [activeRowIdState, isRowActiveState],
+    [activeRowIndexState, isRowActiveState],
   );
 
   return {

@@ -142,7 +142,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
               objectNameSingular,
             });
 
-            activateRecordTableRow(recordId);
+            activateRecordTableRow(cellPosition.row);
           }
 
           return;
