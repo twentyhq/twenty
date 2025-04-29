@@ -4,15 +4,11 @@ import { Request, Response } from 'express';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { TraceableService } from 'src/engine/core-modules/dadshboard-linklogs/services/traceable.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Controller('traceable')
 @UseFilters(RestApiExceptionFilter)
 export class TraceableController {
-  constructor(
-    private readonly traceableService: TraceableService,
-    private readonly twentyConfigService: TwentyConfigService,
-  ) {}
+  constructor(private readonly traceableService: TraceableService) {}
 
   @Get('/r/:workspaceId/:traceableId')
   async handleLinkAccess(
@@ -21,7 +17,7 @@ export class TraceableController {
     @Param('workspaceId') workspaceId: string,
     @Param('traceableId') traceableId: string,
   ) {
-    const { traceable, workspace } =
+    const { traceable, notFoundUrl } =
       await this.traceableService.handleLinkAccess({
         workspaceId,
         traceableId,
@@ -29,11 +25,9 @@ export class TraceableController {
         userIp: req.ip || '',
       });
 
-    const notFoundUrl = `${workspace?.subdomain ?? this.twentyConfigService.get('DEFAULT_SUBDOMAIN')}.${this.twentyConfigService.get('FRONTEND_URL') ?? this.twentyConfigService.get('SERVER_URL')}/not-found`;
-
     return res.redirect(
       302,
-      traceable?.generatedUrl?.primaryLinkLabel ?? notFoundUrl,
+      traceable?.generatedUrl?.primaryLinkLabel ?? (notFoundUrl as string),
     );
   }
 }

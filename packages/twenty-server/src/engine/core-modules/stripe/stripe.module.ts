@@ -10,8 +10,6 @@ import { StripeIntegrationService } from 'src/engine/core-modules/stripe/integra
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 
-import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { SripeController } from './stripe.controller';
 
 @Module({
@@ -26,14 +24,9 @@ import { SripeController } from './stripe.controller';
       ],
     }),
     HttpModule,
-    TwentyConfigModule,
   ],
   controllers: [SripeController],
-  providers: [
-    StripeIntegrationResolver,
-    StripeIntegrationService,
-    TwentyConfigService,
-  ],
+  providers: [StripeIntegrationResolver, StripeIntegrationService],
   exports: [],
 })
 export class StripeModule {}

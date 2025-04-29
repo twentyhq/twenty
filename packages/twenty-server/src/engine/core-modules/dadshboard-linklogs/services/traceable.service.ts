@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 
 import { HandleLinkAccessResult } from 'src/engine/core-modules/dadshboard-linklogs/interfaces/traceable.interface';
 
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { LinkLogsWorkspaceEntity } from 'src/modules/linklogs/standard-objects/linklog.workspace-entity';
@@ -19,6 +20,7 @@ export class TraceableService {
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async handleLinkAccess(input: {
@@ -28,6 +30,8 @@ export class TraceableService {
     userIp: string;
   }): Promise<HandleLinkAccessResult> {
     const { workspaceId, traceableId, userAgent, userIp } = input;
+
+    const notFoundUrl = `${this.twentyConfigService.get('DEFAULT_SUBDOMAIN')}.${this.twentyConfigService.get('FRONTEND_URL') ?? this.twentyConfigService.get('SERVER_URL')}/not-found`;
 
     const traceableRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<TraceableWorkspaceEntity>(
@@ -40,7 +44,7 @@ export class TraceableService {
         `Missing workspaceId in payload ${JSON.stringify(input)}`,
       );
 
-      return { workspace: null, traceable: null };
+      return { workspace: null, traceable: null, notFoundUrl };
     }
 
     const workspace = await this.workspaceRepository.findOneBy({
@@ -53,6 +57,7 @@ export class TraceableService {
       return {
         traceable: null,
         workspace: null,
+        notFoundUrl,
       };
     }
 
@@ -66,6 +71,7 @@ export class TraceableService {
       return {
         workspace,
         traceable: null,
+        notFoundUrl: `${workspace?.subdomain ?? notFoundUrl.split('.')[0]}.${notFoundUrl.split('.')[1]}`,
       };
     }
 
@@ -91,6 +97,7 @@ export class TraceableService {
     return {
       workspace,
       traceable,
+      notFoundUrl,
     };
   }
 }

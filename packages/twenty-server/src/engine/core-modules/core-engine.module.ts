@@ -156,8 +156,6 @@ import { StripeModule } from './stripe/stripe.module';
     WorkspaceModule,
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
-    StripeModule,
-    InterModule,
   ],
 })
 export class CoreEngineModule {}

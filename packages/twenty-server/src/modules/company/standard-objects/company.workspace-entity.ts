@@ -175,7 +175,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.charge,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Charge`,
     description: msg`Company linked to the charge`,
     icon: 'IconPhone',

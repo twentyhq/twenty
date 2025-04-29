@@ -4,4 +4,5 @@ import { TraceableWorkspaceEntity } from 'src/modules/traceable/standard-objects
 export interface HandleLinkAccessResult {
   workspace: Workspace | null;
   traceable: TraceableWorkspaceEntity | null;
+  notFoundUrl: string | null;
 }
