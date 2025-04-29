@@ -262,19 +262,12 @@ export class TwentyConfigService {
   }
 
   validateConfigVariableExists(key: string): boolean {
-    const keyExists = key in this.configVariablesInstance;
+    const metadata = this.getConfigMetadata();
+    const keyExists = key in metadata;
 
     if (!keyExists) {
       throw new Error(
         `Config variable "${key}" does not exist in ConfigVariables`,
-      );
-    }
-
-    const metadata = this.getMetadata(key as keyof ConfigVariables);
-
-    if (!metadata) {
-      throw new Error(
-        `Config variable "${key}" exists but has no metadata defined`,
       );
     }
 
