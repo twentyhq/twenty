@@ -25,6 +25,7 @@ import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropd
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 
+import { activeTableRowIndexComponentState } from '@/object-record/record-table/states/activeTableRowIndexComponentState';
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -82,6 +83,11 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
 
   const { openFieldInput } = useOpenFieldInputEditMode();
 
+  const activeTableRowIndexState = useRecoilComponentCallbackStateV2(
+    activeTableRowIndexComponentState,
+    tableScopeId,
+  );
+
   const openTableCell = useRecoilCallback(
     ({ snapshot, set }) =>
       ({
@@ -134,6 +140,8 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
               recordId,
               objectNameSingular,
             });
+
+            set(activeTableRowIndexState, cellPosition.row);
           }
 
           return;
@@ -189,6 +197,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
       navigate,
       indexIdentifierUrl,
       openRecordInCommandMenu,
+      activeTableRowIndexState,
       setViewableRecordId,
       setViewableRecordNameSingular,
     ],
