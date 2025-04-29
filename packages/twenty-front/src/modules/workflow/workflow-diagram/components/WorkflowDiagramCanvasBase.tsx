@@ -198,9 +198,7 @@ export const WorkflowDiagramCanvasBase = ({
   const handleNodesChanges = (changes: NodeChange<WorkflowDiagramNode>[]) => {
     setWorkflowDiagram((diagram) => {
       if (!isDefined(diagram)) {
-        throw new Error(
-          'It must be impossible for the nodes to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
-        );
+        return diagram;
       }
 
       return {

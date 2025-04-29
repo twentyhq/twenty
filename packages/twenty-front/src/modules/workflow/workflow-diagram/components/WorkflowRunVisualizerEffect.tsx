@@ -1,4 +1,5 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
@@ -60,7 +61,7 @@ export const WorkflowRunVisualizerEffect = ({
   }, [setWorkflowVisualizerWorkflowId, workflowRun]);
 
   const handleWorkflowRunDiagramGeneration = useRecoilCallback(
-    ({ set }) =>
+    ({ snapshot, set }) =>
       ({
         workflowRunOutput,
         workflowVersionId,
@@ -77,7 +78,14 @@ export const WorkflowRunVisualizerEffect = ({
           return;
         }
 
-        set(workflowDiagramStatusState, 'computing-diagram');
+        const workflowDiagramStatus = getSnapshotValue(
+          snapshot,
+          workflowDiagramStatusState,
+        );
+
+        if (workflowDiagramStatus !== 'done') {
+          set(workflowDiagramStatusState, 'computing-diagram');
+        }
 
         set(flowState, {
           workflowVersionId,
@@ -107,7 +115,9 @@ export const WorkflowRunVisualizerEffect = ({
           set(workflowDiagramState, baseWorkflowRunDiagram);
         }
 
-        set(workflowDiagramStatusState, 'computing-dimensions');
+        if (workflowDiagramStatus !== 'done') {
+          set(workflowDiagramStatusState, 'computing-dimensions');
+        }
       },
     [
       flowState,

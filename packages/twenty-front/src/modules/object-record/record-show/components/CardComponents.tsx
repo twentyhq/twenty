@@ -16,8 +16,10 @@ import { WorkflowVersionVisualizer } from '@/workflow/workflow-diagram/component
 import { WorkflowVersionVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVersionVisualizerEffect';
 import { WorkflowVisualizer } from '@/workflow/workflow-diagram/components/WorkflowVisualizer';
 import { WorkflowVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVisualizerEffect';
+import { WorkflowRunVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowRunVisualizerComponentInstanceContext';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import styled from '@emotion/styled';
+import { useId } from 'react';
 
 const StyledGreyBox = styled.div<{ isInRightDrawer?: boolean }>`
   background: ${({ theme, isInRightDrawer }) =>
@@ -116,6 +118,8 @@ export const CardComponents: Record<CardType, CardComponentType> = {
   },
 
   [CardType.WorkflowRunCard]: ({ targetableObject }) => {
+    const componentId = useId();
+
     return (
       <WorkflowVisualizerComponentInstanceContext.Provider
         value={{
@@ -124,13 +128,19 @@ export const CardComponents: Record<CardType, CardComponentType> = {
           }),
         }}
       >
-        <WorkflowRunVisualizerEffect workflowRunId={targetableObject.id} />
-        <ListenRecordUpdatesEffect
-          objectNameSingular={targetableObject.targetObjectNameSingular}
-          recordId={targetableObject.id}
-          listenedFields={['status', 'output']}
-        />
-        <WorkflowRunVisualizer workflowRunId={targetableObject.id} />
+        <WorkflowRunVisualizerComponentInstanceContext.Provider
+          value={{
+            instanceId: componentId,
+          }}
+        >
+          <WorkflowRunVisualizerEffect workflowRunId={targetableObject.id} />
+          <ListenRecordUpdatesEffect
+            objectNameSingular={targetableObject.targetObjectNameSingular}
+            recordId={targetableObject.id}
+            listenedFields={['status', 'output']}
+          />
+          <WorkflowRunVisualizer workflowRunId={targetableObject.id} />
+        </WorkflowRunVisualizerComponentInstanceContext.Provider>
       </WorkflowVisualizerComponentInstanceContext.Provider>
     );
   },
