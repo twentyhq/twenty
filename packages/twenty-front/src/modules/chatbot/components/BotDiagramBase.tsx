@@ -3,6 +3,7 @@
 import { useGetChatbotFlowById } from '@/chatbot/hooks/useGetChatbotFlowById';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { useValidateChatbotFlow } from '@/chatbot/hooks/useValidateChatbotFlow';
+import { chatbotFlowIdState } from '@/chatbot/state/chatbotFlowIdState';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { useTheme } from '@emotion/react';
@@ -21,6 +22,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/input';
@@ -121,6 +123,12 @@ const initialNodes: Node[] = [
     data: { nodeStart: false, title: 'Mensagem' },
     position: { x: 500, y: 600 },
   },
+  {
+    id: '5',
+    type: 'addNode',
+    data: {},
+    position: { x: 700, y: 900 },
+  },
 ];
 
 const initialEdges: Edge[] = [
@@ -147,7 +155,6 @@ export const BotDiagramBase = ({
   nodeTypes,
   tagColor,
   tagText,
-  chatbotId,
 }: BotDiagramBaseProps) => {
   const theme = useTheme();
   const [nodes, setNodes] = useState<Node[]>([]);
@@ -160,7 +167,11 @@ export const BotDiagramBase = ({
   const { chatbotFlow } = useValidateChatbotFlow();
   const { updateFlow } = useUpdateChatbotFlow();
 
-  const { chatbotFlowData, refetch } = useGetChatbotFlowById(chatbotId);
+  const chatbotFlowId = useRecoilValue(chatbotFlowIdState);
+
+  const { chatbotFlowData, refetch } = useGetChatbotFlowById(
+    chatbotFlowId ?? '',
+  );
 
   // eslint-disable-next-line @nx/workspace-no-state-useref
   const hasValidatedRef = useRef(false);
@@ -191,18 +202,21 @@ export const BotDiagramBase = ({
     if (
       nodes.length > 0 &&
       edges.length > 0 &&
-      chatbotId &&
+      chatbotFlowId &&
       !hasValidatedRef.current
     ) {
-      chatbotFlow({ nodes, edges, chatbotId });
+      chatbotFlow({ nodes, edges, chatbotId: chatbotFlowId });
       hasValidatedRef.current = true;
     }
-  }, [nodes, edges, chatbotId]);
+  }, [nodes, edges, chatbotFlowId]);
 
   const onSave = useCallback(() => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
-      const newFlow = { ...flow, chatbotId };
+
+      if (!chatbotFlowId) return;
+
+      const newFlow = { ...flow, chatbotId: chatbotFlowId };
 
       console.log('flow: ', flow);
 
