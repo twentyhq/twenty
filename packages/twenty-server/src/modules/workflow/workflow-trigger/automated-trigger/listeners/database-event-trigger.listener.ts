@@ -13,11 +13,11 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
-import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import {
   WorkflowTriggerJob,
   WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
+import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 
 @Injectable()
 export class DatabaseEventTriggerListener {
@@ -67,9 +67,9 @@ export class DatabaseEventTriggerListener {
     >,
   ) {
     const workspaceId = payload.workspaceId;
-    const eventName = payload.name;
+    const databaseEventName = payload.name;
 
-    if (!workspaceId || !eventName) {
+    if (!workspaceId || !databaseEventName) {
       this.logger.error(
         `Missing workspaceId or eventName in payload ${JSON.stringify(
           payload,
@@ -89,15 +89,15 @@ export class DatabaseEventTriggerListener {
       return;
     }
 
-    const workflowEventListenerRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowEventListenerWorkspaceEntity>(
+    const workflowAutomatedTriggerRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(
         workspaceId,
-        'workflowEventListener',
+        'workflowAutomatedTrigger',
       );
 
-    const eventListeners = await workflowEventListenerRepository.find({
+    const eventListeners = await workflowAutomatedTriggerRepository.find({
       where: {
-        eventName,
+        databaseEventName,
       },
     });
 
