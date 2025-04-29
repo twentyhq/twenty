@@ -78,43 +78,8 @@ export class DatabaseConfigDriver
       );
     }
 
-    try {
-      await this.configStorage.set(key, value);
-      this.configCache.set(key, value);
-      this.logger.debug(
-        `[UPDATE] Config variable ${key as string} updated successfully`,
-      );
-    } catch (error) {
-      this.logger.error(
-        `[UPDATE] Failed to update config variable ${key as string}`,
-        error,
-      );
-      throw error;
-    }
-  }
-
-  async fetchAndCacheConfigVariable(key: keyof ConfigVariables): Promise<void> {
-    try {
-      const value = await this.configStorage.get(key);
-
-      if (value !== undefined) {
-        this.configCache.set(key, value);
-        this.logger.debug(
-          `[FETCH] Config variable ${key as string} loaded from database`,
-        );
-      } else {
-        this.configCache.markKeyAsMissing(key);
-        this.logger.debug(
-          `[FETCH] Config variable ${key as string} not found in database, marked as missing`,
-        );
-      }
-    } catch (error) {
-      this.logger.error(
-        `[FETCH] Failed to fetch config variable ${key as string} from database`,
-        error,
-      );
-      this.configCache.markKeyAsMissing(key);
-    }
+    await this.configStorage.set(key, value);
+    this.configCache.set(key, value);
   }
 
   getCacheInfo(): {
@@ -126,39 +91,19 @@ export class DatabaseConfigDriver
   }
 
   private async loadAllConfigVarsFromDb(): Promise<number> {
-    try {
-      this.logger.debug('[LOAD] Fetching all config variables from database');
-      const configVars = await this.configStorage.loadAll();
+    const configVars = await this.configStorage.loadAll();
 
-      this.logger.debug(
-        `[LOAD] Processing ${this.allPossibleConfigKeys.length} possible config variables`,
-      );
-
-      for (const [key, value] of configVars.entries()) {
-        this.configCache.set(key, value);
-      }
-
-      for (const key of this.allPossibleConfigKeys) {
-        if (!configVars.has(key)) {
-          this.configCache.markKeyAsMissing(key);
-        }
-      }
-
-      const missingKeysCount =
-        this.allPossibleConfigKeys.length - configVars.size;
-
-      this.logger.debug(
-        `[LOAD] Cached ${configVars.size} config variables, marked ${missingKeysCount} keys as missing`,
-      );
-
-      return configVars.size;
-    } catch (error) {
-      this.logger.error(
-        '[LOAD] Failed to load config variables from database',
-        error,
-      );
-      throw error;
+    for (const [key, value] of configVars.entries()) {
+      this.configCache.set(key, value);
     }
+
+    for (const key of this.allPossibleConfigKeys) {
+      if (!configVars.has(key)) {
+        this.configCache.markKeyAsMissing(key);
+      }
+    }
+
+    return configVars.size;
   }
 
   async delete(key: keyof ConfigVariables): Promise<void> {
@@ -179,15 +124,7 @@ export class DatabaseConfigDriver
   @Cron(CONFIG_VARIABLES_REFRESH_CRON_INTERVAL)
   async refreshAllCache(): Promise<void> {
     try {
-      this.logger.debug(
-        '[REFRESH] Starting scheduled refresh of config variables',
-      );
-
       const dbValues = await this.configStorage.loadAll();
-
-      this.logger.debug(
-        `[REFRESH] Processing ${this.allPossibleConfigKeys.length} possible config variables`,
-      );
 
       for (const [key, value] of dbValues.entries()) {
         if (!isEnvOnlyConfigVar(key)) {
@@ -200,15 +137,7 @@ export class DatabaseConfigDriver
           this.configCache.markKeyAsMissing(key);
         }
       }
-
-      const missingKeysCount =
-        this.allPossibleConfigKeys.length - dbValues.size;
-
-      this.logger.log(
-        `[REFRESH] Config variables refreshed: ${dbValues.size} values updated, ${missingKeysCount} marked as missing`,
-      );
     } catch (error) {
-      this.logger.error('[REFRESH] Failed to refresh config variables', error);
       // Error is caught and logged but not rethrown to prevent the cron job from crashing
     }
   }

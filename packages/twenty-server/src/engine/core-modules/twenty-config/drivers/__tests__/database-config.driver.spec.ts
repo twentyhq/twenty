@@ -211,51 +211,6 @@ describe('DatabaseConfigDriver', () => {
     });
   });
 
-  describe('fetchAndCacheConfigVariable', () => {
-    it('should refresh config variable from storage', async () => {
-      const value = true;
-
-      jest.spyOn(configStorage, 'get').mockResolvedValue(value);
-
-      await driver.fetchAndCacheConfigVariable(CONFIG_PASSWORD_KEY);
-
-      expect(configStorage.get).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY);
-      expect(configCache.set).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY, value);
-    });
-
-    it('should mark key as missing when value is undefined', async () => {
-      jest.spyOn(configStorage, 'get').mockResolvedValue(undefined);
-
-      await driver.fetchAndCacheConfigVariable(CONFIG_PASSWORD_KEY);
-
-      expect(configStorage.get).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY);
-      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(
-        CONFIG_PASSWORD_KEY,
-      );
-      expect(configCache.set).not.toHaveBeenCalled();
-    });
-
-    it('should mark key as missing when storage fetch fails', async () => {
-      const error = new Error('Storage error');
-
-      jest.spyOn(configStorage, 'get').mockRejectedValue(error);
-      const loggerSpy = jest
-        .spyOn(driver['logger'], 'error')
-        .mockImplementation();
-
-      await driver.fetchAndCacheConfigVariable(CONFIG_PASSWORD_KEY);
-
-      expect(configStorage.get).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY);
-      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(
-        CONFIG_PASSWORD_KEY,
-      );
-      expect(loggerSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Failed to fetch config'),
-        error,
-      );
-    });
-  });
-
   describe('cache operations', () => {
     it('should return cache info', () => {
       const cacheInfo = {
