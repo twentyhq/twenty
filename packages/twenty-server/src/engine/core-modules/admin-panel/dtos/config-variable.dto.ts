@@ -3,8 +3,8 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import GraphQLJSON from 'graphql-type-json';
 
 import { ConfigSource } from 'src/engine/core-modules/twenty-config/enums/config-source.enum';
+import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import { ConfigVariableOptions } from 'src/engine/core-modules/twenty-config/types/config-variable-options.type';
-import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/types/config-variable-type.type';
 
 registerEnumType(ConfigSource, {
   name: 'ConfigSource',

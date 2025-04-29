@@ -14,7 +14,7 @@ import {
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
-import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/types/config-variable-type.type';
+import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 import { ConfigStorageInterface } from './interfaces/config-storage.interface';

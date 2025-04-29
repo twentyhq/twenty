@@ -7,7 +7,7 @@ import {
   IsString,
 } from 'class-validator';
 
-import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/types/config-variable-type.type';
+import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import { applyBasicValidators } from 'src/engine/core-modules/twenty-config/utils/apply-basic-validators.util';
 import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
 
