@@ -1,6 +1,5 @@
-import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
-
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { FILTER_FIELD_LIST_ID } from '@/object-record/object-filter-dropdown/constants/FilterFieldListId';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
@@ -17,7 +16,7 @@ export const ObjectFilterDropdownFilterSelectMenuItemV2 = ({
   fieldMetadataItemToSelect,
   onClick,
 }: ObjectFilterDropdownFilterSelectMenuItemV2Props) => {
-  const { resetSelectedItem } = useSelectableList(VIEW_BAR_FILTER_DROPDOWN_ID);
+  const { resetSelectedItem } = useSelectableList(FILTER_FIELD_LIST_ID);
 
   const isSelectedItem = useRecoilComponentFamilyValueV2(
     isSelectedItemIdComponentFamilySelector,
