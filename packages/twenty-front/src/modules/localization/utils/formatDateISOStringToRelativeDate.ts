@@ -9,7 +9,6 @@ export const formatDateISOStringToRelativeDate = (
   isoDate: string,
   isDayMaximumPrecision = false,
 ) => {
-  // test change
   const now = new Date();
   const targetDate = new Date(isoDate);
 
