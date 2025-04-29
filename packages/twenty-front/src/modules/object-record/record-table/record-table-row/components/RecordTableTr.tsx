@@ -3,7 +3,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { isRowVisibleComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowVisibleComponentFamilyState';
-import { isTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isTableRowActiveComponentFamilyState';
+import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import styled from '@emotion/styled';
 import { ReactNode, forwardRef } from 'react';
@@ -59,7 +59,7 @@ export const RecordTableTr = forwardRef<
   );
 
   const isActive = useRecoilComponentFamilyValueV2(
-    isTableRowActiveComponentFamilyState,
+    isRecordTableRowActiveComponentFamilyState,
     recordId,
   );
 
