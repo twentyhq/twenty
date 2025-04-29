@@ -458,6 +458,12 @@ export const WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS = {
   workflow: '20202020-4082-4641-8569-dc08d5365002',
 };
 
+export const WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS = {
+  databaseEventName: '20202020-3319-4234-a34c-3f92c1ab56e7',
+  cronPattern: '20202020-3319-4234-a34c-bac8f903de12',
+  workflow: '20202020-3319-4234-a34c-8e1a4d2f7c03',
+};
+
 export const WORKFLOW_STANDARD_FIELD_IDS = {
   name: '20202020-b3d3-478f-acc0-5d901e725b20',
   lastPublishedVersionId: '20202020-326a-4fba-8639-3456c0a169e8',
@@ -466,6 +472,7 @@ export const WORKFLOW_STANDARD_FIELD_IDS = {
   versions: '20202020-9432-416e-8f3c-27ee3153d099',
   runs: '20202020-759b-4340-b58b-e73595c4df4f',
   eventListeners: '20202020-0229-4c66-832e-035c67579a38',
+  automatedTriggers: '20202020-3319-4234-a34c-117ecad2b8a9',
   favorites: '20202020-c554-4c41-be7a-cf9cd4b0d512',
   timelineActivities: '20202020-906e-486a-a798-131a5f081faf',
   createdBy: '20202020-6007-401a-8aa5-e6f48581a6f3',
