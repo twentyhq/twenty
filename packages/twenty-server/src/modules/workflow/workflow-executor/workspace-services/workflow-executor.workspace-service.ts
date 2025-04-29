@@ -129,7 +129,7 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
         context: updatedContext,
       });
 
-      if (!step.nextStepIds?.[0]) {
+      if (!isDefined(step.nextStepIds?.[0])) {
         return actionOutput;
       }
 
