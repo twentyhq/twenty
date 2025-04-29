@@ -10,7 +10,6 @@ import {
   ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
@@ -199,12 +198,9 @@ export class RestApiCoreServiceV2 {
       return this.formatPaginatedResult(
         records,
         objectMetadataNamePlural,
-        objectMetadataItemWithFieldsMaps,
-        objectMetadata,
         isForwardPagination,
         hasMoreRecords,
         totalCount,
-        dataSource.featureFlagMap,
       );
     }
   }
@@ -291,7 +287,12 @@ export class RestApiCoreServiceV2 {
     const isForwardPagination = !inputs.endingBefore;
 
     return {
-      records,
+      records: formatGetManyData<ObjectLiteral[]>(
+        records,
+        objectMetadataItemWithFieldsMaps as any,
+        objectMetadata.objectMetadataMaps,
+        dataSource.featureFlagMap[FeatureFlagKey.IsNewRelationEnabled],
+      ),
       totalCount,
       hasMoreRecords,
       isForwardPagination,
@@ -363,24 +364,16 @@ export class RestApiCoreServiceV2 {
   private formatPaginatedResult(
     finalRecords: any[],
     objectMetadataNamePlural: string,
-    objectMetadataItemWithFieldsMaps: any,
-    objectMetadata: any,
     isForwardPagination: boolean,
     hasMoreRecords: boolean,
     totalCount: number,
-    featureFlagsMap: FeatureFlagMap,
   ) {
     const hasPreviousPage = !isForwardPagination && hasMoreRecords;
 
     return this.formatResult({
       operation: 'findMany',
       objectNamePlural: objectMetadataNamePlural,
-      data: formatGetManyData(
-        finalRecords,
-        objectMetadataItemWithFieldsMaps as any,
-        objectMetadata.objectMetadataMaps,
-        featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
-      ),
+      data: finalRecords,
       pageInfo: {
         hasNextPage: isForwardPagination && hasMoreRecords,
         ...(hasPreviousPage ? { hasPreviousPage } : {}),
