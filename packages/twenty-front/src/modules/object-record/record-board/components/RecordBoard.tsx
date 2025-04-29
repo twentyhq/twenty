@@ -12,7 +12,6 @@ import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useR
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
-import { getBeforeAndAfterIndexRecordIds } from '@/object-record/record-board/utils/getBeforeAndAfterIndexRecordIds';
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
@@ -33,6 +32,7 @@ import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { ViewType } from '@/views/types/ViewType';
+import { getIndexNeighboursElementsFromArray } from '~/utils/array/getIndexNeighboursElementsFromArray';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -174,10 +174,10 @@ export const RecordBoard = () => {
               )
             : destinationRecordByGroupIds;
 
-        const { recordBeforeId, recordAfterId } =
-          getBeforeAndAfterIndexRecordIds({
-            draggedRecordIndex: destinationIndexInColumn,
-            otherRecordIds: otherRecordIdsInDestinationColumn,
+        const { before: recordBeforeId, after: recordAfterId } =
+          getIndexNeighboursElementsFromArray({
+            index: destinationIndexInColumn,
+            array: otherRecordIdsInDestinationColumn,
           });
         const recordBefore = recordBeforeId
           ? getSnapshotValue(snapshot, recordStoreFamilyState(recordBeforeId))
