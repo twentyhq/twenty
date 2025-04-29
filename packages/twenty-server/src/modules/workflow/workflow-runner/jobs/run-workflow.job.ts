@@ -146,6 +146,11 @@ export class RunWorkflowJob {
     const nextStepId = lastExecutedStep.nextStepIds?.[0];
 
     if (!nextStepId) {
+      await this.workflowRunWorkspaceService.endWorkflowRun({
+        workflowRunId,
+        status: WorkflowRunStatus.COMPLETED,
+      });
+
       return;
     }
 
