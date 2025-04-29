@@ -15,6 +15,7 @@ import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hook
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseLoadRecordIndexBoardProps = {
@@ -68,17 +69,38 @@ export const useLoadRecordIndexBoardColumn = ({
     recordBoardId,
   });
 
-  const recordIndexKanbanFieldMetadataItem = objectMetadataItem.fields.find(
-    (field) => field.id === boardFieldMetadataId,
-  );
+  let recordIndexKanbanFieldMetadataFilter: { [x: string]: any } | undefined;
+
+  if (isDefined(boardFieldMetadataId)) {
+    const recordIndexKanbanFieldMetadataItem = objectMetadataItem.fields.find(
+      (field) => field.id === boardFieldMetadataId,
+    );
+
+    if (!isDefined(recordIndexKanbanFieldMetadataItem)) {
+      throw new Error('Record index kanban field metadata item not found');
+    }
+
+    if (
+      !isDefined(recordIndexKanbanFieldMetadataItem?.name) ||
+      isEmpty(recordIndexKanbanFieldMetadataItem.name)
+    ) {
+      throw new Error('Record index kanban field metadata item name not found');
+    }
+
+    recordIndexKanbanFieldMetadataFilter = {
+      [recordIndexKanbanFieldMetadataItem.name]: isDefined(
+        recordGroupDefinition?.value,
+      )
+        ? { in: [recordGroupDefinition.value] }
+        : { is: 'NULL' },
+    };
+  }
 
   const filter = {
     ...requestFilters,
-    [recordIndexKanbanFieldMetadataItem?.name ?? '']: isDefined(
-      recordGroupDefinition?.value,
-    )
-      ? { in: [recordGroupDefinition?.value] }
-      : { is: 'NULL' },
+    ...(isDefined(recordIndexKanbanFieldMetadataFilter) && {
+      ...recordIndexKanbanFieldMetadataFilter,
+    }),
   };
 
   const {
