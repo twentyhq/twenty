@@ -10,33 +10,21 @@ import { IconPlus } from 'twenty-ui/display';
 const StyledPlusIconHeaderCell = styled.th<{
   isTableWiderThanScreen: boolean;
 }>`
-  ${({ theme }) => {
-    return `
-  &:hover {
-    background: ${theme.background.transparent.light};
-  };
-  `;
-  }};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   background-color: ${({ theme }) => theme.background.primary};
   border-left: none !important;
   color: ${({ theme }) => theme.font.color.tertiary};
   border-right: none !important;
-  width: 32px;
+  cursor: default;
 
   ${({ isTableWiderThanScreen, theme }) =>
     isTableWiderThanScreen
       ? `
     background-color: ${theme.background.primary};
+    width: 32px;
     `
-      : ''};
+      : 'width: 100%'};
   z-index: 1;
-`;
-
-const StyledEmptyHeaderCell = styled.th`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  background-color: ${({ theme }) => theme.background.primary};
-  width: 100%;
 `;
 
 const StyledPlusIconContainer = styled.div`
@@ -44,7 +32,14 @@ const StyledPlusIconContainer = styled.div`
   display: flex;
   height: 32px;
   justify-content: center;
-  width: 100%;
+`;
+
+const StyledDropdownContainer = styled.div`
+  width: 32px;
+  &:hover {
+    background: ${({ theme }) => theme.background.transparent.light};
+  }
+  cursor: pointer;
 `;
 
 const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
@@ -60,8 +55,8 @@ export const RecordTableHeaderLastColumn = () => {
     (scrollWrapperHTMLElement?.scrollWidth ?? 0);
 
   return (
-    <>
-      <StyledPlusIconHeaderCell isTableWiderThanScreen={isTableWiderThanScreen}>
+    <StyledPlusIconHeaderCell isTableWiderThanScreen={isTableWiderThanScreen}>
+      <StyledDropdownContainer>
         <Dropdown
           dropdownId={HIDDEN_TABLE_COLUMN_DROPDOWN_ID}
           clickableComponent={
@@ -75,8 +70,7 @@ export const RecordTableHeaderLastColumn = () => {
             scope: HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID,
           }}
         />
-      </StyledPlusIconHeaderCell>
-      <StyledEmptyHeaderCell />
-    </>
+      </StyledDropdownContainer>
+    </StyledPlusIconHeaderCell>
   );
 };
