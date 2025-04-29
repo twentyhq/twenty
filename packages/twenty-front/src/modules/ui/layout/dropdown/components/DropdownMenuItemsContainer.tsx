@@ -5,12 +5,12 @@ import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledDropdownMenuItemsExternalContainer = styled.div<{
-  addPadding?: boolean;
+  displayPadding?: boolean;
   hasMaxHeight?: boolean;
   width: number | 'auto';
 }>`
-  --padding: ${({ theme, addPadding }) =>
-    addPadding ? theme.spacing(1) : theme.spacing(0)};
+  --padding: ${({ theme, displayPadding }) =>
+    displayPadding ? theme.spacing(1) : theme.spacing(0)};
 
   align-items: flex-start;
   display: flex;
@@ -83,7 +83,7 @@ export const DropdownMenuItemsContainer = ({
       className={className}
       role="listbox"
       width={width}
-      addPadding
+      displayPadding
     >
       <StyledDropdownMenuItemsInternalContainer>
         {children}
