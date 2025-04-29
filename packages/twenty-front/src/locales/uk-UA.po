@@ -290,7 +290,7 @@ msgid "Add Field"
 msgstr "Додати поле"
 
 #. js-lingui-id: vCSBPD
-#: src/modules/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton.tsx
+#: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
 msgid "Add filter"
 msgstr "Додати фільтр"
 
@@ -393,7 +393,7 @@ msgid "Advanced"
 msgstr ""
 
 #. js-lingui-id: tMFFwF
-#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
+#: src/modules/views/components/ViewBarFilterDropdownAdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "Розширений фільтр"
 
@@ -2163,9 +2163,8 @@ msgid "Fields Count"
 msgstr "Кількість полів"
 
 #. js-lingui-id: o7J4JM
+#: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
-#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx
-#: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx
 msgid "Filter"
 msgstr "Фільтр"
 

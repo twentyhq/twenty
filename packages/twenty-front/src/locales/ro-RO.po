@@ -290,7 +290,7 @@ msgid "Add Field"
 msgstr "Adaugă câmpul"
 
 #. js-lingui-id: vCSBPD
-#: src/modules/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton.tsx
+#: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
 msgid "Add filter"
 msgstr "Adaugă filtru"
 
@@ -393,7 +393,7 @@ msgid "Advanced"
 msgstr ""
 
 #. js-lingui-id: tMFFwF
-#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
+#: src/modules/views/components/ViewBarFilterDropdownAdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "Filtru avansat"
 
@@ -2163,9 +2163,8 @@ msgid "Fields Count"
 msgstr "Numărul de câmpuri"
 
 #. js-lingui-id: o7J4JM
+#: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
-#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx
-#: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx
 msgid "Filter"
 msgstr "Filtru"
 
