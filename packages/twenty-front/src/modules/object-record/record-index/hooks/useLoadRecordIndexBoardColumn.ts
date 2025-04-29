@@ -15,7 +15,7 @@ import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hook
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import isEmpty from 'lodash.isempty';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseLoadRecordIndexBoardProps = {
@@ -69,7 +69,7 @@ export const useLoadRecordIndexBoardColumn = ({
     recordBoardId,
   });
 
-  let recordIndexKanbanFieldMetadataFilter: { [x: string]: any } | undefined;
+  let recordIndexKanbanFieldMetadataFilter: { [x: string]: any } = {};
 
   if (isDefined(boardFieldMetadataId)) {
     const recordIndexKanbanFieldMetadataItem = objectMetadataItem.fields.find(
@@ -80,10 +80,7 @@ export const useLoadRecordIndexBoardColumn = ({
       throw new Error('Record index kanban field metadata item not found');
     }
 
-    if (
-      !isDefined(recordIndexKanbanFieldMetadataItem?.name) ||
-      isEmpty(recordIndexKanbanFieldMetadataItem.name)
-    ) {
+    if (!isNonEmptyString(recordIndexKanbanFieldMetadataItem?.name ?? '')) {
       throw new Error('Record index kanban field metadata item name not found');
     }
 
@@ -98,9 +95,7 @@ export const useLoadRecordIndexBoardColumn = ({
 
   const filter = {
     ...requestFilters,
-    ...(isDefined(recordIndexKanbanFieldMetadataFilter) && {
-      ...recordIndexKanbanFieldMetadataFilter,
-    }),
+    ...recordIndexKanbanFieldMetadataFilter,
   };
 
   const {
