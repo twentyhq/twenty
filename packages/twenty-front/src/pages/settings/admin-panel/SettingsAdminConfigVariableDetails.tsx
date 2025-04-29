@@ -32,7 +32,7 @@ const StyledForm = styled(Form)`
 
 const StyledRow = styled.div`
   display: flex;
-
+  align-items: flex-end;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
