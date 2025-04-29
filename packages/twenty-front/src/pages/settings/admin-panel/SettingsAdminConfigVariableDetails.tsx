@@ -3,8 +3,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Form, useParams } from 'react-router-dom';
 
+import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { ConfigVariableHelpText } from '@/settings/admin-panel/config-variables/components/ConfigVariableHelpText';
-import { ConfigVariableTitle } from '@/settings/admin-panel/config-variables/components/ConfigVariableTitle';
 import { ConfigVariableValueInput } from '@/settings/admin-panel/config-variables/components/ConfigVariableValueInput';
 import { useConfigVariableActions } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableActions';
 import { useConfigVariableForm } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableForm';
@@ -13,9 +13,15 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { SettingsPath } from '@/types/SettingsPath';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useRecoilValue } from 'recoil';
 import { ConfigVariableValue } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconDeviceFloppy, IconPencil, IconX } from 'twenty-ui/display';
+import {
+  H3Title,
+  IconDeviceFloppy,
+  IconPencil,
+  IconX,
+} from 'twenty-ui/display';
 import { Button, ButtonGroup } from 'twenty-ui/input';
 import {
   ConfigSource,
@@ -28,6 +34,10 @@ const StyledForm = styled(Form)`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(4)};
   width: 100%;
+`;
+
+const StyledH3Title = styled(H3Title)`
+  margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledRow = styled.div`
@@ -47,6 +57,9 @@ export const SettingsAdminConfigVariableDetails = () => {
   const { t } = useLingui();
   const [isEditing, setIsEditing] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const isConfigVariablesInDbEnabled = useRecoilValue(
+    isConfigVariablesInDbEnabledState,
+  );
 
   const { data: configVariableData, loading } =
     useGetDatabaseConfigVariableQuery({
@@ -132,8 +145,8 @@ export const SettingsAdminConfigVariableDetails = () => {
         ]}
       >
         <SettingsPageContainer>
-          <ConfigVariableTitle
-            name={variable.name}
+          <StyledH3Title
+            title={variable.name}
             description={variable.description}
           />
 
@@ -152,7 +165,7 @@ export const SettingsAdminConfigVariableDetails = () => {
                   variant="primary"
                   onClick={handleEditClick}
                   type="button"
-                  disabled={isEnvOnly}
+                  disabled={isEnvOnly || !isConfigVariablesInDbEnabled}
                 />
               ) : (
                 <StyledButtonGroup>

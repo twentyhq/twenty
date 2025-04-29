@@ -35,7 +35,7 @@ export const ConfigVariableHelpText = ({
   if (isReadOnly) {
     return (
       <StyledHelpText>
-        {t`Database configuration is currently disabled. `}
+        {t`Database configuration is currently disabled.`}{' '}
         {isFromEnvironment
           ? t`Value is set in the server environment, it may be a different value on the worker.`
           : t`Using default application value. Configure via environment variables.`}
