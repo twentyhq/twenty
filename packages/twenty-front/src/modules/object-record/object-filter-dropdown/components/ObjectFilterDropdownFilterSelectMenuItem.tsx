@@ -1,4 +1,3 @@
-import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 
@@ -8,6 +7,7 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { FILTER_FIELD_LIST_ID } from '@/object-record/object-filter-dropdown/constants/FilterFieldListId';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -50,7 +50,7 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     objectFilterDropdownFilterIsSelectedComponentState,
   );
 
-  const { resetSelectedItem } = useSelectableList(OBJECT_FILTER_DROPDOWN_ID);
+  const { resetSelectedItem } = useSelectableList(FILTER_FIELD_LIST_ID);
 
   const isSelectedItem = useRecoilComponentFamilyValueV2(
     isSelectedItemIdComponentFamilySelector,
