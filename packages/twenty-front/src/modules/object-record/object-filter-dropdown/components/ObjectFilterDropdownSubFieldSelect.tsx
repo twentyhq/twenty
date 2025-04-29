@@ -1,6 +1,7 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { StyledInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFieldSelect';
+import { FILTER_FIELD_LIST_ID } from '@/object-record/object-filter-dropdown/constants/FilterFieldListId';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
@@ -29,7 +30,6 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconApps, IconChevronLeft, useIcons } from 'twenty-ui/display';
@@ -138,9 +138,10 @@ export const ObjectFilterDropdownSubFieldSelect = () => {
     setObjectFilterDropdownFilterIsSelected(false);
     setSubFieldNameUsedInDropdown(null);
   };
+
   const selectedItemId = useRecoilComponentValueV2(
     selectedItemIdComponentState,
-    VIEW_BAR_FILTER_DROPDOWN_ID,
+    FILTER_FIELD_LIST_ID,
   );
 
   if (!isDefined(objectFilterDropdownSubMenuFieldType)) {
@@ -189,7 +190,7 @@ export const ObjectFilterDropdownSubFieldSelect = () => {
         <SelectableList
           hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
           selectableItemIdArray={['-1', ...options]}
-          selectableListInstanceId={VIEW_BAR_FILTER_DROPDOWN_ID}
+          selectableListInstanceId={FILTER_FIELD_LIST_ID}
         >
           {compositeFieldTypeFilterableByAnySubField ? (
             <SelectableListItem
