@@ -1,14 +1,14 @@
-import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useResetFilterDropdown';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { Trans } from '@lingui/react/macro';
 
-export const MultipleFiltersButton = () => {
+export const ViewBarFilterButton = () => {
   const { resetFilterDropdown } = useResetFilterDropdown();
 
   const { toggleDropdown, isDropdownOpen } = useDropdown(
-    OBJECT_FILTER_DROPDOWN_ID,
+    VIEW_BAR_FILTER_DROPDOWN_ID,
   );
 
   const handleClick = () => {

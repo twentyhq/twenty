@@ -3,24 +3,20 @@ import { ObjectFilterOperandSelectAndInput } from '@/object-record/object-filter
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { ObjectFilterDropdownFieldSelect } from './ObjectFilterDropdownFieldSelect';
+import { ViewBarFilterDropdownAdvancedFilterButton } from '@/views/components/ViewBarFilterDropdownAdvancedFilterButton';
+import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
+import { ObjectFilterDropdownFieldSelect } from '../../object-record/object-filter-dropdown/components/ObjectFilterDropdownFieldSelect';
 
-type MultipleFiltersDropdownContentProps = {
-  filterDropdownId?: string;
-};
-
-export const MultipleFiltersDropdownContent = ({
-  filterDropdownId,
-}: MultipleFiltersDropdownContentProps) => {
+export const ViewBarFilterDropdownContent = () => {
   const [objectFilterDropdownIsSelectingCompositeField] =
     useRecoilComponentStateV2(
       objectFilterDropdownIsSelectingCompositeFieldComponentState,
-      filterDropdownId,
+      VIEW_BAR_FILTER_DROPDOWN_ID,
     );
 
   const [objectFilterDropdownFilterIsSelected] = useRecoilComponentStateV2(
     objectFilterDropdownFilterIsSelectedComponentState,
-    filterDropdownId,
+    VIEW_BAR_FILTER_DROPDOWN_ID,
   );
 
   const shouldShowCompositeSelectionSubMenu =
@@ -32,12 +28,15 @@ export const MultipleFiltersDropdownContent = ({
     <>
       {shouldShowFilterInput ? (
         <ObjectFilterOperandSelectAndInput
-          filterDropdownId={filterDropdownId}
+          filterDropdownId={VIEW_BAR_FILTER_DROPDOWN_ID}
         />
       ) : shouldShowCompositeSelectionSubMenu ? (
         <ObjectFilterDropdownSubFieldSelect />
       ) : (
-        <ObjectFilterDropdownFieldSelect isAdvancedFilterButtonVisible />
+        <>
+          <ObjectFilterDropdownFieldSelect />
+          <ViewBarFilterDropdownAdvancedFilterButton />
+        </>
       )}
     </>
   );

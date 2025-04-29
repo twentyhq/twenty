@@ -1,9 +1,9 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
-import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
+import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
@@ -40,7 +40,7 @@ export const StyledPill = styled(Pill)`
   color: ${({ theme }) => theme.color.blue};
 `;
 
-export const AdvancedFilterButton = () => {
+export const ViewBarFilterDropdownAdvancedFilterButton = () => {
   const advancedFilterQuerySubFilterCount = 0; // TODO
 
   const { t } = useLingui();
@@ -50,7 +50,7 @@ export const AdvancedFilterButton = () => {
   );
 
   const { closeDropdown: closeObjectFilterDropdown } = useDropdown(
-    OBJECT_FILTER_DROPDOWN_ID,
+    VIEW_BAR_FILTER_DROPDOWN_ID,
   );
 
   const { currentView } = useGetCurrentViewOnly();
