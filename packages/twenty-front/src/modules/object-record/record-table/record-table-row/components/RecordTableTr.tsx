@@ -16,8 +16,6 @@ const StyledTr = styled.tr<{ isDragging: boolean; isActive: boolean }>`
   position: relative;
   transition: border-left-color 0.2s ease-in-out;
 
-  z-index: ${({ isActive }) => (isActive ? 1 : 0)};
-
   ${({ isActive, theme }) =>
     isActive
       ? `
