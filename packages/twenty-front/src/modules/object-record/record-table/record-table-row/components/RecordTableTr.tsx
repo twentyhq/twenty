@@ -3,17 +3,37 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { isRowVisibleComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowVisibleComponentFamilyState';
+import { isTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isTableRowActiveComponentFamilyState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import styled from '@emotion/styled';
 import { ReactNode, forwardRef } from 'react';
 
-const StyledTr = styled.tr<{ isDragging: boolean }>`
+const StyledTr = styled.tr<{ isDragging: boolean; isActive: boolean }>`
+  border: ${({ isActive, theme }) =>
+    isActive ? `1px solid ${theme.adaptiveColors.blue4}` : 'none'};
   position: relative;
-  border: ${({ isDragging, theme }) =>
-    isDragging
-      ? `1px solid ${theme.border.color.medium}`
-      : '1px solid transparent'};
   transition: border-left-color 0.2s ease-in-out;
+  z-index: ${({ isActive }) => (isActive ? 1 : 0)};
+
+  ${({ isActive, theme }) =>
+    isActive
+      ? `
+      td {
+        &:not(:first-of-type) {
+          border-bottom: 1px solid ${theme.adaptiveColors.blue4};
+          border-top: 1px solid ${theme.adaptiveColors.blue4};
+        }
+        &:nth-of-type(2) {
+          border-left: 1px solid ${theme.adaptiveColors.blue4};
+          border-radius: ${theme.border.radius.sm} 0 0 ${theme.border.radius.sm};
+        }
+        &:last-of-type {
+          border-right: 1px solid ${theme.adaptiveColors.blue4};
+          border-radius: 0 ${theme.border.radius.sm} ${theme.border.radius.sm} 0;
+        }
+      }
+    `
+      : ''}
 `;
 
 type RecordTableTrProps = {
@@ -21,7 +41,7 @@ type RecordTableTrProps = {
   recordId: string;
   focusIndex: number;
   isDragging?: boolean;
-} & React.ComponentProps<typeof StyledTr>;
+} & Omit<React.ComponentProps<typeof StyledTr>, 'isActive'>;
 
 export const RecordTableTr = forwardRef<
   HTMLTableRowElement,
@@ -35,6 +55,11 @@ export const RecordTableTr = forwardRef<
 
   const isRowVisible = useRecoilComponentFamilyValueV2(
     isRowVisibleComponentFamilyState,
+    recordId,
+  );
+
+  const isActive = useRecoilComponentFamilyValueV2(
+    isTableRowActiveComponentFamilyState,
     recordId,
   );
 
@@ -58,6 +83,7 @@ export const RecordTableTr = forwardRef<
         ref={ref}
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
+        isActive={isActive}
       >
         {children}
       </StyledTr>
