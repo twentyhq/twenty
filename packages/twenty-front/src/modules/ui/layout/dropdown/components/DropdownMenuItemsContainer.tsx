@@ -5,10 +5,12 @@ import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledDropdownMenuItemsExternalContainer = styled.div<{
+  addPadding?: boolean;
   hasMaxHeight?: boolean;
   width: number | 'auto';
 }>`
-  --padding: ${({ theme }) => theme.spacing(1, 1, 0, 1)};
+  --padding: ${({ theme, addPadding }) =>
+    addPadding ? theme.spacing(1) : theme.spacing(0)};
 
   align-items: flex-start;
   display: flex;
@@ -36,8 +38,8 @@ const StyledDropdownMenuItemsInternalContainer = styled.div`
 `;
 
 const StyledScrollWrapper = styled(ScrollWrapper)`
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
   width: 100%;
+  margin: ${({ theme }) => theme.spacing(1)};
 `;
 
 // TODO: refactor this, the dropdown should handle the max height behavior + scroll with the size middleware
@@ -57,41 +59,35 @@ export const DropdownMenuItemsContainer = ({
 }) => {
   const id = useId();
 
-  return scrollable !== true ? (
-    <StyledDropdownMenuItemsExternalContainer
-      hasMaxHeight={hasMaxHeight}
-      className={className}
-      role="listbox"
-      width={width}
-    >
-      {hasMaxHeight ? (
-        <StyledScrollWrapper
-          componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
+  if (scrollable || hasMaxHeight) {
+    return (
+      <StyledScrollWrapper
+        componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
+      >
+        <StyledDropdownMenuItemsExternalContainer
+          className={className}
+          role="listbox"
+          width={width}
+          hasMaxHeight
         >
           <StyledDropdownMenuItemsInternalContainer>
             {children}
           </StyledDropdownMenuItemsInternalContainer>
-        </StyledScrollWrapper>
-      ) : (
-        <StyledDropdownMenuItemsInternalContainer>
-          {children}
-        </StyledDropdownMenuItemsInternalContainer>
-      )}
-    </StyledDropdownMenuItemsExternalContainer>
-  ) : (
-    <StyledScrollWrapper
-      componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
+        </StyledDropdownMenuItemsExternalContainer>
+      </StyledScrollWrapper>
+    );
+  }
+
+  return (
+    <StyledDropdownMenuItemsExternalContainer
+      className={className}
+      role="listbox"
+      width={width}
+      addPadding
     >
-      <StyledDropdownMenuItemsExternalContainer
-        hasMaxHeight={hasMaxHeight}
-        className={className}
-        role="listbox"
-        width={width}
-      >
-        <StyledDropdownMenuItemsInternalContainer>
-          {children}
-        </StyledDropdownMenuItemsInternalContainer>
-      </StyledDropdownMenuItemsExternalContainer>
-    </StyledScrollWrapper>
+      <StyledDropdownMenuItemsInternalContainer>
+        {children}
+      </StyledDropdownMenuItemsInternalContainer>
+    </StyledDropdownMenuItemsExternalContainer>
   );
 };
