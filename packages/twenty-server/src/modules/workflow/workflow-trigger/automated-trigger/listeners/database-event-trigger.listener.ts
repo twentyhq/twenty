@@ -17,7 +17,10 @@ import {
   WorkflowTriggerJob,
   WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
-import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
+import {
+  AutomatedTriggerType,
+  WorkflowAutomatedTriggerWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 
 @Injectable()
 export class DatabaseEventTriggerListener {
@@ -97,7 +100,8 @@ export class DatabaseEventTriggerListener {
 
     const eventListeners = await workflowAutomatedTriggerRepository.find({
       where: {
-        databaseEventName,
+        type: AutomatedTriggerType.DATABASE_EVENT,
+        settings: { eventName: databaseEventName },
       },
     });
 

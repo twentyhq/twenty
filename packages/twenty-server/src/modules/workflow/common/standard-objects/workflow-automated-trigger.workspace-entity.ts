@@ -12,11 +12,20 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 import { WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 
 import { WorkflowWorkspaceEntity } from './workflow.workspace-entity';
+
+export enum AutomatedTriggerType {
+  DATABASE_EVENT = 'DATABASE_EVENT',
+  CRON = 'CRON',
+}
+
+export type AutomatedTriggerSettings = {
+  pattern?: string;
+  eventName?: string;
+};
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowAutomatedTrigger,
@@ -29,22 +38,34 @@ import { WorkflowWorkspaceEntity } from './workflow.workspace-entity';
 @WorkspaceIsSystem()
 export class WorkflowAutomatedTriggerWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
-    standardId: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.databaseEventName,
-    type: FieldMetadataType.TEXT,
-    label: msg`Database Event Name`,
-    description: msg`The workflow database event name`,
+    standardId: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.type,
+    type: FieldMetadataType.SELECT,
+    label: msg`Automated Trigger Type`,
+    description: msg`The workflow automated trigger type`,
+    options: [
+      {
+        value: AutomatedTriggerType.DATABASE_EVENT,
+        label: 'Database Event',
+        position: 0,
+        color: 'green',
+      },
+      {
+        value: AutomatedTriggerType.CRON,
+        label: 'Cron',
+        position: 1,
+        color: 'blue',
+      },
+    ],
   })
-  @WorkspaceIsNullable()
-  databaseEventName: string | null;
+  type: AutomatedTriggerType;
 
   @WorkspaceField({
-    standardId: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.cronPattern,
-    type: FieldMetadataType.TEXT,
-    label: msg`Cron Pattern`,
-    description: msg`The workflow cron pattern`,
+    standardId: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.settings,
+    type: FieldMetadataType.RAW_JSON,
+    label: msg`Settings`,
+    description: msg`The workflow automated trigger settings`,
   })
-  @WorkspaceIsNullable()
-  cronPattern: string | null;
+  settings: AutomatedTriggerSettings;
 
   @WorkspaceRelation({
     standardId: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.workflow,

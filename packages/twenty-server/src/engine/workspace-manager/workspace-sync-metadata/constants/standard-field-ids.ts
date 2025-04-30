@@ -459,8 +459,8 @@ export const WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS = {
 };
 
 export const WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS = {
-  databaseEventName: '20202020-3319-4234-a34c-3f92c1ab56e7',
-  cronPattern: '20202020-3319-4234-a34c-bac8f903de12',
+  type: '20202020-3319-4234-a34c-3f92c1ab56e7',
+  settings: '20202020-3319-4234-a34c-bac8f903de12',
   workflow: '20202020-3319-4234-a34c-8e1a4d2f7c03',
 };
 

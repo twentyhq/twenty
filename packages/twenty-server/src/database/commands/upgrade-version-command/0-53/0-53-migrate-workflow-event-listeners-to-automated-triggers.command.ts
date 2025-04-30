@@ -9,7 +9,10 @@ import {
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
+import {
+  AutomatedTriggerType,
+  WorkflowAutomatedTriggerWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 
 @Command({
@@ -48,15 +51,17 @@ export class MigrateWorkflowEventListenersToAutomatedTriggersCommand extends Act
 
     const workflowEventListeners = await workflowEventListenerRepository.find();
 
-    await workflowAutomatedTriggerRepository.delete({});
+    await workflowAutomatedTriggerRepository.delete({
+      type: AutomatedTriggerType.DATABASE_EVENT,
+    });
 
     for (const eventListener of workflowEventListeners) {
       const { eventName, ...rest } = eventListener;
 
       await workflowAutomatedTriggerRepository.save({
         ...rest,
-        databaseEventName: eventName,
-        cronPattern: null,
+        type: AutomatedTriggerType.DATABASE_EVENT,
+        settings: { eventName },
       });
     }
 

@@ -29,6 +29,7 @@ import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigg
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 import { assertNever } from 'src/utils/assert';
 import { AutomatedTriggerService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.service';
+import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 
 @Injectable()
 export class WorkflowTriggerWorkspaceService {
@@ -327,24 +328,24 @@ export class WorkflowTriggerWorkspaceService {
       case WorkflowTriggerType.WEBHOOK:
         return;
       case WorkflowTriggerType.DATABASE_EVENT: {
-        const databaseEventName = workflowVersion.trigger.settings.eventName;
+        const eventName = workflowVersion.trigger.settings.eventName;
 
         await this.automatedTriggerService.addAutomatedTrigger({
           workflowId: workflowVersion.workflowId,
-          databaseEventName,
+          type: AutomatedTriggerType.DATABASE_EVENT,
+          settings: { eventName },
           manager,
         });
 
         return;
       }
       case WorkflowTriggerType.CRON: {
-        const cronPattern = computeCronPatternFromSchedule(
-          workflowVersion.trigger,
-        );
+        const pattern = computeCronPatternFromSchedule(workflowVersion.trigger);
 
         await this.automatedTriggerService.addAutomatedTrigger({
           workflowId: workflowVersion.workflowId,
-          cronPattern,
+          type: AutomatedTriggerType.CRON,
+          settings: { pattern },
           manager,
         });
 

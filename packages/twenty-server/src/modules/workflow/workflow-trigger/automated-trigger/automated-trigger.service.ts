@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
-import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
+import {
+  AutomatedTriggerType,
+  AutomatedTriggerSettings,
+  WorkflowAutomatedTriggerWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 
 @Injectable()
 export class AutomatedTriggerService {
@@ -14,16 +17,15 @@ export class AutomatedTriggerService {
   async addAutomatedTrigger({
     workflowId,
     manager,
-    databaseEventName = null,
-    cronPattern = null,
+    type,
+    settings,
   }: {
     workflowId: string;
     manager: EntityManager;
-  } & (
-    | { databaseEventName: string; cronPattern?: null }
-    | { databaseEventName?: null; cronPattern: string }
-  )) {
-    if (isDefined(databaseEventName)) {
+    type: AutomatedTriggerType;
+    settings: AutomatedTriggerSettings;
+  }) {
+    if (type === AutomatedTriggerType.DATABASE_EVENT) {
       // Todo: remove workflowEventListenerRepository updates when data are migrated to workflowAutomatedTrigger
       const workflowEventListenerRepository =
         await this.twentyORMManager.getRepository<WorkflowEventListenerWorkspaceEntity>(
@@ -32,7 +34,7 @@ export class AutomatedTriggerService {
 
       const workflowEventListener = workflowEventListenerRepository.create({
         workflowId,
-        eventName: databaseEventName,
+        eventName: settings.eventName,
       });
 
       await workflowEventListenerRepository.save(
@@ -49,9 +51,9 @@ export class AutomatedTriggerService {
       );
 
     const workflowAutomatedTrigger = workflowAutomatedTriggerRepository.create({
+      type,
+      settings,
       workflowId,
-      databaseEventName,
-      cronPattern,
     });
 
     await workflowAutomatedTriggerRepository.save(

@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -9,7 +9,10 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
+import {
+  AutomatedTriggerType,
+  WorkflowAutomatedTriggerWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -51,15 +54,15 @@ export class CronTriggerCronJob {
 
       const workflowAutomatedCronTriggers =
         await workflowAutomatedTriggerRepository.find({
-          where: { cronPattern: Not(IsNull()) },
+          where: { type: AutomatedTriggerType.CRON },
         });
 
       for (const workflowAutomatedCronTrigger of workflowAutomatedCronTriggers) {
-        if (!isDefined(workflowAutomatedCronTrigger.cronPattern)) {
+        if (!isDefined(workflowAutomatedCronTrigger.settings.pattern)) {
           continue;
         }
 
-        if (!shouldRunNow(workflowAutomatedCronTrigger.cronPattern, now)) {
+        if (!shouldRunNow(workflowAutomatedCronTrigger.settings.pattern, now)) {
           continue;
         }
 
