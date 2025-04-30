@@ -989,7 +989,6 @@ export type LinkLogsWorkspaceEntity = {
   utmCampaign: Scalars['String'];
   utmMedium: Scalars['String'];
   utmSource: Scalars['String'];
-  uv?: Maybe<Scalars['String']>;
 };
 
 export type LinkMetadata = {
@@ -3417,12 +3416,12 @@ export type SearchQueryVariables = Exact<{
 
 export type SearchQuery = { __typename?: 'Query', search: Array<{ __typename?: 'SearchRecord', recordId: string, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number }> };
 
-export type DashboardLinklogsQueryFragmentFragment = { __typename?: 'LinkLogsWorkspaceEntity', product: string, linkName?: string | null, uv?: string | null, linkId?: string | null, utmSource: string, utmMedium: string, utmCampaign: string, userIp?: string | null, userAgent?: string | null };
+export type DashboardLinklogsQueryFragmentFragment = { __typename?: 'LinkLogsWorkspaceEntity', product: string, linkName?: string | null, linkId?: string | null, utmSource: string, utmMedium: string, utmCampaign: string, userIp?: string | null, userAgent?: string | null };
 
 export type GetDashboardLinklogsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetDashboardLinklogsQuery = { __typename?: 'Query', getDashboardLinklogs: Array<{ __typename?: 'LinkLogsWorkspaceEntity', product: string, linkName?: string | null, uv?: string | null, linkId?: string | null, utmSource: string, utmMedium: string, utmCampaign: string, userIp?: string | null, userAgent?: string | null }> };
+export type GetDashboardLinklogsQuery = { __typename?: 'Query', getDashboardLinklogs: Array<{ __typename?: 'LinkLogsWorkspaceEntity', product: string, linkName?: string | null, linkId?: string | null, utmSource: string, utmMedium: string, utmCampaign: string, userIp?: string | null, userAgent?: string | null }> };
 
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -4034,7 +4033,6 @@ export const DashboardLinklogsQueryFragmentFragmentDoc = gql`
     fragment DashboardLinklogsQueryFragment on LinkLogsWorkspaceEntity {
   product
   linkName
-  uv
   linkId
   utmSource
   utmMedium
