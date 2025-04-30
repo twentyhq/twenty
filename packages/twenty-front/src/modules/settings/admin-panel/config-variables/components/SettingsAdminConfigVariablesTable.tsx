@@ -21,7 +21,6 @@ export const SettingsAdminConfigVariablesTable = ({
     <Table>
       <TableRow gridAutoColumns="5fr 3fr 1fr">
         <TableHeader>Name</TableHeader>
-        {/* <TableHeader>Description</TableHeader> */}
         <TableHeader align="right">Value</TableHeader>
         <TableHeader align="right"></TableHeader>
       </TableRow>

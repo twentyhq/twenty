@@ -18,7 +18,6 @@ export class ConfigVariableGraphqlApiExceptionFilter
   catch(exception: ConfigVariableException) {
     switch (exception.code) {
       case ConfigVariableExceptionCode.VARIABLE_NOT_FOUND:
-      case ConfigVariableExceptionCode.METADATA_NOT_FOUND:
         throw new NotFoundError(exception.message);
       case ConfigVariableExceptionCode.ENVIRONMENT_ONLY_VARIABLE:
         throw new ForbiddenError(exception.message);
