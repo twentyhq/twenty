@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 import { PropsWithChildren, useId } from 'react';
 
 const StyledScrollWrapper = styled(ScrollWrapper)`
-  width: 100%;
   box-sizing: border-box;
   padding-inline: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
 `;
 
 const StyledPaddingContainer = styled.div`

@@ -31,7 +31,6 @@ const StyledDropdownMenuItemsInternalContainer = styled.div`
   width: 100%;
 `;
 
-
 type DropdownMenuItemsContainerProps = PropsWithChildren<{
   hasMaxHeight?: boolean;
   className?: string;
@@ -47,19 +46,19 @@ export const DropdownMenuItemsContainer = ({
   width = 200,
   scrollable,
 }: DropdownMenuItemsContainerProps) => (
-    <DropDownMenuItemsScrollContainer
+  <DropDownMenuItemsScrollContainer
+    hasMaxHeight={hasMaxHeight}
+    scrollable={scrollable}
+  >
+    <StyledDropdownMenuItemsExternalContainer
+      className={className}
+      role="listbox"
+      width={width}
       hasMaxHeight={hasMaxHeight}
-      scrollable={scrollable}
     >
-      <StyledDropdownMenuItemsExternalContainer
-        className={className}
-        role="listbox"
-        width={width}
-        hasMaxHeight={hasMaxHeight}
-      >
-        <StyledDropdownMenuItemsInternalContainer>
-          {children}
-        </StyledDropdownMenuItemsInternalContainer>
-      </StyledDropdownMenuItemsExternalContainer>
-    </DropDownMenuItemsScrollContainer>
+      <StyledDropdownMenuItemsInternalContainer>
+        {children}
+      </StyledDropdownMenuItemsInternalContainer>
+    </StyledDropdownMenuItemsExternalContainer>
+  </DropDownMenuItemsScrollContainer>
 );
