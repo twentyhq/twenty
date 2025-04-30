@@ -27,7 +27,6 @@ export const usePageChangeEffectNavigateLocation = () => {
     isMatchingLocation(AppPath.ResetPassword);
 
   const isMatchingOngoingUserCreationRoute =
-    isMatchingOpenRoute ||
     isMatchingLocation(AppPath.SignInUp) ||
     isMatchingLocation(AppPath.VerifyEmail) ||
     isMatchingLocation(AppPath.Verify);
@@ -47,11 +46,11 @@ export const usePageChangeEffectNavigateLocation = () => {
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
 
-  if (isMatchingLocation(AppPath.ResetPassword)) {
-    return;
-  }
-
-  if (!isLoggedIn && !isMatchingOngoingUserCreationRoute) {
+  if (
+    !isLoggedIn &&
+    !isMatchingOngoingUserCreationRoute &&
+    !isMatchingOpenRoute
+  ) {
     return AppPath.SignInUp;
   }
 
@@ -101,6 +100,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   if (
     onboardingStatus === OnboardingStatus.COMPLETED &&
     isMatchingOnboardingRoute &&
+    !isMatchingOpenRoute &&
     isLoggedIn
   ) {
     return defaultHomePagePath;
