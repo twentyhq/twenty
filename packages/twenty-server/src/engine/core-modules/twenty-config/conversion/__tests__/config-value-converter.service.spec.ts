@@ -4,11 +4,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
+import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
-// Mock configTransformers for type validation tests
 jest.mock(
   'src/engine/core-modules/twenty-config/utils/config-transformers.util',
   () => {
@@ -19,7 +19,6 @@ jest.mock(
     return {
       configTransformers: {
         ...originalModule.configTransformers,
-        // These mocked versions can be overridden in specific tests
         _mockedBoolean: jest.fn(),
         _mockedNumber: jest.fn(),
         _mockedString: jest.fn(),
@@ -56,7 +55,7 @@ describe('ConfigValueConverterService', () => {
       // Mock the metadata
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         AUTH_PASSWORD_ENABLED: {
-          type: 'boolean',
+          type: ConfigVariableType.BOOLEAN,
           group: ConfigVariablesGroup.Other,
           description: 'Enable or disable password authentication for users',
         },
@@ -116,7 +115,7 @@ describe('ConfigValueConverterService', () => {
     it('should convert string to number based on metadata', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         NODE_PORT: {
-          type: 'number',
+          type: ConfigVariableType.NUMBER,
           group: ConfigVariablesGroup.ServerConfig,
           description: 'Port for the node server',
         },
@@ -146,7 +145,7 @@ describe('ConfigValueConverterService', () => {
     it('should convert string to array based on metadata', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         LOG_LEVELS: {
-          type: 'array',
+          type: ConfigVariableType.ARRAY,
           group: ConfigVariablesGroup.Logging,
           description: 'Levels of logging to be captured',
         },
@@ -161,7 +160,7 @@ describe('ConfigValueConverterService', () => {
 
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         LOG_LEVELS: {
-          type: 'array',
+          type: ConfigVariableType.ARRAY,
           group: ConfigVariablesGroup.Logging,
           description: 'Levels of logging to be captured',
         },
@@ -188,7 +187,7 @@ describe('ConfigValueConverterService', () => {
     it('should handle various input types', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         AUTH_PASSWORD_ENABLED: {
-          type: 'boolean',
+          type: ConfigVariableType.BOOLEAN,
           group: ConfigVariablesGroup.Other,
           description: 'Enable or disable password authentication for users',
         },
@@ -202,7 +201,7 @@ describe('ConfigValueConverterService', () => {
 
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         NODE_PORT: {
-          type: 'number',
+          type: ConfigVariableType.NUMBER,
           group: ConfigVariablesGroup.ServerConfig,
           description: 'Port for the node server',
         },
@@ -216,7 +215,7 @@ describe('ConfigValueConverterService', () => {
 
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         LOG_LEVELS: {
-          type: 'array',
+          type: ConfigVariableType.ARRAY,
           group: ConfigVariablesGroup.Logging,
           description: 'Levels of logging to be captured',
         },
@@ -259,7 +258,7 @@ describe('ConfigValueConverterService', () => {
     it('should throw error if boolean converter returns non-boolean', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         AUTH_PASSWORD_ENABLED: {
-          type: 'boolean',
+          type: ConfigVariableType.BOOLEAN,
           group: ConfigVariablesGroup.Other,
           description: 'Test boolean',
         },
@@ -284,7 +283,7 @@ describe('ConfigValueConverterService', () => {
     it('should throw error if number converter returns non-number', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         NODE_PORT: {
-          type: 'number',
+          type: ConfigVariableType.NUMBER,
           group: ConfigVariablesGroup.ServerConfig,
           description: 'Test number',
         },
@@ -309,7 +308,7 @@ describe('ConfigValueConverterService', () => {
     it('should throw error if string converter returns non-string', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         EMAIL_FROM_ADDRESS: {
-          type: 'string',
+          type: ConfigVariableType.STRING,
           group: ConfigVariablesGroup.EmailSettings,
           description: 'Test string',
         },
@@ -332,7 +331,7 @@ describe('ConfigValueConverterService', () => {
     it('should throw error if array conversion produces non-array', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         LOG_LEVELS: {
-          type: 'array',
+          type: ConfigVariableType.ARRAY,
           group: ConfigVariablesGroup.Logging,
           description: 'Test array',
         },
@@ -358,7 +357,7 @@ describe('ConfigValueConverterService', () => {
     it('should handle array with option validation', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         LOG_LEVELS: {
-          type: 'array',
+          type: ConfigVariableType.ARRAY,
           group: ConfigVariablesGroup.Logging,
           description: 'Test array with options',
           options: ['log', 'error', 'warn', 'debug'],
@@ -374,7 +373,7 @@ describe('ConfigValueConverterService', () => {
 
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         LOG_LEVELS: {
-          type: 'array',
+          type: ConfigVariableType.ARRAY,
           group: ConfigVariablesGroup.Logging,
           description: 'Test array with options',
           options: ['log', 'error', 'warn', 'debug'],
@@ -392,7 +391,7 @@ describe('ConfigValueConverterService', () => {
     it('should properly handle enum with options', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         LOG_LEVEL: {
-          type: 'enum',
+          type: ConfigVariableType.ENUM,
           group: ConfigVariablesGroup.Logging,
           description: 'Test enum',
           options: ['log', 'error', 'warn', 'debug'],
@@ -408,7 +407,7 @@ describe('ConfigValueConverterService', () => {
 
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         LOG_LEVEL: {
-          type: 'enum',
+          type: ConfigVariableType.ENUM,
           group: ConfigVariablesGroup.Logging,
           description: 'Test enum',
           options: ['log', 'error', 'warn', 'debug'],

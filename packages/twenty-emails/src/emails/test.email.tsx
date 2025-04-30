@@ -13,6 +13,8 @@ export const TestEmail = ({ locale }: TestEmailProps) => {
   return (
     <BaseEmail locale={locale}>
       <Title value={i18n._('Test email')} />
+      <br />
+      <br />
     </BaseEmail>
   );
 };

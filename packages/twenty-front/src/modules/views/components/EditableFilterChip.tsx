@@ -13,11 +13,13 @@ import { useIcons } from 'twenty-ui/display';
 type EditableFilterChipProps = {
   recordFilter: RecordFilter;
   onRemove: () => void;
+  onClick?: () => void;
 };
 
 export const EditableFilterChip = ({
   recordFilter,
   onRemove,
+  onClick,
 }: EditableFilterChipProps) => {
   const { getIcon } = useIcons();
 
@@ -58,6 +60,7 @@ export const EditableFilterChip = ({
       labelValue={recordFilter.displayValue}
       Icon={FieldMetadataItemIcon}
       onRemove={onRemove}
+      onClick={onClick}
     />
   );
 };

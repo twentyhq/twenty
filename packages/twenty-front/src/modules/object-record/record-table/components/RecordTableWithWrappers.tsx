@@ -51,6 +51,10 @@ export const RecordTableWithWrappers = ({
     'ctrl+a,meta+a',
     handleSelectAllRows,
     TableHotkeyScope.Table,
+    [],
+    {
+      enableOnFormTags: false,
+    },
   );
 
   const { saveViewFields } = useSaveCurrentViewFields();
