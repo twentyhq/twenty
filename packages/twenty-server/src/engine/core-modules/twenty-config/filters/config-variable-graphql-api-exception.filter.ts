@@ -1,14 +1,14 @@
 import { Catch, ExceptionFilter } from '@nestjs/common';
 
 import {
-    ForbiddenError,
-    InternalServerError,
-    NotFoundError,
-    UserInputError,
+  ForbiddenError,
+  InternalServerError,
+  NotFoundError,
+  UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-    ConfigVariableException,
-    ConfigVariableExceptionCode,
+  ConfigVariableException,
+  ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 
 @Catch(ConfigVariableException)
