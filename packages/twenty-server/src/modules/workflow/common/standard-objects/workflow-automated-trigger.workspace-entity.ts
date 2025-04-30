@@ -33,7 +33,6 @@ export class WorkflowAutomatedTriggerWorkspaceEntity extends BaseWorkspaceEntity
     type: FieldMetadataType.TEXT,
     label: msg`Database Event Name`,
     description: msg`The workflow database event name`,
-    defaultValue: null,
   })
   @WorkspaceIsNullable()
   databaseEventName: string | null;
@@ -43,7 +42,6 @@ export class WorkflowAutomatedTriggerWorkspaceEntity extends BaseWorkspaceEntity
     type: FieldMetadataType.TEXT,
     label: msg`Cron Pattern`,
     description: msg`The workflow cron pattern`,
-    defaultValue: null,
   })
   @WorkspaceIsNullable()
   cronPattern: string | null;
