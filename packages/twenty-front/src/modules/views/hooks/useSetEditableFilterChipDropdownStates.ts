@@ -1,4 +1,5 @@
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
+import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSelectedOptionValuesComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedOptionValuesComponentState';
 import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
@@ -43,6 +44,13 @@ export const useSetEditableFilterChipDropdownStates = () => {
 
         set(
           selectedFilterComponentState.atomFamily({
+            instanceId: recordFilter.id,
+          }),
+          recordFilter,
+        );
+
+        set(
+          objectFilterDropdownCurrentRecordFilterComponentState.atomFamily({
             instanceId: recordFilter.id,
           }),
           recordFilter,

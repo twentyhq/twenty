@@ -1,4 +1,5 @@
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
+import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
@@ -50,6 +51,12 @@ export const useResetFilterDropdown = (componentInstanceId?: string) => {
       componentInstanceId,
     );
 
+  const objectFilterDropdownCurrentRecordFilterCallbackState =
+    useRecoilComponentCallbackStateV2(
+      objectFilterDropdownCurrentRecordFilterComponentState,
+      componentInstanceId,
+    );
+
   const resetFilterDropdown = useRecoilCallback(
     ({ set }) =>
       () => {
@@ -60,6 +67,7 @@ export const useResetFilterDropdown = (componentInstanceId?: string) => {
         set(objectFilterDropdownFilterIsSelectedCallbackState, false);
         set(objectFilterDropdownIsSelectingCompositeFieldCallbackState, false);
         set(fieldMetadataItemIdUsedInDropdownCallbackState, null);
+        set(objectFilterDropdownCurrentRecordFilterCallbackState, null);
       },
     [
       objectFilterDropdownSearchInputCallbackState,
@@ -69,6 +77,7 @@ export const useResetFilterDropdown = (componentInstanceId?: string) => {
       objectFilterDropdownFilterIsSelectedCallbackState,
       objectFilterDropdownIsSelectingCompositeFieldCallbackState,
       fieldMetadataItemIdUsedInDropdownCallbackState,
+      objectFilterDropdownCurrentRecordFilterCallbackState,
     ],
   );
 
