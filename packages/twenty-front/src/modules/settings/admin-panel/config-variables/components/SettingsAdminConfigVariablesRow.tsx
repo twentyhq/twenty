@@ -48,7 +48,7 @@ export const SettingsAdminConfigVariablesRow = ({
 
   return (
     <StyledTableRow
-      gridAutoColumns="5fr 4fr 3fr 1fr"
+      gridAutoColumns="5fr 3fr 1fr"
       to={getSettingsPath(SettingsPath.AdminPanelConfigVariableDetails, {
         variableName: variable.name,
       })}
@@ -56,9 +56,9 @@ export const SettingsAdminConfigVariablesRow = ({
       <StyledTruncatedCell color={theme.font.color.primary}>
         <StyledEllipsisLabel>{variable.name}</StyledEllipsisLabel>
       </StyledTruncatedCell>
-      <StyledTruncatedCell>
+      {/* <StyledTruncatedCell>
         <StyledEllipsisLabel>{variable.description}</StyledEllipsisLabel>
-      </StyledTruncatedCell>
+      </StyledTruncatedCell> */}
       <StyledTruncatedCell align="right">
         <StyledEllipsisLabel>{displayValue}</StyledEllipsisLabel>
       </StyledTruncatedCell>

@@ -2,12 +2,12 @@ import { LogLevel, Logger } from '@nestjs/common';
 
 import { plainToClass } from 'class-transformer';
 import {
-    IsDefined,
-    IsOptional,
-    IsUrl,
-    ValidateIf,
-    ValidationError,
-    validateSync,
+  IsDefined,
+  IsOptional,
+  IsUrl,
+  ValidateIf,
+  ValidationError,
+  validateSync,
 } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -36,8 +36,8 @@ import { IsTwentySemVer } from 'src/engine/core-modules/twenty-config/decorators
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import {
-    ConfigVariableException,
-    ConfigVariableExceptionCode,
+  ConfigVariableException,
+  ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 
 export class ConfigVariables {
@@ -96,7 +96,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.GoogleAuth,
     description: 'Callback URL for Google Auth APIs',
     type: ConfigVariableType.STRING,
-    isSensitive: true,
+    isSensitive: false,
   })
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
 
@@ -110,7 +110,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GoogleAuth,
-    isSensitive: true,
+    isSensitive: false,
     description: 'Client ID for Google authentication',
     type: ConfigVariableType.STRING,
   })
@@ -128,7 +128,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GoogleAuth,
-    isSensitive: true,
+    isSensitive: false,
     description: 'Callback URL for Google authentication',
     type: ConfigVariableType.STRING,
   })
@@ -153,7 +153,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
-    isSensitive: true,
+    isSensitive: false,
     description: 'Client ID for Microsoft authentication',
     type: ConfigVariableType.STRING,
   })
@@ -171,7 +171,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
-    isSensitive: true,
+    isSensitive: false,
     description: 'Callback URL for Microsoft authentication',
     type: ConfigVariableType.STRING,
   })
@@ -181,7 +181,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
-    isSensitive: true,
+    isSensitive: false,
     description: 'Callback URL for Microsoft APIs',
     type: ConfigVariableType.STRING,
   })
