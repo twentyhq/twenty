@@ -268,17 +268,23 @@ const testCases: {
 describe('usePageChangeEffectNavigateLocation', () => {
   it.each(testCases)(
     'with location $loc and onboardingStatus $onboardingStatus and isWorkspaceSuspended $isWorkspaceSuspended should return $res`',
-    (context) => {
-      setupMockIsMatchingLocation(context.loc);
-      setupMockOnboardingStatus(context.onboardingStatus);
-      setupMockIsWorkspaceActivationStatusEqualsTo(
-        context.isWorkspaceSuspended,
-      );
-      setupMockIsLogged(context.isLoggedIn);
-      setupMockUseParams(context.objectNamePluralFromParams);
-      setupMockRecoil(context.objectNamePluralFromMetadata);
+    ({
+      loc,
+      onboardingStatus,
+      isWorkspaceSuspended,
+      isLoggedIn,
+      objectNamePluralFromParams,
+      objectNamePluralFromMetadata,
+      res,
+    }) => {
+      setupMockIsMatchingLocation(loc);
+      setupMockOnboardingStatus(onboardingStatus);
+      setupMockIsWorkspaceActivationStatusEqualsTo(isWorkspaceSuspended);
+      setupMockIsLogged(isLoggedIn);
+      setupMockUseParams(objectNamePluralFromParams);
+      setupMockRecoil(objectNamePluralFromMetadata);
 
-      expect(usePageChangeEffectNavigateLocation()).toEqual(context.res);
+      expect(usePageChangeEffectNavigateLocation()).toEqual(res);
     },
   );
   describe('tests should be exhaustive', () => {
