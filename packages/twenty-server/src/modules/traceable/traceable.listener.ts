@@ -52,12 +52,13 @@ export class TraceableEventListener {
     await Promise.all(
       traceableEntities.map(async (traceable) => {
         if (isDefined(traceable?.websiteUrl)) {
-          const generatedUrl = this.generateTraceableUrl(
+          const { generatedUrl, url } = this.generateTraceableUrl(
             traceable,
             workspaceId,
           );
 
           traceable.generatedUrl = generatedUrl;
+          traceable.url = url;
 
           return traceableRepository.save(traceable);
         }
@@ -70,7 +71,10 @@ export class TraceableEventListener {
   private generateTraceableUrl(
     traceable: TraceableWorkspaceEntity,
     workspaceId: string,
-  ): TraceableWorkspaceEntity['generatedUrl'] {
+  ): {
+    generatedUrl: TraceableWorkspaceEntity['generatedUrl'];
+    url: TraceableWorkspaceEntity['generatedUrl'];
+  } {
     const websiteUrl = this.normalizeUrl(
       traceable.websiteUrl?.primaryLinkUrl as string,
     ) as string;
@@ -80,7 +84,7 @@ export class TraceableEventListener {
     const keyworkd = traceable.keyword || '';
     const campaignContent = traceable.campaignContent || '';
 
-    const url = `${websiteUrl}/?utm_campaign=${encodeURIComponent(campaignName)}&utm_source=${encodeURIComponent(
+    const generatedUrl = `${websiteUrl}/?utm_campaign=${encodeURIComponent(campaignName)}&utm_source=${encodeURIComponent(
       campaignSource,
     )}&utm_medium=${encodeURIComponent(
       meansOfCommunication,
@@ -88,10 +92,19 @@ export class TraceableEventListener {
 
     const baseUrl = this.twentyConfigService.get('SERVER_URL');
 
+    const redirectUrl = `${baseUrl}/traceable/r/${workspaceId}/${traceable.id}`;
+
     return {
-      primaryLinkLabel: url,
-      primaryLinkUrl: `${baseUrl}/traceable/r/${workspaceId}/${traceable.id}`,
-      secondaryLinks: null,
+      generatedUrl: {
+        primaryLinkLabel: generatedUrl,
+        primaryLinkUrl: generatedUrl,
+        secondaryLinks: null,
+      },
+      url: {
+        primaryLinkLabel: redirectUrl,
+        primaryLinkUrl: redirectUrl,
+        secondaryLinks: null,
+      },
     };
   }
 

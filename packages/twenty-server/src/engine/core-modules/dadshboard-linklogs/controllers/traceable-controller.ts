@@ -25,9 +25,8 @@ export class TraceableController {
         userIp: req.ip || '',
       });
 
-    return res.redirect(
-      302,
-      traceable?.generatedUrl?.primaryLinkLabel ?? (notFoundUrl as string),
-    );
+    const finalUrl = traceable?.url?.primaryLinkUrl;
+
+    return res.redirect(302, finalUrl ?? (notFoundUrl as string));
   }
 }

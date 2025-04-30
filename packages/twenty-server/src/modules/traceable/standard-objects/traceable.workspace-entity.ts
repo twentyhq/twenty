@@ -114,6 +114,15 @@ export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
   generatedUrl: LinksMetadata | null;
 
   @WorkspaceField({
+    standardId: TRACEABLE_STANDARD_FIELD_IDS.generatedUrl,
+    type: FieldMetadataType.LINKS,
+    label: msg`Traceable URL`,
+    description: msg`The URL used to track final url metadata.`,
+    icon: 'IconLink',
+  })
+  url: LinksMetadata | null;
+
+  @WorkspaceField({
     standardId: TRACEABLE_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
