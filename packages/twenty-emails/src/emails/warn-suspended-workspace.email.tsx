@@ -54,10 +54,13 @@ export const WarnSuspendedWorkspaceEmail = ({
           values={{ remainingDays, dayOrDays }}
         />
       </MainText>
+      <br />
       <CallToAction
         href="https://app.twenty.com/settings/billing"
         value={i18n._('Update your subscription')}
       />
+      <br />
+      <br />
     </BaseEmail>
   );
 };

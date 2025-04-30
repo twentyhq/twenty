@@ -3,8 +3,8 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { ConfigVariablesMetadataMap } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
+import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import { ConfigVariableOptions } from 'src/engine/core-modules/twenty-config/types/config-variable-options.type';
-import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/types/config-variable-type.type';
 import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
@@ -31,7 +31,7 @@ export class ConfigValueConverterService {
 
     try {
       switch (configType) {
-        case 'boolean': {
+        case ConfigVariableType.BOOLEAN: {
           const result = configTransformers.boolean(dbValue);
 
           if (result !== undefined && typeof result !== 'boolean') {
@@ -43,7 +43,7 @@ export class ConfigValueConverterService {
           return result as ConfigVariables[T];
         }
 
-        case 'number': {
+        case ConfigVariableType.NUMBER: {
           const result = configTransformers.number(dbValue);
 
           if (result !== undefined && typeof result !== 'number') {
@@ -55,7 +55,7 @@ export class ConfigValueConverterService {
           return result as ConfigVariables[T];
         }
 
-        case 'string': {
+        case ConfigVariableType.STRING: {
           const result = configTransformers.string(dbValue);
 
           if (result !== undefined && typeof result !== 'string') {
@@ -67,7 +67,7 @@ export class ConfigValueConverterService {
           return result as ConfigVariables[T];
         }
 
-        case 'array': {
+        case ConfigVariableType.ARRAY: {
           const result = this.convertToArray(dbValue, options);
 
           if (result !== undefined && !Array.isArray(result)) {
@@ -79,7 +79,7 @@ export class ConfigValueConverterService {
           return result as ConfigVariables[T];
         }
 
-        case 'enum': {
+        case ConfigVariableType.ENUM: {
           const result = this.convertToEnum(dbValue, options);
 
           return result as ConfigVariables[T];
@@ -204,10 +204,10 @@ export class ConfigValueConverterService {
   ): ConfigVariableType {
     const defaultValue = this.configVariables[key];
 
-    if (typeof defaultValue === 'boolean') return 'boolean';
-    if (typeof defaultValue === 'number') return 'number';
-    if (Array.isArray(defaultValue)) return 'array';
+    if (typeof defaultValue === 'boolean') return ConfigVariableType.BOOLEAN;
+    if (typeof defaultValue === 'number') return ConfigVariableType.NUMBER;
+    if (Array.isArray(defaultValue)) return ConfigVariableType.ARRAY;
 
-    return 'string';
+    return ConfigVariableType.STRING;
   }
 }

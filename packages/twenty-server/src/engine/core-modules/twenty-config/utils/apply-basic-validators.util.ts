@@ -7,8 +7,12 @@ import {
   IsString,
 } from 'class-validator';
 
+import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
+import {
+  ConfigVariableException,
+  ConfigVariableExceptionCode,
+} from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { ConfigVariableOptions } from 'src/engine/core-modules/twenty-config/types/config-variable-options.type';
-import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/types/config-variable-type.type';
 import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
 
 export function applyBasicValidators(
@@ -18,7 +22,7 @@ export function applyBasicValidators(
   options?: ConfigVariableOptions,
 ): void {
   switch (type) {
-    case 'boolean':
+    case ConfigVariableType.BOOLEAN:
       Transform(({ value }) => {
         const result = configTransformers.boolean(value);
 
@@ -27,7 +31,7 @@ export function applyBasicValidators(
       IsBoolean()(target, propertyKey);
       break;
 
-    case 'number':
+    case ConfigVariableType.NUMBER:
       Transform(({ value }) => {
         const result = configTransformers.number(value);
 
@@ -36,21 +40,24 @@ export function applyBasicValidators(
       IsNumber()(target, propertyKey);
       break;
 
-    case 'string':
+    case ConfigVariableType.STRING:
       IsString()(target, propertyKey);
       break;
 
-    case 'enum':
+    case ConfigVariableType.ENUM:
       if (options) {
         IsEnum(options)(target, propertyKey);
       }
       break;
 
-    case 'array':
+    case ConfigVariableType.ARRAY:
       IsArray()(target, propertyKey);
       break;
 
     default:
-      throw new Error(`Unsupported config variable type: ${type}`);
+      throw new ConfigVariableException(
+        `Unsupported config variable type: ${type}`,
+        ConfigVariableExceptionCode.UNSUPPORTED_CONFIG_TYPE,
+      );
   }
 }

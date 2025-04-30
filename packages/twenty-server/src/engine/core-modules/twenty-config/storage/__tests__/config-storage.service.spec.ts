@@ -3,20 +3,31 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { DeleteResult, IsNull, Repository } from 'typeorm';
 
+import * as authUtils from 'src/engine/core-modules/auth/auth.util';
 import {
   KeyValuePair,
   KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
+import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
+import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
+import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { TypedReflect } from 'src/utils/typed-reflect';
+
+jest.mock('src/engine/core-modules/auth/auth.util', () => ({
+  encryptText: jest.fn((text) => `encrypted:${text}`),
+  decryptText: jest.fn((text) => text.replace('encrypted:', '')),
+}));
 
 describe('ConfigStorageService', () => {
   let service: ConfigStorageService;
   let keyValuePairRepository: Repository<KeyValuePair>;
   let configValueConverter: ConfigValueConverterService;
+  let environmentConfigDriver: EnvironmentConfigDriver;
 
   const createMockKeyValuePair = (
     key: string,
@@ -47,6 +58,12 @@ describe('ConfigStorageService', () => {
             convertAppValueToDbValue: jest.fn(),
           },
         },
+        {
+          provide: EnvironmentConfigDriver,
+          useValue: {
+            get: jest.fn().mockReturnValue('test-secret'),
+          },
+        },
         ConfigVariables,
         {
           provide: getRepositoryToken(KeyValuePair, 'core'),
@@ -67,6 +84,9 @@ describe('ConfigStorageService', () => {
     );
     configValueConverter = module.get<ConfigValueConverterService>(
       ConfigValueConverterService,
+    );
+    environmentConfigDriver = module.get<EnvironmentConfigDriver>(
+      EnvironmentConfigDriver,
     );
 
     jest.clearAllMocks();
@@ -136,6 +156,188 @@ describe('ConfigStorageService', () => {
 
       await expect(service.get(key)).rejects.toThrow('Conversion error');
     });
+
+    it('should decrypt sensitive string values', async () => {
+      const key = 'SENSITIVE_CONFIG' as keyof ConfigVariables;
+      const originalValue = 'sensitive-value';
+      const encryptedValue = 'encrypted:sensitive-value';
+
+      const mockRecord = createMockKeyValuePair(key as string, encryptedValue);
+
+      jest
+        .spyOn(keyValuePairRepository, 'findOne')
+        .mockResolvedValue(mockRecord);
+
+      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
+        [key]: {
+          isSensitive: true,
+          type: ConfigVariableType.STRING,
+          group: ConfigVariablesGroup.ServerConfig,
+          description: 'Test sensitive config',
+        },
+      });
+
+      (
+        configValueConverter.convertDbValueToAppValue as jest.Mock
+      ).mockReturnValue(encryptedValue);
+
+      const result = await service.get(key);
+
+      expect(result).toBe(originalValue);
+      expect(environmentConfigDriver.get).toHaveBeenCalledWith('APP_SECRET');
+      expect(authUtils.decryptText).toHaveBeenCalledWith(
+        encryptedValue,
+        'test-secret',
+      );
+    });
+
+    it('should handle decryption errors gracefully', async () => {
+      const key = 'SENSITIVE_CONFIG' as keyof ConfigVariables;
+      const encryptedValue = 'encrypted-value';
+      const convertedValue = 'converted-value';
+
+      const mockRecord = createMockKeyValuePair(key as string, encryptedValue);
+
+      jest
+        .spyOn(keyValuePairRepository, 'findOne')
+        .mockResolvedValue(mockRecord);
+
+      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
+        [key]: {
+          isSensitive: true,
+          type: ConfigVariableType.STRING,
+          group: ConfigVariablesGroup.ServerConfig,
+          description: 'Test sensitive config',
+        },
+      });
+
+      (
+        configValueConverter.convertDbValueToAppValue as jest.Mock
+      ).mockReturnValue(convertedValue);
+
+      const result = await service.get(key);
+
+      expect(result).toBe(convertedValue);
+    });
+
+    it('should handle decryption failure in get() by returning original value', async () => {
+      const key = 'SENSITIVE_CONFIG' as keyof ConfigVariables;
+      const encryptedValue = 'encrypted:sensitive-value';
+
+      const mockRecord = createMockKeyValuePair(key as string, encryptedValue);
+
+      jest
+        .spyOn(keyValuePairRepository, 'findOne')
+        .mockResolvedValue(mockRecord);
+
+      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
+        [key]: {
+          isSensitive: true,
+          type: ConfigVariableType.STRING,
+          group: ConfigVariablesGroup.ServerConfig,
+          description: 'Test sensitive config',
+        },
+      });
+
+      (
+        configValueConverter.convertDbValueToAppValue as jest.Mock
+      ).mockReturnValue(encryptedValue);
+
+      // Mock decryption to throw an error
+      (authUtils.decryptText as jest.Mock).mockImplementationOnce(() => {
+        throw new Error('Decryption failed');
+      });
+
+      const result = await service.get(key);
+
+      expect(result).toBe(encryptedValue); // Should fall back to encrypted value
+      expect(environmentConfigDriver.get).toHaveBeenCalledWith('APP_SECRET');
+    });
+
+    it('should skip decryption for non-string sensitive values', async () => {
+      const key = 'SENSITIVE_CONFIG' as keyof ConfigVariables;
+      const value = { someKey: 'someValue' };
+
+      const mockRecord = createMockKeyValuePair(
+        key as string,
+        JSON.stringify(value),
+      );
+
+      jest
+        .spyOn(keyValuePairRepository, 'findOne')
+        .mockResolvedValue(mockRecord);
+
+      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
+        [key]: {
+          isSensitive: true,
+          type: ConfigVariableType.ARRAY,
+          group: ConfigVariablesGroup.ServerConfig,
+          description: 'Test sensitive config',
+        },
+      });
+
+      (
+        configValueConverter.convertDbValueToAppValue as jest.Mock
+      ).mockReturnValue(value);
+
+      const result = await service.get(key);
+
+      expect(result).toBe(value);
+      expect(authUtils.decryptText).not.toHaveBeenCalled();
+    });
+
+    it('should handle decryption failure in loadAll() by skipping failed values', async () => {
+      const configVars: KeyValuePair[] = [
+        createMockKeyValuePair('SENSITIVE_CONFIG_1', 'encrypted:value1'),
+        createMockKeyValuePair('SENSITIVE_CONFIG_2', 'encrypted:value2'),
+        createMockKeyValuePair('NORMAL_CONFIG', 'normal-value'),
+      ];
+
+      jest.spyOn(keyValuePairRepository, 'find').mockResolvedValue(configVars);
+      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
+        SENSITIVE_CONFIG_1: {
+          isSensitive: true,
+          type: ConfigVariableType.STRING,
+          group: ConfigVariablesGroup.ServerConfig,
+          description: 'Test sensitive config 1',
+        },
+        SENSITIVE_CONFIG_2: {
+          isSensitive: true,
+          type: ConfigVariableType.STRING,
+          group: ConfigVariablesGroup.ServerConfig,
+          description: 'Test sensitive config 2',
+        },
+        NORMAL_CONFIG: {
+          type: ConfigVariableType.STRING,
+          group: ConfigVariablesGroup.ServerConfig,
+          description: 'Test normal config',
+        },
+      });
+
+      (
+        configValueConverter.convertDbValueToAppValue as jest.Mock
+      ).mockImplementation((value) => value);
+
+      // Mock decryption to fail for the second sensitive value
+      (authUtils.decryptText as jest.Mock)
+        .mockImplementationOnce((text) => text.replace('encrypted:', ''))
+        .mockImplementationOnce(() => {
+          throw new Error('Decryption failed');
+        });
+
+      const result = await service.loadAll();
+
+      expect(result.size).toBe(3);
+      expect(result.get('SENSITIVE_CONFIG_1' as keyof ConfigVariables)).toBe(
+        'value1',
+      );
+      expect(result.get('SENSITIVE_CONFIG_2' as keyof ConfigVariables)).toBe(
+        'encrypted:value2',
+      ); // Original encrypted value
+      expect(result.get('NORMAL_CONFIG' as keyof ConfigVariables)).toBe(
+        'normal-value',
+      );
+    });
   });
 
   describe('set', () => {
@@ -196,6 +398,77 @@ describe('ConfigStorageService', () => {
       });
 
       await expect(service.set(key, value)).rejects.toThrow('Conversion error');
+    });
+
+    it('should encrypt sensitive string values', async () => {
+      const key = 'SENSITIVE_CONFIG' as keyof ConfigVariables;
+      const value = 'sensitive-value';
+      const convertedValue = 'sensitive-value';
+      const encryptedValue = 'encrypted:sensitive-value';
+
+      jest.spyOn(keyValuePairRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
+        [key]: {
+          isSensitive: true,
+          type: ConfigVariableType.STRING,
+          group: ConfigVariablesGroup.ServerConfig,
+          description: 'Test sensitive config',
+        },
+      });
+
+      (
+        configValueConverter.convertAppValueToDbValue as jest.Mock
+      ).mockReturnValue(convertedValue);
+
+      await service.set(key, value);
+
+      expect(keyValuePairRepository.insert).toHaveBeenCalledWith({
+        key: key as string,
+        value: encryptedValue,
+        userId: null,
+        workspaceId: null,
+        type: KeyValuePairType.CONFIG_VARIABLE,
+      });
+      expect(environmentConfigDriver.get).toHaveBeenCalledWith('APP_SECRET');
+      expect(authUtils.encryptText).toHaveBeenCalledWith(
+        convertedValue,
+        'test-secret',
+      );
+    });
+
+    it('should handle encryption errors gracefully', async () => {
+      const key = 'SENSITIVE_CONFIG' as keyof ConfigVariables;
+      const value = 'sensitive-value';
+      const convertedValue = 'sensitive-value';
+
+      jest.spyOn(keyValuePairRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
+        [key]: {
+          isSensitive: true,
+          type: ConfigVariableType.STRING,
+          group: ConfigVariablesGroup.ServerConfig,
+          description: 'Test sensitive config',
+        },
+      });
+
+      (
+        configValueConverter.convertAppValueToDbValue as jest.Mock
+      ).mockReturnValue(convertedValue);
+
+      // Mock encryption to throw an error
+      (authUtils.encryptText as jest.Mock).mockImplementationOnce(() => {
+        throw new Error('Encryption failed');
+      });
+
+      await service.set(key, value);
+
+      expect(keyValuePairRepository.insert).toHaveBeenCalledWith({
+        key: key as string,
+        value: convertedValue, // Should fall back to unconverted value
+        userId: null,
+        workspaceId: null,
+        type: KeyValuePairType.CONFIG_VARIABLE,
+      });
     });
   });
 
@@ -314,6 +587,47 @@ describe('ConfigStorageService', () => {
           configValueConverter.convertDbValueToAppValue,
         ).toHaveBeenCalledTimes(1); // Only called for non-null value
       });
+    });
+
+    it('should decrypt sensitive string values in loadAll', async () => {
+      const configVars: KeyValuePair[] = [
+        createMockKeyValuePair('SENSITIVE_CONFIG', 'encrypted:sensitive-value'),
+        createMockKeyValuePair('NORMAL_CONFIG', 'normal-value'),
+      ];
+
+      jest.spyOn(keyValuePairRepository, 'find').mockResolvedValue(configVars);
+      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
+        SENSITIVE_CONFIG: {
+          isSensitive: true,
+          type: ConfigVariableType.STRING,
+          group: ConfigVariablesGroup.ServerConfig,
+          description: 'Test sensitive config',
+        },
+        NORMAL_CONFIG: {
+          type: ConfigVariableType.STRING,
+          group: ConfigVariablesGroup.ServerConfig,
+          description: 'Test normal config',
+        },
+      });
+
+      (
+        configValueConverter.convertDbValueToAppValue as jest.Mock
+      ).mockImplementation((value) => value);
+
+      const result = await service.loadAll();
+
+      expect(result.size).toBe(2);
+      expect(result.get('SENSITIVE_CONFIG' as keyof ConfigVariables)).toBe(
+        'sensitive-value',
+      );
+      expect(result.get('NORMAL_CONFIG' as keyof ConfigVariables)).toBe(
+        'normal-value',
+      );
+      expect(environmentConfigDriver.get).toHaveBeenCalledWith('APP_SECRET');
+      expect(authUtils.decryptText).toHaveBeenCalledWith(
+        'encrypted:sensitive-value',
+        'test-secret',
+      );
     });
   });
 

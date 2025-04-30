@@ -1,12 +1,20 @@
 name: 'Preview Environment Dispatch'
 
 on:
-  pull_request:
+  # Using pull_request_target instead of pull_request to have access to secrets for external contributors
+  # Security note: This is safe because we're only using the repository-dispatch action with limited scope
+  # and not checking out or running any code from the external contributor's PR
+  pull_request_target:
     types: [opened, synchronize, reopened, labeled]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+permissions:
+  contents: write
+  actions: write
+  pull-requests: read
 
 jobs:
   changed-files-check:

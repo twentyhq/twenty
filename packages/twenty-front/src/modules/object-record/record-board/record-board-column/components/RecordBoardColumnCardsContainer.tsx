@@ -13,7 +13,6 @@ import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/re
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
 import { isRecordIndexBoardColumnLoadingFamilyState } from '@/object-record/states/isRecordBoardColumnLoadingFamilyState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-
 const StyledColumnCardsContainer = styled.div`
   display: flex;
   flex: 1;
@@ -23,7 +22,6 @@ const StyledColumnCardsContainer = styled.div`
 const StyledNewButtonContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(4)};
 `;
-
 // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
 const StyledSkeletonCardContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -102,14 +100,13 @@ export const RecordBoardColumnCardsContainer = ({
             ref={draggableProvided?.innerRef}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.draggableProps}
-          >
-            <StyledNewButtonContainer>
-              <RecordBoardColumnNewRecordButton />
-            </StyledNewButtonContainer>
-          </div>
+          ></div>
         )}
       </Draggable>
       {droppableProvided?.placeholder}
+      <StyledNewButtonContainer>
+        <RecordBoardColumnNewRecordButton />
+      </StyledNewButtonContainer>
     </StyledColumnCardsContainer>
   );
 };

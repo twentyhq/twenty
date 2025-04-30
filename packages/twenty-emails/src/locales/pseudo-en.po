@@ -90,12 +90,12 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Verify Email"
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
 msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
+msgid "Verify Email"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -125,12 +125,12 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
-msgid "Reset"
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgid "Reset"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -217,6 +217,11 @@ msgstr ""
 #: src/components/Footer.tsx
 msgid "San Francisco / Paris"
 msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+#~ msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
+#~ msgstr ""
 
 #. js-lingui-id: 4WPI3S
 #: src/emails/send-invite-link.email.tsx
