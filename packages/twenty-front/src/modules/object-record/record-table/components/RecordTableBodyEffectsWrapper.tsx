@@ -4,7 +4,6 @@ import { RecordTableBodyFocusKeyboardEffect } from '@/object-record/record-table
 import { RecordTableNoRecordGroupBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBodyEffect';
 import { RecordTableRecordGroupBodyEffects } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupBodyEffects';
 import { isAtLeastOneTableRowSelectedSelector } from '@/object-record/record-table/record-table-row/states/isAtLeastOneTableRowSelectedSelector';
-import { isRecordTableFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableFocusActiveComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export interface RecordTableBodyEffectsWrapperProps {
@@ -20,10 +19,6 @@ export const RecordTableBodyEffectsWrapper = ({
     isAtLeastOneTableRowSelectedSelector,
   );
 
-  const isRecordTableFocusActive = useRecoilComponentValueV2(
-    isRecordTableFocusActiveComponentState,
-  );
-
   return (
     <>
       {hasRecordGroups ? (
@@ -32,7 +27,7 @@ export const RecordTableBodyEffectsWrapper = ({
         <RecordTableNoRecordGroupBodyEffect />
       )}
       {isAtLeastOneRecordSelected && <RecordTableBodyEscapeHotkeyEffect />}
-      {isRecordTableFocusActive && <RecordTableBodyFocusKeyboardEffect />}
+      <RecordTableBodyFocusKeyboardEffect />
       <RecordTableBodyFocusClickOutsideEffect tableBodyRef={tableBodyRef} />
     </>
   );

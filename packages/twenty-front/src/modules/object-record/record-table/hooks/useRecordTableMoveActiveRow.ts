@@ -3,6 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { activeRecordTableRowIndexComponentState } from '@/object-record/record-table/states/activeRecordTableRowIndexComponentState';
+import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { isDefined } from 'twenty-shared/utils';
@@ -70,8 +71,17 @@ export const useRecordTableMoveActiveRow = (recordTableId?: string) => {
     ],
   );
 
+  const moveActiveRow = (direction: MoveFocusDirection) => {
+    if (direction === 'up') {
+      moveActiveRowUp();
+    } else if (direction === 'down') {
+      moveActiveRowDown();
+    }
+  };
+
   return {
     moveActiveRowUp,
     moveActiveRowDown,
+    moveActiveRow,
   };
 };

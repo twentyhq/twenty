@@ -56,7 +56,7 @@ type RecordTableTrProps = {
   recordId: string;
   focusIndex: number;
   isDragging?: boolean;
-} & Omit<React.ComponentProps<typeof StyledTr>, 'isActive'>;
+} & Omit<React.ComponentProps<typeof StyledTr>, 'isActive' | 'isNextRowActive'>;
 
 export const RecordTableTr = forwardRef<
   HTMLTableRowElement,
