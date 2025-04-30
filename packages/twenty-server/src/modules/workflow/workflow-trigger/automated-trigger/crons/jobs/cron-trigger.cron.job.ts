@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, Not, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -16,6 +17,7 @@ import {
   WorkflowTriggerJob,
   WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
+import { shouldRunNow } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/utils/should-run-now.utils';
 
 export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
 
@@ -38,6 +40,8 @@ export class CronTriggerCronJob {
       },
     });
 
+    const now = new Date();
+
     for (const activeWorkspace of activeWorkspaces) {
       const workflowAutomatedTriggerRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(
@@ -51,6 +55,14 @@ export class CronTriggerCronJob {
         });
 
       for (const workflowAutomatedCronTrigger of workflowAutomatedCronTriggers) {
+        if (!isDefined(workflowAutomatedCronTrigger.cronPattern)) {
+          continue;
+        }
+
+        if (!shouldRunNow(workflowAutomatedCronTrigger.cronPattern, now)) {
+          continue;
+        }
+
         await this.messageQueueService.add<WorkflowTriggerJobData>(
           WorkflowTriggerJob.name,
           {

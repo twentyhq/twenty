@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
@@ -12,17 +13,17 @@ export class AutomatedTriggerService {
 
   async addAutomatedTrigger({
     workflowId,
-    databaseEventName,
-    cronPattern,
     manager,
+    databaseEventName = null,
+    cronPattern = null,
   }: {
     workflowId: string;
     manager: EntityManager;
   } & (
-    | { databaseEventName: string; cronPattern?: undefined }
-    | { databaseEventName?: undefined; cronPattern: string }
+    | { databaseEventName: string; cronPattern?: null }
+    | { databaseEventName?: null; cronPattern: string }
   )) {
-    if (!databaseEventName) {
+    if (isDefined(databaseEventName)) {
       // Todo: remove workflowEventListenerRepository updates when data are migrated to workflowAutomatedTrigger
       const workflowEventListenerRepository =
         await this.twentyORMManager.getRepository<WorkflowEventListenerWorkspaceEntity>(
