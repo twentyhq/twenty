@@ -149,6 +149,21 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('product')
   productId: string | null;
 
+  @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.cancelPayment,
+    type: FieldMetadataType.SELECT,
+    label: msg`Cancel Payment`,
+    description: msg`Product cancel payment (active products can be used in charges)`,
+    icon: 'IconProgress',
+    options: [
+      { value: 'active', label: 'Active', position: 0, color: 'green' },
+      { value: 'inactive', label: 'Inactive', position: 1, color: 'red' },
+    ],
+    defaultValue: "'active'",
+  })
+  @WorkspaceFieldIndex()
+  cancelPayment: string;
+
   //Relations
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.company,

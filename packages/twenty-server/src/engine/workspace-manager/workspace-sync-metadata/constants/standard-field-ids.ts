@@ -158,6 +158,7 @@ export const CHARGE_STANDARD_FIELD_IDS = {
   recurrence: '20202020-0b7b-4d0d-8b5d-4b7c3d2b623a',
   paymentGateway: '20202020-0b7b-4d0d-8b5d-4b7c3d2b234f',
   activityTargets: '20202020-0b7b-4d0d-8b5d-4b7c3d2b259c',
+  cancelPayment: '20202020-7a4c-5d2e-9f1b-3e8c7d6a2f4d',
   position: '20202020-fcd5-4231-aff5-fff583eaa0a1',
   attachments: 'bdc8497f-9ecb-451d-aa35-17dbade48b71',
   person: '20202020-3213-4ddf-9494-6422bcff8d7c',

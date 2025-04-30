@@ -75,7 +75,7 @@ export class IntegrationWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  charge: Relation<ChargeWorkspaceEntity[]>;
+  charge: Relation<ChargeWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: INTEGRATION_STANDARD_FIELD_IDS.timelineActivities,

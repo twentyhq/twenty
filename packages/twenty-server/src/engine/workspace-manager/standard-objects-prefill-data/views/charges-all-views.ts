@@ -20,7 +20,7 @@ export const chargesAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
-            CHARGE_STANDARD_FIELD_IDS.product
+            CHARGE_STANDARD_FIELD_IDS.name
           ],
         position: 0,
         isVisible: true,
@@ -65,7 +65,7 @@ export const chargesAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
-            CHARGE_STANDARD_FIELD_IDS.company
+            CHARGE_STANDARD_FIELD_IDS.product
           ],
         position: 5,
         isVisible: true,
@@ -74,7 +74,7 @@ export const chargesAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
-            CHARGE_STANDARD_FIELD_IDS.person
+            CHARGE_STANDARD_FIELD_IDS.company
           ],
         position: 6,
         isVisible: true,
@@ -83,9 +83,27 @@ export const chargesAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
-            CHARGE_STANDARD_FIELD_IDS.integration
+            CHARGE_STANDARD_FIELD_IDS.cancelPayment
+          ],
+        position: 6,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
+            CHARGE_STANDARD_FIELD_IDS.person
           ],
         position: 7,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
+            CHARGE_STANDARD_FIELD_IDS.integration
+          ],
+        position: 8,
         isVisible: true,
         size: 150,
       },
