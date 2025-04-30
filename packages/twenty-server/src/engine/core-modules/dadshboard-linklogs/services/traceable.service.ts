@@ -89,7 +89,6 @@ export class TraceableService {
       utmMedium: traceable?.meansOfCommunication,
       utmCampaign: traceable?.campaignName,
       linkName: traceable?.name,
-      uv: 1,
     });
 
     await linklogsRepository.save(traceableAccessLog);
