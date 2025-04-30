@@ -39,7 +39,7 @@ export const normalizeLocale = (
     return caseInsensitiveMatch as keyof typeof APP_LOCALES;
 
   // Try matching just the language part (e.g., 'fr' -> 'fr-FR')
-  const languageCode = value.split('-')[0].toLowerCase();
+  const languageCode = value?.trim() ? value.split('-')[0].toLowerCase() : '';
   if (languageToLocaleMap[languageCode]) {
     return languageToLocaleMap[languageCode] as keyof typeof APP_LOCALES;
   }
