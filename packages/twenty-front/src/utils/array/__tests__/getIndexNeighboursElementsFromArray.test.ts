@@ -56,8 +56,7 @@ describe('getIndexNeighboursElementsFromArray', () => {
       },
     },
     {
-      title:
-        'should return correct before and after elements for middle index',
+      title: 'should return correct before and after elements for middle index',
       context: {
         index: 1,
         array: [
