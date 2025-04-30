@@ -17,10 +17,7 @@ import {
   WorkflowTriggerJob,
   WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
-import {
-  AutomatedTriggerType,
-  WorkflowAutomatedTriggerWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
+import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 
 @Injectable()
 export class DatabaseEventTriggerListener {
@@ -92,6 +89,8 @@ export class DatabaseEventTriggerListener {
       return;
     }
 
+    // Todo: uncomment that when data are migrated to workflowAutomatedTrigger
+    /*
     const workflowAutomatedTriggerRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(
         workspaceId,
@@ -104,8 +103,29 @@ export class DatabaseEventTriggerListener {
         settings: { eventName: databaseEventName },
       },
     });
+    */
+    // end Todo
 
-    for (const eventListener of eventListeners) {
+    // Todo: remove that when data are migrated to workflowAutomatedTrigger
+    const workflowEventListenerRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowEventListenerWorkspaceEntity>(
+        workspaceId,
+        'workflowEventListener',
+      );
+
+    const oldEventListeners = await workflowEventListenerRepository.find({
+      where: { eventName: databaseEventName },
+    });
+
+    // end Todo
+
+    // Todo: uncomment that when data are migrated to workflowAutomatedTrigger
+    //for (const eventListener of eventListeners) {
+    // end Todo
+
+    // Todo: remove that when data are migrated to workflowAutomatedTrigger
+    for (const eventListener of oldEventListeners) {
+      // end Todo
       for (const eventPayload of payload.events) {
         this.messageQueueService.add<WorkflowTriggerJobData>(
           WorkflowTriggerJob.name,
