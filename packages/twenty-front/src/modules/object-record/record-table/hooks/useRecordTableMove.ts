@@ -7,9 +7,9 @@ import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/componen
 import { useRecoilCallback } from 'recoil';
 
 export const useRecordTableMove = (recordTableId?: string) => {
-  const moveActiveRow = useRecordTableMoveFocusedRow(recordTableId);
+  const { moveFocusedRow } = useRecordTableMoveFocusedRow(recordTableId);
 
-  const moveFocus = useRecordTableMoveFocusedCell(recordTableId);
+  const { moveFocus } = useRecordTableMoveFocusedCell(recordTableId);
 
   const isRecordTableFocusActiveState = useRecoilComponentCallbackStateV2(
     isRecordTableFocusActiveComponentState,
@@ -25,12 +25,12 @@ export const useRecordTableMove = (recordTableId?: string) => {
         );
 
         if (isRecordTableFocusActive) {
-          moveFocus.moveFocus(direction);
+          moveFocus(direction);
         } else {
-          moveActiveRow.moveActiveRow(direction);
+          moveFocusedRow(direction);
         }
       },
-    [isRecordTableFocusActiveState, moveActiveRow, moveFocus],
+    [isRecordTableFocusActiveState, moveFocusedRow, moveFocus],
   );
 
   return {

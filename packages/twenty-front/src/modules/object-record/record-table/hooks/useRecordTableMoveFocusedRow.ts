@@ -21,7 +21,7 @@ export const useRecordTableMoveFocusedRow = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const moveActiveRowUp = useRecoilCallback(
+  const moveFocusedRowUp = useRecoilCallback(
     ({ snapshot }) =>
       () => {
         const focusedRowIndex = getSnapshotValue(
@@ -45,7 +45,7 @@ export const useRecordTableMoveFocusedRow = (recordTableId?: string) => {
     [focusedRowIndexState, focusRecordTableRow],
   );
 
-  const moveActiveRowDown = useRecoilCallback(
+  const moveFocusedRowDown = useRecoilCallback(
     ({ snapshot }) =>
       () => {
         const allRecordIds = getSnapshotValue(
@@ -77,17 +77,17 @@ export const useRecordTableMoveFocusedRow = (recordTableId?: string) => {
     ],
   );
 
-  const moveActiveRow = (direction: MoveFocusDirection) => {
+  const moveFocusedRow = (direction: MoveFocusDirection) => {
     if (direction === 'up') {
-      moveActiveRowUp();
+      moveFocusedRowUp();
     } else if (direction === 'down') {
-      moveActiveRowDown();
+      moveFocusedRowDown();
     }
   };
 
   return {
-    moveActiveRowUp,
-    moveActiveRowDown,
-    moveActiveRow,
+    moveFocusedRowUp,
+    moveFocusedRowDown,
+    moveFocusedRow,
   };
 };
