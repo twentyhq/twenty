@@ -10,6 +10,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
+// vvCCCCCCC to pudate padding
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({
     default: module.ActivityRichTextEditor,

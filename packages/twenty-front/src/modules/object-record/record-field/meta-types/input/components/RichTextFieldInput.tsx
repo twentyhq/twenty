@@ -67,6 +67,7 @@ export const RichTextFieldInput = ({
 
   return (
     <StyledContainer ref={containerRef}>
+      \vvCCCCCCC to pudate padding
       <ActivityRichTextEditor
         activityId={targetableObject.id}
         activityObjectNameSingular={targetableObject.targetObjectNameSingular}

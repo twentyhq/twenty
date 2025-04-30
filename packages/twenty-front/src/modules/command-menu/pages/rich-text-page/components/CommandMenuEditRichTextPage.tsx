@@ -24,6 +24,7 @@ export const CommandMenuEditRichTextPage = () => {
 
   return (
     <StyledContainer>
+      vvCCCCCCC to pudate padding
       <ActivityRichTextEditor
         activityId={activityId}
         activityObjectNameSingular={activityObjectNameSingular}
