@@ -4,6 +4,7 @@ import { RecordTableRowContextProvider } from '@/object-record/record-table/cont
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { isRowVisibleComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowVisibleComponentFamilyState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
+import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import styled from '@emotion/styled';
 import { ReactNode, forwardRef } from 'react';
@@ -11,7 +12,8 @@ import { ReactNode, forwardRef } from 'react';
 const StyledTr = styled.tr<{
   isDragging: boolean;
   isActive: boolean;
-  isNextRowActive: boolean;
+  isFocused: boolean;
+  isNextRowActiveOrFocused: boolean;
 }>`
   border: ${({ isDragging, theme }) =>
     isDragging
@@ -20,8 +22,8 @@ const StyledTr = styled.tr<{
   position: relative;
   transition: border-left-color 0.2s ease-in-out;
 
-  ${({ isNextRowActive }) =>
-    isNextRowActive
+  ${({ isNextRowActiveOrFocused }) =>
+    isNextRowActiveOrFocused
       ? `
       td { 
           border-bottom: none;
@@ -29,7 +31,7 @@ const StyledTr = styled.tr<{
       `
       : ''}
 
-  ${({ isActive, theme }) =>
+  ${({ isActive, isFocused, theme }) =>
     isActive
       ? `
       td {
@@ -48,7 +50,25 @@ const StyledTr = styled.tr<{
         }
       }
     `
-      : ''}
+      : isFocused
+        ? `
+      td {
+        &:not(:first-of-type) {
+          border-bottom: 1px solid ${theme.border.color.medium};
+          border-top: 1px solid ${theme.border.color.medium};
+          background-color: ${theme.background.transparent.light};
+        }
+        &:nth-of-type(2) {
+          border-left: 1px solid ${theme.border.color.medium};
+          border-radius: ${theme.border.radius.sm} 0 0 ${theme.border.radius.sm};
+        }
+        &:last-of-type {
+          border-right: 1px solid ${theme.border.color.medium};
+          border-radius: 0 ${theme.border.radius.sm} ${theme.border.radius.sm} 0;
+        }
+      }
+    `
+        : ''}
 `;
 
 type RecordTableTrProps = {
@@ -56,7 +76,10 @@ type RecordTableTrProps = {
   recordId: string;
   focusIndex: number;
   isDragging?: boolean;
-} & Omit<React.ComponentProps<typeof StyledTr>, 'isActive' | 'isNextRowActive'>;
+} & Omit<
+  React.ComponentProps<typeof StyledTr>,
+  'isActive' | 'isNextRowActiveOrFocused' | 'isFocused'
+>;
 
 export const RecordTableTr = forwardRef<
   HTMLTableRowElement,
@@ -83,6 +106,18 @@ export const RecordTableTr = forwardRef<
     focusIndex + 1,
   );
 
+  const isFocused = useRecoilComponentFamilyValueV2(
+    isRecordTableRowFocusedComponentFamilyState,
+    focusIndex,
+  );
+
+  const isNextRowFocused = useRecoilComponentFamilyValueV2(
+    isRecordTableRowFocusedComponentFamilyState,
+    focusIndex + 1,
+  );
+
+  const isNextRowActiveOrFocused = isNextRowActive || isNextRowFocused;
+
   return (
     <RecordTableRowContextProvider
       value={{
@@ -104,7 +139,8 @@ export const RecordTableTr = forwardRef<
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
         isActive={isActive}
-        isNextRowActive={isNextRowActive}
+        isFocused={isFocused}
+        isNextRowActiveOrFocused={isNextRowActiveOrFocused}
       >
         {children}
       </StyledTr>

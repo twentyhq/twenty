@@ -1,5 +1,5 @@
-import { useRecordTableMoveActiveRow } from '@/object-record/record-table/hooks/useRecordTableMoveActiveRow';
-import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
+import { useRecordTableMoveFocusedCell } from '@/object-record/record-table/hooks/useRecordTableMoveFocusedCell';
+import { useRecordTableMoveFocusedRow } from '@/object-record/record-table/hooks/useRecordTableMoveFocusedRow';
 import { isRecordTableFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableFocusActiveComponentState';
 import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -7,9 +7,9 @@ import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/componen
 import { useRecoilCallback } from 'recoil';
 
 export const useRecordTableMove = (recordTableId?: string) => {
-  const moveActiveRow = useRecordTableMoveActiveRow(recordTableId);
+  const moveActiveRow = useRecordTableMoveFocusedRow(recordTableId);
 
-  const moveFocus = useRecordTableMoveFocus(recordTableId);
+  const moveFocus = useRecordTableMoveFocusedCell(recordTableId);
 
   const isRecordTableFocusActiveState = useRecoilComponentCallbackStateV2(
     isRecordTableFocusActiveComponentState,
