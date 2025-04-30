@@ -3,9 +3,13 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCommandMenuWorkflowIdOrThrow = () => {
-  const workflowId = useRecoilComponentValueV2(commandMenuWorkflowIdComponentState);
+  const workflowId = useRecoilComponentValueV2(
+    commandMenuWorkflowIdComponentState,
+  );
   if (!isDefined(workflowId)) {
-    throw new Error('Expected commandMenuWorkflowIdComponentState to be defined');
+    throw new Error(
+      'Expected commandMenuWorkflowIdComponentState to be defined',
+    );
   }
 
   return workflowId;
