@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager, IsNull } from 'typeorm';
+import { IsNull } from 'typeorm';
 
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/entity.manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -31,8 +32,8 @@ export class MessagingMessageCleanerService {
         async (
           limit: number,
           offset: number,
-          workspaceId: string,
-          transactionManager: EntityManager,
+          _workspaceId: string,
+          transactionManager: WorkspaceEntityManager,
         ) => {
           const nonAssociatedMessages = await messageRepository.find(
             {
@@ -53,7 +54,7 @@ export class MessagingMessageCleanerService {
         async (
           ids: string[],
           workspaceId: string,
-          transactionManager?: EntityManager,
+          transactionManager?: WorkspaceEntityManager,
         ) => {
           await messageRepository.delete(ids, transactionManager);
         },
@@ -66,8 +67,8 @@ export class MessagingMessageCleanerService {
         async (
           limit: number,
           offset: number,
-          workspaceId: string,
-          transactionManager?: EntityManager,
+          _workspaceId: string,
+          transactionManager?: WorkspaceEntityManager,
         ) => {
           const orphanThreads = await messageThreadRepository.find(
             {
@@ -86,8 +87,8 @@ export class MessagingMessageCleanerService {
         },
         async (
           ids: string[],
-          workspaceId: string,
-          transactionManager?: EntityManager,
+          _workspaceId: string,
+          transactionManager?: WorkspaceEntityManager,
         ) => {
           await messageThreadRepository.delete(ids, transactionManager);
         },

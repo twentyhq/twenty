@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
-
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/entity.manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import { WorkflowDatabaseEventTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
@@ -13,7 +12,7 @@ export class DatabaseEventTriggerService {
   async createEventListener(
     workflowId: string,
     trigger: WorkflowDatabaseEventTrigger,
-    manager: EntityManager,
+    manager: WorkspaceEntityManager,
   ) {
     const eventName = trigger.settings.eventName;
 
@@ -34,7 +33,10 @@ export class DatabaseEventTriggerService {
     );
   }
 
-  async deleteEventListener(workflowId: string, manager: EntityManager) {
+  async deleteEventListener(
+    workflowId: string,
+    manager: WorkspaceEntityManager,
+  ) {
     const workflowEventListenerRepository =
       await this.twentyORMManager.getRepository<WorkflowEventListenerWorkspaceEntity>(
         'workflowEventListener',
