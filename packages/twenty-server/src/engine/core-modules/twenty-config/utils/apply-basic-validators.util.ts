@@ -8,6 +8,10 @@ import {
 } from 'class-validator';
 
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
+import {
+  ConfigVariableException,
+  ConfigVariableExceptionCode,
+} from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { ConfigVariableOptions } from 'src/engine/core-modules/twenty-config/types/config-variable-options.type';
 import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
 
@@ -51,6 +55,9 @@ export function applyBasicValidators(
       break;
 
     default:
-      throw new Error(`Unsupported config variable type: ${type}`);
+      throw new ConfigVariableException(
+        `Unsupported config variable type: ${type}`,
+        ConfigVariableExceptionCode.UNSUPPORTED_CONFIG_TYPE,
+      );
   }
 }

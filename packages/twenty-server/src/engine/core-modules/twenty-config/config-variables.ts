@@ -2,12 +2,12 @@ import { LogLevel, Logger } from '@nestjs/common';
 
 import { plainToClass } from 'class-transformer';
 import {
-  IsDefined,
-  IsOptional,
-  IsUrl,
-  ValidateIf,
-  ValidationError,
-  validateSync,
+    IsDefined,
+    IsOptional,
+    IsUrl,
+    ValidateIf,
+    ValidationError,
+    validateSync,
 } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -35,6 +35,10 @@ import { IsStrictlyLowerThan } from 'src/engine/core-modules/twenty-config/decor
 import { IsTwentySemVer } from 'src/engine/core-modules/twenty-config/decorators/is-twenty-semver.decorator';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import {
+    ConfigVariableException,
+    ConfigVariableExceptionCode,
+} from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 
 export class ConfigVariables {
   @ConfigVariablesMetadata({
@@ -1084,7 +1088,10 @@ export const validate = (config: Record<string, unknown>): ConfigVariables => {
 
   if (validationErrors.length > 0) {
     logValidatonErrors(validationErrors, 'error');
-    throw new Error('Config variables validation failed');
+    throw new ConfigVariableException(
+      'Config variables validation failed',
+      ConfigVariableExceptionCode.VALIDATION_FAILED,
+    );
   }
 
   return validatedConfig;

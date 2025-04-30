@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
@@ -21,13 +20,11 @@ type ConfigVariableHelpTextProps = {
 export const ConfigVariableHelpText = ({
   variable,
   hasValueChanged,
-  color,
 }: ConfigVariableHelpTextProps) => {
   const isConfigVariablesInDbEnabled = useRecoilValue(
     isConfigVariablesInDbEnabledState,
   );
   const { t } = useLingui();
-  const theme = useTheme();
   const isFromDatabase = variable.source === ConfigSource.DATABASE;
   const isFromEnvironment = variable.source === ConfigSource.ENVIRONMENT;
   const isReadOnly = !isConfigVariablesInDbEnabled;
@@ -53,9 +50,9 @@ export const ConfigVariableHelpText = ({
 
   if (isConfigVariablesInDbEnabled && !variable.isEnvOnly && hasValueChanged) {
     return (
-      <StyledHelpText color={color || theme.color.blue50}>
+      <StyledHelpText>
         {isFromDatabase
-          ? t`Click Save to apply your changes.`
+          ? t`Click on the checkmark to apply your changes.`
           : t`This value will be saved to the database.`}
       </StyledHelpText>
     );

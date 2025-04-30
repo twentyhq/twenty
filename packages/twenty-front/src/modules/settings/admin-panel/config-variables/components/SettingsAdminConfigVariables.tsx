@@ -32,7 +32,6 @@ export const SettingsAdminConfigVariables = () => {
       fetchPolicy: 'network-only',
     });
 
-  // probably have this search logic in a hook?
   const [search, setSearch] = useState('');
   const [showHiddenGroupVariables, setShowHiddenGroupVariables] =
     useState(false);

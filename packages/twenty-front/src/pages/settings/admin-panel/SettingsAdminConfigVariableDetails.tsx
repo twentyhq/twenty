@@ -16,12 +16,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useRecoilValue } from 'recoil';
 import { ConfigVariableValue } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  H3Title,
-  IconDeviceFloppy,
-  IconPencil,
-  IconX,
-} from 'twenty-ui/display';
+import { H3Title, IconCheck, IconPencil, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
   ConfigSource,
@@ -171,24 +166,16 @@ export const SettingsAdminConfigVariableDetails = () => {
               ) : (
                 <StyledButtonContainer>
                   <Button
-                    Icon={IconDeviceFloppy}
+                    Icon={IconCheck}
                     variant="secondary"
                     position="left"
                     type="submit"
-                    accent={
-                      isSubmitting || !isValueValid || !hasValueChanged
-                        ? undefined
-                        : 'blue'
-                    }
                     disabled={isSubmitting || !isValueValid || !hasValueChanged}
                   />
                   <Button
                     Icon={IconX}
                     variant="secondary"
                     position="right"
-                    accent={
-                      isFromDatabase && !hasValueChanged ? 'danger' : undefined
-                    }
                     onClick={handleXButtonClick}
                     type="button"
                     disabled={isSubmitting}
