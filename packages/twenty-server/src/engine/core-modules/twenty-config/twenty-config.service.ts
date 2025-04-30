@@ -10,6 +10,10 @@ import { DatabaseConfigDriver } from 'src/engine/core-modules/twenty-config/driv
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 import { ConfigSource } from 'src/engine/core-modules/twenty-config/enums/config-source.enum';
 import { ConfigVariablesMaskingStrategies } from 'src/engine/core-modules/twenty-config/enums/config-variables-masking-strategies.enum';
+import {
+  ConfigVariableException,
+  ConfigVariableExceptionCode,
+} from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { configVariableMaskSensitiveData } from 'src/engine/core-modules/twenty-config/utils/config-variable-mask-sensitive-data.util';
 import { isEnvOnlyConfigVar } from 'src/engine/core-modules/twenty-config/utils/is-env-only-config-var.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
@@ -74,6 +78,7 @@ export class TwentyConfigService {
     this.validateDatabaseDriverActive('set');
     this.validateNotEnvOnly(key, 'create');
     this.validateConfigVariableExists(key as string);
+
     await this.databaseConfigDriver.set(key, value);
   }
 
@@ -85,13 +90,7 @@ export class TwentyConfigService {
     this.validateNotEnvOnly(key, 'update');
     this.validateConfigVariableExists(key as string);
 
-    try {
-      await this.databaseConfigDriver.update(key, value);
-      this.logger.debug(`Updated config variable: ${key as string}`);
-    } catch (error) {
-      this.logger.error(`Failed to update config for ${key as string}`, error);
-      throw error;
-    }
+    await this.databaseConfigDriver.update(key, value);
   }
 
   getMetadata(
@@ -193,8 +192,9 @@ export class TwentyConfigService {
 
   private validateDatabaseDriverActive(operation: string): void {
     if (!this.isDatabaseDriverActive) {
-      throw new Error(
+      throw new ConfigVariableException(
         `Database configuration is disabled or unavailable, cannot ${operation} configuration`,
+        ConfigVariableExceptionCode.DATABASE_CONFIG_DISABLED,
       );
     }
   }
@@ -207,8 +207,9 @@ export class TwentyConfigService {
     const envMetadata = metadata[key as string];
 
     if (envMetadata?.isEnvOnly) {
-      throw new Error(
+      throw new ConfigVariableException(
         `Cannot ${operation} environment-only variable: ${key as string}`,
+        ConfigVariableExceptionCode.ENVIRONMENT_ONLY_VARIABLE,
       );
     }
   }
@@ -266,8 +267,9 @@ export class TwentyConfigService {
     const keyExists = key in metadata;
 
     if (!keyExists) {
-      throw new Error(
+      throw new ConfigVariableException(
         `Config variable "${key}" does not exist in ConfigVariables`,
+        ConfigVariableExceptionCode.VARIABLE_NOT_FOUND,
       );
     }
 

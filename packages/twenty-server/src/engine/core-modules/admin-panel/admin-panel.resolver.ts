@@ -22,6 +22,7 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
@@ -32,7 +33,10 @@ import { AdminPanelHealthServiceData } from './dtos/admin-panel-health-service-d
 import { QueueMetricsData } from './dtos/queue-metrics-data.dto';
 
 @Resolver()
-@UseFilters(AuthGraphqlApiExceptionFilter)
+@UseFilters(
+  AuthGraphqlApiExceptionFilter,
+  ConfigVariableGraphqlApiExceptionFilter,
+)
 export class AdminPanelResolver {
   constructor(
     private adminService: AdminPanelService,
@@ -131,13 +135,9 @@ export class AdminPanelResolver {
   async getDatabaseConfigVariable(
     @Args('key', { type: () => String }) key: keyof ConfigVariables,
   ): Promise<ConfigVariable> {
-    try {
-      this.twentyConfigService.validateConfigVariableExists(key as string);
+    this.twentyConfigService.validateConfigVariableExists(key as string);
 
-      return this.adminService.getConfigVariable(key);
-    } catch (error) {
-      throw new UserInputError(error.message);
-    }
+    return this.adminService.getConfigVariable(key);
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
@@ -147,13 +147,9 @@ export class AdminPanelResolver {
     @Args('value', { type: () => GraphQLJSON })
     value: ConfigVariables[keyof ConfigVariables],
   ): Promise<boolean> {
-    try {
-      await this.twentyConfigService.set(key, value);
+    await this.twentyConfigService.set(key, value);
 
-      return true;
-    } catch (error) {
-      throw new UserInputError(error.message);
-    }
+    return true;
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
@@ -163,13 +159,9 @@ export class AdminPanelResolver {
     @Args('value', { type: () => GraphQLJSON })
     value: ConfigVariables[keyof ConfigVariables],
   ): Promise<boolean> {
-    try {
-      await this.twentyConfigService.update(key, value);
+    await this.twentyConfigService.update(key, value);
 
-      return true;
-    } catch (error) {
-      throw new UserInputError(error.message);
-    }
+    return true;
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
@@ -177,12 +169,8 @@ export class AdminPanelResolver {
   async deleteDatabaseConfigVariable(
     @Args('key', { type: () => String }) key: keyof ConfigVariables,
   ): Promise<boolean> {
-    try {
-      await this.twentyConfigService.delete(key);
+    await this.twentyConfigService.delete(key);
 
-      return true;
-    } catch (error) {
-      throw new UserInputError(error.message);
-    }
+    return true;
   }
 }
