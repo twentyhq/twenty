@@ -22,6 +22,7 @@ import { onEntityCountChangeComponentState } from '@/object-record/record-table/
 import { useRecordTableMove } from '@/object-record/record-table/hooks/useRecordTableMove';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -144,6 +145,8 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   const { setIsFocusActiveForCurrentPosition } =
     useSetIsRecordTableFocusActive(recordTableId);
 
+  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
+
   const { move } = useRecordTableMove(recordTableId);
 
   const useMapKeyboardToFocus = () => {
@@ -164,6 +167,26 @@ export const useRecordTable = (props?: useRecordTableProps) => {
         move('down');
       },
       TableHotkeyScope.TableFocus,
+      [move],
+    );
+
+    useScopedHotkeys(
+      [Key.ArrowUp],
+      () => {
+        setHotkeyScopeAndMemorizePreviousScope(TableHotkeyScope.TableFocus);
+        move('up');
+      },
+      TableHotkeyScope.Table,
+      [move],
+    );
+
+    useScopedHotkeys(
+      Key.ArrowDown,
+      () => {
+        setHotkeyScopeAndMemorizePreviousScope(TableHotkeyScope.TableFocus);
+        move('down');
+      },
+      TableHotkeyScope.Table,
       [move],
     );
 
