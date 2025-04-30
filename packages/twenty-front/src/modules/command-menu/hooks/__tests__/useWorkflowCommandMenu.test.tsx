@@ -5,6 +5,7 @@ import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/Com
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
+import { commandMenuWorkflowVersionIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowVersionIdComponentState';
 import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
@@ -98,6 +99,10 @@ const renderHooks = () => {
         commandMenuWorkflowIdComponentState,
         'mocked-uuid',
       );
+      const workflowVersionId = useRecoilComponentValueV2(
+        commandMenuWorkflowVersionIdComponentState,
+        'mocked-uuid',
+      );
       const { getIcon } = useIcons();
 
       return {
@@ -106,6 +111,7 @@ const renderHooks = () => {
         openWorkflowEditStepInCommandMenu,
         openWorkflowViewStepInCommandMenu,
         workflowId,
+        workflowVersionId,
         viewableRecordId,
         commandMenuPage,
         commandMenuNavigationMorphItemByPage,
@@ -188,14 +194,16 @@ describe('useWorkflowCommandMenu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.openWorkflowViewStepInCommandMenu(
-        'test-workflow-id',
-        'View Step',
-        IconSettingsAutomation,
-      );
+      result.current.openWorkflowViewStepInCommandMenu({
+        workflowId: 'test-workflow-id',
+        workflowVersionId: 'test-workflow-version-id',
+        icon: IconSettingsAutomation,
+        title: 'View Step',
+      });
     });
 
     expect(result.current.workflowId).toBe('test-workflow-id');
+    expect(result.current.workflowVersionId).toBe('test-workflow-version-id');
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
       page: CommandMenuPages.WorkflowStepView,
