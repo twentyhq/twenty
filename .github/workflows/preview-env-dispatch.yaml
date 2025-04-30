@@ -7,10 +7,6 @@ on:
   pull_request_target:
     types: [opened, synchronize, reopened, labeled]
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 permissions:
   contents: write
   actions: write
