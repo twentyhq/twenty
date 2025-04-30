@@ -374,8 +374,8 @@ msgid "Adjust the role-related settings"
 msgstr "調整角色相關的設定"
 
 #. js-lingui-id: g1in8j
-#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -900,6 +900,16 @@ msgstr "選擇試用"
 msgid "Clear"
 msgstr "清除"
 
+#. js-lingui-id: wu0RfR
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "Clear the field or \"X\" to revert to environment/default value."
+msgstr ""
+
+#. js-lingui-id: b8wwse
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "Click on the checkmark to apply your changes."
+msgstr ""
+
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client ID"
@@ -956,6 +966,13 @@ msgstr "緊湊視圖"
 #. js-lingui-id: s2QZS6
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Companies"
+msgstr ""
+
+#. js-lingui-id: Vj43Y/
+#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
+#: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+msgid "Config Variables"
 msgstr ""
 
 #. js-lingui-id: +zUMwJ
@@ -1059,7 +1076,7 @@ msgstr ""
 #. js-lingui-id: u+VWhB
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminEnvCopyableText.tsx
+#: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigCopyableText.tsx
 msgid "Copied to clipboard!"
 msgstr "已複製到剪貼板！"
 
@@ -1230,6 +1247,11 @@ msgstr "創建您的工作區"
 msgid "Created"
 msgstr "已創建"
 
+#. js-lingui-id: 6YzXhC
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "Current value from server environment. Set a custom value to override."
+msgstr ""
+
 #. js-lingui-id: Hd06oy
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Current version"
@@ -1328,6 +1350,11 @@ msgstr ""
 msgid "Data type"
 msgstr "數據類型"
 
+#. js-lingui-id: GEMJqo
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "Database configuration is currently disabled."
+msgstr ""
+
 #. js-lingui-id: mYGY3B
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
@@ -1394,6 +1421,11 @@ msgstr "默認國家"
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "Default Country Code"
 msgstr "默認國際冠碼"
+
+#. js-lingui-id: TlEEts
+#: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
+msgid "Default value"
+msgstr ""
 
 #. js-lingui-id: aQ8swY
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -1683,6 +1715,7 @@ msgstr "最早日期"
 #. js-lingui-id: ePK91l
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 msgid "Edit"
 msgstr "編輯"
 
@@ -1844,6 +1877,11 @@ msgstr "英語"
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "享受 {withCreditCardTrialPeriodDuration} 天的免費試用期"
 
+#. js-lingui-id: oiVP/+
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
+msgid "Enter a value to store in database"
+msgstr ""
+
 #. js-lingui-id: 9/30HU
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Enter in <0>Unicode</0> format"
@@ -1876,8 +1914,13 @@ msgstr "實體 ID 已複製到剪貼板"
 
 #. js-lingui-id: 7RnAWe
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
-msgid "Env Variables"
-msgstr "環境變量"
+#~ msgid "Env Variables"
+#~ msgstr "環境變量"
+
+#. js-lingui-id: vPWtZ+
+#: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
+msgid "Environment variable"
+msgstr ""
 
 #. js-lingui-id: XOEl9R
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
@@ -2109,6 +2152,16 @@ msgstr "導出工作流程"
 #. js-lingui-id: uE7S0L
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
 msgid "Extra Credits Used"
+msgstr ""
+
+#. js-lingui-id: bVax4d
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Failed to remove  override"
+msgstr ""
+
+#. js-lingui-id: Dzh4a2
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Failed to update variable"
 msgstr ""
 
 #. js-lingui-id: jARNNi
@@ -2348,6 +2401,7 @@ msgid "Greek"
 msgstr "希臘語"
 
 #. js-lingui-id: L8fEEm
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Group"
@@ -2416,6 +2470,11 @@ msgstr "隱藏已刪除的工作流程"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Hide empty groups"
 msgstr "隱藏空組"
+
+#. js-lingui-id: wgmt7A
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
+msgid "Hide hidden groups"
+msgstr ""
 
 #. js-lingui-id: B06Bgk
 #: src/pages/onboarding/CreateProfile.tsx
@@ -3143,6 +3202,11 @@ msgstr ""
 msgid "No change detected"
 msgstr "未檢測到變更"
 
+#. js-lingui-id: YFLMyY
+#: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
+msgid "No config variables match your current filters. Try adjusting your filters or search criteria."
+msgstr ""
+
 #. js-lingui-id: pwenQu
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "No connected account"
@@ -3263,6 +3327,11 @@ msgstr ""
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "No Select field"
 msgstr "無選擇字段"
+
+#. js-lingui-id: A5XQ/A
+#: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
+msgid "No variables found"
+msgstr ""
 
 #. js-lingui-id: 0uWxPM
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
@@ -3423,8 +3492,8 @@ msgstr "或"
 #. js-lingui-id: /IX/7x
 #: src/pages/settings/Releases.tsx
 #: src/pages/settings/lab/SettingsLab.tsx
-#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Other"
@@ -3433,13 +3502,13 @@ msgstr "其他"
 #. js-lingui-id: 3V8SRM
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
-msgid "Other Environment Variables"
-msgstr "其他環境變量"
+#~ msgid "Other Environment Variables"
+#~ msgstr "其他環境變量"
 
 #. js-lingui-id: P7KMWx
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid "Other Variables"
-msgstr "其他變量"
+#~ msgid "Other Variables"
+#~ msgstr "其他變量"
 
 #. js-lingui-id: +vDFPm
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
@@ -3782,6 +3851,7 @@ msgid "Remove option"
 msgstr "移除選項"
 
 #. js-lingui-id: OfhWJH
+#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
 msgid "Reset"
 msgstr "重設"
@@ -3795,6 +3865,16 @@ msgstr "重置密碼"
 #: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx
 msgid "Reset to"
 msgstr "重置為"
+
+#. js-lingui-id: Tj36Dr
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
+msgid "Reset to Default"
+msgstr ""
+
+#. js-lingui-id: 6rzsES
+#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
+msgid "Reset variable"
+msgstr ""
 
 #. js-lingui-id: WHiaOl
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
@@ -3874,6 +3954,7 @@ msgstr "俄語"
 #. js-lingui-id: tfDRzk
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 msgid "Save"
 msgstr "保存"
 
@@ -3934,6 +4015,11 @@ msgstr "搜尋已分配的團隊成員……"
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 msgid "Search an index..."
 msgstr "搜索索引..."
+
+#. js-lingui-id: 3UPqHL
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableSearchInput.tsx
+msgid "Search config variables"
+msgstr ""
 
 #. js-lingui-id: sSARNY
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -4077,9 +4163,19 @@ msgstr ""
 msgid "Select file"
 msgstr ""
 
+#. js-lingui-id: llc/hA
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
+msgid "Select Group"
+msgstr ""
+
 #. js-lingui-id: ljSvAs
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 msgid "Select header row"
+msgstr ""
+
+#. js-lingui-id: UKCiEd
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
+msgid "Select Source"
 msgstr ""
 
 #. js-lingui-id: mWHn81
@@ -4222,6 +4318,11 @@ msgstr "更改字段標籤是否也應更改 API 名稱？"
 msgid "Should changing an object's label also change the API?"
 msgstr "更改對象標籤是否也應更改 API 名稱？"
 
+#. js-lingui-id: 1OVrop
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
+msgid "Show hidden groups"
+msgstr ""
+
 #. js-lingui-id: qi+g0a
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Show only rows with errors"
@@ -4280,6 +4381,11 @@ msgstr "跳過"
 msgid "Sort"
 msgstr "排序"
 
+#. js-lingui-id: wdxz7K
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
+msgid "Source"
+msgstr ""
+
 #. js-lingui-id: 65A04M
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Spanish"
@@ -4305,6 +4411,11 @@ msgstr "階段"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
 msgstr "狀態"
+
+#. js-lingui-id: qn1Xxf
+#: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
+msgid "Stored in database"
+msgstr ""
 
 #. js-lingui-id: ku9TbG
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
@@ -4593,8 +4704,8 @@ msgstr "出現問題"
 
 #. js-lingui-id: DHjmMm
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
-msgstr "這些僅是伺服器的數值。確保您的工作環境具有相同的變量和值，這對於電子郵件同步等異步任務是必需的。"
+#~ msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
+#~ msgstr "這些僅是伺服器的數值。確保您的工作環境具有相同的變量和值，這對於電子郵件同步等異步任務是必需的。"
 
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -4605,6 +4716,11 @@ msgstr "此操作無法撤銷。這將永久刪除此用戶並將其從所有任
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
 msgstr "此操作無法撤銷。這將永久刪除您的整個工作區。 <0/> 請輸入您的電子郵件以確認。"
+
+#. js-lingui-id: SLIRqz
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "This database value overrides environment settings. "
+msgstr ""
 
 #. js-lingui-id: yHIStW
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
@@ -4626,10 +4742,30 @@ msgstr "此操作無法撤銷。這將永久刪除您的整個工作區。 <0/> 
 msgid "This role is assigned to these workspace members."
 msgstr "這個角色已被指派給這些工作區成員。"
 
+#. js-lingui-id: C/wr0z
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "This setting can only be configured through environment variables."
+msgstr ""
+
+#. js-lingui-id: iAubP2
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "This should never happen"
+msgstr ""
+
+#. js-lingui-id: MMGDfe
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "This value will be saved to the database."
+msgstr ""
+
 #. js-lingui-id: yByRxz
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "This week"
 msgstr "本週"
+
+#. js-lingui-id: 4YifBe
+#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
+msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
+msgstr ""
 
 #. js-lingui-id: n9nSNJ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -4835,9 +4971,30 @@ msgstr "用戶未登錄"
 msgid "Users"
 msgstr "Users"
 
+#. js-lingui-id: vUr1/5
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "Using default application value. Configure via environment variables."
+msgstr ""
+
+#. js-lingui-id: 8Drj7i
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "Using default value. Set a custom value to override."
+msgstr ""
+
 #. js-lingui-id: MGeZsN
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
 msgid "Validate data"
+msgstr ""
+
+#. js-lingui-id: wMHvYH
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
+msgid "Value"
+msgstr ""
+
+#. js-lingui-id: UZHvVi
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "Value is set in the server environment, it may be a different value on the worker."
 msgstr ""
 
 #. js-lingui-id: fXVIZq
@@ -4851,6 +5008,11 @@ msgstr "值"
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Variable not found"
 msgstr "變量未找到"
+
+#. js-lingui-id: N/89ho
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Variable updated successfully"
+msgstr ""
 
 #. js-lingui-id: IHIWR4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
