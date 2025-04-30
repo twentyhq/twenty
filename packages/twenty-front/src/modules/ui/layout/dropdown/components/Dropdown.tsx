@@ -25,6 +25,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useDropdown } from '../hooks/useDropdown';
 
+type Width = `${string}px` | `${number}%` | 'auto' | number;
 const StyledDropdownFallbackAnchor = styled.div`
   left: 0;
   position: fixed;
@@ -32,7 +33,7 @@ const StyledDropdownFallbackAnchor = styled.div`
 `;
 
 const StyledClickableComponent = styled.div<{
-  width?: `${string}px` | `${number}%` | 'auto' | number;
+  width?: Width;
 }>`
   height: fit-content;
   width: ${({ width }) => width ?? 'auto'};
@@ -41,6 +42,7 @@ const StyledClickableComponent = styled.div<{
 export type DropdownProps = {
   className?: string;
   clickableComponent?: ReactNode;
+  clickableComponentWidth?: Width;
   dropdownComponents: ReactNode;
   hotkey?: {
     key: Keys;
@@ -49,14 +51,13 @@ export type DropdownProps = {
   dropdownHotkeyScope: HotkeyScope;
   dropdownId: string;
   dropdownPlacement?: Placement;
-  dropdownWidth?: `${string}px` | `${number}%` | 'auto' | number;
+  dropdownWidth?: Width;
   dropdownOffset?: DropdownOffset;
   dropdownStrategy?: 'fixed' | 'absolute';
   onClickOutside?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
   avoidPortal?: boolean;
-  clickableComponentWidth?: `${string}px` | `${number}%` | 'auto' | number;
 };
 
 export const Dropdown = ({

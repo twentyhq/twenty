@@ -588,7 +588,6 @@ export class WorkflowVersionStepWorkspaceService {
 
           const record = await repository.findOne({
             where: { id: response[key].id },
-            relations: ['fields'],
           });
 
           return { key, value: record };
