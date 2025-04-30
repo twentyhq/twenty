@@ -28,7 +28,7 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
 import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 import { assertNever } from 'src/utils/assert';
-import { AutomatedTriggerService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.service';
+import { AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 
 @Injectable()
@@ -38,7 +38,7 @@ export class WorkflowTriggerWorkspaceService {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
-    private readonly automatedTriggerService: AutomatedTriggerService,
+    private readonly automatedTriggerWorkspaceService: AutomatedTriggerWorkspaceService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
@@ -330,7 +330,7 @@ export class WorkflowTriggerWorkspaceService {
       case WorkflowTriggerType.DATABASE_EVENT: {
         const eventName = workflowVersion.trigger.settings.eventName;
 
-        await this.automatedTriggerService.addAutomatedTrigger({
+        await this.automatedTriggerWorkspaceService.addAutomatedTrigger({
           workflowId: workflowVersion.workflowId,
           type: AutomatedTriggerType.DATABASE_EVENT,
           settings: { eventName },
@@ -342,7 +342,7 @@ export class WorkflowTriggerWorkspaceService {
       case WorkflowTriggerType.CRON: {
         const pattern = computeCronPatternFromSchedule(workflowVersion.trigger);
 
-        await this.automatedTriggerService.addAutomatedTrigger({
+        await this.automatedTriggerWorkspaceService.addAutomatedTrigger({
           workflowId: workflowVersion.workflowId,
           type: AutomatedTriggerType.CRON,
           settings: { pattern },
@@ -366,7 +366,7 @@ export class WorkflowTriggerWorkspaceService {
     switch (workflowVersion.trigger.type) {
       case WorkflowTriggerType.DATABASE_EVENT:
       case WorkflowTriggerType.CRON:
-        await this.automatedTriggerService.deleteAutomatedTrigger({
+        await this.automatedTriggerWorkspaceService.deleteAutomatedTrigger({
           workflowId: workflowVersion.workflowId,
           manager,
         });

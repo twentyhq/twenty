@@ -11,7 +11,7 @@ import {
 } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 
 @Injectable()
-export class AutomatedTriggerService {
+export class AutomatedTriggerWorkspaceService {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   async addAutomatedTrigger({

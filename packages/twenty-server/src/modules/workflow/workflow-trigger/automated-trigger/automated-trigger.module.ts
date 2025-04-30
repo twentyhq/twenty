@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AutomatedTriggerService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.service';
+import { AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { DatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/database-event-trigger.listener';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -11,11 +11,11 @@ import { CronTriggerCronJob } from 'src/modules/workflow/workflow-trigger/automa
 @Module({
   imports: [FeatureFlagModule, TypeOrmModule.forFeature([Workspace], 'core')],
   providers: [
-    AutomatedTriggerService,
+    AutomatedTriggerWorkspaceService,
     DatabaseEventTriggerListener,
     CronTriggerCronJob,
     CronTriggerCronCommand,
   ],
-  exports: [AutomatedTriggerService],
+  exports: [AutomatedTriggerWorkspaceService],
 })
 export class AutomatedTriggerModule {}
