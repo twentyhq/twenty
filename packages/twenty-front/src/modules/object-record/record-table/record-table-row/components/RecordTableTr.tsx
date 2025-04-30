@@ -8,13 +8,26 @@ import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-
 import styled from '@emotion/styled';
 import { ReactNode, forwardRef } from 'react';
 
-const StyledTr = styled.tr<{ isDragging: boolean; isActive: boolean }>`
+const StyledTr = styled.tr<{
+  isDragging: boolean;
+  isActive: boolean;
+  isNextRowActive: boolean;
+}>`
   border: ${({ isDragging, theme }) =>
     isDragging
       ? `1px solid ${theme.border.color.medium}`
       : '1px solid transparent'};
   position: relative;
   transition: border-left-color 0.2s ease-in-out;
+
+  ${({ isNextRowActive }) =>
+    isNextRowActive
+      ? `
+      td { 
+          border-bottom: none;
+      }
+      `
+      : ''}
 
   ${({ isActive, theme }) =>
     isActive
@@ -65,6 +78,11 @@ export const RecordTableTr = forwardRef<
     focusIndex,
   );
 
+  const isNextRowActive = useRecoilComponentFamilyValueV2(
+    isRecordTableRowActiveComponentFamilyState,
+    focusIndex + 1,
+  );
+
   return (
     <RecordTableRowContextProvider
       value={{
@@ -86,6 +104,7 @@ export const RecordTableTr = forwardRef<
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
         isActive={isActive}
+        isNextRowActive={isNextRowActive}
       >
         {children}
       </StyledTr>
