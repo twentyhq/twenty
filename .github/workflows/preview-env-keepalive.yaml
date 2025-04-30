@@ -1,5 +1,9 @@
 name: 'Preview Environment Keep Alive'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.client_payload.ref }}
+  cancel-in-progress: true
+
 on:
   repository_dispatch:
     types: [preview-environment]
