@@ -47,6 +47,10 @@ export const usePageChangeEffectNavigateLocation = () => {
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
 
+  if (isMatchingLocation(AppPath.ResetPassword)) {
+    return;
+  }
+
   if (!isLoggedIn && !isMatchingOngoingUserCreationRoute) {
     return AppPath.SignInUp;
   }
