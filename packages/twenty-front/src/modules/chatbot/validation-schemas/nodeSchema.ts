@@ -1,16 +1,16 @@
 import { z } from 'zod';
 
 export const nodeTextSchema = z.object({
-  type: z.literal('TEXT'),
+  type: z.literal('text'),
   text: z.string(),
 });
 
 export const nodeImageSchema = z.object({
-  type: z.literal('IMAGE'),
+  type: z.literal('image'),
 });
 
 export const nodeFileSchema = z.object({
-  type: z.literal('FILE'),
+  type: z.literal('file'),
 });
 
 export const nodeActionSchema = z.discriminatedUnion('type', [
@@ -20,7 +20,7 @@ export const nodeActionSchema = z.discriminatedUnion('type', [
 ]);
 
 export const nodeConditionsSchema = z.object({
-  type: z.literal('CONDITION'),
+  type: z.literal('condition'),
 });
 
 export const otherNodeActionSchema = z.discriminatedUnion('type', [

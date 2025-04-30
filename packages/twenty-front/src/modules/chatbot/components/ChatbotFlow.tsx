@@ -17,8 +17,8 @@ interface TargetableObject {
 }
 
 const types: NodeTypes = {
-  textInput: TextNode,
-  logicInput: CondicionalNode,
+  text: TextNode,
+  condition: CondicionalNode,
   addNode: ButtonAddNode,
 };
 

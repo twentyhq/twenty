@@ -3,6 +3,7 @@ import { ChatbotFlowInput } from '@/chatbot/types/chatbotFlow.type';
 import { Node } from '@xyflow/react';
 
 import { SendMessageInput } from '@/chat/call-center/types/SendMessage';
+import { NodeType } from '@/chatbot/constants/NodeTypes';
 import { CondicionalInputHandler } from '@/chatbot/engine/handlers/CondicionalInputHandler';
 import { LogicData } from '@/chatbot/types/LogicNodeDataType';
 import { NodeHandler } from './handlers/NodeHandler';
@@ -28,13 +29,13 @@ export class ExecuteFlow {
     this.currentNodeId = this.findStartNode()?.id;
 
     this.handlers = {
-      textInput: new TextInputHandler(
+      text: new TextInputHandler(
         sendMessage,
         integrationId,
         recipient,
         chatbotName,
       ),
-      logicInput: new CondicionalInputHandler(),
+      condition: new CondicionalInputHandler(),
     };
 
     this.onFinish = onFinish;
@@ -67,7 +68,7 @@ export class ExecuteFlow {
         incomingMessage: this.incomingMessage,
       });
 
-      if (currentNode.type === 'logicInput' && nextNodeId) {
+      if (currentNode.type === NodeType.CONDITION && nextNodeId) {
         const logic = (currentNode.data as { logic: LogicData }).logic;
         const { logicNodeData } = logic;
 
@@ -81,7 +82,7 @@ export class ExecuteFlow {
       }
 
       if (!nextNodeId) {
-        if (this.onFinish && currentNode.type === 'textInput') {
+        if (this.onFinish && currentNode.type === NodeType.TEXT) {
           this.onFinish(currentNode, this.chosenGroupInputs);
         }
         break;
@@ -120,7 +121,7 @@ export class ExecuteFlow {
         incomingMessage: this.incomingMessage,
       });
 
-      if (currentNode.type === 'logicInput' && nextNodeId) {
+      if (currentNode.type === NodeType.CONDITION && nextNodeId) {
         const logic = (currentNode.data as { logic: LogicData }).logic;
         const { logicNodeData } = logic;
 
@@ -134,7 +135,7 @@ export class ExecuteFlow {
       }
 
       if (!nextNodeId) {
-        if (this.onFinish && currentNode.type === 'textInput') {
+        if (this.onFinish && currentNode.type === NodeType.TEXT) {
           this.onFinish(currentNode, this.chosenGroupInputs);
         }
         break;

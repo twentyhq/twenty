@@ -3,7 +3,7 @@ import { Edge, Node } from '@xyflow/react';
 export const initialNodes: Node[] = [
   {
     id: '1',
-    type: 'textInput',
+    type: 'text',
     data: {
       nodeStart: true,
       title: 'Mensagem Inicial',
@@ -14,7 +14,7 @@ export const initialNodes: Node[] = [
   },
   {
     id: '2',
-    type: 'logicInput',
+    type: 'condition',
     data: {
       logic: {
         logicNodes: [0, 1],
@@ -31,13 +31,13 @@ export const initialNodes: Node[] = [
   },
   {
     id: '3',
-    type: 'textInput',
+    type: 'text',
     data: { nodeStart: false, title: 'Mensagem' },
     position: { x: 500, y: 300 },
   },
   {
     id: '4',
-    type: 'textInput',
+    type: 'text',
     data: { nodeStart: false, title: 'Mensagem' },
     position: { x: 500, y: 600 },
   },
