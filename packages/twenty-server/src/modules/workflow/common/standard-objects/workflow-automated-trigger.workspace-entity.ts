@@ -50,13 +50,12 @@ export class WorkflowAutomatedTriggerWorkspaceEntity extends BaseWorkspaceEntity
     standardId: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.workflow,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workflow`,
-    description: msg`WorkflowAutoTrigger workflow`,
+    description: msg`WorkflowAutomatedTrigger workflow`,
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'automatedTriggers',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @WorkspaceIsNullable()
   workflow: Relation<WorkflowWorkspaceEntity>;
 
   @WorkspaceJoinColumn('workflow')
