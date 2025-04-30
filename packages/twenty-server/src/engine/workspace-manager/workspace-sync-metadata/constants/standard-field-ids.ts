@@ -188,6 +188,7 @@ export const TRACEABLE_STANDARD_FIELD_IDS = {
   keyword: '20202020-8e7d-6c5b-4a3a-2b1c0d9e8f7a',
   campaignContent: '20202020-e52a-4e7c-9445-c9390d78bcb3',
   generatedUrl: '20202020-e611-4874-ba80-3d45cf541b2a',
+  url: '20202020-44fb-4853-90b4-7162977abc80',
   position: '20202020-1a2b-3c4d-5e6f-7a8b9c0d1e2f',
   timelineActivities: '20202020-b751-43e3-a9f0-186288344f21',
   searchVector: '20202020-8c9d-7e6f-5a4b-3c2d1e0f9a8b',

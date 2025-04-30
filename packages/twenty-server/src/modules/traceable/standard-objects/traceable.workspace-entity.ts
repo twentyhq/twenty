@@ -114,7 +114,7 @@ export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
   generatedUrl: LinksMetadata | null;
 
   @WorkspaceField({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.generatedUrl,
+    standardId: TRACEABLE_STANDARD_FIELD_IDS.url,
     type: FieldMetadataType.LINKS,
     label: msg`Traceable URL`,
     description: msg`The URL used to track final url metadata.`,
