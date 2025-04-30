@@ -38,6 +38,6 @@ export const STANDARD_OBJECT_ICONS = {
   workflowEventListener: 'IconSettingsAutomation',
   workflowRun: 'IconHistoryToggle',
   workflowVersion: 'IconVersions',
+  workflowAutomatedTrigger: 'IconSettingsAutomation',
   workspaceMember: 'IconUserCircle',
-  workspaceAutomatedTrigger: 'IconSettingsAutomation',
 };

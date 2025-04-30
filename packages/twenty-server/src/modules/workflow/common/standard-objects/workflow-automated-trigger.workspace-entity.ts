@@ -33,7 +33,7 @@ export type AutomatedTriggerSettings = {
   labelSingular: msg`WorkflowAutomatedTrigger`,
   labelPlural: msg`WorkflowAutomatedTriggers`,
   description: msg`A workflow automated trigger`,
-  icon: STANDARD_OBJECT_ICONS.workspaceAutomatedTrigger,
+  icon: STANDARD_OBJECT_ICONS.workflowAutomatedTrigger,
 })
 @WorkspaceIsSystem()
 export class WorkflowAutomatedTriggerWorkspaceEntity extends BaseWorkspaceEntity {
