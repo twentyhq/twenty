@@ -23,6 +23,7 @@ export const seedUsers = async (
       'lastName',
       'email',
       'passwordHash',
+      'isEmailVerified',
     ])
     .orIgnore()
     .values([
@@ -32,7 +33,8 @@ export const seedUsers = async (
         lastName: 'A',
         email: 'noah@demo.dev',
         passwordHash:
-          '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
+          '$2b$10$3LwXjJRtLsfx4hLuuXhxt.3mWgismTiZFCZSG3z9kDrSfsrBl0fT6', // tim@apple.dev
+        isEmailVerified: true,
       },
       {
         id: DEMO_SEED_USER_IDS.HUGO,
@@ -40,7 +42,8 @@ export const seedUsers = async (
         lastName: 'I',
         email: 'hugo@demo.dev',
         passwordHash:
-          '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
+          '$2b$10$3LwXjJRtLsfx4hLuuXhxt.3mWgismTiZFCZSG3z9kDrSfsrBl0fT6', // tim@apple.dev
+        isEmailVerified: true,
       },
       {
         id: DEMO_SEED_USER_IDS.TIM,
@@ -48,7 +51,8 @@ export const seedUsers = async (
         lastName: 'Apple',
         email: 'tim@apple.dev',
         passwordHash:
-          '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
+          '$2b$10$3LwXjJRtLsfx4hLuuXhxt.3mWgismTiZFCZSG3z9kDrSfsrBl0fT6', // tim@apple.dev
+        isEmailVerified: true,
       },
     ])
     .execute();
