@@ -1,7 +1,7 @@
 import { fromNavigator, fromStorage, fromUrl } from '@lingui/detect-locale';
+import { APP_LOCALES } from 'twenty-shared/translations';
+import { isDefined, isValidLocale, normalizeLocale } from 'twenty-shared/utils';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { isDefined, isValidLocale } from 'twenty-shared/utils';
 
 export const initialI18nActivate = () => {
   const urlLocale = fromUrl('locale');
@@ -10,20 +10,34 @@ export const initialI18nActivate = () => {
 
   let locale: keyof typeof APP_LOCALES = APP_LOCALES.en;
 
-  if (isDefined(urlLocale) && isValidLocale(urlLocale)) {
-    locale = urlLocale;
+  const normalizedUrlLocale = isDefined(urlLocale)
+    ? normalizeLocale(urlLocale)
+    : null;
+  const normalizedStorageLocale = isDefined(storageLocale)
+    ? normalizeLocale(storageLocale)
+    : null;
+  const normalizedNavigatorLocale = isDefined(navigatorLocale)
+    ? normalizeLocale(navigatorLocale)
+    : null;
+
+  if (isDefined(normalizedUrlLocale) && isValidLocale(normalizedUrlLocale)) {
+    locale = normalizedUrlLocale;
     try {
-      localStorage.setItem('locale', urlLocale);
+      localStorage.setItem('locale', normalizedUrlLocale);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log('Failed to save locale to localStorage:', error);
     }
-  } else if (isDefined(storageLocale) && isValidLocale(storageLocale)) {
-    locale = storageLocale;
-  } else if (isDefined(navigatorLocale) && isValidLocale(navigatorLocale)) {
-    // TODO: remove when we're ready to launch
-    // locale = navigatorLocale;
-    locale = SOURCE_LOCALE;
+  } else if (
+    isDefined(normalizedStorageLocale) &&
+    isValidLocale(normalizedStorageLocale)
+  ) {
+    locale = normalizedStorageLocale;
+  } else if (
+    isDefined(normalizedNavigatorLocale) &&
+    isValidLocale(normalizedNavigatorLocale)
+  ) {
+    locale = normalizedNavigatorLocale;
   }
 
   dynamicActivate(locale);
