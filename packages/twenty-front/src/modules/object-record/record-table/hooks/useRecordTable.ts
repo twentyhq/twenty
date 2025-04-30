@@ -20,10 +20,13 @@ import { isRecordTableInitialLoadingComponentState } from '@/object-record/recor
 import { onColumnsChangeComponentState } from '@/object-record/record-table/states/onColumnsChangeComponentState';
 import { onEntityCountChangeComponentState } from '@/object-record/record-table/states/onEntityCountChangeComponentState';
 
+import { useRecordTableMoveActiveRow } from '@/object-record/record-table/hooks/useRecordTableMoveActiveRow';
+import { isRecordTableFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableFocusActiveComponentState';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useLeaveTableFocus } from './internal/useLeaveTableFocus';
 import { useResetTableRowSelection } from './internal/useResetTableRowSelection';
@@ -144,8 +147,20 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   const { setIsFocusActiveForCurrentPosition } =
     useSetIsRecordTableFocusActive(recordTableId);
 
-  const { moveDown, moveLeft, moveRight, moveUp } =
-    useRecordTableMoveFocus(recordTableId);
+  const isRecordTableFocusActive = useRecoilComponentValueV2(
+    isRecordTableFocusActiveComponentState,
+    recordTableId,
+  );
+
+  const {
+    moveDown: moveFocusDown,
+    moveLeft: moveFocusLeft,
+    moveRight: moveFocusRight,
+    moveUp: moveFocusUp,
+  } = useRecordTableMoveFocus(recordTableId);
+
+  const { moveActiveRowDown, moveActiveRowUp } =
+    useRecordTableMoveActiveRow(recordTableId);
 
   const useMapKeyboardToFocus = () => {
     const setHotkeyScope = useSetHotkeyScope();
@@ -153,37 +168,53 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     useScopedHotkeys(
       [Key.ArrowUp, `${Key.Shift}+${Key.Enter}`],
       () => {
-        moveUp();
+        if (isRecordTableFocusActive) {
+          moveFocusUp();
+        } else {
+          moveActiveRowUp();
+        }
       },
       TableHotkeyScope.TableFocus,
-      [moveUp],
+      [moveActiveRowUp, moveFocusUp],
     );
 
     useScopedHotkeys(
       Key.ArrowDown,
       () => {
-        moveDown();
+        if (isRecordTableFocusActive) {
+          moveFocusDown();
+        } else {
+          moveActiveRowDown();
+        }
       },
       TableHotkeyScope.TableFocus,
-      [moveDown],
+      [moveActiveRowDown, moveFocusDown],
     );
 
     useScopedHotkeys(
       [Key.ArrowLeft, `${Key.Shift}+${Key.Tab}`],
       () => {
-        moveLeft();
+        if (!isRecordTableFocusActive) {
+          return;
+        }
+
+        moveFocusLeft();
       },
       TableHotkeyScope.TableFocus,
-      [moveLeft],
+      [moveFocusLeft],
     );
 
     useScopedHotkeys(
       [Key.ArrowRight, Key.Tab],
       () => {
-        moveRight();
+        if (isRecordTableFocusActive) {
+          return;
+        }
+
+        moveFocusRight();
       },
       TableHotkeyScope.TableFocus,
-      [moveRight],
+      [moveFocusRight],
     );
 
     useScopedHotkeys(
@@ -211,10 +242,10 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setRowSelected,
     resetTableRowSelection,
     upsertRecordTableItem,
-    moveDown,
-    moveLeft,
-    moveRight,
-    moveUp,
+    moveFocusDown,
+    moveFocusLeft,
+    moveFocusRight,
+    moveFocusUp,
     useMapKeyboardToFocus,
     selectAllRows,
     setOnColumnsChange,

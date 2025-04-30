@@ -20,7 +20,7 @@ export const useRecordTableMoveActiveRow = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const moveUp = useRecoilCallback(
+  const moveActiveRowUp = useRecoilCallback(
     ({ snapshot }) =>
       () => {
         const activeRowIndex = getSnapshotValue(snapshot, activeRowIndexState);
@@ -41,7 +41,7 @@ export const useRecordTableMoveActiveRow = (recordTableId?: string) => {
     [activeRowIndexState, activateRecordTableRow],
   );
 
-  const moveDown = useRecoilCallback(
+  const moveActiveRowDown = useRecoilCallback(
     ({ snapshot }) =>
       () => {
         const allRecordIds = getSnapshotValue(
@@ -71,7 +71,7 @@ export const useRecordTableMoveActiveRow = (recordTableId?: string) => {
   );
 
   return {
-    moveUp,
-    moveDown,
+    moveActiveRowUp,
+    moveActiveRowDown,
   };
 };
