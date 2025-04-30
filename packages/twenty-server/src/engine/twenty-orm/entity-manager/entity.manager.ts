@@ -1,29 +1,41 @@
+import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import {
   DataSource,
   EntityManager,
   EntityTarget,
+  InsertResult,
   ObjectLiteral,
   QueryRunner,
   Repository,
+  SelectQueryBuilder,
 } from 'typeorm';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { validateOperationIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 export class WorkspaceEntityManager extends EntityManager {
   private readonly internalContext: WorkspaceInternalContext;
   readonly repositories: Map<string, Repository<any>>;
+  private featureFlagMap: FeatureFlagMap;
 
   constructor(
     internalContext: WorkspaceInternalContext,
     connection: DataSource,
+    featureFlagMap: FeatureFlagMap,
     queryRunner?: QueryRunner,
   ) {
     super(connection, queryRunner);
     this.internalContext = internalContext;
     this.repositories = new Map();
+    this.featureFlagMap = featureFlagMap;
   }
 
   override getRepository<Entity extends ObjectLiteral>(
@@ -68,6 +80,86 @@ export class WorkspaceEntityManager extends EntityManager {
     return newRepository;
   }
 
+  override createQueryBuilder<Entity extends ObjectLiteral>(
+    entityClassOrQueryRunner?: EntityTarget<Entity> | QueryRunner,
+    alias?: string,
+    queryRunner?: QueryRunner,
+    options: {
+      shouldBypassPermissionChecks: boolean;
+      roleId?: string;
+    } = {
+      shouldBypassPermissionChecks: false,
+    },
+  ): SelectQueryBuilder<Entity> | WorkspaceSelectQueryBuilder<Entity> {
+    let queryBuilder: SelectQueryBuilder<Entity>;
+
+    if (alias) {
+      queryBuilder = super.createQueryBuilder(
+        entityClassOrQueryRunner as EntityTarget<Entity>,
+        alias as string,
+        queryRunner as QueryRunner | undefined,
+      );
+    } else {
+      queryBuilder = super.createQueryBuilder(
+        entityClassOrQueryRunner as QueryRunner,
+      );
+    }
+
+    const isPermissionsV2Enabled =
+      this.featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
+
+    if (!isPermissionsV2Enabled) {
+      return queryBuilder;
+    } else {
+      let objectPermissions = {};
+
+      if (options?.roleId) {
+        const dataSource = this.connection as WorkspaceDataSource;
+        const objectPermissionsByRoleId = dataSource.permissionsPerRoleId;
+
+        objectPermissions = objectPermissionsByRoleId?.[options.roleId] ?? {};
+      }
+
+      return new WorkspaceSelectQueryBuilder(
+        queryBuilder,
+        objectPermissions,
+        this.internalContext,
+        options?.shouldBypassPermissionChecks ?? false,
+      );
+    }
+  }
+
+  override insert<Entity extends ObjectLiteral>(
+    target: EntityTarget<Entity>,
+    entityOrEntities:
+      | QueryDeepPartialEntity<Entity>
+      | QueryDeepPartialEntity<Entity>[],
+    options?: {
+      shouldBypassPermissionChecks?: boolean;
+      objectRecordsPermissions?: ObjectRecordsPermissions;
+    },
+  ): Promise<InsertResult> {
+    this.validatePermissions(target, options);
+
+    return super.insert(target, entityOrEntities);
+  }
+
+  override upsert<Entity extends ObjectLiteral>(
+    target: EntityTarget<Entity>,
+    entityOrEntities:
+      | QueryDeepPartialEntity<Entity>
+      | QueryDeepPartialEntity<Entity>[],
+    conflictPathsOrOptions: string[] | UpsertOptions<Entity>,
+    options?: {
+      shouldBypassPermissionChecks?: boolean;
+      objectRecordsPermissions?: ObjectRecordsPermissions;
+    },
+  ): Promise<InsertResult> {
+    this.validatePermissions(target, options);
+
+    return super.upsert(target, entityOrEntities, conflictPathsOrOptions);
+  }
+
   private getRepositoryKey({
     target,
     dataSource,
@@ -91,5 +183,37 @@ export class WorkspaceEntityManager extends EntityManager {
     return shouldBypassPermissionChecks
       ? `${repositoryPrefix}_bypass${featureFlagMapVersionSuffix}`
       : `${repositoryPrefix}${roleIdSuffix}${rolesPermissionsVersionSuffix}${featureFlagMapVersionSuffix}`;
+  }
+
+  private validatePermissions<Entity extends ObjectLiteral>(
+    target: EntityTarget<Entity>,
+    options?: {
+      shouldBypassPermissionChecks?: boolean;
+      objectRecordsPermissions?: ObjectRecordsPermissions;
+    },
+  ): void {
+    const isPermissionsV2Enabled =
+      this.featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
+
+    if (!isPermissionsV2Enabled) {
+      return;
+    }
+
+    if (options?.shouldBypassPermissionChecks === true) {
+      return;
+    }
+
+    validateOperationIsPermittedOrThrow({
+      entityName: this.extractTargetNameSingularFromEntityTarget(target),
+      operationType: 'update',
+      objectRecordsPermissions: options?.objectRecordsPermissions ?? {},
+      objectMetadataMaps: this.internalContext.objectMetadataMaps,
+    });
+  }
+
+  private extractTargetNameSingularFromEntityTarget(
+    target: EntityTarget<any>,
+  ): string {
+    return this.connection.getMetadata(target).name;
   }
 }
