@@ -56,9 +56,6 @@ export const SettingsAdminConfigVariablesRow = ({
       <StyledTruncatedCell color={theme.font.color.primary}>
         <StyledEllipsisLabel>{variable.name}</StyledEllipsisLabel>
       </StyledTruncatedCell>
-      {/* <StyledTruncatedCell>
-        <StyledEllipsisLabel>{variable.description}</StyledEllipsisLabel>
-      </StyledTruncatedCell> */}
       <StyledTruncatedCell align="right">
         <StyledEllipsisLabel>{displayValue}</StyledEllipsisLabel>
       </StyledTruncatedCell>
