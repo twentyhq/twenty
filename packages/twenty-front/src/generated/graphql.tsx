@@ -301,6 +301,7 @@ export type ClientConfig = {
   defaultSubdomain?: Maybe<Scalars['String']>;
   frontDomain: Scalars['String'];
   isAttachmentPreviewEnabled: Scalars['Boolean'];
+  isConfigVariablesInDbEnabled: Scalars['Boolean'];
   isEmailVerificationRequired: Scalars['Boolean'];
   isGoogleCalendarEnabled: Scalars['Boolean'];
   isGoogleMessagingEnabled: Scalars['Boolean'];
@@ -318,13 +319,31 @@ export type ComputeStepOutputSchemaInput = {
   step: Scalars['JSON'];
 };
 
+export enum ConfigSource {
+  DATABASE = 'DATABASE',
+  DEFAULT = 'DEFAULT',
+  ENVIRONMENT = 'ENVIRONMENT'
+}
+
 export type ConfigVariable = {
   __typename?: 'ConfigVariable';
   description: Scalars['String'];
+  isEnvOnly: Scalars['Boolean'];
   isSensitive: Scalars['Boolean'];
   name: Scalars['String'];
-  value: Scalars['String'];
+  options?: Maybe<Scalars['JSON']>;
+  source: ConfigSource;
+  type: ConfigVariableType;
+  value?: Maybe<Scalars['JSON']>;
 };
+
+export enum ConfigVariableType {
+  ARRAY = 'ARRAY',
+  BOOLEAN = 'BOOLEAN',
+  ENUM = 'ENUM',
+  NUMBER = 'NUMBER',
+  STRING = 'STRING'
+}
 
 export enum ConfigVariablesGroup {
   AnalyticsConfig = 'AnalyticsConfig',
@@ -868,6 +887,7 @@ export type Mutation = {
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
   createApprovedAccessDomain: ApprovedAccessDomain;
+  createDatabaseConfigVariable: Scalars['Boolean'];
   createDraftFromWorkflowVersion: WorkflowVersion;
   createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
@@ -880,6 +900,7 @@ export type Mutation = {
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
+  deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
@@ -914,6 +935,7 @@ export type Mutation = {
   switchToYearlyInterval: BillingUpdateOutput;
   track: Analytics;
   trackAnalytics: Analytics;
+  updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneField: Field;
   updateOneObject: Object;
@@ -971,6 +993,12 @@ export type MutationCreateApprovedAccessDomainArgs = {
 };
 
 
+export type MutationCreateDatabaseConfigVariableArgs = {
+  key: Scalars['String'];
+  value: Scalars['JSON'];
+};
+
+
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
 };
@@ -1013,6 +1041,11 @@ export type MutationDeactivateWorkflowVersionArgs = {
 
 export type MutationDeleteApprovedAccessDomainArgs = {
   input: DeleteApprovedAccessDomainInput;
+};
+
+
+export type MutationDeleteDatabaseConfigVariableArgs = {
+  key: Scalars['String'];
 };
 
 
@@ -1159,6 +1192,12 @@ export type MutationTrackAnalyticsArgs = {
   name?: InputMaybe<Scalars['String']>;
   properties?: InputMaybe<Scalars['JSON']>;
   type: AnalyticsType;
+};
+
+
+export type MutationUpdateDatabaseConfigVariableArgs = {
+  key: Scalars['String'];
+  value: Scalars['JSON'];
 };
 
 
@@ -1485,6 +1524,7 @@ export type Query = {
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
+  getDatabaseConfigVariable: ConfigVariable;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
@@ -1537,6 +1577,11 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
+};
+
+
+export type QueryGetDatabaseConfigVariableArgs = {
+  key: Scalars['String'];
 };
 
 
@@ -2665,7 +2710,7 @@ export type SwitchSubscriptionToYearlyIntervalMutation = { __typename?: 'Mutatio
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isEmailVerificationRequired: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, isAttachmentPreviewEnabled: boolean, chromeExtensionId?: string | null, canManageFeatureFlags: boolean, isMicrosoftMessagingEnabled: boolean, isMicrosoftCalendarEnabled: boolean, isGoogleMessagingEnabled: boolean, isGoogleCalendarEnabled: boolean, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, trialPeriods: Array<{ __typename?: 'BillingTrialPeriodDTO', duration: number, isCreditCardRequired: boolean }> }, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number }, publicFeatureFlags: Array<{ __typename?: 'PublicFeatureFlag', key: FeatureFlagKey, metadata: { __typename?: 'PublicFeatureFlagMetadata', label: string, description: string, imagePath: string } }> } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isEmailVerificationRequired: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, isAttachmentPreviewEnabled: boolean, chromeExtensionId?: string | null, canManageFeatureFlags: boolean, isMicrosoftMessagingEnabled: boolean, isMicrosoftCalendarEnabled: boolean, isGoogleMessagingEnabled: boolean, isGoogleCalendarEnabled: boolean, isConfigVariablesInDbEnabled: boolean, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, trialPeriods: Array<{ __typename?: 'BillingTrialPeriodDTO', duration: number, isCreditCardRequired: boolean }> }, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number }, publicFeatureFlags: Array<{ __typename?: 'PublicFeatureFlag', key: FeatureFlagKey, metadata: { __typename?: 'PublicFeatureFlagMetadata', label: string, description: string, imagePath: string } }> } };
 
 export type SearchQueryVariables = Exact<{
   searchInput: Scalars['String'];
@@ -2683,6 +2728,41 @@ export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]
 
 export type SkipSyncEmailOnboardingStepMutation = { __typename?: 'Mutation', skipSyncEmailOnboardingStep: { __typename?: 'OnboardingStepSuccess', success: boolean } };
 
+export type CreateDatabaseConfigVariableMutationVariables = Exact<{
+  key: Scalars['String'];
+  value: Scalars['JSON'];
+}>;
+
+
+export type CreateDatabaseConfigVariableMutation = { __typename?: 'Mutation', createDatabaseConfigVariable: boolean };
+
+export type DeleteDatabaseConfigVariableMutationVariables = Exact<{
+  key: Scalars['String'];
+}>;
+
+
+export type DeleteDatabaseConfigVariableMutation = { __typename?: 'Mutation', deleteDatabaseConfigVariable: boolean };
+
+export type UpdateDatabaseConfigVariableMutationVariables = Exact<{
+  key: Scalars['String'];
+  value: Scalars['JSON'];
+}>;
+
+
+export type UpdateDatabaseConfigVariableMutation = { __typename?: 'Mutation', updateDatabaseConfigVariable: boolean };
+
+export type GetConfigVariablesGroupedQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetConfigVariablesGroupedQuery = { __typename?: 'Query', getConfigVariablesGrouped: { __typename?: 'ConfigVariablesOutput', groups: Array<{ __typename?: 'ConfigVariablesGroupData', name: ConfigVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'ConfigVariable', name: string, description: string, value?: any | null, isSensitive: boolean, isEnvOnly: boolean, type: ConfigVariableType, options?: any | null, source: ConfigSource }> }> } };
+
+export type GetDatabaseConfigVariableQueryVariables = Exact<{
+  key: Scalars['String'];
+}>;
+
+
+export type GetDatabaseConfigVariableQuery = { __typename?: 'Query', getDatabaseConfigVariable: { __typename?: 'ConfigVariable', name: string, description: string, value?: any | null, isSensitive: boolean, isEnvOnly: boolean, type: ConfigVariableType, options?: any | null, source: ConfigSource } };
+
 export type UpdateWorkspaceFeatureFlagMutationVariables = Exact<{
   workspaceId: Scalars['String'];
   featureFlag: Scalars['String'];
@@ -2698,11 +2778,6 @@ export type UserLookupAdminPanelMutationVariables = Exact<{
 
 
 export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> }> } };
-
-export type GetConfigVariablesGroupedQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetConfigVariablesGroupedQuery = { __typename?: 'Query', getConfigVariablesGrouped: { __typename?: 'ConfigVariablesOutput', groups: Array<{ __typename?: 'ConfigVariablesGroupData', name: ConfigVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'ConfigVariable', name: string, description: string, value: string, isSensitive: boolean }> }> } };
 
 export type GetVersionInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4510,6 +4585,7 @@ export const GetClientConfigDocument = gql`
     isMicrosoftCalendarEnabled
     isGoogleMessagingEnabled
     isGoogleCalendarEnabled
+    isConfigVariablesInDbEnabled
   }
 }
     `;
@@ -4622,6 +4698,191 @@ export function useSkipSyncEmailOnboardingStepMutation(baseOptions?: Apollo.Muta
 export type SkipSyncEmailOnboardingStepMutationHookResult = ReturnType<typeof useSkipSyncEmailOnboardingStepMutation>;
 export type SkipSyncEmailOnboardingStepMutationResult = Apollo.MutationResult<SkipSyncEmailOnboardingStepMutation>;
 export type SkipSyncEmailOnboardingStepMutationOptions = Apollo.BaseMutationOptions<SkipSyncEmailOnboardingStepMutation, SkipSyncEmailOnboardingStepMutationVariables>;
+export const CreateDatabaseConfigVariableDocument = gql`
+    mutation CreateDatabaseConfigVariable($key: String!, $value: JSON!) {
+  createDatabaseConfigVariable(key: $key, value: $value)
+}
+    `;
+export type CreateDatabaseConfigVariableMutationFn = Apollo.MutationFunction<CreateDatabaseConfigVariableMutation, CreateDatabaseConfigVariableMutationVariables>;
+
+/**
+ * __useCreateDatabaseConfigVariableMutation__
+ *
+ * To run a mutation, you first call `useCreateDatabaseConfigVariableMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDatabaseConfigVariableMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDatabaseConfigVariableMutation, { data, loading, error }] = useCreateDatabaseConfigVariableMutation({
+ *   variables: {
+ *      key: // value for 'key'
+ *      value: // value for 'value'
+ *   },
+ * });
+ */
+export function useCreateDatabaseConfigVariableMutation(baseOptions?: Apollo.MutationHookOptions<CreateDatabaseConfigVariableMutation, CreateDatabaseConfigVariableMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateDatabaseConfigVariableMutation, CreateDatabaseConfigVariableMutationVariables>(CreateDatabaseConfigVariableDocument, options);
+      }
+export type CreateDatabaseConfigVariableMutationHookResult = ReturnType<typeof useCreateDatabaseConfigVariableMutation>;
+export type CreateDatabaseConfigVariableMutationResult = Apollo.MutationResult<CreateDatabaseConfigVariableMutation>;
+export type CreateDatabaseConfigVariableMutationOptions = Apollo.BaseMutationOptions<CreateDatabaseConfigVariableMutation, CreateDatabaseConfigVariableMutationVariables>;
+export const DeleteDatabaseConfigVariableDocument = gql`
+    mutation DeleteDatabaseConfigVariable($key: String!) {
+  deleteDatabaseConfigVariable(key: $key)
+}
+    `;
+export type DeleteDatabaseConfigVariableMutationFn = Apollo.MutationFunction<DeleteDatabaseConfigVariableMutation, DeleteDatabaseConfigVariableMutationVariables>;
+
+/**
+ * __useDeleteDatabaseConfigVariableMutation__
+ *
+ * To run a mutation, you first call `useDeleteDatabaseConfigVariableMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteDatabaseConfigVariableMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteDatabaseConfigVariableMutation, { data, loading, error }] = useDeleteDatabaseConfigVariableMutation({
+ *   variables: {
+ *      key: // value for 'key'
+ *   },
+ * });
+ */
+export function useDeleteDatabaseConfigVariableMutation(baseOptions?: Apollo.MutationHookOptions<DeleteDatabaseConfigVariableMutation, DeleteDatabaseConfigVariableMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteDatabaseConfigVariableMutation, DeleteDatabaseConfigVariableMutationVariables>(DeleteDatabaseConfigVariableDocument, options);
+      }
+export type DeleteDatabaseConfigVariableMutationHookResult = ReturnType<typeof useDeleteDatabaseConfigVariableMutation>;
+export type DeleteDatabaseConfigVariableMutationResult = Apollo.MutationResult<DeleteDatabaseConfigVariableMutation>;
+export type DeleteDatabaseConfigVariableMutationOptions = Apollo.BaseMutationOptions<DeleteDatabaseConfigVariableMutation, DeleteDatabaseConfigVariableMutationVariables>;
+export const UpdateDatabaseConfigVariableDocument = gql`
+    mutation UpdateDatabaseConfigVariable($key: String!, $value: JSON!) {
+  updateDatabaseConfigVariable(key: $key, value: $value)
+}
+    `;
+export type UpdateDatabaseConfigVariableMutationFn = Apollo.MutationFunction<UpdateDatabaseConfigVariableMutation, UpdateDatabaseConfigVariableMutationVariables>;
+
+/**
+ * __useUpdateDatabaseConfigVariableMutation__
+ *
+ * To run a mutation, you first call `useUpdateDatabaseConfigVariableMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateDatabaseConfigVariableMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateDatabaseConfigVariableMutation, { data, loading, error }] = useUpdateDatabaseConfigVariableMutation({
+ *   variables: {
+ *      key: // value for 'key'
+ *      value: // value for 'value'
+ *   },
+ * });
+ */
+export function useUpdateDatabaseConfigVariableMutation(baseOptions?: Apollo.MutationHookOptions<UpdateDatabaseConfigVariableMutation, UpdateDatabaseConfigVariableMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateDatabaseConfigVariableMutation, UpdateDatabaseConfigVariableMutationVariables>(UpdateDatabaseConfigVariableDocument, options);
+      }
+export type UpdateDatabaseConfigVariableMutationHookResult = ReturnType<typeof useUpdateDatabaseConfigVariableMutation>;
+export type UpdateDatabaseConfigVariableMutationResult = Apollo.MutationResult<UpdateDatabaseConfigVariableMutation>;
+export type UpdateDatabaseConfigVariableMutationOptions = Apollo.BaseMutationOptions<UpdateDatabaseConfigVariableMutation, UpdateDatabaseConfigVariableMutationVariables>;
+export const GetConfigVariablesGroupedDocument = gql`
+    query GetConfigVariablesGrouped {
+  getConfigVariablesGrouped {
+    groups {
+      name
+      description
+      isHiddenOnLoad
+      variables {
+        name
+        description
+        value
+        isSensitive
+        isEnvOnly
+        type
+        options
+        source
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetConfigVariablesGroupedQuery__
+ *
+ * To run a query within a React component, call `useGetConfigVariablesGroupedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetConfigVariablesGroupedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetConfigVariablesGroupedQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetConfigVariablesGroupedQuery(baseOptions?: Apollo.QueryHookOptions<GetConfigVariablesGroupedQuery, GetConfigVariablesGroupedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetConfigVariablesGroupedQuery, GetConfigVariablesGroupedQueryVariables>(GetConfigVariablesGroupedDocument, options);
+      }
+export function useGetConfigVariablesGroupedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetConfigVariablesGroupedQuery, GetConfigVariablesGroupedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetConfigVariablesGroupedQuery, GetConfigVariablesGroupedQueryVariables>(GetConfigVariablesGroupedDocument, options);
+        }
+export type GetConfigVariablesGroupedQueryHookResult = ReturnType<typeof useGetConfigVariablesGroupedQuery>;
+export type GetConfigVariablesGroupedLazyQueryHookResult = ReturnType<typeof useGetConfigVariablesGroupedLazyQuery>;
+export type GetConfigVariablesGroupedQueryResult = Apollo.QueryResult<GetConfigVariablesGroupedQuery, GetConfigVariablesGroupedQueryVariables>;
+export const GetDatabaseConfigVariableDocument = gql`
+    query GetDatabaseConfigVariable($key: String!) {
+  getDatabaseConfigVariable(key: $key) {
+    name
+    description
+    value
+    isSensitive
+    isEnvOnly
+    type
+    options
+    source
+  }
+}
+    `;
+
+/**
+ * __useGetDatabaseConfigVariableQuery__
+ *
+ * To run a query within a React component, call `useGetDatabaseConfigVariableQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDatabaseConfigVariableQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDatabaseConfigVariableQuery({
+ *   variables: {
+ *      key: // value for 'key'
+ *   },
+ * });
+ */
+export function useGetDatabaseConfigVariableQuery(baseOptions: Apollo.QueryHookOptions<GetDatabaseConfigVariableQuery, GetDatabaseConfigVariableQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDatabaseConfigVariableQuery, GetDatabaseConfigVariableQueryVariables>(GetDatabaseConfigVariableDocument, options);
+      }
+export function useGetDatabaseConfigVariableLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDatabaseConfigVariableQuery, GetDatabaseConfigVariableQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDatabaseConfigVariableQuery, GetDatabaseConfigVariableQueryVariables>(GetDatabaseConfigVariableDocument, options);
+        }
+export type GetDatabaseConfigVariableQueryHookResult = ReturnType<typeof useGetDatabaseConfigVariableQuery>;
+export type GetDatabaseConfigVariableLazyQueryHookResult = ReturnType<typeof useGetDatabaseConfigVariableLazyQuery>;
+export type GetDatabaseConfigVariableQueryResult = Apollo.QueryResult<GetDatabaseConfigVariableQuery, GetDatabaseConfigVariableQueryVariables>;
 export const UpdateWorkspaceFeatureFlagDocument = gql`
     mutation UpdateWorkspaceFeatureFlag($workspaceId: String!, $featureFlag: String!, $value: Boolean!) {
   updateWorkspaceFeatureFlag(
@@ -4714,50 +4975,6 @@ export function useUserLookupAdminPanelMutation(baseOptions?: Apollo.MutationHoo
 export type UserLookupAdminPanelMutationHookResult = ReturnType<typeof useUserLookupAdminPanelMutation>;
 export type UserLookupAdminPanelMutationResult = Apollo.MutationResult<UserLookupAdminPanelMutation>;
 export type UserLookupAdminPanelMutationOptions = Apollo.BaseMutationOptions<UserLookupAdminPanelMutation, UserLookupAdminPanelMutationVariables>;
-export const GetConfigVariablesGroupedDocument = gql`
-    query GetConfigVariablesGrouped {
-  getConfigVariablesGrouped {
-    groups {
-      name
-      description
-      isHiddenOnLoad
-      variables {
-        name
-        description
-        value
-        isSensitive
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useGetConfigVariablesGroupedQuery__
- *
- * To run a query within a React component, call `useGetConfigVariablesGroupedQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetConfigVariablesGroupedQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetConfigVariablesGroupedQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetConfigVariablesGroupedQuery(baseOptions?: Apollo.QueryHookOptions<GetConfigVariablesGroupedQuery, GetConfigVariablesGroupedQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetConfigVariablesGroupedQuery, GetConfigVariablesGroupedQueryVariables>(GetConfigVariablesGroupedDocument, options);
-      }
-export function useGetConfigVariablesGroupedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetConfigVariablesGroupedQuery, GetConfigVariablesGroupedQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetConfigVariablesGroupedQuery, GetConfigVariablesGroupedQueryVariables>(GetConfigVariablesGroupedDocument, options);
-        }
-export type GetConfigVariablesGroupedQueryHookResult = ReturnType<typeof useGetConfigVariablesGroupedQuery>;
-export type GetConfigVariablesGroupedLazyQueryHookResult = ReturnType<typeof useGetConfigVariablesGroupedLazyQuery>;
-export type GetConfigVariablesGroupedQueryResult = Apollo.QueryResult<GetConfigVariablesGroupedQuery, GetConfigVariablesGroupedQueryVariables>;
 export const GetVersionInfoDocument = gql`
     query GetVersionInfo {
   versionInfo {

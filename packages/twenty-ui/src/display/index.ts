@@ -299,6 +299,7 @@ export {
   IconPuzzle,
   IconQuestionMark,
   IconRefresh,
+  IconRefreshAlert,
   IconRefreshDot,
   IconRelationManyToMany,
   IconRelationOneToMany,
