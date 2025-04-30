@@ -10,6 +10,7 @@ export const getSettingsPath = <T extends SettingsPath>(
     [key in PathParam<`/${AppPath.Settings}/${T}`>]: string | null;
   },
   queryParams?: Record<string, any>,
+  hash?: string,
 ) => {
   let path = `/${AppPath.Settings}/${to}`;
 
@@ -30,6 +31,10 @@ export const getSettingsPath = <T extends SettingsPath>(
     if (queryString !== '') {
       path += `?${queryString}`;
     }
+  }
+
+  if (isDefined(hash)) {
+    path += `#${hash.replace(/^#/, '')}`;
   }
 
   return path;

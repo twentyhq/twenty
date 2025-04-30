@@ -258,29 +258,64 @@ export class WorkflowVisualizerPage {
 
     await expect(this.#page.getByTestId('command-menu')).not.toBeVisible();
   }
+
+  async goToWorkflowsIndexPage() {
+    await this.#page.goto('/objects/workflows');
+  }
+
+  async setWorkflowsOpenInMode(mode: 'side-panel' | 'record-page') {
+    const recordTableOptionsButton = this.#page.getByText('Options');
+    await recordTableOptionsButton.click();
+
+    const layoutButton = this.#page.getByText('Layout');
+    await layoutButton.click();
+
+    const openInButton = this.#page.getByText('Open in');
+    await openInButton.click();
+
+    if (mode === 'side-panel') {
+      const openInSidePanelOption = this.#page.getByRole('option', {
+        name: 'Side Panel',
+      });
+
+      await openInSidePanelOption.click();
+    } else {
+      const openInRecordPageOption = this.#page.getByRole('option', {
+        name: 'Record Page',
+      });
+
+      await openInRecordPageOption.click();
+    }
+
+    // Close the dropdown
+    await recordTableOptionsButton.click();
+  }
 }
 
-export const test = base.extend<{ workflowVisualizer: WorkflowVisualizerPage }>(
-  {
-    workflowVisualizer: async ({ page }, use) => {
-      const workflowVisualizer = new WorkflowVisualizerPage({
-        page,
-        workflowName: 'Test Workflow',
-      });
+export const test = base.extend<{
+  workflowVisualizer: WorkflowVisualizerPage;
+}>({
+  workflowVisualizer: async ({ page }, use) => {
+    const workflowVisualizer = new WorkflowVisualizerPage({
+      page,
+      workflowName: 'Test Workflow',
+    });
 
-      await workflowVisualizer.createOneWorkflow();
-      await workflowVisualizer.goToWorkflowVisualizerPage();
+    await workflowVisualizer.createOneWorkflow();
+    await workflowVisualizer.goToWorkflowVisualizerPage();
 
-      await use(workflowVisualizer);
+    await use(workflowVisualizer);
 
-      await deleteWorkflow({
-        page,
-        workflowId: workflowVisualizer.workflowId,
-      });
-      await destroyWorkflow({
-        page,
-        workflowId: workflowVisualizer.workflowId,
-      });
-    },
+    await deleteWorkflow({
+      page,
+      workflowId: workflowVisualizer.workflowId,
+    });
+    await destroyWorkflow({
+      page,
+      workflowId: workflowVisualizer.workflowId,
+    });
+
+    await workflowVisualizer.goToWorkflowsIndexPage();
+    await workflowVisualizer.setWorkflowsOpenInMode('record-page');
   },
-);
+});

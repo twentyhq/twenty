@@ -9,7 +9,7 @@ import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 import { ObjectFilterOperandSelectAndInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterOperandSelectAndInput';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
-import { EditableFilterDropdownButtonEffect } from '@/views/components/EditableFilterDropdownButtonEffect';
+import { useSetEditableFilterChipDropdownStates } from '@/views/hooks/useSetEditableFilterChipDropdownStates';
 
 type EditableFilterDropdownButtonProps = {
   recordFilter: RecordFilter;
@@ -38,15 +38,22 @@ export const EditableFilterDropdownButton = ({
     }
   }, [recordFilter, removeRecordFilter]);
 
+  const { setEditableFilterChipDropdownStates } =
+    useSetEditableFilterChipDropdownStates();
+
+  const handleFilterChipClick = () => {
+    setEditableFilterChipDropdownStates(recordFilter);
+  };
+
   return (
     <>
-      <EditableFilterDropdownButtonEffect recordFilter={recordFilter} />
       <Dropdown
         dropdownId={recordFilter.id}
         clickableComponent={
           <EditableFilterChip
             recordFilter={recordFilter}
             onRemove={handleRemove}
+            onClick={handleFilterChipClick}
           />
         }
         dropdownComponents={

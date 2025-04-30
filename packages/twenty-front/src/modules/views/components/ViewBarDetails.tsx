@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { ReactNode, useMemo } from 'react';
 
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
@@ -10,7 +9,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { AdvancedFilterDropdownButton } from '@/views/components/AdvancedFilterDropdownButton';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
-import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
+import { ViewBarDetailsAddFilterButton } from '@/views/components/ViewBarDetailsAddFilterButton';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 
 import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
@@ -35,7 +34,6 @@ import { LightButton } from 'twenty-ui/input';
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
   rightComponent?: ReactNode;
-  filterDropdownId?: string;
   viewBarId: string;
   objectNamePlural: string;
 };
@@ -100,7 +98,6 @@ const StyledAddFilterContainer = styled.div`
 export const ViewBarDetails = ({
   hasFilterButton = false,
   rightComponent,
-  filterDropdownId,
   viewBarId,
   objectNamePlural,
 }: ViewBarDetailsProps) => {
@@ -232,7 +229,6 @@ export const ViewBarDetails = ({
                 value={{ instanceId: recordFilter.id }}
               >
                 <DropdownScope dropdownScopeId={recordFilter.id}>
-                  <ViewBarFilterEffect filterDropdownId={recordFilter.id} />
                   <EditableFilterDropdownButton
                     recordFilter={recordFilter}
                     hotkeyScope={{
@@ -246,9 +242,7 @@ export const ViewBarDetails = ({
         </ScrollWrapper>
         {hasFilterButton && (
           <StyledAddFilterContainer>
-            <AddObjectFilterFromDetailsButton
-              filterDropdownId={filterDropdownId}
-            />
+            <ViewBarDetailsAddFilterButton />
           </StyledAddFilterContainer>
         )}
       </StyledFilterContainer>
