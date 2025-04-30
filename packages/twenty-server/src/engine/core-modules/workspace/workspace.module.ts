@@ -7,6 +7,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
+import { BillingPlans } from 'src/engine/core-modules/billing-plans/billing-plans.entity';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
@@ -44,7 +45,14 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
         FileUploadModule,
         WorkspaceMetadataCacheModule,
         NestjsQueryTypeOrmModule.forFeature(
-          [User, Workspace, UserWorkspace, FeatureFlag, StripeIntegration],
+          [
+            User,
+            Workspace,
+            UserWorkspace,
+            FeatureFlag,
+            StripeIntegration,
+            BillingPlans,
+          ],
           'core',
         ),
         UserWorkspaceModule,
