@@ -87,9 +87,7 @@ export function formatResult<T>(
   for (const [key, value] of Object.entries(data)) {
     const compositePropertyArgs = compositeFieldMetadataMap.get(key);
 
-    const fieldMetadata = isNewRelationEnabled
-      ? objectMetadataItemWithFieldMaps.fieldsByName[key]
-      : objectMetadataItemWithFieldMaps.fieldsById[key];
+    const fieldMetadata = objectMetadataItemWithFieldMaps.fieldsByName[key];
 
     const isRelation = fieldMetadata
       ? isFieldMetadataInterfaceOfType(
