@@ -3,11 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { BillingPlans } from 'src/engine/core-modules/billing-plans/billing-plans.entity';
 import { CreateBillingPlansInput } from 'src/engine/core-modules/billing-plans/dtos/create-billing-plans.input';
 import { UpdateBillingPlansInput } from 'src/engine/core-modules/billing-plans/dtos/update-billing-plans.input';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class BillingPlansService {
@@ -16,9 +16,7 @@ export class BillingPlansService {
     private billingPlansRepository: Repository<BillingPlans>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    // private readonly onboardingService: OnboardingService,
-    @InjectRepository(User, 'core')
-    private readonly userRepository: Repository<User>,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async create(createInput: CreateBillingPlansInput): Promise<BillingPlans> {
@@ -40,11 +38,7 @@ export class BillingPlansService {
     return createdPlan;
   }
 
-  async savePlanId(
-    planId: string,
-    workspaceId: string,
-    userId: string,
-  ): Promise<BillingPlans> {
+  async savePlanId(planId: string, workspaceId: string): Promise<BillingPlans> {
     const currentWorkspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
     });
@@ -53,30 +47,12 @@ export class BillingPlansService {
       throw new Error('Workspace not found');
     }
 
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-    });
-
     const billingPlan = this.billingPlansRepository.create({
       planId,
       workspace: currentWorkspace,
     });
 
-    const savePlan = await this.billingPlansRepository.save(billingPlan);
-
-    // await this.onboardingService.setOnboardingPlanPending({
-    //   userId: user?.id || '',
-    //   workspaceId,
-    //   value: false,
-    // });
-
-    // await this.onboardingService.setOnboardingPlanPaymentPending({
-    //   userId: user?.id || '',
-    //   workspaceId,
-    //   value: true,
-    // });
-
-    return savePlan;
+    return this.billingPlansRepository.save(billingPlan);
   }
 
   async findAll(workspaceId: string): Promise<BillingPlans[]> {

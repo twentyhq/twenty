@@ -2,10 +2,8 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { BillingPlans } from 'src/engine/core-modules/billing-plans/billing-plans.entity';
 import { BillingPlansService } from 'src/engine/core-modules/billing-plans/billing-plans.service';
-import { CurrentUser } from 'src/engine/core-modules/billing-plans/current-user.decorator';
 import { CreateBillingPlansInput } from 'src/engine/core-modules/billing-plans/dtos/create-billing-plans.input';
 import { UpdateBillingPlansInput } from 'src/engine/core-modules/billing-plans/dtos/update-billing-plans.input';
-import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Resolver(() => BillingPlans)
 export class BillingPlansResolver {
@@ -23,9 +21,8 @@ export class BillingPlansResolver {
   saveBillingPlanId(
     @Args('planId') planId: string,
     @Args('workspaceId') workspaceId: string,
-    @CurrentUser() user: User,
   ): Promise<BillingPlans> {
-    return this.billingPlansService.savePlanId(planId, workspaceId, user.id);
+    return this.billingPlansService.savePlanId(planId, workspaceId);
   }
 
   @Query(() => [BillingPlans])
