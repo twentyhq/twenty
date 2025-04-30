@@ -15,16 +15,6 @@ export const useActiveRecordTableRow = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const activateRecordTableRow = useRecoilCallback(
-    ({ set }) =>
-      (rowIndex: number) => {
-        set(activeRowIndexState, rowIndex);
-
-        set(isRowActiveState(rowIndex), true);
-      },
-    [activeRowIndexState, isRowActiveState],
-  );
-
   const deactivateRecordTableRow = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
@@ -39,6 +29,28 @@ export const useActiveRecordTableRow = (recordTableId?: string) => {
         set(activeRowIndexState, null);
 
         set(isRowActiveState(activeRowIndex), false);
+      },
+    [activeRowIndexState, isRowActiveState],
+  );
+
+  const activateRecordTableRow = useRecoilCallback(
+    ({ set, snapshot }) =>
+      (rowIndex: number) => {
+        const activeRowIndex = snapshot
+          .getLoadable(activeRowIndexState)
+          .getValue();
+
+        if (activeRowIndex === rowIndex) {
+          return;
+        }
+
+        if (isDefined(activeRowIndex)) {
+          set(isRowActiveState(activeRowIndex), false);
+        }
+
+        set(activeRowIndexState, rowIndex);
+
+        set(isRowActiveState(rowIndex), true);
       },
     [activeRowIndexState, isRowActiveState],
   );
