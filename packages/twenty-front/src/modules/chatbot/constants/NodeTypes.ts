@@ -1,0 +1,9 @@
+export enum NodeType {
+  TEXT = 'TEXT',
+  IMAGE = 'IMAGE',
+  VIDEO = 'VIDEO',
+  AUDIO = 'AUDIO',
+  FILE = 'FILE',
+  INTERACTION = 'INTERACTION',
+  CONDITION = 'CONDITION',
+}
