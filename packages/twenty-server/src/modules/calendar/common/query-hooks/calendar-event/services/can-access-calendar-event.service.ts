@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 
 import groupBy from 'lodash.groupby';
-import { Any } from 'typeorm';
+import { In } from 'typeorm';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -52,7 +52,9 @@ export class CanAccessCalendarEventService {
     const connectedAccounts = await connectedAccountRepository.find({
       select: ['id'],
       where: {
-        calendarChannels: Any(calendarChannels.map((channel) => channel.id)),
+        calendarChannels: {
+          id: In(calendarChannels.map((channel) => channel.id)),
+        },
         accountOwnerId: currentWorkspaceMember.id,
       },
     });
