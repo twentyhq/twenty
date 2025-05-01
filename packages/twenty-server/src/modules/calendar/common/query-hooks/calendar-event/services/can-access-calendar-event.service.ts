@@ -36,7 +36,8 @@ export class CanAccessCalendarEventService {
     if (
       calendarChannelsGroupByVisibility[
         CalendarChannelVisibility.SHARE_EVERYTHING
-      ]
+      ] ||
+      calendarChannelsGroupByVisibility[CalendarChannelVisibility.METADATA]
     ) {
       return;
     }
