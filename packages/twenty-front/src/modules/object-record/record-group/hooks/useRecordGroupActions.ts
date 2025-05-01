@@ -1,21 +1,29 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { useRecordGroupReorder } from '@/object-record/record-group/hooks/useRecordGroupReorder';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
+import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useHasSettingsPermission } from '@/settings/roles/hooks/useHasSettingsPermission';
 import { SettingsPath } from '@/types/SettingsPath';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
 import { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconEyeOff,
+  IconSettings,
+} from 'twenty-ui/display';
 import { SettingPermissionType } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { IconEyeOff, IconSettings } from 'twenty-ui/display';
 
 type UseRecordGroupActionsParams = {
   viewType: ViewType;
@@ -49,6 +57,16 @@ export const useRecordGroupActions = ({
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
   );
+
+  const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(
+    visibleRecordGroupIdsComponentFamilySelector,
+    viewType,
+  );
+
+  const { reorderRecordGroups } = useRecordGroupReorder({
+    viewBarId: objectMetadataItem.id,
+    viewType,
+  });
 
   const navigateToSelectSettings = useCallback(() => {
     setNavigationMemorizedUrl(location.pathname + location.search);
@@ -88,11 +106,42 @@ export const useRecordGroupActions = ({
     });
   }
 
+  const currentIndex = visibleRecordGroupIds.findIndex(
+    (id) => id === recordGroupDefinition.id,
+  );
+
+  const canMoveLeft = currentIndex > 0;
+  const canMoveRight = currentIndex < visibleRecordGroupIds.length - 1;
+
+  if (canMoveLeft) {
+    recordGroupActions.push({
+      id: 'moveLeft',
+      label: 'Move left',
+      icon: IconArrowLeft,
+      position: 1,
+      callback: () => {
+        reorderRecordGroups(currentIndex, currentIndex - 1);
+      },
+    });
+  }
+
+  if (canMoveRight) {
+    recordGroupActions.push({
+      id: 'moveRight',
+      label: 'Move right',
+      icon: IconArrowRight,
+      position: 2,
+      callback: () => {
+        reorderRecordGroups(currentIndex, currentIndex + 1);
+      },
+    });
+  }
+
   recordGroupActions.push({
     id: 'hide',
     label: 'Hide',
     icon: IconEyeOff,
-    position: 1,
+    position: 3,
     callback: () => {
       handleRecordGroupVisibilityChange({
         ...recordGroupDefinition,
