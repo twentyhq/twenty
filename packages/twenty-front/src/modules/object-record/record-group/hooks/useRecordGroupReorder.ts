@@ -11,9 +11,9 @@ import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups
 import { ViewType } from '@/views/types/ViewType';
 import { mapRecordGroupDefinitionsToViewGroups } from '@/views/utils/mapRecordGroupDefinitionsToViewGroups';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isDefined } from 'twenty-shared/utils';
 
 type UseRecordGroupHandlersParams = {
   viewBarId: string;
@@ -33,13 +33,9 @@ export const useRecordGroupReorder = ({
 
   const { saveViewGroups } = useSaveCurrentViewGroups();
 
-  const handleOrderChange: OnDragEndResponder = useRecoilCallback(
+  const reorderRecordGroups = useRecoilCallback(
     ({ snapshot }) =>
-      (result) => {
-        if (!result.destination) {
-          return;
-        }
-
+      (fromIndex: number, toIndex: number) => {
         const visibleRecordGroupIds = getSnapshotValue(
           snapshot,
           visibleRecordGroupIdsFamilySelector(viewType),
@@ -48,8 +44,8 @@ export const useRecordGroupReorder = ({
         const reorderedVisibleRecordGroupIds = moveArrayItem(
           visibleRecordGroupIds,
           {
-            fromIndex: result.source.index - 1,
-            toIndex: result.destination.index - 1,
+            fromIndex,
+            toIndex,
           },
         );
 
@@ -95,7 +91,16 @@ export const useRecordGroupReorder = ({
     ],
   );
 
+  const handleOrderChange: OnDragEndResponder = (result) => {
+    if (!result.destination) {
+      return;
+    }
+
+    reorderRecordGroups(result.source.index - 1, result.destination.index - 1);
+  };
+
   return {
     handleOrderChange,
+    reorderRecordGroups,
   };
 };
