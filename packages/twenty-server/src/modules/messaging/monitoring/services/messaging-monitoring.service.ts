@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
+import { AnalyticsService } from 'src/engine/core-modules/audit/services/analytics.service';
 
 type MessagingMonitoringTrackInput = {
   eventName: string;

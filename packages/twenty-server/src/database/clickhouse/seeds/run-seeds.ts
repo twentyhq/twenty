@@ -2,7 +2,7 @@
 import { createClient } from '@clickhouse/client';
 import { config } from 'dotenv';
 
-import { fixtures } from 'src/engine/core-modules/analytics/utils/fixtures/fixtures';
+import { fixtures } from 'src/engine/core-modules/audit/utils/fixtures/fixtures';
 
 config({
   path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
@@ -18,7 +18,7 @@ async function seedEvents() {
     console.log(`⚡ Seeding ${fixtures.length} events...`);
 
     await client.insert({
-      table: 'event',
+      table: 'auditEvent',
       values: fixtures,
       format: 'JSONEachRow',
     });

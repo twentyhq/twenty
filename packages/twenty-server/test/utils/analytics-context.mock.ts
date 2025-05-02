@@ -1,4 +1,4 @@
-import { TrackEventName } from 'src/engine/core-modules/analytics/types/events.type';
+import { TrackEventName } from 'src/engine/core-modules/audit/types/events.type';
 
 export const AnalyticsContextMock = (params?: {
   track?:
