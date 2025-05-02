@@ -11,11 +11,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: write
-  actions: write
-  pull-requests: read
-
 jobs:
   changed-files-check:
     uses: ./.github/workflows/changed-files.yaml
@@ -27,9 +22,13 @@ jobs:
         docker-compose.yml
         packages/twenty-server/**
         packages/twenty-front/**
-  
+
   trigger-preview:
     needs: changed-files-check
+    permissions:
+      contents: write
+      actions: write
+      pull-requests: read
     if: needs.changed-files-check.outputs.any_changed == 'true' || contains(github.event.pull_request.labels.*.name, 'preview')
     timeout-minutes: 5
     runs-on: ubuntu-latest
@@ -40,4 +39,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
           event-type: preview-environment
-          client-payload: '{"pr_number": "${{ github.event.pull_request.number }}", "pr_head_sha": "${{ github.event.pull_request.head.sha }}", "repo_full_name": "${{ github.repository }}"}' 
+          client-payload: '{"pr_number": "${{ github.event.pull_request.number }}", "pr_head_sha": "${{ github.event.pull_request.head.sha }}", "repo_full_name": "${{ github.repository }}"}'
