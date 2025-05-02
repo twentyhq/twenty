@@ -68,12 +68,7 @@ export class WorkspaceDataSource extends DataSource {
   override createEntityManager(
     queryRunner?: QueryRunner,
   ): WorkspaceEntityManager {
-    return new WorkspaceEntityManager(
-      this.internalContext,
-      this,
-      this.featureFlagMap,
-      queryRunner,
-    );
+    return new WorkspaceEntityManager(this.internalContext, this, queryRunner);
   }
 
   override createQueryRunner(

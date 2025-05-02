@@ -1,6 +1,5 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import {
-  DataSource,
   EntityManager,
   EntityTarget,
   InsertResult,
@@ -24,18 +23,20 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 export class WorkspaceEntityManager extends EntityManager {
   private readonly internalContext: WorkspaceInternalContext;
   readonly repositories: Map<string, Repository<any>>;
-  private featureFlagMap: FeatureFlagMap;
+  declare connection: WorkspaceDataSource;
 
   constructor(
     internalContext: WorkspaceInternalContext,
-    connection: DataSource,
-    featureFlagMap: FeatureFlagMap,
+    connection: WorkspaceDataSource,
     queryRunner?: QueryRunner,
   ) {
     super(connection, queryRunner);
     this.internalContext = internalContext;
     this.repositories = new Map();
-    this.featureFlagMap = featureFlagMap;
+  }
+
+  getFeatureFlagMap(): FeatureFlagMap {
+    return this.connection.featureFlagMap;
   }
 
   override getRepository<Entity extends ObjectLiteral>(
@@ -43,7 +44,7 @@ export class WorkspaceEntityManager extends EntityManager {
     shouldBypassPermissionChecks = false,
     roleId?: string,
   ): WorkspaceRepository<Entity> {
-    const dataSource = this.connection as WorkspaceDataSource;
+    const dataSource = this.connection;
 
     const repositoryKey = this.getRepositoryKey({
       target,
@@ -105,8 +106,10 @@ export class WorkspaceEntityManager extends EntityManager {
       );
     }
 
+    const featureFlagMap = this.getFeatureFlagMap();
+
     const isPermissionsV2Enabled =
-      this.featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
+      featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
 
     if (!isPermissionsV2Enabled) {
       return queryBuilder;
@@ -192,8 +195,10 @@ export class WorkspaceEntityManager extends EntityManager {
       objectRecordsPermissions?: ObjectRecordsPermissions;
     },
   ): void {
+    const featureFlagMap = this.getFeatureFlagMap();
+
     const isPermissionsV2Enabled =
-      this.featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
+      featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
 
     if (!isPermissionsV2Enabled) {
       return;

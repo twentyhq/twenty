@@ -465,7 +465,7 @@ export class WorkspaceRepository<
 
     const formatedEntity = await this.formatData(entity);
     const result = await manager.insert(this.target, formatedEntity, {
-      shouldBypassPermissionChecks: false,
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
       objectRecordsPermissions: this.objectRecordsPermissions,
     });
     const formattedResult = await this.formatResult(result.generatedMaps);
@@ -517,7 +517,7 @@ export class WorkspaceRepository<
       formattedEntityOrEntities,
       conflictPathsOrOptions,
       {
-        shouldBypassPermissionChecks: false,
+        shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
         objectRecordsPermissions: this.objectRecordsPermissions,
       },
     );
