@@ -1,8 +1,8 @@
 import { isPlainObject } from '@nestjs/common/utils/shared.utils';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
@@ -87,7 +87,9 @@ export function formatResult<T>(
   for (const [key, value] of Object.entries(data)) {
     const compositePropertyArgs = compositeFieldMetadataMap.get(key);
 
-    const fieldMetadata = objectMetadataItemWithFieldMaps.fieldsByName[key];
+    const fieldMetadata = objectMetadataItemWithFieldMaps.fieldsByName[key] as
+      | FieldMetadataInterface<FieldMetadataType>
+      | undefined;
 
     const isRelation = fieldMetadata
       ? isFieldMetadataInterfaceOfType(
@@ -151,7 +153,7 @@ export function formatResult<T>(
       }
     } else {
       if (isRelation) {
-        if (!fieldMetadata.relationTargetObjectMetadataId) {
+        if (!isDefined(fieldMetadata?.relationTargetObjectMetadataId)) {
           throw new Error(
             `Relation target object metadata ID is missing for field "${key}"`,
           );

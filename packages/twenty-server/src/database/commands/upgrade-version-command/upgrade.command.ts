@@ -23,6 +23,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
+import { MigrateWorkflowEventListenersToAutomatedTriggersCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-migrate-workflow-event-listeners-to-automated-triggers.command';
 
 type VersionCommands = {
   beforeSyncMetadata: ActiveOrSuspendedWorkspacesMigrationCommandRunner[];
@@ -60,6 +61,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 0.52 Commands
     protected readonly upgradeDateAndDateTimeFieldsSettingsJsonCommand: UpgradeDateAndDateTimeFieldsSettingsJsonCommand,
     protected readonly migrateRelationsToFieldMetadataCommand: MigrateRelationsToFieldMetadataCommand,
+
+    // 0.53 Commands
+    protected readonly migrateWorkflowEventListenersToAutomatedTriggersCommand: MigrateWorkflowEventListenersToAutomatedTriggersCommand,
   ) {
     super(
       workspaceRepository,
@@ -93,7 +97,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
 
-    const commands_051: VersionCommands = {
+    const _commands_051: VersionCommands = {
       beforeSyncMetadata: [this.upgradeCreatedByEnumCommand],
       afterSyncMetadata: [],
     };
@@ -106,7 +110,14 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
 
-    this.commands = commands_051;
+    const commands_053: VersionCommands = {
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [
+        this.migrateWorkflowEventListenersToAutomatedTriggersCommand,
+      ],
+    };
+
+    this.commands = commands_053;
   }
 
   override async runBeforeSyncMetadata(args: RunOnWorkspaceArgs) {
