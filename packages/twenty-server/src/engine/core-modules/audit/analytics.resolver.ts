@@ -2,15 +2,14 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import {
   AnalyticsException,
-  AnalyticsExceptionCode,
-} from 'src/engine/core-modules/audit/analytics.exception';
+  AuditExceptionCode,
+} from 'src/engine/core-modules/audit/audit.exception';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 
 import {
-  CreateAnalyticsInput,
   CreateAnalyticsInputV2,
   isPageviewAnalyticsInput,
   isTrackAnalyticsInput,
@@ -22,14 +21,14 @@ import { AnalyticsService } from './services/analytics.service';
 export class AnalyticsResolver {
   constructor(private readonly analyticsService: AnalyticsService) {}
 
-  // deprecated
-  @Mutation(() => Analytics)
-  track(
-    @Args() _createAnalyticsInput: CreateAnalyticsInput,
-    @AuthWorkspace() _workspace: Workspace | undefined,
-    @AuthUser({ allowUndefined: true }) _user: User | undefined,
+  // preparing for new name
+  async auditTrack(
+    @Args()
+    createAnalyticsInput: CreateAnalyticsInputV2,
+    @AuthWorkspace() workspace: Workspace | undefined,
+    @AuthUser({ allowUndefined: true }) user: User | undefined,
   ) {
-    return { success: true };
+    return this.trackAnalytics(createAnalyticsInput, workspace, user);
   }
 
   @Mutation(() => Analytics)
@@ -60,7 +59,7 @@ export class AnalyticsResolver {
 
     throw new AnalyticsException(
       'Invalid analytics input',
-      AnalyticsExceptionCode.INVALID_TYPE,
+      AuditExceptionCode.INVALID_TYPE,
     );
   }
 }

@@ -51,7 +51,7 @@ import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 
-import { AnalyticsModule } from './audit/analytics.module';
+import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
 
@@ -59,7 +59,7 @@ import { FileModule } from './file/file.module';
   imports: [
     TwentyConfigModule.forRoot(),
     HealthModule,
-    AnalyticsModule,
+    AuditModule,
     AuthModule,
     BillingModule,
     ClientConfigModule,
@@ -128,7 +128,7 @@ import { FileModule } from './file/file.module';
     SearchModule,
   ],
   exports: [
-    AnalyticsModule,
+    AuditModule,
     AuthModule,
     FeatureFlagModule,
     TimelineMessagingModule,

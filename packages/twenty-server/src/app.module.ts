@@ -28,6 +28,7 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { ModulesModule } from 'src/modules/modules.module';
 
+import { ClickHouseModule } from './database/clickHouse/clickhouse.module';
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 import { I18nModule } from './engine/core-modules/i18n/i18n.module';
 
@@ -52,6 +53,7 @@ const MIGRATED_REST_METHODS = [
       useClass: GraphQLConfigService,
     }),
     TwentyORMModule,
+    ClickHouseModule,
     // Core engine module, contains all the core modules
     CoreEngineModule,
     // Modules module, contains all business logic modules

@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 
-import { AnalyticsCommonPropertiesType } from 'src/engine/core-modules/audit/types/common.type';
+import { AuditCommonPropertiesType } from 'src/engine/core-modules/audit/types/common.type';
 import {
   TrackEventName,
   TrackEventProperties,
@@ -14,7 +14,7 @@ import {
   GenericTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/track/track';
 
-const common = (): Record<AnalyticsCommonPropertiesType, string> => ({
+const common = (): Record<AuditCommonPropertiesType, string> => ({
   timestamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
   version: '1',
 });

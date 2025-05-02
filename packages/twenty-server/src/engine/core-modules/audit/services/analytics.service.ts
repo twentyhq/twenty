@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
+import { ClickHouseService } from 'src/database/clickHouse/clickhouse.service';
 import {
   AnalyticsException,
-  AnalyticsExceptionCode,
-} from 'src/engine/core-modules/audit/analytics.exception';
-import { ClickhouseService } from 'src/engine/core-modules/audit/services/clickhouse.service';
+  AuditExceptionCode,
+} from 'src/engine/core-modules/audit/audit.exception';
 import {
   TrackEventName,
   TrackEventProperties,
@@ -14,13 +14,15 @@ import {
   makeTrackEvent,
 } from 'src/engine/core-modules/audit/utils/analytics.utils';
 import { PageviewProperties } from 'src/engine/core-modules/audit/utils/events/pageview/pageview';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class AnalyticsService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly clickhouseService: ClickhouseService,
+    private readonly clickHouseService: ClickHouseService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   createAnalyticsContext(context?: {
@@ -40,19 +42,31 @@ export class AnalyticsService {
         properties: TrackEventProperties<T>,
       ) =>
         this.preventAnalyticsIfDisabled(() =>
-          this.clickhouseService.pushEvent({
-            ...userIdAndWorkspaceId,
-            ...makeTrackEvent(event, properties),
-          }),
+          this.clickHouseService.insert('auditEvent', [
+            { ...userIdAndWorkspaceId, ...makeTrackEvent(event, properties) },
+          ]),
         ),
       pageview: (name: string, properties: Partial<PageviewProperties>) =>
         this.preventAnalyticsIfDisabled(() =>
-          this.clickhouseService.pushEvent({
-            ...userIdAndWorkspaceId,
-            ...makePageview(name, properties),
-          }),
+          this.clickHouseService.insert('pageview', [
+            { ...userIdAndWorkspaceId, ...makePageview(name, properties) },
+          ]),
         ),
     };
+  }
+
+  private async pushEvent(
+    data: (
+      | ReturnType<typeof makeTrackEvent>
+      | ReturnType<typeof makePageview>
+    ) & { userId?: string | null; workspaceId?: string | null },
+  ) {
+    const { type, ...rest } = data;
+
+    return await this.clickHouseService.insert(
+      type === 'page' ? 'pageview' : 'auditEvent',
+      [rest],
+    );
   }
 
   private preventAnalyticsIfDisabled(
@@ -64,7 +78,7 @@ export class AnalyticsService {
     try {
       return sendEventOrPageviewFunction();
     } catch (err) {
-      return new AnalyticsException(err, AnalyticsExceptionCode.INVALID_INPUT);
+      return new AnalyticsException(err, AuditExceptionCode.INVALID_INPUT);
     }
   }
 }

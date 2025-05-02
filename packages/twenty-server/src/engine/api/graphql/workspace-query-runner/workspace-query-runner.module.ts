@@ -5,7 +5,7 @@ import { WorkspaceQueryBuilderModule } from 'src/engine/api/graphql/workspace-qu
 import { workspaceQueryRunnerFactories } from 'src/engine/api/graphql/workspace-query-runner/factories';
 import { TelemetryListener } from 'src/engine/api/graphql/workspace-query-runner/listeners/telemetry.listener';
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
-import { AnalyticsModule } from 'src/engine/core-modules/audit/analytics.module';
+import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -27,7 +27,7 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     WorkspaceQueryHookModule,
     ObjectMetadataRepositoryModule.forFeature([WorkspaceMemberWorkspaceEntity]),
     TypeOrmModule.forFeature([FeatureFlag], 'core'),
-    AnalyticsModule,
+    AuditModule,
     TelemetryModule,
     FileModule,
     FeatureFlagModule,

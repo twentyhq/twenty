@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import {
   AnalyticsException,
-  AnalyticsExceptionCode,
-} from 'src/engine/core-modules/audit/analytics.exception';
+  AuditExceptionCode,
+} from 'src/engine/core-modules/audit/audit.exception';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -99,7 +99,7 @@ describe('AnalyticsResolver', () => {
     ).rejects.toThrowError(
       new AnalyticsException(
         'Invalid analytics input',
-        AnalyticsExceptionCode.INVALID_TYPE,
+        AuditExceptionCode.INVALID_TYPE,
       ),
     );
   });

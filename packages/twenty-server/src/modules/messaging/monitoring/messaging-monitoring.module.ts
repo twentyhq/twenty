@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AnalyticsModule } from 'src/engine/core-modules/audit/analytics.module';
+import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
@@ -12,7 +12,7 @@ import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/ser
 
 @Module({
   imports: [
-    AnalyticsModule,
+    AuditModule,
     MessagingCommonModule,
     BillingModule,
     TypeOrmModule.forFeature([Workspace], 'core'),

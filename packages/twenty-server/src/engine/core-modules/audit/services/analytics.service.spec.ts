@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { AnalyticsContextMock } from 'test/utils/analytics-context.mock';
 
-import { ClickhouseService } from 'src/engine/core-modules/audit/services/clickhouse.service';
+import { ClickHouseService } from 'src/database/clickHouse/clickhouse.service';
 import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/track/custom-domain/custom-domain-activated';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -28,7 +28,7 @@ describe('AnalyticsService', () => {
           },
         },
         {
-          provide: ClickhouseService,
+          provide: ClickHouseService,
           useValue: {
             pushEvent: jest.fn(),
           },
