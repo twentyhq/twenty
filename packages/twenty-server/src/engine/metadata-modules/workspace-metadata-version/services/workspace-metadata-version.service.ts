@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
@@ -9,7 +10,6 @@ import {
   WorkspaceMetadataVersionException,
   WorkspaceMetadataVersionExceptionCode,
 } from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class WorkspaceMetadataVersionService {
