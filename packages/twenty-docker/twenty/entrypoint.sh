@@ -3,6 +3,7 @@ set -e
 
 setup_and_migrate_db() {
     if [ "${DISABLE_DB_MIGRATIONS}" = "true" ]; then
+        echo "Database setup and migrations are disabled, skipping..."
         return
     fi
 
