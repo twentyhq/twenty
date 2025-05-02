@@ -50,6 +50,48 @@ export class WorkspaceSelectQueryBuilder<
     return super.getMany();
   }
 
+  override getRawOne<T>(): Promise<T | undefined> {
+    this.validatePermissions();
+
+    return super.getRawOne();
+  }
+
+  override getRawMany<T>(): Promise<T[]> {
+    this.validatePermissions();
+
+    return super.getRawMany();
+  }
+
+  override getOne(): Promise<T | null> {
+    this.validatePermissions();
+
+    return super.getOne();
+  }
+
+  override getOneOrFail(): Promise<T> {
+    this.validatePermissions();
+
+    return super.getOneOrFail();
+  }
+
+  override getCount(): Promise<number> {
+    this.validatePermissions();
+
+    return super.getCount();
+  }
+
+  override getExists(): Promise<boolean> {
+    this.validatePermissions();
+
+    return super.getExists();
+  }
+
+  override getManyAndCount(): Promise<[T[], number]> {
+    this.validatePermissions();
+
+    return super.getManyAndCount();
+  }
+
   override update(): WorkspaceUpdateQueryBuilder<T>;
 
   override update(
