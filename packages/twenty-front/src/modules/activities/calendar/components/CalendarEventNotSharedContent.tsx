@@ -8,6 +8,7 @@ const StyledVisibilityCard = styled(Card)`
   color: ${({ theme }) => theme.font.color.light};
   flex: 1;
   transition: color ${({ theme }) => theme.animation.duration.normal} ease;
+  width: 100%;
 `;
 
 const StyledVisibilityCardContent = styled(CardContent)`
