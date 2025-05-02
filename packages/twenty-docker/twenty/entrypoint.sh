@@ -7,30 +7,25 @@ setup_and_migrate_db() {
         return
     fi
 
-    if [ ! -f /app/docker-data/db_status ]; then
-        echo "Running database setup and migrations..."
+    echo "Running database setup and migrations..."
+    PGUSER=$(echo $PG_DATABASE_URL | awk -F '//' '{print $2}' | awk -F ':' '{print $1}')
+    PGPASS=$(echo $PG_DATABASE_URL | awk -F ':' '{print $3}' | awk -F '@' '{print $1}')
+    PGHOST=$(echo $PG_DATABASE_URL | awk -F '@' '{print $2}' | awk -F ':' '{print $1}')
+    PGPORT=$(echo $PG_DATABASE_URL | awk -F ':' '{print $4}' | awk -F '/' '{print $1}')
+    PGDATABASE=$(echo $PG_DATABASE_URL | awk -F ':' '{print $4}' | awk -F '/' '{print $2}')
 
-        # Creating the database if it doesn't exist
-        PGUSER=$(echo $PG_DATABASE_URL | awk -F '//' '{print $2}' | awk -F ':' '{print $1}')
-        PGPASS=$(echo $PG_DATABASE_URL | awk -F ':' '{print $3}' | awk -F '@' '{print $1}')
-        PGHOST=$(echo $PG_DATABASE_URL | awk -F '@' '{print $2}' | awk -F ':' '{print $1}')
-        PGPORT=$(echo $PG_DATABASE_URL | awk -F ':' '{print $4}' | awk -F '/' '{print $1}')
-        PGDATABASE=$(echo $PG_DATABASE_URL | awk -F ':' '{print $4}' | awk -F '/' '{print $2}')
-        PGPASSWORD=${PGPASS} psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = '${PGDATABASE}'" | grep -q 1 ||
-            PGPASSWORD=${PGPASS} psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -c "CREATE DATABASE \"${PGDATABASE}\""
+    # Creating the database if it doesn't exist
+    if ! PGPASSWORD=${PGPASS} psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = '${PGDATABASE}'" | grep -q 1; then
+        echo "Database ${PGDATABASE} does not exist, creating..."
+        PGPASSWORD=${PGPASS} psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -c "CREATE DATABASE \"${PGDATABASE}\""
 
         # Run setup and migration scripts
         NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
     fi
-
+    
     yarn database:migrate:prod
     yarn command:prod upgrade
-
-    if [ ! -f /app/docker-data/db_status ]; then
-        # Mark initialization as done
-        echo "Successfully migrated DB!"
-        touch /app/docker-data/db_status
-    fi
+    echo "Successfully migrated DB!"
 }
 setup_and_migrate_db
 
