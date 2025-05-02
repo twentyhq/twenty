@@ -12,6 +12,7 @@ import {
   WorkspaceMetadataCacheExceptionCode,
 } from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class WorkspaceMetadataCacheService {
@@ -44,7 +45,7 @@ export class WorkspaceMetadataCacheService {
     const currentDatabaseVersion =
       await this.getMetadataVersionFromDatabase(workspaceId);
 
-    if (currentDatabaseVersion === undefined) {
+    if (!isDefined(currentDatabaseVersion)) {
       throw new WorkspaceMetadataCacheException(
         'Metadata version not found in the database',
         WorkspaceMetadataCacheExceptionCode.METADATA_VERSION_NOT_FOUND,

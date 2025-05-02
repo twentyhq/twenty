@@ -9,6 +9,7 @@ import {
   WorkspaceMetadataVersionException,
   WorkspaceMetadataVersionExceptionCode,
 } from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class WorkspaceMetadataVersionService {
@@ -27,7 +28,7 @@ export class WorkspaceMetadataVersionService {
 
     const metadataVersion = workspace?.metadataVersion;
 
-    if (metadataVersion === undefined) {
+    if (!isDefined(metadataVersion)) {
       throw new WorkspaceMetadataVersionException(
         'Metadata version not found',
         WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,

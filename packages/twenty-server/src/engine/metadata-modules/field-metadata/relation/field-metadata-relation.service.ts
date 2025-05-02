@@ -10,6 +10,7 @@ import {
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { removeFieldMapsFromObjectMetadata } from 'src/engine/metadata-modules/utils/remove-field-maps-from-object-metadata.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class FieldMetadataRelationService {
@@ -40,7 +41,7 @@ export class FieldMetadataRelationService {
     const metadataVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
 
-    if (!metadataVersion) {
+    if (!isDefined(metadataVersion)) {
       throw new FieldMetadataException(
         `Metadata version not found for workspace ${workspaceId}`,
         FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
