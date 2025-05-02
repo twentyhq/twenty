@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
-import { MONITORING_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/monitoring/monitoring';
 
 type MessagingTelemetryTrackInput = {
   eventName: string;
@@ -24,6 +23,15 @@ export class MessagingMonitoringService {
     messageChannelId,
     message,
   }: MessagingTelemetryTrackInput): Promise<void> {
+    const _eventName = eventName;
+    const _workspaceId = workspaceId;
+    const _userId = userId;
+    const _connectedAccountId = connectedAccountId;
+    const _messageChannelId = messageChannelId;
+    const _message = message;
+
+    // TODO: replace once we have Prometheus
+    /*
     await this.analyticsService
       .createAnalyticsContext({
         userId,
@@ -34,6 +42,6 @@ export class MessagingMonitoringService {
         connectedAccountId,
         messageChannelId,
         message,
-      });
+      }); */
   }
 }
