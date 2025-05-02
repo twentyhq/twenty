@@ -36,7 +36,7 @@ async function ensureDatabaseExists() {
 async function ensureMigrationTable(client: ClickHouseClient) {
   await client.command({
     query: `
-        CREATE TABLE IF NOT EXISTS migrations (
+        CREATE TABLE IF NOT EXISTS _migration (
           filename String,
           applied_at DateTime DEFAULT now()
         ) ENGINE = MergeTree()
@@ -50,7 +50,7 @@ async function hasMigrationBeenRun(
   client: ClickHouseClient,
 ): Promise<boolean> {
   const resultSet = await client.query({
-    query: `SELECT count() as count FROM migrations WHERE filename = {filename:String}`,
+    query: `SELECT count() as count FROM _migration WHERE filename = {filename:String}`,
     query_params: { filename },
     format: 'JSON',
   });
@@ -61,7 +61,7 @@ async function hasMigrationBeenRun(
 
 async function recordMigration(filename: string, client: ClickHouseClient) {
   await client.insert({
-    table: 'migrations',
+    table: '_migration',
     values: [{ filename }],
     format: 'JSONEachRow',
   });

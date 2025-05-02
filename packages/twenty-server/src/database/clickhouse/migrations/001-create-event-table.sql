@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS events
+CREATE TABLE IF NOT EXISTS event
 (
     `event`      LowCardinality(String),
     `timestamp`   DateTime64(3),
@@ -7,4 +7,4 @@ CREATE TABLE IF NOT EXISTS events
     `properties`  JSON
 )
     ENGINE = MergeTree
-        ORDER BY (event, workspaceId, timestamp);
+        ORDER BY (event, workspaceId, userId, timestamp);

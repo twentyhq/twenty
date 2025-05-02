@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { ClickHouseClient, createClient } from '@clickhouse/client';
 
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   makePageview,
   makeTrackEvent,
 } from 'src/engine/core-modules/analytics/utils/analytics.utils';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class ClickhouseService {
@@ -45,7 +45,7 @@ export class ClickhouseService {
       const { type, ...rest } = data;
 
       await this.clickhouseClient.insert({
-        table: type === 'page' ? 'pageview' : 'events',
+        table: type === 'page' ? 'pageview' : 'event',
         values: [rest],
         format: 'JSONEachRow',
       });

@@ -1,3 +1,7 @@
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
+import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-created';
+import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-delete';
+import { OBJECT_RECORD_UPDATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-updated';
 import { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -8,10 +12,6 @@ import { AuditLogRepository } from 'src/modules/timeline/repositiories/audit-log
 import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
-import { OBJECT_RECORD_UPDATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-updated';
-import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-created';
-import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/object-record/object-record-delete';
 
 @Processor(MessageQueue.entityEventsToDbQueue)
 export class CreateAuditLogFromInternalEvent {
@@ -39,14 +39,18 @@ export class CreateAuditLogFromInternalEvent {
         workspaceMemberId = workspaceMember.id;
       }
 
-      await this.auditLogRepository.insert(
-        workspaceEventBatch.name,
+      // We remove "before" and "after" property for a cleaner/slimmer event payload
+      const eventProperties =
         'diff' in eventData.properties
           ? {
-              // we remove "before" and "after" property for a cleaner/slimmer event payload
+              ...eventData.properties,
               diff: eventData.properties.diff,
             }
-          : eventData.properties,
+          : eventData.properties;
+
+      await this.auditLogRepository.insert(
+        workspaceEventBatch.name,
+        eventProperties,
         workspaceMemberId,
         workspaceEventBatch.name.split('.')[0],
         eventData.objectMetadata.id,
@@ -60,11 +64,11 @@ export class CreateAuditLogFromInternalEvent {
       });
 
       if (workspaceEventBatch.name.endsWith('.updated')) {
-        analytics.track(OBJECT_RECORD_UPDATED_EVENT, eventData.properties);
+        analytics.track(OBJECT_RECORD_UPDATED_EVENT, eventProperties);
       } else if (workspaceEventBatch.name.endsWith('.created')) {
-        analytics.track(OBJECT_RECORD_CREATED_EVENT, eventData.properties);
+        analytics.track(OBJECT_RECORD_CREATED_EVENT, eventProperties);
       } else if (workspaceEventBatch.name.endsWith('.deleted')) {
-        analytics.track(OBJECT_RECORD_DELETED_EVENT, eventData.properties);
+        analytics.track(OBJECT_RECORD_DELETED_EVENT, eventProperties);
       }
     }
   }

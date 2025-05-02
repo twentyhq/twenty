@@ -8,7 +8,7 @@ import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-s
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingMessageChannelSyncStatusMonitoringCronCommand } from 'src/modules/messaging/monitoring/crons/commands/messaging-message-channel-sync-status-monitoring.cron.command';
 import { MessagingMessageChannelSyncStatusMonitoringCronJob } from 'src/modules/messaging/monitoring/crons/jobs/messaging-message-channel-sync-status-monitoring.cron.job';
-import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
+import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 
 @Module({
   imports: [
@@ -21,8 +21,8 @@ import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/serv
   providers: [
     MessagingMessageChannelSyncStatusMonitoringCronCommand,
     MessagingMessageChannelSyncStatusMonitoringCronJob,
-    MessagingTelemetryService,
+    MessagingMonitoringService,
   ],
-  exports: [MessagingTelemetryService],
+  exports: [MessagingMonitoringService],
 })
 export class MessagingMonitoringModule {}
