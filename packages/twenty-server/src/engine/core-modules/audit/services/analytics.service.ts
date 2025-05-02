@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
-import { ClickHouseService } from 'src/database/clickHouse/clickhouse.service';
+import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import {
-  AnalyticsException,
-  AuditExceptionCode,
+    AnalyticsException,
+    AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
 import {
-  TrackEventName,
-  TrackEventProperties,
+    TrackEventName,
+    TrackEventProperties,
 } from 'src/engine/core-modules/audit/types/events.type';
 import {
-  makePageview,
-  makeTrackEvent,
+    makePageview,
+    makeTrackEvent,
 } from 'src/engine/core-modules/audit/utils/analytics.utils';
 import { PageviewProperties } from 'src/engine/core-modules/audit/utils/events/pageview/pageview';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';

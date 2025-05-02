@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { ClickHouseModule } from 'src/database/clickHouse/clickhouse.module';
+import { ClickHouseModule } from 'src/database/clickHouse/clickHouse.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 
 import { AnalyticsResolver } from './analytics.resolver';

@@ -6,7 +6,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-import { ClickHouseService } from './clickhouse.service';
+import { ClickHouseService } from './clickHouse.service';
 
 // Mock the createClient function from @clickhouse/client
 jest.mock('@clickhouse/client', () => ({
@@ -69,8 +69,7 @@ describe('ClickHouseService', () => {
     );
 
     // Set the mock client
-    // @ts-expect-error accessing private property for testing
-    service.mainClient = mockClickHouseClient;
+    (service as any).mainClient = mockClickHouseClient;
   });
 
   it('should be defined', () => {
@@ -103,8 +102,7 @@ describe('ClickHouseService', () => {
 
       const newService = newModule.get<ClickHouseService>(ClickHouseService);
 
-      // @ts-expect-error accessing private property for testing
-      expect(newService.mainClient).toBeUndefined();
+      expect((newService as any).mainClient).toBeUndefined();
     });
   });
 
@@ -122,8 +120,7 @@ describe('ClickHouseService', () => {
     });
 
     it('should return failure when clickhouse client is not defined', async () => {
-      // @ts-expect-error accessing private property for testing
-      service.mainClient = undefined;
+      (service as any).mainClient = undefined;
 
       const testData = [{ id: 1, name: 'test' }];
       const result = await service.insert('test_table', testData);
@@ -166,8 +163,7 @@ describe('ClickHouseService', () => {
     });
 
     it('should return empty array when clickhouse client is not defined', async () => {
-      // @ts-expect-error accessing private property for testing
-      service.mainClient = undefined;
+      (service as any).mainClient = undefined;
 
       const query = 'SELECT * FROM test_table';
       const result = await service.select(query);
@@ -201,8 +197,7 @@ describe('ClickHouseService', () => {
     });
 
     it('should return false when clickhouse client is not defined', async () => {
-      // @ts-expect-error accessing private property for testing
-      service.mainClient = undefined;
+      (service as any).mainClient = undefined;
 
       const result = await service.createDatabase('test_db');
 
@@ -221,8 +216,7 @@ describe('ClickHouseService', () => {
     });
 
     it('should return false when clickhouse client is not defined', async () => {
-      // @ts-expect-error accessing private property for testing
-      service.mainClient = undefined;
+      (service as any).mainClient = undefined;
 
       const result = await service.dropDatabase('test_db');
 
@@ -243,8 +237,7 @@ describe('ClickHouseService', () => {
 
     it('should reuse an existing client if available', async () => {
       // Set up a client in the map
-      // @ts-expect-error accessing private property for testing
-      service.clients.set('test-client', mockClickHouseClient);
+      (service as any).clients.set('test-client', mockClickHouseClient);
 
       const result = await service.connectToClient('test-client');
 
@@ -255,14 +248,12 @@ describe('ClickHouseService', () => {
   describe('disconnectFromClient', () => {
     it('should disconnect from a client', async () => {
       // Set up a client in the map
-      // @ts-expect-error accessing private property for testing
-      service.clients.set('test-client', mockClickHouseClient);
+      (service as any).clients.set('test-client', mockClickHouseClient);
 
       await service.disconnectFromClient('test-client');
 
       expect(mockClickHouseClient.close).toHaveBeenCalled();
-      // @ts-expect-error accessing private property for testing
-      expect(service.clients.has('test-client')).toBe(false);
+      expect((service as any).clients.has('test-client')).toBe(false);
     });
 
     it('should do nothing if client does not exist', async () => {
@@ -281,10 +272,8 @@ describe('ClickHouseService', () => {
 
     it('should close all clients on module destroy', async () => {
       // Set up a couple of clients
-      // @ts-expect-error accessing private property for testing
-      service.clients.set('client1', mockClickHouseClient);
-      // @ts-expect-error accessing private property for testing
-      service.clients.set('client2', mockClickHouseClient);
+      (service as any).clients.set('client1', mockClickHouseClient);
+      (service as any).clients.set('client2', mockClickHouseClient);
 
       await service.onModuleDestroy();
 
