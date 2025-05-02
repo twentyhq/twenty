@@ -25,7 +25,7 @@ spec:
         - name: redis
           image: redis/redis-stack-server:latest
           imagePullPolicy: Always
-          args: ["--maxmemory", "1800mb", "--maxmemory-policy", "noeviction"]
+          args: ["--maxmemory-policy", "noeviction"]
           env:
             - name: PORT
               value: "6379"
