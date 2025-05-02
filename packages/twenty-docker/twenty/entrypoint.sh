@@ -1,28 +1,34 @@
 #!/bin/sh
 set -e
 
-# Check if the initialization has already been done and that we enabled automatic migration
-if [ "${DISABLE_DB_MIGRATIONS}" != "true" ] && [ ! -f /app/docker-data/db_status ]; then
-    echo "Running database setup and migrations..."
+setup_and_migrate_db() {
+    if [ "${DISABLE_DB_MIGRATIONS}" = "true" ]; then
+        echo "Database setup and migrations are disabled, skipping..."
+        return
+    fi
 
-    # Creating the database if it doesn't exist
+    echo "Running database setup and migrations..."
     PGUSER=$(echo $PG_DATABASE_URL | awk -F '//' '{print $2}' | awk -F ':' '{print $1}')
     PGPASS=$(echo $PG_DATABASE_URL | awk -F ':' '{print $3}' | awk -F '@' '{print $1}')
     PGHOST=$(echo $PG_DATABASE_URL | awk -F '@' '{print $2}' | awk -F ':' '{print $1}')
     PGPORT=$(echo $PG_DATABASE_URL | awk -F ':' '{print $4}' | awk -F '/' '{print $1}')
     PGDATABASE=$(echo $PG_DATABASE_URL | awk -F ':' '{print $4}' | awk -F '/' '{print $2}')
-    PGPASSWORD=${PGPASS} psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = '${PGDATABASE}'" | grep -q 1 || \
-    PGPASSWORD=${PGPASS} psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -c "CREATE DATABASE \"${PGDATABASE}\""
 
-    # Run setup and migration scripts
-    NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
+    # Creating the database if it doesn't exist
+    db_count=$(PGPASSWORD=${PGPASS} psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -tAc "SELECT COUNT(*) FROM pg_database WHERE datname = '${PGDATABASE}'")
+    if [ "$db_count" = "0" ]; then
+        echo "Database ${PGDATABASE} does not exist, creating..."
+        PGPASSWORD=${PGPASS} psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -c "CREATE DATABASE \"${PGDATABASE}\""
+
+        # Run setup and migration scripts
+        NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
+    fi
+    
     yarn database:migrate:prod
     yarn command:prod upgrade
-
-    # Mark initialization as done
-    echo "Successfuly migrated DB!"
-    touch /app/docker-data/db_status
-fi
+    echo "Successfully migrated DB!"
+}
+setup_and_migrate_db
 
 # Continue with the original Docker command
 exec "$@"
