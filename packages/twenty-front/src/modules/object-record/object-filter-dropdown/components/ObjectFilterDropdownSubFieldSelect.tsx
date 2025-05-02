@@ -9,7 +9,6 @@ import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-rec
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
-import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
@@ -81,10 +80,6 @@ export const ObjectFilterDropdownSubFieldSelect = () => {
     currentRecordFiltersComponentState,
   );
 
-  const setSelectedFilter = useSetRecoilComponentStateV2(
-    selectedFilterComponentState,
-  );
-
   const setObjectFilterDropdownCurrentRecordFilter =
     useSetRecoilComponentStateV2(
       objectFilterDropdownCurrentRecordFilterComponentState,
@@ -125,8 +120,6 @@ export const ObjectFilterDropdownSubFieldSelect = () => {
     );
 
     if (filterIsAlreadyInCurrentRecordFilters) {
-      setSelectedFilter(duplicateFilterInCurrentRecordFilters);
-
       setObjectFilterDropdownCurrentRecordFilter(
         duplicateFilterInCurrentRecordFilters,
       );

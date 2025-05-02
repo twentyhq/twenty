@@ -69,8 +69,10 @@ export const RelativeDatePickerHeader = (
           });
         }}
         options={RELATIVE_DATE_DIRECTION_SELECT_OPTIONS}
+        fullWidth
       />
       <TextInput
+        width={50}
         value={textInputValue}
         onChange={(text) => {
           const amountString = text.replace(/[^0-9]|^0+/g, '');
@@ -106,6 +108,7 @@ export const RelativeDatePickerHeader = (
           });
         }}
         options={unitSelectOptions}
+        fullWidth
       />
     </StyledContainer>
   );
