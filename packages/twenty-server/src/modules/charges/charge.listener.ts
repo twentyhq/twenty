@@ -1,10 +1,14 @@
+/* eslint-disable no-case-declarations */
 import { Injectable, Logger } from '@nestjs/common';
+
+import { Repository } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 
 import { InterApiService } from './inter/inter-api.service';
 import { ChargeWorkspaceEntity } from './standard-objects/charge.workspace-entity';
@@ -38,21 +42,35 @@ export class ChargeEventListener {
         'charge',
       );
 
+    const productRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ProductWorkspaceEntity>(
+        workspaceId,
+        'product',
+      );
+
     const charges = await Promise.all(
       events.map((event) =>
-        chargeRepository.findOneByOrFail({ id: event.recordId }),
+        chargeRepository.findOne({
+          where: { id: event.recordId },
+          relations: ['product'],
+        }),
       ),
     );
 
     await Promise.all(
       charges.map(async (charge) => {
-        const { cancelPayment, integrationId, id, price } = charge;
+        if (!charge) {
+          this.logger.warn(`Charge not found for recordId: ${charge}`);
 
+          return;
+        }
+
+        const { chargeAction, id, price, productId } = charge;
         const dataVencimento = '2025-10-21';
-
         const cliente = {
           telefone: '99999999',
           cpfCnpj: '01123456789',
+          tipoPessoa: 'FISICA' as const,
           nome: 'Cliente Teste',
           cidade: 'São Paulo',
           uf: 'SP' as const,
@@ -66,57 +84,69 @@ export class ChargeEventListener {
         };
 
         try {
-          const shouldCancelCharge = cancelPayment === 'inactive';
-          const shouldEmitCharge =
-            cancelPayment === 'active' || !!integrationId;
+          switch (chargeAction) {
+            case 'issue':
+              this.logger.log(
+                `Emitindo cobrança para charge ${id.slice(0, 11)}`,
+              );
 
-          if (shouldCancelCharge) {
-            this.logger.log(
-              `Charge ${id} — cancelPayment === 'inactive' → Cancelando cobrança`,
-            );
-            await this.interApiService.cancelCharge(
-              id,
-              'Devedor pagou por outra forma',
-            );
-          }
+              const response = await this.interApiService.issueCharge({
+                seuNumero: id.slice(0, 11),
+                valorNominal: price,
+                dataVencimento,
+                numDiasAgenda: 60,
+                pagador: { ...cliente },
+                mensagem: { linha1: 'mensagem 1' },
+              });
 
-          if (shouldEmitCharge && !shouldCancelCharge) {
-            this.logger.log(
-              `Charge ${id} — integrationId existe ou cancelPayment === 'active' → Emitindo cobrança`,
-            );
+              charge.requestCode = response.codigoSolicitacao;
+              this.logger.log(
+                `Cobrança emitida com sucesso para charge ${id}. Código: ${response.codigoSolicitacao}`,
+              );
 
-            this.logger.log(`Charge Client ${cliente}`);
+              if (productId) {
+                await this.updateProductStatus(
+                  productRepository,
+                  productId,
+                  'active',
+                );
+                this.logger.log(
+                  `Status do produto ${productId} atualizado para ATIVO`,
+                );
+              }
+              break;
 
-            const testeID = id.slice(0, 11);
+            case 'cancel':
+              this.logger.log(`Cancelando cobrança para charge ${id}`);
+              await this.interApiService.cancelCharge(
+                charge.requestCode || id,
+                'Devedor pagou por outra forma',
+              );
+              this.logger.log(
+                `Cobrança cancelada com sucesso para charge ${id}`,
+              );
 
-            this.logger.log(`Parametros ID: ${testeID} VALOR: ${price} `);
+              if (productId) {
+                await this.updateProductStatus(
+                  productRepository,
+                  productId,
+                  'active',
+                );
+                this.logger.log(
+                  `Status do produto ${productId} atualizado para INATIVO`,
+                );
+              }
+              break;
 
-            await this.interApiService.issueCharge({
-              seuNumero: id.slice(0, 11),
-              valorNominal: price,
-              dataVencimento,
-              numDiasAgenda: 60,
-              pagador: {
-                cpfCnpj: cliente.cpfCnpj,
-                tipoPessoa: 'FISICA',
-                nome: cliente.nome,
-                cidade: cliente.cidade,
-                uf: cliente.uf,
-                cep: cliente.cep,
-                telefone: cliente.telefone,
-                ddd: '31',
-                bairro: cliente.bairro,
-                endereco: cliente.endereco,
-                email: cliente.email,
-                complemento: cliente.complemento,
-                numero: cliente.numero,
-              },
-              mensagem: {
-                linha1: 'mensagem 1',
-              },
-            });
+            case 'none':
+              this.logger.log(`Nenhuma ação necessária para charge ${id}`);
+              break;
 
-            this.logger.log(`Succes !!!!!`);
+            default:
+              this.logger.warn(
+                `Ação desconhecida para charge ${id}: ${chargeAction}`,
+              );
+              break;
           }
         } catch (error) {
           this.logger.error(
@@ -128,7 +158,20 @@ export class ChargeEventListener {
         await chargeRepository.save(charge);
       }),
     );
+  }
 
-    return;
+  private async updateProductStatus(
+    productRepository: Repository<ProductWorkspaceEntity>,
+    productId: string,
+    status: 'active' | 'inactive',
+  ): Promise<void> {
+    try {
+      await productRepository.update({ id: productId }, { status });
+    } catch (error) {
+      this.logger.error(
+        `Erro ao atualizar status do produto ${productId}: ${error.message}`,
+      );
+      throw error;
+    }
   }
 }

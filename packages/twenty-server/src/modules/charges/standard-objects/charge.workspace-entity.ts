@@ -89,6 +89,16 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   discount: number;
 
   @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.requestCode,
+    type: FieldMetadataType.TEXT,
+    label: msg`Request Code`,
+    description: msg`Charge request code`,
+    icon: 'IconSettings',
+  })
+  @WorkspaceIsNullable()
+  requestCode: string;
+
+  @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.recurrence,
     type: FieldMetadataType.SELECT,
     label: msg`Recurrence`,
@@ -150,19 +160,20 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   productId: string | null;
 
   @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.cancelPayment,
+    standardId: CHARGE_STANDARD_FIELD_IDS.chargeAction,
     type: FieldMetadataType.SELECT,
-    label: msg`Cancel Payment`,
-    description: msg`Product cancel payment (active products can be used in charges)`,
+    label: msg`Charge Action`,
+    description: msg`Product charge action(issue products can be used in charges)`,
     icon: 'IconProgress',
     options: [
-      { value: 'active', label: 'Active', position: 0, color: 'green' },
-      { value: 'inactive', label: 'Inactive', position: 1, color: 'red' },
+      { value: 'none', label: 'None', position: 0, color: 'gray' },
+      { value: 'issue', label: 'Issue', position: 1, color: 'green' },
+      { value: 'cancel', label: 'Cancel', position: 2, color: 'red' },
     ],
-    defaultValue: "'active'",
+    defaultValue: "'none'",
   })
   @WorkspaceFieldIndex()
-  cancelPayment: string;
+  chargeAction: string;
 
   //Relations
   @WorkspaceRelation({

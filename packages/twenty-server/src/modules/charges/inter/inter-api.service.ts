@@ -90,14 +90,10 @@ export class InterApiService {
     };
     mensagem?: {
       linha1?: string;
-      linha2?: string;
-      linha3?: string;
-      linha4?: string;
-      linha5?: string;
     };
-  }) {
-    //const token = await this.getAccessToken();
-    const token = '321b9537-51da-48b2-8284-ddd681d0a366';
+  }): Promise<{ codigoSolicitacao: string }> {
+    const token = await this.getAccessToken();
+    //const token = 'bc09997e-9f65-49cd-a648-ec6112793480';
     const body = {
       seuNumero: data.seuNumero,
       valorNominal: data.valorNominal,
@@ -110,13 +106,16 @@ export class InterApiService {
         cidade: data.pagador.cidade,
         uf: data.pagador.uf,
         cep: data.pagador.cep,
+        telefone: data.pagador.telefone,
+        ddd: data.pagador.ddd,
+        bairro: data.pagador.bairro,
+        endereco: data.pagador.endereco,
+        email: data.pagador.email,
+        complemento: data.pagador.complemento,
+        numero: data.pagador.numero,
       },
       mensagem: {
         linha1: data.mensagem?.linha1 || '',
-        linha2: data.mensagem?.linha2 || '',
-        linha3: data.mensagem?.linha3 || '',
-        linha4: data.mensagem?.linha4 || '',
-        linha5: data.mensagem?.linha5 || '',
       },
     };
 
