@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -40,7 +42,7 @@ export class FieldMetadataRelationService {
     const metadataVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
 
-    if (!metadataVersion) {
+    if (!isDefined(metadataVersion)) {
       throw new FieldMetadataException(
         `Metadata version not found for workspace ${workspaceId}`,
         FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
