@@ -12,14 +12,14 @@ import { WorkspaceMemberRepository } from 'src/modules/workspace-member/reposito
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
-export class CanAccessCalendarEventService {
+export class CanAccessCalendarEventsService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberService: WorkspaceMemberRepository,
   ) {}
 
-  public async canAccessCalendarEvent(
+  public async canAccessCalendarEvents(
     userId: string,
     workspaceId: string,
     calendarChannelCalendarEventAssociations: CalendarChannelEventAssociationWorkspaceEntity[],

@@ -11,7 +11,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     ObjectMetadataRepositoryModule.forFeature([WorkspaceMemberWorkspaceEntity]),
   ],
   providers: [
-    CanAccessCalendarEventService,
+    CanAccessCalendarEventsService,
     CalendarEventFindOnePreQueryHook,
     CalendarEventFindManyPreQueryHook,
   ],
