@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 
-type MessagingTelemetryTrackInput = {
+type MessagingMonitoringTrackInput = {
   eventName: string;
   workspaceId?: string;
   userId?: string;
@@ -22,7 +22,7 @@ export class MessagingMonitoringService {
     connectedAccountId,
     messageChannelId,
     message,
-  }: MessagingTelemetryTrackInput): Promise<void> {
+  }: MessagingMonitoringTrackInput): Promise<void> {
     const _eventName = eventName;
     const _workspaceId = workspaceId;
     const _userId = userId;

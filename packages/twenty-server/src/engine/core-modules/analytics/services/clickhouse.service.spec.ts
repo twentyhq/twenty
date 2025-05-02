@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/custom-domain/custom-domain-activated';
 import {
   makePageview,
   makeTrackEvent,
 } from 'src/engine/core-modules/analytics/utils/analytics.utils';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/custom-domain/custom-domain-activated';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { ClickhouseService } from './clickhouse.service';
 
@@ -115,7 +115,7 @@ describe('ClickhouseService', () => {
       const { type: _type, ...rest } = mockEvent;
 
       expect(mockClickhouseClient.insert).toHaveBeenCalledWith({
-        table: 'events',
+        table: 'event',
         values: [rest],
         format: 'JSONEachRow',
       });
