@@ -99,6 +99,26 @@ export const EventRowMainObject = ({
         </StyledMainContainer>
       );
     }
+    case 'restored': {
+      return (
+        <StyledMainContainer>
+          <StyledRowContainer>
+            <StyledRow>
+              <StyledEventRowItemColumn>
+                {labelIdentifierValue}
+              </StyledEventRowItemColumn>
+              <StyledEventRowItemAction>
+                was restored by
+              </StyledEventRowItemAction>
+              <StyledEventRowItemColumn>
+                {authorFullName}
+              </StyledEventRowItemColumn>
+            </StyledRow>
+            <StyledItemTitleDate>{createdAt}</StyledItemTitleDate>
+          </StyledRowContainer>
+        </StyledMainContainer>
+      );
+    }
     default:
       return null;
   }
