@@ -1,6 +1,12 @@
+/* eslint-disable import/order */
 import { Injectable, Logger } from '@nestjs/common';
 
+import fs from 'fs';
+import https from 'https';
+import { URLSearchParams } from 'url';
+
 import axios from 'axios';
+import { join } from 'path';
 
 @Injectable()
 export class InterApiService {
@@ -10,8 +16,45 @@ export class InterApiService {
   private readonly clientSecret = '8a5f4d3e-26ea-4dbf-8333-dcf1de2039da';
   private readonly baseUrl = 'https://cdpj-sandbox.partners.uatinter.co';
 
+  private readonly certPath = join(
+    process.cwd(),
+    'ssl_certs/charges/inter_certificado.crt',
+  );
+  private readonly keyPath = join(
+    process.cwd(),
+    'ssl_certs/charges/inter_chave.key',
+  );
+
   private cachedToken: string | null = null;
   private tokenExpiresAt: number | null = null;
+
+  private async getHttpsAgent() {
+    try {
+      if (!fs.existsSync(this.certPath)) {
+        throw new Error(`Certificado não encontrado em: ${this.certPath}`);
+      }
+      if (!fs.existsSync(this.keyPath)) {
+        throw new Error(`Chave não encontrada em: ${this.keyPath}`);
+      }
+
+      const cert = fs.readFileSync(this.certPath);
+      const key = fs.readFileSync(this.keyPath);
+
+      return new https.Agent({
+        cert,
+        key,
+        rejectUnauthorized: true,
+      });
+    } catch (error) {
+      this.logger.error('Erro detalhado ao carregar certificados:', {
+        error: error.message,
+        certPath: this.certPath,
+        keyPath: this.keyPath,
+        currentDir: __dirname,
+      });
+      throw new Error('Falha ao configurar certificados SSL: ' + error.message);
+    }
+  }
 
   private async getAccessToken(): Promise<string> {
     const now = Date.now();
@@ -25,20 +68,28 @@ export class InterApiService {
     params.append('client_id', this.clientId);
     params.append('client_secret', this.clientSecret);
     params.append('grant_type', 'client_credentials');
-    params.append('scope', 'pagamento-boleto.write');
+    params.append('scope', 'boleto-cobranca.write');
 
-    const response = await axios.post(
-      `${this.baseUrl}/oauth/v2/token`,
-      params,
-      {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      },
-    );
+    try {
+      const httpsAgent = await this.getHttpsAgent();
 
-    this.cachedToken = response.data.access_token;
-    this.tokenExpiresAt = now + 55 * 60 * 1000;
+      const response = await axios.post(
+        `${this.baseUrl}/oauth/v2/token`,
+        params,
+        {
+          httpsAgent,
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        },
+      );
 
-    return this.cachedToken || '';
+      this.cachedToken = response.data.access_token;
+      this.tokenExpiresAt = now + 55 * 60 * 1000;
+
+      return this.cachedToken || '';
+    } catch (error) {
+      this.logger.error('Erro ao obter token de acesso:', error);
+      throw new Error('Falha na autenticação com o Banco Inter');
+    }
   }
 
   async issueCharge(data: {
@@ -92,69 +143,91 @@ export class InterApiService {
       linha1?: string;
     };
   }): Promise<{ codigoSolicitacao: string }> {
-    const token = await this.getAccessToken();
-    //const token = 'bc09997e-9f65-49cd-a648-ec6112793480';
-    const body = {
-      seuNumero: data.seuNumero,
-      valorNominal: data.valorNominal,
-      dataVencimento: data.dataVencimento,
-      numDiasAgenda: 60,
-      pagador: {
-        cpfCnpj: data.pagador.cpfCnpj,
-        tipoPessoa: data.pagador.tipoPessoa,
-        nome: data.pagador.nome,
-        cidade: data.pagador.cidade,
-        uf: data.pagador.uf,
-        cep: data.pagador.cep,
-        telefone: data.pagador.telefone,
-        ddd: data.pagador.ddd,
-        bairro: data.pagador.bairro,
-        endereco: data.pagador.endereco,
-        email: data.pagador.email,
-        complemento: data.pagador.complemento,
-        numero: data.pagador.numero,
-      },
-      mensagem: {
-        linha1: data.mensagem?.linha1 || '',
-      },
-    };
+    try {
+      const token = await this.getAccessToken();
+      const httpsAgent = await this.getHttpsAgent();
 
-    const response = await axios.post(
-      `${this.baseUrl}/cobranca/v3/cobrancas`,
-      body,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+      const body = {
+        seuNumero: data.seuNumero,
+        valorNominal: data.valorNominal,
+        dataVencimento: data.dataVencimento,
+        numDiasAgenda: data.numDiasAgenda,
+        pagador: {
+          cpfCnpj: data.pagador.cpfCnpj,
+          tipoPessoa: data.pagador.tipoPessoa,
+          nome: data.pagador.nome,
+          cidade: data.pagador.cidade,
+          uf: data.pagador.uf,
+          cep: data.pagador.cep,
+          telefone: data.pagador.telefone,
+          ddd: data.pagador.ddd,
+          bairro: data.pagador.bairro,
+          endereco: data.pagador.endereco,
+          email: data.pagador.email,
+          complemento: data.pagador.complemento,
+          numero: data.pagador.numero,
         },
-      },
-    );
+        mensagem: {
+          linha1: data.mensagem?.linha1 || '',
+        },
+      };
 
-    this.logger.log(
-      `Charge issued successfully: ${JSON.stringify(response.data)}`,
-    );
+      const response = await axios.post(
+        `${this.baseUrl}/cobranca/v3/cobrancas`,
+        body,
+        {
+          httpsAgent,
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
 
-    return response.data;
+      this.logger.log(
+        `Cobrança emitida com sucesso: ${JSON.stringify(response.data)}`,
+      );
+
+      return response.data;
+    } catch (error) {
+      this.logger.error(
+        `Erro ao emitir cobrança: ${error.response?.data || error.message}`,
+      );
+      throw error;
+    }
   }
 
   async cancelCharge(seuNumero: string, motivoCancelamento: string) {
-    const token = await this.getAccessToken();
+    try {
+      const token = await this.getAccessToken();
+      const httpsAgent = await this.getHttpsAgent();
 
-    const response = await axios.post(
-      `${this.baseUrl}/cobranca/v3/cobrancas/${seuNumero}`,
-      { motivoCancelamento },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+      this.logger.log(
+        `Cobrança cancelada com id: ${JSON.stringify(seuNumero)}`,
+      );
+
+      const response = await axios.post(
+        `${this.baseUrl}/cobranca/v3/cobrancas/${seuNumero}/cancelar`,
+        { motivoCancelamento },
+        {
+          httpsAgent,
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      },
-    );
+      );
 
-    this.logger.log(
-      `Charge cancelled successfully: ${JSON.stringify(response.data)}`,
-    );
+      this.logger.log(
+        `Cobrança cancelada com sucesso: ${JSON.stringify(response.data)}`,
+      );
 
-    return response.data;
+      return response.data;
+    } catch (error) {
+      this.logger.error(
+        `Erro ao cancelar cobrança: ${error.response?.data || error.message}`,
+      );
+      throw error;
+    }
   }
 }
