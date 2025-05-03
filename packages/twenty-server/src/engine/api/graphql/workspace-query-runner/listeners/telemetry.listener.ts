@@ -22,7 +22,7 @@ export class TelemetryListener {
     await Promise.all(
       payload.events.map(async (eventPayload) => {
         this.auditService
-          .createAnalyticsContext({
+          .createContext({
             userId: eventPayload.userId,
             workspaceId: payload.workspaceId,
           })

@@ -66,7 +66,7 @@ describe('CloudflareController - customHostnameWebhooks', () => {
         {
           provide: AuditService,
           useValue: {
-            createAnalyticsContext: AuditContextMock,
+            createContext: AuditContextMock,
           },
         },
       ],

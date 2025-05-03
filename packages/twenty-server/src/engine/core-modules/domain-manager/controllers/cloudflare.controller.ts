@@ -60,7 +60,7 @@ export class CloudflareController {
 
     if (!workspace) return;
 
-    const analytics = this.auditService.createAnalyticsContext({
+    const analytics = this.auditService.createContext({
       workspaceId: workspace.id,
     });
 

@@ -78,7 +78,7 @@ describe('WorkspaceService', () => {
         {
           provide: AuditService,
           useValue: {
-            createAnalyticsContext: jest.fn(),
+            createContext: jest.fn(),
           },
         },
         ...[

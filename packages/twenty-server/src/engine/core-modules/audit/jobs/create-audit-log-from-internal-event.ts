@@ -33,7 +33,7 @@ export class CreateAuditLogFromInternalEvent {
             }
           : eventData.properties;
 
-      const analytics = this.auditService.createAnalyticsContext({
+      const analytics = this.auditService.createContext({
         workspaceId: workspaceEventBatch.workspaceId,
         userId: eventData.userId,
       });

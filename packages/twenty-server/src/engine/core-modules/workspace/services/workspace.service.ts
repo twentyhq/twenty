@@ -418,7 +418,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       workspace.isCustomDomainEnabled = isCustomDomainWorking;
       await this.workspaceRepository.save(workspace);
 
-      const analytics = this.auditService.createAnalyticsContext({
+      const analytics = this.auditService.createContext({
         workspaceId: workspace.id,
       });
 

@@ -33,7 +33,7 @@ export class MessagingMonitoringService {
     // TODO: replace once we have Prometheus
     /*
     await this.auditService
-      .createAnalyticsContext({
+      .createContext({
         userId,
         workspaceId,
       })

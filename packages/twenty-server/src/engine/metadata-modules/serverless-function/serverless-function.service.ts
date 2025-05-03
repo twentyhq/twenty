@@ -145,7 +145,7 @@ export class ServerlessFunctionService {
     );
 
     this.auditService
-      .createAnalyticsContext({
+      .createContext({
         workspaceId,
       })
       .track(SERVERLESS_FUNCTION_EXECUTED_EVENT, {

@@ -47,7 +47,7 @@ export class CallWebhookJob {
       webhookId: data.webhookId,
       eventName: data.eventName,
     };
-    const analytics = this.auditService.createAnalyticsContext({
+    const analytics = this.auditService.createContext({
       workspaceId: data.workspaceId,
     });
 

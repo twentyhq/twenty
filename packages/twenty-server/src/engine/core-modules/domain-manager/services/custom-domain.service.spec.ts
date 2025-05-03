@@ -30,7 +30,7 @@ describe('CustomDomainService', () => {
         {
           provide: AuditService,
           useValue: {
-            createAnalyticsContext: AuditContextMock,
+            createContext: AuditContextMock,
           },
         },
         {
