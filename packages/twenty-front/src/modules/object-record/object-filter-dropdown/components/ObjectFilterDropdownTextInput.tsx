@@ -31,6 +31,12 @@ export const ObjectFilterDropdownTextInput = () => {
     [hasFocused],
   );
 
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+
+    applyObjectFilterDropdownFilterValue(newValue);
+  };
+
   return (
     <DropdownMenuItemsContainer>
       <DropdownMenuInput
@@ -39,11 +45,7 @@ export const ObjectFilterDropdownTextInput = () => {
         autoFocus
         type="text"
         placeholder={fieldMetadataItemUsedInDropdown?.label}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          const newValue = event.target.value;
-
-          applyObjectFilterDropdownFilterValue(newValue);
-        }}
+        onChange={handleInputChange}
       />
     </DropdownMenuItemsContainer>
   );
