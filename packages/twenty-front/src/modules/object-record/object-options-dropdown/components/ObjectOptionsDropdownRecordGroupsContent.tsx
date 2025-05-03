@@ -186,7 +186,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer scrollable={false}>
             <SelectableList
-              selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
+              selectableListInstanceId={`${OBJECT_OPTIONS_DROPDOWN_ID}-hidden-groups`}
               hotkeyScope={TableOptionsHotkeyScope.Dropdown}
               selectableItemIdArray={['HiddenGroups']}
             >
