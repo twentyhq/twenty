@@ -57,7 +57,7 @@ export const SettingsObjectFieldActiveActionDropdown = ({
       }
       dropdownWidth={160}
       dropdownComponents={
-        <DropdownMenuItemsContainer>
+        <DropdownMenuItemsContainer scrollable={false}>
           <MenuItem
             text={isCustomField ? 'Edit' : 'View'}
             LeftIcon={isCustomField ? IconPencil : IconEye}
