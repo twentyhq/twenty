@@ -10,8 +10,8 @@ The `AuditService` provides a `createContext` method that returns an object with
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { AuditService } from 'src/engine/core-modules/analytics/services/audit.service';
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/custom-domain/custom-domain-activated';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/track/custom-domain/custom-domain-activated';
 
 @Injectable()
 export class MyService {
