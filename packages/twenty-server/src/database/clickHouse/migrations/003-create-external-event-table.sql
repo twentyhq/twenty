@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS externalEvent
 (
-    `event`      LowCardinality(String),
+    `event`      LowCardinality(String) NOT NULL,
     `timestamp`   DateTime64(3),
     `userId`      String DEFAULT '',
     `workspaceId` String NOT NULL,
