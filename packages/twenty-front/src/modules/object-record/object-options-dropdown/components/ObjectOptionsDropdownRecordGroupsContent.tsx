@@ -102,7 +102,6 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const selectableItemIdArray = [
     ...(currentView?.key !== 'INDEX' ? ['GroupBy', 'Sort'] : []),
     'HideEmptyGroups',
-    ...(hiddenRecordGroupIds.length > 0 ? ['HiddenGroups'] : []),
   ];
 
   return (
