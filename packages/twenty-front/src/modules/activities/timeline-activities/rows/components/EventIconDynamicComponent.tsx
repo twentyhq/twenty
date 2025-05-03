@@ -27,7 +27,7 @@ export const EventIconDynamicComponent = ({
   if (eventAction === 'deleted') {
     return <IconTrash />;
   }
-  if(eventAction === 'restored'){
+  if (eventAction === 'restored'){
     return <IconRestore />;
   }
 
