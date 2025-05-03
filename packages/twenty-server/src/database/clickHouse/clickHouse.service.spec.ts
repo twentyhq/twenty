@@ -2,8 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { ClickHouseClient } from '@clickhouse/client';
 
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { ClickHouseService } from './clickHouse.service';
@@ -24,7 +22,6 @@ jest.mock('@clickhouse/client', () => ({
 describe('ClickHouseService', () => {
   let service: ClickHouseService;
   let twentyConfigService: TwentyConfigService;
-  let exceptionHandlerService: ExceptionHandlerService;
   let mockClickHouseClient: jest.Mocked<ClickHouseClient>;
 
   beforeEach(async () => {
@@ -46,17 +43,11 @@ describe('ClickHouseService', () => {
         {
           provide: TwentyConfigService,
           useValue: {
-            get: jest.fn((key: keyof ConfigVariables) => {
+            get: jest.fn((key) => {
               if (key === 'CLICKHOUSE_URL') return 'http://localhost:8123';
 
               return undefined;
             }),
-          },
-        },
-        {
-          provide: ExceptionHandlerService,
-          useValue: {
-            captureExceptions: jest.fn(),
           },
         },
       ],
@@ -64,9 +55,6 @@ describe('ClickHouseService', () => {
 
     service = module.get<ClickHouseService>(ClickHouseService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    exceptionHandlerService = module.get<ExceptionHandlerService>(
-      ExceptionHandlerService,
-    );
 
     // Set the mock client
     (service as any).mainClient = mockClickHouseClient;
@@ -78,13 +66,11 @@ describe('ClickHouseService', () => {
 
   describe('constructor', () => {
     it('should not initialize clickhouse client when clickhouse is disabled', async () => {
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockImplementation((key: keyof ConfigVariables) => {
-          if (key === 'CLICKHOUSE_URL') return '';
+      jest.spyOn(twentyConfigService, 'get').mockImplementation((key) => {
+        if (key === 'CLICKHOUSE_URL') return '';
 
-          return undefined;
-        });
+        return undefined;
+      });
 
       const newModule: TestingModule = await Test.createTestingModule({
         providers: [
@@ -92,10 +78,6 @@ describe('ClickHouseService', () => {
           {
             provide: TwentyConfigService,
             useValue: twentyConfigService,
-          },
-          {
-            provide: ExceptionHandlerService,
-            useValue: exceptionHandlerService,
           },
         ],
       }).compile();
@@ -137,9 +119,8 @@ describe('ClickHouseService', () => {
       const result = await service.insert('test_table', testData);
 
       expect(result).toEqual({ success: false });
-      expect(exceptionHandlerService.captureExceptions).toHaveBeenCalledWith([
-        testError,
-      ]);
+      // Since the service uses logger.error instead of exceptionHandlerService.captureExceptions,
+      // we don't need to assert on exceptionHandlerService
     });
   });
 
@@ -180,9 +161,8 @@ describe('ClickHouseService', () => {
       const result = await service.select(query);
 
       expect(result).toEqual([]);
-      expect(exceptionHandlerService.captureExceptions).toHaveBeenCalledWith([
-        testError,
-      ]);
+      // Since the service uses logger.error instead of exceptionHandlerService.captureExceptions,
+      // we don't need to assert on exceptionHandlerService
     });
   });
 
