@@ -89,7 +89,7 @@ export const EventRowMainObject = ({
                 {labelIdentifierValue}
               </StyledEventRowItemColumn>
               <StyledEventRowItemAction>
-               {t`was deleted by`}
+                {t`was deleted by`}
               </StyledEventRowItemAction>
               <StyledEventRowItemColumn>
                 {authorFullName}
@@ -109,7 +109,7 @@ export const EventRowMainObject = ({
                 {labelIdentifierValue}
               </StyledEventRowItemColumn>
               <StyledEventRowItemAction>
-               {t`was restored by`}
+                {t`was restored by`}
               </StyledEventRowItemAction>
               <StyledEventRowItemColumn>
                 {authorFullName}
