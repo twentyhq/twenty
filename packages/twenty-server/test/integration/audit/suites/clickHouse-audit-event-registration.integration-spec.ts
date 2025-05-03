@@ -7,24 +7,24 @@ import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/audit/utils
 import { GenericTrackEvent } from 'src/engine/core-modules/audit/utils/events/track/track';
 
 describe('ClickHouse Event Registration (integration)', () => {
-  let clickhouseClient: ClickHouseClient;
+  let clickHouseClient: ClickHouseClient;
 
   beforeAll(async () => {
     jest.useRealTimers();
 
-    clickhouseClient = createClient({
+    clickHouseClient = createClient({
       url: process.env.CLICKHOUSE_URL,
     });
 
-    await clickhouseClient.query({
+    await clickHouseClient.query({
       query: 'TRUNCATE TABLE auditEvent',
       format: 'JSONEachRow',
     });
   });
 
   afterAll(async () => {
-    if (clickhouseClient) {
-      await clickhouseClient.close();
+    if (clickHouseClient) {
+      await clickHouseClient.close();
     }
   });
 
@@ -53,7 +53,7 @@ describe('ClickHouse Event Registration (integration)', () => {
     expect(response.status).toBe(200);
     expect(response.body.data.trackAnalytics.success).toBe(true);
 
-    const queryResult = await clickhouseClient.query({
+    const queryResult = await clickHouseClient.query({
       query: `
         SELECT *
         FROM auditEvent
