@@ -29,12 +29,12 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import {
-    ServerlessFunctionEntity,
-    ServerlessFunctionSyncStatus,
+  ServerlessFunctionEntity,
+  ServerlessFunctionSyncStatus,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
-    ServerlessFunctionException,
-    ServerlessFunctionExceptionCode,
+  ServerlessFunctionException,
+  ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 
 @Injectable()
