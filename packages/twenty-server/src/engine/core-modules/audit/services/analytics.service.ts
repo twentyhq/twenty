@@ -2,19 +2,18 @@ import { Injectable } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import {
-    AnalyticsException,
-    AuditExceptionCode,
+  AnalyticsException,
+  AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
 import {
-    TrackEventName,
-    TrackEventProperties,
+  TrackEventName,
+  TrackEventProperties,
 } from 'src/engine/core-modules/audit/types/events.type';
 import {
-    makePageview,
-    makeTrackEvent,
+  makePageview,
+  makeTrackEvent,
 } from 'src/engine/core-modules/audit/utils/analytics.utils';
 import { PageviewProperties } from 'src/engine/core-modules/audit/utils/events/pageview/pageview';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -22,7 +21,6 @@ export class AnalyticsService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly clickHouseService: ClickHouseService,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   createAnalyticsContext(context?: {
