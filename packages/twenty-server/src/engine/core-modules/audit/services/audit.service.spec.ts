@@ -18,7 +18,7 @@ describe('AuditService', () => {
         {
           provide: AuditService,
           useValue: {
-            createAnalyticsContext: AuditContextMock,
+            createContext: AuditContextMock,
           },
         },
         {
@@ -49,14 +49,14 @@ describe('AuditService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('createAnalyticsContext', () => {
+  describe('createContext', () => {
     const mockUserIdAndWorkspaceId = {
       userId: 'test-user-id',
       workspaceId: 'test-workspace-id',
     };
 
     it('should create a valid context object', () => {
-      const context = service.createAnalyticsContext(mockUserIdAndWorkspaceId);
+      const context = service.createContext(mockUserIdAndWorkspaceId);
 
       expect(context).toHaveProperty('track');
       expect(context).toHaveProperty('pageview');
@@ -68,11 +68,9 @@ describe('AuditService', () => {
         track: trackSpy,
       });
 
-      jest
-        .spyOn(service, 'createAnalyticsContext')
-        .mockReturnValue(mockContext);
+      jest.spyOn(service, 'createContext').mockReturnValue(mockContext);
 
-      const context = service.createAnalyticsContext(mockUserIdAndWorkspaceId);
+      const context = service.createContext(mockUserIdAndWorkspaceId);
 
       await context.track(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
 
@@ -85,11 +83,9 @@ describe('AuditService', () => {
         pageview: pageviewSpy,
       });
 
-      jest
-        .spyOn(service, 'createAnalyticsContext')
-        .mockReturnValue(mockContext);
+      jest.spyOn(service, 'createContext').mockReturnValue(mockContext);
 
-      const context = service.createAnalyticsContext(mockUserIdAndWorkspaceId);
+      const context = service.createContext(mockUserIdAndWorkspaceId);
       const testPageviewProperties = {
         href: '/test-url',
         locale: '',
@@ -109,7 +105,7 @@ describe('AuditService', () => {
     });
 
     it('should return success when track is called', async () => {
-      const context = service.createAnalyticsContext(mockUserIdAndWorkspaceId);
+      const context = service.createContext(mockUserIdAndWorkspaceId);
 
       const result = await context.track(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
 
@@ -117,7 +113,7 @@ describe('AuditService', () => {
     });
 
     it('should return success when pageview is called', async () => {
-      const context = service.createAnalyticsContext(mockUserIdAndWorkspaceId);
+      const context = service.createContext(mockUserIdAndWorkspaceId);
 
       const result = await context.pageview('page-view', {});
 
