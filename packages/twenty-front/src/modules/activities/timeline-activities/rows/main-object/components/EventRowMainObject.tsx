@@ -5,6 +5,7 @@ import {
 } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
 import { EventRowMainObjectUpdated } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 type EventRowMainObjectProps = EventRowDynamicComponentProps;
@@ -57,7 +58,7 @@ export const EventRowMainObject = ({
                 {labelIdentifierValue}
               </StyledEventRowItemColumn>
               <StyledEventRowItemAction>
-                was created by
+                {t`was created by`}
               </StyledEventRowItemAction>
               <StyledEventRowItemColumn>
                 {authorFullName}
@@ -88,7 +89,7 @@ export const EventRowMainObject = ({
                 {labelIdentifierValue}
               </StyledEventRowItemColumn>
               <StyledEventRowItemAction>
-                was deleted by
+               {t`was deleted by`}
               </StyledEventRowItemAction>
               <StyledEventRowItemColumn>
                 {authorFullName}
@@ -108,7 +109,7 @@ export const EventRowMainObject = ({
                 {labelIdentifierValue}
               </StyledEventRowItemColumn>
               <StyledEventRowItemAction>
-                was restored by
+               {t`was restored by`}
               </StyledEventRowItemAction>
               <StyledEventRowItemColumn>
                 {authorFullName}
