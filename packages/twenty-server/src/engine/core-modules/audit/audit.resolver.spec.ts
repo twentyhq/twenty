@@ -1,28 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import {
-  AnalyticsException,
+  AuditException,
   AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
-import { AnalyticsResolver } from './analytics.resolver';
+import { AuditResolver } from './audit.resolver';
 
 import { AuditService } from './services/audit.service';
 
-describe('AnalyticsResolver', () => {
-  let resolver: AnalyticsResolver;
+describe('AuditResolver', () => {
+  let resolver: AuditResolver;
   let auditService: jest.Mocked<AuditService>;
 
   beforeEach(async () => {
     auditService = {
-      createAnalyticsContext: jest.fn(),
+      createContext: jest.fn(),
     } as any;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AnalyticsResolver,
+        AuditResolver,
         {
           provide: AuditService,
           useValue: auditService,
@@ -30,7 +30,7 @@ describe('AnalyticsResolver', () => {
       ],
     }).compile();
 
-    resolver = module.get<AnalyticsResolver>(AnalyticsResolver);
+    resolver = module.get<AuditResolver>(AuditResolver);
   });
 
   it('should be defined', () => {
@@ -40,7 +40,7 @@ describe('AnalyticsResolver', () => {
   it('should handle a valid pageview input', async () => {
     const mockPageview = jest.fn().mockResolvedValue('Pageview created');
 
-    auditService.createAnalyticsContext.mockReturnValue({
+    auditService.createContext.mockReturnValue({
       pageview: mockPageview,
       track: jest.fn(),
     });
@@ -56,7 +56,7 @@ describe('AnalyticsResolver', () => {
       { id: 'user-1' } as User,
     );
 
-    expect(auditService.createAnalyticsContext).toHaveBeenCalledWith({
+    expect(auditService.createContext).toHaveBeenCalledWith({
       workspaceId: 'workspace-1',
       userId: 'user-1',
     });
@@ -67,7 +67,7 @@ describe('AnalyticsResolver', () => {
   it('should handle a valid track input', async () => {
     const mockTrack = jest.fn().mockResolvedValue('Track created');
 
-    auditService.createAnalyticsContext.mockReturnValue({
+    auditService.createContext.mockReturnValue({
       track: mockTrack,
       pageview: jest.fn(),
     });
@@ -83,7 +83,7 @@ describe('AnalyticsResolver', () => {
       { id: 'user-2' } as User,
     );
 
-    expect(auditService.createAnalyticsContext).toHaveBeenCalledWith({
+    expect(auditService.createContext).toHaveBeenCalledWith({
       workspaceId: 'workspace-2',
       userId: 'user-2',
     });
@@ -91,13 +91,13 @@ describe('AnalyticsResolver', () => {
     expect(result).toBe('Track created');
   });
 
-  it('should throw an AnalyticsException for invalid input', async () => {
+  it('should throw an AuditException for invalid input', async () => {
     const invalidInput = { type: 'invalid' };
 
     await expect(
       resolver.trackAnalytics(invalidInput as any, undefined, undefined),
     ).rejects.toThrowError(
-      new AnalyticsException(
+      new AuditException(
         'Invalid analytics input',
         AuditExceptionCode.INVALID_TYPE,
       ),

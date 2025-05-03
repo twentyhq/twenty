@@ -1,7 +1,7 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import {
-  AnalyticsException,
+  AuditException,
   AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -18,7 +18,7 @@ import { Analytics } from './entities/analytics.entity';
 import { AuditService } from './services/audit.service';
 
 @Resolver(() => Analytics)
-export class AnalyticsResolver {
+export class AuditResolver {
   constructor(private readonly auditService: AuditService) {}
 
   // preparing for new name
@@ -38,7 +38,7 @@ export class AnalyticsResolver {
     @AuthWorkspace() workspace: Workspace | undefined,
     @AuthUser({ allowUndefined: true }) user: User | undefined,
   ) {
-    const analyticsContext = this.auditService.createAnalyticsContext({
+    const analyticsContext = this.auditService.createContext({
       workspaceId: workspace?.id,
       userId: user?.id,
     });
@@ -57,7 +57,7 @@ export class AnalyticsResolver {
       );
     }
 
-    throw new AnalyticsException(
+    throw new AuditException(
       'Invalid analytics input',
       AuditExceptionCode.INVALID_TYPE,
     );

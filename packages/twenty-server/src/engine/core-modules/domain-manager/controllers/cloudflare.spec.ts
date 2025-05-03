@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Request, Response } from 'express';
-import { AnalyticsContextMock } from 'test/utils/analytics-context.mock';
+import { AuditContextMock } from 'test/utils/audit-context.mock';
 import { Repository } from 'typeorm';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
@@ -66,7 +66,7 @@ describe('CloudflareController - customHostnameWebhooks', () => {
         {
           provide: AuditService,
           useValue: {
-            createAnalyticsContext: AnalyticsContextMock,
+            createAnalyticsContext: AuditContextMock,
           },
         },
       ],

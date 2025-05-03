@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import {
-  AnalyticsException,
+  AuditException,
   AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
 import {
@@ -23,7 +23,7 @@ export class AuditService {
     private readonly clickHouseService: ClickHouseService,
   ) {}
 
-  createAnalyticsContext(context?: {
+  createContext(context?: {
     workspaceId?: string | null | undefined;
     userId?: string | null | undefined;
   }) {
@@ -39,13 +39,13 @@ export class AuditService {
         event: T,
         properties: TrackEventProperties<T>,
       ) =>
-        this.preventAnalyticsIfDisabled(() =>
+        this.preventIfDisabled(() =>
           this.clickHouseService.insert('auditEvent', [
             { ...userIdAndWorkspaceId, ...makeTrackEvent(event, properties) },
           ]),
         ),
       pageview: (name: string, properties: Partial<PageviewProperties>) =>
-        this.preventAnalyticsIfDisabled(() =>
+        this.preventIfDisabled(() =>
           this.clickHouseService.insert('pageview', [
             { ...userIdAndWorkspaceId, ...makePageview(name, properties) },
           ]),
@@ -53,30 +53,16 @@ export class AuditService {
     };
   }
 
-  private async pushEvent(
-    data: (
-      | ReturnType<typeof makeTrackEvent>
-      | ReturnType<typeof makePageview>
-    ) & { userId?: string | null; workspaceId?: string | null },
-  ) {
-    const { type, ...rest } = data;
-
-    return await this.clickHouseService.insert(
-      type === 'page' ? 'pageview' : 'auditEvent',
-      [rest],
-    );
-  }
-
-  private preventAnalyticsIfDisabled(
+  private preventIfDisabled(
     sendEventOrPageviewFunction: () => Promise<{ success: boolean }>,
   ) {
-    if (!this.twentyConfigService.get('ANALYTICS_ENABLED')) {
+    if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
       return { success: true };
     }
     try {
       return sendEventOrPageviewFunction();
     } catch (err) {
-      return new AnalyticsException(err, AuditExceptionCode.INVALID_INPUT);
+      return new AuditException(err, AuditExceptionCode.INVALID_INPUT);
     }
   }
 }

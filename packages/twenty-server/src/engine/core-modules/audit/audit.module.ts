@@ -3,12 +3,12 @@ import { Module } from '@nestjs/common';
 import { ClickHouseModule } from 'src/database/clickHouse/clickHouse.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 
-import { AnalyticsResolver } from './analytics.resolver';
+import { AuditResolver } from './audit.resolver';
 
 import { AuditService } from './services/audit.service';
 
 @Module({
-  providers: [AnalyticsResolver, AuditService],
+  providers: [AuditResolver, AuditService],
   imports: [JwtModule, ClickHouseModule],
   exports: [AuditService],
 })

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AnalyticsContextMock } from 'test/utils/analytics-context.mock';
+import { AuditContextMock } from 'test/utils/audit-context.mock';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/track/custom-domain/custom-domain-activated';
@@ -18,7 +18,7 @@ describe('AuditService', () => {
         {
           provide: AuditService,
           useValue: {
-            createAnalyticsContext: AnalyticsContextMock,
+            createAnalyticsContext: AuditContextMock,
           },
         },
         {
@@ -64,7 +64,7 @@ describe('AuditService', () => {
 
     it('should call track with correct parameters', async () => {
       const trackSpy = jest.fn().mockResolvedValue({ success: true });
-      const mockContext = AnalyticsContextMock({
+      const mockContext = AuditContextMock({
         track: trackSpy,
       });
 
@@ -81,7 +81,7 @@ describe('AuditService', () => {
 
     it('should call pageview with correct parameters', async () => {
       const pageviewSpy = jest.fn().mockResolvedValue({ success: true });
-      const mockContext = AnalyticsContextMock({
+      const mockContext = AuditContextMock({
         pageview: pageviewSpy,
       });
 

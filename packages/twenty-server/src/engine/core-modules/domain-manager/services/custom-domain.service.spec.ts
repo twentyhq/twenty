@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import Cloudflare from 'cloudflare';
 import { CustomHostnameCreateResponse } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
-import { AnalyticsContextMock } from 'test/utils/analytics-context.mock';
+import { AuditContextMock } from 'test/utils/audit-context.mock';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { DomainManagerException } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
@@ -30,7 +30,7 @@ describe('CustomDomainService', () => {
         {
           provide: AuditService,
           useValue: {
-            createAnalyticsContext: AnalyticsContextMock,
+            createAnalyticsContext: AuditContextMock,
           },
         },
         {

@@ -6,7 +6,7 @@ This module provides analytics tracking functionality for the Twenty application
 
 ### Tracking Events
 
-The `AuditService` provides a `createAnalyticsContext` method that returns an object with a `track` method. The `track` method is used to track events.
+The `AuditService` provides a `createContext` method that returns an object with a `track` method. The `track` method is used to track events.
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -19,7 +19,7 @@ export class MyService {
 
   async doSomething() {
     // Create an analytics context
-    const analytics = this.auditService.createAnalyticsContext({
+    const analytics = this.auditService.createContext({
       workspaceId: 'workspace-id',
       userId: 'user-id',
     });
@@ -89,7 +89,7 @@ export type TrackEventProperties<T extends TrackEventName> = T extends keyof Tra
 
 ### AuditService
 
-#### createAnalyticsContext(context?)
+#### createContext(context?)
 
 Creates an analytics context with the given user ID and workspace ID.
 
