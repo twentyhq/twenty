@@ -1,4 +1,4 @@
-import { AnalyticsService } from 'src/engine/core-modules/audit/services/analytics.service';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/audit/utils/events/track/object-record/object-record-created';
 import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/audit/utils/events/track/object-record/object-record-delete';
 import { OBJECT_RECORD_UPDATED_EVENT } from 'src/engine/core-modules/audit/utils/events/track/object-record/object-record-updated';
@@ -16,7 +16,7 @@ export class CreateAuditLogFromInternalEvent {
   constructor(
     @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberService: WorkspaceMemberRepository,
-    private readonly analyticsService: AnalyticsService,
+    private readonly auditService: AuditService,
   ) {}
 
   @Process(CreateAuditLogFromInternalEvent.name)
@@ -33,7 +33,7 @@ export class CreateAuditLogFromInternalEvent {
             }
           : eventData.properties;
 
-      const analytics = this.analyticsService.createAnalyticsContext({
+      const analytics = this.auditService.createAnalyticsContext({
         workspaceId: workspaceEventBatch.workspaceId,
         userId: eventData.userId,
       });

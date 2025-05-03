@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
-import { AnalyticsService } from 'src/engine/core-modules/audit/services/analytics.service';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { USER_SIGNUP_EVENT } from 'src/engine/core-modules/audit/utils/events/track/user/user-signup';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { TelemetryService } from 'src/engine/core-modules/telemetry/telemetry.service';
@@ -11,7 +11,7 @@ import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/wo
 @Injectable()
 export class TelemetryListener {
   constructor(
-    private readonly analyticsService: AnalyticsService,
+    private readonly auditService: AuditService,
     private readonly telemetryService: TelemetryService,
   ) {}
 
@@ -21,7 +21,7 @@ export class TelemetryListener {
   ) {
     await Promise.all(
       payload.events.map(async (eventPayload) => {
-        this.analyticsService
+        this.auditService
           .createAnalyticsContext({
             userId: eventPayload.userId,
             workspaceId: payload.workspaceId,

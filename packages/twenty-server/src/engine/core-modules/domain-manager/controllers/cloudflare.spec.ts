@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 import { AnalyticsContextMock } from 'test/utils/analytics-context.mock';
 import { Repository } from 'typeorm';
 
-import { AnalyticsService } from 'src/engine/core-modules/audit/services/analytics.service';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { CloudflareController } from 'src/engine/core-modules/domain-manager/controllers/cloudflare.controller';
 import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
@@ -64,7 +64,7 @@ describe('CloudflareController - customHostnameWebhooks', () => {
           },
         },
         {
-          provide: AnalyticsService,
+          provide: AuditService,
           useValue: {
             createAnalyticsContext: AnalyticsContextMock,
           },

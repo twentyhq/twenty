@@ -10,7 +10,7 @@ import { IsNull, Not, Repository } from 'typeorm';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
-import { AnalyticsService } from 'src/engine/core-modules/audit/services/analytics.service';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/track/serverless-function/serverless-function-executed';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
@@ -29,12 +29,12 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import {
-  ServerlessFunctionEntity,
-  ServerlessFunctionSyncStatus,
+    ServerlessFunctionEntity,
+    ServerlessFunctionSyncStatus,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
-  ServerlessFunctionException,
-  ServerlessFunctionExceptionCode,
+    ServerlessFunctionException,
+    ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 
 @Injectable()
@@ -46,7 +46,7 @@ export class ServerlessFunctionService {
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly analyticsService: AnalyticsService,
+    private readonly auditService: AuditService,
     @InjectMessageQueue(MessageQueue.serverlessFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -144,7 +144,7 @@ export class ServerlessFunctionService {
       version,
     );
 
-    this.analyticsService
+    this.auditService
       .createAnalyticsContext({
         workspaceId,
       })

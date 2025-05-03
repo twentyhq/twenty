@@ -1,8 +1,8 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import {
-  AnalyticsException,
-  AuditExceptionCode,
+    AnalyticsException,
+    AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -10,16 +10,16 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 
 import {
-  CreateAnalyticsInputV2,
-  isPageviewAnalyticsInput,
-  isTrackAnalyticsInput,
+    CreateAnalyticsInputV2,
+    isPageviewAnalyticsInput,
+    isTrackAnalyticsInput,
 } from './dtos/create-analytics.input';
 import { Analytics } from './entities/analytics.entity';
-import { AnalyticsService } from './services/analytics.service';
+import { AuditService } from './services/audit.service';
 
 @Resolver(() => Analytics)
 export class AnalyticsResolver {
-  constructor(private readonly analyticsService: AnalyticsService) {}
+  constructor(private readonly auditService: AuditService) {}
 
   // preparing for new name
   async auditTrack(
@@ -38,7 +38,7 @@ export class AnalyticsResolver {
     @AuthWorkspace() workspace: Workspace | undefined,
     @AuthUser({ allowUndefined: true }) user: User | undefined,
   ) {
-    const analyticsContext = this.analyticsService.createAnalyticsContext({
+    const analyticsContext = this.auditService.createAnalyticsContext({
       workspaceId: workspace?.id,
       userId: user?.id,
     });

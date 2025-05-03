@@ -6,20 +6,20 @@ This module provides analytics tracking functionality for the Twenty application
 
 ### Tracking Events
 
-The `AnalyticsService` provides a `createAnalyticsContext` method that returns an object with a `track` method. The `track` method is used to track events.
+The `AuditService` provides a `createAnalyticsContext` method that returns an object with a `track` method. The `track` method is used to track events.
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
+import { AuditService } from 'src/engine/core-modules/analytics/services/audit.service';
 import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/custom-domain/custom-domain-activated';
 
 @Injectable()
 export class MyService {
-  constructor(private readonly analyticsService: AnalyticsService) {}
+  constructor(private readonly auditService: AuditService) {}
 
   async doSomething() {
     // Create an analytics context
-    const analytics = this.analyticsService.createAnalyticsContext({
+    const analytics = this.auditService.createAnalyticsContext({
       workspaceId: 'workspace-id',
       userId: 'user-id',
     });
@@ -87,7 +87,7 @@ export type TrackEventProperties<T extends TrackEventName> = T extends keyof Tra
 
 ## API
 
-### AnalyticsService
+### AuditService
 
 #### createAnalyticsContext(context?)
 

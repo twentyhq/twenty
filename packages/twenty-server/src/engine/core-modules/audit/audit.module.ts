@@ -5,11 +5,11 @@ import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 
 import { AnalyticsResolver } from './analytics.resolver';
 
-import { AnalyticsService } from './services/analytics.service';
+import { AuditService } from './services/audit.service';
 
 @Module({
-  providers: [AnalyticsResolver, AnalyticsService],
+  providers: [AnalyticsResolver, AuditService],
   imports: [JwtModule, ClickHouseModule],
-  exports: [AnalyticsService],
+  exports: [AuditService],
 })
 export class AuditModule {}

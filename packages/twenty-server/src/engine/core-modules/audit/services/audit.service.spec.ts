@@ -7,16 +7,16 @@ import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/uti
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-import { AnalyticsService } from './analytics.service';
+import { AuditService } from './audit.service';
 
-describe('AnalyticsService', () => {
-  let service: AnalyticsService;
+describe('AuditService', () => {
+  let service: AuditService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
-          provide: AnalyticsService,
+          provide: AuditService,
           useValue: {
             createAnalyticsContext: AnalyticsContextMock,
           },
@@ -42,7 +42,7 @@ describe('AnalyticsService', () => {
       ],
     }).compile();
 
-    service = module.get<AnalyticsService>(AnalyticsService);
+    service = module.get<AuditService>(AuditService);
   });
 
   it('should be defined', () => {

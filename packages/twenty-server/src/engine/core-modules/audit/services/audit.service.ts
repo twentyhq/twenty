@@ -17,7 +17,7 @@ import { PageviewProperties } from 'src/engine/core-modules/audit/utils/events/p
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
-export class AnalyticsService {
+export class AuditService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly clickHouseService: ClickHouseService,

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { AnalyticsService } from 'src/engine/core-modules/audit/services/analytics.service';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 
 type MessagingMonitoringTrackInput = {
   eventName: string;
@@ -13,7 +13,7 @@ type MessagingMonitoringTrackInput = {
 
 @Injectable()
 export class MessagingMonitoringService {
-  constructor(private readonly analyticsService: AnalyticsService) {}
+  constructor(private readonly auditService: AuditService) {}
 
   public async track({
     eventName,
@@ -32,7 +32,7 @@ export class MessagingMonitoringService {
 
     // TODO: replace once we have Prometheus
     /*
-    await this.analyticsService
+    await this.auditService
       .createAnalyticsContext({
         userId,
         workspaceId,

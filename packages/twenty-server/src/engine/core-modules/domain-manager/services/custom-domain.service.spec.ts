@@ -4,7 +4,7 @@ import Cloudflare from 'cloudflare';
 import { CustomHostnameCreateResponse } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
 import { AnalyticsContextMock } from 'test/utils/analytics-context.mock';
 
-import { AnalyticsService } from 'src/engine/core-modules/audit/services/analytics.service';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { DomainManagerException } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
@@ -28,7 +28,7 @@ describe('CustomDomainService', () => {
           },
         },
         {
-          provide: AnalyticsService,
+          provide: AuditService,
           useValue: {
             createAnalyticsContext: AnalyticsContextMock,
           },
