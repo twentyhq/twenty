@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "services": {
+    "server": {
+      "image": "twentycrm/twenty:${TAG:-latest}",
+      "ports": ["3000:3000"],
+      "environment": {
+        "NODE_PORT": "3000",
+        "PG_DATABASE_URL": "postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default",
+        "SERVER_URL": "${SERVER_URL}",
+        "REDIS_URL": "${REDIS_URL:-redis://redis:6379}",
+        "STORAGE_TYPE": "${STORAGE_TYPE}",
+        "STORAGE_S3_REGION": "${STORAGE_S3_REGION}",
+        "STORAGE_S3_NAME": "${STORAGE_S3_NAME}",
+        "STORAGE_S3_ENDPOINT": "${STORAGE_S3_ENDPOINT}",
+        "APP_SECRET": "${APP_SECRET:-replace_me_with_a_random_string}"
+      },
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "server-local-data",
+          "target": "/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}"
+        },
+        {
+          "type": "volume",
+          "source": "docker-data",
+          "target": "/app/docker-data"
+        }
+      ],
+      "healthcheck": {
+        "test": ["CMD", "curl", "--fail", "http://localhost:3000/healthz"],
+        "interval": "5s",
+        "timeout": "5s",
+        "retries": 10
+      },
+      "depends_on": {
+        "db": {
+          "condition": "service_healthy"
+        }
+      }
+    },
+    "worker": {
+      "image": "twentycrm/twenty:${TAG:-latest}",
+      "command": ["yarn", "worker:prod"],
+      "environment": {
+        "PG_DATABASE_URL": "postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default",
+        "SERVER_URL": "${SERVER_URL}",
+        "REDIS_URL": "${REDIS_URL:-redis://redis:6379}",
+        "DISABLE_DB_MIGRATIONS": "true",
+        "STORAGE_TYPE": "${STORAGE_TYPE}",
+        "STORAGE_S3_REGION": "${STORAGE_S3_REGION}",
+        "STORAGE_S3_NAME": "${STORAGE_S3_NAME}",
+        "STORAGE_S3_ENDPOINT": "${STORAGE_S3_ENDPOINT}",
+        "APP_SECRET": "${APP_SECRET:-replace_me_with_a_random_string}"
+      },
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "server-local-data",
+          "target": "/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}"
+        }
+      ],
+      "depends_on": {
+        "db": {
+          "condition": "service_healthy"
+        },
+        "server": {
+          "condition": "service_healthy"
+        }
+      }
+    },
+    "db": {
+      "image": "postgres:16",
+      "environment": {
+        "POSTGRES_USER": "${PG_DATABASE_USER:-postgres}",
+        "POSTGRES_PASSWORD": "${PG_DATABASE_PASSWORD:-postgres}"
+      },
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "db-data",
+          "target": "/var/lib/postgresql/data"
+        }
+      ],
+      "healthcheck": {
+        "test": ["CMD-SHELL", "pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres"],
+        "interval": "5s",
+        "timeout": "5s",
+        "retries": 10
+      }
+    },
+    "redis": {
+      "image": "redis",
+      "command": ["--maxmemory-policy", "noeviction"]
+    }
+  },
+  "volumes": {
+    "docker-data": {},
+    "db-data": {},
+    "server-local-data": {}
+  }
+} 
