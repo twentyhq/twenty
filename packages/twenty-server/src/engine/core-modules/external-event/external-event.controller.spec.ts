@@ -1,15 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ExternalEventController } from './external-event.controller';
-import { ExternalEventException } from './external-event.exception';
+import {
+  ExternalEventException,
+  ExternalEventExceptionCode,
+} from './external-event.exception';
 
 import { ExternalEventTokenService } from './services/external-event-token.service';
 import { ExternalEventService } from './services/external-event.service';
+import { ExternalEventValidator } from './validators/external-event.validator';
 
 describe('ExternalEventController', () => {
   let controller: ExternalEventController;
   let externalEventService: ExternalEventService;
   let externalEventTokenService: ExternalEventTokenService;
+  let externalEventValidator: ExternalEventValidator;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,6 +32,12 @@ describe('ExternalEventController', () => {
             validateToken: jest.fn().mockResolvedValue(true),
           },
         },
+        {
+          provide: ExternalEventValidator,
+          useValue: {
+            validate: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -36,12 +47,19 @@ describe('ExternalEventController', () => {
     externalEventTokenService = module.get<ExternalEventTokenService>(
       ExternalEventTokenService,
     );
+    externalEventValidator = module.get<ExternalEventValidator>(
+      ExternalEventValidator,
+    );
   });
 
   describe('createExternalEvent', () => {
     it('should throw exception when authorization header is missing', async () => {
       const workspaceId = 'test-workspace-id';
-      const event = { type: 'test.event', payload: {} };
+      const event = {
+        event: 'test.event',
+        objectId: 'test-id',
+        properties: {},
+      };
 
       await expect(
         controller.createExternalEvent(
@@ -55,7 +73,11 @@ describe('ExternalEventController', () => {
     it('should throw exception when token validation fails', async () => {
       const workspaceId = 'test-workspace-id';
       const authHeader = 'Bearer invalid-token';
-      const event = { type: 'test.event', payload: {} };
+      const event = {
+        event: 'test.event',
+        objectId: 'test-id',
+        properties: {},
+      };
 
       jest
         .spyOn(externalEventTokenService, 'validateToken')
@@ -66,10 +88,39 @@ describe('ExternalEventController', () => {
       ).rejects.toThrow(ExternalEventException);
     });
 
+    it('should throw exception when validation fails', async () => {
+      const workspaceId = 'test-workspace-id';
+      const authHeader = 'Bearer valid-token';
+      const event = {
+        event: 'test.event',
+        objectId: 'test-id',
+        properties: {},
+      };
+
+      jest
+        .spyOn(externalEventTokenService, 'validateToken')
+        .mockResolvedValue(true);
+
+      jest.spyOn(externalEventValidator, 'validate').mockImplementation(() => {
+        throw new ExternalEventException(
+          'Validation failed',
+          ExternalEventExceptionCode.INVALID_INPUT,
+        );
+      });
+
+      await expect(
+        controller.createExternalEvent(workspaceId, authHeader, event),
+      ).rejects.toThrow(ExternalEventException);
+    });
+
     it('should throw exception when createExternalEvent fails', async () => {
       const workspaceId = 'test-workspace-id';
       const authHeader = 'Bearer valid-token';
-      const event = { type: 'test.event', payload: {} };
+      const event = {
+        event: 'test.event',
+        objectId: 'test-id',
+        properties: {},
+      };
 
       jest
         .spyOn(externalEventTokenService, 'validateToken')
@@ -87,7 +138,11 @@ describe('ExternalEventController', () => {
     it('should return success when everything is valid', async () => {
       const workspaceId = 'test-workspace-id';
       const authHeader = 'Bearer valid-token';
-      const event = { type: 'test.event', payload: {} };
+      const event = {
+        event: 'test.event',
+        objectId: 'test-id',
+        properties: {},
+      };
 
       jest
         .spyOn(externalEventTokenService, 'validateToken')
@@ -108,6 +163,7 @@ describe('ExternalEventController', () => {
         workspaceId,
         'valid-token',
       );
+      expect(externalEventValidator.validate).toHaveBeenCalledWith(event);
       expect(externalEventService.createExternalEvent).toHaveBeenCalledWith(
         workspaceId,
         event,

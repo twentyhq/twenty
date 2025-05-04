@@ -45,17 +45,20 @@ describe('ExternalEventService', () => {
     it('should insert event to clickhouse', async () => {
       const workspaceId = 'test-workspace-id';
       const event = {
-        type: 'test.event',
-        payload: { test: 'data' },
+        event: 'test.event',
+        objectId: 'test-id',
+        properties: { test: 'data' },
       };
 
       await service.createExternalEvent(workspaceId, event);
 
       expect(clickHouseService.insert).toHaveBeenCalledWith('externalEvent', [
         expect.objectContaining({
-          ...event,
+          event: event.event,
+          objectId: event.objectId,
+          properties: event.properties,
           workspaceId,
-          createdAt: expect.any(String),
+          timestamp: expect.any(String),
         }),
       ]);
     });
@@ -63,8 +66,9 @@ describe('ExternalEventService', () => {
     it('should return success true when clickhouse URL is not configured', async () => {
       const workspaceId = 'test-workspace-id';
       const event = {
-        type: 'test.event',
-        payload: { test: 'data' },
+        event: 'test.event',
+        objectId: 'test-id',
+        properties: { test: 'data' },
       };
 
       // Mock TwentyConfigService to return undefined for CLICKHOUSE_URL
@@ -79,8 +83,9 @@ describe('ExternalEventService', () => {
     it('should return success false when clickhouse insertion fails', async () => {
       const workspaceId = 'test-workspace-id';
       const event = {
-        type: 'test.event',
-        payload: { test: 'data' },
+        event: 'test.event',
+        objectId: 'test-id',
+        properties: { test: 'data' },
       };
 
       jest

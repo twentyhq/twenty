@@ -4,6 +4,7 @@ export enum FeatureFlagKey {
   IsStripeIntegrationEnabled = 'IS_STRIPE_INTEGRATION_ENABLED',
   IsCopilotEnabled = 'IS_COPILOT_ENABLED',
   IsWorkflowEnabled = 'IS_WORKFLOW_ENABLED',
+  IsExternalEventEnabled = 'IS_EXTERNAL_EVENT_ENABLED',
   IsUniqueIndexesEnabled = 'IS_UNIQUE_INDEXES_ENABLED',
   IsJsonFilterEnabled = 'IS_JSON_FILTER_ENABLED',
   IsCustomDomainEnabled = 'IS_CUSTOM_DOMAIN_ENABLED',

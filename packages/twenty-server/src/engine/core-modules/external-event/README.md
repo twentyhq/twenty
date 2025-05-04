@@ -1,10 +1,17 @@
 # External Event Module
 
-This module provides an HTTP API endpoint for writing events to the ExternalEvent ClickHouse table.
+The External Event module provides an HTTP API endpoint for writing events to the ExternalEvent ClickHouse table. It also includes a configurable validation system for events similar to Segment Protocols.
 
 ## Overview
 
-The External Event module allows clients to send event data to Twenty's ClickHouse database. Events are stored with their workspace context and can be used for analytics, monitoring, and integration purposes.
+This module allows clients to send event data to Twenty's ClickHouse database. Events are stored with their workspace context and can be used for analytics, monitoring, and integration purposes.
+
+## Key Features
+
+- **Event Collection API**: Simple HTTP endpoint for sending events
+- **Workspace-specific Validation**: Define validation rules per workspace
+- **Schema Validation**: Validate events against defined metadata
+- **GraphQL Management API**: Create and manage event metadata
 
 ## Authentication
 
@@ -33,6 +40,122 @@ Security features:
 - Token values are only returned once when created and cannot be retrieved later
 - Default expiration of 1 year
 
+## Event Structure
+
+Events follow the ClickHouse table structure:
+
+```typescript
+interface ExternalEventInput {
+  // The event name/type (maps to 'event' column)
+  event: string;
+  
+  // ID of the object related to this event
+  objectId: string;
+  
+  // Type of the object related to this event (e.g., 'company', 'person', 'opportunity')
+  objectType?: string;
+  
+  // User ID related to this event (optional)
+  userId?: string;
+  
+  // Additional event properties (as JSON)
+  properties: Record<string, any>;
+}
+```
+
+## Validation Architecture
+
+The External Event module implements a two-level validation system:
+
+### 1. Platform-level Validation
+
+All events, regardless of workspace, must pass basic structural validation:
+- `event` must be a non-empty string
+- `objectId` must be a non-empty string
+- `properties` must be a valid object
+
+This validation is enforced by the `BaseEventValidationRule` in the validator.
+
+### 2. Workspace-specific Validation
+
+Each workspace can define validation rules for different event types via event metadata.
+
+#### Event Metadata Structure
+
+```
+EventMetadata
+├── eventName
+├── description
+├── workspaceId
+├── strictValidation    # Controls whether unknown properties are allowed
+├── validObjectTypes[]  # Optional list of allowed object types
+└── EventFieldMetadata[]
+    ├── name
+    ├── fieldType (string, number, boolean, object)
+    ├── isRequired
+    └── allowedValues[]
+```
+
+When `strictValidation` is set to `false` (default), unknown properties will be accepted silently. When set to `true`, unknown properties will cause validation errors.
+
+## Managing Event Metadata
+
+You can create and manage event metadata using the GraphQL API:
+
+### Create Event Metadata
+
+```graphql
+mutation {
+  createEventMetadata(input: {
+    eventName: "page.viewed",
+    description: "Triggered when a user views a page",
+    validObjectTypes: ["page"],
+    strictValidation: false
+  }) {
+    id
+    eventName
+    strictValidation
+  }
+}
+```
+
+### Add an Event Field
+
+```graphql
+mutation {
+  addEventField(
+    eventMetadataId: "event-metadata-id",
+    input: {
+      name: "pageName",
+      fieldType: "string",
+      isRequired: true,
+      description: "The name of the page that was viewed"
+    }
+  ) {
+    id
+    name
+    fieldType
+  }
+}
+```
+
+### Get Event Metadata
+
+```graphql
+query {
+  eventMetadataList {
+    id
+    eventName
+    strictValidation
+    fields {
+      name
+      fieldType
+      isRequired
+    }
+  }
+}
+```
+
 ## API Endpoints
 
 ### Create External Event
@@ -45,10 +168,14 @@ Security features:
 **Request Body:**
 ```json
 {
-  "type": "event_type",
-  "payload": {
-    "key1": "value1",
-    "key2": "value2"
+  "event": "page.viewed",
+  "objectId": "page-123",
+  "objectType": "page",
+  "userId": "user-456",
+  "properties": {
+    "pageName": "Home",
+    "url": "https://example.com",
+    "referrer": "https://google.com"
   }
 }
 ```
@@ -59,32 +186,6 @@ Security features:
   "success": true
 }
 ```
-
-### Create External Event Token (GraphQL)
-
-**GraphQL Mutation:**
-```graphql
-mutation {
-  createExternalEventToken {
-    token
-    expiresAt
-  }
-}
-```
-
-**Response:**
-```json
-{
-  "data": {
-    "createExternalEventToken": {
-      "token": "a4f68c37-1e9d-4f8b-b20e-123456789abc",
-      "expiresAt": "2023-12-31T23:59:59.999Z"
-    }
-  }
-}
-```
-
-**IMPORTANT**: The token is only returned once during creation and cannot be retrieved later. Store it securely.
 
 ## Usage Example
 
@@ -100,11 +201,13 @@ fetch(`https://api.twenty.com/api/external-event/${workspaceId}`, {
     'Authorization': `Bearer ${token}`
   },
   body: JSON.stringify({
-    type: 'custom.event',
-    payload: {
-      sourceSystem: 'my-app',
-      action: 'user.clicked',
-      metadata: { page: 'dashboard' }
+    event: "user.identified",
+    objectId: "user-123",
+    objectType: "user",
+    properties: {
+      email: "user@example.com",
+      name: "Example User",
+      plan: "premium"
     }
   })
 });
@@ -113,7 +216,10 @@ fetch(`https://api.twenty.com/api/external-event/${workspaceId}`, {
 ## ClickHouse Integration
 
 Events are stored in the `externalEvent` table in ClickHouse with the following schema:
-- `workspaceId`: The ID of the workspace
-- `type`: The type of event
-- `payload`: The event payload (JSON)
-- `createdAt`: Timestamp when the event was created 
+- `event`: The name of the event (String)
+- `timestamp`: When the event occurred (DateTime64)
+- `userId`: The ID of the user who triggered the event (String)
+- `workspaceId`: The ID of the workspace (String)
+- `objectId`: The ID of the object related to this event (String)
+- `objectType`: The type of object related to this event (String)
+- `properties`: Additional event properties (JSON) 

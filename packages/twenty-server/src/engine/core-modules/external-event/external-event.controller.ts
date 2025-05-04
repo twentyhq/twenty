@@ -1,21 +1,31 @@
-import { Body, Controller, Post, Headers, Param } from '@nestjs/common';
+import { Body, Controller, Headers, Param, Post } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 import {
   ExternalEventException,
   ExternalEventExceptionCode,
 } from './external-event.exception';
 
+import { ExternalEventTokenService } from './services/external-event-token.service';
 import {
   ExternalEventInput,
   ExternalEventService,
 } from './services/external-event.service';
-import { ExternalEventTokenService } from './services/external-event-token.service';
+import { ExternalEventValidator } from './validators/external-event.validator';
 
 @Controller('external-event')
 export class ExternalEventController {
   constructor(
     private readonly externalEventService: ExternalEventService,
     private readonly externalEventTokenService: ExternalEventTokenService,
+    private readonly externalEventValidator: ExternalEventValidator,
+    @InjectRepository(FeatureFlag, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlag>,
   ) {}
 
   @Post(':workspaceId')
@@ -24,7 +34,21 @@ export class ExternalEventController {
     @Headers('authorization') authHeader: string,
     @Body() externalEventInput: ExternalEventInput,
   ) {
-    // Extract API key from Authorization header
+    const isFeatureEnabled = await this.featureFlagRepository.findOne({
+      where: {
+        workspaceId,
+        key: FeatureFlagKey.IsExternalEventEnabled,
+        value: true,
+      },
+    });
+
+    if (!isFeatureEnabled) {
+      throw new ExternalEventException(
+        'External Event feature is not enabled for this workspace',
+        ExternalEventExceptionCode.FEATURE_DISABLED,
+      );
+    }
+
     if (!authHeader) {
       throw new ExternalEventException(
         'Missing authorization header',
@@ -34,7 +58,6 @@ export class ExternalEventController {
 
     const apiKey = authHeader.replace('Bearer ', '');
 
-    // Validate token
     const isValidAppToken = await this.externalEventTokenService.validateToken(
       workspaceId,
       apiKey,
@@ -46,6 +69,9 @@ export class ExternalEventController {
         ExternalEventExceptionCode.INVALID_AUTH,
       );
     }
+
+    // Validate the event input
+    this.externalEventValidator.validate(externalEventInput);
 
     const result = await this.externalEventService.createExternalEvent(
       workspaceId,

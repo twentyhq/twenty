@@ -5,6 +5,7 @@ export enum ExternalEventExceptionCode {
   INVALID_AUTH = 'INVALID_AUTH',
   CLICKHOUSE_ERROR = 'CLICKHOUSE_ERROR',
   TOKEN_CREATION_ERROR = 'TOKEN_CREATION_ERROR',
+  FEATURE_DISABLED = 'FEATURE_DISABLED',
 }
 
 export class ExternalEventException extends CustomException {
