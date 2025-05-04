@@ -45,6 +45,12 @@ export const SettingsObjectFieldActiveActionDropdown = ({
     closeDropdown();
   };
 
+  const dropDownWidth = onSetAsLabelIdentifier
+    ? 155
+    : !onSetAsLabelIdentifier && !onDeactivate
+      ? 75
+      : 110;
+
   return (
     <Dropdown
       dropdownId={dropdownId}
@@ -55,7 +61,7 @@ export const SettingsObjectFieldActiveActionDropdown = ({
           accent="tertiary"
         />
       }
-      dropdownWidth={160}
+      dropdownWidth={dropDownWidth}
       dropdownComponents={
         <DropdownMenuItemsContainer scrollable={false}>
           <MenuItem
