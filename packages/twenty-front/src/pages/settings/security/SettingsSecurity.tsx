@@ -9,13 +9,11 @@ import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/compo
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
-import { FeatureFlagKey } from '~/generated/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { Tag } from 'twenty-ui/components';
 import { H2Title, IconLock } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { Tag } from 'twenty-ui/components';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -36,9 +34,6 @@ export const SettingsSecurity = () => {
   const { t } = useLingui();
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
-  const IsApprovedAccessDomainsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsApprovedAccessDomainsEnabled,
-  );
 
   return (
     <SubMenuTopBarContainer
@@ -68,15 +63,13 @@ export const SettingsSecurity = () => {
             />
             <SettingsSSOIdentitiesProvidersListCard />
           </StyledSection>
-          {IsApprovedAccessDomainsEnabled && (
-            <StyledSection>
-              <H2Title
-                title={t`Approved Domains`}
-                description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
-              />
-              <SettingsApprovedAccessDomainsListCard />
-            </StyledSection>
-          )}
+          <StyledSection>
+            <H2Title
+              title={t`Approved Domains`}
+              description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
+            />
+            <SettingsApprovedAccessDomainsListCard />
+          </StyledSection>
           <Section>
             <StyledContainer>
               <H2Title

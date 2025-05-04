@@ -20,8 +20,7 @@ import { MessagingGetMessagesService } from 'src/modules/messaging/message-impor
 import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
-import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
-
+import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 describe('MessagingMessagesImportService', () => {
   let service: MessagingMessagesImportService;
   let messageChannelSyncStatusService: MessageChannelSyncStatusService;
@@ -78,7 +77,7 @@ describe('MessagingMessagesImportService', () => {
         },
       },
       {
-        provide: MessagingTelemetryService,
+        provide: MessagingMonitoringService,
         useValue: {
           track: jest.fn().mockResolvedValue(undefined),
         },
