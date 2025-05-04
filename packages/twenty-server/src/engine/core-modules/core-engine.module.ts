@@ -15,6 +15,7 @@ import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
 import { captchaModuleFactory } from 'src/engine/core-modules/captcha/captcha.module-factory';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { emailModuleFactory } from 'src/engine/core-modules/email/email.module-factory';
+import { ExternalEventModule } from 'src/engine/core-modules/external-event/external-event.module';
 import { ExceptionHandlerModule } from 'src/engine/core-modules/exception-handler/exception-handler.module';
 import { exceptionHandlerModuleFactory } from 'src/engine/core-modules/exception-handler/exception-handler.module-factory';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -63,6 +64,7 @@ import { FileModule } from './file/file.module';
     AuthModule,
     BillingModule,
     ClientConfigModule,
+    ExternalEventModule,
     FeatureFlagModule,
     FileModule,
     OpenApiModule,
@@ -130,6 +132,7 @@ import { FileModule } from './file/file.module';
   exports: [
     AuditModule,
     AuthModule,
+    ExternalEventModule,
     FeatureFlagModule,
     TimelineMessagingModule,
     TimelineCalendarEventModule,

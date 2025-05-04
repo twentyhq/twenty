@@ -25,6 +25,7 @@ export enum AppTokenType {
   InvitationToken = 'INVITATION_TOKEN',
   OIDCCodeVerifier = 'OIDC_CODE_VERIFIER',
   EmailVerificationToken = 'EMAIL_VERIFICATION_TOKEN',
+  ExternalEventToken = 'EXTERNAL_EVENT_TOKEN',
 }
 
 @Entity({ name: 'appToken', schema: 'core' })

@@ -21,7 +21,8 @@ export type WorkspaceTokenType =
   | 'FILE'
   | 'POSTGRES_PROXY'
   | 'REMOTE_SERVER'
-  | 'API_KEY';
+  | 'API_KEY'
+  | 'EXTERNAL_EVENT';
 
 @Injectable()
 export class JwtWrapperService {
