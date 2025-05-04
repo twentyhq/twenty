@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "build": "VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=4500 npx vite build && sh ./scripts/inject-runtime-env.sh",
+    "preview": "npx vite preview",
     "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=7000 npx vite build && sh ./scripts/inject-runtime-env.sh",
+    "start:dev": "NODE_ENV=development npx vite --host",
     "start:prod": "NODE_ENV=production npx vite --host",
     "tsup": "npx tsup"
   },

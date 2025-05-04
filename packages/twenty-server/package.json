@@ -6,9 +6,11 @@
   "license": "AGPL-3.0",
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-server node ../../node_modules/nx/bin/nx.js",
+    "build": "nest build",
     "start:prod": "node dist/src/main",
     "command:prod": "node dist/src/command/command",
     "worker:prod": "node dist/src/queue-worker/queue-worker",
+    "database:truncate": "npx ts-node ./scripts/truncate-db.ts",
     "database:init:prod": "npx ts-node ./scripts/setup-db.ts && yarn database:migrate:prod",
     "database:migrate:prod": "npx -y typeorm migration:run -d dist/src/database/typeorm/metadata/metadata.datasource && npx -y typeorm migration:run -d dist/src/database/typeorm/core/core.datasource",
     "clickhouse:migrate:prod": "node dist/src/database/clickhouse/migrations/run-migrations.js",
