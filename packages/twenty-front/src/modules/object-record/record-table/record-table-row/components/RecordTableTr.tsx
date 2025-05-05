@@ -123,7 +123,7 @@ export const RecordTableTr = forwardRef<
   );
 
   const isNextRowActiveOrFocused =
-    isRowFocusActive && (isNextRowActive || isNextRowFocused);
+    (isRowFocusActive && isNextRowFocused) || isNextRowActive;
 
   return (
     <RecordTableRowContextProvider
