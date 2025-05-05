@@ -2,6 +2,8 @@ import { OpenAPIV3_1 } from 'openapi-types';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
+import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+
 import {
   computeDepthParameters,
   computeEndingBeforeParameters,
@@ -12,7 +14,6 @@ import {
   computeStartingAfterParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
@@ -39,28 +40,44 @@ const isFieldAvailable = (field: FieldMetadataEntity, forResponse: boolean) => {
 
 const getFieldProperties = (field: FieldMetadataEntity): Property => {
   switch (field.type) {
-    case FieldMetadataType.UUID:
+    case FieldMetadataType.UUID: {
       return { type: 'string', format: 'uuid' };
+    }
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT:
+    case FieldMetadataType.RICH_TEXT: {
       return { type: 'string' };
-    case FieldMetadataType.DATE_TIME:
+    }
+    case FieldMetadataType.DATE_TIME: {
       return { type: 'string', format: 'date-time' };
-    case FieldMetadataType.DATE:
+    }
+    case FieldMetadataType.DATE: {
       return { type: 'string', format: 'date' };
-    case FieldMetadataType.NUMBER:
-      const settings = (field as FieldMetadataEntity<FieldMetadataType.NUMBER>).settings;
-      return { type: settings?.dataType === NumberDataType.FLOAT || (settings?.decimals ?? 0) >= 1 ? 'number' : 'integer' };
-    case FieldMetadataType.NUMERIC:
-    case FieldMetadataType.POSITION:
-      return { type: 'number' };
-    case FieldMetadataType.BOOLEAN:
-      return { type: 'boolean' };
-    case FieldMetadataType.RAW_JSON:
-      return { type: 'object' };
+    }
+    case FieldMetadataType.NUMBER: {
+      const settings = (field as FieldMetadataEntity<FieldMetadataType.NUMBER>)
+        .settings;
 
-    default:
+      return {
+        type:
+          settings?.dataType === NumberDataType.FLOAT ||
+          (settings?.decimals ?? 0) >= 1
+            ? 'number'
+            : 'integer',
+      };
+    }
+    case FieldMetadataType.NUMERIC:
+    case FieldMetadataType.POSITION: {
+      return { type: 'number' };
+    }
+    case FieldMetadataType.BOOLEAN: {
+      return { type: 'boolean' };
+    }
+    case FieldMetadataType.RAW_JSON: {
+      return { type: 'object' };
+    }
+    default: {
       return { type: 'string' };
+    }
   }
 };
 
