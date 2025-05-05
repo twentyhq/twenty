@@ -5,7 +5,8 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
@@ -54,7 +55,9 @@ export const WorkflowEditTriggerWebhookForm = ({
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
   const [errorMessagesVisible, setErrorMessagesVisible] = useState(false);
   const { getIcon } = useIcons();
-  const workflowId = useRecoilValue(workflowIdState);
+  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const onBlur = () => {
@@ -66,7 +69,7 @@ export const WorkflowEditTriggerWebhookForm = ({
   const headerIcon = getTriggerIcon(trigger);
   const headerType = getTriggerHeaderType(trigger);
 
-  const webhookUrl = `${REACT_APP_SERVER_BASE_URL}/webhooks/workflows/${currentWorkspace?.id}/${workflowId}`;
+  const webhookUrl = `${REACT_APP_SERVER_BASE_URL}/webhooks/workflows/${currentWorkspace?.id}/${workflowVisualizerWorkflowId}`;
   const displayWebhookUrl = webhookUrl.replace(/^(https?:\/\/)?(www\.)?/, '');
 
   const copyToClipboard = async () => {
