@@ -12,19 +12,23 @@ const StyledDocumentViewerContainer = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.background.secondary};
 
-  .react-doc-viewer {
-    height: 100%;
-    width: 100%;
-    overflow: auto;
-    background: none;
-  }
-
   #react-doc-viewer #header-bar {
     display: none;
   }
 
   #react-doc-viewer #pdf-controls {
     display: none !important;
+  }
+
+  #react-doc-viewer,
+  #proxy-renderer,
+  #msdoc-renderer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    background: none;
   }
 `;
 
