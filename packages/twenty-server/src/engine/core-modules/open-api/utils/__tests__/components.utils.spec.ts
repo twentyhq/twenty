@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { EachTestingContext } from 'twenty-shared/testing';
 
 import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -6,7 +7,6 @@ import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata
 import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/components.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { EachTestingContext } from 'twenty-shared/testing';
 
 describe('computeSchemaComponents', () => {
   it('should compute schema components', () => {
