@@ -2,7 +2,10 @@ import { OpenAPIV3_1 } from 'openapi-types';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
-import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import {
+  FieldMetadataSettings,
+  NumberDataType,
+} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import {
   computeDepthParameters,
@@ -54,16 +57,17 @@ const getFieldProperties = (field: FieldMetadataEntity): Property => {
       return { type: 'string', format: 'date' };
     }
     case FieldMetadataType.NUMBER: {
-      const settings = (field as FieldMetadataEntity<FieldMetadataType.NUMBER>)
-        .settings;
+      const settings =
+        field.settings as FieldMetadataSettings<FieldMetadataType.NUMBER>;
 
-      return {
-        type:
-          settings?.dataType === NumberDataType.FLOAT ||
-          (settings?.decimals ?? 0) >= 1
-            ? 'number'
-            : 'integer',
-      };
+      switch (settings?.dataType) {
+        case NumberDataType.INT:
+        case NumberDataType.BIGINT:
+          return { type: 'integer' };
+        case NumberDataType.FLOAT:
+        default:
+          return { type: 'number' };
+      }
     }
     case FieldMetadataType.NUMERIC:
     case FieldMetadataType.POSITION: {
