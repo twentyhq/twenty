@@ -1,5 +1,5 @@
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/entity.manager';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import {
   AIRBNB_ID,
   FIGMA_ID,

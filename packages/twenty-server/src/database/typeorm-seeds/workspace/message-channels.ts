@@ -1,5 +1,5 @@
 import { DEV_SEED_CONNECTED_ACCOUNT_IDS } from 'src/database/typeorm-seeds/workspace/connected-account';
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/entity.manager';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import {
   MessageChannelSyncStage,
   MessageChannelVisibility,

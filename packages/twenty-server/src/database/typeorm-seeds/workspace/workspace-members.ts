@@ -4,7 +4,7 @@ import {
   SEED_APPLE_WORKSPACE_ID,
 } from 'src/database/typeorm-seeds/core/workspaces';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/entity.manager';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 
 const tableName = 'workspaceMember';
 

@@ -1,5 +1,5 @@
 
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/entity.manager';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { peopleDemo } from 'src/engine/workspace-manager/demo-objects-prefill-data/people-demo.json';
 
 export const seedPersonWithDemoData = async (

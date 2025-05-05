@@ -16,7 +16,10 @@ import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/works
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { validateOperationIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
+import {
+  OperationType,
+  validateOperationIsPermittedOrThrow,
+} from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
@@ -142,7 +145,7 @@ export class WorkspaceEntityManager extends EntityManager {
       objectRecordsPermissions?: ObjectRecordsPermissions;
     },
   ): Promise<InsertResult> {
-    this.validatePermissions(target, options);
+    this.validatePermissions(target, 'insert', options);
 
     return super.insert(target, entityOrEntities);
   }
@@ -158,7 +161,7 @@ export class WorkspaceEntityManager extends EntityManager {
       objectRecordsPermissions?: ObjectRecordsPermissions;
     },
   ): Promise<InsertResult> {
-    this.validatePermissions(target, options);
+    this.validatePermissions(target, 'update', options);
 
     return super.upsert(target, entityOrEntities, conflictPathsOrOptions);
   }
@@ -190,6 +193,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   private validatePermissions<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
+    operationType: OperationType,
     options?: {
       shouldBypassPermissionChecks?: boolean;
       objectRecordsPermissions?: ObjectRecordsPermissions;
@@ -210,7 +214,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
     validateOperationIsPermittedOrThrow({
       entityName: this.extractTargetNameSingularFromEntityTarget(target),
-      operationType: 'update',
+      operationType,
       objectRecordsPermissions: options?.objectRecordsPermissions ?? {},
       objectMetadataMaps: this.internalContext.objectMetadataMaps,
     });

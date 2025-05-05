@@ -1,6 +1,6 @@
 
 import { DEMO_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/demo/users';
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/entity.manager';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 export const DEMO_SEED_WORKSPACE_MEMBER_IDS = {
