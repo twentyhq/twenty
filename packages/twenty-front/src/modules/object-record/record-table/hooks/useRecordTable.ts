@@ -21,6 +21,7 @@ import { onEntityCountChangeComponentState } from '@/object-record/record-table/
 
 import { useRecordTableMove } from '@/object-record/record-table/hooks/useRecordTableMove';
 import { useRecordTableMoveFocusedRow } from '@/object-record/record-table/hooks/useRecordTableMoveFocusedRow';
+import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
@@ -152,6 +153,11 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const { moveFocusedRow } = useRecordTableMoveFocusedRow(recordTableId);
 
+  const setIsRowFocusActive = useSetRecoilComponentStateV2(
+    isRecordTableRowFocusActiveComponentState,
+    recordTableId,
+  );
+
   const useMapKeyboardToFocus = () => {
     const setHotkeyScope = useSetHotkeyScope();
 
@@ -237,9 +243,10 @@ export const useRecordTable = (props?: useRecordTableProps) => {
           keyboardShortcutMenu: true,
         });
         setIsFocusActiveForCurrentPosition(false);
+        setIsRowFocusActive(true);
       },
       TableHotkeyScope.TableFocus,
-      [setIsFocusActiveForCurrentPosition],
+      [setIsFocusActiveForCurrentPosition, setIsRowFocusActive],
     );
   };
 

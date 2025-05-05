@@ -28,13 +28,13 @@ import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/drop
 import { useSetRecordTableFocusPosition } from '@/object-record/record-table/hooks/internal/useSetRecordTableFocusPosition';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
+import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useNavigate } from 'react-router-dom';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
-
 export const DEFAULT_CELL_SCOPE: HotkeyScope = {
   scope: TableHotkeyScope.CellEditMode,
 };
@@ -90,6 +90,11 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
     useActiveRecordTableRow(tableScopeId);
 
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(tableScopeId);
+
+  const setIsRowFocusActive = useSetRecoilComponentStateV2(
+    isRecordTableRowFocusActiveComponentState,
+    tableScopeId,
+  );
 
   const setFocusPosition = useSetRecordTableFocusPosition();
 
@@ -165,6 +170,8 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
 
         setFocusPosition(cellPosition);
 
+        setIsRowFocusActive(false);
+
         setDragSelectionStartEnabled(false);
 
         openFieldInput({
@@ -199,6 +206,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
       clickOutsideListenerIsActivatedState,
       deactivateRecordTableRow,
       setFocusPosition,
+      setIsRowFocusActive,
       setDragSelectionStartEnabled,
       openFieldInput,
       setCurrentTableCellInEditModePosition,
