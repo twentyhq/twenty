@@ -463,8 +463,8 @@ export class WorkspaceRepository<
   ): Promise<InsertResult> {
     const manager = entityManager || this.manager;
 
-    const formatedEntity = await this.formatData(entity);
-    const result = await manager.insert(this.target, formatedEntity, {
+    const formattedEntity = await this.formatData(entity);
+    const result = await manager.insert(this.target, formattedEntity, {
       shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
       objectRecordsPermissions: this.objectRecordsPermissions,
     });
