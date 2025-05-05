@@ -190,13 +190,13 @@ export class TimelineCalendarEventService {
 
     const formattedPersonIds = personIds.map(({ id }) => id);
 
-    const messageThreads = await this.getCalendarEventsFromPersonIds({
+    const calendarEvents = await this.getCalendarEventsFromPersonIds({
       currentWorkspaceMemberId,
       personIds: formattedPersonIds,
       page,
       pageSize,
     });
 
-    return messageThreads;
+    return calendarEvents;
   }
 }

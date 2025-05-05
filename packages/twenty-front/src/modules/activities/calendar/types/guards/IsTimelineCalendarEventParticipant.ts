@@ -4,5 +4,5 @@ import { TimelineCalendarEventParticipant } from '~/generated-metadata/graphql';
 export const isTimelineCalendarEventParticipant = (
   participant: CalendarEventParticipant | TimelineCalendarEventParticipant,
 ): participant is TimelineCalendarEventParticipant => {
-  return 'workspaceMemberId' in participant && !('person' in participant);
+  return 'avatarUrl' in participant;
 };

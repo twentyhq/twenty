@@ -31,6 +31,11 @@ export class CanReturnCalendarEventsService {
         relations: ['calendarChannel', 'calendarChannel.connectedAccount'],
       });
 
+    const connectedAccountRepository =
+      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+        'connectedAccount',
+      );
+
     for (let i = calendarEvents.length - 1; i >= 0; i--) {
       const calendarChannelCalendarEventAssociations =
         calendarChannelCalendarEventsAssociations.filter(
@@ -53,11 +58,6 @@ export class CanReturnCalendarEventsService {
       ) {
         continue;
       }
-
-      const connectedAccountRepository =
-        await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
-          'connectedAccount',
-        );
 
       const connectedAccounts = await connectedAccountRepository.find({
         select: ['id'],

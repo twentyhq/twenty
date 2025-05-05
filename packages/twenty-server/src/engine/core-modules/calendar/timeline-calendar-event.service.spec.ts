@@ -1,35 +1,58 @@
+import { Test, TestingModule } from '@nestjs/testing';
+
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
 import { TimelineCalendarEventService } from './timeline-calendar-event.service';
 
+type MockWorkspaceRepository = Partial<
+  WorkspaceRepository<CalendarEventWorkspaceEntity>
+> & {
+  find: jest.Mock;
+  findAndCount: jest.Mock;
+};
+
 describe('TimelineCalendarEventService', () => {
   let service: TimelineCalendarEventService;
-  let twentyORMManager: TwentyORMManager;
+  let mockCalendarEventRepository: MockWorkspaceRepository;
 
-  const mockCalendarEvent = {
+  const mockCalendarEvent: Partial<CalendarEventWorkspaceEntity> = {
     id: '1',
     title: 'Test Event',
     description: 'Test Description',
-    startsAt: new Date(),
-    endsAt: new Date(),
+    startsAt: '2024-01-01T00:00:00.000Z',
+    endsAt: '2024-01-01T01:00:00.000Z',
     calendarEventParticipants: [],
     calendarChannelEventAssociations: [],
   };
 
-  const mockCalendarEventRepository = {
-    find: jest.fn(),
-    findAndCount: jest.fn(),
-  };
-
   beforeEach(async () => {
-    twentyORMManager = {
-      getRepository: jest.fn().mockResolvedValue(mockCalendarEventRepository),
-    } as any;
+    mockCalendarEventRepository = {
+      find: jest.fn(),
+      findAndCount: jest.fn(),
+    };
 
-    service = new TimelineCalendarEventService(twentyORMManager);
+    const mockTwentyORMManager = {
+      getRepository: jest.fn().mockResolvedValue(mockCalendarEventRepository),
+    };
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        TimelineCalendarEventService,
+        {
+          provide: TwentyORMManager,
+          useValue: mockTwentyORMManager,
+        },
+      ],
+    }).compile();
+
+    service = module.get<TimelineCalendarEventService>(
+      TimelineCalendarEventService,
+    );
   });
 
   it('should return non-obfuscated calendar events if visibility is SHARE_EVERYTHING', async () => {

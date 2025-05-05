@@ -1,3 +1,5 @@
+import { BadRequestException } from '@nestjs/common';
+
 import { WorkspaceQueryPostHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
@@ -23,7 +25,7 @@ export class CalendarEventFindManyPostQueryHook
     payload: CalendarEventWorkspaceEntity[],
   ): Promise<void> {
     if (!authContext.workspaceMemberId) {
-      return;
+      throw new BadRequestException('Workspace member id is required');
     }
 
     await this.canReturnCalendarEventsService.canReturnCalendarEvents(
