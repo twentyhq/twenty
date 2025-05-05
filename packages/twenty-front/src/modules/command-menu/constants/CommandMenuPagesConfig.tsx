@@ -1,3 +1,4 @@
+import { CommandMenuChatbotFlowEditStep } from '@/chatbot/components/CommandMenuChatbotFlowEditStep';
 import { CommandMenuChatbotFlowPage } from '@/chatbot/components/CommandMenuChatbotFlowPage';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { CommandMenuCalendarEventPage } from '@/command-menu/pages/calendar-event/components/CommandMenuCalendarEventPage';
@@ -34,4 +35,5 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   [CommandMenuPages.WorkflowRunStepView, <CommandMenuWorkflowRunViewStep />],
   [CommandMenuPages.SearchRecords, <CommandMenuSearchRecordsPage />],
   [CommandMenuPages.ChatbotFlow, <CommandMenuChatbotFlowPage />],
+  [CommandMenuPages.ChatbotFlowStepEdit, <CommandMenuChatbotFlowEditStep />],
 ]);

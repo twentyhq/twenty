@@ -1,10 +1,21 @@
 import { NodeActionType, OtherNodeActionType } from '@/chatbot/types/Node';
 
-export const NODE_ACTIONS: Array<{
+type BaseAction = {
   label: string;
-  type: Extract<NodeActionType, 'text' | 'image' | 'file'>;
   icon: string;
-}> = [
+};
+
+type NodeAction = BaseAction & {
+  type: Extract<NodeActionType, 'text' | 'image' | 'file'>;
+};
+
+type OtherNodeAction = BaseAction & {
+  type: Extract<OtherNodeActionType, 'condition'>;
+};
+
+export type ChatbotAction = NodeAction | OtherNodeAction;
+
+export const NODE_ACTIONS: Array<NodeAction> = [
   {
     label: 'Text',
     type: 'text',
@@ -22,11 +33,7 @@ export const NODE_ACTIONS: Array<{
   // },
 ];
 
-export const OTHER_NODE_ACTIONS: Array<{
-  label: string;
-  type: Extract<OtherNodeActionType, 'condition'>;
-  icon: string;
-}> = [
+export const OTHER_NODE_ACTIONS: Array<OtherNodeAction> = [
   {
     label: 'If / Else Logic',
     type: 'condition',

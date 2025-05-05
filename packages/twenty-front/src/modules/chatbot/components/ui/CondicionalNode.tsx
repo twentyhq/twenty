@@ -37,7 +37,7 @@ function CondicionalNode({
   id,
   data,
   isConnectable,
-}: NodeProps<Node<{ logic: CondicionalState }>>) {
+}: NodeProps<Node<{ title: string; logic: CondicionalState }>>) {
   const { updateNodeData } = useReactFlow();
   const [state, setState] = useState<CondicionalState>(initialState);
 
@@ -110,6 +110,7 @@ function CondicionalNode({
   return (
     <BaseNode icon={'IconLogicAnd'} title={'Condicional'}>
       <Handle
+        title={data.title}
         type="target"
         position={Position.Top}
         isConnectable={isConnectable}

@@ -6,15 +6,28 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 
 import { useChatbotFlowCommandMenu } from '@/chatbot/hooks/useChatbotFlowCommandMenu';
 import { chatbotFlowIdState } from '@/chatbot/state/chatbotFlowIdState';
-import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
+import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
+import { getChatbotNodeIcon } from '@/chatbot/utils/getChatbotNodeIcon';
+import { getChatbotNodeLabel } from '@/chatbot/utils/getChatbotNodeLabel';
+import { isValidChatbotNodeType } from '@/chatbot/utils/isValidChatbotNodeType';
+import {
+  Node,
+  OnSelectionChangeParams,
+  useOnSelectionChange,
+} from '@xyflow/react';
+import { useIcons } from 'twenty-ui/display';
 
 export const ChatbotFlowDiagramCanvasEditableEffect = () => {
-  const { openChatbotFlowCommandMenu } = useChatbotFlowCommandMenu();
-
-  // const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
+  const { getIcon } = useIcons();
+  const { openChatbotFlowCommandMenu, openChatbotFlowStepEditCommandMenu } =
+    useChatbotFlowCommandMenu();
 
   const setCommandMenuNavigationStack = useSetRecoilState(
     commandMenuNavigationStackState,
+  );
+
+  const setChatbotFlowSelectedNode = useSetRecoilState(
+    chatbotFlowSelectedNodeState,
   );
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
@@ -23,29 +36,46 @@ export const ChatbotFlowDiagramCanvasEditableEffect = () => {
 
   const handleSelectionChange = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
-      // const selectedNode = nodes[0] as Node;
+      const selectedNode = nodes[0] as Node | undefined;
 
       if (!isInRightDrawer) {
         setCommandMenuNavigationStack([]);
       }
 
+      if (!chatbotFlowId) return;
+
+      const nodeType = selectedNode?.type;
+
+      if (
+        // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+        selectedNode &&
+        typeof nodeType === 'string' &&
+        isValidChatbotNodeType(nodeType)
+      ) {
+        setChatbotFlowSelectedNode(selectedNode);
+
+        openChatbotFlowStepEditCommandMenu(
+          chatbotFlowId,
+          getChatbotNodeLabel(nodeType) ?? '',
+          getIcon(getChatbotNodeIcon(nodeType)),
+        );
+        return;
+      }
+
       // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
       if (chatbotFlowId) {
         openChatbotFlowCommandMenu(chatbotFlowId);
+        return;
       }
-
-      // if (!isDefined(selectedNode)) {
-      //   return;
-      // }
-
-      // setWorkflowSelectedNode(selectedNode.id);
     },
     [
       isInRightDrawer,
-      setCommandMenuNavigationStack,
       chatbotFlowId,
+      setCommandMenuNavigationStack,
+      setChatbotFlowSelectedNode,
+      openChatbotFlowStepEditCommandMenu,
+      getIcon,
       openChatbotFlowCommandMenu,
-      // setWorkflowSelectedNode
     ],
   );
 

@@ -12,4 +12,5 @@ export enum CommandMenuPages {
   WorkflowRunStepView = 'workflow-run-step-view',
   SearchRecords = 'search-records',
   ChatbotFlow = 'chatbot-flow',
+  ChatbotFlowStepEdit = 'chatbot-flow-step-edit',
 }

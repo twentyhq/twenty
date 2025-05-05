@@ -16,6 +16,7 @@ export const initialNodes: Node[] = [
     id: '2',
     type: 'condition',
     data: {
+      title: 'Condicional',
       logic: {
         logicNodes: [0, 1],
         logicNodeData: [
@@ -46,6 +47,12 @@ export const initialNodes: Node[] = [
     type: 'addNode',
     data: {},
     position: { x: 700, y: 900 },
+  },
+  {
+    id: '6',
+    type: 'text',
+    data: {},
+    position: { x: 900, y: 900 },
   },
 ];
 

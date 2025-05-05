@@ -8,6 +8,7 @@ import { useGetChatbotFlowById } from '@/chatbot/hooks/useGetChatbotFlowById';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { useValidateChatbotFlow } from '@/chatbot/hooks/useValidateChatbotFlow';
 import { chatbotFlowIdState } from '@/chatbot/state/chatbotFlowIdState';
+import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { useTheme } from '@emotion/react';
@@ -26,7 +27,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/input';
@@ -108,6 +109,8 @@ export const BotDiagramBase = ({
     chatbotFlowId ?? '',
   );
 
+  const setChatbotFlow = useSetRecoilState(chatbotFlowState);
+
   // eslint-disable-next-line @nx/workspace-no-state-useref
   const hasValidatedRef = useRef(false);
 
@@ -121,9 +124,11 @@ export const BotDiagramBase = ({
       Array.isArray(chatbotFlowData.edges) &&
       chatbotFlowData.edges.length > 0
     ) {
+      setChatbotFlow(chatbotFlowData);
       return [chatbotFlowData.nodes, chatbotFlowData.edges];
     }
 
+    setChatbotFlow(chatbotFlowData);
     return [initialNodes, initialEdges];
   };
 

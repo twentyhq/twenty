@@ -1,3 +1,4 @@
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { Label, useIcons } from 'twenty-ui/display';
@@ -66,9 +67,10 @@ const BaseNode = ({
   const Icon = getIcon(icon);
 
   const iconHeader = <Icon size={18}></Icon>;
+  const { toggleCommandMenu } = useCommandMenu();
 
   return (
-    <>
+    <div onClick={toggleCommandMenu}>
       {nodeStart && <StyledNodeType variant="small">Start</StyledNodeType>}
       <StyledBaseNodeWrapper>
         <StyledHeader>
@@ -77,7 +79,7 @@ const BaseNode = ({
         </StyledHeader>
         {children}
       </StyledBaseNodeWrapper>
-    </>
+    </div>
   );
 };
 
