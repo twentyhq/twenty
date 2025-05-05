@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
-
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
@@ -159,7 +157,6 @@ export class TimelineActivityRepository {
       linkedObjectMetadataId: string | undefined;
     }[],
     workspaceId: string,
-    transactionManager?: EntityManager,
   ) {
     if (activities.length === 0) {
       return;
@@ -191,7 +188,6 @@ export class TimelineActivityRepository {
         ])
         .flat(),
       workspaceId,
-      transactionManager,
     );
   }
 }

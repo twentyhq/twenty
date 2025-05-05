@@ -18,21 +18,27 @@ const getTargetEntityAndOperationType = (expressionMap: QueryExpressionMap) => {
   };
 };
 
-export const validateQueryIsPermittedOrThrow = (
-  expressionMap: QueryExpressionMap,
-  objectRecordsPermissions: ObjectRecordsPermissions,
-  objectMetadataMaps: ObjectMetadataMaps,
-  shouldBypassPermissionChecks: boolean,
-) => {
-  if (shouldBypassPermissionChecks) {
-    return;
-  }
+export type OperationType =
+  | 'select'
+  | 'insert'
+  | 'update'
+  | 'delete'
+  | 'restore'
+  | 'soft-delete';
 
-  const { mainEntity, operationType } =
-    getTargetEntityAndOperationType(expressionMap);
-
+export const validateOperationIsPermittedOrThrow = ({
+  entityName,
+  operationType,
+  objectRecordsPermissions,
+  objectMetadataMaps,
+}: {
+  entityName: string;
+  operationType: OperationType;
+  objectRecordsPermissions: ObjectRecordsPermissions;
+  objectMetadataMaps: ObjectMetadataMaps;
+}) => {
   const objectMetadataIdForEntity =
-    objectMetadataMaps.idByNameSingular[mainEntity];
+    objectMetadataMaps.idByNameSingular[entityName];
 
   const objectMetadataIsSystem =
     objectMetadataMaps.byId[objectMetadataIdForEntity]?.isSystem === true;
@@ -41,7 +47,7 @@ export const validateQueryIsPermittedOrThrow = (
     return;
   }
 
-  const permissionsForEntity = objectRecordsPermissions[mainEntity];
+  const permissionsForEntity = objectRecordsPermissions[entityName];
 
   switch (operationType) {
     case 'select':
@@ -84,4 +90,25 @@ export const validateQueryIsPermittedOrThrow = (
         PermissionsExceptionCode.UNKNOWN_OPERATION_NAME,
       );
   }
+};
+
+export const validateQueryIsPermittedOrThrow = (
+  expressionMap: QueryExpressionMap,
+  objectRecordsPermissions: ObjectRecordsPermissions,
+  objectMetadataMaps: ObjectMetadataMaps,
+  shouldBypassPermissionChecks: boolean,
+) => {
+  if (shouldBypassPermissionChecks) {
+    return;
+  }
+
+  const { mainEntity, operationType } =
+    getTargetEntityAndOperationType(expressionMap);
+
+  validateOperationIsPermittedOrThrow({
+    entityName: mainEntity,
+    operationType: operationType as OperationType,
+    objectRecordsPermissions,
+    objectMetadataMaps,
+  });
 };
