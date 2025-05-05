@@ -2,15 +2,22 @@ import styled from '@emotion/styled';
 
 import { HIDDEN_TABLE_COLUMN_DROPDOWN_ID } from '@/object-record/record-table/constants/HiddenTableColumnDropdownId';
 import { RecordTableHeaderPlusButtonContent } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent';
+import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
+import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useTheme } from '@emotion/react';
 import { IconPlus } from 'twenty-ui/display';
 
 const StyledPlusIconHeaderCell = styled.th<{
   isTableWiderThanScreen: boolean;
+  isFirstRowActiveOrFocused: boolean;
 }>`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: ${({ isFirstRowActiveOrFocused, theme }) =>
+    isFirstRowActiveOrFocused
+      ? 'none'
+      : `1px solid ${theme.border.color.light}`};
   background-color: ${({ theme }) => theme.background.primary};
   border-left: none !important;
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -35,7 +42,6 @@ const StyledPlusIconContainer = styled.div`
 `;
 
 const StyledDropdownContainer = styled.div`
-  width: 32px;
   &:hover {
     background: ${({ theme }) => theme.background.transparent.light};
   }
@@ -54,8 +60,23 @@ export const RecordTableHeaderLastColumn = () => {
     (scrollWrapperHTMLElement?.clientWidth ?? 0) <
     (scrollWrapperHTMLElement?.scrollWidth ?? 0);
 
+  const isFirstRowActive = useRecoilComponentFamilyValueV2(
+    isRecordTableRowActiveComponentFamilyState,
+    0,
+  );
+
+  const isFirstRowFocused = useRecoilComponentFamilyValueV2(
+    isRecordTableRowFocusedComponentFamilyState,
+    0,
+  );
+
+  const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
+
   return (
-    <StyledPlusIconHeaderCell isTableWiderThanScreen={isTableWiderThanScreen}>
+    <StyledPlusIconHeaderCell
+      isTableWiderThanScreen={isTableWiderThanScreen}
+      isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
+    >
       <StyledDropdownContainer>
         <Dropdown
           dropdownId={HIDDEN_TABLE_COLUMN_DROPDOWN_ID}
