@@ -59,6 +59,12 @@ export const LocalePicker = () => {
     await updateWorkspaceMember({ locale: value });
 
     await dynamicActivate(value);
+    try {
+      localStorage.setItem('locale', value);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log('Failed to save locale to localStorage:', error);
+    }
     await refreshObjectMetadataItems();
   };
 

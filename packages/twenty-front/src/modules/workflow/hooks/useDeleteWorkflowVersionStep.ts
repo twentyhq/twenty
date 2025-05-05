@@ -6,13 +6,13 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { DELETE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/deleteWorkflowVersionStep';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { useApolloClient, useMutation } from '@apollo/client';
+import { isDefined } from 'twenty-shared/utils';
 import {
   DeleteWorkflowVersionStepInput,
   DeleteWorkflowVersionStepMutation,
   DeleteWorkflowVersionStepMutationVariables,
   WorkflowAction,
 } from '~/generated/graphql';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useDeleteWorkflowVersionStep = () => {
   const apolloClient = useApolloClient();
@@ -47,9 +47,16 @@ export const useDeleteWorkflowVersionStep = () => {
 
     const newCachedRecord = {
       ...cachedRecord,
-      steps: (cachedRecord.steps || []).filter(
-        (step: WorkflowAction) => step.id !== deletedStep.id,
-      ),
+      steps: (cachedRecord.steps || [])
+        .filter((step: WorkflowAction) => step.id !== deletedStep.id)
+        .map((step) => {
+          return {
+            ...step,
+            nextStepIds: step.nextStepIds?.filter(
+              (nextStepId) => nextStepId !== deletedStep.id,
+            ),
+          };
+        }),
     };
 
     const recordGqlFields = {

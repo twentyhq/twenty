@@ -76,6 +76,7 @@ export const SendApprovedAccessDomainValidation = ({
         {workspace.name ? <HighlightedText value={workspace.name} /> : <></>}
         <CallToAction href={link} value={i18n._('Validate domain')} />
       </HighlightedContainer>
+      <br />
     </BaseEmail>
   );
 };

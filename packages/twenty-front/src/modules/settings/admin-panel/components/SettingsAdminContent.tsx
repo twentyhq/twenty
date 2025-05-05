@@ -20,8 +20,8 @@ export const SettingsAdminContent = () => {
       disabled: !canAccessFullAdminPanel && !canImpersonate,
     },
     {
-      id: SETTINGS_ADMIN_TABS.ENV_VARIABLES,
-      title: t`Env Variables`,
+      id: SETTINGS_ADMIN_TABS.CONFIG_VARIABLES,
+      title: t`Config Variables`,
       Icon: IconVariable,
       disabled: !canAccessFullAdminPanel,
     },

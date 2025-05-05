@@ -12,7 +12,8 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
-import { useCallback, useContext, useMemo } from 'react';
+import { isUndefined } from '@sniptt/guards';
+import { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -63,7 +64,7 @@ export const useRecordGroupActions = ({
     viewType,
   );
 
-  const { reorderRecordGroups } = useRecordGroupReorder({
+  const { handleRecordGroupOrderChange } = useRecordGroupReorder({
     viewBarId: objectMetadataItem.id,
     viewType,
   });
@@ -91,68 +92,57 @@ export const useRecordGroupActions = ({
   const hasAccessToDataModelSettings = useHasSettingsPermission(
     SettingPermissionType.DATA_MODEL,
   );
+  const currentIndex = visibleRecordGroupIds.findIndex(
+    (id) => id === recordGroupDefinition.id,
+  );
 
-  const recordGroupActions = useMemo(() => {
-    const actions: RecordGroupAction[] = [];
-
-    if (hasAccessToDataModelSettings) {
-      actions.push({
-        id: 'edit',
-        label: 'Edit',
-        icon: IconSettings,
-        position: 0,
-        callback: navigateToSelectSettings,
-      });
-    }
-
-    const currentIndex = visibleRecordGroupIds.findIndex(
-      (id) => id === recordGroupDefinition.id,
-    );
-
-    const canMoveLeft = currentIndex > 0;
-    const canMoveRight = currentIndex < visibleRecordGroupIds.length - 1;
-
-    if (canMoveRight) {
-      actions.push({
-        id: 'moveRight',
-        label: 'Move right',
-        icon: IconArrowRight,
-        position: actions.length,
-        callback: () => reorderRecordGroups(currentIndex, currentIndex + 1),
-      });
-    }
-
-    if (canMoveLeft) {
-      actions.push({
-        id: 'moveLeft',
-        label: 'Move left',
-        icon: IconArrowLeft,
-        position: actions.length,
-        callback: () => reorderRecordGroups(currentIndex, currentIndex - 1),
-      });
-    }
-
-    actions.push({
+  const recordGroupActions: RecordGroupAction[] = [
+    {
+      id: 'edit',
+      label: 'Edit',
+      icon: IconSettings,
+      position: 0,
+      condition: hasAccessToDataModelSettings,
+      callback: navigateToSelectSettings,
+    },
+    {
+      id: 'moveRight',
+      label: 'Move right',
+      icon: IconArrowRight,
+      condition: currentIndex < visibleRecordGroupIds.length - 1,
+      position: 1,
+      callback: () =>
+        handleRecordGroupOrderChange({
+          fromIndex: currentIndex,
+          toIndex: currentIndex + 1,
+        }),
+    },
+    {
+      id: 'moveLeft',
+      label: 'Move left',
+      icon: IconArrowLeft,
+      condition: currentIndex > 0,
+      position: 2,
+      callback: () =>
+        handleRecordGroupOrderChange({
+          fromIndex: currentIndex,
+          toIndex: currentIndex - 1,
+        }),
+    },
+    {
       id: 'hide',
       label: 'Hide',
       icon: IconEyeOff,
-      position: actions.length,
+      position: 3,
       callback: () =>
         handleRecordGroupVisibilityChange({
           ...recordGroupDefinition,
           isVisible: false,
         }),
-    });
+    },
+  ];
 
-    return actions;
-  }, [
-    hasAccessToDataModelSettings,
-    visibleRecordGroupIds,
-    recordGroupDefinition,
-    reorderRecordGroups,
-    handleRecordGroupVisibilityChange,
-    navigateToSelectSettings,
-  ]);
-
-  return recordGroupActions;
+  return recordGroupActions.filter(
+    ({ condition }) => isUndefined(condition) || condition !== false,
+  );
 };

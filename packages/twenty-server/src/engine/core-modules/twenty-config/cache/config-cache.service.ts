@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, OnModuleDestroy } from '@nestjs/common';
 
 import {
   ConfigCacheEntry,
@@ -8,7 +8,6 @@ import {
 
 @Injectable()
 export class ConfigCacheService implements OnModuleDestroy {
-  private readonly logger = new Logger(ConfigCacheService.name);
   private readonly foundConfigValuesCache: Map<
     ConfigKey,
     ConfigCacheEntry<ConfigKey>

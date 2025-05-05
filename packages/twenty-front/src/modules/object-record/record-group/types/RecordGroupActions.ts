@@ -5,4 +5,5 @@ export type RecordGroupAction = {
   icon: IconComponent;
   position: number;
   callback: () => void;
+  condition?: boolean;
 };

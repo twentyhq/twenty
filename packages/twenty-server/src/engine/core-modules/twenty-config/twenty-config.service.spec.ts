@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { DatabaseConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/database-config.driver';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 import { ConfigSource } from 'src/engine/core-modules/twenty-config/enums/config-source.enum';
@@ -58,7 +59,6 @@ const mockConfigVarMetadata = {
   },
 };
 
-// Setup with database driver
 const setupTestModule = async (isDatabaseConfigEnabled = true) => {
   const configServiceMock = {
     get: jest.fn().mockImplementation((key) => {
@@ -70,6 +70,13 @@ const setupTestModule = async (isDatabaseConfigEnabled = true) => {
     }),
   };
 
+  const mockConfigVariablesInstance = {
+    TEST_VAR: 'test value',
+    ENV_ONLY_VAR: 'env only value',
+    SENSITIVE_VAR: 'sensitive value',
+    NO_METADATA_KEY: 'value without metadata',
+  };
+
   const module: TestingModule = await Test.createTestingModule({
     providers: [
       TwentyConfigService,
@@ -77,8 +84,10 @@ const setupTestModule = async (isDatabaseConfigEnabled = true) => {
         provide: DatabaseConfigDriver,
         useValue: {
           get: jest.fn(),
+          set: jest.fn(),
           update: jest.fn(),
           getCacheInfo: jest.fn(),
+          delete: jest.fn(),
         },
       },
       {
@@ -92,6 +101,10 @@ const setupTestModule = async (isDatabaseConfigEnabled = true) => {
       {
         provide: ConfigService,
         useValue: configServiceMock,
+      },
+      {
+        provide: CONFIG_VARIABLES_INSTANCE_TOKEN,
+        useValue: mockConfigVariablesInstance,
       },
     ],
   }).compile();
@@ -104,10 +117,10 @@ const setupTestModule = async (isDatabaseConfigEnabled = true) => {
       EnvironmentConfigDriver,
     ),
     configService: module.get<ConfigService>(ConfigService),
+    configVariablesInstance: module.get(CONFIG_VARIABLES_INSTANCE_TOKEN),
   };
 };
 
-// Setup without database driver
 const setupTestModuleWithoutDb = async () => {
   const configServiceMock = {
     get: jest.fn().mockImplementation((key) => {
@@ -117,6 +130,13 @@ const setupTestModuleWithoutDb = async () => {
 
       return undefined;
     }),
+  };
+
+  const mockConfigVariablesInstance = {
+    TEST_VAR: 'test value',
+    ENV_ONLY_VAR: 'env only value',
+    SENSITIVE_VAR: 'sensitive value',
+    NO_METADATA_KEY: 'value without metadata',
   };
 
   const module: TestingModule = await Test.createTestingModule({
@@ -134,6 +154,10 @@ const setupTestModuleWithoutDb = async () => {
         provide: ConfigService,
         useValue: configServiceMock,
       },
+      {
+        provide: CONFIG_VARIABLES_INSTANCE_TOKEN,
+        useValue: mockConfigVariablesInstance,
+      },
     ],
   }).compile();
 
@@ -143,6 +167,7 @@ const setupTestModuleWithoutDb = async () => {
       EnvironmentConfigDriver,
     ),
     configService: module.get<ConfigService>(ConfigService),
+    configVariablesInstance: module.get(CONFIG_VARIABLES_INSTANCE_TOKEN),
   };
 };
 
@@ -278,6 +303,10 @@ describe('TwentyConfigService', () => {
   });
 
   describe('update', () => {
+    beforeEach(() => {
+      jest.spyOn(service, 'validateConfigVariableExists').mockReturnValue(true);
+    });
+
     it('should throw error when database driver is not active', async () => {
       setPrivateProps(service, { isDatabaseDriverActive: false });
 
@@ -466,6 +495,53 @@ describe('TwentyConfigService', () => {
         usingDatabaseDriver: true,
         cacheStats,
       });
+    });
+  });
+
+  describe('validateConfigVariableExists', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should be called by set, update, and delete methods', async () => {
+      const validateSpy = jest
+        .spyOn(service, 'validateConfigVariableExists')
+        .mockReturnValue(true);
+
+      setPrivateProps(service, { isDatabaseDriverActive: true });
+      jest
+        .spyOn(service as any, 'validateNotEnvOnly')
+        .mockImplementation(() => {});
+
+      await service.set('TEST_VAR' as keyof ConfigVariables, 'test value');
+      await service.update(
+        'TEST_VAR' as keyof ConfigVariables,
+        'updated value',
+      );
+      await service.delete('TEST_VAR' as keyof ConfigVariables);
+
+      expect(validateSpy).toHaveBeenCalledTimes(3);
+      expect(validateSpy).toHaveBeenCalledWith('TEST_VAR');
+    });
+
+    it('should return true for valid config variables with metadata', () => {
+      jest.spyOn(service, 'validateConfigVariableExists').mockRestore();
+
+      jest
+        .spyOn(service as any, 'getMetadata')
+        .mockReturnValue(mockConfigVarMetadata.TEST_VAR);
+
+      expect(service.validateConfigVariableExists('TEST_VAR')).toBe(true);
+    });
+
+    it('should throw error when config variable does not exist', () => {
+      jest.spyOn(service, 'validateConfigVariableExists').mockRestore();
+
+      expect(() => {
+        service.validateConfigVariableExists('MISSING_KEY');
+      }).toThrow(
+        'Config variable "MISSING_KEY" does not exist in ConfigVariables',
+      );
     });
   });
 });

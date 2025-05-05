@@ -33,12 +33,21 @@ export const useRecordGroupReorderConfirmationModal = ({
   const [pendingDragEndReorder, setPendingDragEndReorder] =
     useState<Parameters<OnDragEndResponder> | null>(null);
 
-  const { handleOrderChange: handleRecordGroupOrderChange } =
-    useRecordGroupReorder({
-      viewBarId: recordIndexId,
-      viewType,
-    });
+  const { handleRecordGroupOrderChange } = useRecordGroupReorder({
+    viewBarId: recordIndexId,
+    viewType,
+  });
 
+  const handleRecordGroupOrderChangeWrapper: OnDragEndResponder = (result) => {
+    if (!result.destination) {
+      return;
+    }
+
+    handleRecordGroupOrderChange({
+      fromIndex: result.source.index - 1,
+      toIndex: result.destination.index - 1,
+    });
+  };
   const isDragableSortRecordGroup = useRecoilComponentValueV2(
     recordIndexRecordGroupIsDraggableSortComponentSelector,
   );
@@ -56,7 +65,7 @@ export const useRecordGroupReorderConfirmationModal = ({
       setActiveDropdownFocusIdAndMemorizePrevious(null);
       setPendingDragEndReorder([result, provided]);
     } else {
-      handleRecordGroupOrderChange(result, provided);
+      handleRecordGroupOrderChangeWrapper(result, provided);
     }
   };
 
@@ -67,7 +76,7 @@ export const useRecordGroupReorderConfirmationModal = ({
 
     setRecordGroupSort(RecordGroupSort.Manual);
     setPendingDragEndReorder(null);
-    handleRecordGroupOrderChange(...pendingDragEndReorder);
+    handleRecordGroupOrderChangeWrapper(...pendingDragEndReorder);
     goBackToPreviousDropdownFocusId();
   };
 

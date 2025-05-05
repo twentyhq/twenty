@@ -97,6 +97,9 @@ export class ClientConfigResolver {
       isGoogleCalendarEnabled: this.twentyConfigService.get(
         'CALENDAR_PROVIDER_GOOGLE_ENABLED',
       ),
+      isConfigVariablesInDbEnabled: this.twentyConfigService.get(
+        'IS_CONFIG_VARIABLES_IN_DB_ENABLED',
+      ),
     };
 
     return Promise.resolve(clientConfig);
