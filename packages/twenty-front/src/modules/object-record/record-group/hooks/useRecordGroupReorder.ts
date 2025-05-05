@@ -1,5 +1,3 @@
-import { OnDragEndResponder } from '@hello-pangea/dnd';
-
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
@@ -20,6 +18,11 @@ type UseRecordGroupHandlersParams = {
   viewType: ViewType;
 };
 
+type handleRecordGroupOrderChangeParams = {
+  fromIndex: number;
+  toIndex: number;
+};
+
 export const useRecordGroupReorder = ({
   viewBarId,
   viewType,
@@ -33,9 +36,9 @@ export const useRecordGroupReorder = ({
 
   const { saveViewGroups } = useSaveCurrentViewGroups();
 
-  const reorderRecordGroups = useRecoilCallback(
+  const handleRecordGroupOrderChange = useRecoilCallback(
     ({ snapshot }) =>
-      (fromIndex: number, toIndex: number) => {
+      ({ fromIndex, toIndex }: handleRecordGroupOrderChangeParams) => {
         const visibleRecordGroupIds = getSnapshotValue(
           snapshot,
           visibleRecordGroupIdsFamilySelector(viewType),
@@ -91,16 +94,7 @@ export const useRecordGroupReorder = ({
     ],
   );
 
-  const handleOrderChange: OnDragEndResponder = (result) => {
-    if (!result.destination) {
-      return;
-    }
-
-    reorderRecordGroups(result.source.index - 1, result.destination.index - 1);
-  };
-
   return {
-    handleOrderChange,
-    reorderRecordGroups,
+    handleRecordGroupOrderChange,
   };
 };

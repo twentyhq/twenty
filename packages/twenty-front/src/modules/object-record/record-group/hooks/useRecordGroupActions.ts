@@ -64,7 +64,7 @@ export const useRecordGroupActions = ({
     viewType,
   );
 
-  const { reorderRecordGroups } = useRecordGroupReorder({
+  const { handleRecordGroupOrderChange } = useRecordGroupReorder({
     viewBarId: objectMetadataItem.id,
     viewType,
   });
@@ -111,7 +111,11 @@ export const useRecordGroupActions = ({
       icon: IconArrowRight,
       condition: currentIndex < visibleRecordGroupIds.length - 1,
       position: 1,
-      callback: () => reorderRecordGroups(currentIndex, currentIndex + 1),
+      callback: () =>
+        handleRecordGroupOrderChange({
+          fromIndex: currentIndex,
+          toIndex: currentIndex + 1,
+        }),
     },
     {
       id: 'moveLeft',
@@ -119,7 +123,11 @@ export const useRecordGroupActions = ({
       icon: IconArrowLeft,
       condition: currentIndex > 0,
       position: 2,
-      callback: () => reorderRecordGroups(currentIndex, currentIndex - 1),
+      callback: () =>
+        handleRecordGroupOrderChange({
+          fromIndex: currentIndex,
+          toIndex: currentIndex - 1,
+        }),
     },
     {
       id: 'hide',
