@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -29,6 +29,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
+
 const TRIGGER_STEP_ID = 'trigger';
 
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
@@ -580,7 +581,8 @@ export class WorkflowVersionStepWorkspaceService {
         if (
           field?.type === 'RECORD' &&
           field?.settings?.objectName &&
-          isDefined(response[key]?.id)
+          isDefined(response[key].id) &&
+          isValidUuid(response[key].id)
         ) {
           const repository = await this.twentyORMManager.getRepository(
             field.settings.objectName,
