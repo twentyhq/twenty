@@ -10,10 +10,10 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 describe('computeSchemaComponents', () => {
   it('should compute schema components', () => {
     expect(
-  computeSchemaComponents([
-  objectMetadataItemMock] as
-  ObjectMetadataEntity[])
-).toMatchInlineSnapshot(`
+      computeSchemaComponents([
+        objectMetadataItemMock,
+      ] as ObjectMetadataEntity[]),
+    ).toMatchInlineSnapshot(`
 {
   "ObjectName": {
     "description": undefined,
@@ -659,17 +659,17 @@ describe('computeSchemaComponents', () => {
     >[];
 
     expect(
-  computeSchemaComponents([
-  {
-    targetTableName: 'testingObject',
-    id: 'mockObjectId',
-    nameSingular: 'objectName',
-    namePlural: 'objectsName',
-    //@ts-expect-error Passing partial FieldMetadataEntity array
-    fields: numberFields
-  }]
-  )
-).toMatchInlineSnapshot(`
+      computeSchemaComponents([
+        {
+          targetTableName: 'testingObject',
+          id: 'mockObjectId',
+          nameSingular: 'objectName',
+          namePlural: 'objectsName',
+          //@ts-expect-error Passing partial FieldMetadataEntity array
+          fields: numberFields,
+        },
+      ]),
+    ).toMatchInlineSnapshot(`
 {
   "ObjectName": {
     "description": undefined,
