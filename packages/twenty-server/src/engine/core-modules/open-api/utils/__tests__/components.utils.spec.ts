@@ -1,6 +1,9 @@
 import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/components.utils';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('computeSchemaComponents', () => {
   it('should compute schema components', () => {
@@ -586,6 +589,80 @@ describe('computeSchemaComponents', () => {
             },
           },
         },
+      },
+    });
+  });
+});
+
+describe('computeSchemaComponentsForDecimalFields', () => {
+  it('should compute schema components', () => {
+    expect(
+      computeSchemaComponents([
+        {
+          targetTableName: 'testingObject',
+          id: 'mockObjectId',
+          nameSingular: 'objectName',
+          namePlural: 'objectsName',
+          fields: [
+            {
+              id: 'number1',
+              name: 'number1',
+              type: FieldMetadataType.NUMBER,
+              isNullable: false,
+              defaultValue: null,
+              settings: { type: "number", decimals: 1 }
+            },
+            {
+              id: 'number2',
+              name: 'number2',
+              type: FieldMetadataType.NUMBER,
+              isNullable: false,
+              defaultValue: null,
+              settings: { type: "number", dataType: NumberDataType.FLOAT }
+            }
+          ] as FieldMetadataEntity<FieldMetadataType.NUMBER>[]
+        },
+      ] as ObjectMetadataEntity[]),
+    ).toEqual({
+      ObjectName: {
+        description: undefined,
+        type: 'object',
+        properties: {
+          number1: {
+            type: "number",
+          },
+          number2: {
+            type: "number",
+          },
+        },
+        required:[
+          "number1",
+          "number2",
+        ],
+      },
+      "ObjectName for Response": {
+        description: undefined,
+        properties: {
+          number1: {
+            type: "number",
+          },
+          number2: {
+            type: "number",
+          },
+        },
+        type: "object",
+      },
+      "ObjectName for Update": {
+        description: undefined,
+        properties: {
+          number1: {
+            type: "number",
+          },
+          number2: {
+            type: "number",
+          },
+        },
+        type: "object",
       },
     });
   });
