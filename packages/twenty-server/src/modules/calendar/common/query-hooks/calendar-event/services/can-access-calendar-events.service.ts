@@ -1,8 +1,9 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import groupBy from 'lodash.groupby';
-import { Any } from 'typeorm';
+import { In } from 'typeorm';
 
+import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
@@ -12,14 +13,14 @@ import { WorkspaceMemberRepository } from 'src/modules/workspace-member/reposito
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
-export class CanAccessCalendarEventService {
+export class CanAccessCalendarEventsService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberService: WorkspaceMemberRepository,
   ) {}
 
-  public async canAccessCalendarEvent(
+  public async canAccessCalendarEvents(
     userId: string,
     workspaceId: string,
     calendarChannelCalendarEventAssociations: CalendarChannelEventAssociationWorkspaceEntity[],
@@ -36,7 +37,8 @@ export class CanAccessCalendarEventService {
     if (
       calendarChannelsGroupByVisibility[
         CalendarChannelVisibility.SHARE_EVERYTHING
-      ]
+      ] ||
+      calendarChannelsGroupByVisibility[CalendarChannelVisibility.METADATA]
     ) {
       return;
     }
@@ -52,7 +54,9 @@ export class CanAccessCalendarEventService {
     const connectedAccounts = await connectedAccountRepository.find({
       select: ['id'],
       where: {
-        calendarChannels: Any(calendarChannels.map((channel) => channel.id)),
+        calendarChannels: {
+          id: In(calendarChannels.map((channel) => channel.id)),
+        },
         accountOwnerId: currentWorkspaceMember.id,
       },
     });
@@ -61,6 +65,6 @@ export class CanAccessCalendarEventService {
       return;
     }
 
-    throw new ForbiddenException();
+    throw new ForbiddenError('Calendar events not shared');
   }
 }
