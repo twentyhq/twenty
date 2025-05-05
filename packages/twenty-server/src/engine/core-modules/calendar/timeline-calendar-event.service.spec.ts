@@ -1,6 +1,7 @@
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 import { TimelineCalendarEventService } from './timeline-calendar-event.service';
 
@@ -45,7 +46,7 @@ describe('TimelineCalendarEventService', () => {
           calendarChannelEventAssociations: [
             {
               calendarChannel: {
-                visibility: 'SHARE_EVERYTHING',
+                visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
                 connectedAccount: {
                   accountOwnerId: 'other-workspace-member-id',
                 },
@@ -84,7 +85,7 @@ describe('TimelineCalendarEventService', () => {
           calendarChannelEventAssociations: [
             {
               calendarChannel: {
-                visibility: 'METADATA',
+                visibility: CalendarChannelVisibility.METADATA,
                 connectedAccount: {
                   accountOwnerId: 'other-workspace-member-id',
                 },
@@ -125,7 +126,7 @@ describe('TimelineCalendarEventService', () => {
           calendarChannelEventAssociations: [
             {
               calendarChannel: {
-                visibility: 'METADATA',
+                visibility: CalendarChannelVisibility.METADATA,
                 connectedAccount: {
                   accountOwnerId: 'current-workspace-member-id',
                 },
