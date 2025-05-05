@@ -3,10 +3,12 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { CardContent } from 'twenty-ui/layout';
 import { IconChevronRight, IconComponent } from 'twenty-ui/display';
+import { CardContent } from 'twenty-ui/layout';
 
-const StyledRow = styled(CardContent)<{ to?: boolean }>`
+const StyledRow = styled(CardContent, {
+  shouldForwardProp: (prop) => prop !== 'to',
+})<{ to?: boolean }>`
   align-items: center;
   cursor: ${({ onClick, to }) => (onClick || to ? 'pointer' : 'default')};
   display: flex;
