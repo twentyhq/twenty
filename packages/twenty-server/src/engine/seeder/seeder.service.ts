@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { capitalize, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+import { DataSource, EntityManager } from 'typeorm';
 
 import { ObjectMetadataSeed } from 'src/engine/seeder/interfaces/object-metadata-seed';
 
@@ -60,12 +61,13 @@ export class SeederService {
     const schemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const workspaceDataSource =
+    const workspaceDataSource: DataSource =
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         workspaceId,
       );
 
-    const entityManager = workspaceDataSource.createEntityManager();
+    const entityManager: EntityManager =
+      workspaceDataSource.createEntityManager();
 
     const filteredFieldMetadataSeeds = objectMetadataSeed.fields.filter(
       (field) =>

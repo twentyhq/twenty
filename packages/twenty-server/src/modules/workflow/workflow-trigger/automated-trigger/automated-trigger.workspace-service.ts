@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
-
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import {
-  AutomatedTriggerType,
   AutomatedTriggerSettings,
+  AutomatedTriggerType,
   WorkflowAutomatedTriggerWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
+import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 
 @Injectable()
 export class AutomatedTriggerWorkspaceService {
@@ -21,7 +20,7 @@ export class AutomatedTriggerWorkspaceService {
     settings,
   }: {
     workflowId: string;
-    manager: EntityManager;
+    manager: WorkspaceEntityManager;
     type: AutomatedTriggerType;
     settings: AutomatedTriggerSettings;
   }) {
@@ -68,7 +67,7 @@ export class AutomatedTriggerWorkspaceService {
     manager,
   }: {
     workflowId: string;
-    manager: EntityManager;
+    manager: WorkspaceEntityManager;
   }) {
     // Todo: remove workflowEventListenerRepository updates when data are migrated to workflowAutomatedTrigger
     const workflowEventListenerRepository =
