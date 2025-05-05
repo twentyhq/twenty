@@ -27,9 +27,10 @@ export const formatThreads = (
     return {
       ...thread,
       subject:
-        visibility === MessageChannelVisibility.METADATA
-          ? FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
-          : thread.subject,
+        visibility === MessageChannelVisibility.SHARE_EVERYTHING ||
+        visibility === MessageChannelVisibility.SUBJECT
+          ? thread.subject
+          : FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
       lastMessageBody:
         visibility === MessageChannelVisibility.SHARE_EVERYTHING
           ? thread.lastMessageBody

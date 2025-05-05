@@ -23,10 +23,10 @@ const StyledEmailTitle = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const EventCardMessageNotShared = ({
-  sharedByFullName,
+export const EventCardMessageForbidden = ({
+  notSharedByFullName,
 }: {
-  sharedByFullName: string;
+  notSharedByFullName: string;
 }) => {
   return (
     <StyledEventCardMessageContainer>
@@ -34,7 +34,9 @@ export const EventCardMessageNotShared = ({
         <StyledEmailTitle>
           <span>Subject not shared</span>
         </StyledEmailTitle>
-        <EventCardMessageBodyNotShared sharedByFullName={sharedByFullName} />
+        <EventCardMessageBodyNotShared
+          notSharedByFullName={notSharedByFullName}
+        />
       </StyledEmailContent>
     </StyledEventCardMessageContainer>
   );

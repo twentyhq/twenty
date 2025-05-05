@@ -58,7 +58,7 @@ export class CanAccessMessageThreadService {
       take: 1,
     });
 
-    if (connectedAccounts.length === 0) {
+    if (connectedAccounts.length !== 0) {
       throw new ForbiddenError('Message thread not shared');
     }
   }
