@@ -126,11 +126,11 @@ const DocsTableContents = () => {
               <StyledUnorderedList>
                 {headings.map((heading) => (
                   <StyledList
-                    key={heading.text}
+                    key={heading.id}
                     style={getStyledHeading(heading.level)}
                   >
                     <StyledLink
-                      href={`#${heading.text}`}
+                      href={`#${heading.id}`}
                       onClick={(e) => {
                         e.preventDefault();
                         const yOffset = -70;
