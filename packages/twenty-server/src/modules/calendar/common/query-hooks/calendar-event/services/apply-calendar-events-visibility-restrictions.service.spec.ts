@@ -6,7 +6,7 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
-import { CanReturnCalendarEventsService } from './can-return-calendar-events.service';
+import { ApplyCalendarEventsVisibilityRestrictionsService } from './apply-calendar-events-visibility-restrictions.service';
 
 const createMockCalendarEvent = (
   id: string,
@@ -37,8 +37,8 @@ const createMockCalendarEvent = (
   calendarEventParticipants: [],
 });
 
-describe('CanReturnCalendarEventsService', () => {
-  let service: CanReturnCalendarEventsService;
+describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
+  let service: ApplyCalendarEventsVisibilityRestrictionsService;
 
   const mockCalendarEventAssociationRepository = {
     find: jest.fn(),
@@ -62,7 +62,7 @@ describe('CanReturnCalendarEventsService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CanReturnCalendarEventsService,
+        ApplyCalendarEventsVisibilityRestrictionsService,
         {
           provide: TwentyORMManager,
           useValue: mockTwentyORMManager,
@@ -70,8 +70,8 @@ describe('CanReturnCalendarEventsService', () => {
       ],
     }).compile();
 
-    service = module.get<CanReturnCalendarEventsService>(
-      CanReturnCalendarEventsService,
+    service = module.get<ApplyCalendarEventsVisibilityRestrictionsService>(
+      ApplyCalendarEventsVisibilityRestrictionsService,
     );
 
     // Clear all mocks before each test
@@ -93,7 +93,7 @@ describe('CanReturnCalendarEventsService', () => {
       },
     ]);
 
-    const result = await service.canReturnCalendarEvents(
+    const result = await service.applyCalendarEventsVisibilityRestrictions(
       'workspace-member-id',
       calendarEvents,
     );
@@ -126,7 +126,7 @@ describe('CanReturnCalendarEventsService', () => {
 
     mockConnectedAccountRepository.find.mockResolvedValue([]);
 
-    const result = await service.canReturnCalendarEvents(
+    const result = await service.applyCalendarEventsVisibilityRestrictions(
       'workspace-member-id',
       calendarEvents,
     );
@@ -157,7 +157,7 @@ describe('CanReturnCalendarEventsService', () => {
 
     mockConnectedAccountRepository.find.mockResolvedValue([{ id: '1' }]);
 
-    const result = await service.canReturnCalendarEvents(
+    const result = await service.applyCalendarEventsVisibilityRestrictions(
       'workspace-member-id',
       calendarEvents,
     );
@@ -188,7 +188,7 @@ describe('CanReturnCalendarEventsService', () => {
 
     mockConnectedAccountRepository.find.mockResolvedValue([]);
 
-    const result = await service.canReturnCalendarEvents(
+    const result = await service.applyCalendarEventsVisibilityRestrictions(
       'workspace-member-id',
       calendarEvents,
     );
@@ -231,7 +231,7 @@ describe('CanReturnCalendarEventsService', () => {
       .mockResolvedValueOnce([]) // request for calendar event 3
       .mockResolvedValueOnce([{ id: '1' }]); // request for calendar event 2
 
-    const result = await service.canReturnCalendarEvents(
+    const result = await service.applyCalendarEventsVisibilityRestrictions(
       'workspace-member-id',
       calendarEvents,
     );

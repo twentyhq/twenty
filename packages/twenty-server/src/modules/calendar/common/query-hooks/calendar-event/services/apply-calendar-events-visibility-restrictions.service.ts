@@ -11,10 +11,10 @@ import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standa
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
-export class CanReturnCalendarEventsService {
+export class ApplyCalendarEventsVisibilityRestrictionsService {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
-  public async canReturnCalendarEvents(
+  public async applyCalendarEventsVisibilityRestrictions(
     workspaceMemberId: string,
     calendarEvents: CalendarEventWorkspaceEntity[],
   ) {
