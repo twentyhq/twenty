@@ -13,10 +13,10 @@ import { LinklogsChartData } from '~/types/LinkLogs';
 
 const StyledChartContainer = styled.div`
   background-color: #fcfcfc;
-  height: 400px;
+  height: 85%;
   padding: ${({ theme }) => theme.spacing(2)};
   margin: ${({ theme }) => theme.spacing(3)};
-  width: 100%;
+  width: 97.2%;
   border: 1px solid #ebebeb;
   border-radius: 8px;
 `;

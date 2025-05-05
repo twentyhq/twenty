@@ -588,6 +588,11 @@ msgstr "Eventos del calendario"
 msgid "Campaign associated with the traffic"
 msgstr ""
 
+#. js-lingui-id: pZ8hvx
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Campaign Content"
+msgstr ""
+
 #. js-lingui-id: QieS3l
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 msgid "Campaign Name"
@@ -1011,6 +1016,11 @@ msgstr "Persona del evento"
 msgid "Event task"
 msgstr "Tarea del evento"
 
+#. js-lingui-id: wFwltV
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event traceable"
+msgstr ""
+
 #. js-lingui-id: dCV1dS
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event workflow"
@@ -1034,6 +1044,7 @@ msgstr "Miembro del espacio de trabajo del evento"
 
 #. js-lingui-id: tst44n
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
@@ -1054,6 +1065,11 @@ msgstr ""
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Events linked to the person"
 msgstr "Eventos relacionados con la persona"
+
+#. js-lingui-id: iag/Jq
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Events linked to the tracable link"
+msgstr ""
 
 #. js-lingui-id: 3/O8MM
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1522,8 +1538,6 @@ msgid "Link ID"
 msgstr ""
 
 #. js-lingui-id: yg5UPw
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 msgid "Link Name"
 msgstr ""
@@ -1559,6 +1573,11 @@ msgstr "Linkedin"
 #. js-lingui-id: H3nIla
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 msgid "Linklog"
+msgstr ""
+
+#. js-lingui-id: fkZGo6
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "Linklog link Name"
 msgstr ""
 
 #. js-lingui-id: XmF8WY
@@ -1762,7 +1781,6 @@ msgstr "Token de actualización del proveedor de mensajería"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2508,6 +2526,11 @@ msgstr "La cuenta de Twitter/X de la empresa"
 msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "La URL del sitio web de la empresa. Utilizamos esta URL para obtener el icono de la empresa"
 
+#. js-lingui-id: YxUHjE
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "The content of the traceable link (e.g., bannerSale)"
+msgstr ""
+
 #. js-lingui-id: zGBDEH
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -2578,6 +2601,16 @@ msgstr ""
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 msgid "The URL of the website to redirect to"
 msgstr ""
+
+#. js-lingui-id: 30jEZc
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "The URL used to track final url metadata."
+msgstr ""
+
+#. js-lingui-id: h74Dhq
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+#~ msgid "The used to track final url metadata."
+#~ msgstr ""
 
 #. js-lingui-id: 7mPrpl
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
@@ -2700,17 +2733,28 @@ msgstr "Título"
 
 #. js-lingui-id: 2jNX/d
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Traceable"
+msgstr ""
+
+#. js-lingui-id: S+jeA7
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Traceable Link Name"
 msgstr ""
 
 #. js-lingui-id: kLFXFH
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Traceable name"
-msgstr ""
+#~ msgid "Traceable name"
+#~ msgstr ""
 
 #. js-lingui-id: ABScWw
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 msgid "Traceable record position"
+msgstr ""
+
+#. js-lingui-id: awZm5I
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Traceable URL"
 msgstr ""
 
 #. js-lingui-id: PdZf5t

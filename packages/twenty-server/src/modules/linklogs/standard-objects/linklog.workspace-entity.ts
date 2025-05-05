@@ -61,17 +61,6 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
   linkName: string;
 
   @WorkspaceField({
-    standardId: LINKLOGS_STANDARD_FIELD_IDS.uv,
-    type: FieldMetadataType.NUMBER,
-    label: msg`UV`,
-    description: msg`UV`,
-    icon: 'IconLink',
-  })
-  @WorkspaceIsNullable()
-  @Field(() => String, { nullable: true })
-  uv: number;
-
-  @WorkspaceField({
     standardId: LINKLOGS_STANDARD_FIELD_IDS.linkId,
     type: FieldMetadataType.TEXT,
     label: msg`Link ID`,

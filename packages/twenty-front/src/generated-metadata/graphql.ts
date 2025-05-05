@@ -1066,7 +1066,6 @@ export type LinkLogsWorkspaceEntity = {
   utmCampaign: Scalars['String']['output'];
   utmMedium: Scalars['String']['output'];
   utmSource: Scalars['String']['output'];
-  uv?: Maybe<Scalars['String']['output']>;
 };
 
 export type LinkMetadata = {

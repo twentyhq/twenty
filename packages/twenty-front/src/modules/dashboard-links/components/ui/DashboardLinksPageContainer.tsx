@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 const StyledPageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 95vh;
   margin-top: ${({ theme }: any) => theme.spacing(1)};
   width: 100%;
   padding: ${({ theme }: any) => theme.spacing(2)};
