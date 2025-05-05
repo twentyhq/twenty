@@ -124,7 +124,6 @@ export class WorkspaceDataSourceService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<any> {
-    // TODO
     try {
       if (transactionManager) {
         return await transactionManager.query(query, parameters);

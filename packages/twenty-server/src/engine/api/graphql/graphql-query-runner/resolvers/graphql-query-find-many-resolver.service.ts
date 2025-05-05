@@ -144,7 +144,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
     }
 
     const parentObjectRecordsAggregatedValues =
-      await aggregateQueryBuilder.getRawOne<any>();
+      await aggregateQueryBuilder.getRawOne();
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({

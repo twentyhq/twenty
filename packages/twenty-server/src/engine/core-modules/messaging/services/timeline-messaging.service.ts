@@ -51,7 +51,7 @@ export class TimelineMessagingService {
       .orderBy('max_received_at', 'DESC')
       .offset(offset)
       .limit(pageSize)
-      .getRawMany<any>();
+      .getRawMany();
 
     const messageThreadIds = threadIdsQuery.map((thread) => thread.id);
 
@@ -218,7 +218,7 @@ export class TimelineMessagingService {
       .where('messageThread.id = ANY(:messageThreadIds)', {
         messageThreadIds: threadIdsWithoutWorkspaceMember,
       })
-      .getRawMany<any>();
+      .getRawMany();
 
     const visibilityValues = Object.values(MessageChannelVisibility);
 
