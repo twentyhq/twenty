@@ -99,6 +99,7 @@ const StyledPlaceholder = styled.div`
 `;
 
 const StyledAddFieldButtonContainer = styled.div`
+  padding-inline: ${({ theme }) => theme.spacing(7)};
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
 
