@@ -5,7 +5,10 @@ import { useRecoilValue } from 'recoil';
 import { viewableRichTextComponentState } from '../states/viewableRichTextComponentState';
 
 const StyledContainer = styled.div`
+  box-sizing: border-box;
   margin: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(-2)};
+  padding-inline: 44px 0px;
+  width: 100%;
 `;
 
 export const CommandMenuEditRichTextPage = () => {
@@ -24,7 +27,6 @@ export const CommandMenuEditRichTextPage = () => {
 
   return (
     <StyledContainer>
-      vvCCCCCCC to pudate padding
       <ActivityRichTextEditor
         activityId={activityId}
         activityObjectNameSingular={activityObjectNameSingular}

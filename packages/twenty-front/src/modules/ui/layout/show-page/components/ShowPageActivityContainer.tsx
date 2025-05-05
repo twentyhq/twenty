@@ -10,7 +10,6 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-// vvCCCCCCC to pudate padding
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({
     default: module.ActivityRichTextEditor,
@@ -20,6 +19,8 @@ const ActivityRichTextEditor = lazy(() =>
 const StyledShowPageActivityContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(6)};
   width: 100%;
+  padding-inline: 44px;
+  box-sizing: border-box;
 `;
 
 const StyledSkeletonContainer = styled.div`

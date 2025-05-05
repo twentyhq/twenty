@@ -66,14 +66,13 @@ const StyledEditor = styled.div`
     left: 26px;
   }
 
-  /* TODO make sure the .bn-container width befoe was laready larger than the content  */
   & .bn-editor {
-    padding-inline: 44px;
+    padding-inline: 0px;
   }
-  /*
+
   & .bn-inline-content {
-    width: 100%; */
-  /* } */
+    width: 100%;
+  }
 
   & .bn-container .bn-suggestion-menu-item:hover {
     background-color: blue;
