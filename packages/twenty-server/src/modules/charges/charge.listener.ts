@@ -120,7 +120,7 @@ export class ChargeEventListener {
               this.logger.log(`Cancelando cobrança para charge ${id}`);
               await this.interApiService.cancelCharge(
                 charge.requestCode || id,
-                'Devedor pagou por outra forma',
+                'Cancelamento manual',
               );
               this.logger.log(
                 `Cobrança cancelada com sucesso para charge ${id}`,
