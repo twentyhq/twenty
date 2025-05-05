@@ -56,7 +56,7 @@ const StyledTr = styled.tr<{
         &:not(:first-of-type) {
           border-bottom: 1px solid ${theme.border.color.medium};
           border-top: 1px solid ${theme.border.color.medium};
-          background-color: ${theme.background.transparent.light};
+          background-color: ${theme.background.tertiary};
         }
         &:nth-of-type(2) {
           border-left: 1px solid ${theme.border.color.medium};
