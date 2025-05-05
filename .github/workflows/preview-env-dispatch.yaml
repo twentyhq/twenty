@@ -6,30 +6,24 @@ on:
   # and not checking out or running any code from the external contributor's PR
   pull_request_target:
     types: [opened, synchronize, reopened, labeled]
+    paths:
+      - packages/twenty-docker/**
+      - packages/twenty-server/**
+      - packages/twenty-front/**
+      - .github/workflows/preview-env-dispatch.yaml
+      - .github/workflows/preview-env-keepalive.yaml
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  changed-files-check:
-    uses: ./.github/workflows/changed-files.yaml
-    with:
-      files: |
-        .github/workflows/preview-env-dispatch.yaml
-        .github/workflows/preview-env-keepalive.yaml
-        packages/twenty-docker/**
-        docker-compose.yml
-        packages/twenty-server/**
-        packages/twenty-front/**
-
   trigger-preview:
-    needs: changed-files-check
     permissions:
       contents: write
       actions: write
       pull-requests: read
-    if: needs.changed-files-check.outputs.any_changed == 'true' || contains(github.event.pull_request.labels.*.name, 'preview')
+    if: contains(github.event.pull_request.labels.*.name, 'preview')
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
