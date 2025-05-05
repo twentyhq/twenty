@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { IconLock } from 'twenty-ui/display';
 
-const StyledEmailBodyNotShareContainer = styled.div`
+const StyledEmailBodyNotSharedContainer = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.light};
@@ -27,7 +27,7 @@ const StyledEmailBodyNotSharedIconContainer = styled.div`
   align-items: center;
 `;
 
-const StyledEmailBodyNotShare = styled.div`
+const StyledEmailBodyNotShared = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
@@ -39,13 +39,13 @@ export const EventCardMessageBodyNotShared = ({
   sharedByFullName: string;
 }) => {
   return (
-    <StyledEmailBodyNotShareContainer>
-      <StyledEmailBodyNotShare>
+    <StyledEmailBodyNotSharedContainer>
+      <StyledEmailBodyNotShared>
         <StyledEmailBodyNotSharedIconContainer>
           <IconLock />
         </StyledEmailBodyNotSharedIconContainer>
         <span>Not shared by {sharedByFullName}</span>
-      </StyledEmailBodyNotShare>
-    </StyledEmailBodyNotShareContainer>
+      </StyledEmailBodyNotShared>
+    </StyledEmailBodyNotSharedContainer>
   );
 };

@@ -6,7 +6,6 @@ import { In } from 'typeorm';
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -30,7 +29,7 @@ export class ApplyMessagesVisibilityRestrictionsService {
         where: {
           messageId: In(messages.map((message) => message.id)),
         },
-        relations: ['messageChannel', 'messageChannel.connectedAccount'],
+        relations: ['messageChannel'],
       });
 
     const connectedAccountRepository =
@@ -61,7 +60,7 @@ export class ApplyMessagesVisibilityRestrictionsService {
 
       if (
         messageChannelsGroupByVisibility[
-          CalendarChannelVisibility.SHARE_EVERYTHING
+          MessageChannelVisibility.SHARE_EVERYTHING
         ]
       ) {
         continue;
