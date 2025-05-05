@@ -7,18 +7,14 @@ import {
   QueryRunner,
   ReplicationMode,
 } from 'typeorm';
-import { IsolationLevel } from 'typeorm/driver/types/IsolationLevel';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/entity.manager';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { WorkspaceQueryRunner } from 'src/engine/twenty-orm/query-runner/workspace-query-runner';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
-type RunInTransaction<T> = (
-  entityManager: WorkspaceEntityManager,
-) => Promise<T>;
 export class WorkspaceDataSource extends DataSource {
   readonly internalContext: WorkspaceInternalContext;
   readonly manager: WorkspaceEntityManager;
@@ -80,22 +76,6 @@ export class WorkspaceDataSource extends DataSource {
     Object.assign(queryRunner, { manager: manager });
 
     return queryRunner as any as WorkspaceQueryRunner;
-  }
-
-  override transaction<T>(
-    runInTransactionOrIsolationLevel: RunInTransaction<T> | IsolationLevel,
-    maybeRunInTransaction?: RunInTransaction<T>,
-  ): Promise<T> {
-    if (maybeRunInTransaction) {
-      return this.manager.transaction(
-        runInTransactionOrIsolationLevel as IsolationLevel,
-        maybeRunInTransaction,
-      );
-    }
-
-    return this.manager.transaction(
-      runInTransactionOrIsolationLevel as RunInTransaction<T>,
-    );
   }
 
   setRolesPermissionsVersion(rolesPermissionsVersion: string) {

@@ -140,7 +140,7 @@ export class SearchService {
           )
           .take(RESULTS_LIMIT_BY_OBJECT_WITHOUT_SEARCH_TERMS);
 
-    return await searchQuery.getRawMany();
+    return await searchQuery.getRawMany<any>();
   }
 
   getLabelIdentifierColumns(

@@ -18,6 +18,14 @@ const getTargetEntityAndOperationType = (expressionMap: QueryExpressionMap) => {
   };
 };
 
+export type OperationType =
+  | 'select'
+  | 'insert'
+  | 'update'
+  | 'delete'
+  | 'restore'
+  | 'soft-delete';
+
 export const validateOperationIsPermittedOrThrow = ({
   entityName,
   operationType,
@@ -25,7 +33,7 @@ export const validateOperationIsPermittedOrThrow = ({
   objectMetadataMaps,
 }: {
   entityName: string;
-  operationType: string;
+  operationType: OperationType;
   objectRecordsPermissions: ObjectRecordsPermissions;
   objectMetadataMaps: ObjectMetadataMaps;
 }) => {
@@ -99,7 +107,7 @@ export const validateQueryIsPermittedOrThrow = (
 
   validateOperationIsPermittedOrThrow({
     entityName: mainEntity,
-    operationType,
+    operationType: operationType as OperationType,
     objectRecordsPermissions,
     objectMetadataMaps,
   });

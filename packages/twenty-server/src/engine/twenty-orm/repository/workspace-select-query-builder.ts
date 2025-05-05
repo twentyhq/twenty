@@ -50,13 +50,13 @@ export class WorkspaceSelectQueryBuilder<
     return super.getMany();
   }
 
-  override getRawOne<T>(): Promise<T | undefined> {
+  override getRawOne<U>(): Promise<U | undefined> {
     this.validatePermissions();
 
     return super.getRawOne();
   }
 
-  override getRawMany<T>(): Promise<T[]> {
+  override getRawMany<U>(): Promise<U[]> {
     this.validatePermissions();
 
     return super.getRawMany();
