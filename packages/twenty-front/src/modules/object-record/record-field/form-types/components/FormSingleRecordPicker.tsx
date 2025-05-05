@@ -124,6 +124,7 @@ export const FormSingleRecordPicker = ({
   };
 
   const handleUnlinkVariable = (event?: React.MouseEvent<HTMLDivElement>) => {
+    // Prevents the dropdown to open when clicking on the chip
     event?.stopPropagation();
     onChange('');
   };
