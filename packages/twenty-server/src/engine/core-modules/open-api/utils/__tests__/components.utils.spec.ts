@@ -6,6 +6,7 @@ import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata
 import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/components.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { EachTestingContext } from 'twenty-shared/testing';
 
 describe('computeSchemaComponents', () => {
   it('should compute schema components', () => {
@@ -635,9 +636,15 @@ describe('computeSchemaComponents', () => {
 `);
   });
 
-  it('should compute schema components', () => {
-    const numberFields = [
-      {
+  const testsCases: EachTestingContext<
+    Pick<
+      FieldMetadataEntity<FieldMetadataType.NUMBER>,
+      'id' | 'name' | 'type' | 'isNullable' | 'defaultValue' | 'settings'
+    >
+  >[] = [
+    {
+      title: 'Integer dataType with decimals',
+      context: {
         id: 'number1',
         name: 'number1',
         type: FieldMetadataType.NUMBER,
@@ -645,7 +652,10 @@ describe('computeSchemaComponents', () => {
         defaultValue: null,
         settings: { type: 'number', decimals: 1, dataType: NumberDataType.INT },
       },
-      {
+    },
+    {
+      title: 'Float without decimals',
+      context: {
         id: 'number2',
         name: 'number2',
         type: FieldMetadataType.NUMBER,
@@ -653,11 +663,21 @@ describe('computeSchemaComponents', () => {
         defaultValue: null,
         settings: { type: 'number', dataType: NumberDataType.FLOAT },
       },
-    ] satisfies Pick<
-      FieldMetadataEntity<FieldMetadataType.NUMBER>,
-      'id' | 'name' | 'type' | 'isNullable' | 'defaultValue' | 'settings'
-    >[];
+    },
+    {
+      title: 'Integer with a 0 decimals',
+      context: {
+        id: 'number3',
+        name: 'number3',
+        type: FieldMetadataType.NUMBER,
+        isNullable: false,
+        defaultValue: null,
+        settings: { type: 'number', decimals: 0, dataType: NumberDataType.INT },
+      },
+    },
+  ];
 
+  it.each(testsCases)('$title', ({ context: field }) => {
     expect(
       computeSchemaComponents([
         {
@@ -666,52 +686,9 @@ describe('computeSchemaComponents', () => {
           nameSingular: 'objectName',
           namePlural: 'objectsName',
           //@ts-expect-error Passing partial FieldMetadataEntity array
-          fields: numberFields,
+          fields: [field],
         },
       ]),
-    ).toMatchInlineSnapshot(`
-{
-  "ObjectName": {
-    "description": undefined,
-    "properties": {
-      "number1": {
-        "type": "number",
-      },
-      "number2": {
-        "type": "number",
-      },
-    },
-    "required": [
-      "number1",
-      "number2",
-    ],
-    "type": "object",
-  },
-  "ObjectName for Response": {
-    "description": undefined,
-    "properties": {
-      "number1": {
-        "type": "number",
-      },
-      "number2": {
-        "type": "number",
-      },
-    },
-    "type": "object",
-  },
-  "ObjectName for Update": {
-    "description": undefined,
-    "properties": {
-      "number1": {
-        "type": "number",
-      },
-      "number2": {
-        "type": "number",
-      },
-    },
-    "type": "object",
-  },
-}
-`);
+    ).toMatchSnapshot();
   });
 });

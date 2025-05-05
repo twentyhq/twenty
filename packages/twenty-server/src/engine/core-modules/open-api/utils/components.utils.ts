@@ -60,11 +60,14 @@ const getFieldProperties = (field: FieldMetadataEntity): Property => {
       const settings =
         field.settings as FieldMetadataSettings<FieldMetadataType.NUMBER>;
 
-      if (settings?.dataType === NumberDataType.FLOAT || isDefined(settings?.decimals)) {
+      if (
+        settings?.dataType === NumberDataType.FLOAT ||
+        (isDefined(settings?.decimals) && settings.decimals > 0)
+      ) {
         return { type: 'number' };
       }
 
-      return {type: 'integer'};
+      return { type: 'integer' };
     }
     case FieldMetadataType.NUMERIC:
     case FieldMetadataType.POSITION: {
