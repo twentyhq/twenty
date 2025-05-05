@@ -65,7 +65,6 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewService } from 'src/modules/view/services/view.service';
-import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
@@ -910,13 +909,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     createdFieldMetadatas: FieldMetadataEntity[],
     workspaceId: string,
   ) {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        workspaceId,
-      );
-
     const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace(workspaceId);
 
     const workspaceQueryRunner = workspaceDataSource?.createQueryRunner();
 
@@ -927,21 +921,39 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       );
     }
 
+    const workspaceEntityManager =
+      workspaceDataSource?.createEntityManager(workspaceQueryRunner);
+
     await workspaceQueryRunner.connect();
     await workspaceQueryRunner.startTransaction();
 
     try {
       for (const createdFieldMetadata of createdFieldMetadatas) {
-        const view = await workspaceQueryRunner?.query(
-          `SELECT id FROM ${dataSourceMetadata.schema}."view"
-        WHERE "objectMetadataId" = '${createdFieldMetadata.objectMetadataId}'`,
-        );
+        const viewsRepository = workspaceEntityManager.getRepository('view', {
+          shouldBypassPermissionChecks: true,
+        });
 
-        if (!isEmpty(view)) {
-          const existingViewFields = (await workspaceQueryRunner?.query(
-            `SELECT * FROM ${dataSourceMetadata.schema}."viewField"
-          WHERE "viewId" = '${view[0].id}'`,
-          )) as ViewFieldWorkspaceEntity[];
+        const views = await viewsRepository.find({
+          where: {
+            objectMetadataId: createdFieldMetadata.objectMetadataId,
+          },
+        });
+
+        if (!isEmpty(views)) {
+          const viewFieldsRepository = workspaceEntityManager.getRepository(
+            'viewField',
+            {
+              shouldBypassPermissionChecks: true,
+            },
+          );
+
+          const view = views[0];
+          const existingViewFields = await viewFieldsRepository.find({
+            where: {
+              viewId: view.id,
+            },
+          });
+
           const isVisible =
             existingViewFields.length < settings.maxVisibleViewFields;
 
@@ -961,13 +973,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
                 return acc;
               }, -1);
 
-            await workspaceQueryRunner?.query(
-              `INSERT INTO ${dataSourceMetadata.schema}."viewField"
-            ("fieldMetadataId", "position", "isVisible", "size", "viewId")
-            VALUES ('${createdFieldMetadata.id}', '${
-              lastPosition + 1
-            }', ${isVisible}, 180, '${view[0].id}')`,
-            );
+            await viewFieldsRepository.insert({
+              fieldMetadataId: createdFieldMetadata.id,
+              position: lastPosition + 1,
+              isVisible,
+              size: 180,
+              viewId: view.id,
+            });
           }
         }
       }

@@ -63,7 +63,7 @@ export class WorkspaceHealthService {
     }
 
     // Try to connect to the data source
-    await this.typeORMService.connectToDataSource(dataSourceMetadata);
+    await this.typeORMService.getMainDataSource();
 
     const objectMetadataCollection =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);

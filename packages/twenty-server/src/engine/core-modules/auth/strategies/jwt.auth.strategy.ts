@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Strategy } from 'passport-jwt';
 import { Repository } from 'typeorm';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -15,20 +14,17 @@ import {
   JwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
-    private readonly twentyConfigService: TwentyConfigService,
-    private readonly jwtWrapperService: JwtWrapperService,
-    private readonly typeORMService: TypeORMService,
-    private readonly dataSourceService: DataSourceService,
+    jwtWrapperService: JwtWrapperService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(User, 'core')
@@ -75,18 +71,20 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    const apiKeyRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ApiKeyWorkspaceEntity>(
         workspace.id,
+        'apiKey',
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    const res = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."apiKey" WHERE id = $1`,
-      [payload.jti],
-    );
+    const res = await apiKeyRepository.findOne({
+      where: {
+        id: payload.jti,
+      },
+    });
 
     apiKey = res?.[0];
 

@@ -46,8 +46,7 @@ export class WorkspaceDataSourceService {
         workspaceId,
       );
 
-    const dataSource =
-      await this.typeormService.connectToDataSource(dataSourceMetadata);
+    const dataSource = await this.typeormService.getMainDataSource();
 
     if (!dataSource) {
       throw new Error(

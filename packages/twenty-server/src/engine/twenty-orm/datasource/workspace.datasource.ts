@@ -45,15 +45,15 @@ export class WorkspaceDataSource extends DataSource {
     roleId?: string,
   ): WorkspaceRepository<Entity> {
     if (shouldBypassPermissionChecks === true) {
-      return this.manager.getRepository(target, shouldBypassPermissionChecks);
+      return this.manager.getRepository(target, {
+        shouldBypassPermissionChecks: true,
+      });
     }
 
     if (roleId) {
-      return this.manager.getRepository(
-        target,
-        shouldBypassPermissionChecks,
+      return this.manager.getRepository(target, {
         roleId,
-      );
+      });
     }
 
     return this.manager.getRepository(target);
