@@ -537,7 +537,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     const metadataVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
 
-    if (!metadataVersion) {
+    if (!isDefined(metadataVersion)) {
       throw new NotFoundException(
         `Metadata version not found for workspace ${workspaceId}`,
       );

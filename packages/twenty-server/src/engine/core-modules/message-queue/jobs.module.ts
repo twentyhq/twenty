@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { AuditJobModule } from 'src/engine/core-modules/audit/jobs/audit-job.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -19,6 +20,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { CleanOnboardingWorkspacesJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-onboarding-workspaces.job';
 import { CleanSuspendedWorkspacesJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-suspended-workspaces.job';
 import { CleanWorkspaceDeletionWarningUserVarsJob } from 'src/engine/workspace-manager/workspace-cleaner/jobs/clean-workspace-deletion-warning-user-vars.job';
@@ -32,7 +34,6 @@ import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 import { WebhookJobModule } from 'src/modules/webhook/jobs/webhook-job.module';
 import { WorkflowModule } from 'src/modules/workflow/workflow.module';
-import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.modu
     FavoriteModule,
     WorkspaceCleanerModule,
     SubscriptionsModule,
+    AuditJobModule,
   ],
   providers: [
     CleanSuspendedWorkspacesJob,

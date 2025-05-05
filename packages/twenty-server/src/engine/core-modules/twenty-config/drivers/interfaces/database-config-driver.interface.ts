@@ -20,11 +20,6 @@ export interface DatabaseConfigDriverInterface {
   ): Promise<void>;
 
   /**
-   * Fetch and cache a specific configuration from its source
-   */
-  fetchAndCacheConfigVariable(key: keyof ConfigVariables): Promise<void>;
-
-  /**
    * Refreshes all entries in the config cache
    */
   refreshAllCache(): Promise<void>;

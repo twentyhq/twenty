@@ -2,9 +2,7 @@ import styled from '@emotion/styled';
 
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
-import { AdvancedFilterButton } from '@/object-record/object-filter-dropdown/components/AdvancedFilterButton';
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
-import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 
@@ -14,12 +12,11 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
+import { FILTER_FIELD_LIST_ID } from '@/object-record/object-filter-dropdown/constants/FilterFieldListId';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 
 export const StyledInput = styled.input`
   background: transparent;
@@ -47,13 +44,7 @@ export const StyledInput = styled.input`
   }
 `;
 
-type ObjectFilterDropdownFieldSelectProps = {
-  isAdvancedFilterButtonVisible?: boolean;
-};
-
-export const ObjectFilterDropdownFieldSelect = ({
-  isAdvancedFilterButtonVisible,
-}: ObjectFilterDropdownFieldSelectProps) => {
+export const ObjectFilterDropdownFieldSelect = () => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const [objectFilterDropdownSearchInput, setObjectFilterDropdownSearchInput] =
@@ -95,11 +86,6 @@ export const ObjectFilterDropdownFieldSelect = ({
     visibleColumnsFieldMetadataItems.length > 0 &&
     hiddenColumnsFieldMetadataItems.length > 0;
 
-  const { currentView } = useGetCurrentViewOnly();
-
-  const shouldShowAdvancedFilterButton =
-    isDefined(currentView?.objectMetadataId) && isAdvancedFilterButtonVisible;
-
   const { t } = useLingui();
 
   const selectableFieldMetadataItemIds = [
@@ -124,7 +110,7 @@ export const ObjectFilterDropdownFieldSelect = ({
       <SelectableList
         hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
         selectableItemIdArray={selectableFieldMetadataItemIds}
-        selectableListInstanceId={OBJECT_FILTER_DROPDOWN_ID}
+        selectableListInstanceId={FILTER_FIELD_LIST_ID}
       >
         <DropdownMenuItemsContainer>
           {visibleColumnsFieldMetadataItems.map((visibleFieldMetadataItem) => (
@@ -142,7 +128,6 @@ export const ObjectFilterDropdownFieldSelect = ({
           ))}
         </DropdownMenuItemsContainer>
       </SelectableList>
-      {shouldShowAdvancedFilterButton && <AdvancedFilterButton />}
     </>
   );
 };
