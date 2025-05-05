@@ -27,12 +27,30 @@ If you want to upgrade your instance by few versions, e.g. from 0.33.0 to 0.35.0
 
 ## Version-specific upgrade steps
  
-### Since v0.50.0
+{/* ### Since v0.53
 
 We've now added  `yarn command:prod upgrade` to the [entrypoint.sh](https://github.com/twentyhq/twenty/blob/main/packages/twenty-docker/twenty/entrypoint.sh#L19) file.
 This means from now on, you shouldn't have to run any command manually anymore.
 Just make sure to keep upgrading your instance sequentially, without skipping any major version (e.g. 0.43.3 to 0.44.0 is allowed, but 0.43.1 to 0.45.0 is not).
-You can view your instance version in the admin panel (at /settings/admin-panel, accessible if your user has canImpersonate property set to true in the database).
+You can view your instance version in the admin panel (at /settings/admin-panel, accessible if your user has canImpersonate property set to true in the database). */}
+
+### v0.51 to v0.52
+
+Upgrade your Twenty instance to use v0.52 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.50 to v0.51
+
+Upgrade your Twenty instance to use v0.51 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
 
 ### v0.44.0 to v0.50.0
 

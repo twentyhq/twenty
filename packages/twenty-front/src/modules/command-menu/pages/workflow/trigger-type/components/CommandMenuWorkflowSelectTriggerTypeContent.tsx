@@ -1,10 +1,11 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import {
   WorkflowTriggerType,
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
-import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
 import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
@@ -12,9 +13,8 @@ import { OTHER_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/Other
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
-import { useSetRecoilState } from 'recoil';
-import { MenuItemCommand } from 'twenty-ui/navigation';
 import { useIcons } from 'twenty-ui/display';
+import { MenuItemCommand } from 'twenty-ui/navigation';
 
 export const CommandMenuWorkflowSelectTriggerTypeContent = ({
   workflow,
@@ -26,7 +26,9 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
-  const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
+  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
+    workflowSelectedNodeComponentState,
+  );
   const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
 
   const handleTriggerTypeClick = ({

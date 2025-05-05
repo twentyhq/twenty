@@ -19,6 +19,7 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
+import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 
 @Injectable()
 export class WorkflowCommonWorkspaceService {
@@ -141,8 +142,17 @@ export class WorkflowCommonWorkspaceService {
         'workflowEventListener',
       );
 
+    const workflowAutomatedTriggerRepository =
+      await this.twentyORMManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+        'workflowAutomatedTrigger',
+      );
+
     workflowIds.forEach((workflowId) => {
       workflowEventListenerRepository.softDelete({
+        workflowId,
+      });
+
+      workflowAutomatedTriggerRepository.softDelete({
         workflowId,
       });
 

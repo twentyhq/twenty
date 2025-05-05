@@ -1,12 +1,7 @@
-import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
-import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
-import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
-import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { turnCurrencyIntoSelectableItem } from '@/object-record/object-filter-dropdown/utils/turnCurrencyIntoSelectableItem';
-import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
 import { StyledMultipleSelectDropdownAvatarChip } from '@/object-record/select/components/StyledMultipleSelectDropdownAvatarChip';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
@@ -14,70 +9,55 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { ChangeEvent, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
-import { v4 } from 'uuid';
 
 export const EMPTY_FILTER_VALUE = '[]';
 export const MAX_ITEMS_TO_DISPLAY = 3;
 
 type ObjectFilterDropdownCurrencySelectProps = {
-  viewComponentId?: string;
   dropdownWidth?: number;
 };
 
 export const ObjectFilterDropdownCurrencySelect = ({
-  viewComponentId,
   dropdownWidth,
 }: ObjectFilterDropdownCurrencySelectProps) => {
   const [searchText, setSearchText] = useState('');
 
-  const selectedFilter = useRecoilComponentValueV2(
-    selectedFilterComponentState,
+  const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValueV2(
+    objectFilterDropdownCurrentRecordFilterComponentState,
   );
 
-  const setObjectFilterDropdownSelectedRecordIds = useSetRecoilComponentStateV2(
-    objectFilterDropdownSelectedRecordIdsComponentState,
-    selectedFilter?.id,
-  );
-
-  const objectFilterDropdownSelectedRecordIds = useRecoilComponentValueV2(
-    objectFilterDropdownSelectedRecordIdsComponentState,
-    selectedFilter?.id,
-  );
-
-  const selectedOperandInDropdown = useRecoilComponentValueV2(
-    selectedOperandInDropdownComponentState,
-  );
+  const { applyObjectFilterDropdownFilterValue } =
+    useApplyObjectFilterDropdownFilterValue();
 
   const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentValueV2(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const { applyRecordFilter } = useApplyRecordFilter(viewComponentId);
-
   const currenciesAsSelectableItems = CURRENCIES.map(
     turnCurrencyIntoSelectableItem,
   );
 
+  const selectedCurrencies = isNonEmptyString(
+    objectFilterDropdownCurrentRecordFilter?.value,
+  )
+    ? (JSON.parse(objectFilterDropdownCurrentRecordFilter.value) as string[]) // TODO: replace by a safe parse
+    : [];
+
   const filteredSelectableItems = currenciesAsSelectableItems.filter(
     (selectableItem) =>
       selectableItem.name.toLowerCase().includes(searchText.toLowerCase()) &&
-      !objectFilterDropdownSelectedRecordIds.includes(selectableItem.id),
+      !selectedCurrencies.includes(selectableItem.id),
   );
 
   const filteredSelectedItems = currenciesAsSelectableItems.filter(
     (selectableItem) =>
       selectableItem.name.toLowerCase().includes(searchText.toLowerCase()) &&
-      objectFilterDropdownSelectedRecordIds.includes(selectableItem.id),
-  );
-
-  const currentRecordFilters = useRecoilComponentValueV2(
-    currentRecordFiltersComponentState,
+      selectedCurrencies.includes(selectableItem.id),
   );
 
   const handleMultipleItemSelectChange = (
@@ -85,18 +65,14 @@ export const ObjectFilterDropdownCurrencySelect = ({
     newSelectedValue: boolean,
   ) => {
     const newSelectedItemIds = newSelectedValue
-      ? [...objectFilterDropdownSelectedRecordIds, itemToSelect.id]
-      : objectFilterDropdownSelectedRecordIds.filter(
-          (id) => id !== itemToSelect.id,
-        );
+      ? [...selectedCurrencies, itemToSelect.id]
+      : selectedCurrencies.filter((id) => id !== itemToSelect.id);
 
     if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
       throw new Error(
         'Field metadata item used in filter dropdown should be defined',
       );
     }
-
-    setObjectFilterDropdownSelectedRecordIds(newSelectedItemIds);
 
     const selectedItemNames = currenciesAsSelectableItems
       .filter((option) => newSelectedItemIds.includes(option.id))
@@ -107,46 +83,12 @@ export const ObjectFilterDropdownCurrencySelect = ({
         ? `${selectedItemNames.length} currencies`
         : selectedItemNames.join(', ');
 
-    if (
-      isDefined(fieldMetadataItemUsedInFilterDropdown) &&
-      isDefined(selectedOperandInDropdown)
-    ) {
-      const newFilterValue =
-        newSelectedItemIds.length > 0
-          ? JSON.stringify(newSelectedItemIds)
-          : EMPTY_FILTER_VALUE;
+    const newFilterValue =
+      newSelectedItemIds.length > 0
+        ? JSON.stringify(newSelectedItemIds)
+        : EMPTY_FILTER_VALUE;
 
-      const duplicateFilterInCurrentRecordFilters =
-        findDuplicateRecordFilterInNonAdvancedRecordFilters({
-          recordFilters: currentRecordFilters,
-          fieldMetadataItemId: fieldMetadataItemUsedInFilterDropdown.id,
-          subFieldName: 'currencyCode',
-        });
-
-      const filterIsAlreadyInCurrentRecordFilters = isDefined(
-        duplicateFilterInCurrentRecordFilters,
-      );
-
-      const filterId = filterIsAlreadyInCurrentRecordFilters
-        ? duplicateFilterInCurrentRecordFilters?.id
-        : v4();
-
-      applyRecordFilter({
-        id: selectedFilter?.id ? selectedFilter.id : filterId,
-        type: getFilterTypeFromFieldType(
-          fieldMetadataItemUsedInFilterDropdown.type,
-        ),
-        label: fieldMetadataItemUsedInFilterDropdown.label,
-        operand: selectedOperandInDropdown || ViewFilterOperand.Is,
-        displayValue: filterDisplayValue,
-        fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
-        value: newFilterValue,
-        recordFilterGroupId: selectedFilter?.recordFilterGroupId,
-        subFieldName: 'currencyCode',
-        positionInRecordFilterGroup:
-          selectedFilter?.positionInRecordFilterGroup,
-      });
-    }
+    applyObjectFilterDropdownFilterValue(newFilterValue, filterDisplayValue);
   };
 
   const showNoResult =
