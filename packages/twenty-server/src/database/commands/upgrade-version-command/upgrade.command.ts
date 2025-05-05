@@ -1,9 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { SemVer } from 'semver';
 import { Repository } from 'typeorm';
 
 import { Command } from 'nest-commander';
+import { SemVer } from 'semver';
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
@@ -25,7 +25,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
-import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
+import { getPreviousVersion } from 'src/utils/version/get-previous-version';
 import { isDefined } from 'twenty-shared/utils';
 
 type VersionCommands = {
@@ -39,7 +39,7 @@ type AllCommands = Record<string, VersionCommands>;
   description: 'Upgrade workspaces to the latest version',
 })
 export class UpgradeCommand extends UpgradeCommandRunner {
-  fromWorkspaceVersion = new SemVer('0.50.0');
+  override fromWorkspaceVersion: SemVer;
   private commands: VersionCommands;
 
   constructor(
@@ -150,28 +150,21 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         `No commands found for version ${currentAppVersion}. Please check the commands record.`,
       );
     }
-    this.commands = currentCommands;
 
-    const parsedAppVersion = new SemVer(currentAppVersion);
-    const appVersionMajorAndMinor = `${parsedAppVersion.major}.${parsedAppVersion.minor}.0`;
+    const allCommandsKeys = Object.keys(allCommands);
+    const previousVersion = getPreviousVersion({
+      currentVersion: currentAppVersion,
+      versions: allCommandsKeys,
+    });
 
-    const versionBeforeCurrentAppVersion = Object.keys(allCommands)
-      .sort()
-      .find((version) => {
-        const result = compareVersionMajorAndMinor(
-          appVersionMajorAndMinor,
-          version,
-        );
-        return result === 'lower';
-      });
-
-    if (!isDefined(versionBeforeCurrentAppVersion)) {
+    if (!isDefined(previousVersion)) {
       throw new Error(
-        `No version found before current app version ${currentAppVersion}. Please check the commands record.`,
+        `No previous version found for version ${currentAppVersion}. Please check the commands record available ${allCommandsKeys.join(',')}.`,
       );
     }
 
-    this.fromWorkspaceVersion = new SemVer(versionBeforeCurrentAppVersion);
+    this.commands = currentCommands;
+    this.fromWorkspaceVersion = previousVersion;
   }
 
   override async runBeforeSyncMetadata(args: RunOnWorkspaceArgs) {

@@ -20,7 +20,7 @@ import {
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
-  abstract readonly fromWorkspaceVersion: SemVer;
+  abstract fromWorkspaceVersion: SemVer;
   public readonly VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG?: true;
 
   constructor(
