@@ -1,7 +1,6 @@
-import { ForbiddenException } from '@nestjs/common';
-
 import { In } from 'typeorm';
 
+import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -42,7 +41,11 @@ export class CanAccessMessageThreadService {
         {
           messageChannels: {
             id: In(messageChannelIds),
-            visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+            visibility: In([
+              MessageChannelVisibility.SHARE_EVERYTHING,
+              MessageChannelVisibility.METADATA,
+              MessageChannelVisibility.SUBJECT,
+            ]),
           },
         },
         {
@@ -56,7 +59,7 @@ export class CanAccessMessageThreadService {
     });
 
     if (connectedAccounts.length === 0) {
-      throw new ForbiddenException();
+      throw new ForbiddenError('Message thread not shared');
     }
   }
 }
