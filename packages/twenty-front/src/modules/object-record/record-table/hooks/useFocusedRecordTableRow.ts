@@ -1,6 +1,7 @@
 import { focusedRecordTableRowIndexComponentState } from '@/object-record/record-table/states/focusedRecordTableRowIndexComponentState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
+import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,6 +19,11 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
 
   const isRowFocusActiveState = useRecoilComponentCallbackStateV2(
     isRecordTableRowFocusActiveComponentState,
+    recordTableId,
+  );
+
+  const focusedCellPositionState = useRecoilComponentCallbackStateV2(
+    recordTableFocusPositionComponentState,
     recordTableId,
   );
 
@@ -61,8 +67,29 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
     [focusedRowIndexState, isRowFocusedState, isRowFocusActiveState],
   );
 
+  const restoreRecordTableRowFocusFromCellPosition = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const focusedRowIndex = snapshot
+          .getLoadable(focusedRowIndexState)
+          .getValue();
+
+        const focusedCellPosition = snapshot
+          .getLoadable(focusedCellPositionState)
+          .getValue();
+
+        if (!isDefined(focusedRowIndex) || !isDefined(focusedCellPosition)) {
+          return;
+        }
+
+        focusRecordTableRow(focusedCellPosition.row);
+      },
+    [focusRecordTableRow, focusedRowIndexState, focusedCellPositionState],
+  );
+
   return {
     focusRecordTableRow,
     unfocusRecordTableRow,
+    restoreRecordTableRowFocusFromCellPosition,
   };
 };

@@ -21,7 +21,6 @@ import { onEntityCountChangeComponentState } from '@/object-record/record-table/
 
 import { useRecordTableMove } from '@/object-record/record-table/hooks/useRecordTableMove';
 import { useRecordTableMoveFocusedRow } from '@/object-record/record-table/hooks/useRecordTableMoveFocusedRow';
-import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
@@ -34,7 +33,7 @@ import { useSelectAllRows } from './internal/useSelectAllRows';
 import { useSetRecordTableData } from './internal/useSetRecordTableData';
 import { useSetRecordTableFocusPosition } from './internal/useSetRecordTableFocusPosition';
 import { useSetRowSelectedState } from './internal/useSetRowSelectedState';
-
+import { useFocusedRecordTableRow } from './useFocusedRecordTableRow';
 type useRecordTableProps = {
   recordTableId?: string;
 };
@@ -153,10 +152,8 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const { moveFocusedRow } = useRecordTableMoveFocusedRow(recordTableId);
 
-  const setIsRowFocusActive = useSetRecoilComponentStateV2(
-    isRecordTableRowFocusActiveComponentState,
-    recordTableId,
-  );
+  const { restoreRecordTableRowFocusFromCellPosition } =
+    useFocusedRecordTableRow(recordTableId);
 
   const useMapKeyboardToFocus = () => {
     const setHotkeyScope = useSetHotkeyScope();
@@ -243,10 +240,13 @@ export const useRecordTable = (props?: useRecordTableProps) => {
           keyboardShortcutMenu: true,
         });
         setIsFocusActiveForCurrentPosition(false);
-        setIsRowFocusActive(true);
+        restoreRecordTableRowFocusFromCellPosition();
       },
       TableHotkeyScope.TableFocus,
-      [setIsFocusActiveForCurrentPosition, setIsRowFocusActive],
+      [
+        setIsFocusActiveForCurrentPosition,
+        restoreRecordTableRowFocusFromCellPosition,
+      ],
     );
   };
 
