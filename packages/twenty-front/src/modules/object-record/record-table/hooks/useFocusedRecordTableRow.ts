@@ -1,4 +1,5 @@
 import { focusedRecordTableRowIndexComponentState } from '@/object-record/record-table/states/focusedRecordTableRowIndexComponentState';
+import { isRecordTableFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableFocusActiveComponentState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
@@ -27,6 +28,11 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
     recordTableId,
   );
 
+  const isRecordTableFocusActiveState = useRecoilComponentCallbackStateV2(
+    isRecordTableFocusActiveComponentState,
+    recordTableId,
+  );
+
   const unfocusRecordTableRow = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
@@ -52,11 +58,7 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
           .getLoadable(focusedRowIndexState)
           .getValue();
 
-        if (focusedRowIndex === rowIndex) {
-          return;
-        }
-
-        if (isDefined(focusedRowIndex)) {
+        if (isDefined(focusedRowIndex) && focusedRowIndex !== rowIndex) {
           set(isRowFocusedState(focusedRowIndex), false);
         }
 
@@ -78,13 +80,26 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
           .getLoadable(focusedCellPositionState)
           .getValue();
 
-        if (!isDefined(focusedRowIndex) || !isDefined(focusedCellPosition)) {
+        const isRecordTableFocusActive = snapshot
+          .getLoadable(isRecordTableFocusActiveState)
+          .getValue();
+
+        if (
+          !isDefined(focusedRowIndex) ||
+          !isDefined(focusedCellPosition) ||
+          !isRecordTableFocusActive
+        ) {
           return;
         }
 
         focusRecordTableRow(focusedCellPosition.row);
       },
-    [focusRecordTableRow, focusedRowIndexState, focusedCellPositionState],
+    [
+      focusedRowIndexState,
+      focusedCellPositionState,
+      isRecordTableFocusActiveState,
+      focusRecordTableRow,
+    ],
   );
 
   return {

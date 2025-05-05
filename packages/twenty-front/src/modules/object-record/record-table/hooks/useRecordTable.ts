@@ -239,8 +239,8 @@ export const useRecordTable = (props?: useRecordTableProps) => {
           goto: true,
           keyboardShortcutMenu: true,
         });
-        setIsFocusActiveForCurrentPosition(false);
         restoreRecordTableRowFocusFromCellPosition();
+        setIsFocusActiveForCurrentPosition(false);
       },
       TableHotkeyScope.TableFocus,
       [
