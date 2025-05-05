@@ -12,7 +12,7 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
-import { msg } from '@lingui/core/macro';
+import { t } from '@lingui/core/macro';
 import { isUndefined } from '@sniptt/guards';
 import { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -96,15 +96,12 @@ export const useRecordGroupActions = ({
   const currentIndex = visibleRecordGroupIds.findIndex(
     (id) => id === recordGroupDefinition.id,
   );
-
-  if (currentIndex === -1) {
-    return [];
-  }
+  const isCurrentRecordGroupNotFound = currentIndex === -1;
 
   const recordGroupActions: RecordGroupAction[] = [
     {
       id: 'edit',
-      label: msg`Edit`,
+      label: t`Edit`,
       icon: IconSettings,
       position: 0,
       condition: hasAccessToDataModelSettings,
@@ -112,9 +109,11 @@ export const useRecordGroupActions = ({
     },
     {
       id: 'moveRight',
-      label: msg`Move right`,
+      label: t`Move right`,
       icon: IconArrowRight,
-      condition: currentIndex < visibleRecordGroupIds.length - 1,
+      condition:
+        !isCurrentRecordGroupNotFound &&
+        currentIndex < visibleRecordGroupIds.length - 1,
       position: 1,
       callback: () =>
         handleRecordGroupOrderChange({
@@ -124,9 +123,9 @@ export const useRecordGroupActions = ({
     },
     {
       id: 'moveLeft',
-      label: msg`Move left`,
+      label: t`Move left`,
       icon: IconArrowLeft,
-      condition: currentIndex > 0,
+      condition: !isCurrentRecordGroupNotFound && currentIndex > 0,
       position: 2,
       callback: () =>
         handleRecordGroupOrderChange({
@@ -136,7 +135,7 @@ export const useRecordGroupActions = ({
     },
     {
       id: 'hide',
-      label: msg`Hide`,
+      label: t`Hide`,
       icon: IconEyeOff,
       position: 3,
       callback: () =>
