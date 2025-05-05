@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateEventMetadataTables1746385023516
+export class CreateEventMetadataTables1746428419085
   implements MigrationInterface
 {
-  name = 'CreateEventMetadataTables1746385023516';
+  name = 'CreateEventMetadataTables1746428419085';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -13,7 +13,7 @@ export class CreateEventMetadataTables1746385023516
       `CREATE TABLE "core"."eventFieldMetadata" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "description" text, "fieldType" "core"."eventFieldMetadata_fieldtype_enum" NOT NULL DEFAULT 'string', "isRequired" boolean NOT NULL DEFAULT false, "allowedValues" text, "eventMetadataId" uuid NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_cec30ba6808f1b5640030ef5593" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "core"."eventMetadata" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "eventName" character varying NOT NULL, "description" text, "isActive" boolean NOT NULL DEFAULT true, "strictValidation" boolean NOT NULL DEFAULT false, "validObjectTypes" text, "workspaceId" uuid NOT NULL, "createdById" uuid NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_7762390924658f4d3ad88c45be0" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "core"."eventMetadata" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "description" text, "isActive" boolean NOT NULL DEFAULT true, "strictValidation" boolean NOT NULL DEFAULT false, "validObjectTypes" text, "workspaceId" uuid NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_7762390924658f4d3ad88c45be0" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."eventFieldMetadata" ADD CONSTRAINT "FK_d4bdc96669d719468943da6331d" FOREIGN KEY ("eventMetadataId") REFERENCES "core"."eventMetadata"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
@@ -21,15 +21,9 @@ export class CreateEventMetadataTables1746385023516
     await queryRunner.query(
       `ALTER TABLE "core"."eventMetadata" ADD CONSTRAINT "FK_e584d68ed4df0ac6a55369e3409" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "core"."eventMetadata" ADD CONSTRAINT "FK_d18a41d743fe581c8c39a3f8313" FOREIGN KEY ("createdById") REFERENCES "core"."user"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "core"."eventMetadata" DROP CONSTRAINT "FK_d18a41d743fe581c8c39a3f8313"`,
-    );
     await queryRunner.query(
       `ALTER TABLE "core"."eventMetadata" DROP CONSTRAINT "FK_e584d68ed4df0ac6a55369e3409"`,
     );
