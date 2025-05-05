@@ -1,6 +1,6 @@
 import { OpenAPIV3_1 } from 'openapi-types';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import {
   FieldMetadataSettings,
@@ -60,14 +60,11 @@ const getFieldProperties = (field: FieldMetadataEntity): Property => {
       const settings =
         field.settings as FieldMetadataSettings<FieldMetadataType.NUMBER>;
 
-      switch (settings?.dataType) {
-        case NumberDataType.INT:
-        case NumberDataType.BIGINT:
-          return { type: 'integer' };
-        case NumberDataType.FLOAT:
-        default:
-          return { type: 'number' };
+      if (settings?.dataType === NumberDataType.FLOAT || isDefined(settings?.decimals)) {
+        return { type: 'number' };
       }
+
+      return {type: 'integer'};
     }
     case FieldMetadataType.NUMERIC:
     case FieldMetadataType.POSITION: {
