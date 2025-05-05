@@ -12,6 +12,7 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
+import { msg } from '@lingui/core/macro';
 import { isUndefined } from '@sniptt/guards';
 import { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -99,7 +100,7 @@ export const useRecordGroupActions = ({
   const recordGroupActions: RecordGroupAction[] = [
     {
       id: 'edit',
-      label: 'Edit',
+      label: msg`Edit`,
       icon: IconSettings,
       position: 0,
       condition: hasAccessToDataModelSettings,
@@ -107,7 +108,7 @@ export const useRecordGroupActions = ({
     },
     {
       id: 'moveRight',
-      label: 'Move right',
+      label: msg`Move right`,
       icon: IconArrowRight,
       condition: currentIndex < visibleRecordGroupIds.length - 1,
       position: 1,
@@ -119,7 +120,7 @@ export const useRecordGroupActions = ({
     },
     {
       id: 'moveLeft',
-      label: 'Move left',
+      label: msg`Move left`,
       icon: IconArrowLeft,
       condition: currentIndex > 0,
       position: 2,
@@ -131,7 +132,7 @@ export const useRecordGroupActions = ({
     },
     {
       id: 'hide',
-      label: 'Hide',
+      label: msg`Hide`,
       icon: IconEyeOff,
       position: 3,
       callback: () =>
