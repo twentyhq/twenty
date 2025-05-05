@@ -4,8 +4,10 @@ import { RecordTableRowContextProvider } from '@/object-record/record-table/cont
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { isRowVisibleComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowVisibleComponentFamilyState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
+import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { ReactNode, forwardRef } from 'react';
 
@@ -111,12 +113,17 @@ export const RecordTableTr = forwardRef<
     focusIndex,
   );
 
+  const isRowFocusActive = useRecoilComponentValueV2(
+    isRecordTableRowFocusActiveComponentState,
+  );
+
   const isNextRowFocused = useRecoilComponentFamilyValueV2(
     isRecordTableRowFocusedComponentFamilyState,
     focusIndex + 1,
   );
 
-  const isNextRowActiveOrFocused = isNextRowActive || isNextRowFocused;
+  const isNextRowActiveOrFocused =
+    isRowFocusActive && (isNextRowActive || isNextRowFocused);
 
   return (
     <RecordTableRowContextProvider
@@ -139,7 +146,7 @@ export const RecordTableTr = forwardRef<
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
         isActive={isActive}
-        isFocused={isFocused}
+        isFocused={isRowFocusActive && isFocused}
         isNextRowActiveOrFocused={isNextRowActiveOrFocused}
       >
         {children}

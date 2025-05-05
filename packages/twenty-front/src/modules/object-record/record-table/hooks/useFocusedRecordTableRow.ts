@@ -1,4 +1,5 @@
 import { focusedRecordTableRowIndexComponentState } from '@/object-record/record-table/states/focusedRecordTableRowIndexComponentState';
+import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilCallback } from 'recoil';
@@ -15,6 +16,11 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
     recordTableId,
   );
 
+  const isRowFocusActiveState = useRecoilComponentCallbackStateV2(
+    isRecordTableRowFocusActiveComponentState,
+    recordTableId,
+  );
+
   const unfocusRecordTableRow = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
@@ -27,10 +33,10 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
         }
 
         set(focusedRowIndexState, null);
-
         set(isRowFocusedState(focusedRowIndex), false);
+        set(isRowFocusActiveState, false);
       },
-    [focusedRowIndexState, isRowFocusedState],
+    [focusedRowIndexState, isRowFocusedState, isRowFocusActiveState],
   );
 
   const focusRecordTableRow = useRecoilCallback(
@@ -49,10 +55,10 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
         }
 
         set(focusedRowIndexState, rowIndex);
-
         set(isRowFocusedState(rowIndex), true);
+        set(isRowFocusActiveState, true);
       },
-    [focusedRowIndexState, isRowFocusedState],
+    [focusedRowIndexState, isRowFocusedState, isRowFocusActiveState],
   );
 
   return {
