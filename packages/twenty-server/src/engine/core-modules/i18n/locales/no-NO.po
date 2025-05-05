@@ -218,13 +218,13 @@ msgstr "Et vedlegg"
 
 #. js-lingui-id: +bL++X
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "An audit log of actions performed in the system"
-msgstr "En revisjonslogg over handlinger utført i systemet"
+#~ msgid "An audit log of actions performed in the system"
+#~ msgstr "En revisjonslogg over handlinger utført i systemet"
 
 #. js-lingui-id: muVHgL
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "An event related to user behavior"
-msgstr "En hendelse relatert til brukeradferd"
+#~ msgid "An event related to user behavior"
+#~ msgstr "En hendelse relatert til brukeradferd"
 
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -369,19 +369,19 @@ msgstr "Vedlegg knyttet til {label}"
 
 #. js-lingui-id: ilRCh1
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Audit Log"
-msgstr "Revisjonslogg"
+#~ msgid "Audit Log"
+#~ msgstr "Revisjonslogg"
 
 #. js-lingui-id: EPEFrH
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Audit Logs"
-msgstr "Revisjonslogger"
+#~ msgid "Audit Logs"
+#~ msgstr "Revisjonslogger"
 
 #. js-lingui-id: RqCC/0
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Audit Logs linked to the workspace member"
-msgstr "Revisjonslogger tilknyttet arbeidsområde-medlemmet"
+#~ msgid "Audit Logs linked to the workspace member"
+#~ msgstr "Revisjonslogger tilknyttet arbeidsområde-medlemmet"
 
 #. js-lingui-id: cNBqH+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -431,13 +431,13 @@ msgstr "Avatar-URL"
 
 #. js-lingui-id: 20B9kW
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Behavioral Event"
-msgstr "Atferdshendelse"
+#~ msgid "Behavioral Event"
+#~ msgstr "Atferdshendelse"
 
 #. js-lingui-id: Jeh/Q/
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Behavioral Events"
-msgstr "Atferdshendelser"
+#~ msgid "Behavioral Events"
+#~ msgstr "Atferdshendelser"
 
 #. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -782,13 +782,11 @@ msgstr "Hendelsesbedrift"
 #. js-lingui-id: FJ7QI4
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Event context"
-msgstr "Hendelseskontekst"
+#~ msgid "Event context"
+#~ msgstr "Hendelseskontekst"
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event details"
 msgstr "Hendelsesdetaljer"
 
@@ -814,17 +812,14 @@ msgstr "Hendelseslyttere"
 #. js-lingui-id: PYs3rP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event name"
 msgstr "Hendelsesnavn"
 
 #. js-lingui-id: evIGwh
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Event name/type"
-msgstr "Hendelsesnavn/type"
+#~ msgid "Event name/type"
+#~ msgstr "Hendelsesnavn/type"
 
 #. js-lingui-id: vv99Wu
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -869,7 +864,6 @@ msgstr "Hendelse arbeidsflyt versjon"
 
 #. js-lingui-id: LxOGsB
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event workspace member"
 msgstr "Hendelse arbeidsområde-medlem"
 
@@ -1167,8 +1161,8 @@ msgstr "Ideell kundeprofil: Indikerer om selskapet er den mest passende og verdi
 
 #. js-lingui-id: NrA0WZ
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "If the event is related to a particular object"
-msgstr "Om hendelsen er relatert til et spesifikt objekt"
+#~ msgid "If the event is related to a particular object"
+#~ msgstr "Om hendelsen er relatert til et spesifikt objekt"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1217,8 +1211,8 @@ msgstr "Bli med teamet ditt på Twenty"
 #. js-lingui-id: shbh25
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Json object to provide context (user, device, workspace, etc.)"
-msgstr "Json-objekt for å gi kontekst (bruker, enhet, arbeidsområde, osv.)"
+#~ msgid "Json object to provide context (user, device, workspace, etc.)"
+#~ msgstr "Json-objekt for å gi kontekst (bruker, enhet, arbeidsområde, osv.)"
 
 #. js-lingui-id: HgJ9jQ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -1237,8 +1231,6 @@ msgstr "JSON-objekt for \\\\.u00e5 gi trigger"
 
 #. js-lingui-id: TVc0/Q
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json value for event details"
 msgstr "JSON-verdi for hendelsesdetaljer"
 
@@ -1624,14 +1616,14 @@ msgstr "Antall ansatte i selskapet"
 
 #. js-lingui-id: hhe7Ce
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Object id"
-msgstr "Objekt-id"
+#~ msgid "Object id"
+#~ msgstr "Objekt-id"
 
 #. js-lingui-id: dnPgTI
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Object metadata id"
-msgstr "Objekt metadata-id"
+#~ msgid "Object metadata id"
+#~ msgstr "Objekt metadata-id"
 
 #. js-lingui-id: T/nPf5
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1642,8 +1634,8 @@ msgstr "Objekt Metadata-id"
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Object name"
-msgstr "Objektnavn"
+#~ msgid "Object name"
+#~ msgstr "Objektnavn"
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1856,8 +1848,8 @@ msgstr "Mottatt kl"
 #. js-lingui-id: 4Tvtbu
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Record id"
-msgstr "Record id"
+#~ msgid "Record id"
+#~ msgstr "Record id"
 
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -2785,7 +2777,6 @@ msgstr "Arbeidsplass medlem"
 #. js-lingui-id: qc38qR
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts

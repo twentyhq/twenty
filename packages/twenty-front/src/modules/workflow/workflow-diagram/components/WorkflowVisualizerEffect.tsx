@@ -1,17 +1,19 @@
-import { workflowIdState } from '@/workflow/states/workflowIdState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 export const WorkflowVisualizerEffect = ({
   workflowId,
 }: {
   workflowId: string;
 }) => {
-  const setWorkflowId = useSetRecoilState(workflowIdState);
+  const setWorkflowVisualizerWorkflowId = useSetRecoilComponentStateV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
 
   useEffect(() => {
-    setWorkflowId(workflowId);
-  }, [setWorkflowId, workflowId]);
+    setWorkflowVisualizerWorkflowId(workflowId);
+  }, [setWorkflowVisualizerWorkflowId, workflowId]);
 
   return null;
 };

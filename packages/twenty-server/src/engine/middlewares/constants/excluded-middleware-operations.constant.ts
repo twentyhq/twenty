@@ -3,6 +3,7 @@ export const EXCLUDED_MIDDLEWARE_OPERATIONS = [
   'GetWorkspaceFromInviteHash',
   'Track',
   'TrackAnalytics',
+  'AuditTrack',
   'CheckUserExists',
   'GetLoginTokenFromCredentials',
   'GetAuthTokensFromLoginToken',

@@ -20,7 +20,6 @@ import { In, Repository } from 'typeorm';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -75,7 +74,6 @@ export class UserResolver {
     private readonly onboardingService: OnboardingService,
     private readonly userVarService: UserVarsService,
     private readonly fileService: FileService,
-    private readonly analyticsService: AnalyticsService,
     private readonly domainManagerService: DomainManagerService,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,

@@ -5070,6 +5070,21 @@ msgstr "Sigbare groepe"
 msgid "Visualize"
 msgstr "Visualiseer"
 
+#. js-lingui-id: zFSQY3
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx
+msgid "was created by"
+msgstr ""
+
+#. js-lingui-id: uHpu1c
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx
+msgid "was deleted by"
+msgstr ""
+
+#. js-lingui-id: S0enzB
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx
+msgid "was restored by"
+msgstr ""
+
 #. js-lingui-id: id6ein
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"

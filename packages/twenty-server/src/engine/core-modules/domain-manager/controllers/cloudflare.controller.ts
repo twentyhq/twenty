@@ -13,8 +13,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Request, Response } from 'express';
 import { Repository } from 'typeorm';
 
-import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/custom-domain/custom-domain-activated';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/track/custom-domain/custom-domain-activated';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import {
   DomainManagerException,
@@ -36,7 +36,7 @@ export class CloudflareController {
     private readonly domainManagerService: DomainManagerService,
     private readonly customDomainService: CustomDomainService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly analyticsService: AnalyticsService,
+    private readonly auditService: AuditService,
   ) {}
 
   @Post(['cloudflare/custom-hostname-webhooks', 'webhooks/cloudflare'])
@@ -60,7 +60,7 @@ export class CloudflareController {
 
     if (!workspace) return;
 
-    const analytics = this.analyticsService.createAnalyticsContext({
+    const analytics = this.auditService.createContext({
       workspaceId: workspace.id,
     });
 

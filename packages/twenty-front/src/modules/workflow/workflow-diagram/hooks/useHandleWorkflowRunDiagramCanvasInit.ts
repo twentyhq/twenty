@@ -1,10 +1,12 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
-import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
-import { workflowRunStepToOpenByDefaultState } from '@/workflow/workflow-diagram/states/workflowRunStepToOpenByDefaultState';
-import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { workflowDiagramStatusComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusComponentState';
+import { workflowRunStepToOpenByDefaultComponentState } from '@/workflow/workflow-diagram/states/workflowRunStepToOpenByDefaultComponentState';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
@@ -16,6 +18,21 @@ export const useHandleWorkflowRunDiagramCanvasInit = () => {
 
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
   const { isInRightDrawer } = useContext(ActionMenuContext);
+
+  const workflowRunId = useWorkflowRunIdOrThrow();
+
+  const workflowVisualizerWorkflowIdState = useRecoilComponentCallbackStateV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
+  const workflowDiagramStatusState = useRecoilComponentCallbackStateV2(
+    workflowDiagramStatusComponentState,
+  );
+  const workflowRunStepToOpenByDefaultState = useRecoilComponentCallbackStateV2(
+    workflowRunStepToOpenByDefaultComponentState,
+  );
+  const workflowSelectedNodeState = useRecoilComponentCallbackStateV2(
+    workflowSelectedNodeComponentState,
+  );
 
   const handleWorkflowRunDiagramCanvasInit = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -43,8 +60,11 @@ export const useHandleWorkflowRunDiagramCanvasInit = () => {
         );
 
         if (isDefined(workflowStepToOpenByDefault)) {
-          const workflowId = getSnapshotValue(snapshot, workflowIdState);
-          if (!isDefined(workflowId)) {
+          const workflowVisualizerWorkflowId = getSnapshotValue(
+            snapshot,
+            workflowVisualizerWorkflowIdState,
+          );
+          if (!isDefined(workflowVisualizerWorkflowId)) {
             throw new Error(
               'The workflow id must be set; ensure the workflow id is always set before rendering the workflow diagram.',
             );
@@ -53,7 +73,8 @@ export const useHandleWorkflowRunDiagramCanvasInit = () => {
           set(workflowSelectedNodeState, workflowStepToOpenByDefault.id);
 
           openWorkflowRunViewStepInCommandMenu({
-            workflowId,
+            workflowId: workflowVisualizerWorkflowId,
+            workflowRunId,
             title: workflowStepToOpenByDefault.data.name,
             icon: getIcon(
               getWorkflowNodeIconKey(workflowStepToOpenByDefault.data),
@@ -65,7 +86,16 @@ export const useHandleWorkflowRunDiagramCanvasInit = () => {
           set(workflowRunStepToOpenByDefaultState, undefined);
         }
       },
-    [getIcon, isInRightDrawer, openWorkflowRunViewStepInCommandMenu],
+    [
+      workflowDiagramStatusState,
+      isInRightDrawer,
+      workflowRunStepToOpenByDefaultState,
+      workflowVisualizerWorkflowIdState,
+      workflowSelectedNodeState,
+      openWorkflowRunViewStepInCommandMenu,
+      workflowRunId,
+      getIcon,
+    ],
   );
 
   return {
