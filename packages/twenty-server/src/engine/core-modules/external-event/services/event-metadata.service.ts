@@ -26,11 +26,6 @@ export class EventMetadataService {
     private readonly externalEventValidator: ExternalEventValidator,
   ) {}
 
-  /**
-   * Get all event metadata for a workspace
-   * @param workspaceId The workspace ID
-   * @returns Array of event metadata
-   */
   async getWorkspaceEventMetadata(
     workspaceId: string,
   ): Promise<EventMetadata[]> {
@@ -40,12 +35,6 @@ export class EventMetadataService {
     });
   }
 
-  /**
-   * Get event metadata by event name for a workspace
-   * @param workspaceId The workspace ID
-   * @param eventName The event name
-   * @returns Event metadata
-   */
   async getEventMetadata(
     workspaceId: string,
     eventName: string,
@@ -56,62 +45,97 @@ export class EventMetadataService {
     });
   }
 
-  /**
-   * Create a new event metadata
-   * @param workspaceId The workspace ID
-   * @param eventName The event name
-   * @param description Optional description
-   * @param validObjectTypes Optional list of valid object types
-   * @param strictValidation Whether to enforce strict validation
-   * @returns The created event metadata
-   */
-  async createEventMetadata(
+  async findOrCreateEventMetadata(
     workspaceId: string,
     eventName: string,
-    description?: string,
-    validObjectTypes?: string[],
-    strictValidation = false,
+    properties: Record<string, any>,
   ): Promise<EventMetadata> {
-    const eventMetadata = this.eventMetadataRepository.create({
-      name: eventName,
-      description,
-      validObjectTypes,
-      workspaceId,
-      strictValidation,
-      isActive: true,
+    let eventMetadata = await this.eventMetadataRepository.findOne({
+      where: { workspaceId, name: eventName },
+      relations: ['fields'],
     });
 
-    return this.eventMetadataRepository.save(eventMetadata);
+    if (!eventMetadata) {
+      this.logger.log(`Creating new event metadata for ${eventName}`);
+      eventMetadata = this.eventMetadataRepository.create({
+        name: eventName,
+        workspaceId,
+        isActive: true,
+      });
+      eventMetadata = await this.eventMetadataRepository.save(eventMetadata);
+    }
+
+    await this.processEventProperties(eventMetadata.id, properties);
+
+    const updatedMetadata = await this.eventMetadataRepository.findOne({
+      where: { id: eventMetadata.id },
+      relations: ['fields'],
+    });
+
+    if (!updatedMetadata) {
+      throw new Error(`Failed to reload event metadata for ${eventName}`);
+    }
+
+    return updatedMetadata;
   }
 
-  /**
-   * Add a field to an event metadata
-   * @param eventMetadataId The event metadata ID
-   * @param name The field name
-   * @param fieldType The field type
-   * @param isRequired Whether the field is required
-   * @param description Optional description
-   * @param allowedValues Optional list of allowed values
-   * @returns The created field metadata
-   */
-  async addEventField(
+  private async processEventProperties(
     eventMetadataId: string,
-    name: string,
-    fieldType: FieldType,
-    isRequired: boolean,
-    description?: string,
-    allowedValues?: Array<string | number | boolean>,
-  ): Promise<EventFieldMetadata> {
-    const fieldMetadata = this.eventFieldRepository.create({
-      name,
-      fieldType,
-      isRequired,
-      description,
-      allowedValues,
-      eventMetadataId,
+    properties: Record<string, any>,
+  ): Promise<void> {
+    const existingFields = await this.eventFieldRepository.find({
+      where: { eventMetadataId },
     });
 
-    return this.eventFieldRepository.save(fieldMetadata);
+    for (const [key, value] of Object.entries(properties)) {
+      if (value === null || value === undefined) {
+        continue;
+      }
+
+      const existingField = existingFields.find((field) => field.name === key);
+
+      const fieldType = this.inferFieldType(value);
+
+      if (existingField) {
+        if (existingField.fieldType !== fieldType) {
+          this.logger.log(
+            `Updating field type for ${key} from ${existingField.fieldType} to ${fieldType}`,
+          );
+          existingField.fieldType = fieldType;
+          await this.eventFieldRepository.save(existingField);
+        }
+      } else {
+        this.logger.log(`Creating new field ${key} with type ${fieldType}`);
+        await this.eventFieldRepository.save(
+          this.eventFieldRepository.create({
+            name: key,
+            fieldType,
+            isRequired: false,
+            eventMetadataId,
+            isActive: true,
+          }),
+        );
+      }
+    }
+  }
+
+  private inferFieldType(value: any): FieldType {
+    const type = typeof value;
+
+    if (type === 'string') return FieldType.STRING;
+    if (type === 'number') return FieldType.NUMBER;
+    if (type === 'boolean') return FieldType.BOOLEAN;
+    if (type === 'object') {
+      if (Array.isArray(value)) {
+        // TODO: Consider handling array types differently or checking array item types
+        return FieldType.OBJECT;
+      }
+
+      return FieldType.OBJECT;
+    }
+
+    // Default to string for any other types
+    return FieldType.STRING;
   }
 
   /**
@@ -140,26 +164,27 @@ export class EventMetadataService {
           allowedValues: {} as Record<string, Array<string | number | boolean>>,
         };
 
-        // Process each field
+        // Process active fields only
         for (const field of metadata.fields || []) {
+          if (!field.isActive) {
+            continue;
+          }
+
           if (field.isRequired) {
             schema.required.push(field.name);
           }
 
-          // Map field type
           schema.fieldTypes[field.name] = field.fieldType as
             | 'string'
             | 'number'
             | 'boolean'
             | 'object';
 
-          // Add allowed values if specified
           if (field.allowedValues && field.allowedValues.length > 0) {
             schema.allowedValues[field.name] = field.allowedValues;
           }
         }
 
-        // Register validation rule for this event
         this.externalEventValidator.registerEventRule(
           metadata.name,
           new EventMetadataValidationRule(schema),

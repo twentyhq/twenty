@@ -17,14 +17,9 @@ import {
   ExternalEventExceptionCode,
 } from './external-event.exception';
 
-import { CreateEventFieldMetadataInput } from './dto/inputs/create-event-field-metadata.input';
-import { CreateEventMetadataInput } from './dto/inputs/create-event-metadata.input';
 import { EventFieldMetadataOutput } from './dto/outputs/event-field-metadata.output';
 import { EventMetadataOutput } from './dto/outputs/event-metadata.output';
-import {
-  EventFieldMetadata,
-  FieldType,
-} from './entities/event-field-metadata.entity';
+import { EventFieldMetadata } from './entities/event-field-metadata.entity';
 import { EventMetadata } from './entities/event-metadata.entity';
 import { EventMetadataService } from './services/event-metadata.service';
 
@@ -35,6 +30,10 @@ export class EventMetadataResolver {
     private readonly eventMetadataService: EventMetadataService,
     @InjectRepository(FeatureFlag, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlag>,
+    @InjectRepository(EventFieldMetadata, 'core')
+    private readonly eventFieldRepository: Repository<EventFieldMetadata>,
+    @InjectRepository(EventMetadata, 'core')
+    private readonly eventMetadataRepository: Repository<EventMetadata>,
   ) {}
 
   private async checkFeatureEnabled(workspaceId: string): Promise<void> {
@@ -77,37 +76,119 @@ export class EventMetadataResolver {
 
   @Mutation(() => EventMetadataOutput)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
-  async createEventMetadata(
+  async setEventMetadataActive(
     @AuthWorkspace() workspace: Workspace,
-    @Args('input') input: CreateEventMetadataInput,
+    @Args('eventMetadataId', { type: () => ID }) eventMetadataId: string,
+    @Args('isActive') isActive: boolean,
   ): Promise<EventMetadata> {
     await this.checkFeatureEnabled(workspace.id);
 
-    return this.eventMetadataService.createEventMetadata(
-      workspace.id,
-      input.name,
-      input.description,
-      input.validObjectTypes,
-      input.strictValidation,
-    );
+    const eventMetadata = await this.eventMetadataRepository.findOne({
+      where: { id: eventMetadataId, workspaceId: workspace.id },
+      relations: ['fields'],
+    });
+
+    if (!eventMetadata) {
+      throw new ExternalEventException(
+        'Event metadata not found',
+        ExternalEventExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    eventMetadata.isActive = isActive;
+    const savedMetadata =
+      await this.eventMetadataRepository.save(eventMetadata);
+
+    await this.eventMetadataService.registerValidationRules();
+
+    return savedMetadata;
   }
 
   @Mutation(() => EventFieldMetadataOutput)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
-  async addEventField(
+  async setEventFieldActive(
     @AuthWorkspace() workspace: Workspace,
-    @Args('eventMetadataId', { type: () => ID }) eventMetadataId: string,
-    @Args('input') input: CreateEventFieldMetadataInput,
+    @Args('fieldId', { type: () => ID }) fieldId: string,
+    @Args('isActive') isActive: boolean,
   ): Promise<EventFieldMetadata> {
     await this.checkFeatureEnabled(workspace.id);
 
-    return this.eventMetadataService.addEventField(
-      eventMetadataId,
-      input.name,
-      input.fieldType as FieldType,
-      input.isRequired,
-      input.description,
-      input.allowedValues,
-    );
+    const field = await this.eventFieldRepository.findOne({
+      where: { id: fieldId },
+      relations: ['eventMetadata'],
+    });
+
+    if (!field || field.eventMetadata.workspaceId !== workspace.id) {
+      throw new ExternalEventException(
+        'Field not found or does not belong to this workspace',
+        ExternalEventExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    field.isActive = isActive;
+    const savedField = await this.eventFieldRepository.save(field);
+
+    await this.eventMetadataService.registerValidationRules();
+
+    return savedField;
+  }
+
+  @Mutation(() => EventFieldMetadataOutput)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async setEventFieldRequired(
+    @AuthWorkspace() workspace: Workspace,
+    @Args('fieldId', { type: () => ID }) fieldId: string,
+    @Args('isRequired') isRequired: boolean,
+  ): Promise<EventFieldMetadata> {
+    await this.checkFeatureEnabled(workspace.id);
+
+    const field = await this.eventFieldRepository.findOne({
+      where: { id: fieldId },
+      relations: ['eventMetadata'],
+    });
+
+    if (!field || field.eventMetadata.workspaceId !== workspace.id) {
+      throw new ExternalEventException(
+        'Field not found or does not belong to this workspace',
+        ExternalEventExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    field.isRequired = isRequired;
+    const savedField = await this.eventFieldRepository.save(field);
+
+    await this.eventMetadataService.registerValidationRules();
+
+    return savedField;
+  }
+
+  @Mutation(() => EventMetadataOutput)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async setEventStrictValidation(
+    @AuthWorkspace() workspace: Workspace,
+    @Args('eventMetadataId', { type: () => ID }) eventMetadataId: string,
+    @Args('strictValidation') strictValidation: boolean,
+  ): Promise<EventMetadata> {
+    await this.checkFeatureEnabled(workspace.id);
+
+    const eventMetadata = await this.eventMetadataRepository.findOne({
+      where: { id: eventMetadataId, workspaceId: workspace.id },
+      relations: ['fields'],
+    });
+
+    if (!eventMetadata) {
+      throw new ExternalEventException(
+        'Event metadata not found',
+        ExternalEventExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    eventMetadata.strictValidation = strictValidation;
+    const savedMetadata =
+      await this.eventMetadataRepository.save(eventMetadata);
+
+    await this.eventMetadataService.registerValidationRules();
+
+    return savedMetadata;
   }
 }

@@ -17,6 +17,9 @@ export class EventFieldMetadataOutput {
   @Field()
   isRequired: boolean;
 
+  @Field()
+  isActive: boolean;
+
   @Field(() => [String], { nullable: true })
   allowedValues?: string[];
 

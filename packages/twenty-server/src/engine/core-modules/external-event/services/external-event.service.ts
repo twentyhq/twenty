@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
+import { EventMetadataService } from './event-metadata.service';
+
 /**
  * Interface for external event input, matching the ClickHouse schema
  */
@@ -31,6 +33,7 @@ export class ExternalEventService {
   constructor(
     private readonly clickHouseService: ClickHouseService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly eventMetadataService: EventMetadataService,
   ) {}
 
   /**
@@ -43,14 +46,24 @@ export class ExternalEventService {
     workspaceId: string,
     eventInput: ExternalEventInput,
   ): Promise<{ success: boolean }> {
-    // Skip if ClickHouse is not configured
-    const clickHouseUrl = this.twentyConfigService.get('CLICKHOUSE_URL');
-
-    if (!clickHouseUrl) {
-      return { success: true };
-    }
-
     try {
+      // Auto-discover and create event metadata
+      await this.eventMetadataService.findOrCreateEventMetadata(
+        workspaceId,
+        eventInput.event,
+        eventInput.properties,
+      );
+
+      // Register updated validation rules
+      await this.eventMetadataService.registerValidationRules();
+
+      // Skip if ClickHouse is not configured
+      const clickHouseUrl = this.twentyConfigService.get('CLICKHOUSE_URL');
+
+      if (!clickHouseUrl) {
+        return { success: true };
+      }
+
       // Format the event for ClickHouse
       const timestamp = new Date().toISOString();
 

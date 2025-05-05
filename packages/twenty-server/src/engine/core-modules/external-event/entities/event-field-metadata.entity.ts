@@ -39,6 +39,9 @@ export class EventFieldMetadata {
   @Column({ type: 'boolean', default: false })
   isRequired: boolean;
 
+  @Column({ default: true })
+  isActive: boolean;
+
   @Column('simple-json', { nullable: true })
   allowedValues: any[];
 

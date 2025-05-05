@@ -25,9 +25,6 @@ export class EventMetadataOutput {
   @Field(() => ID)
   workspaceId: string;
 
-  @Field(() => ID)
-  createdById: string;
-
   @Field(() => Date)
   createdAt: Date;
 
