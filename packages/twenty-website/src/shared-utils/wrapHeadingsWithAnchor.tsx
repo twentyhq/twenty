@@ -13,16 +13,16 @@ export const wrapHeadingsWithAnchor = (children: ReactNode): ReactNode => {
     return element.props.children !== undefined;
   };
 
-  return Children.map(children, (child) => {
+  return Children.map(children, (child, index) => {
     if (
       isValidElement(child) &&
       typeof child.type === 'string' &&
       ['h1', 'h2', 'h3', 'h4'].includes(child.type)
     ) {
-      const id = child.props.children
+      const id = `${child.props.children
         .toString()
         .replace(/\s+/g, '-')
-        .toLowerCase();
+        .toLowerCase()}-${index}`;
       return cloneElement(child as ReactElement<any>, {
         id,
         className: 'anchor',
