@@ -97,6 +97,10 @@ export const useRecordGroupActions = ({
     (id) => id === recordGroupDefinition.id,
   );
 
+  if (currentIndex === -1) {
+    return [];
+  }
+
   const recordGroupActions: RecordGroupAction[] = [
     {
       id: 'edit',
