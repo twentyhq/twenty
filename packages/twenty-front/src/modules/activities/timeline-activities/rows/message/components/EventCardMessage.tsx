@@ -2,10 +2,12 @@ import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
 
 import { EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
+import { EventCardMessageBodyNotShared } from '@/activities/timeline-activities/rows/message/components/EventCardMessageBodyNotShared';
 import { EventCardMessageNotShared } from '@/activities/timeline-activities/rows/message/components/EventCardMessageNotShared';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
@@ -112,12 +114,21 @@ export const EventCardMessage = ({
     <StyledEventCardMessageContainer>
       <StyledEmailContent>
         <StyledEmailTop>
-          <StyledEmailTitle>{message.subject}</StyledEmailTitle>
+          <StyledEmailTitle>
+            {message.subject !==
+            FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
+              ? message.subject
+              : 'Subject not shared'}
+          </StyledEmailTitle>
           <StyledEmailParticipants>
             <OverflowingTextWithTooltip text={messageParticipantHandles} />
           </StyledEmailParticipants>
         </StyledEmailTop>
-        <StyledEmailBody>{message.text}</StyledEmailBody>
+        {message.text !== FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED ? (
+          <StyledEmailBody>{message.text}</StyledEmailBody>
+        ) : (
+          <EventCardMessageBodyNotShared sharedByFullName={authorFullName} />
+        )}
       </StyledEmailContent>
     </StyledEventCardMessageContainer>
   );
