@@ -10,7 +10,6 @@ import {
   WorkspaceHealthOptions,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-options.interface';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
@@ -31,7 +30,6 @@ export class WorkspaceHealthService {
     @InjectDataSource('metadata')
     private readonly metadataDataSource: DataSource,
     private readonly dataSourceService: DataSourceService,
-    private readonly typeORMService: TypeORMService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly databaseStructureService: DatabaseStructureService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -61,9 +59,6 @@ export class WorkspaceHealthService {
         `DataSource for workspace id ${workspaceId} not found`,
       );
     }
-
-    // Try to connect to the data source
-    await this.typeORMService.getMainDataSource();
 
     const objectMetadataCollection =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);

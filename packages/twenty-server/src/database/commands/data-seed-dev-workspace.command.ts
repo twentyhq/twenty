@@ -117,8 +117,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         workspaceId,
       );
 
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+    const workspaceDataSource = this.typeORMService.getMainDataSource();
 
     if (!workspaceDataSource) {
       throw new Error('Could not connect to workspace data source');
@@ -162,7 +161,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
       this.logger.error(error);
     }
 
-    await this.typeORMService.disconnectFromDataSource(dataSourceMetadata.id);
+    await this.typeORMService.disconnectFromMainDataSource();
   }
 
   async seedStandardObjectRecords(

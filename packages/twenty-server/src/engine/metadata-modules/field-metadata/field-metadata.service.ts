@@ -61,6 +61,7 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
@@ -912,84 +913,65 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     const workspaceDataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace(workspaceId);
 
-    const workspaceQueryRunner = workspaceDataSource?.createQueryRunner();
-
-    if (!workspaceQueryRunner) {
-      throw new FieldMetadataException(
-        'Could not create workspace query runner',
-        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    const workspaceEntityManager =
-      workspaceDataSource?.createEntityManager(workspaceQueryRunner);
-
-    await workspaceQueryRunner.connect();
-    await workspaceQueryRunner.startTransaction();
-
-    try {
-      for (const createdFieldMetadata of createdFieldMetadatas) {
+    await workspaceDataSource.transaction(
+      async (workspaceEntityManager: WorkspaceEntityManager) => {
         const viewsRepository = workspaceEntityManager.getRepository('view', {
           shouldBypassPermissionChecks: true,
         });
 
-        const views = await viewsRepository.find({
-          where: {
-            objectMetadataId: createdFieldMetadata.objectMetadataId,
+        const viewFieldsRepository = workspaceEntityManager.getRepository(
+          'viewField',
+          {
+            shouldBypassPermissionChecks: true,
           },
-        });
+        );
 
-        if (!isEmpty(views)) {
-          const viewFieldsRepository = workspaceEntityManager.getRepository(
-            'viewField',
-            {
-              shouldBypassPermissionChecks: true,
-            },
-          );
-
-          const view = views[0];
-          const existingViewFields = await viewFieldsRepository.find({
+        for (const createdFieldMetadata of createdFieldMetadatas) {
+          const views = await viewsRepository.find({
             where: {
-              viewId: view.id,
+              objectMetadataId: createdFieldMetadata.objectMetadataId,
             },
           });
 
-          const isVisible =
-            existingViewFields.length < settings.maxVisibleViewFields;
-
-          const createdFieldIsAlreadyInView = existingViewFields.some(
-            (existingViewField) =>
-              existingViewField.fieldMetadataId === createdFieldMetadata.id,
-          );
-
-          if (!createdFieldIsAlreadyInView) {
-            const lastPosition = existingViewFields
-              .map((viewField) => viewField.position)
-              .reduce((acc, position) => {
-                if (position > acc) {
-                  return position;
-                }
-
-                return acc;
-              }, -1);
-
-            await viewFieldsRepository.insert({
-              fieldMetadataId: createdFieldMetadata.id,
-              position: lastPosition + 1,
-              isVisible,
-              size: 180,
-              viewId: view.id,
+          if (!isEmpty(views)) {
+            const view = views[0];
+            const existingViewFields = await viewFieldsRepository.find({
+              where: {
+                viewId: view.id,
+              },
             });
+
+            const isVisible =
+              existingViewFields.length < settings.maxVisibleViewFields;
+
+            const createdFieldIsAlreadyInView = existingViewFields.some(
+              (existingViewField) =>
+                existingViewField.fieldMetadataId === createdFieldMetadata.id,
+            );
+
+            if (!createdFieldIsAlreadyInView) {
+              const lastPosition = existingViewFields
+                .map((viewField) => viewField.position)
+                .reduce((acc, position) => {
+                  if (position > acc) {
+                    return position;
+                  }
+
+                  return acc;
+                }, -1);
+
+              await viewFieldsRepository.insert({
+                fieldMetadataId: createdFieldMetadata.id,
+                position: lastPosition + 1,
+                isVisible,
+                size: 180,
+                viewId: view.id,
+              });
+            }
           }
         }
-      }
-      await workspaceQueryRunner.commitTransaction();
-    } catch (error) {
-      await workspaceQueryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await workspaceQueryRunner.release();
-    }
+      },
+    );
   }
 
   async getFieldMetadataItemsByBatch(

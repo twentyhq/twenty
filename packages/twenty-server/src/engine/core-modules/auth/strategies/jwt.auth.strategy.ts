@@ -33,7 +33,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
   ) {
     const jwtFromRequestFunction = jwtWrapperService.extractJwtFromRequest();
-    const secretOrKeyProviderFunction = async (request, rawJwtToken, done) => {
+    const secretOrKeyProviderFunction = async (_request, rawJwtToken, done) => {
       try {
         const decodedToken = jwtWrapperService.decode(
           rawJwtToken,
@@ -80,13 +80,11 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         },
       );
 
-    const res = await apiKeyRepository.findOne({
+    apiKey = await apiKeyRepository.findOne({
       where: {
         id: payload.jti,
       },
     });
-
-    apiKey = res?.[0];
 
     if (!apiKey || apiKey.revokedAt) {
       throw new AuthException(

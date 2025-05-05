@@ -25,7 +25,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
   private mainDataSource: DataSource;
-  private dataSources: Map<string, DataSource> = new Map();
 
   constructor(twentyConfigService: TwentyConfigService) {
     this.mainDataSource = new DataSource({
@@ -67,20 +66,12 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  public getMainDataSource(): DataSource {
+  public getMainDataSource() {
     return this.mainDataSource;
   }
 
-  public async disconnectFromDataSource(dataSourceId: string) {
-    if (!this.dataSources.has(dataSourceId)) {
-      return;
-    }
-
-    const dataSource = this.dataSources.get(dataSourceId);
-
-    await dataSource?.destroy();
-
-    this.dataSources.delete(dataSourceId);
+  public async disconnectFromMainDataSource() {
+    await this.mainDataSource.destroy();
   }
 
   public async createSchema(schemaName: string): Promise<string> {
@@ -108,11 +99,6 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleDestroy() {
     // Destroy main data source "default" schema
-    await this.mainDataSource.destroy();
-
-    // Destroy all workspace data sources
-    for (const [, dataSource] of this.dataSources) {
-      await dataSource.destroy();
-    }
+    await this.disconnectFromMainDataSource();
   }
 }
