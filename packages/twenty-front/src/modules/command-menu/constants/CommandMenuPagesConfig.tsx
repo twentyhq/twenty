@@ -32,4 +32,5 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   [CommandMenuPages.WorkflowStepView, <CommandMenuWorkflowViewStep />],
   [CommandMenuPages.WorkflowRunStepView, <CommandMenuWorkflowRunViewStep />],
   [CommandMenuPages.SearchRecords, <CommandMenuSearchRecordsPage />],
+  [CommandMenuPages.Traceable, <>WIP: Custom Traceable command menu page</>],
 ]);
