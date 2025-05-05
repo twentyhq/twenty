@@ -1,10 +1,10 @@
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { assertWorkflowWithCurrentVersionIsDefined } from '@/workflow/utils/assertWorkflowWithCurrentVersionIsDefined';
 import { WorkflowDiagramStepNodeEditableContent } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeEditableContent';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
-import { useRecoilValue } from 'recoil';
 
 export const WorkflowDiagramStepNodeEditable = ({
   id,
@@ -15,9 +15,13 @@ export const WorkflowDiagramStepNodeEditable = ({
   data: WorkflowDiagramStepNodeData;
   selected?: boolean;
 }) => {
-  const workflowId = useRecoilValue(workflowIdState);
+  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
 
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
+  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
+    workflowVisualizerWorkflowId,
+  );
   assertWorkflowWithCurrentVersionIsDefined(workflowWithCurrentVersion);
 
   const { deleteStep } = useDeleteStep({
