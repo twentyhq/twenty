@@ -14,18 +14,19 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useState } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
-
 import { isNonEmptyString } from '@sniptt/guards';
+import { useEffect, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronDown,
+  IconGripVertical,
   IconPlus,
   IconTrash,
   useIcons,
 } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
 export type WorkflowEditActionFormBuilderProps = {
@@ -42,10 +43,36 @@ export type WorkflowEditActionFormBuilderProps = {
 
 type FormData = WorkflowFormActionField[];
 
-const StyledRowContainer = styled.div`
+const StyledWorkflowStepBody = styled(WorkflowStepBody)`
+  padding-inline: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledFormFieldContainer = styled.div`
+  align-items: flex-end;
   column-gap: ${({ theme }) => theme.spacing(1)};
   display: grid;
-  grid-template-columns: 1fr 16px;
+  grid-template-areas:
+    'grip input delete'
+    '. settings .';
+  grid-template-columns: 24px 1fr 24px;
+`;
+
+const StyledLightGripIconButton = styled(LightIconButton)`
+  grid-area: grip;
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledLightTrashIconButton = styled(LightIconButton)`
+  grid-area: delete;
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledLabelAndFieldContainer = styled.div`
+  grid-area: input;
+`;
+
+const StyledOpenedSettingsContainer = styled.div`
+  grid-area: settings;
 `;
 
 const StyledFieldContainer = styled.div`
@@ -71,21 +98,6 @@ const StyledPlaceholder = styled.div`
   width: 100%;
 `;
 
-const StyledIconButtonContainer = styled.div`
-  align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  justify-content: center;
-  width: 24px;
-
-  cursor: pointer;
-
-  &:hover,
-  &[data-open='true'] {
-    background-color: ${({ theme }) => theme.background.transparent.lighter};
-  }
-`;
-
 const StyledAddFieldButtonContainer = styled.div`
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
@@ -98,10 +110,6 @@ const StyledAddFieldButtonContentContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(0.5)};
   justify-content: center;
   width: 100%;
-`;
-
-const StyledLabelContainer = styled.div`
-  min-height: 17px;
 `;
 
 export const WorkflowEditActionFormBuilder = ({
@@ -188,17 +196,18 @@ export const WorkflowEditActionFormBuilder = ({
         headerType={headerType}
         disabled={actionOptions.readonly}
       />
-      <WorkflowStepBody>
+      <StyledWorkflowStepBody>
         {formData.map((field) => (
-          <FormFieldInputContainer key={field.id}>
-            <StyledLabelContainer>
-              <InputLabel>{field.label || ''}</InputLabel>
-            </StyledLabelContainer>
+          <StyledFormFieldContainer
+            key={field.id}
+            onMouseEnter={() => setHoveredField(field.id)}
+            onMouseLeave={() => setHoveredField(null)}
+          >
+            <StyledLightGripIconButton Icon={IconGripVertical} />
 
-            <StyledRowContainer
-              onMouseEnter={() => setHoveredField(field.id)}
-              onMouseLeave={() => setHoveredField(null)}
-            >
+            <StyledLabelAndFieldContainer>
+              <InputLabel>{field.label || ''}</InputLabel>
+
               <FormFieldInputRowContainer>
                 <FormFieldInputInnerContainer
                   hasRightElement={false}
@@ -222,31 +231,32 @@ export const WorkflowEditActionFormBuilder = ({
                   </StyledFieldContainer>
                 </FormFieldInputInnerContainer>
               </FormFieldInputRowContainer>
-              {!actionOptions.readonly &&
-                (isFieldSelected(field.id) || isFieldHovered(field.id)) && (
-                  <StyledIconButtonContainer>
-                    <IconTrash
-                      size={theme.icon.size.md}
-                      color={theme.font.color.secondary}
-                      onClick={() => {
-                        const updatedFormData = formData.filter(
-                          (currentField) => currentField.id !== field.id,
-                        );
+            </StyledLabelAndFieldContainer>
 
-                        setFormData(updatedFormData);
+            {!actionOptions.readonly &&
+              (isFieldSelected(field.id) || isFieldHovered(field.id)) && (
+                <StyledLightTrashIconButton
+                  Icon={IconTrash}
+                  onClick={() => {
+                    const updatedFormData = formData.filter(
+                      (currentField) => currentField.id !== field.id,
+                    );
 
-                        actionOptions.onActionUpdate({
-                          ...action,
-                          settings: {
-                            ...action.settings,
-                            input: updatedFormData,
-                          },
-                        });
-                      }}
-                    />
-                  </StyledIconButtonContainer>
-                )}
-              {isFieldSelected(field.id) && (
+                    setFormData(updatedFormData);
+
+                    actionOptions.onActionUpdate({
+                      ...action,
+                      settings: {
+                        ...action.settings,
+                        input: updatedFormData,
+                      },
+                    });
+                  }}
+                />
+              )}
+
+            {isFieldSelected(field.id) && (
+              <StyledOpenedSettingsContainer>
                 <WorkflowEditActionFormFieldSettings
                   field={field}
                   onChange={onFieldUpdate}
@@ -254,55 +264,54 @@ export const WorkflowEditActionFormBuilder = ({
                     setSelectedField(null);
                   }}
                 />
-              )}
-            </StyledRowContainer>
-          </FormFieldInputContainer>
+              </StyledOpenedSettingsContainer>
+            )}
+          </StyledFormFieldContainer>
         ))}
+
         {!actionOptions.readonly && (
           <StyledAddFieldButtonContainer>
-            <StyledRowContainer>
-              <FormFieldInputContainer>
-                <FormFieldInputRowContainer>
-                  <FormFieldInputInnerContainer
-                    hasRightElement={false}
-                    onClick={() => {
-                      const { label, name } = getDefaultFormFieldSettings(
-                        FieldMetadataType.TEXT,
-                      );
+            <FormFieldInputContainer>
+              <FormFieldInputRowContainer>
+                <FormFieldInputInnerContainer
+                  hasRightElement={false}
+                  onClick={() => {
+                    const { label, name } = getDefaultFormFieldSettings(
+                      FieldMetadataType.TEXT,
+                    );
 
-                      const newField: WorkflowFormActionField = {
-                        id: v4(),
-                        name,
-                        type: FieldMetadataType.TEXT,
-                        label,
-                      };
+                    const newField: WorkflowFormActionField = {
+                      id: v4(),
+                      name,
+                      type: FieldMetadataType.TEXT,
+                      label,
+                    };
 
-                      setFormData([...formData, newField]);
+                    setFormData([...formData, newField]);
 
-                      actionOptions.onActionUpdate({
-                        ...action,
-                        settings: {
-                          ...action.settings,
-                          input: [...action.settings.input, newField],
-                        },
-                      });
+                    actionOptions.onActionUpdate({
+                      ...action,
+                      settings: {
+                        ...action.settings,
+                        input: [...action.settings.input, newField],
+                      },
+                    });
 
-                      setSelectedField(newField.id);
-                    }}
-                  >
-                    <StyledFieldContainer>
-                      <StyledAddFieldButtonContentContainer>
-                        <IconPlus size={theme.icon.size.sm} />
-                        {t`Add Field`}
-                      </StyledAddFieldButtonContentContainer>
-                    </StyledFieldContainer>
-                  </FormFieldInputInnerContainer>
-                </FormFieldInputRowContainer>
-              </FormFieldInputContainer>
-            </StyledRowContainer>
+                    setSelectedField(newField.id);
+                  }}
+                >
+                  <StyledFieldContainer>
+                    <StyledAddFieldButtonContentContainer>
+                      <IconPlus size={theme.icon.size.sm} />
+                      {t`Add Field`}
+                    </StyledAddFieldButtonContentContainer>
+                  </StyledFieldContainer>
+                </FormFieldInputInnerContainer>
+              </FormFieldInputRowContainer>
+            </FormFieldInputContainer>
           </StyledAddFieldButtonContainer>
         )}
-      </WorkflowStepBody>
+      </StyledWorkflowStepBody>
     </>
   );
 };
