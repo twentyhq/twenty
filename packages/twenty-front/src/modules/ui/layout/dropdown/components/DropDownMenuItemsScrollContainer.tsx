@@ -13,6 +13,7 @@ const StyledPaddingContainer = styled.div`
 `;
 
 const StyledPaddingBlockContainer = styled.div`
+  overflow: auto;
   padding-block: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -29,13 +30,13 @@ export const DropDownMenuItemsScrollContainer = ({
 
   if (scrollable || hasMaxHeight) {
     return (
-      // <StyledPaddingBlockContainer> Breaks scroll on reduced height
-      <StyledScrollWrapper
-        componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
-      >
-        {children}
-      </StyledScrollWrapper>
-      // </StyledPaddingBlockContainer>
+      <StyledPaddingBlockContainer>
+        <StyledScrollWrapper
+          componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
+        >
+          {children}
+        </StyledScrollWrapper>
+      </StyledPaddingBlockContainer>
     );
   }
 
