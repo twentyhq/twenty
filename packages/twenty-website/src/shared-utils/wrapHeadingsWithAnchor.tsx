@@ -12,17 +12,23 @@ export const wrapHeadingsWithAnchor = (children: ReactNode): ReactNode => {
   ): element is ReactElement<{ children: ReactNode }> => {
     return element.props.children !== undefined;
   };
+  const idCounts = new Map<string, number>();
 
-  return Children.map(children, (child, index) => {
+  return Children.map(children, (child) => {
     if (
       isValidElement(child) &&
       typeof child.type === 'string' &&
       ['h1', 'h2', 'h3', 'h4'].includes(child.type)
     ) {
-      const id = `${child.props.children
+      const baseId = child.props.children
         .toString()
         .replace(/\s+/g, '-')
-        .toLowerCase()}-${index}`;
+        .toLowerCase();
+      const idCount = idCounts.get(baseId) ?? 0;
+
+      const id = idCount === 0 ? baseId : `${baseId}-${idCount + 1}`;
+      idCounts.set(baseId, idCount + 1);
+
       return cloneElement(child as ReactElement<any>, {
         id,
         className: 'anchor',
