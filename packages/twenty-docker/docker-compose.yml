@@ -134,6 +134,7 @@ services:
   redis:
     image: redis
     restart: always
+    command: ["--maxmemory-policy", "noeviction"]
 
 volumes:
   docker-data:

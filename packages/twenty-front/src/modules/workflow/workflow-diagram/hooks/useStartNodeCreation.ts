@@ -1,18 +1,21 @@
 import { useCallback } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
-import { workflowCreateStepFromParentStepIdState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { workflowCreateStepFromParentStepIdComponentState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useStartNodeCreation = () => {
-  const setWorkflowCreateStepFromParentStepId = useSetRecoilState(
-    workflowCreateStepFromParentStepIdState,
+  const setWorkflowCreateStepFromParentStepId = useSetRecoilComponentStateV2(
+    workflowCreateStepFromParentStepIdComponentState,
   );
   const { openStepSelectInCommandMenu } = useWorkflowCommandMenu();
 
-  const workflowId = useRecoilValue(workflowIdState);
+  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
 
   /**
    * This function is used in a context where dependencies shouldn't change much.
@@ -22,14 +25,14 @@ export const useStartNodeCreation = () => {
     (parentNodeId: string) => {
       setWorkflowCreateStepFromParentStepId(parentNodeId);
 
-      if (isDefined(workflowId)) {
-        openStepSelectInCommandMenu(workflowId);
+      if (isDefined(workflowVisualizerWorkflowId)) {
+        openStepSelectInCommandMenu(workflowVisualizerWorkflowId);
         return;
       }
     },
     [
       setWorkflowCreateStepFromParentStepId,
-      workflowId,
+      workflowVisualizerWorkflowId,
       openStepSelectInCommandMenu,
     ],
   );

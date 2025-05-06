@@ -1,4 +1,3 @@
-import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 
@@ -8,7 +7,8 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
+import { FILTER_FIELD_LIST_ID } from '@/object-record/object-filter-dropdown/constants/FilterFieldListId';
+import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
@@ -50,7 +50,7 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     objectFilterDropdownFilterIsSelectedComponentState,
   );
 
-  const { resetSelectedItem } = useSelectableList(OBJECT_FILTER_DROPDOWN_ID);
+  const { resetSelectedItem } = useSelectableList(FILTER_FIELD_LIST_ID);
 
   const isSelectedItem = useRecoilComponentFamilyValueV2(
     isSelectedItemIdComponentFamilySelector,
@@ -67,9 +67,10 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     currentRecordFiltersComponentState,
   );
 
-  const setSelectedFilter = useSetRecoilComponentStateV2(
-    selectedFilterComponentState,
-  );
+  const setObjectFilterDropdownCurrentRecordFilter =
+    useSetRecoilComponentStateV2(
+      objectFilterDropdownCurrentRecordFilterComponentState,
+    );
 
   const handleSelectFilter = (fieldMetadataItem: FieldMetadataItem) => {
     setFieldMetadataItemIdUsedInDropdown(fieldMetadataItem.id);
@@ -97,9 +98,9 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     );
 
     if (filterIsAlreadyInCurrentRecordFilters) {
-      setSelectedFilter({
-        ...duplicateFilterInCurrentRecordFilters,
-      });
+      setObjectFilterDropdownCurrentRecordFilter(
+        duplicateFilterInCurrentRecordFilters,
+      );
 
       setSelectedOperandInDropdown(
         duplicateFilterInCurrentRecordFilters.operand,

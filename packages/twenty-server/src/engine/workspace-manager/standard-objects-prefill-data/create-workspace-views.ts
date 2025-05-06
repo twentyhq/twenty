@@ -1,10 +1,10 @@
-import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 
 export const createWorkspaceViews = async (
-  entityManager: EntityManager,
+  entityManager: WorkspaceEntityManager,
   schemaName: string,
   viewDefinitions: ViewDefinition[],
 ) => {
@@ -14,7 +14,9 @@ export const createWorkspaceViews = async (
   }));
 
   await entityManager
-    .createQueryBuilder()
+    .createQueryBuilder(undefined, undefined, undefined, {
+      shouldBypassPermissionChecks: true,
+    })
     .insert()
     .into(`${schemaName}.view`, [
       'id',
@@ -64,7 +66,9 @@ export const createWorkspaceViews = async (
   for (const viewDefinition of viewDefinitionsWithId) {
     if (viewDefinition.fields && viewDefinition.fields.length > 0) {
       await entityManager
-        .createQueryBuilder()
+        .createQueryBuilder(undefined, undefined, undefined, {
+          shouldBypassPermissionChecks: true,
+        })
         .insert()
         .into(`${schemaName}.viewField`, [
           'fieldMetadataId',
@@ -89,7 +93,9 @@ export const createWorkspaceViews = async (
 
     if (viewDefinition.filters && viewDefinition.filters.length > 0) {
       await entityManager
-        .createQueryBuilder()
+        .createQueryBuilder(undefined, undefined, undefined, {
+          shouldBypassPermissionChecks: true,
+        })
         .insert()
         .into(`${schemaName}.viewFilter`, [
           'fieldMetadataId',
@@ -116,7 +122,9 @@ export const createWorkspaceViews = async (
       viewDefinition.groups.length > 0
     ) {
       await entityManager
-        .createQueryBuilder()
+        .createQueryBuilder(undefined, undefined, undefined, {
+          shouldBypassPermissionChecks: true,
+        })
         .insert()
         .into(`${schemaName}.viewGroup`, [
           'fieldMetadataId',

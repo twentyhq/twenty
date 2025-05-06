@@ -32,6 +32,7 @@ import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { ViewType } from '@/views/types/ViewType';
+import { getIndexNeighboursElementsFromArray } from '~/utils/array/getIndexNeighboursElementsFromArray';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -173,14 +174,15 @@ export const RecordBoard = () => {
               )
             : destinationRecordByGroupIds;
 
-        const recordBeforeId =
-          otherRecordIdsInDestinationColumn[destinationIndexInColumn - 1];
+        const { before: recordBeforeId, after: recordAfterId } =
+          getIndexNeighboursElementsFromArray({
+            index: destinationIndexInColumn,
+            array: otherRecordIdsInDestinationColumn,
+          });
         const recordBefore = recordBeforeId
           ? getSnapshotValue(snapshot, recordStoreFamilyState(recordBeforeId))
           : null;
 
-        const recordAfterId =
-          otherRecordIdsInDestinationColumn[destinationIndexInColumn];
         const recordAfter = recordAfterId
           ? getSnapshotValue(snapshot, recordStoreFamilyState(recordAfterId))
           : null;

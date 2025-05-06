@@ -4,11 +4,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, IsNull, Repository } from 'typeorm';
 
 import {
+  decryptText,
+  encryptText,
+} from 'src/engine/core-modules/auth/auth.util';
+import {
   KeyValuePair,
   KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
+import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
+import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
+import { TypedReflect } from 'src/utils/typed-reflect';
 
 import { ConfigStorageInterface } from './interfaces/config-storage.interface';
 
@@ -20,6 +27,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
     @InjectRepository(KeyValuePair, 'core')
     private readonly keyValuePairRepository: Repository<KeyValuePair>,
     private readonly configValueConverter: ConfigValueConverterService,
+    private readonly environmentConfigDriver: EnvironmentConfigDriver,
   ) {}
 
   private getConfigVariableWhereClause(
@@ -31,6 +39,67 @@ export class ConfigStorageService implements ConfigStorageInterface {
       userId: IsNull(),
       workspaceId: IsNull(),
     };
+  }
+
+  private getAppSecret(): string {
+    return this.environmentConfigDriver.get('APP_SECRET');
+  }
+
+  private getConfigMetadata<T extends keyof ConfigVariables>(key: T) {
+    return TypedReflect.getMetadata('config-variables', ConfigVariables)?.[
+      key as string
+    ];
+  }
+
+  private logAndRethrow(message: string, error: any): never {
+    this.logger.error(message, error);
+    throw error;
+  }
+
+  private async convertAndSecureValue<T extends keyof ConfigVariables>(
+    value: any,
+    key: T,
+    isDecrypt = false,
+  ): Promise<any> {
+    try {
+      const convertedValue = isDecrypt
+        ? this.configValueConverter.convertDbValueToAppValue(value, key)
+        : this.configValueConverter.convertAppValueToDbValue(value);
+
+      const metadata = this.getConfigMetadata(key);
+      const isSensitiveString =
+        metadata?.isSensitive &&
+        metadata.type === ConfigVariableType.STRING &&
+        typeof convertedValue === 'string';
+
+      if (!isSensitiveString) {
+        return convertedValue;
+      }
+
+      const appSecret = this.getAppSecret();
+
+      try {
+        return isDecrypt
+          ? decryptText(convertedValue, appSecret)
+          : encryptText(convertedValue, appSecret);
+      } catch (error) {
+        this.logger.error(
+          `Failed to ${isDecrypt ? 'decrypt' : 'encrypt'} value for key ${
+            key as string
+          }`,
+          error,
+        );
+
+        return convertedValue;
+      }
+    } catch (error) {
+      this.logAndRethrow(
+        `Failed to convert value ${
+          isDecrypt ? 'from DB' : 'to DB'
+        } for key ${key as string}`,
+        error,
+      );
+    }
   }
 
   async get<T extends keyof ConfigVariables>(
@@ -45,25 +114,13 @@ export class ConfigStorageService implements ConfigStorageInterface {
         return undefined;
       }
 
-      try {
-        this.logger.debug(
-          `Fetching config for ${key as string} in database: ${result?.value}`,
-        );
+      this.logger.debug(
+        `Fetching config for ${key as string} in database: ${result?.value}`,
+      );
 
-        return this.configValueConverter.convertDbValueToAppValue(
-          result.value,
-          key,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to convert value to app type for key ${key as string}`,
-          error,
-        );
-        throw error;
-      }
+      return await this.convertAndSecureValue(result.value, key, true);
     } catch (error) {
-      this.logger.error(`Failed to get config for ${key as string}`, error);
-      throw error;
+      this.logAndRethrow(`Failed to get config for ${key as string}`, error);
     }
   }
 
@@ -72,18 +129,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
     value: ConfigVariables[T],
   ): Promise<void> {
     try {
-      let processedValue;
-
-      try {
-        processedValue =
-          this.configValueConverter.convertAppValueToDbValue(value);
-      } catch (error) {
-        this.logger.error(
-          `Failed to convert value to storage type for key ${key as string}`,
-          error,
-        );
-        throw error;
-      }
+      const dbValue = await this.convertAndSecureValue(value, key, false);
 
       const existingRecord = await this.keyValuePairRepository.findOne({
         where: this.getConfigVariableWhereClause(key as string),
@@ -92,20 +138,19 @@ export class ConfigStorageService implements ConfigStorageInterface {
       if (existingRecord) {
         await this.keyValuePairRepository.update(
           { id: existingRecord.id },
-          { value: processedValue },
+          { value: dbValue },
         );
       } else {
         await this.keyValuePairRepository.insert({
           key: key as string,
-          value: processedValue,
+          value: dbValue,
           userId: null,
           workspaceId: null,
           type: KeyValuePairType.CONFIG_VARIABLE,
         });
       }
     } catch (error) {
-      this.logger.error(`Failed to set config for ${key as string}`, error);
-      throw error;
+      this.logAndRethrow(`Failed to set config for ${key as string}`, error);
     }
   }
 
@@ -115,8 +160,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
         this.getConfigVariableWhereClause(key as string),
       );
     } catch (error) {
-      this.logger.error(`Failed to delete config for ${key as string}`, error);
-      throw error;
+      this.logAndRethrow(`Failed to delete config for ${key as string}`, error);
     }
   }
 
@@ -138,9 +182,10 @@ export class ConfigStorageService implements ConfigStorageInterface {
           const key = configVar.key as keyof ConfigVariables;
 
           try {
-            const value = this.configValueConverter.convertDbValueToAppValue(
+            const value = await this.convertAndSecureValue(
               configVar.value,
               key,
+              true,
             );
 
             if (value !== undefined) {
@@ -148,7 +193,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
             }
           } catch (error) {
             this.logger.error(
-              `Failed to convert value to app type for key ${key as string}`,
+              `Failed to process config value for key ${key as string}`,
               error,
             );
             continue;
@@ -158,8 +203,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
 
       return result;
     } catch (error) {
-      this.logger.error('Failed to load all config variables', error);
-      throw error;
+      this.logAndRethrow('Failed to load all config variables', error);
     }
   }
 }
