@@ -84,6 +84,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       `- fromWorkspaceVersion: ${previousVersion}`,
       `- ${this.commands.beforeSyncMetadata.length + this.commands.afterSyncMetadata.length} commands`,
     ];
+
     this.logger.log(chalk.blue(message.join('\n   ')));
   }
 
