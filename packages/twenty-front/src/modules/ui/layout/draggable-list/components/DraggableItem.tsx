@@ -1,12 +1,16 @@
 import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
+import { isFunction } from '@sniptt/guards';
 
 type DraggableItemProps = {
   draggableId: string;
   isDragDisabled?: boolean;
   index: number;
-  itemComponent: JSX.Element;
+  itemComponent:
+    | JSX.Element
+    | ((props: { isDragging: boolean }) => JSX.Element);
   isInsideScrollableContainer?: boolean;
+  draggableComponentStyles?: React.CSSProperties;
 };
 
 export const DraggableItem = ({
@@ -15,6 +19,7 @@ export const DraggableItem = ({
   index,
   itemComponent,
   isInsideScrollableContainer,
+  draggableComponentStyles,
 }: DraggableItemProps) => {
   const theme = useTheme();
   return (
@@ -26,7 +31,8 @@ export const DraggableItem = ({
     >
       {(draggableProvided, draggableSnapshot) => {
         const draggableStyle = draggableProvided.draggableProps.style;
-        const isDragged = draggableSnapshot.isDragging;
+        const isDragging = draggableSnapshot.isDragging;
+
         return (
           <div
             ref={draggableProvided.innerRef}
@@ -35,6 +41,7 @@ export const DraggableItem = ({
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided.dragHandleProps}
             style={{
+              ...draggableComponentStyles,
               ...draggableStyle,
               left: 'auto',
               ...(isInsideScrollableContainer ? {} : { top: 'auto' }),
@@ -42,12 +49,16 @@ export const DraggableItem = ({
                 /\(-?\d+px,/,
                 '(0,',
               ),
-              background: isDragged
+              background: isDragging
                 ? theme.background.transparent.light
                 : 'none',
             }}
           >
-            {itemComponent}
+            {isFunction(itemComponent)
+              ? itemComponent({
+                  isDragging,
+                })
+              : itemComponent}
           </div>
         );
       }}

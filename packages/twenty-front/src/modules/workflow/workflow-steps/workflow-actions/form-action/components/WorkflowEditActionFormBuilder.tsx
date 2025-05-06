@@ -2,6 +2,8 @@ import { FormFieldInputContainer } from '@/object-record/record-field/form-types
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
+import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
@@ -13,6 +15,7 @@ import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-ac
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
@@ -44,6 +47,7 @@ export type WorkflowEditActionFormBuilderProps = {
 type FormData = WorkflowFormActionField[];
 
 const StyledWorkflowStepBody = styled(WorkflowStepBody)`
+  display: block;
   padding-inline: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -55,6 +59,7 @@ const StyledFormFieldContainer = styled.div`
     'grip input delete'
     '. settings .';
   grid-template-columns: 24px 1fr 24px;
+  /* margin-bottom: ${({ theme }) => theme.spacing(4)}; */
 `;
 
 const StyledLightGripIconButton = styled(LightIconButton)`
@@ -178,6 +183,10 @@ export const WorkflowEditActionFormBuilder = ({
     };
   }, [saveAction]);
 
+  const onDragEnd: OnDragEndResponder = (...args) => {
+    console.log('onDragEnd', args);
+  };
+
   return (
     <>
       <WorkflowStepHeader
@@ -198,80 +207,104 @@ export const WorkflowEditActionFormBuilder = ({
         disabled={actionOptions.readonly}
       />
       <StyledWorkflowStepBody>
-        {formData.map((field) => (
-          <StyledFormFieldContainer
-            key={field.id}
-            onMouseEnter={() => setHoveredField(field.id)}
-            onMouseLeave={() => setHoveredField(null)}
-          >
-            {!actionOptions.readonly &&
-              (isFieldSelected(field.id) || isFieldHovered(field.id)) && (
-                <StyledLightGripIconButton Icon={IconGripVertical} />
-              )}
-
-            <StyledLabelAndFieldContainer>
-              <InputLabel>{field.label || ''}</InputLabel>
-
-              <FormFieldInputRowContainer>
-                <FormFieldInputInnerContainer
-                  hasRightElement={false}
-                  onClick={() => {
-                    handleFieldClick(field.id);
+        <DraggableList
+          onDragEnd={onDragEnd}
+          draggableItems={
+            <>
+              {formData.map((field, index) => (
+                <DraggableItem
+                  key={field.id}
+                  draggableId={field.id}
+                  index={index}
+                  isInsideScrollableContainer
+                  draggableComponentStyles={{
+                    marginBottom: theme.spacing(4),
                   }}
-                >
-                  <StyledFieldContainer>
-                    <StyledPlaceholder>
-                      {isDefined(field.placeholder) &&
-                      isNonEmptyString(field.placeholder)
-                        ? field.placeholder
-                        : getDefaultFormFieldSettings(field.type).placeholder}
-                    </StyledPlaceholder>
-                    {field.type === 'RECORD' && (
-                      <IconChevronDown
-                        size={theme.icon.size.md}
-                        color={theme.font.color.tertiary}
-                      />
-                    )}
-                  </StyledFieldContainer>
-                </FormFieldInputInnerContainer>
-              </FormFieldInputRowContainer>
-            </StyledLabelAndFieldContainer>
+                  itemComponent={({ isDragging }) => {
+                    const showButtons =
+                      isFieldSelected(field.id) ||
+                      isFieldHovered(field.id) ||
+                      isDragging;
 
-            {!actionOptions.readonly &&
-              (isFieldSelected(field.id) || isFieldHovered(field.id)) && (
-                <StyledLightTrashIconButton
-                  Icon={IconTrash}
-                  onClick={() => {
-                    const updatedFormData = formData.filter(
-                      (currentField) => currentField.id !== field.id,
+                    return (
+                      <StyledFormFieldContainer
+                        key={field.id}
+                        onMouseEnter={() => setHoveredField(field.id)}
+                        onMouseLeave={() => setHoveredField(null)}
+                      >
+                        {!actionOptions.readonly && showButtons && (
+                          <StyledLightGripIconButton Icon={IconGripVertical} />
+                        )}
+
+                        <StyledLabelAndFieldContainer>
+                          <InputLabel>{field.label || ''}</InputLabel>
+
+                          <FormFieldInputRowContainer>
+                            <FormFieldInputInnerContainer
+                              hasRightElement={false}
+                              onClick={() => {
+                                handleFieldClick(field.id);
+                              }}
+                            >
+                              <StyledFieldContainer>
+                                <StyledPlaceholder>
+                                  {isDefined(field.placeholder) &&
+                                  isNonEmptyString(field.placeholder)
+                                    ? field.placeholder
+                                    : getDefaultFormFieldSettings(field.type)
+                                        .placeholder}
+                                </StyledPlaceholder>
+                                {field.type === 'RECORD' && (
+                                  <IconChevronDown
+                                    size={theme.icon.size.md}
+                                    color={theme.font.color.tertiary}
+                                  />
+                                )}
+                              </StyledFieldContainer>
+                            </FormFieldInputInnerContainer>
+                          </FormFieldInputRowContainer>
+                        </StyledLabelAndFieldContainer>
+
+                        {!actionOptions.readonly && showButtons && (
+                          <StyledLightTrashIconButton
+                            Icon={IconTrash}
+                            onClick={() => {
+                              const updatedFormData = formData.filter(
+                                (currentField) => currentField.id !== field.id,
+                              );
+
+                              setFormData(updatedFormData);
+
+                              actionOptions.onActionUpdate({
+                                ...action,
+                                settings: {
+                                  ...action.settings,
+                                  input: updatedFormData,
+                                },
+                              });
+                            }}
+                          />
+                        )}
+
+                        {isFieldSelected(field.id) && (
+                          <StyledOpenedSettingsContainer>
+                            <WorkflowEditActionFormFieldSettings
+                              field={field}
+                              onChange={onFieldUpdate}
+                              onClose={() => {
+                                setSelectedField(null);
+                              }}
+                            />
+                          </StyledOpenedSettingsContainer>
+                        )}
+                      </StyledFormFieldContainer>
                     );
-
-                    setFormData(updatedFormData);
-
-                    actionOptions.onActionUpdate({
-                      ...action,
-                      settings: {
-                        ...action.settings,
-                        input: updatedFormData,
-                      },
-                    });
                   }}
                 />
-              )}
-
-            {isFieldSelected(field.id) && (
-              <StyledOpenedSettingsContainer>
-                <WorkflowEditActionFormFieldSettings
-                  field={field}
-                  onChange={onFieldUpdate}
-                  onClose={() => {
-                    setSelectedField(null);
-                  }}
-                />
-              </StyledOpenedSettingsContainer>
-            )}
-          </StyledFormFieldContainer>
-        ))}
+              ))}
+            </>
+          }
+        />
 
         {!actionOptions.readonly && (
           <StyledAddFieldButtonContainer>
