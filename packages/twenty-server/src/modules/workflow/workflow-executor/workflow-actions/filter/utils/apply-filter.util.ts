@@ -115,11 +115,12 @@ const evaluateCondition = (value: any, condition: FilterOperator): boolean => {
       return matchesILike(value, targetValue as string);
 
     case 'in':
+      if (!Array.isArray(targetValue)) return false;
       if (Array.isArray(value)) {
         return value.some((v) => targetValue.includes(v));
       }
 
-      return Array.isArray(targetValue) && targetValue.includes(value);
+      return targetValue.includes(value);
 
     case 'is':
       return targetValue === 'NULL'

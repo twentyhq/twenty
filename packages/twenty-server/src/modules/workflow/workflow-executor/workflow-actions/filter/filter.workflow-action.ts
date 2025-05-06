@@ -48,14 +48,14 @@ export class FilterWorkflowAction implements WorkflowExecutor {
     if (previousSteps.length === 0) {
       throw new WorkflowStepExecutorException(
         'Filter action must have a previous step',
-        WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
+        WorkflowStepExecutorExceptionCode.FAILED_TO_EXECUTE_STEP,
       );
     }
 
     if (previousSteps.length > 1) {
       throw new WorkflowStepExecutorException(
         'Filter action must have only one previous step',
-        WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
+        WorkflowStepExecutorExceptionCode.FAILED_TO_EXECUTE_STEP,
       );
     }
 
@@ -65,7 +65,7 @@ export class FilterWorkflowAction implements WorkflowExecutor {
     if (!previousStepOutput) {
       throw new WorkflowStepExecutorException(
         'Previous step output not found',
-        WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
+        WorkflowStepExecutorExceptionCode.FAILED_TO_EXECUTE_STEP,
       );
     }
 
