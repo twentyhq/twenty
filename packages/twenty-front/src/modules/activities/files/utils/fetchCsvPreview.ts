@@ -2,7 +2,7 @@ import Papa from 'papaparse';
 
 const DEFAULT_PREVIEW_ROWS = 50;
 
-export const loadCsvPreview = async (url: string): Promise<string> => {
+export const fetchCsvPreview = async (url: string): Promise<string> => {
   const response = await fetch(url);
   const text = await response.text();
 
