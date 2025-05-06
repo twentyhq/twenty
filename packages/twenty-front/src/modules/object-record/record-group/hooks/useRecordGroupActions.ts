@@ -1,7 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { useRecordGroupReorder } from '@/object-record/record-group/hooks/useRecordGroupReorder';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
+import { useReorderRecordGroups } from '@/object-record/record-group/hooks/useReorderRecordGroups';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
@@ -65,7 +65,7 @@ export const useRecordGroupActions = ({
     viewType,
   );
 
-  const { handleRecordGroupOrderChange } = useRecordGroupReorder({
+  const { reorderRecordGroups } = useReorderRecordGroups({
     viewBarId: objectMetadataItem.id,
     viewType,
   });
@@ -116,7 +116,7 @@ export const useRecordGroupActions = ({
         currentIndex < visibleRecordGroupIds.length - 1,
       position: 1,
       callback: () =>
-        handleRecordGroupOrderChange({
+        reorderRecordGroups({
           fromIndex: currentIndex,
           toIndex: currentIndex + 1,
         }),
@@ -128,7 +128,7 @@ export const useRecordGroupActions = ({
       condition: !isCurrentRecordGroupNotFound && currentIndex > 0,
       position: 2,
       callback: () =>
-        handleRecordGroupOrderChange({
+        reorderRecordGroups({
           fromIndex: currentIndex,
           toIndex: currentIndex - 1,
         }),

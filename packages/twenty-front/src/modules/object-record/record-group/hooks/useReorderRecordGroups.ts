@@ -13,20 +13,20 @@ import { isDefined } from 'twenty-shared/utils';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-type UseRecordGroupHandlersParams = {
+type UseReorderRecordGroupsParams = {
   viewBarId: string;
   viewType: ViewType;
 };
 
-type handleRecordGroupOrderChangeParams = {
+type ReorderRecordGroupsParams = {
   fromIndex: number;
   toIndex: number;
 };
 
-export const useRecordGroupReorder = ({
+export const useReorderRecordGroups = ({
   viewBarId,
   viewType,
-}: UseRecordGroupHandlersParams) => {
+}: UseReorderRecordGroupsParams) => {
   const { setRecordGroups } = useSetRecordGroups();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
@@ -36,9 +36,9 @@ export const useRecordGroupReorder = ({
 
   const { saveViewGroups } = useSaveCurrentViewGroups();
 
-  const handleRecordGroupOrderChange = useRecoilCallback(
+  const reorderRecordGroups = useRecoilCallback(
     ({ snapshot }) =>
-      ({ fromIndex, toIndex }: handleRecordGroupOrderChangeParams) => {
+      ({ fromIndex, toIndex }: ReorderRecordGroupsParams) => {
         const visibleRecordGroupIds = getSnapshotValue(
           snapshot,
           visibleRecordGroupIdsFamilySelector(viewType),
@@ -95,6 +95,6 @@ export const useRecordGroupReorder = ({
   );
 
   return {
-    handleRecordGroupOrderChange,
+    reorderRecordGroups,
   };
 };
