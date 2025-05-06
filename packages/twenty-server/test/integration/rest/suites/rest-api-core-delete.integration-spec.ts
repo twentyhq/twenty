@@ -1,7 +1,7 @@
 import {
-  NOT_EXISTING_PERSON_ID,
-  PERSON_1_ID,
-} from 'test/integration/constants/mock-person-ids.constants';
+  NOT_EXISTING_TEST_PERSON_ID,
+  TEST_PERSON_1_ID,
+} from 'test/integration/constants/test-person-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
@@ -15,7 +15,7 @@ describe('Core REST API Delete One endpoint', () => {
       method: 'post',
       path: `/people`,
       body: {
-        id: PERSON_1_ID,
+        id: TEST_PERSON_1_ID,
       },
     });
   });
@@ -23,11 +23,11 @@ describe('Core REST API Delete One endpoint', () => {
   it('should delete one person', async () => {
     await makeRestAPIRequest({
       method: 'delete',
-      path: `/people/${PERSON_1_ID}`,
+      path: `/people/${TEST_PERSON_1_ID}`,
     })
       .expect(200)
       .expect((res) =>
-        expect(res.body.data.deletePerson).toEqual({ id: PERSON_1_ID }),
+        expect(res.body.data.deletePerson).toEqual({ id: TEST_PERSON_1_ID }),
       );
   });
 
@@ -36,24 +36,24 @@ describe('Core REST API Delete One endpoint', () => {
       method: 'post',
       path: `/favorites`,
       body: {
-        personId: PERSON_1_ID,
+        personId: TEST_PERSON_1_ID,
       },
     });
 
     await makeRestAPIRequest({
       method: 'delete',
-      path: `/people/${PERSON_1_ID}`,
+      path: `/people/${TEST_PERSON_1_ID}`,
     })
       .expect(200)
       .expect((res) =>
-        expect(res.body.data.deletePerson).toEqual({ id: PERSON_1_ID }),
+        expect(res.body.data.deletePerson).toEqual({ id: TEST_PERSON_1_ID }),
       );
   });
 
   it('should return a EntityNotFoundError when trying to delete a non-existing person', async () => {
     await makeRestAPIRequest({
       method: 'delete',
-      path: `/people/${NOT_EXISTING_PERSON_ID}`,
+      path: `/people/${NOT_EXISTING_TEST_PERSON_ID}`,
     })
       .expect(400)
       .expect((res) => {

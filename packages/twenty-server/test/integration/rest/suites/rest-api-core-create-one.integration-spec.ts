@@ -1,8 +1,8 @@
-import { PERSON_1_ID } from 'test/integration/constants/mock-person-ids.constants';
+import { TEST_PERSON_1_ID } from 'test/integration/constants/test-person-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
-import { COMPANY_1_ID } from 'test/integration/constants/mock-company-ids.constants';
+import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 
 describe('Core REST API Create One endpoint', () => {
@@ -12,7 +12,7 @@ describe('Core REST API Create One endpoint', () => {
       method: 'post',
       path: '/companies',
       body: {
-        id: COMPANY_1_ID,
+        id: TEST_COMPANY_1_ID,
         domainName: {
           primaryLinkUrl: TEST_PRIMARY_LINK_URL,
         },
@@ -21,11 +21,11 @@ describe('Core REST API Create One endpoint', () => {
   });
 
   it('should create a new person', async () => {
-    const personCity = generateRecordName(PERSON_1_ID);
+    const personCity = generateRecordName(TEST_PERSON_1_ID);
     const requestBody = {
-      id: PERSON_1_ID,
+      id: TEST_PERSON_1_ID,
       city: personCity,
-      companyId: COMPANY_1_ID,
+      companyId: TEST_COMPANY_1_ID,
     };
 
     await makeRestAPIRequest({
@@ -37,17 +37,17 @@ describe('Core REST API Create One endpoint', () => {
       .expect((res) => {
         const createdPerson = res.body.data.createPerson;
 
-        expect(createdPerson.id).toBe(PERSON_1_ID);
+        expect(createdPerson.id).toBe(TEST_PERSON_1_ID);
         expect(createdPerson.city).toBe(personCity);
       });
   });
 
   it('should support depth 0 parameter', async () => {
-    const personCity = generateRecordName(PERSON_1_ID);
+    const personCity = generateRecordName(TEST_PERSON_1_ID);
     const requestBody = {
-      id: PERSON_1_ID,
+      id: TEST_PERSON_1_ID,
       city: personCity,
-      companyId: COMPANY_1_ID,
+      companyId: TEST_COMPANY_1_ID,
     };
 
     await makeRestAPIRequest({
@@ -65,11 +65,11 @@ describe('Core REST API Create One endpoint', () => {
   });
 
   it('should support depth 1 parameter', async () => {
-    const personCity = generateRecordName(PERSON_1_ID);
+    const personCity = generateRecordName(TEST_PERSON_1_ID);
     const requestBody = {
-      id: PERSON_1_ID,
+      id: TEST_PERSON_1_ID,
       city: personCity,
-      companyId: COMPANY_1_ID,
+      companyId: TEST_COMPANY_1_ID,
     };
 
     await makeRestAPIRequest({
@@ -90,11 +90,11 @@ describe('Core REST API Create One endpoint', () => {
   });
 
   it('should support depth 2 parameter', async () => {
-    const personCity = generateRecordName(PERSON_1_ID);
+    const personCity = generateRecordName(TEST_PERSON_1_ID);
     const requestBody = {
-      id: PERSON_1_ID,
+      id: TEST_PERSON_1_ID,
       city: personCity,
-      companyId: COMPANY_1_ID,
+      companyId: TEST_COMPANY_1_ID,
     };
 
     await makeRestAPIRequest({
@@ -116,9 +116,9 @@ describe('Core REST API Create One endpoint', () => {
   });
 
   it('should return a BadRequestException when trying to create a person with an existing ID', async () => {
-    const personCity = generateRecordName(PERSON_1_ID);
+    const personCity = generateRecordName(TEST_PERSON_1_ID);
     const requestBody = {
-      id: PERSON_1_ID,
+      id: TEST_PERSON_1_ID,
       city: personCity,
     };
 

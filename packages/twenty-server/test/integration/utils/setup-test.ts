@@ -12,9 +12,9 @@ export default async (_, projectConfig: JestConfigWithTsJest) => {
     throw new Error('No globals found in project config');
   }
 
-  await app.listen(projectConfig.globals.APP_PORT);
-
   await rawDataSource.initialize();
+
+  await app.listen(projectConfig.globals.APP_PORT);
 
   global.app = app;
   global.testDataSource = rawDataSource;

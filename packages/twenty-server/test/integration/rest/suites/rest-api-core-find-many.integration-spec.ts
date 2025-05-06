@@ -1,16 +1,16 @@
 import {
-  PERSON_1_ID,
-  PERSON_2_ID,
-  PERSON_3_ID,
-} from 'test/integration/constants/mock-person-ids.constants';
+  TEST_PERSON_1_ID,
+  TEST_PERSON_2_ID,
+  TEST_PERSON_3_ID,
+} from 'test/integration/constants/test-person-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
-import { COMPANY_1_ID } from 'test/integration/constants/mock-company-ids.constants';
+import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 
 describe('Core REST API Find Many endpoint', () => {
-  const testPersonIds = [PERSON_1_ID, PERSON_2_ID, PERSON_3_ID];
+  const testPersonIds = [TEST_PERSON_1_ID, TEST_PERSON_2_ID, TEST_PERSON_3_ID];
   const testPersonCities: Record<string, string> = {};
 
   beforeAll(async () => {
@@ -20,7 +20,7 @@ describe('Core REST API Find Many endpoint', () => {
       method: 'post',
       path: '/companies',
       body: {
-        id: COMPANY_1_ID,
+        id: TEST_COMPANY_1_ID,
         domainName: {
           primaryLinkUrl: TEST_PRIMARY_LINK_URL,
         },
@@ -41,7 +41,7 @@ describe('Core REST API Find Many endpoint', () => {
           id: personId,
           city: city,
           position: index,
-          companyId: COMPANY_1_ID,
+          companyId: TEST_COMPANY_1_ID,
         },
       });
       index++;
@@ -181,7 +181,9 @@ describe('Core REST API Find Many endpoint', () => {
 
     const ascPeople = ascResponse.body.data.people;
 
-    expect(ascPeople).toBe(ascPeople.sort((a, b) => a.position - b.position));
+    expect(ascPeople).toEqual(
+      [...ascPeople].sort((a, b) => a.position - b.position),
+    );
 
     const descResponse = await makeRestAPIRequest({
       method: 'get',
@@ -190,8 +192,8 @@ describe('Core REST API Find Many endpoint', () => {
 
     const descPeople = descResponse.body.data.people;
 
-    expect(descPeople).toBe(
-      descPeople.sort((a, b) => -(a.position - b.position)),
+    expect(descPeople).toEqual(
+      [...descPeople].sort((a, b) => -(a.position - b.position)),
     );
   });
 

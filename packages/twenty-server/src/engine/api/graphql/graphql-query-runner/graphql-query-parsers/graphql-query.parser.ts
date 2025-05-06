@@ -118,6 +118,10 @@ export class GraphqlQueryParser {
     queryBuilder: SelectQueryBuilder<any>,
     limit: number,
   ): SelectQueryBuilder<any> {
+    if (limit < 0) {
+      throw new Error('Limit must be a positive number');
+    }
+
     return queryBuilder.limit(limit);
   }
 

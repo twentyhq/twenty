@@ -6,10 +6,10 @@ import { FilterInputFactory } from 'src/engine/api/rest/input-factories/filter-i
 import { DepthInputFactory } from 'src/engine/api/rest/input-factories/depth-input.factory';
 
 export const inputFactories = [
-  StartingAfterInputFactory,
-  EndingBeforeInputFactory,
-  LimitInputFactory,
   DepthInputFactory,
-  OrderByInputFactory,
+  EndingBeforeInputFactory,
   FilterInputFactory,
+  LimitInputFactory,
+  OrderByInputFactory,
+  StartingAfterInputFactory,
 ];
