@@ -5,6 +5,7 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordBoard } from '@/object-record/record-board/components/RecordBoard';
+import { RecordBoardHotkeyEffect } from '@/object-record/record-board/components/RecordBoardHotkeyEffect';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
@@ -55,6 +56,7 @@ export const RecordIndexBoardContainer = ({
     >
       <RecordBoard />
       <RecordIndexRemoveSortingModal />
+      <RecordBoardHotkeyEffect />
     </RecordBoardContext.Provider>
   );
 };

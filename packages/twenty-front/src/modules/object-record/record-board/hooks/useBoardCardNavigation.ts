@@ -162,7 +162,7 @@ export const useBoardCardNavigation = (recordBoardId?: string) => {
     ],
   );
 
-  const moveCard = (direction: NavigationDirection) => {
+  const move = (direction: NavigationDirection) => {
     if (direction === 'left' || direction === 'right') {
       moveHorizontally(direction);
     } else if (direction === 'up' || direction === 'down') {
@@ -171,10 +171,6 @@ export const useBoardCardNavigation = (recordBoardId?: string) => {
   };
 
   return {
-    moveCardLeft: () => moveHorizontally('left'),
-    moveCardRight: () => moveHorizontally('right'),
-    moveCardUp: () => moveVertically('up'),
-    moveCardDown: () => moveVertically('down'),
-    moveCard,
+    move,
   };
 };
