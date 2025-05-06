@@ -30,7 +30,7 @@ type FormSingleRecordFieldChipProps = {
       };
   selectedRecord?: ObjectRecord;
   objectNameSingular: string;
-  onRemove: () => void;
+  onRemove: (event?: React.MouseEvent<HTMLDivElement>) => void;
   disabled?: boolean;
 };
 

@@ -183,7 +183,9 @@ export abstract class GraphqlQueryBaseResolverService<
         resultWithGettersArray,
       );
 
-      return resultWithGetters;
+      return Array.isArray(resultWithGetters)
+        ? resultWithGettersArray
+        : resultWithGettersArray[0];
     } catch (error) {
       workspaceQueryRunnerGraphqlApiExceptionHandler(error, options);
     }

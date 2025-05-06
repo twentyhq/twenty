@@ -1,6 +1,5 @@
-import { EntityManager } from 'typeorm';
-
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import {
   AIRBNB_ID,
   FIGMA_ID,
@@ -11,11 +10,13 @@ import {
 
 // FixMe: Is this file a duplicate of src/database/typeorm-seeds/workspace/people.ts
 export const personPrefillData = async (
-  entityManager: EntityManager,
+  entityManager: WorkspaceEntityManager,
   schemaName: string,
 ) => {
   await entityManager
-    .createQueryBuilder()
+    .createQueryBuilder(undefined, undefined, undefined, {
+      shouldBypassPermissionChecks: true,
+    })
     .insert()
     .into(`${schemaName}.person`, [
       'nameFirstName',

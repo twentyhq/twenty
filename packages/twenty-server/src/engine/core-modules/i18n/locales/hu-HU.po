@@ -218,13 +218,13 @@ msgstr "Egy csatolmány"
 
 #. js-lingui-id: +bL++X
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "An audit log of actions performed in the system"
-msgstr "Az akciókról készült naplózás a rendszerben"
+#~ msgid "An audit log of actions performed in the system"
+#~ msgstr "Az akciókról készült naplózás a rendszerben"
 
 #. js-lingui-id: muVHgL
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "An event related to user behavior"
-msgstr "A felhasználói magatartással kapcsolatos esemény"
+#~ msgid "An event related to user behavior"
+#~ msgstr "A felhasználói magatartással kapcsolatos esemény"
 
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -369,19 +369,19 @@ msgstr "Csatolmányok, amelyek a(z) {label}-hez kapcsolódnak"
 
 #. js-lingui-id: ilRCh1
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Audit Log"
-msgstr "Audit Napló"
+#~ msgid "Audit Log"
+#~ msgstr "Audit Napló"
 
 #. js-lingui-id: EPEFrH
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Audit Logs"
-msgstr "Audit Naplók"
+#~ msgid "Audit Logs"
+#~ msgstr "Audit Naplók"
 
 #. js-lingui-id: RqCC/0
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Audit Logs linked to the workspace member"
-msgstr "A munkaterület taghoz kapcsolódó Audit Naplók"
+#~ msgid "Audit Logs linked to the workspace member"
+#~ msgstr "A munkaterület taghoz kapcsolódó Audit Naplók"
 
 #. js-lingui-id: cNBqH+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -431,13 +431,13 @@ msgstr "Avatár URL"
 
 #. js-lingui-id: 20B9kW
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Behavioral Event"
-msgstr "Viselkedésbeli Esemény"
+#~ msgid "Behavioral Event"
+#~ msgstr "Viselkedésbeli Esemény"
 
 #. js-lingui-id: Jeh/Q/
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Behavioral Events"
-msgstr "Viselkedésbeli Események"
+#~ msgid "Behavioral Events"
+#~ msgstr "Viselkedésbeli Események"
 
 #. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -782,13 +782,11 @@ msgstr "Esemény cég"
 #. js-lingui-id: FJ7QI4
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Event context"
-msgstr "Esemény kontextus"
+#~ msgid "Event context"
+#~ msgstr "Esemény kontextus"
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event details"
 msgstr "Esemény részletei"
 
@@ -814,17 +812,14 @@ msgstr "Eseményfigyelők"
 #. js-lingui-id: PYs3rP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event name"
 msgstr "Esemény neve"
 
 #. js-lingui-id: evIGwh
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Event name/type"
-msgstr "Esemény megnevezése/típusa"
+#~ msgid "Event name/type"
+#~ msgstr "Esemény megnevezése/típusa"
 
 #. js-lingui-id: vv99Wu
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -869,7 +864,6 @@ msgstr "Esemény munkafolyamat verziója"
 
 #. js-lingui-id: LxOGsB
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event workspace member"
 msgstr "Esemény munkaterület tag"
 
@@ -1167,8 +1161,8 @@ msgstr "Ideális vevőprofil: Jelzi, hogy a cég a legmegfelelőbb és legérté
 
 #. js-lingui-id: NrA0WZ
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "If the event is related to a particular object"
-msgstr "Ha az esemény egy adott objektumhoz kapcsolódik"
+#~ msgid "If the event is related to a particular object"
+#~ msgstr "Ha az esemény egy adott objektumhoz kapcsolódik"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1217,8 +1211,8 @@ msgstr "Csatlakozzon a csapatához a Twentyn"
 #. js-lingui-id: shbh25
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Json object to provide context (user, device, workspace, etc.)"
-msgstr "Json objektum a kontextus megadásához (felhasználó, eszköz, munkaterület stb.)"
+#~ msgid "Json object to provide context (user, device, workspace, etc.)"
+#~ msgstr "Json objektum a kontextus megadásához (felhasználó, eszköz, munkaterület stb.)"
 
 #. js-lingui-id: HgJ9jQ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -1237,8 +1231,6 @@ msgstr "Json objektum a trigger megadásához"
 
 #. js-lingui-id: TVc0/Q
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json value for event details"
 msgstr "Json érték az esemény részleteihez"
 
@@ -1624,14 +1616,14 @@ msgstr "A társaság alkalmazottainak száma"
 
 #. js-lingui-id: hhe7Ce
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Object id"
-msgstr "Objektum azonosító"
+#~ msgid "Object id"
+#~ msgstr "Objektum azonosító"
 
 #. js-lingui-id: dnPgTI
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Object metadata id"
-msgstr "Objektum metaadat azonosító"
+#~ msgid "Object metadata id"
+#~ msgstr "Objektum metaadat azonosító"
 
 #. js-lingui-id: T/nPf5
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1642,8 +1634,8 @@ msgstr "Objektum Metaadat Azonosító"
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Object name"
-msgstr "Objektum neve"
+#~ msgid "Object name"
+#~ msgstr "Objektum neve"
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1856,8 +1848,8 @@ msgstr "Fogadás ideje"
 #. js-lingui-id: 4Tvtbu
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Record id"
-msgstr "Rekord azonosító"
+#~ msgid "Record id"
+#~ msgstr "Rekord azonosító"
 
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -2785,7 +2777,6 @@ msgstr "Munkaterület tag"
 #. js-lingui-id: qc38qR
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts

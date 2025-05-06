@@ -57,8 +57,7 @@ test('The workflow run visualizer shows the executed draft version without the l
   );
 });
 
-// FIXME: Documented bug. See https://github.com/twentyhq/core-team-issues/issues/921
-test.fail('Workflow Runs with a pending form step can be opened in the side panel and then in full screen', async ({
+test('Workflow Runs with a pending form step can be opened in the side panel and then in full screen', async ({
   workflowVisualizer,
   page,
 }) => {

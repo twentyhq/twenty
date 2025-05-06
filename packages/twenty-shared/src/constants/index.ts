@@ -8,6 +8,7 @@
  */
 
 export { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from './FieldForTotalCountAggregateOperation';
+export { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from './FieldRestrictedAdditionalPermissionsRequired';
 export { PermissionsOnAllObjectRecords } from './PermissionsOnAllObjectRecords';
 export { STANDARD_OBJECT_RECORDS_UNDER_OBJECT_RECORDS_PERMISSIONS } from './StandardObjectRecordsUnderObjectRecordsPermissions';
 export { TWENTY_COMPANIES_BASE_URL } from './TwentyCompaniesBaseUrl';
