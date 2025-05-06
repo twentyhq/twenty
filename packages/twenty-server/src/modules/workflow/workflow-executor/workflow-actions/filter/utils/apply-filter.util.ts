@@ -3,14 +3,8 @@ import { FilterOperator } from 'src/modules/workflow/workflow-executor/workflow-
 
 export const applyFilter = <T extends Record<string, any>>(
   array: T[],
-  filter: FilterCondition | FilterCondition[],
+  filter: FilterCondition,
 ): T[] => {
-  if (Array.isArray(filter)) {
-    return array.filter((item) => {
-      return filter.every((condition) => evaluateFilter(item, condition));
-    });
-  }
-
   return array.filter((item) => evaluateFilter(item, filter));
 };
 
@@ -30,45 +24,23 @@ const evaluateFilter = (
     );
   }
 
-  if ('not' in filter) {
-    if (!filter.not) {
-      return false;
-    }
-
+  if ('not' in filter && filter.not) {
     return !evaluateFilter(item, filter.not);
   }
 
-  for (const field in filter) {
-    const conditions = filter[field];
-
-    if (['and', 'or', 'not'].includes(field)) {
-      continue;
-    }
+  return Object.entries(filter).every(([field, conditions]) => {
+    const value = item[field];
 
     if (isOperator(conditions)) {
-      const value = getNestedProperty(item, field);
-
-      if (!evaluateCondition(value, conditions as FilterOperator)) {
-        return false;
-      }
-    } else {
-      const nestedValue = getNestedProperty(item, field);
-
-      if (
-        nestedValue === undefined &&
-        !hasNullCheck(conditions as FilterCondition)
-      ) {
-        return false;
-      }
-      if (
-        !evaluateNestedConditions(nestedValue, conditions as FilterCondition)
-      ) {
-        return false;
-      }
+      return evaluateCondition(value, conditions as FilterOperator);
     }
-  }
 
-  return true;
+    if (value === undefined && !hasNullCheck(conditions as FilterCondition)) {
+      return false;
+    }
+
+    return evaluateNestedConditions(value, conditions as FilterCondition);
+  });
 };
 
 const hasNullCheck = (conditions: FilterCondition): boolean => {
@@ -78,19 +50,16 @@ const hasNullCheck = (conditions: FilterCondition): boolean => {
     return true;
   }
 
-  for (const key in conditions) {
-    if (typeof conditions[key] === 'object' && conditions[key] !== null) {
-      if (hasNullCheck(conditions[key] as FilterCondition)) {
-        return true;
-      }
-    }
-  }
-
-  return false;
+  return Object.values(conditions).some(
+    (value) =>
+      typeof value === 'object' &&
+      value !== null &&
+      hasNullCheck(value as FilterCondition),
+  );
 };
 
 const evaluateNestedConditions = (
-  value: any,
+  value: unknown,
   conditions: FilterCondition,
 ): boolean => {
   const operator = conditions as FilterOperator;
@@ -103,30 +72,83 @@ const evaluateNestedConditions = (
     return false;
   }
 
-  for (const field in conditions) {
-    const nestedConditions = conditions[field];
+  return Object.entries(conditions).every(([field, nestedConditions]) => {
+    const nestedValue = (value as Record<string, any>)[field];
 
     if (isOperator(nestedConditions)) {
-      const nestedValue = getNestedProperty(value, field);
-
-      if (!evaluateCondition(nestedValue, nestedConditions as FilterOperator)) {
-        return false;
-      }
-    } else {
-      const nestedValue = getNestedProperty(value, field);
-
-      if (
-        !evaluateNestedConditions(
-          nestedValue,
-          nestedConditions as FilterCondition,
-        )
-      ) {
-        return false;
-      }
+      return evaluateCondition(nestedValue, nestedConditions as FilterOperator);
     }
+
+    return evaluateNestedConditions(
+      nestedValue,
+      nestedConditions as FilterCondition,
+    );
+  });
+};
+
+const evaluateCondition = (value: any, condition: FilterOperator): boolean => {
+  const [[operator, targetValue]] = Object.entries(condition);
+
+  switch (operator) {
+    case 'eq':
+      return value === targetValue;
+
+    case 'ne':
+      return value !== targetValue;
+
+    case 'gt':
+      return value > targetValue;
+
+    case 'gte':
+      return value >= targetValue;
+
+    case 'lt':
+      return value < targetValue;
+
+    case 'lte':
+      return value <= targetValue;
+
+    case 'like':
+      return matchesLike(value, targetValue as string);
+
+    case 'ilike':
+      return matchesILike(value, targetValue as string);
+
+    case 'in':
+      if (Array.isArray(value)) {
+        return value.some((v) => targetValue.includes(v));
+      }
+
+      return Array.isArray(targetValue) && targetValue.includes(value);
+
+    case 'is':
+      return targetValue === 'NULL'
+        ? value === null || value === undefined
+        : value === targetValue;
+
+    default:
+      return false;
+  }
+};
+
+const matchesLike = (value: any, pattern: string): boolean => {
+  if (typeof value !== 'string') {
+    return false;
   }
 
-  return true;
+  const regexPattern = pattern.replace(/%/g, '.*').replace(/_/g, '.');
+
+  return new RegExp(`^${regexPattern}$`).test(value);
+};
+
+const matchesILike = (value: any, pattern: string): boolean => {
+  if (typeof value !== 'string') {
+    return false;
+  }
+
+  const regexPattern = pattern.replace(/%/g, '.*').replace(/_/g, '.');
+
+  return new RegExp(`^${regexPattern}$`, 'i').test(value);
 };
 
 const isOperator = (obj: any): boolean => {
@@ -134,7 +156,7 @@ const isOperator = (obj: any): boolean => {
     return false;
   }
 
-  const operatorKeys = [
+  return [
     'eq',
     'ne',
     'gt',
@@ -144,100 +166,6 @@ const isOperator = (obj: any): boolean => {
     'like',
     'ilike',
     'in',
-    'between',
-    'isNull',
     'is',
-  ];
-
-  return operatorKeys.some((op) => op in obj);
-};
-
-const evaluateCondition = (value: any, condition: FilterOperator): boolean => {
-  for (const operator in condition) {
-    const targetValue = condition[operator as keyof FilterOperator];
-
-    switch (operator) {
-      case 'eq':
-        if (value != targetValue) return false;
-        break;
-      case 'ne':
-        if (value == targetValue) return false;
-        break;
-      case 'gt':
-        if (!(value > targetValue)) return false;
-        break;
-      case 'gte':
-        if (!(value >= targetValue)) return false;
-        break;
-      case 'lt':
-        if (!(value < targetValue)) return false;
-        break;
-      case 'lte':
-        if (!(value <= targetValue)) return false;
-        break;
-      case 'like':
-        if (!matchesLike(value, targetValue as string)) return false;
-        break;
-      case 'ilike':
-        if (!matchesILike(value, targetValue as string)) return false;
-        break;
-      case 'in':
-        if (!Array.isArray(targetValue) || !targetValue.includes(value))
-          return false;
-        break;
-      case 'between':
-        if (Array.isArray(targetValue) && targetValue.length === 2) {
-          if (!(value >= targetValue[0] && value <= targetValue[1]))
-            return false;
-        }
-        break;
-      case 'isNull': {
-        const isNull = value === null || value === undefined;
-
-        if (isNull !== targetValue) return false;
-        break;
-      }
-      case 'is':
-        if (targetValue === 'NULL') {
-          if (value !== null && value !== undefined) return false;
-        } else {
-          if (value != targetValue) return false;
-        }
-        break;
-      default:
-        return false;
-    }
-  }
-
-  return true;
-};
-
-const matchesLike = (value: any, pattern: string): boolean => {
-  if (typeof value !== 'string') {
-    return false;
-  }
-
-  const regexPattern = pattern.replace(/%/g, '.*').replace(/_/g, '.');
-  const regex = new RegExp(`^${regexPattern}$`);
-
-  return regex.test(value);
-};
-
-const matchesILike = (value: any, pattern: string): boolean => {
-  if (typeof value !== 'string') {
-    return false;
-  }
-
-  const regexPattern = pattern.replace(/%/g, '.*').replace(/_/g, '.');
-  const regex = new RegExp(`^${regexPattern}$`, 'i');
-
-  return regex.test(value);
-};
-
-const getNestedProperty = (obj: Record<string, any>, path: string): any => {
-  if (obj === null || obj === undefined) {
-    return undefined;
-  }
-
-  return obj[path];
+  ].some((op) => op in obj);
 };

@@ -8,7 +8,5 @@ export type FilterOperator = {
   like?: string;
   ilike?: string;
   in?: any[];
-  between?: [number, number];
-  isNull?: boolean;
   is?: 'NULL' | any;
 };

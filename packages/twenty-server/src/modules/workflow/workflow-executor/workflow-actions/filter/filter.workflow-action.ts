@@ -1,3 +1,5 @@
+import { Injectable } from '@nestjs/common';
+
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
 import {
@@ -9,9 +11,8 @@ import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/t
 import { isWorkflowFilterAction } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/guards/is-workflow-filter-action.guard';
 import { applyFilter } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/apply-filter.util';
 
+@Injectable()
 export class FilterWorkflowAction implements WorkflowExecutor {
-  constructor() {}
-
   async execute(input: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
     const { currentStepId, steps, context } = input;
 
@@ -40,7 +41,6 @@ export class FilterWorkflowAction implements WorkflowExecutor {
       );
     }
 
-    // find previous step
     const previousSteps = steps.filter((step) =>
       step?.nextStepIds?.includes(currentStepId),
     );
@@ -59,7 +59,6 @@ export class FilterWorkflowAction implements WorkflowExecutor {
       );
     }
 
-    // find previous step output from context key
     const previousStep = previousSteps[0];
     const previousStepOutput = context[previousStep.id];
 
