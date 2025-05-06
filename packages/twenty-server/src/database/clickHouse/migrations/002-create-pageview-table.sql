@@ -2,9 +2,9 @@ CREATE TABLE IF NOT EXISTS pageview
 (
     `name` LowCardinality(String),
     `timestamp` DateTime64(3),
-    `properties`  JSON,
     `userId`      String DEFAULT '',
-    `workspaceId` String DEFAULT ''
+    `workspaceId` String DEFAULT '',
+    `properties`  JSON,
 )
     ENGINE = MergeTree
-        ORDER BY (name, workspaceId, userId, timestamp);
+        ORDER BY (workspaceId, name, userId, timestamp);
