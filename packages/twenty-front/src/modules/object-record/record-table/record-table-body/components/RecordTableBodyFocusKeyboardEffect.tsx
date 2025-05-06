@@ -47,6 +47,8 @@ export const RecordTableBodyFocusKeyboardEffect = () => {
     [
       setIsFocusActiveForCurrentPosition,
       restoreRecordTableRowFocusFromCellPosition,
+      setHotkeyScope,
+      isRecordTableFocusActive,
     ],
   );
 
