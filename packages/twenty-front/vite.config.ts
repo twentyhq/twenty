@@ -73,6 +73,7 @@ export default defineConfig(({ command, mode }) => {
     cacheDir: '../../node_modules/.vite/packages/twenty-front',
 
     server: {
+      cors: true,
       port: port,
       ...(VITE_HOST ? { host: VITE_HOST } : {}),
       ...(SSL_KEY_PATH && SSL_CERT_PATH
@@ -95,6 +96,17 @@ export default defineConfig(({ command, mode }) => {
     },
 
     plugins: [
+      {
+        name: 'configure-response-headers',
+        configureServer: server => {
+          server.middlewares.use((_req, res, next) => {
+            res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+            res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+            res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+            next();
+          });
+        },
+      },
       react({
         jsxImportSource: '@emotion/react',
         plugins: [['@lingui/swc-plugin', {}]],

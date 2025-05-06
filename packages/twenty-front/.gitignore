@@ -45,3 +45,4 @@ dist-ssr
 
 # eslint-plugin-project-structure
 projectStructure.cache.json
+.vercel
