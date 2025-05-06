@@ -24,7 +24,7 @@ class BasicUpgradeCommandRunner extends UpgradeCommandRunner {
   };
 }
 
-class InvalidVersionUpgradeCommandRunner extends UpgradeCommandRunner {
+class InvalidpgradeCommandRunner extends UpgradeCommandRunner {
   allCommands = {
     '1.0.0': {
       beforeSyncMetadata: [],
@@ -37,23 +37,9 @@ class InvalidVersionUpgradeCommandRunner extends UpgradeCommandRunner {
   };
 }
 
-class TestUpgradeCommandRunnerV2 extends UpgradeCommandRunner {
-  allCommands = {
-    '2.0.0': {
-      beforeSyncMetadata: [],
-      afterSyncMetadata: [],
-    },
-    '3.0.0': {
-      beforeSyncMetadata: [],
-      afterSyncMetadata: [],
-    },
-  };
-}
-
 type CommandRunnerValues =
   | typeof BasicUpgradeCommandRunner
-  | typeof TestUpgradeCommandRunnerV2
-  | typeof InvalidVersionUpgradeCommandRunner;
+  | typeof InvalidpgradeCommandRunner;
 
 const generateMockWorkspace = (overrides?: Partial<Workspace>) =>
   ({
@@ -365,7 +351,8 @@ describe('UpgradeCommandRunner', () => {
         },
       },
       {
-        title: 'even if workspace version and app version differ in patch',
+        title:
+          'even if workspace version and app version differ in patch and semantic',
         context: {
           input: {
             appVersion: 'v2.0.0',
@@ -406,8 +393,7 @@ describe('UpgradeCommandRunner', () => {
         title: 'when workspace version is not equal to fromVersion',
         context: {
           input: {
-            appVersion: '3.0.0',
-            commandRunner: TestUpgradeCommandRunnerV2,
+            appVersion: '2.0.0',
             workspaceOverride: {
               version: '0.1.0',
             },
@@ -445,6 +431,14 @@ describe('UpgradeCommandRunner', () => {
         context: {
           input: {
             appVersion: '1.0.0',
+          },
+        },
+      },
+      {
+        title: 'when all commands contains invalid semver keys',
+        context: {
+          input: {
+            commandRunner: InvalidpgradeCommandRunner,
           },
         },
       },
