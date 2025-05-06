@@ -349,6 +349,55 @@ describe('UpgradeCommandRunner', () => {
     expect(upgradeCommandRunner.migrationReport.fail.length).toBe(0);
   });
 
+  describe('Workspace upgrade should succeed ', () => {
+    const failingTestUseCases: EachTestingContext<{
+      input: Omit<BuildModuleAndSetupSpiesArgs, 'numberOfWorkspace'>;
+    }>[] = [
+      {
+        title: 'even if workspace version and app version differ in patch',
+        context: {
+          input: {
+            appVersion: "v2.0.0",
+            workspaceOverride: {
+              version: 'v1.0.12',
+            },
+          },
+        },
+      },
+      {
+        title: 'even if workspace version and app version differ in patch',
+        context: {
+          input: {
+            appVersion: "v2.0.0",
+            workspaceOverride: {
+              version: '1.0.12',
+            },
+          },
+        },
+      },
+    ];
+
+    it.each(failingTestUseCases)('$title', async ({ context: { input } }) => {
+      await buildModuleAndSetupSpies(input);
+
+      const passedParams = [];
+      const options = {};
+
+      await upgradeCommandRunner.run(passedParams, options);
+
+      const { fail: failReport, success: successReport } =
+        upgradeCommandRunner.migrationReport;
+
+      expect(failReport.length).toBe(0);
+      expect(successReport.length).toBe(1);
+      expect(runAfterSyncMetadataSpy).toBeCalledTimes(1)
+      expect(runBeforeSyncMetadataSpy).toBeCalledTimes(1)
+      const { workspaceId } = successReport[0];
+
+      expect(workspaceId).toBe('workspace_0');
+    });
+  });
+
   describe('Workspace upgrade should fail', () => {
     const failingTestUseCases: EachTestingContext<{
       input: Omit<BuildModuleAndSetupSpiesArgs, 'numberOfWorkspace'>;
