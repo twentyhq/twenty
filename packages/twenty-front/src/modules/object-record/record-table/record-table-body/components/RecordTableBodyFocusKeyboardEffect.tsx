@@ -2,7 +2,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useSetIsRecordTableFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableFocusActive';
-import { isRecordTableFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableFocusActiveComponentState';
+import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -25,7 +25,7 @@ export const RecordTableBodyFocusKeyboardEffect = () => {
     useSetIsRecordTableFocusActive(recordTableId);
 
   const isRecordTableFocusActive = useRecoilComponentValueV2(
-    isRecordTableFocusActiveComponentState,
+    isRecordTableCellFocusActiveComponentState,
   );
 
   useMapKeyboardToFocus();

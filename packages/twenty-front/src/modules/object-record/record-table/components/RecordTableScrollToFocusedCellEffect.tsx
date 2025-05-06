@@ -1,13 +1,18 @@
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const RecordTableScrollToFocusedElementEffect = () => {
+export const RecordTableScrollToFocusedCellEffect = () => {
+  const { recordTableId } = useRecordTableContextOrThrow();
+
   const focusPosition = useRecoilComponentValueV2(
     recordTableFocusPositionComponentState,
+    recordTableId,
   );
 
+  // Handle cell focus
   useEffect(() => {
     if (!focusPosition) {
       return;
@@ -36,6 +41,7 @@ export const RecordTableScrollToFocusedElementEffect = () => {
       }
     }
 
+    focusElement.style.scrollMarginTop = '32px';
     focusElement.style.scrollMarginBottom = '32px';
 
     focusElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

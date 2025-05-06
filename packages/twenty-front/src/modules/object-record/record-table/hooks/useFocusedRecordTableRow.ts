@@ -1,5 +1,5 @@
 import { focusedRecordTableRowIndexComponentState } from '@/object-record/record-table/states/focusedRecordTableRowIndexComponentState';
-import { isRecordTableFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableFocusActiveComponentState';
+import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
@@ -28,8 +28,8 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const isRecordTableFocusActiveState = useRecoilComponentCallbackStateV2(
-    isRecordTableFocusActiveComponentState,
+  const isRecordTableCellFocusActiveState = useRecoilComponentCallbackStateV2(
+    isRecordTableCellFocusActiveComponentState,
     recordTableId,
   );
 
@@ -80,14 +80,14 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
           .getLoadable(focusedCellPositionState)
           .getValue();
 
-        const isRecordTableFocusActive = snapshot
-          .getLoadable(isRecordTableFocusActiveState)
+        const isRecordTableCellFocusActive = snapshot
+          .getLoadable(isRecordTableCellFocusActiveState)
           .getValue();
 
         if (
           !isDefined(focusedRowIndex) ||
           !isDefined(focusedCellPosition) ||
-          !isRecordTableFocusActive
+          !isRecordTableCellFocusActive
         ) {
           return;
         }
@@ -97,7 +97,7 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
     [
       focusedRowIndexState,
       focusedCellPositionState,
-      isRecordTableFocusActiveState,
+      isRecordTableCellFocusActiveState,
       focusRecordTableRow,
     ],
   );
