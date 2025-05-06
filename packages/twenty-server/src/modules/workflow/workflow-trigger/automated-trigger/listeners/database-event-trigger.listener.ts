@@ -79,11 +79,19 @@ export class DatabaseEventTriggerListener {
       return;
     }
 
+    for (const eventPayload of payload.events) {
+      console.log('eventPayload44', eventPayload.properties);
+    }
+
     const isWorkflowEnabled =
       await this.isFeatureFlagEnabledService.isFeatureEnabled(
         FeatureFlagKey.IsWorkflowEnabled,
         workspaceId,
       );
+
+    for (const eventPayload of payload.events) {
+      console.log('eventPayload55', eventPayload.properties);
+    }
 
     if (!isWorkflowEnabled) {
       return;
@@ -105,6 +113,9 @@ export class DatabaseEventTriggerListener {
     });
     */
     // end Todo
+    for (const eventPayload of payload.events) {
+      console.log('eventPayload3', eventPayload.properties);
+    }
 
     // Todo: remove that when data are migrated to workflowAutomatedTrigger
     const workflowEventListenerRepository =
