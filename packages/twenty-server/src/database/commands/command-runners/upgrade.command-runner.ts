@@ -48,6 +48,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       this.commands,
       this.fromWorkspaceVersion,
     ].every(isDefined);
+
     if (ugpradeContextAlreadyDefined) {
       return;
     }
@@ -55,6 +56,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     const currentAppVersion = this.retrieveToVersionFromAppVersion();
 
     const currentCommands = this.allCommands[currentAppVersion];
+
     if (!isDefined(currentCommands)) {
       throw new Error(
         `No commands found for version ${currentAppVersion}. Please check the commands record.`,
@@ -81,6 +83,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     this.computeFromToVersionAndCommandsToRunForCurrentAppVersion();
 
     const { workspaceId, index, total, options } = args;
+
     this.logger.log(
       chalk.blue(
         `${options.dryRun ? '(dry run)' : ''} Upgrading workspace ${workspaceId} ${index + 1}/${total}`,

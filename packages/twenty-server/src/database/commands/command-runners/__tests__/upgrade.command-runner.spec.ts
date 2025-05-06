@@ -387,7 +387,7 @@ describe('UpgradeCommandRunner', () => {
         title: 'when current version commands are not found',
         context: {
           input: {
-            appVersion: "42.0.0",
+            appVersion: '42.0.0',
           },
         },
       },
@@ -395,7 +395,7 @@ describe('UpgradeCommandRunner', () => {
         title: 'when previous version is not found',
         context: {
           input: {
-            appVersion: "1.0.0"
+            appVersion: '1.0.0',
           },
         },
       },

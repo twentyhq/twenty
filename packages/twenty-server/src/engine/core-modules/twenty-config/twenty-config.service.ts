@@ -275,4 +275,4 @@ export class TwentyConfigService {
 
     return true;
   }
- }
+}

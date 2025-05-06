@@ -3,10 +3,11 @@ import { SemVer } from 'semver';
 type GetPreviousVersionFromArrayArgs = {
   versions: string[];
   currentVersion: string;
-}
-export const getPreviousVersion = (
-  { versions, currentVersion }: GetPreviousVersionFromArrayArgs,
-): SemVer | undefined => {
+};
+export const getPreviousVersion = ({
+  versions,
+  currentVersion,
+}: GetPreviousVersionFromArrayArgs): SemVer | undefined => {
   try {
     const semverVersions = versions
       .map((version) => new SemVer(version))

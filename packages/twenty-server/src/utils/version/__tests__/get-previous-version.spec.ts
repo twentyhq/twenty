@@ -1,6 +1,6 @@
-import { getPreviousVersion } from 'src/utils/version/get-previous-version';
 import { EachTestingContext } from 'twenty-shared/testing';
 
+import { getPreviousVersion } from 'src/utils/version/get-previous-version';
 
 type GetPreviousVersionTestCase = EachTestingContext<{
   versions: string[];
@@ -92,8 +92,12 @@ describe('get-previous-version', () => {
     },
   ];
 
-  test.each(testCase)('$title', ({ context: { versions, currentVersion, expected } }) => {
-    const result = getPreviousVersion({versions, currentVersion});
-    expect(result?.format()).toBe(expected);
-  });
-}); 
+  test.each(testCase)(
+    '$title',
+    ({ context: { versions, currentVersion, expected } }) => {
+      const result = getPreviousVersion({ versions, currentVersion });
+
+      expect(result?.format()).toBe(expected);
+    },
+  );
+});
