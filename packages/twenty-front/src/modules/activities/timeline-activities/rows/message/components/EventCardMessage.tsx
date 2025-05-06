@@ -6,6 +6,7 @@ import { EventCardMessageForbidden } from '@/activities/timeline-activities/rows
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { Trans } from '@lingui/react/macro';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
@@ -94,14 +95,26 @@ export const EventCardMessage = ({
     );
 
     if (shouldHandleNotFound) {
-      return <div>Message not found</div>;
+      return (
+        <div>
+          <Trans>Message not found</Trans>
+        </div>
+      );
     }
 
-    return <div>Error loading message</div>;
+    return (
+      <div>
+        <Trans>Error loading message</Trans>
+      </div>
+    );
   }
 
   if (loading || !isDefined(message)) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <Trans>Loading...</Trans>
+      </div>
+    );
   }
 
   const messageParticipantHandles = message.messageParticipants
