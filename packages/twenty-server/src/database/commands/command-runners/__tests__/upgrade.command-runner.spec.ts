@@ -364,25 +364,28 @@ describe('UpgradeCommandRunner', () => {
       },
     ];
 
-    it.each(successfulTestUseCases)('$title', async ({ context: { input } }) => {
-      await buildModuleAndSetupSpies(input);
+    it.each(successfulTestUseCases)(
+      '$title',
+      async ({ context: { input } }) => {
+        await buildModuleAndSetupSpies(input);
 
-      const passedParams = [];
-      const options = {};
+        const passedParams = [];
+        const options = {};
 
-      await upgradeCommandRunner.run(passedParams, options);
+        await upgradeCommandRunner.run(passedParams, options);
 
-      const { fail: failReport, success: successReport } =
-        upgradeCommandRunner.migrationReport;
+        const { fail: failReport, success: successReport } =
+          upgradeCommandRunner.migrationReport;
 
-      expect(failReport.length).toBe(0);
-      expect(successReport.length).toBe(1);
-      expect(runAfterSyncMetadataSpy).toBeCalledTimes(1);
-      expect(runBeforeSyncMetadataSpy).toBeCalledTimes(1);
-      const { workspaceId } = successReport[0];
+        expect(failReport.length).toBe(0);
+        expect(successReport.length).toBe(1);
+        expect(runAfterSyncMetadataSpy).toBeCalledTimes(1);
+        expect(runBeforeSyncMetadataSpy).toBeCalledTimes(1);
+        const { workspaceId } = successReport[0];
 
-      expect(workspaceId).toBe('workspace_0');
-    });
+        expect(workspaceId).toBe('workspace_0');
+      },
+    );
   });
 
   describe('Workspace upgrade should fail', () => {
