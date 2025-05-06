@@ -18,7 +18,6 @@ import { onColumnsChangeComponentState } from '@/object-record/record-table/stat
 import { onEntityCountChangeComponentState } from '@/object-record/record-table/states/onEntityCountChangeComponentState';
 
 import { useRecordTableMove } from '@/object-record/record-table/hooks/useRecordTableMove';
-import { useRecordTableMoveFocusedRow } from '@/object-record/record-table/hooks/useRecordTableMoveFocusedRow';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
@@ -144,8 +143,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const { move } = useRecordTableMove(recordTableId);
 
-  const { moveFocusedRow } = useRecordTableMoveFocusedRow(recordTableId);
-
   const useMapKeyboardToFocus = () => {
     useScopedHotkeys(
       [Key.ArrowUp, `${Key.Shift}+${Key.Enter}`],
@@ -183,24 +180,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       },
       TableHotkeyScope.Table,
       [move],
-    );
-
-    useScopedHotkeys(
-      [Key.ArrowUp, 'k'],
-      () => {
-        moveFocusedRow('up');
-      },
-      TableHotkeyScope.TableFocus,
-      [moveFocusedRow],
-    );
-
-    useScopedHotkeys(
-      [Key.ArrowDown, 'j'],
-      () => {
-        moveFocusedRow('down');
-      },
-      TableHotkeyScope.TableFocus,
-      [moveFocusedRow],
     );
 
     useScopedHotkeys(
