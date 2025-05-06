@@ -204,7 +204,10 @@ export const WorkflowEditActionFormBuilder = ({
             onMouseEnter={() => setHoveredField(field.id)}
             onMouseLeave={() => setHoveredField(null)}
           >
-            <StyledLightGripIconButton Icon={IconGripVertical} />
+            {!actionOptions.readonly &&
+              (isFieldSelected(field.id) || isFieldHovered(field.id)) && (
+                <StyledLightGripIconButton Icon={IconGripVertical} />
+              )}
 
             <StyledLabelAndFieldContainer>
               <InputLabel>{field.label || ''}</InputLabel>
