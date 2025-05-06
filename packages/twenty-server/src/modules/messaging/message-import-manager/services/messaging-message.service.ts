@@ -62,19 +62,39 @@ export class MessagingMessageService {
       });
 
       if (existingMessage) {
-        await messageChannelMessageAssociationRepository.upsert(
-          {
-            messageChannelId,
-            messageId: existingMessage.id,
-            messageExternalId: message.externalId,
-            messageThreadExternalId: message.messageThreadExternalId,
-          },
-          {
-            conflictPaths: ['messageChannelId', 'messageId'],
-            indexPredicate: '"deletedAt" IS NULL',
-          },
-          transactionManager,
-        );
+        const existingAssociation =
+          await messageChannelMessageAssociationRepository.findOne(
+            {
+              where: {
+                messageChannelId,
+                messageId: existingMessage.id,
+              },
+            },
+            transactionManager,
+          );
+
+        if (existingAssociation) {
+          await messageChannelMessageAssociationRepository.update(
+            {
+              id: existingAssociation.id,
+            },
+            {
+              messageExternalId: message.externalId,
+              messageThreadExternalId: message.messageThreadExternalId,
+            },
+            transactionManager,
+          );
+        } else {
+          await messageChannelMessageAssociationRepository.insert(
+            {
+              messageChannelId,
+              messageId: existingMessage.id,
+              messageExternalId: message.externalId,
+              messageThreadExternalId: message.messageThreadExternalId,
+            },
+            transactionManager,
+          );
+        }
 
         continue;
       }
