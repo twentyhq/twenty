@@ -9,7 +9,7 @@ import { recordTableFocusPositionComponentState } from '@/object-record/record-t
 import { numberOfTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/numberOfTableColumnsComponentSelector';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 
-export const useRecordTableMoveFocus = (recordTableId?: string) => {
+export const useRecordTableMoveFocusedCell = (recordTableId?: string) => {
   const setFocusPosition = useSetRecordTableFocusPosition(recordTableId);
 
   const focusPositionState = useRecoilComponentCallbackStateV2(
