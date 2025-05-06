@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { ExternalEventInput } from 'src/engine/core-modules/external-event/dto/external-event.input';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
@@ -12,10 +13,7 @@ import {
 } from './external-event.exception';
 
 import { ExternalEventTokenService } from './services/external-event-token.service';
-import {
-  ExternalEventInput,
-  ExternalEventService,
-} from './services/external-event.service';
+import { ExternalEventService } from './services/external-event.service';
 import { ExternalEventValidator } from './validators/external-event.validator';
 
 @Controller('external-event')
@@ -70,7 +68,6 @@ export class ExternalEventController {
       );
     }
 
-    // Validate the event input
     this.externalEventValidator.validate(externalEventInput);
 
     const result = await this.externalEventService.createExternalEvent(

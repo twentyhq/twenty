@@ -4,8 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import {
-  EventFieldMetadata,
-  FieldType,
+    EventFieldMetadata,
+    FieldType,
 } from 'src/engine/core-modules/external-event/entities/event-field-metadata.entity';
 import { EventMetadata } from 'src/engine/core-modules/external-event/entities/event-metadata.entity';
 import { ExternalEventValidator } from 'src/engine/core-modules/external-event/validators/external-event.validator';
@@ -93,7 +93,6 @@ export class EventMetadataService {
       }
 
       const existingField = existingFields.find((field) => field.name === key);
-
       const fieldType = this.inferFieldType(value);
 
       if (existingField) {
@@ -127,14 +126,12 @@ export class EventMetadataService {
     if (type === 'boolean') return FieldType.BOOLEAN;
     if (type === 'object') {
       if (Array.isArray(value)) {
-        // TODO: Consider handling array types differently or checking array item types
         return FieldType.OBJECT;
       }
 
       return FieldType.OBJECT;
     }
 
-    // Default to string for any other types
     return FieldType.STRING;
   }
 
@@ -144,7 +141,6 @@ export class EventMetadataService {
    */
   async registerValidationRules(): Promise<void> {
     try {
-      // Get all active event metadata
       const allEventMetadata = await this.eventMetadataRepository.find({
         where: { isActive: true },
         relations: ['fields'],

@@ -1,4 +1,4 @@
-import { ExternalEventInput } from 'src/engine/core-modules/external-event/services/external-event.service';
+import { ExternalEventInput } from 'src/engine/core-modules/external-event/dto/external-event.input';
 
 import { EventValidationRule } from './external-event.validator';
 
@@ -33,9 +33,9 @@ export class EventMetadataValidationRule implements EventValidationRule {
 
   validate(event: ExternalEventInput): boolean {
     // Validate object type if restricted
-    if (this.schema.validObjectTypes?.length && event.objectType) {
-      if (!this.schema.validObjectTypes.includes(event.objectType)) {
-        this.validationError = `Object type '${event.objectType}' is not valid for this event. Valid types: ${this.schema.validObjectTypes.join(', ')}`;
+    if (this.schema.validObjectTypes?.length && event.objectMetadataId) {
+      if (!this.schema.validObjectTypes.includes(event.objectMetadataId)) {
+        this.validationError = `Object metadata ID '${event.objectMetadataId}' is not valid for this event. Valid types: ${this.schema.validObjectTypes.join(', ')}`;
 
         return false;
       }

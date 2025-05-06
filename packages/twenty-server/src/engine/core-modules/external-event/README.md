@@ -9,7 +9,6 @@ This module allows clients to send event data to Twenty's ClickHouse database. E
 ## Key Features
 
 - **Event Collection API**: Simple HTTP endpoint for sending events
-- **Workspace-specific Validation**: Define validation rules per workspace
 - **Schema Validation**: Validate events against defined metadata
 - **GraphQL Management API**: Create and manage event metadata
 

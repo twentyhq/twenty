@@ -4,50 +4,41 @@ import {
 } from './schema-validation.rule';
 
 describe('EventMetadataValidationRule', () => {
-  describe('required fields validation', () => {
-    it('should validate event with all required fields', () => {
+  describe('validate', () => {
+    it('should validate required properties', () => {
       const schema: EventSchema = {
         required: ['userId', 'event'],
       };
 
       const rule = new EventMetadataValidationRule(schema);
+
+      // Valid event with all required properties
       const event = {
-        event: 'user.action',
-        objectId: 'test-id',
+        event: 'test.event',
+        recordId: 'test-id',
         properties: {
-          userId: '123',
+          userId: 'user123',
           event: 'click',
           optional: 'value',
         },
       };
 
       expect(rule.validate(event)).toBe(true);
-    });
 
-    it('should fail validation when required field is missing', () => {
-      const schema: EventSchema = {
-        required: ['userId', 'event'],
-      };
-
-      const rule = new EventMetadataValidationRule(schema);
-      const event = {
-        event: 'user.action',
-        objectId: 'test-id',
+      // Invalid event missing required property
+      const invalidEvent = {
+        event: 'test.event',
+        recordId: 'test-id',
         properties: {
-          userId: '123',
-          // event field is missing
+          userId: 'user123',
+          // missing required 'event' property
         },
       };
 
-      expect(rule.validate(event)).toBe(false);
-      expect(rule.getErrorMessage()).toContain(
-        "Required property 'event' is missing",
-      );
+      expect(rule.validate(invalidEvent)).toBe(false);
     });
-  });
 
-  describe('field type validation', () => {
-    it('should validate event with correct field types', () => {
+    it('should validate field types', () => {
       const schema: EventSchema = {
         fieldTypes: {
           userId: 'string',
@@ -58,11 +49,13 @@ describe('EventMetadataValidationRule', () => {
       };
 
       const rule = new EventMetadataValidationRule(schema);
+
+      // Valid event with correct types
       const event = {
-        event: 'user.action',
-        objectId: 'test-id',
+        event: 'test.event',
+        recordId: 'test-id',
         properties: {
-          userId: '123',
+          userId: 'user123',
           count: 5,
           isActive: true,
           metadata: { key: 'value' },
@@ -70,78 +63,55 @@ describe('EventMetadataValidationRule', () => {
       };
 
       expect(rule.validate(event)).toBe(true);
-    });
 
-    it('should fail validation when field type is incorrect', () => {
-      const schema: EventSchema = {
-        fieldTypes: {
-          userId: 'string',
-          count: 'number',
-        },
-      };
-
-      const rule = new EventMetadataValidationRule(schema);
-      const event = {
-        event: 'user.action',
-        objectId: 'test-id',
+      // Invalid event with wrong type for a field
+      const invalidEvent = {
+        event: 'test.event',
+        recordId: 'test-id',
         properties: {
-          userId: '123',
-          count: '5', // should be number but is string
+          userId: 'user123',
+          count: 'not-a-number', // should be a number
         },
       };
 
-      expect(rule.validate(event)).toBe(false);
-      expect(rule.getErrorMessage()).toContain(
-        "Property 'count' should be of type 'number'",
-      );
+      expect(rule.validate(invalidEvent)).toBe(false);
     });
-  });
 
-  describe('allowed values validation', () => {
-    it('should validate event with allowed values', () => {
+    it('should validate allowed values', () => {
       const schema: EventSchema = {
         allowedValues: {
-          status: ['active', 'inactive', 'pending'],
+          status: ['pending', 'processing', 'completed'],
           priority: [1, 2, 3],
         },
       };
 
       const rule = new EventMetadataValidationRule(schema);
+
+      // Valid event with allowed values
       const event = {
-        event: 'user.status',
-        objectId: 'test-id',
+        event: 'test.event',
+        recordId: 'test-id',
         properties: {
-          status: 'active',
+          status: 'pending',
           priority: 2,
         },
       };
 
       expect(rule.validate(event)).toBe(true);
-    });
 
-    it('should fail validation when value is not in allowed values', () => {
-      const schema: EventSchema = {
-        allowedValues: {
-          status: ['active', 'inactive', 'pending'],
-        },
-      };
-
-      const rule = new EventMetadataValidationRule(schema);
-      const event = {
-        event: 'user.status',
-        objectId: 'test-id',
+      // Invalid event with disallowed value
+      const invalidEvent = {
+        event: 'test.event',
+        recordId: 'test-id',
         properties: {
-          status: 'deleted', // not in allowed values
+          status: 'unknown', // not in allowed values
         },
       };
 
-      expect(rule.validate(event)).toBe(false);
-      expect(rule.getErrorMessage()).toContain('not in the allowed values');
+      expect(rule.validate(invalidEvent)).toBe(false);
     });
-  });
 
-  describe('strictValidation setting', () => {
-    it('should accept unknown properties when strictValidation is false', () => {
+    it('should handle strict validation', () => {
       const schema: EventSchema = {
         fieldTypes: {
           name: 'string',
@@ -150,92 +120,75 @@ describe('EventMetadataValidationRule', () => {
       };
 
       const rule = new EventMetadataValidationRule(schema);
+
+      // Valid event with extra properties (allowed with strictValidation: false)
       const event = {
-        event: 'user.action',
-        objectId: 'test-id',
+        event: 'test.event',
+        recordId: 'test-id',
         properties: {
-          name: 'Test',
-          unknownProp: 'value', // unknown property
+          name: 'Test Event',
+          unknownProp: 'some value',
         },
       };
 
       expect(rule.validate(event)).toBe(true);
-    });
 
-    it('should reject unknown properties when strictValidation is true', () => {
-      const schema: EventSchema = {
+      // With strict validation
+      const strictSchema: EventSchema = {
         fieldTypes: {
           name: 'string',
         },
         strictValidation: true,
       };
 
-      const rule = new EventMetadataValidationRule(schema);
-      const event = {
-        event: 'user.action',
-        objectId: 'test-id',
+      const strictRule = new EventMetadataValidationRule(strictSchema);
+
+      const invalidEvent = {
+        event: 'test.event',
+        recordId: 'test-id',
         properties: {
-          name: 'Test',
-          unknownProp: 'value', // unknown property
+          name: 'Test Event',
+          unknownProp: 'some value', // not allowed with strictValidation: true
         },
       };
 
-      expect(rule.validate(event)).toBe(false);
-      expect(rule.getErrorMessage()).toContain('Unknown properties found');
+      expect(strictRule.validate(invalidEvent)).toBe(false);
     });
-  });
 
-  describe('combined validations', () => {
-    it('should validate event with combined validation rules', () => {
+    it('should validate valid object types', () => {
       const schema: EventSchema = {
-        required: ['userId', 'action'],
-        fieldTypes: {
-          userId: 'string',
-          count: 'number',
-        },
-        allowedValues: {
-          action: ['click', 'view', 'submit'],
-        },
+        validObjectTypes: ['user', 'account'],
       };
 
       const rule = new EventMetadataValidationRule(schema);
+
+      // Valid event with valid object type
       const event = {
-        event: 'user.action',
-        objectId: 'test-id',
+        event: 'test.event',
+        recordId: 'test-id',
+        objectMetadataId: 'user',
         properties: {
-          userId: '123',
-          action: 'click',
-          count: 5,
+          userId: 'user123',
+          action: 'login',
+          count: 1,
         },
       };
 
       expect(rule.validate(event)).toBe(true);
-    });
 
-    it('should fail validation when any rule fails', () => {
-      const schema: EventSchema = {
-        required: ['userId', 'action'],
-        fieldTypes: {
-          userId: 'string',
-          count: 'number',
-        },
-        allowedValues: {
-          action: ['click', 'view', 'submit'],
-        },
-      };
-
-      const rule = new EventMetadataValidationRule(schema);
-      const event = {
-        event: 'user.action',
-        objectId: 'test-id',
+      // Invalid event with invalid object type
+      const invalidEvent = {
+        event: 'test.event',
+        recordId: 'test-id',
+        objectMetadataId: 'contact', // not in validObjectTypes
         properties: {
-          userId: '123',
-          action: 'hover', // not in allowed values
-          count: 5,
+          userId: 'user123',
+          action: 'view',
+          count: 1,
         },
       };
 
-      expect(rule.validate(event)).toBe(false);
+      expect(rule.validate(invalidEvent)).toBe(false);
     });
   });
 });

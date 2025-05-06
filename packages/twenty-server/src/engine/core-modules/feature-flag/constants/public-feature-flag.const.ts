@@ -9,9 +9,7 @@ type FeatureFlagMetadata = {
 export type PublicFeatureFlag = {
   key: Extract<
     FeatureFlagKey,
-    | FeatureFlagKey.IsWorkflowEnabled
-    | FeatureFlagKey.IsCustomDomainEnabled
-    | FeatureFlagKey.IsExternalEventEnabled
+    FeatureFlagKey.IsWorkflowEnabled | FeatureFlagKey.IsCustomDomainEnabled
   >;
   metadata: FeatureFlagMetadata;
 };
@@ -25,6 +23,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       imagePath: 'https://twenty.com/images/lab/is-workflow-enabled.png',
     },
   },
+  /* Uncomment when ready to make the feature public
   {
     key: FeatureFlagKey.IsExternalEventEnabled,
     metadata: {
@@ -33,6 +32,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       imagePath: 'https://twenty.com/images/lab/is-external-event-enabled.png',
     },
   },
+  */
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         {

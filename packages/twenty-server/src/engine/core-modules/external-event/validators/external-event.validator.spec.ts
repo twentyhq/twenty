@@ -22,7 +22,7 @@ describe('ExternalEventValidator', () => {
     it('should validate a valid event', () => {
       const event = {
         event: 'test.event',
-        objectId: 'test-id',
+        recordId: 'test-id',
         properties: { data: 'value' },
       };
 
@@ -32,7 +32,7 @@ describe('ExternalEventValidator', () => {
     it('should throw an exception for empty event name', () => {
       const event = {
         event: '',
-        objectId: 'test-id',
+        recordId: 'test-id',
         properties: { data: 'value' },
       };
 
@@ -42,7 +42,7 @@ describe('ExternalEventValidator', () => {
     it('should throw an exception for non-string event name', () => {
       const event = {
         event: 123 as any,
-        objectId: 'test-id',
+        recordId: 'test-id',
         properties: { data: 'value' },
       };
 
@@ -52,7 +52,7 @@ describe('ExternalEventValidator', () => {
     it('should throw an exception for null properties', () => {
       const event = {
         event: 'test.event',
-        objectId: 'test-id',
+        recordId: 'test-id',
         properties: null as any,
       };
 
@@ -62,7 +62,7 @@ describe('ExternalEventValidator', () => {
     it('should throw an exception for array properties', () => {
       const event = {
         event: 'test.event',
-        objectId: 'test-id',
+        recordId: 'test-id',
         properties: [] as any,
       };
 
@@ -88,7 +88,7 @@ describe('ExternalEventValidator', () => {
     it('should pass validation for custom event type with required field', () => {
       const event = {
         event: 'custom.event',
-        objectId: 'test-id',
+        recordId: 'test-id',
         properties: { requiredField: 'value' },
       };
 
@@ -98,7 +98,7 @@ describe('ExternalEventValidator', () => {
     it('should throw an exception for custom event type without required field', () => {
       const event = {
         event: 'custom.event',
-        objectId: 'test-id',
+        recordId: 'test-id',
         properties: { otherField: 'value' },
       };
 
@@ -108,7 +108,7 @@ describe('ExternalEventValidator', () => {
     it('should not apply event-specific rules to other event types', () => {
       const event = {
         event: 'other.event',
-        objectId: 'test-id',
+        recordId: 'test-id',
         properties: { otherField: 'value' },
       };
 

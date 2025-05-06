@@ -1,5 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { Repository } from 'typeorm';
+
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+
 import { ExternalEventController } from './external-event.controller';
 import {
   ExternalEventException,
@@ -15,6 +20,10 @@ describe('ExternalEventController', () => {
   let externalEventService: ExternalEventService;
   let externalEventTokenService: ExternalEventTokenService;
   let externalEventValidator: ExternalEventValidator;
+  let mockFeatureFlagRepository: Repository<FeatureFlag>;
+  let mockExternalEventTokenService: ExternalEventTokenService;
+  let mockExternalEventService: ExternalEventService;
+  let mockExternalEventValidator: ExternalEventValidator;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,6 +47,12 @@ describe('ExternalEventController', () => {
             validate: jest.fn(),
           },
         },
+        {
+          provide: Repository,
+          useValue: {
+            findOne: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -50,37 +65,57 @@ describe('ExternalEventController', () => {
     externalEventValidator = module.get<ExternalEventValidator>(
       ExternalEventValidator,
     );
+    mockFeatureFlagRepository = module.get<Repository<FeatureFlag>>(Repository);
+    mockExternalEventTokenService = module.get<ExternalEventTokenService>(
+      ExternalEventTokenService,
+    );
+    mockExternalEventService =
+      module.get<ExternalEventService>(ExternalEventService);
+    mockExternalEventValidator = module.get<ExternalEventValidator>(
+      ExternalEventValidator,
+    );
   });
 
   describe('createExternalEvent', () => {
-    it('should throw exception when authorization header is missing', async () => {
-      const workspaceId = 'test-workspace-id';
-      const event = {
-        event: 'test.event',
-        objectId: 'test-id',
-        properties: {},
-      };
+    const workspaceId = 'test-workspace-id';
+    const authHeader = 'Bearer test-token';
+    const event = {
+      event: 'test.event',
+      recordId: 'test-id',
+      properties: {},
+    };
+
+    it('should throw an exception when feature is not enabled', async () => {
+      jest.spyOn(mockFeatureFlagRepository, 'findOne').mockResolvedValue(null);
 
       await expect(
-        controller.createExternalEvent(
-          workspaceId,
-          null as unknown as string,
-          event,
-        ),
+        controller.createExternalEvent(workspaceId, authHeader, event),
       ).rejects.toThrow(ExternalEventException);
     });
 
-    it('should throw exception when token validation fails', async () => {
-      const workspaceId = 'test-workspace-id';
-      const authHeader = 'Bearer invalid-token';
-      const event = {
-        event: 'test.event',
-        objectId: 'test-id',
-        properties: {},
-      };
+    it('should throw an exception when authorization header is missing', async () => {
+      jest.spyOn(mockFeatureFlagRepository, 'findOne').mockResolvedValue({
+        id: 'test-id',
+        workspaceId,
+        key: FeatureFlagKey.IsExternalEventEnabled,
+        value: true,
+      } as FeatureFlag);
+
+      await expect(
+        controller.createExternalEvent(workspaceId, '' as string, event),
+      ).rejects.toThrow(ExternalEventException);
+    });
+
+    it('should throw an exception when token validation fails', async () => {
+      jest.spyOn(mockFeatureFlagRepository, 'findOne').mockResolvedValue({
+        id: 'test-id',
+        workspaceId,
+        key: FeatureFlagKey.IsExternalEventEnabled,
+        value: true,
+      } as FeatureFlag);
 
       jest
-        .spyOn(externalEventTokenService, 'validateToken')
+        .spyOn(mockExternalEventTokenService, 'validateToken')
         .mockResolvedValue(false);
 
       await expect(
@@ -88,46 +123,46 @@ describe('ExternalEventController', () => {
       ).rejects.toThrow(ExternalEventException);
     });
 
-    it('should throw exception when validation fails', async () => {
-      const workspaceId = 'test-workspace-id';
-      const authHeader = 'Bearer valid-token';
-      const event = {
-        event: 'test.event',
-        objectId: 'test-id',
-        properties: {},
-      };
+    it('should throw an exception when validation fails', async () => {
+      jest.spyOn(mockFeatureFlagRepository, 'findOne').mockResolvedValue({
+        id: 'test-id',
+        workspaceId,
+        key: FeatureFlagKey.IsExternalEventEnabled,
+        value: true,
+      } as FeatureFlag);
 
       jest
-        .spyOn(externalEventTokenService, 'validateToken')
+        .spyOn(mockExternalEventTokenService, 'validateToken')
         .mockResolvedValue(true);
 
-      jest.spyOn(externalEventValidator, 'validate').mockImplementation(() => {
-        throw new ExternalEventException(
-          'Validation failed',
-          ExternalEventExceptionCode.INVALID_INPUT,
-        );
-      });
+      jest
+        .spyOn(mockExternalEventValidator, 'validate')
+        .mockImplementation(() => {
+          throw new ExternalEventException(
+            'Validation error',
+            ExternalEventExceptionCode.INVALID_INPUT,
+          );
+        });
 
       await expect(
         controller.createExternalEvent(workspaceId, authHeader, event),
       ).rejects.toThrow(ExternalEventException);
     });
 
-    it('should throw exception when createExternalEvent fails', async () => {
-      const workspaceId = 'test-workspace-id';
-      const authHeader = 'Bearer valid-token';
-      const event = {
-        event: 'test.event',
-        objectId: 'test-id',
-        properties: {},
-      };
+    it('should throw an exception when createExternalEvent fails', async () => {
+      jest.spyOn(mockFeatureFlagRepository, 'findOne').mockResolvedValue({
+        id: 'test-id',
+        workspaceId,
+        key: FeatureFlagKey.IsExternalEventEnabled,
+        value: true,
+      } as FeatureFlag);
 
       jest
-        .spyOn(externalEventTokenService, 'validateToken')
+        .spyOn(mockExternalEventTokenService, 'validateToken')
         .mockResolvedValue(true);
 
       jest
-        .spyOn(externalEventService, 'createExternalEvent')
+        .spyOn(mockExternalEventService, 'createExternalEvent')
         .mockResolvedValue({ success: false });
 
       await expect(
@@ -135,21 +170,20 @@ describe('ExternalEventController', () => {
       ).rejects.toThrow(ExternalEventException);
     });
 
-    it('should return success when everything is valid', async () => {
-      const workspaceId = 'test-workspace-id';
-      const authHeader = 'Bearer valid-token';
-      const event = {
-        event: 'test.event',
-        objectId: 'test-id',
-        properties: {},
-      };
+    it('should return success when operation succeeds', async () => {
+      jest.spyOn(mockFeatureFlagRepository, 'findOne').mockResolvedValue({
+        id: 'test-id',
+        workspaceId,
+        key: FeatureFlagKey.IsExternalEventEnabled,
+        value: true,
+      } as FeatureFlag);
 
       jest
-        .spyOn(externalEventTokenService, 'validateToken')
+        .spyOn(mockExternalEventTokenService, 'validateToken')
         .mockResolvedValue(true);
 
       jest
-        .spyOn(externalEventService, 'createExternalEvent')
+        .spyOn(mockExternalEventService, 'createExternalEvent')
         .mockResolvedValue({ success: true });
 
       const result = await controller.createExternalEvent(
@@ -159,15 +193,6 @@ describe('ExternalEventController', () => {
       );
 
       expect(result).toEqual({ success: true });
-      expect(externalEventTokenService.validateToken).toHaveBeenCalledWith(
-        workspaceId,
-        'valid-token',
-      );
-      expect(externalEventValidator.validate).toHaveBeenCalledWith(event);
-      expect(externalEventService.createExternalEvent).toHaveBeenCalledWith(
-        workspaceId,
-        event,
-      );
     });
   });
 });

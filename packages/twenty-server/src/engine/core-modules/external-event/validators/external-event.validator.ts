@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
+import { ExternalEventInput } from 'src/engine/core-modules/external-event/dto/external-event.input';
 import {
   ExternalEventException,
   ExternalEventExceptionCode,
 } from 'src/engine/core-modules/external-event/external-event.exception';
-import { ExternalEventInput } from 'src/engine/core-modules/external-event/services/external-event.service';
 
 /**
  * Interface for event validation rules
@@ -22,24 +22,21 @@ export class BaseEventValidationRule implements EventValidationRule {
   private validationError: string | null = null;
 
   validate(event: ExternalEventInput): boolean {
-    // Validate event name
     if (typeof event.event !== 'string' || event.event.trim().length === 0) {
       this.validationError = 'Event name is required and must be a string';
 
       return false;
     }
 
-    // Validate objectId
     if (
-      typeof event.objectId !== 'string' ||
-      event.objectId.trim().length === 0
+      typeof event.recordId !== 'string' ||
+      event.recordId.trim().length === 0
     ) {
-      this.validationError = 'Object ID is required and must be a string';
+      this.validationError = 'Record ID is required and must be a string';
 
       return false;
     }
 
-    // Validate properties
     if (
       !event.properties ||
       typeof event.properties !== 'object' ||

@@ -8,93 +8,88 @@ import { ExternalEventService } from './services/external-event.service';
 
 describe('ExternalEventService', () => {
   let service: ExternalEventService;
-  let clickHouseService: ClickHouseService;
-  let twentyConfigService: TwentyConfigService;
+  let clickhouseService: ClickHouseService;
+  let configService: TwentyConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ExternalEventService,
         {
-          provide: TwentyConfigService,
-          useValue: {
-            get: jest.fn().mockReturnValue('http://localhost:8123'),
-          },
-        },
-        {
           provide: ClickHouseService,
           useValue: {
-            insert: jest.fn().mockResolvedValue({ success: true }),
+            insert: jest.fn(),
           },
         },
         {
           provide: JwtWrapperService,
           useValue: {
-            generateAppSecret: jest.fn(),
+            signAsync: jest.fn(),
+            verifyAsync: jest.fn(),
+          },
+        },
+        {
+          provide: TwentyConfigService,
+          useValue: {
+            get: jest.fn(),
           },
         },
       ],
     }).compile();
 
     service = module.get<ExternalEventService>(ExternalEventService);
-    clickHouseService = module.get<ClickHouseService>(ClickHouseService);
-    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
+    clickhouseService = module.get<ClickHouseService>(ClickHouseService);
+    configService = module.get<TwentyConfigService>(TwentyConfigService);
   });
 
   describe('createExternalEvent', () => {
-    it('should insert event to clickhouse', async () => {
-      const workspaceId = 'test-workspace-id';
-      const event = {
-        event: 'test.event',
-        objectId: 'test-id',
-        properties: { test: 'data' },
-      };
+    const workspaceId = 'test-workspace-id';
+    const event = {
+      event: 'test.event',
+      recordId: 'test-id',
+      properties: {
+        test: 'value',
+      },
+    };
+
+    it('should insert a record into ClickHouse', async () => {
+      jest
+        .spyOn(configService, 'get')
+        .mockReturnValue('http://clickhouse:8123');
+
+      jest.spyOn(clickhouseService, 'insert').mockResolvedValue({} as any);
 
       await service.createExternalEvent(workspaceId, event);
 
-      expect(clickHouseService.insert).toHaveBeenCalledWith('externalEvent', [
+      expect(clickhouseService.insert).toHaveBeenCalledWith('external_events', [
         expect.objectContaining({
-          event: event.event,
-          objectId: event.objectId,
-          properties: event.properties,
           workspaceId,
-          timestamp: expect.any(String),
+          event: event.event,
+          properties: JSON.stringify(event.properties),
+          recordId: event.recordId,
         }),
       ]);
     });
 
-    it('should return success true when clickhouse URL is not configured', async () => {
-      const workspaceId = 'test-workspace-id';
-      const event = {
-        event: 'test.event',
-        objectId: 'test-id',
-        properties: { test: 'data' },
-      };
-
-      // Mock TwentyConfigService to return undefined for CLICKHOUSE_URL
-      jest.spyOn(twentyConfigService, 'get').mockReturnValue(undefined);
+    it('should return failure when clickhouse URL is not configured', async () => {
+      jest.spyOn(configService, 'get').mockReturnValue(undefined);
 
       const result = await service.createExternalEvent(workspaceId, event);
 
-      expect(result).toEqual({ success: true });
-      expect(clickHouseService.insert).not.toHaveBeenCalled();
+      expect(result.success).toBe(false);
+      expect(clickhouseService.insert).not.toHaveBeenCalled();
     });
 
-    it('should return success false when clickhouse insertion fails', async () => {
-      const workspaceId = 'test-workspace-id';
-      const event = {
-        event: 'test.event',
-        objectId: 'test-id',
-        properties: { test: 'data' },
-      };
-
+    it('should handle clickhouse insertion failure', async () => {
       jest
-        .spyOn(clickHouseService, 'insert')
-        .mockRejectedValue(new Error('ClickHouse error'));
+        .spyOn(configService, 'get')
+        .mockReturnValue('http://clickhouse:8123');
+
+      jest.spyOn(clickhouseService, 'insert').mockRejectedValue(new Error());
 
       const result = await service.createExternalEvent(workspaceId, event);
 
-      expect(result).toEqual({ success: false });
+      expect(result.success).toBe(false);
     });
   });
 });
