@@ -23,7 +23,7 @@ import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
-    jwtWrapperService: JwtWrapperService,
+    private readonly jwtWrapperService: JwtWrapperService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,

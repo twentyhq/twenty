@@ -1,18 +1,18 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Command({
   name: 'upgrade:0-51:upgrade-created-by-enum',
@@ -43,7 +43,10 @@ export class UpgradeCreatedByEnumCommand extends ActiveOrSuspendedWorkspacesMigr
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     const workspaceDataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace(workspaceId);
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+        shouldFailIfMetadataNotFound: false,
+      });
 
     const objectMetadatas = await this.objectMetadataRepository.find({
       where: {

@@ -911,7 +911,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     workspaceId: string,
   ) {
     const workspaceDataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace(workspaceId);
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+        shouldFailIfMetadataNotFound: false,
+      });
 
     await workspaceDataSource.transaction(
       async (workspaceEntityManager: WorkspaceEntityManager) => {

@@ -20,7 +20,13 @@ export class WorkspaceDataSourceService {
    * @returns
    */
   public async connectToMainDataSource(): Promise<DataSource> {
-    return this.typeormService.getMainDataSource();
+    const dataSource = this.typeormService.getMainDataSource();
+
+    if (!dataSource) {
+      throw new Error(`Could not connect to workspace data source`);
+    }
+
+    return dataSource;
   }
 
   public async checkSchemaExists(workspaceId: string) {

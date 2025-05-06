@@ -26,7 +26,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
   private mainDataSource: DataSource;
 
-  constructor(twentyConfigService: TwentyConfigService) {
+  constructor(private readonly twentyConfigService: TwentyConfigService) {
     this.mainDataSource = new DataSource({
       url: twentyConfigService.get('PG_DATABASE_URL'),
       type: 'postgres',
@@ -66,7 +66,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  public getMainDataSource() {
+  public getMainDataSource(): DataSource {
     return this.mainDataSource;
   }
 

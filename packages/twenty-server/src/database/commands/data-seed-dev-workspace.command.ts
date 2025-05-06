@@ -100,7 +100,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
     await seedCoreSchema({
-      workspaceDataSource: rawDataSource,
+      dataSource: rawDataSource,
       workspaceId,
       seedBilling: isBillingEnabled,
       appVersion,
@@ -117,9 +117,9 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         workspaceId,
       );
 
-    const workspaceDataSource = this.typeORMService.getMainDataSource();
+    const mainDataSource = this.typeORMService.getMainDataSource();
 
-    if (!workspaceDataSource) {
+    if (!mainDataSource) {
       throw new Error('Could not connect to workspace data source');
     }
 
@@ -139,10 +139,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         workspaceId,
       );
 
-      await this.seedStandardObjectRecords(
-        workspaceDataSource,
-        dataSourceMetadata,
-      );
+      await this.seedStandardObjectRecords(mainDataSource, dataSourceMetadata);
 
       await this.seederService.seedCustomObjects(
         dataSourceMetadata.id,
@@ -163,10 +160,10 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
   }
 
   async seedStandardObjectRecords(
-    workspaceDataSource: DataSource,
+    mainDataSource: DataSource,
     dataSourceMetadata: DataSourceEntity,
   ) {
-    await workspaceDataSource.transaction(
+    await mainDataSource.transaction(
       async (entityManager: WorkspaceEntityManager) => {
         const { objectMetadataStandardIdToIdMap } =
           await this.objectMetadataService.getObjectMetadataStandardIdToIdMap(
