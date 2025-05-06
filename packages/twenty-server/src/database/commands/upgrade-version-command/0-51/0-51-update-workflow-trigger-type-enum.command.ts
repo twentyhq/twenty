@@ -45,7 +45,6 @@ export class UpgradeCreatedByEnumCommand extends ActiveOrSuspendedWorkspacesMigr
     const workspaceDataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace({
         workspaceId,
-        shouldFailIfMetadataNotFound: false,
       });
 
     const objectMetadatas = await this.objectMetadataRepository.find({

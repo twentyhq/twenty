@@ -106,7 +106,6 @@ export class MicrosoftAPIsService {
     const workspaceDataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace({
         workspaceId,
-        shouldFailIfMetadataNotFound: false,
       });
 
     const scopes = getMicrosoftApisOauthScopes();
