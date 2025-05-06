@@ -94,5 +94,6 @@
     "node": "^18.17.1",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
-  }
+  },
+  "packageManager": "yarn@4.4.0"
 }
