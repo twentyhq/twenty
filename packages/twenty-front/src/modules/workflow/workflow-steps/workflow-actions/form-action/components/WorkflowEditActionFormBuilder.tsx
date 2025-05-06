@@ -135,8 +135,11 @@ export const WorkflowEditActionFormBuilder = ({
 
   const [selectedField, setSelectedField] = useState<string | null>(null);
   const [hoveredField, setHoveredField] = useState<string | null>(null);
+
   const isFieldSelected = (fieldName: string) => selectedField === fieldName;
+
   const isFieldHovered = (fieldName: string) => hoveredField === fieldName;
+
   const handleFieldClick = (fieldName: string) => {
     if (actionOptions.readonly === true) {
       return;
@@ -163,6 +166,27 @@ export const WorkflowEditActionFormBuilder = ({
     saveAction(updatedFormData);
   };
 
+  const handleDragEnd: OnDragEndResponder = ({ source, destination }) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
+
+    const movedField = formData.at(source.index);
+
+    if (!isDefined(movedField) || !isDefined(destination)) {
+      return;
+    }
+
+    const copiedFormData = [...formData];
+
+    copiedFormData.splice(source.index, 1);
+    copiedFormData.splice(destination.index, 0, movedField);
+
+    setFormData(copiedFormData);
+
+    saveAction(copiedFormData);
+  };
+
   const saveAction = useDebouncedCallback(async (formData: FormData) => {
     if (actionOptions.readonly === true) {
       return;
@@ -182,10 +206,6 @@ export const WorkflowEditActionFormBuilder = ({
       saveAction.flush();
     };
   }, [saveAction]);
-
-  const onDragEnd: OnDragEndResponder = (...args) => {
-    console.log('onDragEnd', args);
-  };
 
   return (
     <>
@@ -208,7 +228,7 @@ export const WorkflowEditActionFormBuilder = ({
       />
       <StyledWorkflowStepBody>
         <DraggableList
-          onDragEnd={onDragEnd}
+          onDragEnd={handleDragEnd}
           draggableItems={
             <>
               {formData.map((field, index) => (
@@ -216,15 +236,17 @@ export const WorkflowEditActionFormBuilder = ({
                   key={field.id}
                   draggableId={field.id}
                   index={index}
+                  isDragDisabled={actionOptions.readonly}
                   isInsideScrollableContainer
                   draggableComponentStyles={{
                     marginBottom: theme.spacing(4),
                   }}
                   itemComponent={({ isDragging }) => {
                     const showButtons =
-                      isFieldSelected(field.id) ||
-                      isFieldHovered(field.id) ||
-                      isDragging;
+                      !actionOptions.readonly &&
+                      (isFieldSelected(field.id) ||
+                        isFieldHovered(field.id) ||
+                        isDragging);
 
                     return (
                       <StyledFormFieldContainer
@@ -232,7 +254,7 @@ export const WorkflowEditActionFormBuilder = ({
                         onMouseEnter={() => setHoveredField(field.id)}
                         onMouseLeave={() => setHoveredField(null)}
                       >
-                        {!actionOptions.readonly && showButtons && (
+                        {showButtons && (
                           <StyledLightGripIconButton Icon={IconGripVertical} />
                         )}
 
@@ -265,7 +287,7 @@ export const WorkflowEditActionFormBuilder = ({
                           </FormFieldInputRowContainer>
                         </StyledLabelAndFieldContainer>
 
-                        {!actionOptions.readonly && showButtons && (
+                        {showButtons && (
                           <StyledLightTrashIconButton
                             Icon={IconTrash}
                             onClick={() => {
