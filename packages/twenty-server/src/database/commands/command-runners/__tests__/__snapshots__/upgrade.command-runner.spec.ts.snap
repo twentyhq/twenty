@@ -2,7 +2,7 @@
 
 exports[`UpgradeCommandRunner Workspace upgrade should fail when APP_VERSION is not defined 1`] = `[Error: Cannot run upgrade command when APP_VERSION is not defined, please double check your env variables]`;
 
-exports[`UpgradeCommandRunner Workspace upgrade should fail when all commands contains invalid semver keys 1`] = `[Error: No commands found for version 2.0.0. Please check the commands record.]`;
+exports[`UpgradeCommandRunner Workspace upgrade should fail when all commands contains invalid semver keys 1`] = `[Error: No previous version found for version 2.0.0. Please check the commands record available invalid, 2.0.0.]`;
 
 exports[`UpgradeCommandRunner Workspace upgrade should fail when current version commands are not found 1`] = `[Error: No commands found for version 42.0.0. Please check the commands record.]`;
 
