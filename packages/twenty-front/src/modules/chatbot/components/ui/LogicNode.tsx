@@ -128,7 +128,7 @@ function LogicNode({
 }: {
   dropdownId: string;
   onGroupsChange: (groups: ExtendedLogicNodeData[]) => void;
-  children: ReactNode;
+  children?: ReactNode;
   groupsData: LogicNodeData[];
 }) {
   const handleConditionChange = (index: number, value: SelectValue) => {
