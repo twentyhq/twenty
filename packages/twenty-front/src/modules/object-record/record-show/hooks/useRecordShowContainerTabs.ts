@@ -10,8 +10,6 @@ import { RecordLayoutTab } from '@/ui/layout/tab/types/RecordLayoutTab';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { FeatureFlagKey } from '~/generated/graphql';
 import {
   IconCalendarEvent,
   IconHome,
@@ -19,6 +17,8 @@ import {
   IconNotes,
   IconSettings,
 } from 'twenty-ui/display';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRecordShowContainerTabs = (
   loading: boolean,
@@ -193,6 +193,28 @@ export const useRecordShowContainerTabs = (
             position: 101,
             Icon: IconSettings,
             cards: [{ type: CardType.WorkflowRunCard }],
+            hide: {
+              ifMobile: false,
+              ifDesktop: false,
+              ifInRightDrawer: false,
+              ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
+              ifRequiredObjectsInactive: [],
+              ifRelationsMissing: [],
+            },
+          },
+          timeline: null,
+          tasks: null,
+          notes: null,
+          files: null,
+        },
+      },
+      [CoreObjectNameSingular.Traceable]: {
+        tabs: {
+          recordShow: {
+            title: 'Record show',
+            position: 101,
+            Icon: IconSettings,
+            cards: [],
             hide: {
               ifMobile: false,
               ifDesktop: false,
