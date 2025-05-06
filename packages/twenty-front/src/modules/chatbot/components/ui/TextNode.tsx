@@ -39,6 +39,21 @@ const StyledDiv = styled.div`
   }
 `;
 
+const StyledTextContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.quaternary};
+  border: none;
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  box-sizing: border-box;
+  color: ${({ theme }) => theme.font.color.primary};
+  display: flex;
+  flex-direction: column;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  outline: none;
+  padding: ${({ theme }) => theme.spacing(2)};
+  white-space: pre-wrap;
+  width: 100%;
+`;
+
 function TextNode({
   id,
   data,
@@ -80,13 +95,6 @@ function TextNode({
     }
   }, [connections]);
 
-  const handleInputChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const textarea = evt.target;
-    textarea.style.height = 'auto';
-    textarea.style.height = `${textarea.scrollHeight}px`;
-    updateNodeData(id, { text: textarea.value });
-  };
-
   useEffect(() => {
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (isDefined(textareaRef.current)) {
@@ -109,12 +117,7 @@ function TextNode({
         />
       )}
       <StyledDiv>
-        <textarea
-          id="text"
-          ref={textareaRef}
-          onChange={handleInputChange}
-          value={data.text}
-        />
+        <StyledTextContainer>{data.text}</StyledTextContainer>
       </StyledDiv>
       {data.nodeStart && (
         <Handle
