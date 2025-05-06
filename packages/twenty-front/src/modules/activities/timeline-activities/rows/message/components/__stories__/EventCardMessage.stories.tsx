@@ -68,7 +68,7 @@ export const NotShared: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Subject not shared');
+    await canvas.findByText('Not shared by John Doe');
   },
   parameters: {
     msw: {
