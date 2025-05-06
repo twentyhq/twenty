@@ -27,6 +27,7 @@ export type VersionCommands = {
 export type AllCommands = Record<string, VersionCommands>;
 export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   private fromWorkspaceVersion: SemVer;
+  private currentAppVersion: string;
   public abstract allCommands: AllCommands;
   public commands: VersionCommands;
   public readonly VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG?: true;
@@ -42,12 +43,16 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
   }
 
   private computeFromToVersionAndCommandsToRunForCurrentAppVersion() {
-    const currentAppVersion = this.twentyConfigService.get('APP_VERSION');
-    if (!isDefined(currentAppVersion)) {
-      throw new Error(
-        'APP_VERSION is not defined. Should never occur please check the configuration.',
-      );
+    const ugpradeContextAlreadyDefined = [
+      this.currentAppVersion,
+      this.commands,
+      this.fromWorkspaceVersion,
+    ].every(isDefined);
+    if (ugpradeContextAlreadyDefined) {
+      return;
     }
+
+    const currentAppVersion = this.retrieveToVersionFromAppVersion();
 
     const currentCommands = this.allCommands[currentAppVersion];
     if (!isDefined(currentCommands)) {
@@ -67,28 +72,20 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
         `No previous version found for version ${currentAppVersion}. Please check the commands record available ${allCommandsKeys.join(', ')}.`,
       );
     }
-
-    return {
-      previousVersion,
-      currentCommands,
-    };
+    this.commands = currentCommands;
+    this.fromWorkspaceVersion = previousVersion;
+    this.currentAppVersion = currentAppVersion;
   }
 
   override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
+    this.computeFromToVersionAndCommandsToRunForCurrentAppVersion();
+
     const { workspaceId, index, total, options } = args;
     this.logger.log(
       chalk.blue(
         `${options.dryRun ? '(dry run)' : ''} Upgrading workspace ${workspaceId} ${index + 1}/${total}`,
       ),
     );
-    
-    // TODO improve in order to avoid computing each time
-    const toVersion = this.retrieveToVersionFromAppVersion();
-    const { currentCommands, previousVersion } =
-      this.computeFromToVersionAndCommandsToRunForCurrentAppVersion();
-    this.commands = currentCommands;
-    this.fromWorkspaceVersion = previousVersion;
-    ///
 
     const workspaceVersionCompareResult =
       await this.retrieveWorkspaceVersionAndCompareToWorkspaceFromVersion(
@@ -108,7 +105,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
 
         await this.workspaceRepository.update(
           { id: workspaceId },
-          { version: toVersion },
+          { version: this.currentAppVersion },
         );
         this.logger.log(
           chalk.blue(`Upgrade for workspace ${workspaceId} completed.`),
