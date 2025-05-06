@@ -1,5 +1,3 @@
-import { OnDragEndResponder } from '@hello-pangea/dnd';
-
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
@@ -11,19 +9,24 @@ import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups
 import { ViewType } from '@/views/types/ViewType';
 import { mapRecordGroupDefinitionsToViewGroups } from '@/views/utils/mapRecordGroupDefinitionsToViewGroups';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isDefined } from 'twenty-shared/utils';
 
-type UseRecordGroupHandlersParams = {
+type UseReorderRecordGroupsParams = {
   viewBarId: string;
   viewType: ViewType;
 };
 
-export const useRecordGroupReorder = ({
+type ReorderRecordGroupsParams = {
+  fromIndex: number;
+  toIndex: number;
+};
+
+export const useReorderRecordGroups = ({
   viewBarId,
   viewType,
-}: UseRecordGroupHandlersParams) => {
+}: UseReorderRecordGroupsParams) => {
   const { setRecordGroups } = useSetRecordGroups();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
@@ -33,13 +36,9 @@ export const useRecordGroupReorder = ({
 
   const { saveViewGroups } = useSaveCurrentViewGroups();
 
-  const handleOrderChange: OnDragEndResponder = useRecoilCallback(
+  const reorderRecordGroups = useRecoilCallback(
     ({ snapshot }) =>
-      (result) => {
-        if (!result.destination) {
-          return;
-        }
-
+      ({ fromIndex, toIndex }: ReorderRecordGroupsParams) => {
         const visibleRecordGroupIds = getSnapshotValue(
           snapshot,
           visibleRecordGroupIdsFamilySelector(viewType),
@@ -48,8 +47,8 @@ export const useRecordGroupReorder = ({
         const reorderedVisibleRecordGroupIds = moveArrayItem(
           visibleRecordGroupIds,
           {
-            fromIndex: result.source.index - 1,
-            toIndex: result.destination.index - 1,
+            fromIndex,
+            toIndex,
           },
         );
 
@@ -96,6 +95,6 @@ export const useRecordGroupReorder = ({
   );
 
   return {
-    handleOrderChange,
+    reorderRecordGroups,
   };
 };
