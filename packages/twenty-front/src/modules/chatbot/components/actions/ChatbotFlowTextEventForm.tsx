@@ -1,7 +1,6 @@
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
 import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
-import { ChatbotFlow } from '@/chatbot/types/chatbotFlow.type';
 import { getChatbotNodeLabel } from '@/chatbot/utils/getChatbotNodeLabel';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import styled from '@emotion/styled';
@@ -163,8 +162,6 @@ export const ChatbotFlowTextEventForm = ({
     const updatedNodes = chatbotFlow.nodes.map((node) =>
       node.id === selectedNode.id ? selectedNodeAltered : node,
     );
-
-    console.log('updatedNodes: ', updatedNodes);
 
     const { id, __typename, ...chatbotFlowWithoutId } = chatbotFlow;
 

@@ -158,8 +158,6 @@ export const BotDiagramBase = ({
 
       const newFlow = { ...flow, chatbotId: chatbotFlowId };
 
-      console.log('flow: ', flow);
-
       updateFlow(newFlow);
       refetch();
     }
