@@ -24,13 +24,13 @@ class BasicUpgradeCommandRunner extends UpgradeCommandRunner {
   };
 }
 
-class InvalidpgradeCommandRunner extends UpgradeCommandRunner {
+class InvalidUpgradeCommandRunner extends UpgradeCommandRunner {
   allCommands = {
-    '1.0.0': {
+    invalid: {
       beforeSyncMetadata: [],
       afterSyncMetadata: [],
     },
-    invalid: {
+    '2.0.0': {
       beforeSyncMetadata: [],
       afterSyncMetadata: [],
     },
@@ -39,7 +39,7 @@ class InvalidpgradeCommandRunner extends UpgradeCommandRunner {
 
 type CommandRunnerValues =
   | typeof BasicUpgradeCommandRunner
-  | typeof InvalidpgradeCommandRunner;
+  | typeof InvalidUpgradeCommandRunner;
 
 const generateMockWorkspace = (overrides?: Partial<Workspace>) =>
   ({
@@ -438,7 +438,7 @@ describe('UpgradeCommandRunner', () => {
         title: 'when all commands contains invalid semver keys',
         context: {
           input: {
-            commandRunner: InvalidpgradeCommandRunner,
+            commandRunner: InvalidUpgradeCommandRunner,
           },
         },
       },
