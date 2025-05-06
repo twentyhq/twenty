@@ -336,7 +336,7 @@ describe('UpgradeCommandRunner', () => {
   });
 
   describe('Workspace upgrade should succeed ', () => {
-    const failingTestUseCases: EachTestingContext<{
+    const successfulTestUseCases: EachTestingContext<{
       input: Omit<BuildModuleAndSetupSpiesArgs, 'numberOfWorkspace'>;
     }>[] = [
       {
@@ -364,7 +364,7 @@ describe('UpgradeCommandRunner', () => {
       },
     ];
 
-    it.each(failingTestUseCases)('$title', async ({ context: { input } }) => {
+    it.each(successfulTestUseCases)('$title', async ({ context: { input } }) => {
       await buildModuleAndSetupSpies(input);
 
       const passedParams = [];
