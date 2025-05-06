@@ -1716,6 +1716,7 @@ msgstr "最早日期"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Edit"
 msgstr "编辑"
 
@@ -2438,6 +2439,7 @@ msgstr "隐藏字段"
 
 #. js-lingui-id: vLyv1R
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Hide"
 msgstr "隐藏"
 
@@ -3025,11 +3027,13 @@ msgstr "更多选项"
 
 #. js-lingui-id: iSLA/r
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move left"
 msgstr "左移"
 
 #. js-lingui-id: Ubl2by
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move right"
 msgstr "右移"
 

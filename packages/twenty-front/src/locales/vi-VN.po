@@ -1716,6 +1716,7 @@ msgstr "Ngày sớm nhất"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Edit"
 msgstr "Chỉnh sửa"
 
@@ -2438,6 +2439,7 @@ msgstr "Trường ẩn"
 
 #. js-lingui-id: vLyv1R
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Hide"
 msgstr "\\"
 
@@ -3025,11 +3027,13 @@ msgstr "Thêm lựa chọn"
 
 #. js-lingui-id: iSLA/r
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move left"
 msgstr "Di chuyển sang trái"
 
 #. js-lingui-id: Ubl2by
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move right"
 msgstr "Di chuyển sang phải"
 

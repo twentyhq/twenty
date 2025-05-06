@@ -1716,6 +1716,7 @@ msgstr "最も早い日付"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Edit"
 msgstr "編集"
 
@@ -2438,6 +2439,7 @@ msgstr "非表示フィールド"
 
 #. js-lingui-id: vLyv1R
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Hide"
 msgstr "非表示"
 
@@ -3025,11 +3027,13 @@ msgstr "その他のオプション"
 
 #. js-lingui-id: iSLA/r
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move left"
 msgstr "左に移動"
 
 #. js-lingui-id: Ubl2by
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move right"
 msgstr "右に移動"
 
