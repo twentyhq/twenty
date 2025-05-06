@@ -6,7 +6,6 @@ import { EventCardMessageForbidden } from '@/activities/timeline-activities/rows
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -131,7 +130,7 @@ export const EventCardMessage = ({
             {message.subject !==
             FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
               ? message.subject
-              : t`Subject not shared`}
+              : `Subject not shared`}
           </StyledEmailTitle>
           <StyledEmailParticipants>
             <OverflowingTextWithTooltip text={messageParticipantHandles} />
