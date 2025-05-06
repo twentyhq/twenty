@@ -3,7 +3,17 @@ import styled from '@emotion/styled';
 import { PropsWithChildren, useId } from 'react';
 
 const StyledScrollWrapper = styled(ScrollWrapper)`
+  box-sizing: border-box;
+  padding-inline: ${({ theme }) => theme.spacing(1)};
   width: 100%;
+`;
+
+const StyledPaddingContainer = styled.div`
+  padding: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledPaddingBlockContainer = styled.div`
+  padding-block: ${({ theme }) => theme.spacing(1)};
 `;
 
 type DropDownMenuItemsScrollContainerProps = PropsWithChildren<{
@@ -19,13 +29,15 @@ export const DropDownMenuItemsScrollContainer = ({
 
   if (scrollable || hasMaxHeight) {
     return (
+      // <StyledPaddingBlockContainer> Breaks scroll on reduced height
       <StyledScrollWrapper
         componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
       >
         {children}
       </StyledScrollWrapper>
+      // </StyledPaddingBlockContainer>
     );
   }
 
-  return children;
+  return <StyledPaddingContainer>{children}</StyledPaddingContainer>;
 };

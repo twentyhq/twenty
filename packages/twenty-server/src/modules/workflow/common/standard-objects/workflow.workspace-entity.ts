@@ -21,6 +21,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 
 export enum WorkflowStatus {
   DRAFT = 'DRAFT',
@@ -134,6 +135,17 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   eventListeners: Relation<WorkflowEventListenerWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKFLOW_STANDARD_FIELD_IDS.automatedTriggers,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Automated Triggers`,
+    description: msg`Workflow automated triggers linked to the workflow.`,
+    inverseSideTarget: () => WorkflowAutomatedTriggerWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsSystem()
+  automatedTriggers: Relation<WorkflowAutomatedTriggerWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.favorites,

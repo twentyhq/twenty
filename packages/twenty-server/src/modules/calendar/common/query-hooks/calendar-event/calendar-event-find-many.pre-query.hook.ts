@@ -4,10 +4,10 @@ import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-que
 import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { CanAccessCalendarEventService } from 'src/modules/calendar/common/query-hooks/calendar-event/services/can-access-calendar-event.service';
-import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { CanAccessCalendarEventsService } from 'src/modules/calendar/common/query-hooks/calendar-event/services/can-access-calendar-events.service';
+import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 
 @WorkspaceQueryHook({
   key: `calendarEvent.findMany`,
@@ -18,7 +18,7 @@ export class CalendarEventFindManyPreQueryHook
 {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly canAccessCalendarEventService: CanAccessCalendarEventService,
+    private readonly canAccessCalendarEventsService: CanAccessCalendarEventsService,
   ) {}
 
   async execute(
@@ -51,7 +51,7 @@ export class CalendarEventFindManyPreQueryHook
       throw new NotFoundException();
     }
 
-    await this.canAccessCalendarEventService.canAccessCalendarEvent(
+    await this.canAccessCalendarEventsService.canAccessCalendarEvents(
       authContext.user.id,
       authContext.workspace.id,
       calendarChannelCalendarEventAssociations,

@@ -1,8 +1,11 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import GraphQLJSON from 'graphql-type-json';
+
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
+import { ConfigVariable } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
 import { ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
 import { ImpersonateInput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.input';
 import { ImpersonateOutput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.output';
@@ -18,6 +21,9 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -27,12 +33,16 @@ import { AdminPanelHealthServiceData } from './dtos/admin-panel-health-service-d
 import { QueueMetricsData } from './dtos/queue-metrics-data.dto';
 
 @Resolver()
-@UseFilters(AuthGraphqlApiExceptionFilter)
+@UseFilters(
+  AuthGraphqlApiExceptionFilter,
+  ConfigVariableGraphqlApiExceptionFilter,
+)
 export class AdminPanelResolver {
   constructor(
     private adminService: AdminPanelService,
     private adminPanelHealthService: AdminPanelHealthService,
     private featureFlagService: FeatureFlagService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
@@ -118,5 +128,49 @@ export class AdminPanelResolver {
   @Query(() => VersionInfo)
   async versionInfo(): Promise<VersionInfo> {
     return this.adminService.getVersionInfo();
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Query(() => ConfigVariable)
+  async getDatabaseConfigVariable(
+    @Args('key', { type: () => String }) key: keyof ConfigVariables,
+  ): Promise<ConfigVariable> {
+    this.twentyConfigService.validateConfigVariableExists(key as string);
+
+    return this.adminService.getConfigVariable(key);
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async createDatabaseConfigVariable(
+    @Args('key', { type: () => String }) key: keyof ConfigVariables,
+    @Args('value', { type: () => GraphQLJSON })
+    value: ConfigVariables[keyof ConfigVariables],
+  ): Promise<boolean> {
+    await this.twentyConfigService.set(key, value);
+
+    return true;
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async updateDatabaseConfigVariable(
+    @Args('key', { type: () => String }) key: keyof ConfigVariables,
+    @Args('value', { type: () => GraphQLJSON })
+    value: ConfigVariables[keyof ConfigVariables],
+  ): Promise<boolean> {
+    await this.twentyConfigService.update(key, value);
+
+    return true;
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async deleteDatabaseConfigVariable(
+    @Args('key', { type: () => String }) key: keyof ConfigVariables,
+  ): Promise<boolean> {
+    await this.twentyConfigService.delete(key);
+
+    return true;
   }
 }

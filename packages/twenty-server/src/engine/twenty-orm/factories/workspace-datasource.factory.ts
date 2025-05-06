@@ -307,7 +307,7 @@ export class WorkspaceDatasourceFactory {
     let latestWorkspaceMetadataVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
 
-    if (latestWorkspaceMetadataVersion === undefined) {
+    if (!isDefined(latestWorkspaceMetadataVersion)) {
       if (shouldFailIfMetadataNotFound) {
         throw new TwentyORMException(
           `Metadata version not found for workspace ${workspaceId}`,
@@ -325,7 +325,7 @@ export class WorkspaceDatasourceFactory {
       }
     }
 
-    if (!latestWorkspaceMetadataVersion) {
+    if (!isDefined(latestWorkspaceMetadataVersion)) {
       throw new TwentyORMException(
         `Metadata version not found after recompute for workspace ${workspaceId}`,
         TwentyORMExceptionCode.METADATA_VERSION_NOT_FOUND,

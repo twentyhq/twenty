@@ -1,9 +1,11 @@
-import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
-import { useRecoilValue } from 'recoil';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useWorkflowSelectedNodeOrThrow = () => {
-  const workflowSelectedNode = useRecoilValue(workflowSelectedNodeState);
+  const workflowSelectedNode = useRecoilComponentValueV2(
+    workflowSelectedNodeComponentState,
+  );
 
   if (!isDefined(workflowSelectedNode)) {
     throw new Error(

@@ -10,7 +10,8 @@ import { IsNull, Not, Repository } from 'typeorm';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
-import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/track/serverless-function/serverless-function-executed';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -35,7 +36,6 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/serverless-function/serverless-function-executed';
 
 @Injectable()
 export class ServerlessFunctionService {
@@ -46,7 +46,7 @@ export class ServerlessFunctionService {
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly analyticsService: AnalyticsService,
+    private readonly auditService: AuditService,
     @InjectMessageQueue(MessageQueue.serverlessFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -144,8 +144,8 @@ export class ServerlessFunctionService {
       version,
     );
 
-    this.analyticsService
-      .createAnalyticsContext({
+    this.auditService
+      .createContext({
         workspaceId,
       })
       .track(SERVERLESS_FUNCTION_EXECUTED_EVENT, {

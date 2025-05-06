@@ -30213,6 +30213,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cron-parser@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "cron-parser@npm:5.1.1"
+  dependencies:
+    luxon: "npm:^3.6.1"
+  checksum: 10c0/6e0a62833111974884407eb9e2c57f4d6abdddf302f9e43097363c57a1e32bd950f17fb4f14d857ce44bf73a6e5822918c9e5951a4b274c2eb02d5ec03e34b15
+  languageName: node
+  linkType: hard
+
 "cron-validate@npm:^1.4.5":
   version: 1.4.5
   resolution: "cron-validate@npm:1.4.5"
@@ -42066,6 +42075,13 @@ __metadata:
   version: 3.5.0
   resolution: "luxon@npm:3.5.0"
   checksum: 10c0/335789bba95077db831ef99894edadeb23023b3eb2137a1b56acd0d290082b691cf793143d69e30bc069ec95f0b49f36419f48e951c68014f19ffe12045e3494
+  languageName: node
+  linkType: hard
+
+"luxon@npm:^3.6.1":
+  version: 3.6.1
+  resolution: "luxon@npm:3.6.1"
+  checksum: 10c0/906d57a9dc4d1de9383f2e9223e378c298607c1b4d17b6657b836a3cd120feb1c1de3b5d06d846a3417e1ca764de8476e8c23b3cd4083b5cdb870adcb06a99d5
   languageName: node
   linkType: hard
 
@@ -55407,6 +55423,7 @@ __metadata:
     class-transformer: "npm:^0.5.1"
     clsx: "npm:^2.1.1"
     concurrently: "npm:^8.2.2"
+    cron-parser: "npm:^5.1.1"
     cron-validate: "npm:^1.4.5"
     cross-env: "npm:^7.0.3"
     cross-var: "npm:^1.1.0"

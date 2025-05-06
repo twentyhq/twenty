@@ -1,7 +1,10 @@
 name: 'Preview Environment Dispatch'
 
 on:
-  pull_request:
+  # Using pull_request_target instead of pull_request to have access to secrets for external contributors
+  # Security note: This is safe because we're only using the repository-dispatch action with limited scope
+  # and not checking out or running any code from the external contributor's PR
+  pull_request_target:
     types: [opened, synchronize, reopened, labeled]
 
 concurrency:
@@ -19,9 +22,13 @@ jobs:
         docker-compose.yml
         packages/twenty-server/**
         packages/twenty-front/**
-  
+
   trigger-preview:
     needs: changed-files-check
+    permissions:
+      contents: write
+      actions: write
+      pull-requests: read
     if: needs.changed-files-check.outputs.any_changed == 'true' || contains(github.event.pull_request.labels.*.name, 'preview')
     timeout-minutes: 5
     runs-on: ubuntu-latest
@@ -32,4 +39,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
           event-type: preview-environment
-          client-payload: '{"pr_number": "${{ github.event.pull_request.number }}", "pr_head_sha": "${{ github.event.pull_request.head.sha }}", "repo_full_name": "${{ github.repository }}"}' 
+          client-payload: '{"pr_number": "${{ github.event.pull_request.number }}", "pr_head_sha": "${{ github.event.pull_request.head.sha }}", "repo_full_name": "${{ github.repository }}"}'

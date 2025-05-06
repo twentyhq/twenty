@@ -31,10 +31,6 @@ const StyledDropdownMenuItemsInternalContainer = styled.div`
   width: 100%;
 `;
 
-const StyledPaddingContainer = styled.div`
-  padding: ${({ theme }) => theme.spacing(1)};
-`;
-
 type DropdownMenuItemsContainerProps = PropsWithChildren<{
   hasMaxHeight?: boolean;
   className?: string;
@@ -50,21 +46,19 @@ export const DropdownMenuItemsContainer = ({
   width = 200,
   scrollable,
 }: DropdownMenuItemsContainerProps) => (
-  <StyledPaddingContainer>
-    <DropDownMenuItemsScrollContainer
+  <DropDownMenuItemsScrollContainer
+    hasMaxHeight={hasMaxHeight}
+    scrollable={scrollable}
+  >
+    <StyledDropdownMenuItemsExternalContainer
+      className={className}
+      role="listbox"
+      width={width}
       hasMaxHeight={hasMaxHeight}
-      scrollable={scrollable}
     >
-      <StyledDropdownMenuItemsExternalContainer
-        className={className}
-        role="listbox"
-        width={width}
-        hasMaxHeight={hasMaxHeight}
-      >
-        <StyledDropdownMenuItemsInternalContainer>
-          {children}
-        </StyledDropdownMenuItemsInternalContainer>
-      </StyledDropdownMenuItemsExternalContainer>
-    </DropDownMenuItemsScrollContainer>
-  </StyledPaddingContainer>
+      <StyledDropdownMenuItemsInternalContainer>
+        {children}
+      </StyledDropdownMenuItemsInternalContainer>
+    </StyledDropdownMenuItemsExternalContainer>
+  </DropDownMenuItemsScrollContainer>
 );

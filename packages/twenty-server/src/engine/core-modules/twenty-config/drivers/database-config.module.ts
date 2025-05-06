@@ -8,6 +8,7 @@ import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-va
 import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
 import { DatabaseConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/database-config.driver';
+import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
 
 @Module({})
@@ -24,6 +25,7 @@ export class DatabaseConfigModule {
         ConfigCacheService,
         ConfigStorageService,
         ConfigValueConverterService,
+        EnvironmentConfigDriver,
         {
           provide: CONFIG_VARIABLES_INSTANCE_TOKEN,
           useValue: new ConfigVariables(),

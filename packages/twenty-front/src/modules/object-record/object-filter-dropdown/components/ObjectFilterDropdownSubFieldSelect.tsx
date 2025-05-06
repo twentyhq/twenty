@@ -1,14 +1,14 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { StyledInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFieldSelect';
-import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
+import { FILTER_FIELD_LIST_ID } from '@/object-record/object-filter-dropdown/constants/FilterFieldListId';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
+import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
-import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
@@ -80,9 +80,10 @@ export const ObjectFilterDropdownSubFieldSelect = () => {
     currentRecordFiltersComponentState,
   );
 
-  const setSelectedFilter = useSetRecoilComponentStateV2(
-    selectedFilterComponentState,
-  );
+  const setObjectFilterDropdownCurrentRecordFilter =
+    useSetRecoilComponentStateV2(
+      objectFilterDropdownCurrentRecordFilterComponentState,
+    );
 
   const handleSelectFilter = (
     fieldMetadataItem: FieldMetadataItem | null | undefined,
@@ -119,9 +120,9 @@ export const ObjectFilterDropdownSubFieldSelect = () => {
     );
 
     if (filterIsAlreadyInCurrentRecordFilters) {
-      setSelectedFilter({
-        ...duplicateFilterInCurrentRecordFilters,
-      });
+      setObjectFilterDropdownCurrentRecordFilter(
+        duplicateFilterInCurrentRecordFilters,
+      );
 
       setSelectedOperandInDropdown(
         duplicateFilterInCurrentRecordFilters.operand,
@@ -138,9 +139,10 @@ export const ObjectFilterDropdownSubFieldSelect = () => {
     setObjectFilterDropdownFilterIsSelected(false);
     setSubFieldNameUsedInDropdown(null);
   };
+
   const selectedItemId = useRecoilComponentValueV2(
     selectedItemIdComponentState,
-    OBJECT_FILTER_DROPDOWN_ID,
+    FILTER_FIELD_LIST_ID,
   );
 
   if (!isDefined(objectFilterDropdownSubMenuFieldType)) {
@@ -189,7 +191,7 @@ export const ObjectFilterDropdownSubFieldSelect = () => {
         <SelectableList
           hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
           selectableItemIdArray={['-1', ...options]}
-          selectableListInstanceId={OBJECT_FILTER_DROPDOWN_ID}
+          selectableListInstanceId={FILTER_FIELD_LIST_ID}
         >
           {compositeFieldTypeFilterableByAnySubField ? (
             <SelectableListItem

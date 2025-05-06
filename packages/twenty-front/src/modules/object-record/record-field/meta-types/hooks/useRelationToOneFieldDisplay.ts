@@ -60,9 +60,8 @@ export const useRelationToOneFieldDisplay = () => {
     : (record: ObjectRecord) =>
         generateDefaultRecordChipData({
           record,
-          // @ts-expect-error Above assertions does not infer that fieldDefinition.metadata.objectMetadataNameSingular always defined
           objectNameSingular:
-            fieldDefinition.metadata.objectMetadataNameSingular,
+            fieldDefinition.metadata.relationObjectMetadataNameSingular,
         });
 
   return {

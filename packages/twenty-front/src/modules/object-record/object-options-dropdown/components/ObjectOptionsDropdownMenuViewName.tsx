@@ -129,6 +129,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
               }}
               autoGrow={false}
               sizeVariant="sm"
+              fullWidth
             />
           </StyledDropdownMenuIconAndNameContainer>
         </DropdownMenuItemsContainer>
