@@ -1,4 +1,4 @@
-import React, {
+import {
   Children,
   cloneElement,
   isValidElement,
@@ -26,7 +26,7 @@ export const wrapHeadingsWithAnchor = (children: ReactNode): ReactNode => {
         .toLowerCase();
       const idCount = idCounts.get(baseId) ?? 0;
 
-      const id = idCount === 0 ? baseId : `${baseId}-${idCount + 1}`;
+      const id = idCount === 0 ? baseId : `${baseId}-${idCount}`;
       idCounts.set(baseId, idCount + 1);
 
       return cloneElement(child as ReactElement<any>, {
