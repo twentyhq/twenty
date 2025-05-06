@@ -26,7 +26,6 @@ describe('UserWorkspaceService', () => {
   let userWorkspaceRepository: Repository<UserWorkspace>;
   let userRepository: Repository<User>;
   let objectMetadataRepository: Repository<ObjectMetadataEntity>;
-  let dataSourceService: DataSourceService;
   let typeORMService: TypeORMService;
   let workspaceInvitationService: WorkspaceInvitationService;
   let workspaceEventEmitter: WorkspaceEventEmitter;
@@ -115,7 +114,6 @@ describe('UserWorkspaceService', () => {
     objectMetadataRepository = module.get(
       getRepositoryToken(ObjectMetadataEntity, 'metadata'),
     );
-    dataSourceService = module.get<DataSourceService>(DataSourceService);
     typeORMService = module.get<TypeORMService>(TypeORMService);
     workspaceInvitationService = module.get<WorkspaceInvitationService>(
       WorkspaceInvitationService,
