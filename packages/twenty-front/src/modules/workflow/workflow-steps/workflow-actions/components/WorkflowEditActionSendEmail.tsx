@@ -171,6 +171,13 @@ export const WorkflowEditActionSendEmail = ({
   const { records: accounts, loading } = useFindManyRecords<ConnectedAccount>({
     objectNameSingular: 'connectedAccount',
     filter,
+    recordGqlFields: {
+      id: true,
+      handle: true,
+      accountOwnerId: true,
+      scopes: true,
+      provider: true,
+    },
   });
 
   let emptyOption: SelectOption<string | null> = { label: 'None', value: null };
