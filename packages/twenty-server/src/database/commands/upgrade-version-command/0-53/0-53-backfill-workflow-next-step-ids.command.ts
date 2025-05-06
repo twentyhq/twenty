@@ -14,7 +14,7 @@ import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/stan
 import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 @Command({
-  name: 'upgrade:0-52:backfill-workflow-next-step-ids',
+  name: 'upgrade:0-53:backfill-workflow-next-step-ids',
   description: 'Backfill workflow next step ids',
 })
 export class BackfillWorkflowNextStepIdsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
