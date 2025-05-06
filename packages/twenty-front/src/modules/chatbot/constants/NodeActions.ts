@@ -35,7 +35,7 @@ export const NODE_ACTIONS: Array<NodeAction> = [
 
 export const OTHER_NODE_ACTIONS: Array<OtherNodeAction> = [
   {
-    label: 'If / Else Logic',
+    label: 'If/Else',
     type: 'condition',
     icon: 'IconHierarchy',
   },
