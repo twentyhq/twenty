@@ -77,6 +77,10 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     this.commands = currentCommands;
     this.fromWorkspaceVersion = previousVersion;
     this.currentAppVersion = currentAppVersion;
+
+    this.logger.log(
+      `Initialized upgrade context with:\n   - currentVersion (migrating to): ${currentAppVersion}\n   - fromVersion: ${previousVersion}\nWith ${this.commands.beforeSyncMetadata.length + this.commands.afterSyncMetadata.length} commands`,
+    );
   }
 
   override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
@@ -86,7 +90,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
 
     this.logger.log(
       chalk.blue(
-        `${options.dryRun ? '(dry run)' : ''} Upgrading workspace ${workspaceId} ${index + 1}/${total}`,
+        `${options.dryRun ? '(dry run)' : ''} Upgrading workspace ${workspaceId} from=${this.fromWorkspaceVersion} to=${this.currentAppVersion} ${index + 1}/${total}`,
       ),
     );
 
