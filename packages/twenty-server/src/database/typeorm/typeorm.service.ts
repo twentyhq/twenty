@@ -70,10 +70,6 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     return this.mainDataSource;
   }
 
-  public async disconnectFromMainDataSource() {
-    await this.mainDataSource.destroy();
-  }
-
   public async createSchema(schemaName: string): Promise<string> {
     const queryRunner = this.mainDataSource.createQueryRunner();
 
@@ -99,6 +95,6 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleDestroy() {
     // Destroy main data source "default" schema
-    await this.disconnectFromMainDataSource();
+    await this.mainDataSource.destroy();
   }
 }

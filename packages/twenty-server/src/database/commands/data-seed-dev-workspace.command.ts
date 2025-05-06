@@ -160,8 +160,6 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     } catch (error) {
       this.logger.error(error);
     }
-
-    await this.typeORMService.disconnectFromMainDataSource();
   }
 
   async seedStandardObjectRecords(
