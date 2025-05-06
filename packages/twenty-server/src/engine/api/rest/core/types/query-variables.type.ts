@@ -10,5 +10,4 @@ export type QueryVariables = {
   startingAfter?: string;
   endingBefore?: string;
   input?: object;
-  depth?: 0 | 1 | 2;
 };

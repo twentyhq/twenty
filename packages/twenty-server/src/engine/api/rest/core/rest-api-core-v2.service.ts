@@ -25,7 +25,10 @@ import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/get-variables.factory';
 import { QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
-import { Depth } from 'src/engine/api/rest/input-factories/depth-input.factory';
+import {
+  Depth,
+  DepthInputFactory,
+} from 'src/engine/api/rest/input-factories/depth-input.factory';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
@@ -50,6 +53,7 @@ export class RestApiCoreServiceV2 {
     private readonly coreQueryBuilderFactory: CoreQueryBuilderFactory,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly getVariablesFactory: GetVariablesFactory,
+    private readonly depthInputFactory: DepthInputFactory,
     private readonly recordInputTransformerService: RecordInputTransformerService,
     protected readonly apiEventEmitterService: ApiEventEmitterService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
@@ -114,10 +118,17 @@ export class RestApiCoreServiceV2 {
       objectMetadata.objectMetadataMapItem,
     );
 
+    const records = await this.getRecord({
+      recordIds: [createdRecord.id],
+      repository,
+      objectMetadata: objectMetadata.objectMetadataMapItem,
+      depth: this.depthInputFactory.create(request),
+    });
+
     return this.formatResult({
       operation: 'create',
       objectNameSingular: objectMetadataNameSingular,
-      data: createdRecord,
+      data: records[0],
     });
   }
 
@@ -153,10 +164,17 @@ export class RestApiCoreServiceV2 {
       objectMetadata.objectMetadataMapItem,
     );
 
+    const records = await this.getRecord({
+      recordIds: [updatedRecord.id],
+      repository,
+      objectMetadata: objectMetadata.objectMetadataMapItem,
+      depth: this.depthInputFactory.create(request),
+    });
+
     return this.formatResult({
       operation: 'update',
       objectNameSingular: objectMetadataNameSingular,
-      data: updatedRecord,
+      data: records[0],
     });
   }
 
@@ -172,7 +190,7 @@ export class RestApiCoreServiceV2 {
     } = await this.getRepositoryAndMetadataOrFail(request);
 
     const { records, isForwardPagination, hasMoreRecords, totalCount } =
-      await this.getRecords({
+      await this.findRecords({
         request,
         recordId,
         repository,
@@ -205,7 +223,7 @@ export class RestApiCoreServiceV2 {
     }
   }
 
-  private async getRecords({
+  private async findRecords({
     request,
     recordId,
     repository,
@@ -272,14 +290,11 @@ export class RestApiCoreServiceV2 {
       .select(`${objectMetadataNameSingular}.id`)
       .getMany();
 
-    const relations = this.getRelations({
+    const records = await this.getRecord({
+      recordIds: recordIds.map((record) => record.id),
+      repository,
       objectMetadata: objectMetadata.objectMetadataMapItem,
-      depth: inputs.depth,
-    });
-
-    const records = await repository.find({
-      where: { id: In(recordIds.map((record) => record.id)) },
-      relations,
+      depth: this.depthInputFactory.create(request),
     });
 
     const hasMoreRecords = records.length < totalCount;
@@ -299,6 +314,28 @@ export class RestApiCoreServiceV2 {
     };
   }
 
+  private async getRecord({
+    recordIds,
+    repository,
+    objectMetadata,
+    depth,
+  }: {
+    recordIds: string[];
+    repository: WorkspaceRepository<ObjectLiteral>;
+    objectMetadata: ObjectMetadataInterface;
+    depth: Depth | undefined;
+  }) {
+    const relations = this.getRelations({
+      objectMetadata: objectMetadata,
+      depth: depth,
+    });
+
+    return await repository.find({
+      where: { id: In(recordIds) },
+      relations,
+    });
+  }
+
   private getRelations({
     objectMetadata,
     depth,
@@ -314,7 +351,18 @@ export class RestApiCoreServiceV2 {
 
     objectMetadata.fields.forEach((field) => {
       if (field.type === FieldMetadataType.RELATION) {
-        relations.push(`${field.name}`);
+        if (depth === 2 && isDefined(field.relationTargetObjectMetadata)) {
+          const depth2Relations = this.getRelations({
+            objectMetadata: field.relationTargetObjectMetadata,
+            depth: 1,
+          });
+
+          depth2Relations.forEach((depth2Relation) => {
+            relations.push(`${field.name}.${depth2Relation}`);
+          });
+        } else {
+          relations.push(`${field.name}`);
+        }
       }
     });
 
