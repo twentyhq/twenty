@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { SemVer } from 'semver';
 import { EachTestingContext } from 'twenty-shared/testing';
 import { Repository } from 'typeorm';
 
@@ -12,44 +11,47 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
-class TestUpgradeCommandRunnerV1 extends UpgradeCommandRunner {
-  fromWorkspaceVersion = new SemVer('1.0.0');
-
-  public override async runBeforeSyncMetadata(): Promise<void> {
-    return;
-  }
-
-  public override async runAfterSyncMetadata(): Promise<void> {
-    return;
-  }
+class BasicUpgradeCommandRunner extends UpgradeCommandRunner {
+  allCommands = {
+    '1.0.0': {
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [],
+    },
+    '2.0.0': {
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [],
+    },
+  };
 }
 
 class InvalidVersionUpgradeCommandRunner extends UpgradeCommandRunner {
-  fromWorkspaceVersion = new SemVer('invalid');
-
-  protected async runBeforeSyncMetadata(): Promise<void> {
-    return;
-  }
-
-  protected async runAfterSyncMetadata(): Promise<void> {
-    return;
-  }
+  allCommands = {
+    '1.0.0': {
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [],
+    },
+    invalid: {
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [],
+    },
+  };
 }
 
 class TestUpgradeCommandRunnerV2 extends UpgradeCommandRunner {
-  fromWorkspaceVersion = new SemVer('2.0.0');
-
-  protected async runBeforeSyncMetadata(): Promise<void> {
-    return;
-  }
-
-  protected async runAfterSyncMetadata(): Promise<void> {
-    return;
-  }
+  allCommands = {
+    '2.0.0': {
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [],
+    },
+    '3.0.0': {
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [],
+    },
+  };
 }
 
 type CommandRunnerValues =
-  | typeof TestUpgradeCommandRunnerV1
+  | typeof BasicUpgradeCommandRunner
   | typeof TestUpgradeCommandRunnerV2
   | typeof InvalidVersionUpgradeCommandRunner;
 
@@ -132,7 +134,7 @@ const buildUpgradeCommandModule = async ({
 };
 
 describe('UpgradeCommandRunner', () => {
-  let upgradeCommandRunner: TestUpgradeCommandRunnerV1;
+  let upgradeCommandRunner: BasicUpgradeCommandRunner;
   let workspaceRepository: Repository<Workspace>;
   let syncWorkspaceMetadataCommand: jest.Mocked<SyncWorkspaceMetadataCommand>;
   let runAfterSyncMetadataSpy: jest.SpyInstance;
@@ -150,7 +152,7 @@ describe('UpgradeCommandRunner', () => {
     numberOfWorkspace = 1,
     workspaceOverride,
     workspaces,
-    commandRunner = TestUpgradeCommandRunnerV1,
+    commandRunner = BasicUpgradeCommandRunner,
     appVersion = '2.0.0',
   }: BuildModuleAndSetupSpiesArgs) => {
     const generatedWorkspaces = Array.from(
@@ -381,6 +383,22 @@ describe('UpgradeCommandRunner', () => {
           },
         },
       },
+      {
+        title: 'when current version commands are not found',
+        context: {
+          input: {
+            appVersion: "42.0.0",
+          },
+        },
+      },
+      {
+        title: 'when previous version is not found',
+        context: {
+          input: {
+            appVersion: "1.0.0"
+          },
+        },
+      },
     ];
 
     it.each(failingTestUseCases)('$title', async ({ context: { input } }) => {
@@ -401,13 +419,5 @@ describe('UpgradeCommandRunner', () => {
       expect(workspaceId).toBe('workspace_0');
       expect(error).toMatchSnapshot();
     });
-  });
-
-  it('should throw if upgrade command version is invalid', async () => {
-    await expect(
-      buildModuleAndSetupSpies({
-        commandRunner: InvalidVersionUpgradeCommandRunner,
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`"Invalid Version: invalid"`);
   });
 });

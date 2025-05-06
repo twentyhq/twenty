@@ -3,12 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Command } from 'nest-commander';
-import { SemVer } from 'semver';
-import {
-  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  RunOnWorkspaceArgs,
-} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { UpgradeCommandRunner } from 'src/database/commands/command-runners/upgrade.command-runner';
+import { AllCommands, UpgradeCommandRunner, VersionCommands } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { AddTasksAssignedToMeViewCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-add-tasks-assigned-to-me-view.command';
 import { MigrateIsSearchableForCustomObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-migrate-is-searchable-for-custom-object-metadata.command';
 import { MigrateRichTextContentPatchCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-migrate-rich-text-content-patch.command';
@@ -25,22 +20,13 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
-import { getPreviousVersion } from 'src/utils/version/get-previous-version';
-import { isDefined } from 'twenty-shared/utils';
 
-type VersionCommands = {
-  beforeSyncMetadata: ActiveOrSuspendedWorkspacesMigrationCommandRunner[];
-  afterSyncMetadata: ActiveOrSuspendedWorkspacesMigrationCommandRunner[];
-};
-
-type AllCommands = Record<string, VersionCommands>;
 @Command({
   name: 'upgrade',
   description: 'Upgrade workspaces to the latest version',
 })
 export class UpgradeCommand extends UpgradeCommandRunner {
-  override fromWorkspaceVersion: SemVer;
-  private commands: VersionCommands;
+  override allCommands: AllCommands;
 
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -77,7 +63,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       twentyORMGlobalManager,
       syncWorkspaceMetadataCommand,
     );
-
+    
     const commands_043: VersionCommands = {
       beforeSyncMetadata: [
         this.migrateRichTextContentPatchCommand,
@@ -124,58 +110,13 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       ],
     };
 
-    this.computeFromToVersionAndCommandsToRunForCurrentAppVersion({
+    this.allCommands = {
       '0.43.0': commands_043,
       '0.44.0': commands_044,
       '0.50.0': commands_050,
       '0.51.0': commands_051,
       '0.52.0': commands_052,
       '0.53.0': commands_053,
-    });
-  }
-
-  private computeFromToVersionAndCommandsToRunForCurrentAppVersion(
-    allCommands: AllCommands,
-  ) {
-    const currentAppVersion = this.twentyConfigService.get('APP_VERSION');
-    if (!isDefined(currentAppVersion)) {
-      throw new Error(
-        'APP_VERSION is not defined. Should never occur please check the configuration.',
-      );
-    }
-
-    const currentCommands = allCommands[currentAppVersion];
-    if (!isDefined(currentCommands)) {
-      throw new Error(
-        `No commands found for version ${currentAppVersion}. Please check the commands record.`,
-      );
-    }
-
-    const allCommandsKeys = Object.keys(allCommands);
-    const previousVersion = getPreviousVersion({
-      currentVersion: currentAppVersion,
-      versions: allCommandsKeys,
-    });
-
-    if (!isDefined(previousVersion)) {
-      throw new Error(
-        `No previous version found for version ${currentAppVersion}. Please check the commands record available ${allCommandsKeys.join(',')}.`,
-      );
-    }
-
-    this.commands = currentCommands;
-    this.fromWorkspaceVersion = previousVersion;
-  }
-
-  override async runBeforeSyncMetadata(args: RunOnWorkspaceArgs) {
-    for (const command of this.commands.beforeSyncMetadata) {
-      await command.runOnWorkspace(args);
-    }
-  }
-
-  override async runAfterSyncMetadata(args: RunOnWorkspaceArgs) {
-    for (const command of this.commands.afterSyncMetadata) {
-      await command.runOnWorkspace(args);
     }
   }
 }

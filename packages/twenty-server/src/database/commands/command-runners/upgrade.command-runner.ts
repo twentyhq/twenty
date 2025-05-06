@@ -18,9 +18,17 @@ import {
   compareVersionMajorAndMinor,
 } from 'src/utils/version/compare-version-minor-and-major';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
+import { getPreviousVersion } from 'src/utils/version/get-previous-version';
 
+export type VersionCommands = {
+  beforeSyncMetadata: ActiveOrSuspendedWorkspacesMigrationCommandRunner[];
+  afterSyncMetadata: ActiveOrSuspendedWorkspacesMigrationCommandRunner[];
+};
+export type AllCommands = Record<string, VersionCommands>;
 export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
-  abstract fromWorkspaceVersion: SemVer;
+  private fromWorkspaceVersion: SemVer;
+  public abstract allCommands: AllCommands;
+  public commands: VersionCommands;
   public readonly VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG?: true;
 
   constructor(
@@ -33,15 +41,54 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
+  private computeFromToVersionAndCommandsToRunForCurrentAppVersion() {
+    const currentAppVersion = this.twentyConfigService.get('APP_VERSION');
+    if (!isDefined(currentAppVersion)) {
+      throw new Error(
+        'APP_VERSION is not defined. Should never occur please check the configuration.',
+      );
+    }
+
+    const currentCommands = this.allCommands[currentAppVersion];
+    if (!isDefined(currentCommands)) {
+      throw new Error(
+        `No commands found for version ${currentAppVersion}. Please check the commands record.`,
+      );
+    }
+
+    const allCommandsKeys = Object.keys(this.allCommands);
+    const previousVersion = getPreviousVersion({
+      currentVersion: currentAppVersion,
+      versions: allCommandsKeys,
+    });
+
+    if (!isDefined(previousVersion)) {
+      throw new Error(
+        `No previous version found for version ${currentAppVersion}. Please check the commands record available ${allCommandsKeys.join(', ')}.`,
+      );
+    }
+
+    return {
+      previousVersion,
+      currentCommands,
+    };
+  }
+
   override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
     const { workspaceId, index, total, options } = args;
-
     this.logger.log(
       chalk.blue(
         `${options.dryRun ? '(dry run)' : ''} Upgrading workspace ${workspaceId} ${index + 1}/${total}`,
       ),
     );
+    
+    // TODO improve in order to avoid computing each time
     const toVersion = this.retrieveToVersionFromAppVersion();
+    const { currentCommands, previousVersion } =
+      this.computeFromToVersionAndCommandsToRunForCurrentAppVersion();
+    this.commands = currentCommands;
+    this.fromWorkspaceVersion = previousVersion;
+    ///
 
     const workspaceVersionCompareResult =
       await this.retrieveWorkspaceVersionAndCompareToWorkspaceFromVersion(
@@ -124,10 +171,15 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     );
   }
 
-  protected abstract runBeforeSyncMetadata(
-    args: RunOnWorkspaceArgs,
-  ): Promise<void>;
-  protected abstract runAfterSyncMetadata(
-    args: RunOnWorkspaceArgs,
-  ): Promise<void>;
+  public readonly runBeforeSyncMetadata = async (args: RunOnWorkspaceArgs) => {
+    for (const command of this.commands.beforeSyncMetadata) {
+      await command.runOnWorkspace(args);
+    }
+  };
+
+  public readonly runAfterSyncMetadata = async (args: RunOnWorkspaceArgs) => {
+    for (const command of this.commands.afterSyncMetadata) {
+      await command.runOnWorkspace(args);
+    }
+  };
 }
