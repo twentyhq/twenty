@@ -42,17 +42,11 @@ export class ChargeEventListener {
         'charge',
       );
 
-    const productRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ProductWorkspaceEntity>(
-        workspaceId,
-        'product',
-      );
-
     const charges = await Promise.all(
       events.map((event) =>
         chargeRepository.findOne({
           where: { id: event.recordId },
-          relations: ['product'],
+          relations: ['product', 'person', 'company'],
         }),
       ),
     );
@@ -65,23 +59,62 @@ export class ChargeEventListener {
           return;
         }
 
-        const { chargeAction, id, price, productId } = charge;
-        const dataVencimento = '2025-10-21';
+        const person = charge.person;
+        const company = charge.company;
+        const { chargeAction, id, price } = charge;
+        const dataVencimento = '2025-10-21'; //temporario (campo em definição)
+
+        if (!person || !company) {
+          this.logger.warn(
+            `Charge ${id} não possui relação com person ou company. Ignorando.`,
+          );
+
+          return;
+        }
+
         const cliente = {
-          telefone: '99999999',
-          cpfCnpj: '01123456789',
-          tipoPessoa: 'FISICA' as const,
-          nome: 'Cliente Teste',
-          cidade: 'São Paulo',
-          uf: 'SP' as const,
-          cep: '01001000',
-          ddd: '51',
-          endereco: 'Avenida Brasil, 1200',
-          bairro: 'Centro',
-          email: 'nome.sobrenome@x.com.br',
-          complemento: 'apartamento 3 bloco 4',
-          numero: '311',
+          telefone:
+            typeof person.phones === 'string'
+              ? person.phones
+              : person.phones.primaryPhoneNumber || '',
+          cpfCnpj: charge.taxId,
+          tipoPessoa:
+            charge.entityType === 'individual' ? 'FISICA' : 'JURIDICA',
+          nome:
+            typeof person.name === 'string'
+              ? person.name
+              : person.name?.firstName || '',
+          cidade:
+            typeof person.city === 'string' ? person.city : person.city || '',
+          uf:
+            typeof company.address === 'string'
+              ? company.address
+              : company.address?.addressState || 'SP',
+          cep:
+            typeof company.address === 'string'
+              ? company.address
+              : company.address?.addressZipCode || '18103418',
+          ddd:
+            typeof person.phones === 'string'
+              ? person.phones
+              : person.phones.primaryPhoneCallingCode?.replace(/^\+/, '') || '',
+          endereco:
+            typeof company.address === 'string'
+              ? company.address
+              : company.address?.addressStreet1 || '',
+          bairro:
+            typeof company.address === 'string'
+              ? company.address
+              : company.address?.addressStreet2 || '',
+          email:
+            typeof person.emails === 'string'
+              ? person.emails
+              : person.emails?.primaryEmail || '',
+          complemento: '-',
+          numero: '-',
         };
+
+        this.logger.log(`Valor do CLIENTE`, cliente);
 
         try {
           switch (chargeAction) {
@@ -96,7 +129,7 @@ export class ChargeEventListener {
                 dataVencimento,
                 numDiasAgenda: 60,
                 pagador: { ...cliente },
-                mensagem: { linha1: 'mensagem 1' },
+                mensagem: { linha1: '-' },
               });
 
               charge.requestCode = response.codigoSolicitacao;
@@ -104,16 +137,6 @@ export class ChargeEventListener {
                 `Cobrança emitida com sucesso para charge ${id}. Código: ${response.codigoSolicitacao}`,
               );
 
-              if (productId) {
-                await this.updateProductStatus(
-                  productRepository,
-                  productId,
-                  'active',
-                );
-                this.logger.log(
-                  `Status do produto ${productId} atualizado para ATIVO`,
-                );
-              }
               break;
 
             case 'cancel':
@@ -126,16 +149,6 @@ export class ChargeEventListener {
                 `Cobrança cancelada com sucesso para charge ${id}`,
               );
 
-              if (productId) {
-                await this.updateProductStatus(
-                  productRepository,
-                  productId,
-                  'active',
-                );
-                this.logger.log(
-                  `Status do produto ${productId} atualizado para INATIVO`,
-                );
-              }
               break;
 
             case 'none':

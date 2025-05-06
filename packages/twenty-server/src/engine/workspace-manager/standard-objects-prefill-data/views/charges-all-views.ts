@@ -47,6 +47,24 @@ export const chargesAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
+            CHARGE_STANDARD_FIELD_IDS.taxId
+          ],
+        position: 2,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
+            CHARGE_STANDARD_FIELD_IDS.entityType
+          ],
+        position: 2,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
             CHARGE_STANDARD_FIELD_IDS.price
           ],
         position: 3,

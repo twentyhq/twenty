@@ -156,6 +156,8 @@ export const CHARGE_STANDARD_FIELD_IDS = {
   quantity: '20202020-0b7b-4d0d-867a-4b7c3d2b6f3d',
   discount: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3e',
   recurrence: '20202020-0b7b-4d0d-8b5d-4b7c3d2b623a',
+  entityType: '20202020-a1b2-4c3d-8e4f-5f6a7b8c9d01',
+  taxId: '20202020-b2c3-5d4e-9f5a-6a7b8c9d0e12',
   paymentGateway: '20202020-0b7b-4d0d-8b5d-4b7c3d2b234f',
   activityTargets: '20202020-0b7b-4d0d-8b5d-4b7c3d2b259c',
   chargeAction: '20202020-7a4c-5d2e-9f1b-3e8c7d6a2f4d',

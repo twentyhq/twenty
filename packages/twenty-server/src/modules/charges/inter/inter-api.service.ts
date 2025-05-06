@@ -99,38 +99,11 @@ export class InterApiService {
     numDiasAgenda: number;
     pagador: {
       cpfCnpj: string;
-      tipoPessoa: 'FISICA' | 'JURIDICA';
+      tipoPessoa: string;
       nome: string;
       cidade: string;
       telefone: string;
-      uf:
-        | 'AC'
-        | 'AL'
-        | 'AP'
-        | 'AM'
-        | 'BA'
-        | 'CE'
-        | 'DF'
-        | 'ES'
-        | 'GO'
-        | 'MA'
-        | 'MT'
-        | 'MS'
-        | 'MG'
-        | 'PA'
-        | 'PB'
-        | 'PR'
-        | 'PE'
-        | 'PI'
-        | 'RJ'
-        | 'RN'
-        | 'RS'
-        | 'RO'
-        | 'RR'
-        | 'SC'
-        | 'SP'
-        | 'SE'
-        | 'TO';
+      uf: string;
       cep: string;
       email: string;
       ddd: string;
@@ -153,19 +126,19 @@ export class InterApiService {
         dataVencimento: data.dataVencimento,
         numDiasAgenda: data.numDiasAgenda,
         pagador: {
+          email: data.pagador.email,
+          ddd: data.pagador.ddd,
+          telefone: data.pagador.telefone,
+          numero: data.pagador.numero,
+          complemento: data.pagador.complemento,
           cpfCnpj: data.pagador.cpfCnpj,
           tipoPessoa: data.pagador.tipoPessoa,
           nome: data.pagador.nome,
           cidade: data.pagador.cidade,
           uf: data.pagador.uf,
           cep: data.pagador.cep,
-          telefone: data.pagador.telefone,
-          ddd: data.pagador.ddd,
           bairro: data.pagador.bairro,
           endereco: data.pagador.endereco,
-          email: data.pagador.email,
-          complemento: data.pagador.complemento,
-          numero: data.pagador.numero,
         },
         mensagem: {
           linha1: data.mensagem?.linha1 || '',
