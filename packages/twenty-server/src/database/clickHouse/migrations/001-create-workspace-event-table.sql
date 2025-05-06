@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS workspaceEvent
 (
-    `event`      LowCardinality(String),
-    `timestamp`   DateTime64(3),
+    `event`      LowCardinality(String) NOT NULL,
+    `timestamp`   DateTime64(3) NOT NULL,
     `userId`      String DEFAULT '',
     `workspaceId` String NOT NULL,
     `properties`  JSON
