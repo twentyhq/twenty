@@ -1,6 +1,11 @@
 import { OpenAPIV3_1 } from 'openapi-types';
-import { capitalize } from 'twenty-shared/utils';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+
+import {
+  FieldMetadataSettings,
+  NumberDataType,
+} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import {
   computeDepthParameters,
@@ -36,29 +41,47 @@ const isFieldAvailable = (field: FieldMetadataEntity, forResponse: boolean) => {
   }
 };
 
-const getFieldProperties = (type: FieldMetadataType): Property => {
-  switch (type) {
-    case FieldMetadataType.UUID:
+const getFieldProperties = (field: FieldMetadataEntity): Property => {
+  switch (field.type) {
+    case FieldMetadataType.UUID: {
       return { type: 'string', format: 'uuid' };
+    }
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT:
+    case FieldMetadataType.RICH_TEXT: {
       return { type: 'string' };
-    case FieldMetadataType.DATE_TIME:
+    }
+    case FieldMetadataType.DATE_TIME: {
       return { type: 'string', format: 'date-time' };
-    case FieldMetadataType.DATE:
+    }
+    case FieldMetadataType.DATE: {
       return { type: 'string', format: 'date' };
-    case FieldMetadataType.NUMBER:
-      return { type: 'integer' };
-    case FieldMetadataType.NUMERIC:
-    case FieldMetadataType.POSITION:
-      return { type: 'number' };
-    case FieldMetadataType.BOOLEAN:
-      return { type: 'boolean' };
-    case FieldMetadataType.RAW_JSON:
-      return { type: 'object' };
+    }
+    case FieldMetadataType.NUMBER: {
+      const settings =
+        field.settings as FieldMetadataSettings<FieldMetadataType.NUMBER>;
 
-    default:
+      if (
+        settings?.dataType === NumberDataType.FLOAT ||
+        (isDefined(settings?.decimals) && settings.decimals > 0)
+      ) {
+        return { type: 'number' };
+      }
+
+      return { type: 'integer' };
+    }
+    case FieldMetadataType.NUMERIC:
+    case FieldMetadataType.POSITION: {
+      return { type: 'number' };
+    }
+    case FieldMetadataType.BOOLEAN: {
+      return { type: 'boolean' };
+    }
+    case FieldMetadataType.RAW_JSON: {
+      return { type: 'object' };
+    }
+    default: {
       return { type: 'string' };
+    }
   }
 };
 
@@ -282,7 +305,7 @@ const getSchemaComponentsProperties = ({
         };
         break;
       default:
-        itemProperty = getFieldProperties(field.type);
+        itemProperty = getFieldProperties(field);
         break;
     }
 

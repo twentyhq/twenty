@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
@@ -16,7 +16,7 @@ export class MessagingMessageService {
   public async saveMessagesWithinTransaction(
     messages: MessageWithParticipants[],
     messageChannelId: string,
-    transactionManager: EntityManager,
+    transactionManager: WorkspaceEntityManager,
   ): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
     messageExternalIdsAndIdsMap: Map<string, string>;

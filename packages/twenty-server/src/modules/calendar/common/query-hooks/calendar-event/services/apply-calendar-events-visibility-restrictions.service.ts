@@ -28,7 +28,7 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
         where: {
           calendarEventId: In(calendarEvents.map((event) => event.id)),
         },
-        relations: ['calendarChannel', 'calendarChannel.connectedAccount'],
+        relations: ['calendarChannel'],
       });
 
     const connectedAccountRepository =

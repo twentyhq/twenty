@@ -1,5 +1,11 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+import { EachTestingContext } from 'twenty-shared/testing';
+
+import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+
 import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/components.utils';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 describe('computeSchemaComponents', () => {
@@ -8,585 +14,681 @@ describe('computeSchemaComponents', () => {
       computeSchemaComponents([
         objectMetadataItemMock,
       ] as ObjectMetadataEntity[]),
-    ).toEqual({
-      ObjectName: {
-        description: undefined,
-        type: 'object',
-        properties: {
-          fieldUuid: {
-            type: 'string',
-            format: 'uuid',
-          },
-          fieldText: {
-            type: 'string',
-          },
-          fieldPhones: {
-            properties: {
-              additionalPhones: {
-                type: 'array',
-                items: {
-                  type: 'string',
-                },
-              },
-              primaryPhoneCountryCode: {
-                type: 'string',
-              },
-              primaryPhoneCallingCode: {
-                type: 'string',
-              },
-              primaryPhoneNumber: {
-                type: 'string',
-              },
-            },
-            type: 'object',
-          },
-          fieldEmails: {
-            type: 'object',
-            properties: {
-              primaryEmail: {
-                type: 'string',
-              },
-              additionalEmails: {
-                type: 'array',
-                items: {
-                  type: 'string',
-                  format: 'email',
-                },
-              },
-            },
-          },
-          fieldDateTime: {
-            type: 'string',
-            format: 'date-time',
-          },
-          fieldDate: {
-            type: 'string',
-            format: 'date',
-          },
-          fieldArray: {
-            items: {
-              type: 'string',
-            },
-            type: 'array',
-          },
-          fieldBoolean: {
-            type: 'boolean',
-          },
-          fieldNumber: {
-            type: 'integer',
-          },
-          fieldNumeric: {
-            type: 'number',
-          },
-          fieldLinks: {
-            type: 'object',
-            properties: {
-              primaryLinkLabel: {
-                type: 'string',
-              },
-              primaryLinkUrl: {
-                type: 'string',
-              },
-              secondaryLinks: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  description: 'A secondary link',
-                  properties: {
-                    url: {
-                      type: 'string',
-                      format: 'uri',
-                    },
-                    label: {
-                      type: 'string',
-                    },
-                  },
-                },
-              },
-            },
-          },
-          fieldCurrency: {
-            type: 'object',
-            properties: {
-              amountMicros: {
-                type: 'number',
-              },
-              currencyCode: {
-                type: 'string',
-              },
-            },
-          },
-          fieldFullName: {
-            type: 'object',
-            properties: {
-              firstName: {
-                type: 'string',
-              },
-              lastName: {
-                type: 'string',
-              },
-            },
-          },
-          fieldRating: {
-            type: 'string',
-            enum: ['RATING_1', 'RATING_2'],
-          },
-          fieldSelect: {
-            type: 'string',
-            enum: ['OPTION_1', 'OPTION_2'],
-          },
-          fieldMultiSelect: {
-            type: 'array',
-            items: { type: 'string', enum: ['OPTION_1', 'OPTION_2'] },
-          },
-          fieldPosition: {
-            type: 'number',
-          },
-          fieldAddress: {
-            type: 'object',
-            properties: {
-              addressStreet1: {
-                type: 'string',
-              },
-              addressStreet2: {
-                type: 'string',
-              },
-              addressCity: {
-                type: 'string',
-              },
-              addressPostcode: {
-                type: 'string',
-              },
-              addressState: {
-                type: 'string',
-              },
-              addressCountry: {
-                type: 'string',
-              },
-              addressLat: {
-                type: 'number',
-              },
-              addressLng: {
-                type: 'number',
-              },
-            },
-          },
-          fieldRawJson: {
-            type: 'object',
-          },
-          fieldRichText: {
-            type: 'string',
-          },
-          fieldActor: {
-            type: 'object',
-            properties: {
-              source: {
-                type: 'string',
-                enum: [
-                  'EMAIL',
-                  'CALENDAR',
-                  'WORKFLOW',
-                  'API',
-                  'IMPORT',
-                  'MANUAL',
-                  'SYSTEM',
-                  'WEBHOOK',
-                ],
-              },
-            },
+    ).toMatchInlineSnapshot(`
+{
+  "ObjectName": {
+    "description": undefined,
+    "properties": {
+      "fieldActor": {
+        "properties": {
+          "source": {
+            "enum": [
+              "EMAIL",
+              "CALENDAR",
+              "WORKFLOW",
+              "API",
+              "IMPORT",
+              "MANUAL",
+              "SYSTEM",
+              "WEBHOOK",
+            ],
+            "type": "string",
           },
         },
-        required: ['fieldNumber'],
+        "type": "object",
       },
-      'ObjectName for Update': {
-        description: undefined,
-        type: 'object',
-        properties: {
-          fieldUuid: {
-            type: 'string',
-            format: 'uuid',
+      "fieldAddress": {
+        "properties": {
+          "addressCity": {
+            "type": "string",
           },
-          fieldText: {
-            type: 'string',
+          "addressCountry": {
+            "type": "string",
           },
-          fieldPhones: {
-            properties: {
-              additionalPhones: {
-                type: 'array',
-                items: {
-                  type: 'string',
-                },
-              },
-              primaryPhoneCountryCode: {
-                type: 'string',
-              },
-              primaryPhoneCallingCode: {
-                type: 'string',
-              },
-              primaryPhoneNumber: {
-                type: 'string',
-              },
-            },
-            type: 'object',
+          "addressLat": {
+            "type": "number",
           },
-          fieldEmails: {
-            type: 'object',
-            properties: {
-              primaryEmail: {
-                type: 'string',
-              },
-              additionalEmails: {
-                type: 'array',
-                items: {
-                  type: 'string',
-                  format: 'email',
-                },
-              },
-            },
+          "addressLng": {
+            "type": "number",
           },
-          fieldDateTime: {
-            type: 'string',
-            format: 'date-time',
+          "addressPostcode": {
+            "type": "string",
           },
-          fieldDate: {
-            type: 'string',
-            format: 'date',
+          "addressState": {
+            "type": "string",
           },
-          fieldArray: {
-            items: {
-              type: 'string',
-            },
-            type: 'array',
+          "addressStreet1": {
+            "type": "string",
           },
-          fieldBoolean: {
-            type: 'boolean',
-          },
-          fieldNumber: {
-            type: 'integer',
-          },
-          fieldNumeric: {
-            type: 'number',
-          },
-          fieldLinks: {
-            type: 'object',
-            properties: {
-              primaryLinkLabel: {
-                type: 'string',
-              },
-              primaryLinkUrl: {
-                type: 'string',
-              },
-              secondaryLinks: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  description: 'A secondary link',
-                  properties: {
-                    url: {
-                      type: 'string',
-                      format: 'uri',
-                    },
-                    label: {
-                      type: 'string',
-                    },
-                  },
-                },
-              },
-            },
-          },
-          fieldCurrency: {
-            type: 'object',
-            properties: {
-              amountMicros: {
-                type: 'number',
-              },
-              currencyCode: {
-                type: 'string',
-              },
-            },
-          },
-          fieldFullName: {
-            type: 'object',
-            properties: {
-              firstName: {
-                type: 'string',
-              },
-              lastName: {
-                type: 'string',
-              },
-            },
-          },
-          fieldRating: {
-            type: 'string',
-            enum: ['RATING_1', 'RATING_2'],
-          },
-          fieldSelect: {
-            type: 'string',
-            enum: ['OPTION_1', 'OPTION_2'],
-          },
-          fieldMultiSelect: {
-            type: 'array',
-            items: { type: 'string', enum: ['OPTION_1', 'OPTION_2'] },
-          },
-          fieldPosition: {
-            type: 'number',
-          },
-          fieldAddress: {
-            type: 'object',
-            properties: {
-              addressStreet1: {
-                type: 'string',
-              },
-              addressStreet2: {
-                type: 'string',
-              },
-              addressCity: {
-                type: 'string',
-              },
-              addressPostcode: {
-                type: 'string',
-              },
-              addressState: {
-                type: 'string',
-              },
-              addressCountry: {
-                type: 'string',
-              },
-              addressLat: {
-                type: 'number',
-              },
-              addressLng: {
-                type: 'number',
-              },
-            },
-          },
-          fieldRawJson: {
-            type: 'object',
-          },
-          fieldRichText: {
-            type: 'string',
-          },
-          fieldActor: {
-            type: 'object',
-            properties: {
-              source: {
-                type: 'string',
-                enum: [
-                  'EMAIL',
-                  'CALENDAR',
-                  'WORKFLOW',
-                  'API',
-                  'IMPORT',
-                  'MANUAL',
-                  'SYSTEM',
-                  'WEBHOOK',
-                ],
-              },
-            },
+          "addressStreet2": {
+            "type": "string",
           },
         },
+        "type": "object",
       },
-      'ObjectName for Response': {
-        description: undefined,
-        type: 'object',
-        properties: {
-          fieldUuid: {
-            type: 'string',
-            format: 'uuid',
+      "fieldArray": {
+        "items": {
+          "type": "string",
+        },
+        "type": "array",
+      },
+      "fieldBoolean": {
+        "type": "boolean",
+      },
+      "fieldCurrency": {
+        "properties": {
+          "amountMicros": {
+            "type": "number",
           },
-          fieldText: {
-            type: 'string',
-          },
-          fieldPhones: {
-            properties: {
-              additionalPhones: {
-                type: 'array',
-                items: {
-                  type: 'string',
-                },
-              },
-              primaryPhoneCountryCode: {
-                type: 'string',
-              },
-              primaryPhoneCallingCode: {
-                type: 'string',
-              },
-              primaryPhoneNumber: {
-                type: 'string',
-              },
-            },
-            type: 'object',
-          },
-          fieldEmails: {
-            type: 'object',
-            properties: {
-              primaryEmail: {
-                type: 'string',
-              },
-              additionalEmails: {
-                type: 'array',
-                items: {
-                  type: 'string',
-                  format: 'email',
-                },
-              },
-            },
-          },
-          fieldDateTime: {
-            type: 'string',
-            format: 'date-time',
-          },
-          fieldDate: {
-            type: 'string',
-            format: 'date',
-          },
-          fieldArray: {
-            items: {
-              type: 'string',
-            },
-            type: 'array',
-          },
-          fieldBoolean: {
-            type: 'boolean',
-          },
-          fieldNumber: {
-            type: 'integer',
-          },
-          fieldNumeric: {
-            type: 'number',
-          },
-          fieldLinks: {
-            type: 'object',
-            properties: {
-              primaryLinkLabel: {
-                type: 'string',
-              },
-              primaryLinkUrl: {
-                type: 'string',
-              },
-              secondaryLinks: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  description: 'A secondary link',
-                  properties: {
-                    url: {
-                      type: 'string',
-                      format: 'uri',
-                    },
-                    label: {
-                      type: 'string',
-                    },
-                  },
-                },
-              },
-            },
-          },
-          fieldCurrency: {
-            type: 'object',
-            properties: {
-              amountMicros: {
-                type: 'number',
-              },
-              currencyCode: {
-                type: 'string',
-              },
-            },
-          },
-          fieldFullName: {
-            type: 'object',
-            properties: {
-              firstName: {
-                type: 'string',
-              },
-              lastName: {
-                type: 'string',
-              },
-            },
-          },
-          fieldRating: {
-            type: 'string',
-            enum: ['RATING_1', 'RATING_2'],
-          },
-          fieldSelect: {
-            type: 'string',
-            enum: ['OPTION_1', 'OPTION_2'],
-          },
-          fieldMultiSelect: {
-            type: 'array',
-            items: { type: 'string', enum: ['OPTION_1', 'OPTION_2'] },
-          },
-          fieldPosition: {
-            type: 'number',
-          },
-          fieldAddress: {
-            type: 'object',
-            properties: {
-              addressStreet1: {
-                type: 'string',
-              },
-              addressStreet2: {
-                type: 'string',
-              },
-              addressCity: {
-                type: 'string',
-              },
-              addressPostcode: {
-                type: 'string',
-              },
-              addressState: {
-                type: 'string',
-              },
-              addressCountry: {
-                type: 'string',
-              },
-              addressLat: {
-                type: 'number',
-              },
-              addressLng: {
-                type: 'number',
-              },
-            },
-          },
-          fieldRawJson: {
-            type: 'object',
-          },
-          fieldRichText: {
-            type: 'string',
-          },
-          fieldActor: {
-            type: 'object',
-            properties: {
-              source: {
-                type: 'string',
-                enum: [
-                  'EMAIL',
-                  'CALENDAR',
-                  'WORKFLOW',
-                  'API',
-                  'IMPORT',
-                  'MANUAL',
-                  'SYSTEM',
-                  'WEBHOOK',
-                ],
-              },
-              workspaceMemberId: {
-                type: 'string',
-                format: 'uuid',
-              },
-              name: {
-                type: 'string',
-              },
-            },
-          },
-          fieldRelation: {
-            type: 'array',
-            items: {
-              $ref: '#/components/schemas/ToObjectMetadataName for Response',
-            },
+          "currencyCode": {
+            "type": "string",
           },
         },
+        "type": "object",
       },
-    });
+      "fieldDate": {
+        "format": "date",
+        "type": "string",
+      },
+      "fieldDateTime": {
+        "format": "date-time",
+        "type": "string",
+      },
+      "fieldEmails": {
+        "properties": {
+          "additionalEmails": {
+            "items": {
+              "format": "email",
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "primaryEmail": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "fieldFullName": {
+        "properties": {
+          "firstName": {
+            "type": "string",
+          },
+          "lastName": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "fieldLinks": {
+        "properties": {
+          "primaryLinkLabel": {
+            "type": "string",
+          },
+          "primaryLinkUrl": {
+            "type": "string",
+          },
+          "secondaryLinks": {
+            "items": {
+              "description": "A secondary link",
+              "properties": {
+                "label": {
+                  "type": "string",
+                },
+                "url": {
+                  "format": "uri",
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "type": "array",
+          },
+        },
+        "type": "object",
+      },
+      "fieldMultiSelect": {
+        "items": {
+          "enum": [
+            "OPTION_1",
+            "OPTION_2",
+          ],
+          "type": "string",
+        },
+        "type": "array",
+      },
+      "fieldNumber": {
+        "type": "integer",
+      },
+      "fieldNumeric": {
+        "type": "number",
+      },
+      "fieldPhones": {
+        "properties": {
+          "additionalPhones": {
+            "items": {
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "primaryPhoneCallingCode": {
+            "type": "string",
+          },
+          "primaryPhoneCountryCode": {
+            "type": "string",
+          },
+          "primaryPhoneNumber": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "fieldPosition": {
+        "type": "number",
+      },
+      "fieldRating": {
+        "enum": [
+          "RATING_1",
+          "RATING_2",
+        ],
+        "type": "string",
+      },
+      "fieldRawJson": {
+        "type": "object",
+      },
+      "fieldRichText": {
+        "type": "string",
+      },
+      "fieldSelect": {
+        "enum": [
+          "OPTION_1",
+          "OPTION_2",
+        ],
+        "type": "string",
+      },
+      "fieldText": {
+        "type": "string",
+      },
+      "fieldUuid": {
+        "format": "uuid",
+        "type": "string",
+      },
+    },
+    "required": [
+      "fieldNumber",
+    ],
+    "type": "object",
+  },
+  "ObjectName for Response": {
+    "description": undefined,
+    "properties": {
+      "fieldActor": {
+        "properties": {
+          "name": {
+            "type": "string",
+          },
+          "source": {
+            "enum": [
+              "EMAIL",
+              "CALENDAR",
+              "WORKFLOW",
+              "API",
+              "IMPORT",
+              "MANUAL",
+              "SYSTEM",
+              "WEBHOOK",
+            ],
+            "type": "string",
+          },
+          "workspaceMemberId": {
+            "format": "uuid",
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "fieldAddress": {
+        "properties": {
+          "addressCity": {
+            "type": "string",
+          },
+          "addressCountry": {
+            "type": "string",
+          },
+          "addressLat": {
+            "type": "number",
+          },
+          "addressLng": {
+            "type": "number",
+          },
+          "addressPostcode": {
+            "type": "string",
+          },
+          "addressState": {
+            "type": "string",
+          },
+          "addressStreet1": {
+            "type": "string",
+          },
+          "addressStreet2": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "fieldArray": {
+        "items": {
+          "type": "string",
+        },
+        "type": "array",
+      },
+      "fieldBoolean": {
+        "type": "boolean",
+      },
+      "fieldCurrency": {
+        "properties": {
+          "amountMicros": {
+            "type": "number",
+          },
+          "currencyCode": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "fieldDate": {
+        "format": "date",
+        "type": "string",
+      },
+      "fieldDateTime": {
+        "format": "date-time",
+        "type": "string",
+      },
+      "fieldEmails": {
+        "properties": {
+          "additionalEmails": {
+            "items": {
+              "format": "email",
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "primaryEmail": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "fieldFullName": {
+        "properties": {
+          "firstName": {
+            "type": "string",
+          },
+          "lastName": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "fieldLinks": {
+        "properties": {
+          "primaryLinkLabel": {
+            "type": "string",
+          },
+          "primaryLinkUrl": {
+            "type": "string",
+          },
+          "secondaryLinks": {
+            "items": {
+              "description": "A secondary link",
+              "properties": {
+                "label": {
+                  "type": "string",
+                },
+                "url": {
+                  "format": "uri",
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "type": "array",
+          },
+        },
+        "type": "object",
+      },
+      "fieldMultiSelect": {
+        "items": {
+          "enum": [
+            "OPTION_1",
+            "OPTION_2",
+          ],
+          "type": "string",
+        },
+        "type": "array",
+      },
+      "fieldNumber": {
+        "type": "integer",
+      },
+      "fieldNumeric": {
+        "type": "number",
+      },
+      "fieldPhones": {
+        "properties": {
+          "additionalPhones": {
+            "items": {
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "primaryPhoneCallingCode": {
+            "type": "string",
+          },
+          "primaryPhoneCountryCode": {
+            "type": "string",
+          },
+          "primaryPhoneNumber": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "fieldPosition": {
+        "type": "number",
+      },
+      "fieldRating": {
+        "enum": [
+          "RATING_1",
+          "RATING_2",
+        ],
+        "type": "string",
+      },
+      "fieldRawJson": {
+        "type": "object",
+      },
+      "fieldRelation": {
+        "items": {
+          "$ref": "#/components/schemas/ToObjectMetadataName for Response",
+        },
+        "type": "array",
+      },
+      "fieldRichText": {
+        "type": "string",
+      },
+      "fieldSelect": {
+        "enum": [
+          "OPTION_1",
+          "OPTION_2",
+        ],
+        "type": "string",
+      },
+      "fieldText": {
+        "type": "string",
+      },
+      "fieldUuid": {
+        "format": "uuid",
+        "type": "string",
+      },
+    },
+    "type": "object",
+  },
+  "ObjectName for Update": {
+    "description": undefined,
+    "properties": {
+      "fieldActor": {
+        "properties": {
+          "source": {
+            "enum": [
+              "EMAIL",
+              "CALENDAR",
+              "WORKFLOW",
+              "API",
+              "IMPORT",
+              "MANUAL",
+              "SYSTEM",
+              "WEBHOOK",
+            ],
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "fieldAddress": {
+        "properties": {
+          "addressCity": {
+            "type": "string",
+          },
+          "addressCountry": {
+            "type": "string",
+          },
+          "addressLat": {
+            "type": "number",
+          },
+          "addressLng": {
+            "type": "number",
+          },
+          "addressPostcode": {
+            "type": "string",
+          },
+          "addressState": {
+            "type": "string",
+          },
+          "addressStreet1": {
+            "type": "string",
+          },
+          "addressStreet2": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "fieldArray": {
+        "items": {
+          "type": "string",
+        },
+        "type": "array",
+      },
+      "fieldBoolean": {
+        "type": "boolean",
+      },
+      "fieldCurrency": {
+        "properties": {
+          "amountMicros": {
+            "type": "number",
+          },
+          "currencyCode": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "fieldDate": {
+        "format": "date",
+        "type": "string",
+      },
+      "fieldDateTime": {
+        "format": "date-time",
+        "type": "string",
+      },
+      "fieldEmails": {
+        "properties": {
+          "additionalEmails": {
+            "items": {
+              "format": "email",
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "primaryEmail": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "fieldFullName": {
+        "properties": {
+          "firstName": {
+            "type": "string",
+          },
+          "lastName": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "fieldLinks": {
+        "properties": {
+          "primaryLinkLabel": {
+            "type": "string",
+          },
+          "primaryLinkUrl": {
+            "type": "string",
+          },
+          "secondaryLinks": {
+            "items": {
+              "description": "A secondary link",
+              "properties": {
+                "label": {
+                  "type": "string",
+                },
+                "url": {
+                  "format": "uri",
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "type": "array",
+          },
+        },
+        "type": "object",
+      },
+      "fieldMultiSelect": {
+        "items": {
+          "enum": [
+            "OPTION_1",
+            "OPTION_2",
+          ],
+          "type": "string",
+        },
+        "type": "array",
+      },
+      "fieldNumber": {
+        "type": "integer",
+      },
+      "fieldNumeric": {
+        "type": "number",
+      },
+      "fieldPhones": {
+        "properties": {
+          "additionalPhones": {
+            "items": {
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "primaryPhoneCallingCode": {
+            "type": "string",
+          },
+          "primaryPhoneCountryCode": {
+            "type": "string",
+          },
+          "primaryPhoneNumber": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "fieldPosition": {
+        "type": "number",
+      },
+      "fieldRating": {
+        "enum": [
+          "RATING_1",
+          "RATING_2",
+        ],
+        "type": "string",
+      },
+      "fieldRawJson": {
+        "type": "object",
+      },
+      "fieldRichText": {
+        "type": "string",
+      },
+      "fieldSelect": {
+        "enum": [
+          "OPTION_1",
+          "OPTION_2",
+        ],
+        "type": "string",
+      },
+      "fieldText": {
+        "type": "string",
+      },
+      "fieldUuid": {
+        "format": "uuid",
+        "type": "string",
+      },
+    },
+    "type": "object",
+  },
+}
+`);
+  });
+
+  const testsCases: EachTestingContext<
+    Pick<
+      FieldMetadataEntity<FieldMetadataType.NUMBER>,
+      'id' | 'name' | 'type' | 'isNullable' | 'defaultValue' | 'settings'
+    >
+  >[] = [
+    {
+      title: 'Integer dataType with decimals',
+      context: {
+        id: 'number1',
+        name: 'number1',
+        type: FieldMetadataType.NUMBER,
+        isNullable: false,
+        defaultValue: null,
+        settings: { type: 'number', decimals: 1, dataType: NumberDataType.INT },
+      },
+    },
+    {
+      title: 'Float without decimals',
+      context: {
+        id: 'number2',
+        name: 'number2',
+        type: FieldMetadataType.NUMBER,
+        isNullable: false,
+        defaultValue: null,
+        settings: { type: 'number', dataType: NumberDataType.FLOAT },
+      },
+    },
+    {
+      title: 'Integer with a 0 decimals',
+      context: {
+        id: 'number3',
+        name: 'number3',
+        type: FieldMetadataType.NUMBER,
+        isNullable: false,
+        defaultValue: null,
+        settings: { type: 'number', decimals: 0, dataType: NumberDataType.INT },
+      },
+    },
+  ];
+
+  it.each(testsCases)('$title', ({ context: field }) => {
+    expect(
+      computeSchemaComponents([
+        {
+          targetTableName: 'testingObject',
+          id: 'mockObjectId',
+          nameSingular: 'objectName',
+          namePlural: 'objectsName',
+          //@ts-expect-error Passing partial FieldMetadataEntity array
+          fields: [field],
+        },
+      ]),
+    ).toMatchSnapshot();
   });
 });
