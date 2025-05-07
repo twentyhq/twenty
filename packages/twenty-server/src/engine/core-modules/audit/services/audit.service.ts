@@ -44,7 +44,7 @@ export class AuditService {
             { ...userIdAndWorkspaceId, ...makeTrackEvent(event, properties) },
           ]),
         ),
-      insertObjectEvent: <T extends TrackEventName>(
+      createObjectEvent: <T extends TrackEventName>(
         event: T,
         properties: TrackEventProperties<T> & {
           recordId: string;

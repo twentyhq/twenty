@@ -7,7 +7,7 @@ export const AuditContextMock = (params?: {
         properties: any,
       ) => Promise<{ success: boolean }>)
     | jest.Mock<any, any>;
-  insertObjectEvent?:
+  createObjectEvent?:
     | ((
         event: TrackEventName,
         properties: any,
@@ -21,8 +21,8 @@ export const AuditContextMock = (params?: {
     insertWorkspaceEvent:
       params?.insertWorkspaceEvent ??
       jest.fn().mockResolvedValue({ success: true }),
-    insertObjectEvent:
-      params?.insertObjectEvent ??
+    createObjectEvent:
+      params?.createObjectEvent ??
       jest.fn().mockResolvedValue({ success: true }),
     createPageviewEvent:
       params?.createPageviewEvent ??

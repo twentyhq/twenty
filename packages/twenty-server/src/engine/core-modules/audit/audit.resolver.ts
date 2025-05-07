@@ -33,7 +33,7 @@ export class AuditResolver {
   }
 
   @Mutation(() => Analytics)
-  async insertObjectEvent(
+  async createObjectEvent(
     @Args()
     createObjectEventInput: CreateObjectEventInput,
     @AuthWorkspace() workspace: Workspace | undefined,
@@ -51,7 +51,7 @@ export class AuditResolver {
       userId: user?.id,
     });
 
-    return analyticsContext.insertObjectEvent(createObjectEventInput.event, {
+    return analyticsContext.createObjectEvent(createObjectEventInput.event, {
       ...createObjectEventInput.properties,
       recordId: createObjectEventInput.recordId,
       objectMetadataId: createObjectEventInput.objectMetadataId,

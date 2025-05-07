@@ -1,12 +1,12 @@
 /* @license Enterprise */
 
 import {
-    Controller,
-    Post,
-    Req,
-    Res,
-    UseFilters,
-    UseGuards,
+  Controller,
+  Post,
+  Req,
+  Res,
+  UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -17,8 +17,8 @@ import { AuditService } from 'src/engine/core-modules/audit/services/audit.servi
 import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import {
-    DomainManagerException,
-    DomainManagerExceptionCode,
+  DomainManagerException,
+  DomainManagerExceptionCode,
 } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
 import { CloudflareSecretMatchGuard } from 'src/engine/core-modules/domain-manager/guards/cloudflare-secret.guard';
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';

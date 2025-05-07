@@ -6,18 +6,11 @@ import { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/o
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
-import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Processor(MessageQueue.entityEventsToDbQueue)
 export class CreateAuditLogFromInternalEvent {
-  constructor(
-    @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
-    private readonly workspaceMemberService: WorkspaceMemberRepository,
-    private readonly auditService: AuditService,
-  ) {}
+  constructor(private readonly auditService: AuditService) {}
 
   @Process(CreateAuditLogFromInternalEvent.name)
   async handle(
@@ -38,21 +31,21 @@ export class CreateAuditLogFromInternalEvent {
         userId: eventData.userId,
       });
 
-      // Since these are object record events, we use insertObjectEvent
+      // Since these are object record events, we use createObjectEvent
       if (workspaceEventBatch.name.endsWith('.updated')) {
-        analytics.insertObjectEvent(OBJECT_RECORD_UPDATED_EVENT, {
+        analytics.createObjectEvent(OBJECT_RECORD_UPDATED_EVENT, {
           ...eventProperties,
           recordId: eventData.recordId,
           objectMetadataId: eventData.objectMetadata.id,
         });
       } else if (workspaceEventBatch.name.endsWith('.created')) {
-        analytics.insertObjectEvent(OBJECT_RECORD_CREATED_EVENT, {
+        analytics.createObjectEvent(OBJECT_RECORD_CREATED_EVENT, {
           ...eventProperties,
           recordId: eventData.recordId,
           objectMetadataId: eventData.objectMetadata.id,
         });
       } else if (workspaceEventBatch.name.endsWith('.deleted')) {
-        analytics.insertObjectEvent(OBJECT_RECORD_DELETED_EVENT, {
+        analytics.createObjectEvent(OBJECT_RECORD_DELETED_EVENT, {
           ...eventProperties,
           recordId: eventData.recordId,
           objectMetadataId: eventData.objectMetadata.id,

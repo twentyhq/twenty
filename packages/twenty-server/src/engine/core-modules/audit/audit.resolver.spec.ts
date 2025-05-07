@@ -45,7 +45,7 @@ describe('AuditResolver', () => {
     auditService.createContext.mockReturnValue({
       createPageviewEvent: mockInsertPageviewEvent,
       insertWorkspaceEvent: jest.fn(),
-      insertObjectEvent: jest.fn(),
+      createObjectEvent: jest.fn(),
     });
 
     const input = {
@@ -74,7 +74,7 @@ describe('AuditResolver', () => {
 
     auditService.createContext.mockReturnValue({
       insertWorkspaceEvent: mockInsertWorkspaceEvent,
-      insertObjectEvent: jest.fn(),
+      createObjectEvent: jest.fn(),
       createPageviewEvent: jest.fn(),
     });
 
@@ -107,7 +107,7 @@ describe('AuditResolver', () => {
 
     auditService.createContext.mockReturnValue({
       insertWorkspaceEvent: jest.fn(),
-      insertObjectEvent: mockInsertObjectEvent,
+      createObjectEvent: mockInsertObjectEvent,
       createPageviewEvent: jest.fn(),
     });
 
@@ -118,7 +118,7 @@ describe('AuditResolver', () => {
       properties: { additionalData: 'test-data' },
     };
 
-    const result = await resolver.insertObjectEvent(
+    const result = await resolver.createObjectEvent(
       input,
       { id: 'workspace-3' } as Workspace,
       { id: 'user-3' } as User,
@@ -154,7 +154,7 @@ describe('AuditResolver', () => {
     );
   });
 
-  it('should throw an AuditException when workspace is missing for insertObjectEvent', async () => {
+  it('should throw an AuditException when workspace is missing for createObjectEvent', async () => {
     const input = {
       event: 'Object Record Created' as const,
       recordId: 'test-record-id',
@@ -162,7 +162,7 @@ describe('AuditResolver', () => {
     };
 
     await expect(
-      resolver.insertObjectEvent(input, undefined, undefined),
+      resolver.createObjectEvent(input, undefined, undefined),
     ).rejects.toThrowError(
       new AuditException('Missing workspace', AuditExceptionCode.INVALID_INPUT),
     );

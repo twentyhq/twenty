@@ -59,7 +59,7 @@ describe('AuditService', () => {
       const context = service.createContext(mockUserIdAndWorkspaceId);
 
       expect(context).toHaveProperty('insertWorkspaceEvent');
-      expect(context).toHaveProperty('insertObjectEvent');
+      expect(context).toHaveProperty('createObjectEvent');
       expect(context).toHaveProperty('createPageviewEvent');
     });
 
@@ -131,10 +131,10 @@ describe('AuditService', () => {
       expect(result).toEqual({ success: true });
     });
 
-    it('should return success when insertObjectEvent is called', async () => {
+    it('should return success when createObjectEvent is called', async () => {
       const context = service.createContext(mockUserIdAndWorkspaceId);
 
-      const result = await context.insertObjectEvent(
+      const result = await context.createObjectEvent(
         CUSTOM_DOMAIN_ACTIVATED_EVENT,
         {
           recordId: 'test-record-id',

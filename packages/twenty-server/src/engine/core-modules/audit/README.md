@@ -9,7 +9,7 @@ This module provides analytics tracking functionality for the Twenty application
 The `AuditService` provides a `createContext` method that returns an object with three methods:
 
 - `insertWorkspaceEvent`: For tracking workspace-level events
-- `insertObjectEvent`: For tracking object-level events that include record and metadata IDs
+- `createObjectEvent`: For tracking object-level events that include record and metadata IDs
 - `createPageviewEvent`: For tracking page views
 
 ```typescript
@@ -32,7 +32,7 @@ export class MyService {
     analytics.insertWorkspaceEvent(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
     
     // Track an object event
-    analytics.insertObjectEvent(OBJECT_RECORD_CREATED_EVENT, {
+    analytics.createObjectEvent(OBJECT_RECORD_CREATED_EVENT, {
       recordId: 'record-id',
       objectMetadataId: 'object-metadata-id',
       // other properties
@@ -114,7 +114,7 @@ Creates an analytics context with the given user ID and workspace ID.
 Returns an object with the following methods:
 
 - `insertWorkspaceEvent<T extends TrackEventName>(event: T, properties: TrackEventProperties<T>)`: Tracks a workspace-level event
-- `insertObjectEvent<T extends TrackEventName>(event: T, properties: TrackEventProperties<T> & { recordId: string; objectMetadataId: string })`: Tracks an object-level event
+- `createObjectEvent<T extends TrackEventName>(event: T, properties: TrackEventProperties<T> & { recordId: string; objectMetadataId: string })`: Tracks an object-level event
 - `createPageviewEvent(name: string, properties: Partial<PageviewProperties>)`: Tracks a pageview
 
 ### Types
