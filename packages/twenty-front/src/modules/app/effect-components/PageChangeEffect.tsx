@@ -18,10 +18,10 @@ import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPa
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
@@ -115,7 +115,7 @@ export const PageChangeEffect = () => {
   useEffect(() => {
     switch (true) {
       case isMatchingLocation(AppPath.RecordIndexPage): {
-        setHotkeyScope(TableHotkeyScope.Table, {
+        setHotkeyScope(RecordIndexHotkeyScope.RecordIndex, {
           goto: true,
           keyboardShortcutMenu: true,
         });

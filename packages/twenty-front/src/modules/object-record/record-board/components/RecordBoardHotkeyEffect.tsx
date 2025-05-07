@@ -4,6 +4,7 @@ import { Key } from 'ts-key-enum';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useBoardCardNavigation } from '@/object-record/record-board/hooks/useBoardCardNavigation';
 import { BoardHotkeyScope } from '@/object-record/record-board/types/BoardHotkeyScope';
+import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
@@ -20,7 +21,7 @@ export const RecordBoardHotkeyEffect = () => {
       setHotkeyScopeAndMemorizePreviousScope(BoardHotkeyScope.BoardFocus);
       move('left');
     },
-    BoardHotkeyScope.Board,
+    RecordIndexHotkeyScope.RecordIndex,
   );
 
   useScopedHotkeys(
@@ -29,7 +30,7 @@ export const RecordBoardHotkeyEffect = () => {
       setHotkeyScopeAndMemorizePreviousScope(BoardHotkeyScope.BoardFocus);
       move('right');
     },
-    BoardHotkeyScope.Board,
+    RecordIndexHotkeyScope.RecordIndex,
   );
 
   useScopedHotkeys(
@@ -38,7 +39,7 @@ export const RecordBoardHotkeyEffect = () => {
       setHotkeyScopeAndMemorizePreviousScope(BoardHotkeyScope.BoardFocus);
       move('up');
     },
-    BoardHotkeyScope.Board,
+    RecordIndexHotkeyScope.RecordIndex,
   );
 
   useScopedHotkeys(
@@ -47,7 +48,7 @@ export const RecordBoardHotkeyEffect = () => {
       setHotkeyScopeAndMemorizePreviousScope(BoardHotkeyScope.BoardFocus);
       move('down');
     },
-    BoardHotkeyScope.Board,
+    RecordIndexHotkeyScope.RecordIndex,
   );
 
   useScopedHotkeys(
