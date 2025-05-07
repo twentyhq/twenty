@@ -68,6 +68,7 @@ export const RecordChip = ({
 
   const isSidePanelViewOpenRecordInType =
     recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL;
+
   const onClick = isSidePanelViewOpenRecordInType
     ? () =>
         openRecordInCommandMenu({

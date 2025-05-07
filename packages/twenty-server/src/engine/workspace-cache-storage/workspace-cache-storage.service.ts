@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import crypto from 'crypto';
 
+import { isDefined } from 'twenty-shared/utils';
 import { EntitySchemaOptions } from 'typeorm';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
@@ -277,8 +278,13 @@ export class WorkspaceCacheStorageService {
     );
   }
 
-  async flush(workspaceId: string, metadataVersion: number): Promise<void> {
-    await this.flushVersionedMetadata(workspaceId, metadataVersion);
+  async flush(
+    workspaceId: string,
+    metadataVersion: number | undefined,
+  ): Promise<void> {
+    if (isDefined(metadataVersion)) {
+      await this.flushVersionedMetadata(workspaceId, metadataVersion);
+    }
 
     await this.cacheStorageService.del(
       `${WorkspaceCacheKeys.MetadataPermissionsRolesPermissions}:${workspaceId}`,

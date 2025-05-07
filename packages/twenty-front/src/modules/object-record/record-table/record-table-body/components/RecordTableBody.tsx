@@ -6,20 +6,20 @@ const StyledTbody = styled.tbody`
       position: sticky;
       left: 0;
       z-index: 6;
-      transition: 0.3s ease;
+      transition: transform 0.3s ease;
     }
     td:nth-of-type(2) {
       position: sticky;
       left: 11px;
       z-index: 6;
-      transition: 0.3s ease;
+      transition: transform 0.3s ease;
     }
     tr:not(:last-child) td:nth-of-type(3) {
       // Last row is aggregate footer
       position: sticky;
       left: 43px;
       z-index: 6;
-      transition: 0.3s ease;
+      transition: transform 0.3s ease;
 
       &:not(.disable-shadow)::after {
         content: '';

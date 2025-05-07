@@ -37,7 +37,7 @@ export class MessagingMonitoringService {
         userId,
         workspaceId,
       })
-      .track(MONITORING_EVENT, {
+      .insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: `messaging.${eventName}`,
         connectedAccountId,
         messageChannelId,
