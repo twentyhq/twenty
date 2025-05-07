@@ -2,12 +2,12 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
+import { TraceableRecordShowContainer } from '@/command-menu/pages/traceable/components/TraceableRecordShowContainer';
 import { TraceableRecordShowEffect } from '@/command-menu/pages/traceable/components/TraceableRecordShowEffect';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
-import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
@@ -82,8 +82,7 @@ export const CommandMenuTraceableRecordPage = () => {
                     }}
                   >
                     <TraceableRecordShowEffect recordId={objectRecordId} />
-                    <RecordShowContainer
-                      objectNameSingular={objectNameSingular}
+                    <TraceableRecordShowContainer
                       objectRecordId={objectRecordId}
                       loading={false}
                       isInRightDrawer={true}
