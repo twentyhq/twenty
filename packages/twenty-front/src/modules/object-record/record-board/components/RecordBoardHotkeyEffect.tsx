@@ -51,5 +51,37 @@ export const RecordBoardHotkeyEffect = () => {
     RecordIndexHotkeyScope.RecordIndex,
   );
 
+  useScopedHotkeys(
+    Key.ArrowLeft,
+    () => {
+      move('left');
+    },
+    BoardHotkeyScope.BoardFocus,
+  );
+
+  useScopedHotkeys(
+    Key.ArrowRight,
+    () => {
+      move('right');
+    },
+    BoardHotkeyScope.BoardFocus,
+  );
+
+  useScopedHotkeys(
+    Key.ArrowUp,
+    () => {
+      move('up');
+    },
+    BoardHotkeyScope.BoardFocus,
+  );
+
+  useScopedHotkeys(
+    Key.ArrowDown,
+    () => {
+      move('down');
+    },
+    BoardHotkeyScope.BoardFocus,
+  );
+
   return null;
 };
