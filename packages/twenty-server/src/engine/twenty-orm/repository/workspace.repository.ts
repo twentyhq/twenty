@@ -219,19 +219,21 @@ export class WorkspaceRepository<
 
   override async save<U extends DeepPartial<T>>(
     entityOrEntities: U | U[],
-    options?: SaveOptions,
+    options?: SaveOptions | (SaveOptions & { reload: false }),
     entityManager?: WorkspaceEntityManager,
   ): Promise<U | U[]> {
     const manager = entityManager || this.manager;
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
     let result: U | U[];
 
+    const savedOptions = options as SaveOptions & { reload: false };
+
     // Needed because save method has multiple signature, otherwise we will need to do a type assertion
     if (Array.isArray(formattedEntityOrEntities)) {
       result = await manager.save(
         this.target,
         formattedEntityOrEntities,
-        options,
+        savedOptions,
         {
           shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
           objectRecordsPermissions: this.objectRecordsPermissions,
@@ -241,7 +243,7 @@ export class WorkspaceRepository<
       result = await manager.save(
         this.target,
         formattedEntityOrEntities,
-        options,
+        savedOptions,
         {
           shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
           objectRecordsPermissions: this.objectRecordsPermissions,
