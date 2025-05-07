@@ -63,7 +63,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly migrateWorkflowEventListenersToAutomatedTriggersCommand: MigrateWorkflowEventListenersToAutomatedTriggersCommand,
     protected readonly backfillWorkflowNextStepIdsCommand: BackfillWorkflowNextStepIdsCommand,
     protected readonly copyTypeormMigrationsCommand: CopyTypeormMigrationsCommand,
-    
+
     // 0.54 Commands
     protected readonly standardizeRelationFilterSyntaxCommand: StandardizeRelationFilterSyntaxCommand,
   ) {
