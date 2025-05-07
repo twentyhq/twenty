@@ -1,3 +1,4 @@
+import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
@@ -7,7 +8,7 @@ import { IconChevronRight, IconComponent } from 'twenty-ui/display';
 import { CardContent } from 'twenty-ui/layout';
 
 const StyledRow = styled(CardContent, {
-  shouldForwardProp: (prop) => prop !== 'to',
+  shouldForwardProp: (prop) => prop !== 'to' && isPropValid(prop),
 })<{ to?: boolean }>`
   align-items: center;
   cursor: ${({ onClick, to }) => (onClick || to ? 'pointer' : 'default')};
