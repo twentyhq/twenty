@@ -38,11 +38,14 @@ describe('AuditResolver', () => {
   });
 
   it('should handle a valid pageview input', async () => {
-    const mockPageview = jest.fn().mockResolvedValue('Pageview created');
+    const mockInsertPageviewEvent = jest
+      .fn()
+      .mockResolvedValue('Pageview created');
 
     auditService.createContext.mockReturnValue({
-      pageview: mockPageview,
-      track: jest.fn(),
+      insertPageviewEvent: mockInsertPageviewEvent,
+      insertWorkspaceEvent: jest.fn(),
+      insertObjectEvent: jest.fn(),
     });
 
     const input = {
@@ -60,16 +63,19 @@ describe('AuditResolver', () => {
       workspaceId: 'workspace-1',
       userId: 'user-1',
     });
-    expect(mockPageview).toHaveBeenCalledWith('Test Page', {});
+    expect(mockInsertPageviewEvent).toHaveBeenCalledWith('Test Page', {});
     expect(result).toBe('Pageview created');
   });
 
   it('should handle a valid track input', async () => {
-    const mockTrack = jest.fn().mockResolvedValue('Track created');
+    const mockInsertWorkspaceEvent = jest
+      .fn()
+      .mockResolvedValue('Track created');
 
     auditService.createContext.mockReturnValue({
-      track: mockTrack,
-      pageview: jest.fn(),
+      insertWorkspaceEvent: mockInsertWorkspaceEvent,
+      insertObjectEvent: jest.fn(),
+      insertPageviewEvent: jest.fn(),
     });
 
     const input = {
@@ -87,7 +93,10 @@ describe('AuditResolver', () => {
       workspaceId: 'workspace-2',
       userId: 'user-2',
     });
-    expect(mockTrack).toHaveBeenCalledWith('Custom Domain Activated', {});
+    expect(mockInsertWorkspaceEvent).toHaveBeenCalledWith(
+      'Custom Domain Activated',
+      {},
+    );
     expect(result).toBe('Track created');
   });
 

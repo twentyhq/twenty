@@ -11,7 +11,7 @@ import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/i
 import { ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/track/serverless-function/serverless-function-executed';
+import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/serverless-function/serverless-function-executed';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -29,12 +29,12 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import {
-  ServerlessFunctionEntity,
-  ServerlessFunctionSyncStatus,
+    ServerlessFunctionEntity,
+    ServerlessFunctionSyncStatus,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
-  ServerlessFunctionException,
-  ServerlessFunctionExceptionCode,
+    ServerlessFunctionException,
+    ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 
 @Injectable()
@@ -148,7 +148,7 @@ export class ServerlessFunctionService {
       .createContext({
         workspaceId,
       })
-      .track(SERVERLESS_FUNCTION_EXECUTED_EVENT, {
+      .insertWorkspaceEvent(SERVERLESS_FUNCTION_EXECUTED_EVENT, {
         duration: resultServerlessFunction.duration,
         status: resultServerlessFunction.status,
         ...(resultServerlessFunction.error && {

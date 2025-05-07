@@ -1,8 +1,8 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import {
-  AuditException,
-  AuditExceptionCode,
+    AuditException,
+    AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -10,9 +10,9 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 
 import {
-  CreateAnalyticsInputV2,
-  isPageviewAnalyticsInput,
-  isTrackAnalyticsInput,
+    CreateAnalyticsInputV2,
+    isPageviewAnalyticsInput,
+    isTrackAnalyticsInput,
 } from './dtos/create-analytics.input';
 import { Analytics } from './entities/analytics.entity';
 import { AuditService } from './services/audit.service';
@@ -44,14 +44,16 @@ export class AuditResolver {
     });
 
     if (isPageviewAnalyticsInput(createAnalyticsInput)) {
-      return analyticsContext.pageview(
+      return analyticsContext.insertPageviewEvent(
         createAnalyticsInput.name,
         createAnalyticsInput.properties ?? {},
       );
     }
 
     if (isTrackAnalyticsInput(createAnalyticsInput)) {
-      return analyticsContext.track(
+      // For track events, we need to determine if it's a workspace or object event
+      // Since we don't have recordId and objectMetadataId in the input, we use insertWorkspaceEvent
+      return analyticsContext.insertWorkspaceEvent(
         createAnalyticsInput.event,
         createAnalyticsInput.properties ?? {},
       );

@@ -3,8 +3,8 @@ import process from 'process';
 import { ClickHouseClient, createClient } from '@clickhouse/client';
 import request from 'supertest';
 
-import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/audit/utils/events/track/object-record/object-record-created';
-import { GenericTrackEvent } from 'src/engine/core-modules/audit/utils/events/track/track';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
+import { GenericTrackEvent } from 'src/engine/core-modules/audit/utils/events/workspace-event/track';
 
 describe('ClickHouse Event Registration (integration)', () => {
   let clickHouseClient: ClickHouseClient;
@@ -17,7 +17,7 @@ describe('ClickHouse Event Registration (integration)', () => {
     });
 
     await clickHouseClient.query({
-      query: 'TRUNCATE TABLE auditEvent',
+      query: 'TRUNCATE TABLE workspaceEvent',
       format: 'JSONEachRow',
     });
   });
@@ -39,7 +39,7 @@ describe('ClickHouse Event Registration (integration)', () => {
 
     const variables = {
       type: 'TRACK',
-      event: OBJECT_RECORD_CREATED_EVENT,
+      event: CUSTOM_DOMAIN_ACTIVATED_EVENT,
       properties: {},
     };
 
@@ -56,8 +56,8 @@ describe('ClickHouse Event Registration (integration)', () => {
     const queryResult = await clickHouseClient.query({
       query: `
         SELECT *
-        FROM auditEvent
-        WHERE event = '${OBJECT_RECORD_CREATED_EVENT}' AND timestamp >= now() - INTERVAL 1 SECOND
+        FROM workspaceEvent
+        WHERE event = '${CUSTOM_DOMAIN_ACTIVATED_EVENT}' AND timestamp >= now() - INTERVAL 1 SECOND
 
       `,
       format: 'JSONEachRow',
