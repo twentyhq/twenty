@@ -210,7 +210,7 @@ describe('should work as expected for the different field types', () => {
             },
             {
               address: {
-                addressPostcode: {
+                addressPostCode: {
                   ilike: '%123 Main St%',
                 },
               },
