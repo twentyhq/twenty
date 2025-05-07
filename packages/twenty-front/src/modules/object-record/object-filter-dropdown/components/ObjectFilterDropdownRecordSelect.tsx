@@ -1,18 +1,14 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import {
-  getFilterTypeFromFieldType,
-  getRelationObjectMetadataNameSingular,
-} from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getRelationObjectMetadataNameSingular } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { ObjectFilterDropdownRecordPinnedItems } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordPinnedItems';
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
+import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
+import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
@@ -24,29 +20,28 @@ import { relationFilterValueSchema } from '@/views/view-filter-value/validation-
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconUserCircle } from 'twenty-ui/display';
-import { v4 } from 'uuid';
 
 export const MAX_RECORDS_TO_DISPLAY = 3;
 
 type ObjectFilterDropdownRecordSelectProps = {
-  viewComponentId?: string;
   recordFilterId?: string;
 };
 
 export const ObjectFilterDropdownRecordSelect = ({
-  viewComponentId,
   recordFilterId,
 }: ObjectFilterDropdownRecordSelectProps) => {
   const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentValueV2(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
+  const { objectFilterDropdownFilterValue } =
+    useObjectFilterDropdownFilterValue();
+
+  const { applyObjectFilterDropdownFilterValue } =
+    useApplyObjectFilterDropdownFilterValue();
+
   const selectedOperandInDropdown = useRecoilComponentValueV2(
     selectedOperandInDropdownComponentState,
-  );
-
-  const selectedFilter = useRecoilComponentValueV2(
-    selectedFilterComponentState,
   );
 
   const objectFilterDropdownSearchInput = useRecoilComponentValueV2(
@@ -56,8 +51,6 @@ export const ObjectFilterDropdownRecordSelect = ({
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
-
-  const { applyRecordFilter } = useApplyRecordFilter(viewComponentId);
 
   const { id: currentWorkspaceMemberId } =
     useRecoilValue(currentWorkspaceMemberState) ?? {};
@@ -160,9 +153,6 @@ export const ObjectFilterDropdownRecordSelect = ({
     const isItemCurrentWorkspaceMember =
       itemToSelect.id === CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID;
 
-    const isItemCurrentWorkspaceMemberId =
-      itemToSelect.id === currentWorkspaceMemberId;
-
     const selectedRecordIdsWithAddedRecord = [
       ...selectedRecordIds,
       itemToSelect.id,
@@ -221,50 +211,7 @@ export const ObjectFilterDropdownRecordSelect = ({
             )
           : '';
 
-      const duplicateFilterInCurrentRecordFilters =
-        findDuplicateRecordFilterInNonAdvancedRecordFilters({
-          recordFilters: currentRecordFilters,
-          fieldMetadataItemId: fieldMetadataItemUsedInFilterDropdown.id,
-        });
-
-      const filterIsAlreadyInCurrentRecordFilters = isDefined(
-        duplicateFilterInCurrentRecordFilters,
-      );
-
-      if (filterIsAlreadyInCurrentRecordFilters && !isDefined(recordFilterId)) {
-        applyRecordFilter({
-          id: duplicateFilterInCurrentRecordFilters.id,
-          type: getFilterTypeFromFieldType(
-            fieldMetadataItemUsedInFilterDropdown.type,
-          ),
-          label: fieldMetadataItemUsedInFilterDropdown.label,
-          operand: selectedOperandInDropdown,
-          displayValue: filterDisplayValue,
-          fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
-          value: newFilterValue,
-          recordFilterGroupId:
-            duplicateFilterInCurrentRecordFilters.recordFilterGroupId,
-          positionInRecordFilterGroup:
-            duplicateFilterInCurrentRecordFilters.positionInRecordFilterGroup,
-          subFieldName: duplicateFilterInCurrentRecordFilters.subFieldName,
-        });
-      } else {
-        applyRecordFilter({
-          id: selectedFilter?.id ? selectedFilter.id : v4(),
-          type: getFilterTypeFromFieldType(
-            fieldMetadataItemUsedInFilterDropdown.type,
-          ),
-          label: fieldMetadataItemUsedInFilterDropdown.label,
-          operand: selectedOperandInDropdown,
-          displayValue: filterDisplayValue,
-          fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
-          value: newFilterValue,
-          recordFilterGroupId: selectedFilter?.recordFilterGroupId,
-          positionInRecordFilterGroup:
-            selectedFilter?.positionInRecordFilterGroup,
-          subFieldName: selectedFilter?.subFieldName,
-        });
-      }
+      applyObjectFilterDropdownFilterValue(newFilterValue, filterDisplayValue);
     }
   };
 

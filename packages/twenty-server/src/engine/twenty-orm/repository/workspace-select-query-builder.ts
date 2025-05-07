@@ -4,7 +4,7 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.util';
+import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
 import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
 import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
@@ -48,6 +48,48 @@ export class WorkspaceSelectQueryBuilder<
     this.validatePermissions();
 
     return super.getMany();
+  }
+
+  override getRawOne<U = any>(): Promise<U | undefined> {
+    this.validatePermissions();
+
+    return super.getRawOne();
+  }
+
+  override getRawMany<U = any>(): Promise<U[]> {
+    this.validatePermissions();
+
+    return super.getRawMany();
+  }
+
+  override getOne(): Promise<T | null> {
+    this.validatePermissions();
+
+    return super.getOne();
+  }
+
+  override getOneOrFail(): Promise<T> {
+    this.validatePermissions();
+
+    return super.getOneOrFail();
+  }
+
+  override getCount(): Promise<number> {
+    this.validatePermissions();
+
+    return super.getCount();
+  }
+
+  override getExists(): Promise<boolean> {
+    this.validatePermissions();
+
+    return super.getExists();
+  }
+
+  override getManyAndCount(): Promise<[T[], number]> {
+    this.validatePermissions();
+
+    return super.getManyAndCount();
   }
 
   override update(): WorkspaceUpdateQueryBuilder<T>;

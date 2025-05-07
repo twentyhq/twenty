@@ -1708,6 +1708,7 @@ msgstr ""
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Edit"
 msgstr ""
 
@@ -1937,6 +1938,11 @@ msgstr ""
 #. js-lingui-id: WEltn2
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 msgid "Error editing SSO Identity Provider"
+msgstr ""
+
+#. js-lingui-id: 2GvilU
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
+msgid "Error loading message"
 msgstr ""
 
 #. js-lingui-id: bj7nh3
@@ -2430,6 +2436,7 @@ msgstr ""
 
 #. js-lingui-id: vLyv1R
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Hide"
 msgstr ""
 
@@ -2862,6 +2869,11 @@ msgstr ""
 msgid "Listings"
 msgstr ""
 
+#. js-lingui-id: Nx262D
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "Loading csv ... "
+msgstr ""
+
 #. js-lingui-id: s1MstR
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Loading metrics data..."
@@ -2869,6 +2881,7 @@ msgstr ""
 
 #. js-lingui-id: Z3FXyt
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Loading..."
 msgstr ""
 
@@ -2964,6 +2977,11 @@ msgstr ""
 msgid "Members"
 msgstr ""
 
+#. js-lingui-id: U15XwX
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
+msgid "Message not found"
+msgstr ""
+
 #. js-lingui-id: elpx6r
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Message Sync"
@@ -3017,11 +3035,13 @@ msgstr ""
 
 #. js-lingui-id: iSLA/r
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move left"
 msgstr ""
 
 #. js-lingui-id: Ubl2by
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move right"
 msgstr ""
 
@@ -3372,6 +3392,16 @@ msgstr ""
 #. js-lingui-id: pAtylB
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Not Found"
+msgstr ""
+
+#. js-lingui-id: 51G4/+
+#: src/modules/activities/calendar/components/CalendarEventNotSharedContent.tsx
+msgid "Not shared"
+msgstr ""
+
+#. js-lingui-id: uzFo/5
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessageBodyNotShared.tsx
+msgid "Not shared by {notSharedByFullName}"
 msgstr ""
 
 #. js-lingui-id: hZWthZ
@@ -4446,6 +4476,11 @@ msgstr ""
 msgid "Subject and metadata will be shared with your team."
 msgstr ""
 
+#. js-lingui-id: DvSvG9
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessageForbidden.tsx
+msgid "Subject not shared"
+msgstr ""
+
 #. js-lingui-id: J9ylmk
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Subject, body and attachments will be shared with your team."
@@ -5060,6 +5095,21 @@ msgstr ""
 #. js-lingui-id: 6n7jtr
 #: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx
 msgid "Visualize"
+msgstr ""
+
+#. js-lingui-id: zFSQY3
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx
+msgid "was created by"
+msgstr ""
+
+#. js-lingui-id: uHpu1c
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx
+msgid "was deleted by"
+msgstr ""
+
+#. js-lingui-id: S0enzB
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx
+msgid "was restored by"
 msgstr ""
 
 #. js-lingui-id: id6ein

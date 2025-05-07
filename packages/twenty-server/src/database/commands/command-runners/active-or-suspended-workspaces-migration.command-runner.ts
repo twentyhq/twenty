@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { Option } from 'nest-commander';
-import { In, MoreThanOrEqual, Repository } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { In, MoreThanOrEqual, Repository } from 'typeorm';
 
 import { MigrationCommandRunner } from 'src/database/commands/command-runners/migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -138,10 +138,10 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
 
       try {
         const dataSource =
-          await this.twentyORMGlobalManager.getDataSourceForWorkspace(
+          await this.twentyORMGlobalManager.getDataSourceForWorkspace({
             workspaceId,
-            false,
-          );
+            shouldFailIfMetadataNotFound: false,
+          });
 
         await this.runOnWorkspace({
           options,

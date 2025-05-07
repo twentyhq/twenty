@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import omit from 'lodash.omit';
+import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { Any } from 'typeorm';
 
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/calendar/constants/calendar.constants';
@@ -15,11 +16,17 @@ export class TimelineCalendarEventService {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   // TODO: Align return type with the entities to avoid mapping
-  async getCalendarEventsFromPersonIds(
-    personIds: string[],
+  async getCalendarEventsFromPersonIds({
+    currentWorkspaceMemberId,
+    personIds,
     page = 1,
-    pageSize: number = TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
-  ): Promise<TimelineCalendarEventsWithTotal> {
+    pageSize = TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
+  }: {
+    currentWorkspaceMemberId: string;
+    personIds: string[];
+    page: number;
+    pageSize: number;
+  }): Promise<TimelineCalendarEventsWithTotal> {
     const offset = (page - 1) * pageSize;
 
     const calendarEventRepository =
@@ -64,7 +71,11 @@ export class TimelineCalendarEventService {
           workspaceMember: true,
         },
         calendarChannelEventAssociations: {
-          calendarChannel: true,
+          calendarChannel: {
+            connectedAccount: {
+              accountOwner: true,
+            },
+          },
         },
       },
     });
@@ -103,17 +114,35 @@ export class TimelineCalendarEventService {
           handle: participant.handle,
         }),
       );
-      const visibility = event.calendarChannelEventAssociations.some(
-        (association) => association.calendarChannel.visibility === 'METADATA',
-      )
-        ? CalendarChannelVisibility.METADATA
-        : CalendarChannelVisibility.SHARE_EVERYTHING;
+
+      const isCalendarEventImportedByCurrentWorkspaceMember =
+        event.calendarChannelEventAssociations.some(
+          (association) =>
+            association.calendarChannel.connectedAccount.accountOwnerId ===
+            currentWorkspaceMemberId,
+        );
+
+      const visibility =
+        event.calendarChannelEventAssociations.some(
+          (association) =>
+            association.calendarChannel.visibility === 'SHARE_EVERYTHING',
+        ) || isCalendarEventImportedByCurrentWorkspaceMember
+          ? CalendarChannelVisibility.SHARE_EVERYTHING
+          : CalendarChannelVisibility.METADATA;
 
       return {
         ...omit(event, [
           'calendarEventParticipants',
           'calendarChannelEventAssociations',
         ]),
+        title:
+          visibility === CalendarChannelVisibility.METADATA
+            ? FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
+            : event.title,
+        description:
+          visibility === CalendarChannelVisibility.METADATA
+            ? FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
+            : event.description,
         startsAt: event.startsAt as unknown as Date,
         endsAt: event.endsAt as unknown as Date,
         participants,
@@ -127,11 +156,17 @@ export class TimelineCalendarEventService {
     };
   }
 
-  async getCalendarEventsFromCompanyId(
-    companyId: string,
+  async getCalendarEventsFromCompanyId({
+    currentWorkspaceMemberId,
+    companyId,
     page = 1,
-    pageSize: number = TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
-  ): Promise<TimelineCalendarEventsWithTotal> {
+    pageSize = TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
+  }: {
+    currentWorkspaceMemberId: string;
+    companyId: string;
+    page: number;
+    pageSize: number;
+  }): Promise<TimelineCalendarEventsWithTotal> {
     const personRepository =
       await this.twentyORMManager.getRepository<PersonWorkspaceEntity>(
         'person',
@@ -155,12 +190,13 @@ export class TimelineCalendarEventService {
 
     const formattedPersonIds = personIds.map(({ id }) => id);
 
-    const messageThreads = await this.getCalendarEventsFromPersonIds(
-      formattedPersonIds,
+    const calendarEvents = await this.getCalendarEventsFromPersonIds({
+      currentWorkspaceMemberId,
+      personIds: formattedPersonIds,
       page,
       pageSize,
-    );
+    });
 
-    return messageThreads;
+    return calendarEvents;
   }
 }

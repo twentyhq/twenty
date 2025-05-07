@@ -1,6 +1,7 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
 import { AdvancedFilterRootRecordFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterRootRecordFilterGroup';
+import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { AdvancedFilterChip } from '@/views/components/AdvancedFilterChip';
@@ -11,6 +12,13 @@ export const AdvancedFilterDropdownButton = () => {
   const rootLevelRecordFilterGroup = useRecoilComponentValueV2(
     rootLevelRecordFilterGroupComponentSelector,
   );
+
+  const { setAdvancedFilterDropdownStates } =
+    useSetAdvancedFilterDropdownStates();
+
+  const handleOpenAdvancedFilterDropdown = () => {
+    setAdvancedFilterDropdownStates();
+  };
 
   if (!isDefined(rootLevelRecordFilterGroup)) {
     return null;
@@ -25,6 +33,7 @@ export const AdvancedFilterDropdownButton = () => {
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"
       dropdownWidth="100%"
+      onOpen={handleOpenAdvancedFilterDropdown}
     />
   );
 };

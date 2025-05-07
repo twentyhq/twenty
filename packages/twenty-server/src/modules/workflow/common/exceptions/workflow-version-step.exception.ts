@@ -10,4 +10,5 @@ export enum WorkflowVersionStepExceptionCode {
   NOT_FOUND = 'NOT_FOUND',
   UNDEFINED = 'UNDEFINED',
   FAILURE = 'FAILURE',
+  INVALID = 'INVALID',
 }

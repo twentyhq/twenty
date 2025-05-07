@@ -1,25 +1,17 @@
 import { Module } from '@nestjs/common';
 
+import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
-import { CreateAuditLogFromInternalEvent } from 'src/modules/timeline/jobs/create-audit-log-from-internal-event';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
-import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.module';
 
 @Module({
   imports: [
-    ObjectMetadataRepositoryModule.forFeature([
-      WorkspaceMemberWorkspaceEntity,
-      AuditLogWorkspaceEntity,
-    ]),
+    ObjectMetadataRepositoryModule.forFeature([WorkspaceMemberWorkspaceEntity]),
     TimelineActivityModule,
-    AnalyticsModule,
+    AuditModule,
   ],
-  providers: [
-    CreateAuditLogFromInternalEvent,
-    UpsertTimelineActivityFromInternalEvent,
-  ],
+  providers: [UpsertTimelineActivityFromInternalEvent],
 })
 export class TimelineJobModule {}

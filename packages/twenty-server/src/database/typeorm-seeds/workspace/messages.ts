@@ -1,6 +1,5 @@
-import { EntityManager } from 'typeorm';
-
 import { DEV_SEED_MESSAGE_THREAD_IDS } from 'src/database/typeorm-seeds/workspace/message-threads';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 
 const tableName = 'message';
 
@@ -11,11 +10,13 @@ export const DEV_SEED_MESSAGE_IDS = {
 };
 
 export const seedMessage = async (
-  entityManager: EntityManager,
+  entityManager: WorkspaceEntityManager,
   schemaName: string,
 ) => {
   await entityManager
-    .createQueryBuilder()
+    .createQueryBuilder(undefined, undefined, undefined, {
+      shouldBypassPermissionChecks: true,
+    })
     .insert()
     .into(`${schemaName}.${tableName}`, [
       'id',

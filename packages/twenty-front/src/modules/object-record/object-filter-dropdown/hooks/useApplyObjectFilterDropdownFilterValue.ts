@@ -25,7 +25,10 @@ export const useApplyObjectFilterDropdownFilterValue = () => {
   const { upsertObjectFilterDropdownCurrentFilter } =
     useUpsertObjectFilterDropdownCurrentFilter();
 
-  const applyObjectFilterDropdownFilterValue = (newFilterValue: string) => {
+  const applyObjectFilterDropdownFilterValue = (
+    newFilterValue: string,
+    newDisplayValue?: string,
+  ) => {
     if (objectFilterDropdownFilterNotYetCreated) {
       if (!isDefined(fieldMetadataItemUsedInDropdown)) {
         throw new Error(
@@ -41,7 +44,7 @@ export const useApplyObjectFilterDropdownFilterValue = () => {
       const newCurrentRecordFilter = {
         ...newRecordFilterFromObjectFilterDropdownStates,
         value: newFilterValue,
-        displayValue: newFilterValue,
+        displayValue: newDisplayValue ?? newFilterValue,
       } satisfies RecordFilter;
 
       upsertObjectFilterDropdownCurrentFilter(newCurrentRecordFilter);
@@ -49,7 +52,7 @@ export const useApplyObjectFilterDropdownFilterValue = () => {
       const newCurrentRecordFilter = {
         ...objectFilterDropdownCurrentRecordFilter,
         value: newFilterValue,
-        displayValue: newFilterValue,
+        displayValue: newDisplayValue ?? newFilterValue,
       } satisfies RecordFilter;
 
       upsertObjectFilterDropdownCurrentFilter(newCurrentRecordFilter);

@@ -6,13 +6,11 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
@@ -38,13 +36,11 @@ export class UserService extends TypeOrmQueryService<User> {
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly dataSourceService: DataSourceService,
-    private readonly typeORMService: TypeORMService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly workspaceService: WorkspaceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly userRoleService: UserRoleService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(userRepository);
   }
@@ -88,17 +84,16 @@ export class UserService extends TypeOrmQueryService<User> {
     userId: string;
     workspaceId: string;
   }) {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
+        'workspaceMember',
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    const workspaceMembers = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember"`,
-    );
+    const workspaceMembers = await workspaceMemberRepository.find();
 
     if (workspaceMembers.length > 1) {
       const userWorkspace =
@@ -119,9 +114,7 @@ export class UserService extends TypeOrmQueryService<User> {
 
     assert(workspaceMember, 'WorkspaceMember not found');
 
-    await workspaceDataSource?.query(
-      `DELETE FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${userId}'`,
-    );
+    await workspaceMemberRepository.delete({ userId });
 
     const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
       where: {

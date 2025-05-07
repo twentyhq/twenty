@@ -3,7 +3,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 
-import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
+import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -22,17 +22,19 @@ export const ViewBarFilterDropdown = ({
 
   const { removeRecordFilter } = useRemoveRecordFilter();
 
-  const selectedFilter = useRecoilComponentValueV2(
-    selectedFilterComponentState,
+  const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValueV2(
+    objectFilterDropdownCurrentRecordFilterComponentState,
   );
 
   const handleDropdownClickOutside = () => {
     const recordFilterIsEmpty =
-      isDefined(selectedFilter) &&
-      isRecordFilterConsideredEmpty(selectedFilter);
+      isDefined(objectFilterDropdownCurrentRecordFilter) &&
+      isRecordFilterConsideredEmpty(objectFilterDropdownCurrentRecordFilter);
 
     if (recordFilterIsEmpty) {
-      removeRecordFilter({ recordFilterId: selectedFilter.id });
+      removeRecordFilter({
+        recordFilterId: objectFilterDropdownCurrentRecordFilter.id,
+      });
     }
   };
 
