@@ -181,7 +181,7 @@ export const FormMultiSelectFieldInput = ({
   const placeholderText = placeholder ?? label;
 
   return (
-    <FormFieldInputContainer testId={testId}>
+    <FormFieldInputContainer data-testid={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>
