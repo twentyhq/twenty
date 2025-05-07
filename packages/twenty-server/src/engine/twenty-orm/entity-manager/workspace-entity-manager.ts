@@ -8,6 +8,7 @@ import {
   FindOneOptions,
   FindOptionsWhere,
   InsertResult,
+  ObjectId,
   ObjectLiteral,
   QueryRunner,
   RemoveOptions,
@@ -175,6 +176,26 @@ export class WorkspaceEntityManager extends EntityManager {
     return super.upsert(target, entityOrEntities, conflictPathsOrOptions);
   }
 
+  override update<Entity extends ObjectLiteral>(
+    target: EntityTarget<Entity>,
+    criteria:
+      | string
+      | string[]
+      | number
+      | number[]
+      | Date
+      | Date[]
+      | ObjectId
+      | ObjectId[]
+      | any,
+    partialEntity: QueryDeepPartialEntity<Entity>,
+    permissionOptions?: PermissionOptions,
+  ): Promise<UpdateResult> {
+    this.validatePermissions(target, 'update', permissionOptions);
+
+    return super.update(target, criteria, partialEntity);
+  }
+
   override save<Entity extends ObjectLiteral>(
     entities: Entity[],
     options?: SaveOptions,
@@ -296,7 +317,7 @@ export class WorkspaceEntityManager extends EntityManager {
       : `${repositoryPrefix}${roleIdSuffix}${rolesPermissionsVersionSuffix}${featureFlagMapVersionSuffix}`;
   }
 
-  private validatePermissions<Entity extends ObjectLiteral>(
+  validatePermissions<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity> | Entity,
     operationType: OperationType,
     options?: PermissionOptions,
@@ -339,7 +360,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   // Not in use
   override query<T = any>(_query: string, _parameters?: any[]): Promise<T> {
-    throw new Error('Not implemented');
+    throw new Error('Method not allowed.');
   }
 
   override find<Entity extends ObjectLiteral>(
@@ -514,11 +535,13 @@ export class WorkspaceEntityManager extends EntityManager {
   override softRemove<Entity extends ObjectLiteral>(
     entities: Entity[],
     options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
   ): Promise<Entity[]>;
 
   override softRemove<Entity extends ObjectLiteral>(
     entities: Entity,
     options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
   ): Promise<Entity>;
 
   override softRemove<
@@ -528,6 +551,7 @@ export class WorkspaceEntityManager extends EntityManager {
     targetOrEntity: EntityTarget<Entity>,
     entities: T[],
     options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
   ): Promise<T[]>;
 
   override softRemove<
@@ -537,6 +561,7 @@ export class WorkspaceEntityManager extends EntityManager {
     targetOrEntity: EntityTarget<Entity>,
     entities: T,
     options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
   ): Promise<T>;
 
   override async softRemove<
@@ -545,13 +570,20 @@ export class WorkspaceEntityManager extends EntityManager {
   >(
     targetOrEntityOrEntities: Entity | Entity[] | EntityTarget<Entity>,
     entitiesOrMaybeOptions: T | T[] | SaveOptions,
-    maybeOptions?: SaveOptions,
+    maybeOptionsOrMaybePermissionOptions?: SaveOptions | PermissionOptions,
     permissionOptions?: PermissionOptions,
   ): Promise<Entity | Entity[] | T | T[]> {
+    const permissionOptionsFromArgs =
+      maybeOptionsOrMaybePermissionOptions &&
+      ('shouldBypassPermissionChecks' in maybeOptionsOrMaybePermissionOptions ||
+        'objectRecordsPermissions' in maybeOptionsOrMaybePermissionOptions)
+        ? (maybeOptionsOrMaybePermissionOptions as PermissionOptions)
+        : permissionOptions;
+
     this.validatePermissions(
       targetOrEntityOrEntities,
       'soft-delete',
-      permissionOptions,
+      permissionOptionsFromArgs,
     );
 
     const target =
@@ -565,7 +597,7 @@ export class WorkspaceEntityManager extends EntityManager {
       : (targetOrEntityOrEntities as Entity | Entity[]);
 
     const options = target
-      ? maybeOptions
+      ? (maybeOptionsOrMaybePermissionOptions as SaveOptions | undefined)
       : (entitiesOrMaybeOptions as SaveOptions);
 
     if (isDefined(target)) {
@@ -596,35 +628,46 @@ export class WorkspaceEntityManager extends EntityManager {
   override recover<Entity>(
     entities: Entity[],
     options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
   ): Promise<Entity[]>;
 
   override recover<Entity>(
     entity: Entity,
     options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
   ): Promise<Entity>;
 
   override recover<Entity, T extends DeepPartial<Entity>>(
     targetOrEntity: EntityTarget<Entity>,
     entities: T[],
     options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
   ): Promise<T[]>;
 
   override recover<Entity, T extends DeepPartial<Entity>>(
     targetOrEntity: EntityTarget<Entity>,
     entity: T,
     options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
   ): Promise<T>;
 
   override recover<Entity extends ObjectLiteral, T extends DeepPartial<Entity>>(
     targetOrEntityOrEntities: EntityTarget<Entity> | Entity | Entity[],
     entityOrEntitiesOrMaybeOptions: T | T[] | SaveOptions,
-    maybeOptions?: SaveOptions,
+    maybeOptionsOrMaybePermissionOptions?: SaveOptions | PermissionOptions,
     permissionOptions?: PermissionOptions,
   ): Promise<Entity | Entity[] | T | T[]> {
+    const permissionOptionsFromArgs =
+      maybeOptionsOrMaybePermissionOptions &&
+      ('shouldBypassPermissionChecks' in maybeOptionsOrMaybePermissionOptions ||
+        'objectRecordsPermissions' in maybeOptionsOrMaybePermissionOptions)
+        ? (maybeOptionsOrMaybePermissionOptions as PermissionOptions)
+        : permissionOptions;
+
     this.validatePermissions(
       targetOrEntityOrEntities,
       'update',
-      permissionOptions,
+      permissionOptionsFromArgs,
     );
 
     const target =
@@ -633,31 +676,32 @@ export class WorkspaceEntityManager extends EntityManager {
         ? (targetOrEntityOrEntities as EntityTarget<Entity>)
         : undefined;
 
+    const options = target
+      ? (maybeOptionsOrMaybePermissionOptions as SaveOptions | undefined)
+      : (entityOrEntitiesOrMaybeOptions as SaveOptions);
+
     if (target) {
       if (Array.isArray(entityOrEntitiesOrMaybeOptions)) {
         return super.recover(
           target,
           entityOrEntitiesOrMaybeOptions as T[],
-          maybeOptions,
+          options,
         );
       } else {
         return super.recover(
           target,
           entityOrEntitiesOrMaybeOptions as T,
-          maybeOptions,
+          options,
         );
       }
     } else {
       if (Array.isArray(entityOrEntitiesOrMaybeOptions)) {
         return super.recover(
           entityOrEntitiesOrMaybeOptions as Entity | Entity[],
-          maybeOptions,
+          options,
         );
       } else {
-        return super.recover(
-          entityOrEntitiesOrMaybeOptions as Entity,
-          maybeOptions,
-        );
+        return super.recover(entityOrEntitiesOrMaybeOptions as Entity, options);
       }
     }
   }
