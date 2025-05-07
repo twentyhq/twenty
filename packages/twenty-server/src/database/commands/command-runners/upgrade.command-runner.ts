@@ -42,13 +42,13 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
   }
 
   private setUpgradeContextVersionsAndCommandsForCurrentAppVersion() {
-    const ugpradeContextAlreadyDefined = [
+    const ugpradeContextIsAlreadyDefined = [
       this.currentAppVersion,
       this.commands,
       this.fromWorkspaceVersion,
     ].every(isDefined);
 
-    if (ugpradeContextAlreadyDefined) {
+    if (ugpradeContextIsAlreadyDefined) {
       return;
     }
 
@@ -141,6 +141,18 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     }
   }
 
+  public readonly runBeforeSyncMetadata = async (args: RunOnWorkspaceArgs) => {
+    for (const command of this.commands.beforeSyncMetadata) {
+      await command.runOnWorkspace(args);
+    }
+  };
+
+  public readonly runAfterSyncMetadata = async (args: RunOnWorkspaceArgs) => {
+    for (const command of this.commands.afterSyncMetadata) {
+      await command.runOnWorkspace(args);
+    }
+  };
+
   private retrieveCurrentAppVersion() {
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
@@ -176,16 +188,4 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       this.fromWorkspaceVersion.version,
     );
   }
-
-  public readonly runBeforeSyncMetadata = async (args: RunOnWorkspaceArgs) => {
-    for (const command of this.commands.beforeSyncMetadata) {
-      await command.runOnWorkspace(args);
-    }
-  };
-
-  public readonly runAfterSyncMetadata = async (args: RunOnWorkspaceArgs) => {
-    for (const command of this.commands.afterSyncMetadata) {
-      await command.runOnWorkspace(args);
-    }
-  };
 }
