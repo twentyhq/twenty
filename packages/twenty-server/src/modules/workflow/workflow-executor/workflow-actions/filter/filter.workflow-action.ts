@@ -11,6 +11,8 @@ import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/t
 import { isWorkflowFilterAction } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/guards/is-workflow-filter-action.guard';
 import { applyFilter } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/apply-filter.util';
 
+import { getPreviousStepOutput } from './utils/get-previous-step-output.util';
+
 @Injectable()
 export class FilterWorkflowAction implements WorkflowExecutor {
   async execute(input: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
@@ -41,33 +43,11 @@ export class FilterWorkflowAction implements WorkflowExecutor {
       );
     }
 
-    const previousSteps = steps.filter((step) =>
-      step?.nextStepIds?.includes(currentStepId),
+    const previousStepOutput = getPreviousStepOutput(
+      steps,
+      currentStepId,
+      context,
     );
-
-    if (previousSteps.length === 0) {
-      throw new WorkflowStepExecutorException(
-        'Filter action must have a previous step',
-        WorkflowStepExecutorExceptionCode.FAILED_TO_EXECUTE_STEP,
-      );
-    }
-
-    if (previousSteps.length > 1) {
-      throw new WorkflowStepExecutorException(
-        'Filter action must have only one previous step',
-        WorkflowStepExecutorExceptionCode.FAILED_TO_EXECUTE_STEP,
-      );
-    }
-
-    const previousStep = previousSteps[0];
-    const previousStepOutput = context[previousStep.id];
-
-    if (!previousStepOutput) {
-      throw new WorkflowStepExecutorException(
-        'Previous step output not found',
-        WorkflowStepExecutorExceptionCode.FAILED_TO_EXECUTE_STEP,
-      );
-    }
 
     const isPreviousStepOutputArray = Array.isArray(previousStepOutput);
 
@@ -78,7 +58,9 @@ export class FilterWorkflowAction implements WorkflowExecutor {
     const filteredOutput = applyFilter(previousStepOutputArray, filter);
 
     if (filteredOutput.length === 0) {
-      return {};
+      return {
+        result: undefined,
+      };
     }
 
     return {
