@@ -15,6 +15,9 @@ export class BillingSubscriptionItemDTO {
   @Field(() => Boolean)
   hasReachedCurrentPeriodCap: boolean;
 
+  @Field(() => Number, { nullable: true })
+  quantity: number | null;
+
   @Field(() => BillingProductDTO, { nullable: true })
   billingProduct: BillingProductDTO;
 }

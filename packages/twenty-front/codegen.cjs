@@ -10,6 +10,7 @@ module.exports = {
     './src/modules/**/*.tsx',
     './src/modules/**/*.ts',
     '!./src/**/*.test.tsx',
+    '!./src/**/*.test.ts',
     '!./src/**/*.stories.tsx',
     '!./src/**/__mocks__/*.ts',
   ],

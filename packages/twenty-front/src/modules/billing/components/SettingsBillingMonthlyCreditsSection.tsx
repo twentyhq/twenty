@@ -10,18 +10,7 @@ import { BACKGROUND_LIGHT, COLOR } from 'twenty-ui/theme';
 import { SubscriptionStatus } from '~/generated/graphql';
 import { formatAmount } from '~/utils/format/formatAmount';
 import { formatNumber } from '~/utils/format/number';
-
-const StyledMonthlyCreditsContainer = styled.div`
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  background-color: ${({ theme }) => theme.background.secondary};
-  padding: ${({ theme }) => theme.spacing(3)};
-  width: 100%;
-
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
-`;
+import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
 
 const StyledLineSeparator = styled.div`
   width: 100%;
@@ -57,7 +46,7 @@ export const SettingsBillingMonthlyCreditsSection = () => {
         title={t`Monthly Credits`}
         description={t`Track your monthly workflow credit consumption.`}
       />
-      <StyledMonthlyCreditsContainer>
+      <SubscriptionInfoContainer>
         <SettingsBillingLabelValueItem
           label={t`Free Credits Used`}
           value={`${formattedFreeUsageQuantity}/${formatAmount(includedFreeQuantity)}`}
@@ -91,7 +80,7 @@ export const SettingsBillingMonthlyCreditsSection = () => {
             value={`$${formatNumber(totalCostCents / 100, 2)}`}
           />
         )}
-      </StyledMonthlyCreditsContainer>
+      </SubscriptionInfoContainer>
     </Section>
   );
 };
