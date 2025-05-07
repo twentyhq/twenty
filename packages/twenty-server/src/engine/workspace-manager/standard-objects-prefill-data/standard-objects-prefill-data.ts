@@ -9,7 +9,7 @@ import { personPrefillData } from 'src/engine/workspace-manager/standard-objects
 import { seedViewWithDemoData } from 'src/engine/workspace-manager/standard-objects-prefill-data/seed-view-with-demo-data';
 
 export const standardObjectsPrefillData = async (
-  workspaceDataSource: DataSource,
+  mainDataSource: DataSource,
   schemaName: string,
   objectMetadata: ObjectMetadataEntity[],
 ) => {
@@ -34,30 +34,28 @@ export const standardObjectsPrefillData = async (
     return acc;
   }, {});
 
-  workspaceDataSource.transaction(
-    async (entityManager: WorkspaceEntityManager) => {
-      await companyPrefillData(entityManager, schemaName);
-      await personPrefillData(entityManager, schemaName);
-      const viewDefinitionsWithId = await seedViewWithDemoData(
-        entityManager,
-        schemaName,
-        objectMetadataMap,
-      );
+  mainDataSource.transaction(async (entityManager: WorkspaceEntityManager) => {
+    await companyPrefillData(entityManager, schemaName);
+    await personPrefillData(entityManager, schemaName);
+    const viewDefinitionsWithId = await seedViewWithDemoData(
+      entityManager,
+      schemaName,
+      objectMetadataMap,
+    );
 
-      await seedWorkspaceFavorites(
-        viewDefinitionsWithId
-          .filter(
-            (view) =>
-              view.key === 'INDEX' &&
-              shouldSeedWorkspaceFavorite(
-                view.objectMetadataId,
-                objectMetadataMap,
-              ),
-          )
-          .map((view) => view.id),
-        entityManager,
-        schemaName,
-      );
-    },
-  );
+    await seedWorkspaceFavorites(
+      viewDefinitionsWithId
+        .filter(
+          (view) =>
+            view.key === 'INDEX' &&
+            shouldSeedWorkspaceFavorite(
+              view.objectMetadataId,
+              objectMetadataMap,
+            ),
+        )
+        .map((view) => view.id),
+      entityManager,
+      schemaName,
+    );
+  });
 };

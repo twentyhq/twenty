@@ -85,12 +85,13 @@ export abstract class GraphqlQueryBaseResolverService<
 
       await this.validate(args, options);
 
-      const dataSource =
-        await this.twentyORMGlobalManager.getDataSourceForWorkspace(
-          authContext.workspace.id,
-        );
+      const workspaceDataSource =
+        await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+          workspaceId: authContext.workspace.id,
+          shouldFailIfMetadataNotFound: false,
+        });
 
-      const featureFlagsMap = dataSource.featureFlagMap;
+      const featureFlagsMap = workspaceDataSource.featureFlagMap;
 
       const isPermissionsV2Enabled =
         featureFlagsMap[FeatureFlagKey.IsPermissionsV2Enabled];
@@ -127,7 +128,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const executedByApiKey = isDefined(authContext.apiKey);
       const shouldBypassPermissionChecks = executedByApiKey;
 
-      const repository = dataSource.getRepository(
+      const repository = workspaceDataSource.getRepository(
         objectMetadataItemWithFieldMaps.nameSingular,
         shouldBypassPermissionChecks,
         roleId,
@@ -151,7 +152,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const graphqlQueryResolverExecutionArgs = {
         args: computedArgs,
         options,
-        dataSource,
+        dataSource: workspaceDataSource,
         repository,
         graphqlQueryParser,
         graphqlQuerySelectedFieldsResult,

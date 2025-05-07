@@ -46,7 +46,7 @@ export class DataSeedDemoWorkspaceService {
         const appVersion = this.twentyConfigService.get('APP_VERSION');
 
         await seedCoreSchema({
-          workspaceDataSource: rawDataSource,
+          dataSource: rawDataSource,
           workspaceId,
           appVersion,
           seedBilling: false,

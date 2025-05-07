@@ -11,7 +11,7 @@ type IsSameVersionTestCase = EachTestingContext<{
   expected?: CompareVersionMajorAndMinorReturnType;
   expectToThrow?: boolean;
 }>;
-describe('is-same-major-and-minor-version', () => {
+describe('It should compare two versions with', () => {
   const beneathVersionTestCases: IsSameVersionTestCase[] = [
     {
       context: {
@@ -181,7 +181,7 @@ describe('is-same-major-and-minor-version', () => {
     ...beneathVersionTestCases,
     ...aboveVersionTestCases,
   ])(
-    '$title',
+    ' $title',
     ({ context: { version1, version2, expected, expectToThrow = false } }) => {
       if (expectToThrow) {
         expect(() =>

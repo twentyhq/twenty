@@ -61,13 +61,10 @@ export class SeederService {
     const schemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const workspaceDataSource: DataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
+    const mainDataSource: DataSource =
+      await this.workspaceDataSourceService.connectToMainDataSource();
 
-    const entityManager: EntityManager =
-      workspaceDataSource.createEntityManager();
+    const entityManager: EntityManager = mainDataSource.createEntityManager();
 
     const filteredFieldMetadataSeeds = objectMetadataSeed.fields.filter(
       (field) =>
