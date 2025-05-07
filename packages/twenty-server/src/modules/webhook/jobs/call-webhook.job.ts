@@ -4,7 +4,7 @@ import { Logger } from '@nestjs/common';
 import crypto from 'crypto';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { WEBHOOK_RESPONSE_EVENT } from 'src/engine/core-modules/audit/utils/events/track/webhook/webhook-response';
+import { WEBHOOK_RESPONSE_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/webhook/webhook-response';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -78,13 +78,13 @@ export class CallWebhookJob {
 
       const success = response.status >= 200 && response.status < 300;
 
-      analytics.track(WEBHOOK_RESPONSE_EVENT, {
+      analytics.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
         status: response.status,
         success,
         ...commonPayload,
       });
     } catch (err) {
-      analytics.track(WEBHOOK_RESPONSE_EVENT, {
+      analytics.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
         success: false,
         ...commonPayload,
         ...(err.response && { status: err.response.status }),

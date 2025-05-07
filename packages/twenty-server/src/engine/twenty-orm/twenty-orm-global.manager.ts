@@ -65,10 +65,13 @@ export class TwentyORMGlobalManager {
     return repository;
   }
 
-  async getDataSourceForWorkspace(
-    workspaceId: string,
+  async getDataSourceForWorkspace({
+    workspaceId,
     shouldFailIfMetadataNotFound = true,
-  ) {
+  }: {
+    workspaceId: string;
+    shouldFailIfMetadataNotFound?: boolean;
+  }) {
     return await this.workspaceDataSourceFactory.create(
       workspaceId,
       null,

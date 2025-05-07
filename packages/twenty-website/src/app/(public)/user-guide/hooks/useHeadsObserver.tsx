@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 
 export function useHeadsObserver(location: string) {
-  const [activeText, setActiveText] = useState('');
+  const [activeId, setActiveId] = useState('');
   const observer = useRef<IntersectionObserver | null>(null);
   useEffect(() => {
     const handleObsever = (entries: any[]) => {
       entries.forEach((entry) => {
         if (entry?.isIntersecting) {
-          setActiveText(entry.target.innerText);
+          setActiveId(entry.target.id);
         }
       });
     };
@@ -21,5 +21,5 @@ export function useHeadsObserver(location: string) {
     return () => observer.current?.disconnect();
   }, [location]);
 
-  return { activeText };
+  return { activeId };
 }

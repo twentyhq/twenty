@@ -2,6 +2,7 @@ import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import {
   EntityManager,
   EntityTarget,
+  FindManyOptions,
   InsertResult,
   ObjectLiteral,
   QueryRunner,
@@ -44,16 +45,19 @@ export class WorkspaceEntityManager extends EntityManager {
 
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
-    shouldBypassPermissionChecks = false,
-    roleId?: string,
+    permissionOptions?: {
+      shouldBypassPermissionChecks?: boolean;
+      roleId?: string;
+    },
   ): WorkspaceRepository<Entity> {
     const dataSource = this.connection;
 
     const repositoryKey = this.getRepositoryKey({
       target,
       dataSource,
-      roleId,
-      shouldBypassPermissionChecks,
+      roleId: permissionOptions?.roleId,
+      shouldBypassPermissionChecks:
+        permissionOptions?.shouldBypassPermissionChecks ?? false,
     });
     const repoFromMap = this.repositories.get(repositoryKey);
 
@@ -63,10 +67,11 @@ export class WorkspaceEntityManager extends EntityManager {
 
     let objectPermissions = {};
 
-    if (roleId) {
+    if (permissionOptions?.roleId) {
       const objectPermissionsByRoleId = dataSource.permissionsPerRoleId;
 
-      objectPermissions = objectPermissionsByRoleId?.[roleId] ?? {};
+      objectPermissions =
+        objectPermissionsByRoleId?.[permissionOptions?.roleId] ?? {};
     }
 
     const newRepository = new WorkspaceRepository<Entity>(
@@ -76,7 +81,7 @@ export class WorkspaceEntityManager extends EntityManager {
       dataSource.featureFlagMap,
       this.queryRunner,
       objectPermissions,
-      shouldBypassPermissionChecks,
+      permissionOptions?.shouldBypassPermissionChecks,
     );
 
     this.repositories.set(repositoryKey, newRepository);
@@ -135,17 +140,30 @@ export class WorkspaceEntityManager extends EntityManager {
     }
   }
 
+  override find<Entity extends ObjectLiteral>(
+    target: EntityTarget<Entity>,
+    options?: FindManyOptions<Entity>,
+    permissionOptions?: {
+      shouldBypassPermissionChecks?: boolean;
+      objectRecordsPermissions?: ObjectRecordsPermissions;
+    },
+  ): Promise<Entity[]> {
+    this.validatePermissions(target, 'select', permissionOptions);
+
+    return super.find(target, options);
+  }
+
   override insert<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
     entityOrEntities:
       | QueryDeepPartialEntity<Entity>
       | QueryDeepPartialEntity<Entity>[],
-    options?: {
+    permissionOptions?: {
       shouldBypassPermissionChecks?: boolean;
       objectRecordsPermissions?: ObjectRecordsPermissions;
     },
   ): Promise<InsertResult> {
-    this.validatePermissions(target, 'insert', options);
+    this.validatePermissions(target, 'insert', permissionOptions);
 
     return super.insert(target, entityOrEntities);
   }
@@ -156,12 +174,12 @@ export class WorkspaceEntityManager extends EntityManager {
       | QueryDeepPartialEntity<Entity>
       | QueryDeepPartialEntity<Entity>[],
     conflictPathsOrOptions: string[] | UpsertOptions<Entity>,
-    options?: {
+    permissionOptions?: {
       shouldBypassPermissionChecks?: boolean;
       objectRecordsPermissions?: ObjectRecordsPermissions;
     },
   ): Promise<InsertResult> {
-    this.validatePermissions(target, 'update', options);
+    this.validatePermissions(target, 'update', permissionOptions);
 
     return super.upsert(target, entityOrEntities, conflictPathsOrOptions);
   }
@@ -194,7 +212,7 @@ export class WorkspaceEntityManager extends EntityManager {
   private validatePermissions<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
     operationType: OperationType,
-    options?: {
+    permissionOptions?: {
       shouldBypassPermissionChecks?: boolean;
       objectRecordsPermissions?: ObjectRecordsPermissions;
     },
@@ -208,14 +226,15 @@ export class WorkspaceEntityManager extends EntityManager {
       return;
     }
 
-    if (options?.shouldBypassPermissionChecks === true) {
+    if (permissionOptions?.shouldBypassPermissionChecks === true) {
       return;
     }
 
     validateOperationIsPermittedOrThrow({
       entityName: this.extractTargetNameSingularFromEntityTarget(target),
       operationType,
-      objectRecordsPermissions: options?.objectRecordsPermissions ?? {},
+      objectRecordsPermissions:
+        permissionOptions?.objectRecordsPermissions ?? {},
       objectMetadataMaps: this.internalContext.objectMetadataMaps,
     });
   }
