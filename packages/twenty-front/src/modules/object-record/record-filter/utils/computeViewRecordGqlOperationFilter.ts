@@ -572,7 +572,7 @@ export const computeFilterRecordGqlOperationFilter = ({
                 },
                 {
                   [correspondingField.name]: {
-                    addressPostcode: {
+                    addressPostCode: {
                       ilike: `%${filter.value}%`,
                     },
                   } as AddressFilter,
@@ -650,7 +650,7 @@ export const computeFilterRecordGqlOperationFilter = ({
                 {
                   not: {
                     [correspondingField.name]: {
-                      addressPostcode: {
+                      addressPostCode: {
                         ilike: `%${filter.value}%`,
                       },
                     } as AddressFilter,
