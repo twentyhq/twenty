@@ -371,14 +371,14 @@ describe('should work as expected for the different field types', () => {
               or: [
                 {
                   address: {
-                    addressPostcode: {
+                    addressPostCode: {
                       ilike: '',
                     },
                   },
                 },
                 {
                   address: {
-                    addressPostcode: {
+                    addressPostCode: {
                       is: 'NULL',
                     },
                   },
@@ -484,14 +484,14 @@ describe('should work as expected for the different field types', () => {
                 or: [
                   {
                     address: {
-                      addressPostcode: {
+                      addressPostCode: {
                         ilike: '',
                       },
                     },
                   },
                   {
                     address: {
-                      addressPostcode: {
+                      addressPostCode: {
                         is: 'NULL',
                       },
                     },
