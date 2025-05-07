@@ -220,58 +220,124 @@ describe('should work as expected for the different field types', () => {
         {
           and: [
             {
-              not: {
-                address: {
-                  addressStreet1: {
-                    ilike: '%123 Main St%',
+              or: [
+                {
+                  not: {
+                    address: {
+                      addressStreet1: {
+                        ilike: '%123 Main St%',
+                      },
+                    },
                   },
                 },
-              },
+                {
+                  address: {
+                    addressStreet1: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
             },
             {
-              not: {
-                address: {
-                  addressStreet2: {
-                    ilike: '%123 Main St%',
+              or: [
+                {
+                  not: {
+                    address: {
+                      addressStreet2: {
+                        ilike: '%123 Main St%',
+                      },
+                    },
                   },
                 },
-              },
+                {
+                  address: {
+                    addressStreet2: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
             },
             {
-              not: {
-                address: {
-                  addressCity: {
-                    ilike: '%123 Main St%',
+              or: [
+                {
+                  not: {
+                    address: {
+                      addressCity: {
+                        ilike: '%123 Main St%',
+                      },
+                    },
                   },
                 },
-              },
+                {
+                  address: {
+                    addressCity: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
             },
             {
-              not: {
-                address: {
-                  addressState: {
-                    ilike: '%123 Main St%',
+              or: [
+                {
+                  not: {
+                    address: {
+                      addressState: {
+                        ilike: '%123 Main St%',
+                      },
+                    },
                   },
                 },
-              },
+                {
+                  address: {
+                    addressState: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
             },
             {
-              not: {
-                address: {
-                  addressCountry: {
-                    like: '%123 Main St%',
+              or: [
+                {
+                  not: {
+                    address: {
+                      addressPostcode: {
+                        ilike: '%123 Main St%',
+                      },
+                    },
                   },
                 },
-              },
+                {
+                  address: {
+                    addressPostcode: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
             },
             {
-              not: {
-                address: {
-                  addressPostcode: {
-                    ilike: '%123 Main St%',
+              or: [
+                {
+                  not: {
+                    address: {
+                      addressCountry: {
+                        ilike: '%123 Main St%',
+                      },
+                    },
                   },
                 },
-              },
+                {
+                  address: {
+                    addressCountry: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
             },
           ],
         },
