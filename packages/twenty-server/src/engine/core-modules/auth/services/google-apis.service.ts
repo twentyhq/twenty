@@ -100,7 +100,9 @@ export class GoogleAPIsService {
       );
 
     const workspaceDataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace(workspaceId);
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
 
     const scopes = getGoogleApisOauthScopes();
 

@@ -495,7 +495,10 @@ export class RestApiCoreServiceV2 {
     }
 
     const dataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace(workspace.id);
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId: workspace.id,
+        shouldFailIfMetadataNotFound: false,
+      });
 
     const objectMetadataNameSingular =
       objectMetadata.objectMetadataMapItem.nameSingular;
