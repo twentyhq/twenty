@@ -629,9 +629,48 @@ export const computeFilterRecordGqlOperationFilter = ({
                     } as AddressFilter,
                   },
                 },
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      addressState: {
+                        ilike: `%${filter.value}%`,
+                      },
+                    } as AddressFilter,
+                  },
+                },
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      addressCountry: {
+                        ilike: `%${filter.value}%`,
+                      },
+                    } as AddressFilter,
+                  },
+                },
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      addressPostcode: {
+                        ilike: `%${filter.value}%`,
+                      },
+                    } as AddressFilter,
+                  },
+                },
               ],
             };
           } else {
+            if (subFieldName === 'addressCountry') {
+              return {
+                not: {
+                  [correspondingField.name]: {
+                    [subFieldName]: {
+                      in: JSON.parse(filter.value),
+                    } as AddressFilter,
+                  },
+                },
+              };
+            }
+
             return {
               not: {
                 [correspondingField.name]: {
