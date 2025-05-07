@@ -20,14 +20,11 @@ import { getDraggedRecordPosition } from '@/object-record/record-board/utils/get
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -98,10 +95,6 @@ export const RecordBoard = () => {
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
-  const recordIndexAllRecordIdsState = useRecoilComponentCallbackStateV2(
-    recordIndexAllRecordIdsComponentSelector,
-  );
-
   const { resetRecordSelection, setRecordAsSelected } =
     useRecordBoardSelection(recordBoardId);
 
@@ -126,27 +119,6 @@ export const RecordBoard = () => {
       unfocusBoardCard();
     },
   });
-
-  const selectAll = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const allRecordIds = getSnapshotValue(
-          snapshot,
-          recordIndexAllRecordIdsState,
-        );
-
-        for (const recordId of allRecordIds) {
-          setRecordAsSelected(recordId, true);
-        }
-      },
-    [recordIndexAllRecordIdsState, setRecordAsSelected],
-  );
-
-  useScopedHotkeys(
-    'ctrl+a,meta+a',
-    selectAll,
-    RecordIndexHotkeyScope.RecordIndex,
-  );
 
   const setIsRemoveSortingModalOpen = useSetRecoilState(
     isRemoveSortingModalOpenState,
