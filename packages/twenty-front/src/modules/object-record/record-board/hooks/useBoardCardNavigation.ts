@@ -36,7 +36,9 @@ export const useBoardCardNavigation = (recordBoardId?: string) => {
           .getValue();
 
         if (!isDefined(focusedBoardCardIndexes)) {
-          if (visibleRecordGroupIds.length === 0) return;
+          if (visibleRecordGroupIds.length === 0) {
+            return;
+          }
 
           const firstGroupId = visibleRecordGroupIds[0];
           const recordIdsInFirstGroup = snapshot
@@ -46,8 +48,9 @@ export const useBoardCardNavigation = (recordBoardId?: string) => {
           if (
             !Array.isArray(recordIdsInFirstGroup) ||
             recordIdsInFirstGroup.length === 0
-          )
+          ) {
             return;
+          }
 
           focusBoardCard({
             columnIndex: 0,
@@ -56,7 +59,9 @@ export const useBoardCardNavigation = (recordBoardId?: string) => {
           return;
         }
 
-        if (visibleRecordGroupIds.length === 0) return;
+        if (visibleRecordGroupIds.length === 0) {
+          return;
+        }
 
         let newColumnIndex =
           direction === 'right'
@@ -69,15 +74,45 @@ export const useBoardCardNavigation = (recordBoardId?: string) => {
           newColumnIndex = visibleRecordGroupIds.length - 1;
         }
 
-        if (newColumnIndex === focusedBoardCardIndexes.columnIndex) return;
+        if (newColumnIndex === focusedBoardCardIndexes.columnIndex) {
+          return;
+        }
+
+        let foundColumnWithRecords = false;
+        const initialColumnIndex = newColumnIndex;
+
+        while (!foundColumnWithRecords) {
+          const currentGroupId = visibleRecordGroupIds[newColumnIndex];
+          const recordIdsInGroup = snapshot
+            .getLoadable(recordIdsByGroupState(currentGroupId))
+            .getValue();
+
+          if (Array.isArray(recordIdsInGroup) && recordIdsInGroup.length > 0) {
+            foundColumnWithRecords = true;
+          } else {
+            newColumnIndex =
+              direction === 'right' ? newColumnIndex + 1 : newColumnIndex - 1;
+
+            if (
+              newColumnIndex < 0 ||
+              newColumnIndex >= visibleRecordGroupIds.length
+            ) {
+              return;
+            }
+
+            if (
+              (direction === 'right' && newColumnIndex <= initialColumnIndex) ||
+              (direction === 'left' && newColumnIndex >= initialColumnIndex)
+            ) {
+              return;
+            }
+          }
+        }
 
         const currentGroupId = visibleRecordGroupIds[newColumnIndex];
         const recordIdsInGroup = snapshot
           .getLoadable(recordIdsByGroupState(currentGroupId))
           .getValue();
-
-        if (!Array.isArray(recordIdsInGroup) || recordIdsInGroup.length === 0)
-          return;
 
         let newRowIndex = focusedBoardCardIndexes.rowIndex;
         if (newRowIndex >= recordIdsInGroup.length) {
@@ -115,13 +150,15 @@ export const useBoardCardNavigation = (recordBoardId?: string) => {
           if (
             !Array.isArray(recordIdsInFirstGroup) ||
             recordIdsInFirstGroup.length === 0
-          )
+          ) {
             return;
+          }
 
           focusBoardCard({
             columnIndex: 0,
             rowIndex: 0,
           });
+
           return;
         }
 
@@ -133,8 +170,9 @@ export const useBoardCardNavigation = (recordBoardId?: string) => {
           .getLoadable(recordIdsByGroupState(currentGroupId))
           .getValue();
 
-        if (!Array.isArray(recordIdsInGroup) || recordIdsInGroup.length === 0)
+        if (!Array.isArray(recordIdsInGroup) || recordIdsInGroup.length === 0) {
           return;
+        }
 
         let newRowIndex =
           direction === 'down'
@@ -147,7 +185,9 @@ export const useBoardCardNavigation = (recordBoardId?: string) => {
           newRowIndex = recordIdsInGroup.length - 1;
         }
 
-        if (newRowIndex === focusedBoardCardIndexes.rowIndex) return;
+        if (newRowIndex === focusedBoardCardIndexes.rowIndex) {
+          return;
+        }
 
         focusBoardCard({
           columnIndex: focusedBoardCardIndexes.columnIndex,
