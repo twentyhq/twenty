@@ -44,7 +44,10 @@ import { FilterableFieldType } from '@/object-record/record-filter/types/Filtera
 import { isEmptinessOperand } from '@/object-record/record-filter/utils/isEmptinessOperand';
 import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from 'twenty-shared/constants';
-import { FieldMetadataType, jsonRelationFilterValueSchema } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  jsonRelationFilterValueSchema,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type ComputeFilterRecordGqlOperationFilterParams = {

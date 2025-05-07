@@ -64,7 +64,7 @@ describe('relationFilterValueSchema', () => {
       title: 'should return empty array for whitespace string',
       context: {
         input: '   ',
-        shouldFail: true
+        shouldFail: true,
       },
     },
     {

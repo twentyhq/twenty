@@ -2,6 +2,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
+import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from 'twenty-shared/constants';
+import {
+  FieldMetadataType,
+  jsonRelationFilterValueSchema,
+} from 'twenty-shared/types';
+import { In, Repository } from 'typeorm';
+
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
@@ -9,12 +16,6 @@ import {
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from 'twenty-shared/constants';
-import {
-  FieldMetadataType,
-  jsonRelationFilterValueSchema,
-} from 'twenty-shared/types';
-import { In, Repository } from 'typeorm';
 
 @Command({
   name: 'upgrade:0-54:standardize-relation-filter-syntax',
