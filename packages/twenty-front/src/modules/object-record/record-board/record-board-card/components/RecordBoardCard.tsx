@@ -34,40 +34,43 @@ import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledBoardCard = styled.div<{
-  selected: boolean;
-  focused: boolean;
-  active: boolean;
+  isDragging?: boolean;
 }>`
-  background-color: ${({ theme, selected, focused, active }) => {
-    if (active) return theme.accent.quaternary;
-    if (focused) return theme.background.tertiary;
-    return selected ? theme.accent.quaternary : theme.background.secondary;
-  }};
-  border: 1px solid
-    ${({ theme, selected, active }) =>
-      selected || active
-        ? theme.adaptiveColors.blue3
-        : theme.border.color.medium};
+  background-color: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   color: ${({ theme }) => theme.font.color.primary};
-  &:hover {
-    background-color: ${({ theme, selected, active, focused }) => {
-      if (active) return theme.accent.tertiary;
-      if (focused) return theme.accent.tertiary;
-      return selected && theme.accent.tertiary;
-    }};
-    border: 1px solid
-      ${({ theme, selected, active }) =>
-        selected || active
-          ? theme.adaptiveColors.blue3
-          : theme.border.color.strong};
-  }
   cursor: pointer;
+
+  &[data-selected='true'] {
+    background-color: ${({ theme }) => theme.accent.quaternary};
+  }
+
+  &[data-focused='true'] {
+    background-color: ${({ theme }) => theme.background.tertiary};
+  }
+
+  &[data-active='true'] {
+    background-color: ${({ theme }) => theme.accent.quaternary};
+    border: 1px solid ${({ theme }) => theme.adaptiveColors.blue3};
+  }
+
+  &:hover {
+    border: 1px solid ${({ theme }) => theme.border.color.strong};
+
+    &[data-active='true'] {
+      border: 1px solid ${({ theme }) => theme.adaptiveColors.blue3};
+    }
+  }
 
   .checkbox-container {
     transition: all ease-in-out 160ms;
-    opacity: ${({ selected }) => (selected ? 1 : 0)};
+    opacity: 0;
+  }
+
+  &[data-selected='true'] .checkbox-container {
+    opacity: 1;
   }
 
   &:hover .checkbox-container {
@@ -202,9 +205,9 @@ export const RecordBoardCard = () => {
       <InView>
         <StyledBoardCard
           ref={cardRef}
-          selected={isCurrentCardSelected}
-          focused={isCurrentCardFocused}
-          active={isCurrentCardActive}
+          data-selected={isCurrentCardSelected ? 'true' : 'false'}
+          data-focused={isCurrentCardFocused ? 'true' : 'false'}
+          data-active={isCurrentCardActive ? 'true' : 'false'}
           onMouseLeave={onMouseLeaveBoard}
           onClick={handleCardClick}
         >
