@@ -255,7 +255,10 @@ export const WorkflowEditActionFormBuilder = ({
                         onMouseLeave={() => setHoveredField(null)}
                       >
                         {showButtons && (
-                          <StyledLightGripIconButton Icon={IconGripVertical} />
+                          <StyledLightGripIconButton
+                            Icon={IconGripVertical}
+                            aria-label={t`Reorder field`}
+                          />
                         )}
 
                         <StyledLabelAndFieldContainer>
@@ -290,6 +293,7 @@ export const WorkflowEditActionFormBuilder = ({
                         {showButtons && (
                           <StyledLightTrashIconButton
                             Icon={IconTrash}
+                            aria-label={t`Delete field`}
                             onClick={() => {
                               const updatedFormData = formData.filter(
                                 (currentField) => currentField.id !== field.id,
