@@ -17,6 +17,14 @@ const getNextOnboardingStatus = (
   }
 
   if (currentUser?.onboardingStatus === OnboardingStatus.PROFILE_CREATION) {
+    return OnboardingStatus.PLAN_REQUIRED;
+  }
+
+  if (currentUser?.onboardingStatus === OnboardingStatus.PLAN_REQUIRED) {
+    return OnboardingStatus.PAYMENT_REQUIRED;
+  }
+
+  if (currentUser?.onboardingStatus === OnboardingStatus.PAYMENT_REQUIRED) {
     return OnboardingStatus.SYNC_EMAIL;
   }
   if (
