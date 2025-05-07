@@ -111,7 +111,7 @@ export const SettingsBilling = () => {
         )}
         <Section>
           <H2Title
-            title={t`Manage your subscription`}
+            title={t`Manage billing information`}
             description={t`Edit payment method, see your invoices and more`}
           />
           <Button

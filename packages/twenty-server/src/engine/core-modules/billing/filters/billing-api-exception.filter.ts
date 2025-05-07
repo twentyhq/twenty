@@ -54,6 +54,7 @@ export class BillingRestApiExceptionFilter implements ExceptionFilter {
       case BillingExceptionCode.BILLING_METER_EVENT_FAILED:
       case BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_IN_TRIAL_PERIOD:
       case BillingExceptionCode.BILLING_SUBSCRIPTION_INTERVAL_NOT_SWITCHABLE:
+      case BillingExceptionCode.BILLING_MISSING_REQUEST_BODY:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,
