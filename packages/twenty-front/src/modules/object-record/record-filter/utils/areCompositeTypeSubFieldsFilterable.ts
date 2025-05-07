@@ -4,6 +4,7 @@ const COMPOSITE_TYPES_FILTERABLE = [
   'ACTOR',
   'FULL_NAME',
   'CURRENCY',
+  'ADDRESS',
 ] satisfies FieldType[];
 
 type FilterableCompositeFieldType = (typeof COMPOSITE_TYPES_FILTERABLE)[number];

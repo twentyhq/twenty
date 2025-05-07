@@ -1,6 +1,5 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { StyledInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFieldSelect';
 import { FILTER_FIELD_LIST_ID } from '@/object-record/object-filter-dropdown/constants/FilterFieldListId';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
@@ -21,6 +20,7 @@ import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-re
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { isCompositeTypeFilterableByAnySubField } from '@/object-record/record-filter/utils/isCompositeTypeFilterableByAnySubField';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
+import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -30,12 +30,13 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { StyledInput } from '@/views/components/ViewBarFilterDropdownFieldSelectMenu';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconApps, IconChevronLeft, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
-export const ObjectFilterDropdownSubFieldSelect = () => {
+export const AdvancedFilterDropdownSubFieldSelectMenu = () => {
   const [searchText, setSearchText] = useState('');
 
   const { getIcon } = useIcons();
@@ -87,7 +88,7 @@ export const ObjectFilterDropdownSubFieldSelect = () => {
 
   const handleSelectFilter = (
     fieldMetadataItem: FieldMetadataItem | null | undefined,
-    subFieldName?: string | null | undefined,
+    subFieldName?: CompositeFieldSubFieldName | null | undefined,
   ) => {
     if (!isDefined(fieldMetadataItem)) {
       return;

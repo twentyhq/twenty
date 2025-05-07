@@ -7,6 +7,7 @@ import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/consta
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
+import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
 import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -34,6 +35,10 @@ export const AdvancedFilterValueInput = ({
 
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
+  );
+
+  const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
+    subFieldNameUsedInDropdownComponentState,
   );
 
   const recordFilter = currentRecordFilters.find(
@@ -86,7 +91,9 @@ export const AdvancedFilterValueInput = ({
       FieldMetadataType.CURRENCY,
       'amountMicros',
       recordFilter.subFieldName,
-    );
+    ) ||
+    (filterType === 'ADDRESS' &&
+      subFieldNameUsedInDropdown !== 'addressCountry');
 
   return (
     <StyledValueDropdownContainer>

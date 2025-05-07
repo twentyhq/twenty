@@ -392,7 +392,8 @@ export const computeFilterRecordGqlOperationFilter = ({
           FieldMetadataType.CURRENCY,
           'amountMicros',
           subFieldName,
-        )
+        ) ||
+        !isSubFieldFilter
       ) {
         switch (filter.operand) {
           case RecordFilterOperand.GreaterThan:
@@ -579,6 +580,16 @@ export const computeFilterRecordGqlOperationFilter = ({
               ],
             };
           } else {
+            if (subFieldName === 'addressCountry') {
+              return {
+                [correspondingField.name]: {
+                  [subFieldName]: {
+                    in: JSON.parse(filter.value),
+                  } as AddressFilter,
+                },
+              };
+            }
+
             return {
               [correspondingField.name]: {
                 [subFieldName]: {
