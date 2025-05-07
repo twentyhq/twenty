@@ -7,7 +7,8 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownSelectedOptionValuesComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedOptionValuesComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
+import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from 'twenty-shared/constants';
+import { jsonRelationFilterValueSchema } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { relationFilterValueSchema } from '../view-filter-value/validation-schemas/relationFilterValueSchema';
 
@@ -53,7 +54,7 @@ export const ViewBarFilterEffect = ({
         );
 
         selectedRecordIds = relationFilterValue.filter(
-          (item) => item !== '{{CURRENT_WORKSPACE_MEMBER}}',
+          (item) => item !== CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID,
         );
       }
 

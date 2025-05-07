@@ -2,10 +2,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { In, Repository } from 'typeorm';
-import { z } from 'zod';
-
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
@@ -13,27 +9,12 @@ import {
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-
-const relationFilterValueSchemaObject = z.object({
-  isCurrentWorkspaceMemberSelected: z.boolean().optional(),
-  selectedRecordIds: z.array(z.string()),
-});
-
-const jsonRelationFilterValueSchema = z
-  .string()
-  .transform((value, ctx) => {
-    try {
-      return JSON.parse(value);
-    } catch (error) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: (error as Error).message,
-      });
-
-      return z.NEVER;
-    }
-  })
-  .pipe(relationFilterValueSchemaObject);
+import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from 'twenty-shared/constants';
+import {
+  FieldMetadataType,
+  jsonRelationFilterValueSchema,
+} from 'twenty-shared/types';
+import { In, Repository } from 'typeorm';
 
 @Command({
   name: 'upgrade:0-54:standardize-relation-filter-syntax',
@@ -121,7 +102,7 @@ export class StandardizeRelationFilterSyntaxCommand extends ActiveOrSuspendedWor
     if (isCurrentWorkspaceMemberSelected) {
       return JSON.stringify([
         ...selectedRecordIds,
-        '{{CURRENT_WORKSPACE_MEMBER}}',
+        CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID,
       ]);
     }
 

@@ -1,8 +1,9 @@
+import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 const relationFilterValueItemSchema = z.union([
   z.string().uuid(),
-  z.literal('{{CURRENT_WORKSPACE_MEMBER}}'),
+  z.literal(CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID),
 ]);
 
 const relationFilterValueArraySchema = z.array(relationFilterValueItemSchema);
