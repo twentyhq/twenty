@@ -5,6 +5,7 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
+import { RecordBoardScrollToFocusedCardEffect } from '@/object-record/record-board/components/RecordBoardScrollToFocusedCardEffect';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
 import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
@@ -232,6 +233,7 @@ export const RecordBoard = () => {
           componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
         >
           <RecordBoardStickyHeaderEffect />
+          <RecordBoardScrollToFocusedCardEffect />
           <StyledContainerContainer>
             <RecordBoardHeader />
             <StyledBoardContentContainer>

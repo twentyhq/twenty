@@ -1,4 +1,6 @@
+import styled from '@emotion/styled';
 import { Draggable } from '@hello-pangea/dnd';
+import { useContext } from 'react';
 
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
 import { RecordBoardCardFocusHotkeyEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardCardFocusHotkeyEffect';
@@ -7,7 +9,12 @@ import { RecordBoardColumnContext } from '@/object-record/record-board/record-bo
 import { isBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isBoardCardFocusedComponentFamilyState';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { useContext } from 'react';
+
+const StyledDraggableContainer = styled.div`
+  scroll-margin-left: 8px;
+  scroll-margin-right: 8px;
+  scroll-margin-top: 40px;
+`;
 
 export const RecordBoardCardDraggableContainer = ({
   recordId,
@@ -36,7 +43,8 @@ export const RecordBoardCardDraggableContainer = ({
     >
       <Draggable key={recordId} draggableId={recordId} index={rowIndex}>
         {(draggableProvided) => (
-          <div
+          <StyledDraggableContainer
+            id={`record-board-card-${columnIndex}-${rowIndex}`}
             ref={draggableProvided?.innerRef}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.dragHandleProps}
@@ -50,7 +58,7 @@ export const RecordBoardCardDraggableContainer = ({
               <RecordBoardCardFocusHotkeyEffect />
             )}
             <RecordBoardCard />
-          </div>
+          </StyledDraggableContainer>
         )}
       </Draggable>
     </RecordBoardCardContext.Provider>
