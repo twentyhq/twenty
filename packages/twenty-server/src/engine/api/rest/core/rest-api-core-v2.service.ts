@@ -7,9 +7,8 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   ObjectRecord,
-  ObjectRecordOrderBy,
+  OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
@@ -28,9 +27,11 @@ import { QueryVariables } from 'src/engine/api/rest/core/types/query-variables.t
 import {
   Depth,
   DepthInputFactory,
+  MAX_DEPTH,
 } from 'src/engine/api/rest/input-factories/depth-input.factory';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 interface PageInfo {
   hasNextPage?: boolean;
@@ -121,7 +122,7 @@ export class RestApiCoreServiceV2 {
     const records = await this.getRecord({
       recordIds: [createdRecord.id],
       repository,
-      objectMetadata: objectMetadata.objectMetadataMapItem,
+      objectMetadata,
       depth: this.depthInputFactory.create(request),
     });
 
@@ -167,7 +168,7 @@ export class RestApiCoreServiceV2 {
     const records = await this.getRecord({
       recordIds: [updatedRecord.id],
       repository,
-      objectMetadata: objectMetadata.objectMetadataMapItem,
+      objectMetadata,
       depth: this.depthInputFactory.create(request),
     });
 
@@ -274,17 +275,22 @@ export class RestApiCoreServiceV2 {
 
     const totalCount = await this.getTotalCount(selectQueryBuilder);
 
-    selectQueryBuilder = isDefined(inputs.orderBy)
-      ? graphqlQueryParser.applyOrderToBuilder(
-          selectQueryBuilder,
-          inputs.orderBy as ObjectRecordOrderBy,
-          objectMetadataNameSingular,
-        )
-      : selectQueryBuilder;
+    const isForwardPagination = !inputs.endingBefore;
 
-    selectQueryBuilder = inputs.limit
-      ? graphqlQueryParser.applyLimitToBuilder(selectQueryBuilder, inputs.limit)
-      : selectQueryBuilder;
+    selectQueryBuilder = graphqlQueryParser.applyOrderToBuilder(
+      selectQueryBuilder,
+      [...(inputs.orderBy || []), { id: OrderByDirection.AscNullsFirst }],
+      objectMetadataNameSingular,
+      isForwardPagination,
+    );
+
+    if (inputs.first) {
+      selectQueryBuilder = selectQueryBuilder.limit(inputs.first);
+    }
+
+    if (inputs.last) {
+      selectQueryBuilder = selectQueryBuilder.limit(inputs.last);
+    }
 
     const recordIds = await selectQueryBuilder
       .select(`${objectMetadataNameSingular}.id`)
@@ -293,13 +299,11 @@ export class RestApiCoreServiceV2 {
     const records = await this.getRecord({
       recordIds: recordIds.map((record) => record.id),
       repository,
-      objectMetadata: objectMetadata.objectMetadataMapItem,
+      objectMetadata,
       depth: this.depthInputFactory.create(request),
     });
 
     const hasMoreRecords = records.length < totalCount;
-
-    const isForwardPagination = !inputs.endingBefore;
 
     return {
       records: formatGetManyData<ObjectLiteral[]>(
@@ -322,11 +326,14 @@ export class RestApiCoreServiceV2 {
   }: {
     recordIds: string[];
     repository: WorkspaceRepository<ObjectLiteral>;
-    objectMetadata: ObjectMetadataInterface;
+    objectMetadata: {
+      objectMetadataMaps: ObjectMetadataMaps;
+      objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    };
     depth: Depth | undefined;
   }) {
     const relations = this.getRelations({
-      objectMetadata: objectMetadata,
+      objectMetadata,
       depth: depth,
     });
 
@@ -346,7 +353,10 @@ export class RestApiCoreServiceV2 {
     objectMetadata,
     depth,
   }: {
-    objectMetadata: ObjectMetadataInterface;
+    objectMetadata: {
+      objectMetadataMaps: ObjectMetadataMaps;
+      objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    };
     depth: Depth | undefined;
   }) {
     if (!isDefined(depth) || depth === 0) {
@@ -355,11 +365,21 @@ export class RestApiCoreServiceV2 {
 
     const relations: string[] = [];
 
-    objectMetadata.fields.forEach((field) => {
+    objectMetadata.objectMetadataMapItem.fields.forEach((field) => {
       if (field.type === FieldMetadataType.RELATION) {
-        if (depth === 2 && isDefined(field.relationTargetObjectMetadata)) {
+        if (
+          depth === MAX_DEPTH &&
+          isDefined(field.relationTargetObjectMetadataId)
+        ) {
+          const relationTargetObjectMetadata =
+            objectMetadata.objectMetadataMaps.byId[
+              field.relationTargetObjectMetadataId
+            ];
           const depth2Relations = this.getRelations({
-            objectMetadata: field.relationTargetObjectMetadata,
+            objectMetadata: {
+              objectMetadataMaps: objectMetadata.objectMetadataMaps,
+              objectMetadataMapItem: relationTargetObjectMetadata,
+            },
             depth: 1,
           });
 
@@ -427,7 +447,7 @@ export class RestApiCoreServiceV2 {
     return this.formatResult({
       operation: 'findMany',
       objectNamePlural: objectMetadataNamePlural,
-      data: finalRecords,
+      data: isForwardPagination ? finalRecords : finalRecords.reverse(),
       pageInfo: {
         hasNextPage: isForwardPagination && hasMoreRecords,
         ...(hasPreviousPage ? { hasPreviousPage } : {}),

@@ -130,7 +130,7 @@ export class CacheStorageService {
     const formattedKey = `${this.namespace}:${key}`;
 
     if (process.env.NODE_ENV === 'test') {
-      return `${process.env.NODE_ENV}:${formattedKey}`;
+      return `integration-tests:${formattedKey}`;
     }
 
     return formattedKey;

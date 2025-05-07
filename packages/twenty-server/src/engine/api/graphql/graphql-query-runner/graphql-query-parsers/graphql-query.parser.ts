@@ -21,6 +21,10 @@ import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metada
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 
 export class GraphqlQueryParser {
   private fieldMetadataMapByName: FieldMetadataMap;
@@ -114,17 +118,6 @@ export class GraphqlQueryParser {
     return queryBuilder.orderBy(parsedOrderBys as OrderByCondition);
   }
 
-  public applyLimitToBuilder(
-    queryBuilder: SelectQueryBuilder<any>,
-    limit: number,
-  ): SelectQueryBuilder<any> {
-    if (limit < 0) {
-      throw new Error('Limit must be a positive number');
-    }
-
-    return queryBuilder.limit(limit);
-  }
-
   public parseSelectedFields(
     parentObjectMetadata: ObjectMetadataItemWithFieldMaps,
     graphqlSelectedFields: Partial<Record<string, any>>,
@@ -135,8 +128,9 @@ export class GraphqlQueryParser {
     )?.fieldsByName;
 
     if (!parentFields) {
-      throw new Error(
+      throw new GraphqlQueryRunnerException(
         `Could not find object metadata for ${parentObjectMetadata.nameSingular}`,
+        GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
     }
 

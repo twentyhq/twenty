@@ -2,9 +2,11 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 
+export const MAX_DEPTH = 2;
+
 export type Depth = 0 | 1 | 2;
 
-const ALLOWED_DEPTH_VALUES: Depth[] = [0, 1, 2];
+const ALLOWED_DEPTH_VALUES: Depth[] = [0, 1, MAX_DEPTH];
 
 @Injectable()
 export class DepthInputFactory {

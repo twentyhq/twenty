@@ -2,6 +2,7 @@ import {
   TEST_PERSON_1_ID,
   TEST_PERSON_2_ID,
   TEST_PERSON_3_ID,
+  TEST_PERSON_4_ID,
 } from 'test/integration/constants/test-person-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
@@ -10,7 +11,12 @@ import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 
 describe('Core REST API Find Many endpoint', () => {
-  const testPersonIds = [TEST_PERSON_1_ID, TEST_PERSON_2_ID, TEST_PERSON_3_ID];
+  const testPersonIds = [
+    TEST_PERSON_1_ID,
+    TEST_PERSON_2_ID,
+    TEST_PERSON_3_ID,
+    TEST_PERSON_4_ID,
+  ];
   const testPersonCities: Record<string, string> = {};
 
   beforeAll(async () => {
@@ -113,7 +119,7 @@ describe('Core REST API Find Many endpoint', () => {
   it('should filter results based on filter parameters', async () => {
     const response = await makeRestAPIRequest({
       method: 'get',
-      path: '/people?filter=position[gte]:1',
+      path: '/people?filter=position[lt]:2',
     }).expect(200);
 
     const filteredPeople = response.body.data.people;
@@ -151,26 +157,27 @@ describe('Core REST API Find Many endpoint', () => {
   it('should support cursor-based pagination with ending_before', async () => {
     const initialResponse = await makeRestAPIRequest({
       method: 'get',
-      path: '/people?limit=2',
+      path: '/people?limit=4',
     }).expect(200);
 
     const people = initialResponse.body.data.people;
     const endCursor = initialResponse.body.pageInfo.endCursor;
 
     expect(people).toBeDefined();
-    expect(people.length).toBe(2);
+    expect(people.length).toBe(4);
     expect(endCursor).toBeDefined();
 
     const nextPageResponse = await makeRestAPIRequest({
       method: 'get',
-      path: `/people?ending_before=${endCursor}&limit=1`,
+      path: `/people?ending_before=${endCursor}&limit=2`,
     }).expect(200);
 
     const nextPagePeople = nextPageResponse.body.data.people;
 
     expect(nextPagePeople).toBeDefined();
-    expect(nextPagePeople.length).toBe(1);
-    expect(nextPagePeople[0].id).toBe(people[0].id);
+    expect(nextPagePeople.length).toBe(2);
+    expect(nextPagePeople[0].id).toBe(people[1].id);
+    expect(nextPagePeople[1].id).toBe(people[2].id);
   });
 
   it('should support ordering Asc of results', async () => {

@@ -33,16 +33,17 @@ export class GetVariablesFactory {
       return { filter: { id: { eq: id } } };
     }
 
+    const filter = this.filterInputFactory.create(request, objectMetadata);
     const limit = this.limitInputFactory.create(request);
+    const orderBy = this.orderByInputFactory.create(request, objectMetadata);
     const endingBefore = this.endingBeforeInputFactory.create(request);
     const startingAfter = this.startingAfterInputFactory.create(request);
 
     return {
-      filter: this.filterInputFactory.create(request, objectMetadata),
-      orderBy: this.orderByInputFactory.create(request, objectMetadata),
+      filter,
+      orderBy,
       first: !endingBefore ? limit : undefined,
       last: endingBefore ? limit : undefined,
-      limit,
       startingAfter,
       endingBefore,
     };
