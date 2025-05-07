@@ -48,6 +48,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       this.commands,
       this.fromWorkspaceVersion,
     ].every(isDefined);
+
     if (ugpradeContextAlreadyDefined) {
       return;
     }

@@ -11,7 +11,7 @@ type IsSameVersionTestCase = EachTestingContext<{
   expected?: CompareVersionMajorAndMinorReturnType;
   expectToThrow?: boolean;
 }>;
-describe('It should compare two versions with ', () => {
+describe('It should compare two versions with', () => {
   const beneathVersionTestCases: IsSameVersionTestCase[] = [
     {
       context: {
