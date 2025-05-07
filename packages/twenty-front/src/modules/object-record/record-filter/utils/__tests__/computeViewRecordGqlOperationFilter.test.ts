@@ -246,6 +246,33 @@ describe('should work as expected for the different field types', () => {
                 },
               },
             },
+            {
+              not: {
+                address: {
+                  addressState: {
+                    ilike: '%123 Main St%',
+                  },
+                },
+              },
+            },
+            {
+              not: {
+                address: {
+                  addressCountry: {
+                    like: '%123 Main St%',
+                  },
+                },
+              },
+            },
+            {
+              not: {
+                address: {
+                  addressPostCode: {
+                    ilike: '%123 Main St%',
+                  },
+                },
+              },
+            },
           ],
         },
         {

@@ -642,7 +642,7 @@ export const computeFilterRecordGqlOperationFilter = ({
                   not: {
                     [correspondingField.name]: {
                       addressCountry: {
-                        ilike: `%${filter.value}%`,
+                        like: `%${filter.value}%`,
                       },
                     } as AddressFilter,
                   },
