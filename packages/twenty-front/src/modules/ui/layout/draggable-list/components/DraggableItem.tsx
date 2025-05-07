@@ -11,6 +11,7 @@ type DraggableItemProps = {
     | ((props: { isDragging: boolean }) => JSX.Element);
   isInsideScrollableContainer?: boolean;
   draggableComponentStyles?: React.CSSProperties;
+  disableDraggingBackground?: boolean;
 };
 
 export const DraggableItem = ({
@@ -20,8 +21,10 @@ export const DraggableItem = ({
   itemComponent,
   isInsideScrollableContainer,
   draggableComponentStyles,
+  disableDraggingBackground,
 }: DraggableItemProps) => {
   const theme = useTheme();
+
   return (
     <Draggable
       key={draggableId}
@@ -49,9 +52,10 @@ export const DraggableItem = ({
                 /\(-?\d+px,/,
                 '(0,',
               ),
-              background: isDragging
-                ? theme.background.transparent.light
-                : 'none',
+              background:
+                !disableDraggingBackground && isDragging
+                  ? theme.background.transparent.light
+                  : 'none',
             }}
           >
             {isFunction(itemComponent)

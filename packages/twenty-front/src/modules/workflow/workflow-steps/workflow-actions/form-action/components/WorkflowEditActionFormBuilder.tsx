@@ -59,6 +59,14 @@ const StyledFormFieldContainer = styled.div`
     'grip input delete'
     '. settings .';
   grid-template-columns: 24px 1fr 24px;
+  position: relative;
+`;
+
+const StyledDraggingIndicator = styled.div`
+  position: absolute;
+  inset: ${({ theme }) => theme.spacing(-2)};
+  top: ${({ theme }) => theme.spacing(-1)};
+  background-color: ${({ theme }) => theme.background.transparent.light};
 `;
 
 const StyledLightGripIconButton = styled(LightIconButton)`
@@ -237,6 +245,7 @@ export const WorkflowEditActionFormBuilder = ({
                   index={index}
                   isDragDisabled={actionOptions.readonly}
                   isInsideScrollableContainer
+                  disableDraggingBackground
                   draggableComponentStyles={{
                     marginBottom: theme.spacing(4),
                   }}
@@ -253,6 +262,8 @@ export const WorkflowEditActionFormBuilder = ({
                         onMouseEnter={() => setHoveredField(field.id)}
                         onMouseLeave={() => setHoveredField(null)}
                       >
+                        {isDragging && <StyledDraggingIndicator />}
+
                         {showButtons && (
                           <StyledLightGripIconButton
                             Icon={IconGripVertical}
