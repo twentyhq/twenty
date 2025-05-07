@@ -122,7 +122,6 @@ export const ObjectFilterDropdownCountrySelect = ({
                 handleMultipleItemSelectChange(item, newCheckedValue);
               }}
               text={item.name}
-              className=""
               avatar={getCountryFlagMenuItemAvatar(item.name, countries)}
             />
           );
@@ -136,7 +135,6 @@ export const ObjectFilterDropdownCountrySelect = ({
                 handleMultipleItemSelectChange(item, newCheckedValue);
               }}
               text={item.name}
-              className=""
               avatar={getCountryFlagMenuItemAvatar(item.name, countries)}
             />
           );
