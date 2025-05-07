@@ -1,53 +1,67 @@
-/* eslint-disable import/order */
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import https from 'https';
 import { URLSearchParams } from 'url';
 
-import { InjectRepository } from '@nestjs/typeorm';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
+import { Repository } from 'typeorm';
+
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { Repository } from 'typeorm';
+import { ChargeData, ChargeResponse } from 'src/modules/charges/types/inter';
 
 @Injectable()
 export class InterApiService {
-  constructor(
-    @InjectRepository(InterIntegration, 'core')
-    private interIntegrationRepository: Repository<InterIntegration>,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
-  ) {}
-
-  private readonly logger = new Logger('InterApiService');
-  private readonly baseUrl = 'https://cdpj-sandbox.partners.uatinter.co';
+  private readonly logger = new Logger(InterApiService.name);
+  private readonly baseUrl = process.env.BASE_URL_INTER_SANDBOX;
 
   private cachedToken: string | null = null;
   private tokenExpiresAt: number | null = null;
 
-  private async getHttpsAgentFromIntegration(integration: InterIntegration) {
-    try {
-      if (!integration.certificate || !integration.privateKey) {
-        throw new Error(
-          'Certificado ou chave privada não configurados na integração',
-        );
-      }
+  constructor(
+    @InjectRepository(InterIntegration, 'core')
+    private interIntegrationRepository: Repository<InterIntegration>,
+    @InjectRepository(Workspace, 'core')
+    private workspaceRepository: Repository<Workspace>,
+  ) {}
 
-      const cert = integration.certificate.replace(/\\n/g, '\n');
-      const key = integration.privateKey.replace(/\\n/g, '\n');
+  private formatCertificate(input: string): string {
+    return input.replace(/\\n/g, '\n');
+  }
 
-      return new https.Agent({
-        cert,
-        key,
-        rejectUnauthorized: true,
-      });
-    } catch (error) {
-      this.logger.error(
-        'Erro ao configurar certificados da integração:',
-        error.message,
+  private async getIntegration(workspaceId: string): Promise<InterIntegration> {
+    const integration = await this.interIntegrationRepository.findOne({
+      where: { workspace: { id: workspaceId } },
+      relations: ['workspace'],
+    });
+
+    if (!integration) {
+      throw new Error(
+        `Inter integration not configured for workspace ${workspaceId}`,
       );
-      throw new Error('Falha ao configurar certificados SSL: ' + error.message);
     }
+
+    return integration;
+  }
+
+  private async getHttpsAgentFromIntegration(
+    integration: InterIntegration,
+  ): Promise<https.Agent> {
+    if (!integration.certificate || !integration.privateKey) {
+      throw new Error(
+        'Certificate or private key not configured in integration',
+      );
+    }
+
+    const cert = this.formatCertificate(integration.certificate);
+    const key = this.formatCertificate(integration.privateKey);
+
+    return new https.Agent({
+      cert,
+      key,
+      rejectUnauthorized: true,
+    });
   }
 
   private async getAccessToken(workspaceId: string): Promise<string> {
@@ -57,118 +71,58 @@ export class InterApiService {
       return this.cachedToken;
     }
 
-    const integration = await this.interIntegrationRepository.findOne({
-      where: { workspace: { id: workspaceId } },
-      relations: ['workspace'],
+    const integration = await this.getIntegration(workspaceId);
+
+    const params = new URLSearchParams({
+      client_id: integration.clientId,
+      client_secret: integration.clientSecret,
+      grant_type: 'client_credentials',
+      scope: 'boleto-cobranca.write',
     });
-
-    if (!integration) {
-      throw new Error(
-        `Integração Inter não configurada para o workspace ${workspaceId}`,
-      );
-    }
-
-    const params = new URLSearchParams();
-
-    params.append('client_id', integration.clientId);
-    params.append('client_secret', integration.clientSecret);
-    params.append('grant_type', 'client_credentials');
-    params.append('scope', 'boleto-cobranca.write');
 
     try {
       const httpsAgent = await this.getHttpsAgentFromIntegration(integration);
 
-      const response = await axios.post(
-        `${this.baseUrl}/oauth/v2/token`,
-        params,
-        {
+      const response: AxiosResponse<{ access_token: string }> =
+        await axios.post(`${this.baseUrl}/oauth/v2/token`, params, {
           httpsAgent,
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        },
-      );
+        });
 
       this.cachedToken = response.data.access_token;
       this.tokenExpiresAt = now + 55 * 60 * 1000;
 
-      return this.cachedToken || '';
+      this.logger.log('Access token retrieved successfully');
+
+      return this.cachedToken;
     } catch (error) {
-      this.logger.error('Erro ao obter token de acesso:', error);
-      throw new Error('Falha na autenticação com o Banco Inter');
+      this.logger.error('Failed to obtain access token:', error);
+      throw new Error('Authentication failed with Banco Inter');
     }
   }
 
   async issueCharge(
     workspaceId: string,
-    data: {
-      seuNumero: string;
-      valorNominal: number;
-      dataVencimento: string;
-      numDiasAgenda: number;
-      pagador: {
-        cpfCnpj: string;
-        tipoPessoa: string;
-        nome: string;
-        cidade: string;
-        telefone: string;
-        uf: string;
-        cep: string;
-        email: string;
-        ddd: string;
-        numero: string;
-        complemento: string;
-        endereco: string;
-        bairro: string;
-      };
-      mensagem?: {
-        linha1?: string;
-      };
-    },
-  ): Promise<{ codigoSolicitacao: string }> {
+    data: ChargeData,
+  ): Promise<ChargeResponse> {
+    const integration = await this.getIntegration(workspaceId);
+    const token = await this.getAccessToken(workspaceId);
+
+    const httpsAgent = await this.getHttpsAgentFromIntegration(integration);
+
+    const body = {
+      seuNumero: data.seuNumero,
+      valorNominal: data.valorNominal,
+      dataVencimento: data.dataVencimento,
+      numDiasAgenda: data.numDiasAgenda,
+      pagador: data.pagador,
+      mensagem: {
+        linha1: data.mensagem?.linha1 ?? '',
+      },
+    };
+
     try {
-      const token = await this.getAccessToken(workspaceId);
-      const integration = await this.interIntegrationRepository.findOne({
-        where: { workspace: { id: workspaceId } },
-        relations: ['workspace'],
-      });
-
-      if (!integration) {
-        throw new Error(
-          `Integração Inter não configurada para o workspace ${workspaceId}`,
-        );
-      }
-
-      if (!token) {
-        throw new Error(`Token de autenticação não emitido ${workspaceId}`);
-      }
-
-      const httpsAgent = await this.getHttpsAgentFromIntegration(integration);
-
-      const body = {
-        seuNumero: data.seuNumero,
-        valorNominal: data.valorNominal,
-        dataVencimento: data.dataVencimento,
-        numDiasAgenda: data.numDiasAgenda,
-        pagador: {
-          email: data.pagador.email,
-          ddd: data.pagador.ddd,
-          telefone: data.pagador.telefone,
-          numero: data.pagador.numero,
-          complemento: data.pagador.complemento,
-          cpfCnpj: data.pagador.cpfCnpj,
-          tipoPessoa: data.pagador.tipoPessoa,
-          nome: data.pagador.nome,
-          cidade: data.pagador.cidade,
-          uf: data.pagador.uf,
-          cep: data.pagador.cep,
-          bairro: data.pagador.bairro,
-          endereco: data.pagador.endereco,
-        },
-        mensagem: {
-          linha1: data.mensagem?.linha1 || '',
-        },
-      };
-
-      const response = await axios.post(
+      const response: AxiosResponse<ChargeResponse> = await axios.post(
         `${this.baseUrl}/cobranca/v3/cobrancas`,
         body,
         {
@@ -181,13 +135,13 @@ export class InterApiService {
       );
 
       this.logger.log(
-        `Cobrança emitida com sucesso: ${JSON.stringify(response.data)}`,
+        `Charge issued successfully: ${JSON.stringify(response.data)}`,
       );
 
       return response.data;
     } catch (error) {
       this.logger.error(
-        `Erro ao emitir cobrança: ${error.response?.data || error.message}`,
+        `Failed to issue charge: ${error.response?.data || error.message}`,
       );
       throw error;
     }
@@ -196,30 +150,16 @@ export class InterApiService {
   async cancelCharge(
     workspaceId: string,
     seuNumero: string,
-    motivoCancelamento: string,
-  ) {
+    cancelReason: string,
+  ): Promise<any> {
+    const integration = await this.getIntegration(workspaceId);
+    const token = await this.getAccessToken(workspaceId);
+    const httpsAgent = await this.getHttpsAgentFromIntegration(integration);
+
     try {
-      const token = await this.getAccessToken(workspaceId);
-      const integration = await this.interIntegrationRepository.findOne({
-        where: { workspace: { id: workspaceId } },
-        relations: ['workspace'],
-      });
-
-      if (!integration) {
-        throw new Error(
-          `Integração Inter não configurada para o workspace ${workspaceId}`,
-        );
-      }
-
-      const httpsAgent = await this.getHttpsAgentFromIntegration(integration);
-
-      this.logger.log(
-        `Cobrança cancelada com id: ${JSON.stringify(seuNumero)}`,
-      );
-
       const response = await axios.post(
         `${this.baseUrl}/cobranca/v3/cobrancas/${seuNumero}/cancelar`,
-        { motivoCancelamento },
+        { motivoCancelamento: cancelReason },
         {
           httpsAgent,
           headers: {
@@ -230,13 +170,13 @@ export class InterApiService {
       );
 
       this.logger.log(
-        `Cobrança cancelada com sucesso: ${JSON.stringify(response.data)}`,
+        `Charge cancelled successfully: ${JSON.stringify(response.data)}`,
       );
 
       return response.data;
     } catch (error) {
       this.logger.error(
-        `Erro ao cancelar cobrança: ${error.response?.data || error.message}`,
+        `Failed to cancel charge: ${error.response?.data || error.message}`,
       );
       throw error;
     }

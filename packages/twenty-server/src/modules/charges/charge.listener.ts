@@ -1,14 +1,11 @@
 /* eslint-disable no-case-declarations */
 import { Injectable, Logger } from '@nestjs/common';
 
-import { Repository } from 'typeorm';
-
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
-import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 
 import { InterApiService } from './inter/inter-api.service';
 import { ChargeWorkspaceEntity } from './standard-objects/charge.workspace-entity';
@@ -114,8 +111,6 @@ export class ChargeEventListener {
           numero: '-',
         };
 
-        this.logger.log(`Valor do CLIENTE`, cliente);
-
         try {
           switch (chargeAction) {
             case 'issue':
@@ -149,6 +144,7 @@ export class ChargeEventListener {
                 charge.requestCode || id,
                 'Cancelamento manual',
               );
+              charge.requestCode = '';
               this.logger.log(
                 `Cobrança cancelada com sucesso para charge ${id}`,
               );
@@ -175,20 +171,5 @@ export class ChargeEventListener {
         await chargeRepository.save(charge);
       }),
     );
-  }
-
-  private async updateProductStatus(
-    productRepository: Repository<ProductWorkspaceEntity>,
-    productId: string,
-    status: 'active' | 'inactive',
-  ): Promise<void> {
-    try {
-      await productRepository.update({ id: productId }, { status });
-    } catch (error) {
-      this.logger.error(
-        `Erro ao atualizar status do produto ${productId}: ${error.message}`,
-      );
-      throw error;
-    }
   }
 }
