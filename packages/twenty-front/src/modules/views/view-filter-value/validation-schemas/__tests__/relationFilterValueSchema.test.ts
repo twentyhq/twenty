@@ -92,9 +92,8 @@ describe('relationFilterValueSchema', () => {
 
   it.each(testCases)('$title', ({ context }) => {
     const result = relationFilterValueSchema.safeParse(context.input);
-    console.log(result.error);
 
-    if (context.shouldFail) {
+    if (context.shouldFail === true) {
       expect(result.success).toBe(false);
     } else {
       expect(result.success).toBe(true);
