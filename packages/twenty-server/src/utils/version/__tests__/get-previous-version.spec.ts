@@ -8,7 +8,7 @@ type GetPreviousVersionTestCase = EachTestingContext<{
   expected: string | undefined;
 }>;
 
-describe('get-previous-version', () => {
+describe('It should return the previous version from a list of', () => {
   const testCase: GetPreviousVersionTestCase[] = [
     {
       context: {
@@ -93,7 +93,7 @@ describe('get-previous-version', () => {
   ];
 
   test.each(testCase)(
-    '$title',
+    ' $title',
     ({ context: { versions, currentVersion, expected } }) => {
       const result = getPreviousVersion({ versions, currentVersion });
 

@@ -42,36 +42,35 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  private computeFromToVersionAndCommandsToRunForCurrentAppVersion() {
+  private setUpgradeContextVersionsAndCommandsForCurrentAppVersion() {
     const ugpradeContextAlreadyDefined = [
       this.currentAppVersion,
       this.commands,
       this.fromWorkspaceVersion,
     ].every(isDefined);
-
     if (ugpradeContextAlreadyDefined) {
       return;
     }
 
-    const currentAppVersion = this.retrieveToVersionFromAppVersion();
+    const currentAppVersion = this.retrieveMajorMinorAppVersion();
 
     const currentCommands = this.allCommands[currentAppVersion];
 
     if (!isDefined(currentCommands)) {
       throw new Error(
-        `No commands found for version ${currentAppVersion}. Please check the commands record.`,
+        `No command found for version ${currentAppVersion}. Please check the commands record.`,
       );
     }
 
-    const allCommandsKeys = Object.keys(this.allCommands);
+    const allCommandsVersions = Object.keys(this.allCommands);
     const previousVersion = getPreviousVersion({
       currentVersion: currentAppVersion,
-      versions: allCommandsKeys,
+      versions: allCommandsVersions,
     });
 
     if (!isDefined(previousVersion)) {
       throw new Error(
-        `No previous version found for version ${currentAppVersion}. Please check the commands record available ${allCommandsKeys.join(', ')}.`,
+        `No previous version found for version ${currentAppVersion}. Please review the "allCommands" record. Available versions are: ${allCommandsVersions.join(', ')}.`,
       );
     }
     this.commands = currentCommands;
@@ -89,7 +88,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
   }
 
   override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
-    this.computeFromToVersionAndCommandsToRunForCurrentAppVersion();
+    this.setUpgradeContextVersionsAndCommandsForCurrentAppVersion();
 
     const { workspaceId, index, total, options } = args;
 
@@ -142,7 +141,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     }
   }
 
-  private retrieveToVersionFromAppVersion() {
+  private retrieveMajorMinorAppVersion() {
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
     if (!isDefined(appVersion)) {
