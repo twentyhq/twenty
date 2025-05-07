@@ -91,7 +91,7 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
       'workspace id. Command runs on all active workspaces if not provided.',
     required: false,
   })
-  parseWorkspaceId(val: string): Set<String> {
+  parseWorkspaceId(val: string): Set<string> {
     this.workspaceIds.add(val);
     return this.workspaceIds;
   }
