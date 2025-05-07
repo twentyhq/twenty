@@ -47,16 +47,16 @@ export class CopyTypeormMigrationsCommand extends MigrationCommandRunner {
         return;
       }
 
-      // Insert all records into core._typeorm_migrations
-      for (const migration of metadataMigrations) {
-        // Check if migration already exists in core schema
-        // Should not happen and perf is bad with this loop, but we're being ex
-        const existingMigration = await queryRunner.query(
-          'SELECT * FROM core._typeorm_migrations WHERE name = $1',
-          [migration.name],
-        );
+      const existingCoreMigrations = await queryRunner.query(
+        'SELECT name FROM core._typeorm_migrations',
+      );
 
-        if (existingMigration.length === 0) {
+      const existingMigrationNames = new Set(
+        existingCoreMigrations.map((migration) => migration.name),
+      );
+
+      for (const migration of metadataMigrations) {
+        if (!existingMigrationNames.has(migration.name)) {
           await queryRunner.query(
             'INSERT INTO core._typeorm_migrations ("timestamp", name) VALUES ($1, $2)',
             [migration.timestamp, migration.name],
