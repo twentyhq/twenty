@@ -123,14 +123,17 @@ export class ChargeEventListener {
                 `Emitindo cobrança para charge ${id.slice(0, 11)}`,
               );
 
-              const response = await this.interApiService.issueCharge({
-                seuNumero: id.slice(0, 11),
-                valorNominal: price,
-                dataVencimento,
-                numDiasAgenda: 60,
-                pagador: { ...cliente },
-                mensagem: { linha1: '-' },
-              });
+              const response = await this.interApiService.issueCharge(
+                workspaceId,
+                {
+                  seuNumero: id.slice(0, 11),
+                  valorNominal: price,
+                  dataVencimento,
+                  numDiasAgenda: 60,
+                  pagador: { ...cliente },
+                  mensagem: { linha1: '-' },
+                },
+              );
 
               charge.requestCode = response.codigoSolicitacao;
               this.logger.log(
@@ -142,6 +145,7 @@ export class ChargeEventListener {
             case 'cancel':
               this.logger.log(`Cancelando cobrança para charge ${id}`);
               await this.interApiService.cancelCharge(
+                workspaceId,
                 charge.requestCode || id,
                 'Cancelamento manual',
               );
