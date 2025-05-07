@@ -113,6 +113,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [
         this.migrateWorkflowEventListenersToAutomatedTriggersCommand,
         this.backfillWorkflowNextStepIdsCommand,
+        this.copyTypeormMigrationsCommand,
       ],
     };
 
