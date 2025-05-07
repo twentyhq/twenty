@@ -59,7 +59,6 @@ const StyledFormFieldContainer = styled.div`
     'grip input delete'
     '. settings .';
   grid-template-columns: 24px 1fr 24px;
-  /* margin-bottom: ${({ theme }) => theme.spacing(4)}; */
 `;
 
 const StyledLightGripIconButton = styled(LightIconButton)`
@@ -72,7 +71,7 @@ const StyledLightTrashIconButton = styled(LightIconButton)`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledLabelAndFieldContainer = styled.div`
+const StyledFormFieldInputContainer = styled(FormFieldInputContainer)`
   grid-area: input;
 `;
 
@@ -261,7 +260,7 @@ export const WorkflowEditActionFormBuilder = ({
                           />
                         )}
 
-                        <StyledLabelAndFieldContainer>
+                        <StyledFormFieldInputContainer>
                           <InputLabel>{field.label || ''}</InputLabel>
 
                           <FormFieldInputRowContainer>
@@ -288,7 +287,7 @@ export const WorkflowEditActionFormBuilder = ({
                               </StyledFieldContainer>
                             </FormFieldInputInnerContainer>
                           </FormFieldInputRowContainer>
-                        </StyledLabelAndFieldContainer>
+                        </StyledFormFieldInputContainer>
 
                         {showButtons && (
                           <StyledLightTrashIconButton
