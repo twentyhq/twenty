@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { registerEvent } from 'src/engine/core-modules/audit/utils/events/track/track';
+import { registerEvent } from 'src/engine/core-modules/audit/utils/events/workspace-event/track';
 
 export const OBJECT_RECORD_CREATED_EVENT = 'Object Record Created' as const;
 export const objectRecordCreatedSchema = z.object({

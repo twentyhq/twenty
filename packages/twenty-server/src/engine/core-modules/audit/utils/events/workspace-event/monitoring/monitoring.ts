@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { registerEvent } from 'src/engine/core-modules/audit/utils/events/track/track';
+import { registerEvent } from 'src/engine/core-modules/audit/utils/events/workspace-event/track';
 
 export const MONITORING_EVENT = 'Monitoring' as const;
 export const monitoringSchema = z

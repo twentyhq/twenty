@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { registerEvent } from 'src/engine/core-modules/audit/utils/events/track/track';
+import { registerEvent } from 'src/engine/core-modules/audit/utils/events/workspace-event/track';
 
 export const SERVERLESS_FUNCTION_EXECUTED_EVENT =
   'Serverless Function Executed' as const;
