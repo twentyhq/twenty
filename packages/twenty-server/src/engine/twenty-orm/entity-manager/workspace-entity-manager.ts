@@ -1,4 +1,5 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   EntityManager,
   EntityTarget,
@@ -6,8 +7,10 @@ import {
   ObjectLiteral,
   QueryRunner,
   Repository,
+  SaveOptions,
   SelectQueryBuilder,
 } from 'typeorm';
+import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
@@ -164,6 +167,45 @@ export class WorkspaceEntityManager extends EntityManager {
     this.validatePermissions(target, 'update', options);
 
     return super.upsert(target, entityOrEntities, conflictPathsOrOptions);
+  }
+
+  override save<Entity extends ObjectLiteral, T extends DeepPartial<Entity>>(
+    targetOrEntity: EntityTarget<Entity> | Entity,
+    maybeEntityOrOptions: T | T[] | SaveOptions,
+    maybeOptions?: SaveOptions,
+    permissionOptions?: {
+      shouldBypassPermissionChecks?: boolean;
+      objectRecordsPermissions?: ObjectRecordsPermissions;
+    },
+  ): Promise<(T & Entity) | (T & Entity)[]> {
+    const target =
+      arguments.length > 1 &&
+      (typeof targetOrEntity === 'function' ||
+        typeof targetOrEntity === 'string')
+        ? (targetOrEntity as EntityTarget<Entity>)
+        : undefined;
+
+    const entityOrEntities = target
+      ? (maybeEntityOrOptions as T | T[])
+      : (targetOrEntity as Entity | Entity[]);
+
+    if (isDefined(target)) {
+      this.validatePermissions(target, 'update', permissionOptions);
+      let entity: T | undefined;
+      let entities: T[] | undefined;
+
+      if (Array.isArray(entityOrEntities)) {
+        entities = entityOrEntities as T[];
+
+        return super.save(target, entities, maybeOptions);
+      } else {
+        entity = entityOrEntities as T;
+
+        return super.save(target, entity, maybeOptions);
+      }
+    } else {
+      throw new Error('Target is required');
+    }
   }
 
   private getRepositoryKey({
