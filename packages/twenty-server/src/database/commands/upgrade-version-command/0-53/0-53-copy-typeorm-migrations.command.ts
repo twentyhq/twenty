@@ -52,14 +52,14 @@ export class CopyTypeormMigrationsCommand extends MigrationCommandRunner {
         // Check if migration already exists in core schema
         // Should not happen and perf is bad with this loop, but we're being ex
         const existingMigration = await queryRunner.query(
-          'SELECT * FROM core._typeorm_migrations WHERE id = $1',
-          [migration.id],
+          'SELECT * FROM core._typeorm_migrations WHERE name = $1',
+          [migration.name],
         );
 
         if (existingMigration.length === 0) {
           await queryRunner.query(
-            'INSERT INTO core._typeorm_migrations (id, "timestamp", name) VALUES ($1, $2, $3)',
-            [migration.id, migration.timestamp, migration.name],
+            'INSERT INTO core._typeorm_migrations ("timestamp", name) VALUES ($1, $2)',
+            [migration.timestamp, migration.name],
           );
           this.logger.log(`Copied migration: ${migration.name}`);
         } else {
