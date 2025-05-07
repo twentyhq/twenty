@@ -61,6 +61,7 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
     ...objectMetadataItemMock,
     fieldsById,
     fieldsByName,
+    fieldsByJoinColumnName: {},
   };
 
   const objectMetadataMapsMock: ObjectMetadataMaps = {

@@ -9,8 +9,12 @@ import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/get
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
@@ -42,7 +46,7 @@ export const RecordIndexActionMenuDropdown = () => {
   );
 
   const dropdownId = getActionMenuDropdownIdFromActionMenuId(actionMenuId);
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useDropdownV2();
 
   const actionMenuDropdownPosition = useRecoilValue(
     extractComponentState(
@@ -52,6 +56,16 @@ export const RecordIndexActionMenuDropdown = () => {
   );
 
   const { openCommandMenu } = useCommandMenu();
+
+  const selectedItemIdArray = [
+    ...recordIndexActions.map((action) => action.key),
+    'more-actions',
+  ];
+
+  const selectedItemId = useRecoilComponentValueV2(
+    selectedItemIdComponentState,
+    dropdownId,
+  );
 
   return (
     <Dropdown
@@ -69,18 +83,33 @@ export const RecordIndexActionMenuDropdown = () => {
       dropdownComponents={
         <StyledDropdownMenuContainer className="action-menu-dropdown">
           <DropdownMenuItemsContainer>
-            {recordIndexActions.map((action) => (
-              <ActionComponent action={action} key={action.key} />
-            ))}
-            <MenuItem
-              key="more-actions"
-              LeftIcon={IconLayoutSidebarRightExpand}
-              onClick={() => {
-                closeDropdown();
-                openCommandMenu();
-              }}
-              text="More actions"
-            />
+            <SelectableList
+              hotkeyScope={ActionMenuDropdownHotkeyScope.ActionMenuDropdown}
+              selectableItemIdArray={selectedItemIdArray}
+              selectableListInstanceId={dropdownId}
+            >
+              {recordIndexActions.map((action) => (
+                <ActionComponent action={action} key={action.key} />
+              ))}
+              <SelectableListItem
+                itemId="more-actions"
+                key="more-actions"
+                onEnter={() => {
+                  closeDropdown(dropdownId);
+                  openCommandMenu();
+                }}
+              >
+                <MenuItem
+                  LeftIcon={IconLayoutSidebarRightExpand}
+                  onClick={() => {
+                    closeDropdown(dropdownId);
+                    openCommandMenu();
+                  }}
+                  focused={selectedItemId === 'more-actions'}
+                  text="More actions"
+                />
+              </SelectableListItem>
+            </SelectableList>
           </DropdownMenuItemsContainer>
         </StyledDropdownMenuContainer>
       }

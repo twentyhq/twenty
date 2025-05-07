@@ -29,6 +29,10 @@
       {
         "include": "**/modules/charges/certs/*.{crt,key}",
         "outDir": "dist/src/modules/charges/certs"
+      },
+      {
+        "include": "**/database/clickhouse/migrations/*.sql",
+        "outDir": "dist/src"
       }
     ],
     "watchAssets": true

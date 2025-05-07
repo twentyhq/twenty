@@ -66,6 +66,7 @@ import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
+    TwentyConfigModule.forRoot(),
     HealthModule,
     AnalyticsModule,
     AuthModule,
@@ -155,8 +156,6 @@ import { StripeModule } from './stripe/stripe.module';
     WorkspaceModule,
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
-    StripeModule,
-    InterModule,
   ],
 })
 export class CoreEngineModule {}

@@ -13,13 +13,20 @@ import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fiel
 import { SettingsDataModelSetPreviewRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetRecordEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
 import { usePreviewRecord } from '@/settings/data-model/fields/preview/hooks/usePreviewRecord';
+import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export type SettingsDataModelFieldPreviewProps = {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue' | 'options' | 'settings'
+    | 'icon'
+    | 'label'
+    | 'type'
+    | 'defaultValue'
+    | 'options'
+    | 'settings'
+    | 'relationDefinition'
   > & {
     id?: string;
     name?: string;
@@ -31,7 +38,7 @@ export type SettingsDataModelFieldPreviewProps = {
 };
 
 const StyledFieldPreview = styled.div<{ shrink?: boolean }>`
-  align-items: flex-start;
+  align-items: center;
   background-color: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -95,7 +102,7 @@ export const SettingsDataModelFieldPreview = ({
     fieldMetadataItem.name || `${fieldMetadataItem.type}-new-field`;
   const recordId =
     previewRecord?.id ??
-    `${objectMetadataItem.nameSingular}-${fieldName}-preview`;
+    `${objectMetadataItem.nameSingular}-${fieldName}-${fieldMetadataItem.relationDefinition?.direction}-preview`;
 
   return (
     <>
@@ -104,7 +111,7 @@ export const SettingsDataModelFieldPreview = ({
           instanceId: 'record-field-component-instance-id',
         }}
       >
-        {previewRecord ? (
+        {isDefined(previewRecord) ? (
           <SettingsDataModelSetPreviewRecordEffect
             fieldName={fieldName}
             record={previewRecord}
@@ -142,10 +149,12 @@ export const SettingsDataModelFieldPreview = ({
                     relationObjectMetadataItem?.nameSingular,
                   options: fieldMetadataItem.options ?? [],
                   settings: fieldMetadataItem.settings,
+                  relationType: fieldMetadataItem.relationDefinition?.direction,
                 },
                 defaultValue: fieldMetadataItem.defaultValue,
               },
               isReadOnly: false,
+              disableChipClick: true,
             }}
           >
             {fieldMetadataItem.type === FieldMetadataType.BOOLEAN ? (

@@ -54,6 +54,7 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
       nonFormattedRestoredObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     this.apiEventEmitterService.emitRestoreEvents(
@@ -74,6 +75,7 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
         roleId,
+        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
 

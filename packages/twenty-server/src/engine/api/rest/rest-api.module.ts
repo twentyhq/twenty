@@ -1,6 +1,7 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 
+import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { RestApiCoreBatchController } from 'src/engine/api/rest/core/controllers/rest-api-core-batch.controller';
 import { RestApiCoreController } from 'src/engine/api/rest/core/controllers/rest-api-core.controller';
 import { CoreQueryBuilderModule } from 'src/engine/api/rest/core/query-builder/core-query-builder.module';
@@ -15,9 +16,9 @@ import { RestApiMetadataService } from 'src/engine/api/rest/metadata/rest-api-me
 import { RestApiService } from 'src/engine/api/rest/rest-api.service';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
+import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
-import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-run
     HttpModule,
     TwentyORMModule,
     RecordTransformerModule,
+    WorkspacePermissionsCacheModule,
   ],
   controllers: [
     RestApiMetadataController,

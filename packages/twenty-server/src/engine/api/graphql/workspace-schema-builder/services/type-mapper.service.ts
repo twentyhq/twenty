@@ -58,7 +58,7 @@ export class TypeMapperService {
     settings?: FieldMetadataSettings<FieldMetadataType>,
     isIdField?: boolean,
   ): GraphQLScalarType | undefined {
-    if (isIdField || settings?.isForeignKey) {
+    if (isIdField || fieldMetadataType === FieldMetadataType.RELATION) {
       return GraphQLID;
     }
     const typeScalarMapping = new Map<FieldMetadataType, GraphQLScalarType>([
@@ -93,7 +93,7 @@ export class TypeMapperService {
     settings?: FieldMetadataSettings<FieldMetadataType>,
     isIdField?: boolean,
   ): GraphQLInputObjectType | GraphQLScalarType | undefined {
-    if (isIdField || settings?.isForeignKey) {
+    if (isIdField || fieldMetadataType === FieldMetadataType.RELATION) {
       return IDFilterType;
     }
 
@@ -132,6 +132,7 @@ export class TypeMapperService {
   ): GraphQLInputType | undefined {
     const typeOrderByMapping = new Map<FieldMetadataType, GraphQLEnumType>([
       [FieldMetadataType.UUID, OrderByDirectionType],
+      [FieldMetadataType.RELATION, OrderByDirectionType],
       [FieldMetadataType.TEXT, OrderByDirectionType],
       [FieldMetadataType.DATE_TIME, OrderByDirectionType],
       [FieldMetadataType.DATE, OrderByDirectionType],

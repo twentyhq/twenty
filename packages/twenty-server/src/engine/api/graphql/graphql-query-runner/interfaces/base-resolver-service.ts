@@ -45,6 +45,7 @@ export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   repository: WorkspaceRepository<ObjectLiteral>;
   graphqlQueryParser: GraphqlQueryParser;
   graphqlQuerySelectedFieldsResult: GraphqlQuerySelectedFieldsResult;
+  isExecutedByApiKey: boolean;
   roleId?: string;
 };
 
@@ -123,13 +124,18 @@ export abstract class GraphqlQueryBaseResolverService<
         workspaceId: authContext.workspace.id,
       });
 
+      const executedByApiKey = isDefined(authContext.apiKey);
+      const shouldBypassPermissionChecks = executedByApiKey;
+
       const repository = dataSource.getRepository(
         objectMetadataItemWithFieldMaps.nameSingular,
+        shouldBypassPermissionChecks,
         roleId,
       );
 
       const graphqlQueryParser = new GraphqlQueryParser(
         objectMetadataItemWithFieldMaps.fieldsByName,
+        objectMetadataItemWithFieldMaps.fieldsByJoinColumnName,
         options.objectMetadataMaps,
         featureFlagsMap,
       );
@@ -149,6 +155,7 @@ export abstract class GraphqlQueryBaseResolverService<
         repository,
         graphqlQueryParser,
         graphqlQuerySelectedFieldsResult,
+        isExecutedByApiKey: executedByApiKey,
         roleId,
       };
 

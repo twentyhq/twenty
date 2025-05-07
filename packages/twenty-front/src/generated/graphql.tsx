@@ -1,5 +1,16 @@
+import { errors } from '@/settings/data-model/fields/forms/utils/errorMessages';
 import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import { action } from '@storybook/addon-actions';
+import { getRoles } from '@storybook/test';
+import { isActive } from '@tiptap/core';
+import { valid } from 'cron-validate/lib/result';
+import { id } from 'date-fns/locale';
+import { on } from 'events';
+import { query } from 'express';
+import { type } from 'os';
+import input from 'react-imask/esm/input';
+import { record } from 'zod';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -995,7 +1006,6 @@ export type LinkLogsWorkspaceEntity = {
   utmCampaign: Scalars['String'];
   utmMedium: Scalars['String'];
   utmSource: Scalars['String'];
-  uv?: Maybe<Scalars['String']>;
 };
 
 export type LinkMetadata = {
@@ -1128,7 +1138,7 @@ export type Mutation = {
   uploadImage: Scalars['String'];
   uploadProfilePicture: Scalars['String'];
   uploadWorkspaceLogo: Scalars['String'];
-  upsertOneObjectPermission: ObjectPermission;
+  upsertObjectPermissions: Array<ObjectPermission>;
   upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
@@ -1495,8 +1505,9 @@ export type MutationUploadWorkspaceLogoArgs = {
   file: Scalars['Upload'];
 };
 
-export type MutationUpsertOneObjectPermissionArgs = {
-  upsertObjectPermissionInput: UpsertObjectPermissionInput;
+
+export type MutationUpsertObjectPermissionsArgs = {
+  upsertObjectPermissionsInput: UpsertObjectPermissionsInput;
 };
 
 export type MutationUpsertSettingPermissionsArgs = {
@@ -1601,6 +1612,14 @@ export type ObjectPermission = {
   id: Scalars['String'];
   objectMetadataId: Scalars['String'];
   roleId: Scalars['String'];
+};
+
+export type ObjectPermissionInput = {
+  canDestroyObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canReadObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  objectMetadataId: Scalars['String'];
 };
 
 export type ObjectRecordFilterInput = {
@@ -2708,12 +2727,8 @@ export type UpdateWorkspaceInput = {
   subdomain?: InputMaybe<Scalars['String']>;
 };
 
-export type UpsertObjectPermissionInput = {
-  canDestroyObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canReadObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  objectMetadataId: Scalars['String'];
+export type UpsertObjectPermissionsInput = {
+  objectPermissions: Array<ObjectPermissionInput>;
   roleId: Scalars['String'];
 };
 
@@ -3943,9 +3958,7 @@ export type DashboardLinklogsQueryFragmentFragment = {
   userAgent?: string | null;
 };
 
-export type GetDashboardLinklogsQueryVariables = Exact<{
-  [key: string]: never;
-}>;
+export type DashboardLinklogsQueryFragmentFragment = { __typename?: 'LinkLogsWorkspaceEntity', product: string, linkName?: string | null, linkId?: string | null, utmSource: string, utmMedium: string, utmCampaign: string, userIp?: string | null, userAgent?: string | null };
 
 export type GetDashboardLinklogsQuery = {
   __typename?: 'Query';
@@ -3967,13 +3980,12 @@ export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{
   [key: string]: never;
 }>;
 
-export type SkipSyncEmailOnboardingStepMutation = {
-  __typename?: 'Mutation';
-  skipSyncEmailOnboardingStep: {
-    __typename?: 'OnboardingStepSuccess';
-    success: boolean;
-  };
-};
+export type GetDashboardLinklogsQuery = { __typename?: 'Query', getDashboardLinklogs: Array<{ __typename?: 'LinkLogsWorkspaceEntity', product: string, linkName?: string | null, linkId?: string | null, utmSource: string, utmMedium: string, utmCampaign: string, userIp?: string | null, userAgent?: string | null }> };
+
+export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SkipSyncEmailOnboardingStepMutation = { __typename?: 'Mutation', skipSyncEmailOnboardingStep: { __typename?: 'OnboardingStepSuccess', success: boolean } };
 
 export type UpdateWorkspaceFeatureFlagMutationVariables = Exact<{
   workspaceId: Scalars['String'];
@@ -4396,6 +4408,13 @@ export type UpdateWorkspaceMemberRoleMutation = {
     } | null;
   };
 };
+
+export type UpsertObjectPermissionsMutationVariables = Exact<{
+  upsertObjectPermissionsInput: UpsertObjectPermissionsInput;
+}>;
+
+
+export type UpsertObjectPermissionsMutation = { __typename?: 'Mutation', upsertObjectPermissions: Array<{ __typename?: 'ObjectPermission', id: string, objectMetadataId: string, roleId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }> };
 
 export type UpsertSettingPermissionsMutationVariables = Exact<{
   upsertSettingPermissionsInput: UpsertSettingPermissionsInput;
@@ -5549,9 +5568,138 @@ export type GetWorkspaceFromInviteHashQuery = {
 };
 
 export const TimelineCalendarEventParticipantFragmentFragmentDoc = gql`
-  fragment TimelineCalendarEventParticipantFragment on TimelineCalendarEventParticipant {
-    personId
-    workspaceMemberId
+    fragment TimelineCalendarEventParticipantFragment on TimelineCalendarEventParticipant {
+  personId
+  workspaceMemberId
+  firstName
+  lastName
+  displayName
+  avatarUrl
+  handle
+}
+    `;
+export const TimelineCalendarEventFragmentFragmentDoc = gql`
+    fragment TimelineCalendarEventFragment on TimelineCalendarEvent {
+  id
+  title
+  description
+  location
+  startsAt
+  endsAt
+  isFullDay
+  visibility
+  participants {
+    ...TimelineCalendarEventParticipantFragment
+  }
+}
+    ${TimelineCalendarEventParticipantFragmentFragmentDoc}`;
+export const TimelineCalendarEventsWithTotalFragmentFragmentDoc = gql`
+    fragment TimelineCalendarEventsWithTotalFragment on TimelineCalendarEventsWithTotal {
+  totalNumberOfCalendarEvents
+  timelineCalendarEvents {
+    ...TimelineCalendarEventFragment
+  }
+}
+    ${TimelineCalendarEventFragmentFragmentDoc}`;
+export const ParticipantFragmentFragmentDoc = gql`
+    fragment ParticipantFragment on TimelineThreadParticipant {
+  personId
+  workspaceMemberId
+  firstName
+  lastName
+  displayName
+  avatarUrl
+  handle
+}
+    `;
+export const TimelineThreadFragmentFragmentDoc = gql`
+    fragment TimelineThreadFragment on TimelineThread {
+  id
+  read
+  visibility
+  firstParticipant {
+    ...ParticipantFragment
+  }
+  lastTwoParticipants {
+    ...ParticipantFragment
+  }
+  lastMessageReceivedAt
+  lastMessageBody
+  subject
+  numberOfMessagesInThread
+  participantCount
+}
+    ${ParticipantFragmentFragmentDoc}`;
+export const TimelineThreadsWithTotalFragmentFragmentDoc = gql`
+    fragment TimelineThreadsWithTotalFragment on TimelineThreadsWithTotal {
+  totalNumberOfThreads
+  timelineThreads {
+    ...TimelineThreadFragment
+  }
+}
+    ${TimelineThreadFragmentFragmentDoc}`;
+export const AuthTokenFragmentFragmentDoc = gql`
+    fragment AuthTokenFragment on AuthToken {
+  token
+  expiresAt
+}
+    `;
+export const AuthTokensFragmentFragmentDoc = gql`
+    fragment AuthTokensFragment on AuthTokenPair {
+  accessToken {
+    ...AuthTokenFragment
+  }
+  refreshToken {
+    ...AuthTokenFragment
+  }
+}
+    ${AuthTokenFragmentFragmentDoc}`;
+export const AvailableSsoIdentityProvidersFragmentFragmentDoc = gql`
+    fragment AvailableSSOIdentityProvidersFragment on FindAvailableSSOIDPOutput {
+  id
+  issuer
+  name
+  status
+  workspace {
+    id
+    displayName
+  }
+}
+    `;
+export const DashboardLinklogsQueryFragmentFragmentDoc = gql`
+    fragment DashboardLinklogsQueryFragment on LinkLogsWorkspaceEntity {
+  product
+  linkName
+  linkId
+  utmSource
+  utmMedium
+  utmCampaign
+  userIp
+  userAgent
+}
+    `;
+export const ObjectPermissionFragmentFragmentDoc = gql`
+    fragment ObjectPermissionFragment on ObjectPermission {
+  id
+  objectMetadataId
+  roleId
+  canReadObjectRecords
+  canUpdateObjectRecords
+  canSoftDeleteObjectRecords
+  canDestroyObjectRecords
+}
+    `;
+export const SettingPermissionFragmentFragmentDoc = gql`
+    fragment SettingPermissionFragment on SettingPermission {
+  id
+  setting
+  roleId
+}
+    `;
+export const WorkspaceMemberQueryFragmentFragmentDoc = gql`
+    fragment WorkspaceMemberQueryFragment on WorkspaceMember {
+  id
+  name {
     firstName
     lastName
     displayName
@@ -9372,17 +9520,55 @@ export type UpdateWorkspaceMemberRoleMutationFn = Apollo.MutationFunction<
  *   },
  * });
  */
-export function useUpdateWorkspaceMemberRoleMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    UpdateWorkspaceMemberRoleMutation,
-    UpdateWorkspaceMemberRoleMutationVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<
-    UpdateWorkspaceMemberRoleMutation,
-    UpdateWorkspaceMemberRoleMutationVariables
-  >(UpdateWorkspaceMemberRoleDocument, options);
+export function useUpdateWorkspaceMemberRoleMutation(baseOptions?: Apollo.MutationHookOptions<UpdateWorkspaceMemberRoleMutation, UpdateWorkspaceMemberRoleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateWorkspaceMemberRoleMutation, UpdateWorkspaceMemberRoleMutationVariables>(UpdateWorkspaceMemberRoleDocument, options);
+      }
+export type UpdateWorkspaceMemberRoleMutationHookResult = ReturnType<typeof useUpdateWorkspaceMemberRoleMutation>;
+export type UpdateWorkspaceMemberRoleMutationResult = Apollo.MutationResult<UpdateWorkspaceMemberRoleMutation>;
+export type UpdateWorkspaceMemberRoleMutationOptions = Apollo.BaseMutationOptions<UpdateWorkspaceMemberRoleMutation, UpdateWorkspaceMemberRoleMutationVariables>;
+export const UpsertObjectPermissionsDocument = gql`
+    mutation UpsertObjectPermissions($upsertObjectPermissionsInput: UpsertObjectPermissionsInput!) {
+  upsertObjectPermissions(
+    upsertObjectPermissionsInput: $upsertObjectPermissionsInput
+  ) {
+    ...ObjectPermissionFragment
+  }
+}
+    ${ObjectPermissionFragmentFragmentDoc}`;
+export type UpsertObjectPermissionsMutationFn = Apollo.MutationFunction<UpsertObjectPermissionsMutation, UpsertObjectPermissionsMutationVariables>;
+
+/**
+ * __useUpsertObjectPermissionsMutation__
+ *
+ * To run a mutation, you first call `useUpsertObjectPermissionsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpsertObjectPermissionsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upsertObjectPermissionsMutation, { data, loading, error }] = useUpsertObjectPermissionsMutation({
+ *   variables: {
+ *      upsertObjectPermissionsInput: // value for 'upsertObjectPermissionsInput'
+ *   },
+ * });
+ */
+export function useUpsertObjectPermissionsMutation(baseOptions?: Apollo.MutationHookOptions<UpsertObjectPermissionsMutation, UpsertObjectPermissionsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpsertObjectPermissionsMutation, UpsertObjectPermissionsMutationVariables>(UpsertObjectPermissionsDocument, options);
+      }
+export type UpsertObjectPermissionsMutationHookResult = ReturnType<typeof useUpsertObjectPermissionsMutation>;
+export type UpsertObjectPermissionsMutationResult = Apollo.MutationResult<UpsertObjectPermissionsMutation>;
+export type UpsertObjectPermissionsMutationOptions = Apollo.BaseMutationOptions<UpsertObjectPermissionsMutation, UpsertObjectPermissionsMutationVariables>;
+export const UpsertSettingPermissionsDocument = gql`
+    mutation UpsertSettingPermissions($upsertSettingPermissionsInput: UpsertSettingPermissionsInput!) {
+  upsertSettingPermissions(
+    upsertSettingPermissionsInput: $upsertSettingPermissionsInput
+  ) {
+    ...SettingPermissionFragment
+  }
 }
 export type UpdateWorkspaceMemberRoleMutationHookResult = ReturnType<
   typeof useUpdateWorkspaceMemberRoleMutation

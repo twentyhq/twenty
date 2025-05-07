@@ -1,6 +1,6 @@
 import { useGetFieldMetadataItemById } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
-import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { isValidSubFieldName } from '@/settings/data-model/utils/isValidSubFieldName';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -38,7 +38,7 @@ export const AdvancedFilterFieldSelectDropdownButtonClickableSelect = ({
 
   const subFieldLabel =
     isDefined(fieldMetadataItem) &&
-    isCompositeField(fieldMetadataItem.type) &&
+    isCompositeFieldType(fieldMetadataItem.type) &&
     isNonEmptyString(recordFilter?.subFieldName) &&
     isValidSubFieldName(recordFilter.subFieldName)
       ? getCompositeSubFieldLabel(

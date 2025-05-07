@@ -2,6 +2,7 @@ import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordIn
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { useBuildRecordInputFromFilters } from '@/object-record/record-table/hooks/useBuildRecordInputFromFilters';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -27,17 +28,25 @@ export const useCreateNewIndexRecord = ({
 
   const { openRecordTitleCell } = useRecordTitleCell();
 
+  const { buildRecordInputFromFilters } = useBuildRecordInputFromFilters({
+    objectMetadataItem,
+  });
+
   const createNewIndexRecord = useRecoilCallback(
     ({ snapshot }) =>
       async (recordInput?: Partial<ObjectRecord>) => {
         const recordId = v4();
+        const recordInputFromFilters = buildRecordInputFromFilters();
 
         const recordIndexOpenRecordIn = snapshot
           .getLoadable(recordIndexOpenRecordInState)
           .getValue();
 
-        await createOneRecord({ id: recordId, ...recordInput });
-
+        await createOneRecord({
+          id: recordId,
+          ...recordInputFromFilters,
+          ...recordInput,
+        });
         if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
           openRecordInCommandMenu({
             recordId,
@@ -48,7 +57,7 @@ export const useCreateNewIndexRecord = ({
           openRecordTitleCell({
             recordId,
             fieldMetadataId: objectMetadataItem.labelIdentifierFieldMetadataId,
-            containerType: RecordTitleCellContainerType.PageHeader,
+            containerType: RecordTitleCellContainerType.ShowPage,
           });
         } else {
           navigate(AppPath.RecordShowPage, {
@@ -58,6 +67,7 @@ export const useCreateNewIndexRecord = ({
         }
       },
     [
+      buildRecordInputFromFilters,
       createOneRecord,
       navigate,
       objectMetadataItem.labelIdentifierFieldMetadataId,

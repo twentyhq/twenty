@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
@@ -76,6 +77,7 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
       where: {
         nameSingular: workflowActionInput.objectName,
       },
+      relations: ['fields'],
     });
 
     if (!objectMetadata) {
@@ -143,6 +145,14 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
       await repository.update(workflowActionInput.objectRecordId, {
         ...objectRecordFormatted,
       });
+
+      const diff = objectRecordChangedValues(
+        previousObjectRecord,
+        updatedObjectRecord,
+        workflowActionInput.fieldsToUpdate,
+        objectMetadata,
+      );
+
       this.workspaceEventEmitter.emitDatabaseBatchEvent({
         objectMetadataNameSingular: workflowActionInput.objectName,
         action: DatabaseEventAction.UPDATED,
@@ -153,6 +163,8 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
             properties: {
               before: previousObjectRecord,
               after: updatedObjectRecord,
+              updatedFields: workflowActionInput.fieldsToUpdate,
+              diff,
             },
           },
         ],

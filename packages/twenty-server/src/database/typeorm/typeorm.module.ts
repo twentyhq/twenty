@@ -20,6 +20,7 @@ const coreTypeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
 
 @Module({
   imports: [
+    TwentyConfigModule,
     TypeOrmModule.forRootAsync({
       useFactory: metadataTypeORMFactory,
       name: 'metadata',
@@ -28,7 +29,6 @@ const coreTypeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
       useFactory: coreTypeORMFactory,
       name: 'core',
     }),
-    TwentyConfigModule,
   ],
   providers: [TypeORMService],
   exports: [TypeORMService],
