@@ -9,6 +9,8 @@ import { RecordBoardScrollToFocusedCardEffect } from '@/object-record/record-boa
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
 import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { useActiveBoardCard } from '@/object-record/record-board/hooks/useActiveBoardCard';
+import { useFocusedBoardCard } from '@/object-record/record-board/hooks/useFocusedBoardCard';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardDeactivateBoardCardEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardDeactivateBoardCardEffect';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
@@ -73,6 +75,9 @@ export const RecordBoard = () => {
 
   const { closeDropdown } = useDropdownV2();
 
+  const { deactivateBoardCard } = useActiveBoardCard(recordBoardId);
+  const { unfocusBoardCard } = useFocusedBoardCard(recordBoardId);
+
   const handleDragSelectionStart = () => {
     closeDropdown(actionMenuId);
 
@@ -117,6 +122,8 @@ export const RecordBoard = () => {
     refs: [],
     callback: () => {
       resetRecordSelection();
+      deactivateBoardCard();
+      unfocusBoardCard();
     },
   });
 
