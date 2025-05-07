@@ -238,10 +238,11 @@ export const RecordBoard = () => {
               <StyledContainer ref={boardRef}>
                 <DragDropContext onDragEnd={handleDragEnd}>
                   <StyledColumnContainer>
-                    {visibleRecordGroupIds.map((recordGroupId) => (
+                    {visibleRecordGroupIds.map((recordGroupId, index) => (
                       <RecordBoardColumn
                         key={recordGroupId}
                         recordBoardColumnId={recordGroupId}
+                        recordBoardColumnIndex={index}
                       />
                     ))}
                   </StyledColumnContainer>

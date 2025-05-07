@@ -2,22 +2,28 @@ import { Draggable } from '@hello-pangea/dnd';
 
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
+import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
+import { useContext } from 'react';
 
 export const RecordBoardCardDraggableContainer = ({
   recordId,
-  index,
+  rowIndex,
 }: {
   recordId: string;
-  index: number;
+  rowIndex: number;
 }) => {
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId,
   });
 
+  const { columnIndex } = useContext(RecordBoardColumnContext);
+
   return (
-    <RecordBoardCardContext.Provider value={{ recordId, isRecordReadOnly }}>
-      <Draggable key={recordId} draggableId={recordId} index={index}>
+    <RecordBoardCardContext.Provider
+      value={{ recordId, isRecordReadOnly, rowIndex, columnIndex }}
+    >
+      <Draggable key={recordId} draggableId={recordId} index={rowIndex}>
         {(draggableProvided) => (
           <div
             ref={draggableProvided?.innerRef}
