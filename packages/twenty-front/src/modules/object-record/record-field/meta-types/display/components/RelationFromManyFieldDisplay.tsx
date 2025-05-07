@@ -13,7 +13,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { pascalCase } from '~/utils/string/pascalCase';
 
 export const RelationFromManyFieldDisplay = () => {
-  const { fieldValue, fieldDefinition } = useRelationFromManyFieldDisplay();
+  const { fieldValue, fieldDefinition, generateRecordChipData } =
+    useRelationFromManyFieldDisplay();
   const { isFocused } = useFieldFocus();
   const { disableChipClick } = useContext(FieldContext);
 
@@ -99,14 +100,17 @@ export const RelationFromManyFieldDisplay = () => {
   } else {
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
-        {fieldValue.filter(isDefined).map((record) => (
-          <RecordChip
-            key={record.id}
-            objectNameSingular={objectNameSingular}
-            record={record}
-            forceDisableClick={disableChipClick}
-          />
-        ))}
+        {fieldValue.filter(isDefined).map((record) => {
+          const recordChipData = generateRecordChipData(record);
+          return (
+            <RecordChip
+              key={recordChipData.recordId}
+              objectNameSingular={recordChipData.objectNameSingular}
+              record={record}
+              forceDisableClick={disableChipClick}
+            />
+          );
+        })}
       </ExpandableList>
     );
   }
