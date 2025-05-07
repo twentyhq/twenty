@@ -362,6 +362,17 @@ describe('UpgradeCommandRunner', () => {
           },
         },
       },
+      {
+        title: 'even if app version contains a patch value',
+        context: {
+          input: {
+            appVersion: '2.0.24',
+            workspaceOverride: {
+              version: '1.0.12',
+            },
+          },
+        },
+      },
     ];
 
     it.each(successfulTestUseCases)(

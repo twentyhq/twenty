@@ -17,7 +17,6 @@ import {
   CompareVersionMajorAndMinorReturnType,
   compareVersionMajorAndMinor,
 } from 'src/utils/version/compare-version-minor-and-major';
-import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 import { getPreviousVersion } from 'src/utils/version/get-previous-version';
 
 export type VersionCommands = {
@@ -27,7 +26,7 @@ export type VersionCommands = {
 export type AllCommands = Record<string, VersionCommands>;
 export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   private fromWorkspaceVersion: SemVer;
-  private currentAppVersion: string;
+  private currentAppVersion: SemVer;
   public abstract allCommands: AllCommands;
   public commands: VersionCommands;
   public readonly VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG?: true;
@@ -53,9 +52,9 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       return;
     }
 
-    const currentAppVersion = this.retrieveMajorMinorAppVersion();
-
-    const currentCommands = this.allCommands[currentAppVersion];
+    const currentAppVersion = this.retrieveCurrentAppVersion();
+    const currentVersionMajorMinor = `${currentAppVersion.major}.${currentAppVersion.minor}.0`;
+    const currentCommands = this.allCommands[currentVersionMajorMinor];
 
     if (!isDefined(currentCommands)) {
       throw new Error(
@@ -65,13 +64,13 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
 
     const allCommandsVersions = Object.keys(this.allCommands);
     const previousVersion = getPreviousVersion({
-      currentVersion: currentAppVersion,
+      currentVersion: currentVersionMajorMinor,
       versions: allCommandsVersions,
     });
 
     if (!isDefined(previousVersion)) {
       throw new Error(
-        `No previous version found for version ${currentAppVersion}. Please review the "allCommands" record. Available versions are: ${allCommandsVersions.join(', ')}.`,
+        `No previous version found for version ${currentAppVersion}. Please review the "allCommands" record. Available versions are: ${allCommandsVersions.join(', ')}`,
       );
     }
     this.commands = currentCommands;
@@ -117,7 +116,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
 
         await this.workspaceRepository.update(
           { id: workspaceId },
-          { version: this.currentAppVersion },
+          { version: this.currentAppVersion.version },
         );
         this.logger.log(
           chalk.blue(`Upgrade for workspace ${workspaceId} completed.`),
@@ -142,7 +141,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     }
   }
 
-  private retrieveMajorMinorAppVersion() {
+  private retrieveCurrentAppVersion() {
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
     if (!isDefined(appVersion)) {
@@ -151,15 +150,13 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       );
     }
 
-    const parsedVersion = extractVersionMajorMinorPatch(appVersion);
-
-    if (!isDefined(parsedVersion)) {
+    try {
+      return new SemVer(appVersion);
+    } catch {
       throw new Error(
-        `Should never occur, APP_VERSION is invalid ${parsedVersion}`,
+        `Should never occur, APP_VERSION is invalid ${appVersion}`,
       );
     }
-
-    return parsedVersion;
   }
 
   private async retrieveWorkspaceVersionAndCompareToWorkspaceFromVersion(
