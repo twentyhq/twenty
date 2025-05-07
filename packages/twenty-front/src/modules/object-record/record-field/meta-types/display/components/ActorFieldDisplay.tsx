@@ -5,15 +5,19 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 export const ActorFieldDisplay = () => {
   const { fieldValue } = useActorFieldDisplay();
+  const isSoftDeletedWorkspaceMember =
+    fieldValue.workspaceMemberId && !fieldValue.workspaceMember;
 
-  const name = !fieldValue.workspaceMemberId
+  const name = isSoftDeletedWorkspaceMember
     ? fieldValue.name
-    : [
-        fieldValue.workspaceMember?.name.firstName,
-        fieldValue.workspaceMember?.name.lastName,
-      ]
-        .filter(isNonEmptyString)
-        .join(' ');
+    : !fieldValue.workspaceMemberId
+      ? fieldValue.name
+      : [
+          fieldValue.workspaceMember?.name.firstName,
+          fieldValue.workspaceMember?.name.lastName,
+        ]
+          .filter(isNonEmptyString)
+          .join(' ');
 
   const displayActorField = !useIsFieldEmpty();
 
