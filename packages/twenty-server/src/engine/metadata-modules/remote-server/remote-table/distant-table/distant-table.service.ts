@@ -8,15 +8,15 @@ import {
   RemoteServerEntity,
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { DistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table';
-import { STRIPE_DISTANT_TABLES } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/utils/stripe-distant-tables.util';
-import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
-import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
 import {
   DistantTableException,
   DistantTableExceptionCode,
 } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception';
+import { DistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table';
+import { STRIPE_DISTANT_TABLES } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/utils/stripe-distant-tables.util';
+import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
+import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
 export class DistantTableService {
@@ -73,13 +73,11 @@ export class DistantTableService {
     const tmpSchemaId = v4();
     const tmpSchemaName = `${workspaceId}_${remoteServer.id}_${tmpSchemaId}`;
 
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
+    const mainDataSource =
+      await this.workspaceDataSourceService.connectToMainDataSource();
 
     try {
-      const distantTables = await workspaceDataSource.transaction(
+      const distantTables = await mainDataSource.transaction(
         async (entityManager: EntityManager) => {
           await entityManager.query(`CREATE SCHEMA "${tmpSchemaName}"`);
 
