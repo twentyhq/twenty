@@ -10,6 +10,7 @@ import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/comp
 import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
+import { RecordBoardDeactivateBoardCardEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardDeactivateBoardCardEffect';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
@@ -234,6 +235,7 @@ export const RecordBoard = () => {
         >
           <RecordBoardStickyHeaderEffect />
           <RecordBoardScrollToFocusedCardEffect />
+          <RecordBoardDeactivateBoardCardEffect />
           <StyledContainerContainer>
             <RecordBoardHeader />
             <StyledBoardContentContainer>
