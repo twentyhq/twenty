@@ -50,12 +50,6 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
       featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
-    this.apiEventEmitterService.emitDeletedEvents(
-      formattedDeletedRecords,
-      authContext,
-      objectMetadataItemWithFieldMaps,
-    );
-
     if (formattedDeletedRecords.length === 0) {
       throw new GraphqlQueryRunnerException(
         'Record not found',
@@ -80,6 +74,12 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
+
+    this.apiEventEmitterService.emitDeletedEvents(
+      formattedDeletedRecords,
+      authContext,
+      objectMetadataItemWithFieldMaps,
+    );
 
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(

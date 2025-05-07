@@ -50,12 +50,6 @@ export class GraphqlQueryRestoreOneResolverService extends GraphqlQueryBaseResol
       featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
-    this.apiEventEmitterService.emitRestoreEvents(
-      formattedRestoredRecords,
-      authContext,
-      objectMetadataItemWithFieldMaps,
-    );
-
     if (formattedRestoredRecords.length === 0) {
       throw new GraphqlQueryRunnerException(
         'Record not found',
@@ -80,6 +74,12 @@ export class GraphqlQueryRestoreOneResolverService extends GraphqlQueryBaseResol
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
+
+    this.apiEventEmitterService.emitRestoreEvents(
+      formattedRestoredRecords,
+      authContext,
+      objectMetadataItemWithFieldMaps,
+    );
 
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(

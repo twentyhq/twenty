@@ -78,14 +78,6 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
       featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
-    this.apiEventEmitterService.emitUpdateEvents(
-      formattedExistingRecords,
-      formattedUpdatedRecords,
-      Object.keys(executionArgs.args.data),
-      authContext,
-      objectMetadataItemWithFieldMaps,
-    );
-
     if (formattedUpdatedRecords.length === 0) {
       throw new GraphqlQueryRunnerException(
         'Record not found',
@@ -94,12 +86,13 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
     }
 
     const updatedRecord = formattedUpdatedRecords[0];
+    const existingRecord = formattedExistingRecords[0];
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: [updatedRecord],
+        parentObjectRecords: [existingRecord, updatedRecord],
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
@@ -110,6 +103,14 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
+
+    this.apiEventEmitterService.emitUpdateEvents(
+      formattedExistingRecords,
+      formattedUpdatedRecords,
+      Object.keys(executionArgs.args.data),
+      authContext,
+      objectMetadataItemWithFieldMaps,
+    );
 
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(

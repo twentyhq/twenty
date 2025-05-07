@@ -93,19 +93,14 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
       featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
-    this.apiEventEmitterService.emitUpdateEvents(
-      formattedExistingRecords,
-      formattedUpdatedRecords,
-      Object.keys(executionArgs.args.data),
-      authContext,
-      objectMetadataItemWithFieldMaps,
-    );
-
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: formattedUpdatedRecords,
+        parentObjectRecords: [
+          ...formattedExistingRecords,
+          ...formattedUpdatedRecords,
+        ],
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
@@ -116,6 +111,14 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
+
+    this.apiEventEmitterService.emitUpdateEvents(
+      formattedExistingRecords,
+      formattedUpdatedRecords,
+      Object.keys(executionArgs.args.data),
+      authContext,
+      objectMetadataItemWithFieldMaps,
+    );
 
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(

@@ -55,15 +55,21 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
 
     const shouldBypassPermissionChecks = executionArgs.isExecutedByApiKey;
 
-    await this.processNestedRelationsIfNeeded(
-      executionArgs,
-      upsertedRecords,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-      featureFlagsMap,
-      shouldBypassPermissionChecks,
-      roleId,
-    );
+    if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
+      await this.processNestedRelationsHelper.processNestedRelations({
+        objectMetadataMaps,
+        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+        parentObjectRecords: upsertedRecords,
+        relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+        limit: QUERY_MAX_RECORDS,
+        authContext: executionArgs.options.authContext,
+        dataSource: executionArgs.dataSource,
+        isNewRelationEnabled:
+          featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
+        roleId,
+        shouldBypassPermissionChecks,
+      });
+    }
 
     return this.formatRecordsForResponse(
       upsertedRecords,
@@ -324,34 +330,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       objectMetadataMaps,
       featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
-  }
-
-  private async processNestedRelationsIfNeeded(
-    executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
-    upsertedRecords: ObjectRecord[],
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-    objectMetadataMaps: ObjectMetadataMaps,
-    featureFlagsMap: Record<FeatureFlagKey, boolean>,
-    shouldBypassPermissionChecks: boolean,
-    roleId?: string,
-  ): Promise<void> {
-    if (!executionArgs.graphqlQuerySelectedFieldsResult.relations) {
-      return;
-    }
-
-    await this.processNestedRelationsHelper.processNestedRelations({
-      objectMetadataMaps,
-      parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-      parentObjectRecords: upsertedRecords,
-      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
-      limit: QUERY_MAX_RECORDS,
-      authContext: executionArgs.options.authContext,
-      dataSource: executionArgs.dataSource,
-      isNewRelationEnabled:
-        featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
-      roleId,
-      shouldBypassPermissionChecks,
-    });
   }
 
   private formatRecordsForResponse(
