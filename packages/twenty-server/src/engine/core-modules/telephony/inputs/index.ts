@@ -287,6 +287,21 @@ export class UpdateTelephonyInput {
 }
 
 @InputType()
+export class CreateDialingPlanInput {
+  @Field(() => Int)
+  @IsNumber()
+  plano_discagem_id: number;
+
+  @Field()
+  @IsString()
+  nome: string;
+
+  @Field(() => Int)
+  @IsNumber()
+  cliente_id: number;
+}
+
+@InputType()
 export class CreatePabxCompanyInput {
   @Field()
   @IsString()

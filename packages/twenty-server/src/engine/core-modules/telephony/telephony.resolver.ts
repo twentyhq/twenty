@@ -5,6 +5,7 @@ import { User } from '@sentry/types';
 import { Repository } from 'typeorm';
 
 import {
+  CreateDialingPlanInput,
   CreatePabxCompanyInput,
   CreatePabxTrunkInput,
   CreateTelephonyInput,
@@ -24,6 +25,7 @@ import {
 } from './telephony.entity';
 
 import { PabxCompanyResponseType } from './types/Create/PabxCompanyResponse.type';
+import { PabxDialingPlanResponseType } from './types/Create/PabxDialingPlanResponse.type';
 import { PabxTrunkResponseType } from './types/Create/PabxTrunkResponse.type';
 
 @Resolver(() => Telephony)
@@ -382,6 +384,32 @@ export class TelephonyResolver {
       return {
         success: false,
         message: `Failed to create trunk: ${error.message}`,
+      };
+    }
+  }
+
+  @Mutation(() => PabxDialingPlanResponseType, { name: 'createDialingPlan' })
+  async createDialingPlan(
+    @AuthUser() { id: userId }: User,
+    @Args('input') input: CreateDialingPlanInput,
+  ): Promise<PabxDialingPlanResponseType> {
+    if (!userId) {
+      throw new Error('User id not found');
+    }
+
+    try {
+      const result = await this.pabxService.createDialingPlan(input);
+
+      return {
+        success: true,
+        message: `Dialing plan created successfully: ${input.nome}`,
+      };
+    } catch (error) {
+      console.error('Error creating dialing plan:', error);
+
+      return {
+        success: false,
+        message: `Failed to create dialing plan: ${error.message}`,
       };
     }
   }

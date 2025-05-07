@@ -8,6 +8,7 @@ import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/
 import { PabxServiceInterface } from 'src/engine/core-modules/telephony/interfaces/pabx.interface';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { CreateDialingPlanInput } from 'src/engine/core-modules/telephony/inputs';
 import { InsereEmpresa } from 'src/engine/core-modules/telephony/types/Create/InsereEmpresa.type';
 import { InsereTronco } from 'src/engine/core-modules/telephony/types/Create/InsereTronco.type';
 import { ExtetionBody } from 'src/engine/core-modules/telephony/types/Extention.type';
@@ -174,4 +175,34 @@ export class PabxService implements PabxServiceInterface {
       throw error;
     }
   };
+
+  createDialingPlan: (data: CreateDialingPlanInput) => Promise<AxiosResponse> =
+    async (data) => {
+      try {
+        this.logger.log(`Creating dialing plan with name: ${data.nome}`);
+
+        const payload = {
+          dados: {
+            plano_discagem_id: data.plano_discagem_id,
+            nome: data.nome,
+            cliente_id: data.cliente_id,
+          },
+        };
+
+        const createDialingPlanResponse = await this.pabxAxiosInstance.post(
+          '/inserir_plano_discagem',
+          payload,
+        );
+
+        this.logger.log(`Dialing plan created successfully: ${data.nome}`);
+
+        return createDialingPlanResponse;
+      } catch (error) {
+        this.logger.error(
+          `Failed to create dialing plan: ${error.message}`,
+          error.stack,
+        );
+        throw error;
+      }
+    };
 }
