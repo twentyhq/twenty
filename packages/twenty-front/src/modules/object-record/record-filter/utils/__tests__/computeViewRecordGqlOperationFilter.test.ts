@@ -210,7 +210,7 @@ describe('should work as expected for the different field types', () => {
             },
             {
               address: {
-                addressPostCode: {
+                addressPostcode: {
                   ilike: '%123 Main St%',
                 },
               },
@@ -267,7 +267,7 @@ describe('should work as expected for the different field types', () => {
             {
               not: {
                 address: {
-                  addressPostCode: {
+                  addressPostcode: {
                     ilike: '%123 Main St%',
                   },
                 },
@@ -371,14 +371,14 @@ describe('should work as expected for the different field types', () => {
               or: [
                 {
                   address: {
-                    addressPostCode: {
+                    addressPostcode: {
                       ilike: '',
                     },
                   },
                 },
                 {
                   address: {
-                    addressPostCode: {
+                    addressPostcode: {
                       is: 'NULL',
                     },
                   },
@@ -484,14 +484,14 @@ describe('should work as expected for the different field types', () => {
                 or: [
                   {
                     address: {
-                      addressPostCode: {
+                      addressPostcode: {
                         ilike: '',
                       },
                     },
                   },
                   {
                     address: {
-                      addressPostCode: {
+                      addressPostcode: {
                         is: 'NULL',
                       },
                     },
