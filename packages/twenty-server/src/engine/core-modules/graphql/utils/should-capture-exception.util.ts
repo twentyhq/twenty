@@ -12,14 +12,14 @@ export const graphQLErrorCodesToFilterOut = [
   ErrorCode.TIMEOUT,
   ErrorCode.CONFLICT,
   ErrorCode.BAD_USER_INPUT,
+  ErrorCode.EMAIL_NOT_VERIFIED,
 ];
 
 export const shouldCaptureException = (exception: Error): boolean => {
-  if (!(exception instanceof BaseGraphQLError)) {
-    return true;
-  }
-
-  if (graphQLErrorCodesToFilterOut.includes(exception?.extensions?.code)) {
+  if (
+    exception instanceof BaseGraphQLError &&
+    graphQLErrorCodesToFilterOut.includes(exception?.extensions?.code)
+  ) {
     return false;
   }
 

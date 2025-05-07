@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { DeepPartial, EntityManager } from 'typeorm';
-import { v4 } from 'uuid';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { DeepPartial } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -74,7 +74,6 @@ export class CreateContactService {
   public async createPeople(
     contactsToCreate: ContactToCreate[],
     workspaceId: string,
-    transactionManager?: EntityManager,
   ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
     if (contactsToCreate.length === 0) return [];
 
@@ -82,33 +81,28 @@ export class CreateContactService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         PersonWorkspaceEntity,
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
-    const lastPersonPosition = await this.getLastPersonPosition(
-      personRepository,
-      transactionManager,
-    );
+    const lastPersonPosition =
+      await this.getLastPersonPosition(personRepository);
 
     const formattedContacts = this.formatContacts(
       contactsToCreate,
       lastPersonPosition,
     );
 
-    return personRepository.save(
-      formattedContacts,
-      undefined,
-      transactionManager,
-    );
+    return personRepository.save(formattedContacts, undefined);
   }
 
   private async getLastPersonPosition(
     personRepository: WorkspaceRepository<PersonWorkspaceEntity>,
-    transactionManager?: EntityManager,
   ): Promise<number> {
     const lastPersonPosition = await personRepository.maximum(
       'position',
       undefined,
-      transactionManager,
     );
 
     return lastPersonPosition ?? 0;

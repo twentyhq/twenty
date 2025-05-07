@@ -15,19 +15,31 @@ export class TwentyORMGlobalManager {
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     workspaceEntity: Type<T>,
-    failOnMetadataCacheMiss?: boolean,
+    options?: {
+      shouldBypassPermissionChecks?: boolean;
+      shouldFailIfMetadataNotFound?: boolean;
+    },
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     objectMetadataName: string,
-    failOnMetadataCacheMiss?: boolean,
+    options?: {
+      shouldBypassPermissionChecks?: boolean;
+      shouldFailIfMetadataNotFound?: boolean;
+    },
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     workspaceEntityOrobjectMetadataName: Type<T> | string,
-    failOnMetadataCacheMiss = true,
+    options: {
+      shouldBypassPermissionChecks?: boolean;
+      shouldFailIfMetadataNotFound?: boolean;
+    } = {
+      shouldBypassPermissionChecks: false,
+      shouldFailIfMetadataNotFound: true,
+    },
   ): Promise<WorkspaceRepository<T>> {
     let objectMetadataName: string;
 
@@ -42,22 +54,28 @@ export class TwentyORMGlobalManager {
     const workspaceDataSource = await this.workspaceDataSourceFactory.create(
       workspaceId,
       null,
-      failOnMetadataCacheMiss,
+      options.shouldFailIfMetadataNotFound,
     );
 
-    const repository = workspaceDataSource.getRepository<T>(objectMetadataName);
+    const repository = workspaceDataSource.getRepository<T>(
+      objectMetadataName,
+      options.shouldBypassPermissionChecks,
+    );
 
     return repository;
   }
 
-  async getDataSourceForWorkspace(
-    workspaceId: string,
-    failOnMetadataCacheMiss = true,
-  ) {
+  async getDataSourceForWorkspace({
+    workspaceId,
+    shouldFailIfMetadataNotFound = true,
+  }: {
+    workspaceId: string;
+    shouldFailIfMetadataNotFound?: boolean;
+  }) {
     return await this.workspaceDataSourceFactory.create(
       workspaceId,
       null,
-      failOnMetadataCacheMiss,
+      shouldFailIfMetadataNotFound,
     );
   }
 

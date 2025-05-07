@@ -1,12 +1,11 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import {
   DateTimePicker,
-  MONTH_AND_YEAR_DROPDOWN_ID,
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
@@ -30,10 +29,10 @@ import {
   useState,
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Nullable } from 'twenty-ui/utilities';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
+import { Nullable } from 'twenty-ui/utilities';
 
-const StyledInputContainer = styled(FormFieldInputInputContainer)`
+const StyledInputContainer = styled(FormFieldInputInnerContainer)`
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 0px;
@@ -140,7 +139,6 @@ export const FormDateTimeFieldInput = ({
     }
   };
 
-  const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
   const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
     MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   );
@@ -162,7 +160,6 @@ export const FormDateTimeFieldInput = ({
 
       closeDropdownYearSelect();
       closeDropdownMonthSelect();
-      closeDropdown();
       handlePickerClickOutside();
     },
     enabled: displayDatePicker,

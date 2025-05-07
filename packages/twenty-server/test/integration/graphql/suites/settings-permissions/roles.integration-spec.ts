@@ -72,19 +72,12 @@ describe('roles permissions', () => {
   });
 
   afterAll(async () => {
-    const disablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
-      false,
-    );
-
     const disablePermissionsV2Query = updateFeatureFlagFactory(
       SEED_APPLE_WORKSPACE_ID,
       'IsPermissionsV2Enabled',
       false,
     );
 
-    await makeGraphqlAPIRequest(disablePermissionsQuery);
     await makeGraphqlAPIRequest(disablePermissionsV2Query);
   });
 
@@ -480,9 +473,10 @@ describe('roles permissions', () => {
         roleId: string;
       }) => `
       mutation UpsertObjectPermissions {
-          upsertOneObjectPermission(upsertObjectPermissionInput: {objectMetadataId: "${objectMetadataId}", roleId: "${roleId}", canUpdateObjectRecords: true}) {
+          upsertObjectPermissions(upsertObjectPermissionsInput: { roleId: "${roleId}", objectPermissions: [{objectMetadataId: "${objectMetadataId}", canUpdateObjectRecords: true}]}) {
               id
               roleId
+              objectMetadataId
               canUpdateObjectRecords
           }
       }
@@ -540,12 +534,15 @@ describe('roles permissions', () => {
           .expect((res) => {
             expect(res.body.data).toBeDefined();
             expect(res.body.errors).toBeUndefined();
-            expect(res.body.data.upsertOneObjectPermission.roleId).toBe(
-              createdEditableRoleId,
+            expect(res.body.data.upsertObjectPermissions).toEqual(
+              expect.arrayContaining([
+                expect.objectContaining({
+                  roleId: createdEditableRoleId,
+                  objectMetadataId: listingObjectId,
+                  canUpdateObjectRecords: true,
+                }),
+              ]),
             );
-            expect(
-              res.body.data.upsertOneObjectPermission.canUpdateObjectRecords,
-            ).toBe(true);
           });
       });
     });

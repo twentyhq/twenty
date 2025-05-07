@@ -9,11 +9,15 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
-import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 import { IconComponent } from 'twenty-ui/display';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import { SelectOption } from 'twenty-ui/input';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
 export type SelectSizeVariant = 'small' | 'default';
 
@@ -30,7 +34,7 @@ export type SelectProps<Value extends SelectValue> = {
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
   dropdownId: string;
-  dropdownWidth?: `${string}px` | 'auto' | number;
+  dropdownWidth?: number;
   dropdownWidthAuto?: boolean;
   emptyOption?: SelectOption<Value>;
   fullWidth?: boolean;
@@ -43,6 +47,7 @@ export type SelectProps<Value extends SelectValue> = {
   needIconCheck?: boolean;
   callToActionButton?: CallToActionButton;
   dropdownOffset?: DropdownOffset;
+  hasRightElement?: boolean;
 };
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
@@ -75,6 +80,7 @@ export const Select = <Value extends SelectValue>({
   needIconCheck,
   callToActionButton,
   dropdownOffset,
+  hasRightElement,
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
@@ -107,6 +113,13 @@ export const Select = <Value extends SelectValue>({
       ? selectContainerRef.current?.clientWidth
       : dropdownWidth;
 
+  const selectableItemIdArray = filteredOptions.map((option) => option.label);
+
+  const selectedItemId = useRecoilComponentValueV2(
+    selectedItemIdComponentState,
+    dropdownId,
+  );
+
   return (
     <StyledContainer
       className={className}
@@ -121,11 +134,12 @@ export const Select = <Value extends SelectValue>({
           selectedOption={selectedOption}
           isDisabled={isDisabled}
           selectSizeVariant={selectSizeVariant}
+          hasRightElement={hasRightElement}
         />
       ) : (
         <Dropdown
           dropdownId={dropdownId}
-          dropdownMenuWidth={dropDownMenuWidth}
+          dropdownWidth={dropDownMenuWidth}
           dropdownPlacement="bottom-start"
           dropdownOffset={dropdownOffset}
           clickableComponent={
@@ -133,6 +147,7 @@ export const Select = <Value extends SelectValue>({
               selectedOption={selectedOption}
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
+              hasRightElement={hasRightElement}
             />
           }
           dropdownComponents={
@@ -148,21 +163,37 @@ export const Select = <Value extends SelectValue>({
                 <DropdownMenuSeparator />
               )}
               {!!filteredOptions.length && (
-                <DropdownMenuItemsContainer hasMaxHeight>
-                  {filteredOptions.map((option) => (
-                    <MenuItemSelect
-                      key={`${option.value}-${option.label}`}
-                      LeftIcon={option.Icon}
-                      text={option.label}
-                      selected={selectedOption.value === option.value}
-                      needIconCheck={needIconCheck}
-                      onClick={() => {
-                        onChange?.(option.value);
-                        onBlur?.();
-                        closeDropdown();
-                      }}
-                    />
-                  ))}
+                <DropdownMenuItemsContainer hasMaxHeight width={'auto'}>
+                  <SelectableList
+                    hotkeyScope={SelectHotkeyScope.Select}
+                    selectableListInstanceId={dropdownId}
+                    selectableItemIdArray={selectableItemIdArray}
+                  >
+                    {filteredOptions.map((option) => (
+                      <SelectableListItem
+                        key={`${option.value}-${option.label}`}
+                        itemId={option.label}
+                        onEnter={() => {
+                          onChange?.(option.value);
+                          onBlur?.();
+                          closeDropdown();
+                        }}
+                      >
+                        <MenuItemSelect
+                          LeftIcon={option.Icon}
+                          text={option.label}
+                          selected={selectedOption.value === option.value}
+                          focused={selectedItemId === option.label}
+                          needIconCheck={needIconCheck}
+                          onClick={() => {
+                            onChange?.(option.value);
+                            onBlur?.();
+                            closeDropdown();
+                          }}
+                        />
+                      </SelectableListItem>
+                    ))}
+                  </SelectableList>
                 </DropdownMenuItemsContainer>
               )}
               {!!callToActionButton && !!filteredOptions.length && (

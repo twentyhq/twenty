@@ -8,6 +8,7 @@ export const CREATE_WORKFLOW_VERSION_STEP = gql`
       type
       settings
       valid
+      nextStepIds
     }
   }
 `;

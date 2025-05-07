@@ -8,7 +8,8 @@ export const ChipFieldDisplay = () => {
     recordValue,
     objectNameSingular,
     labelIdentifierLink,
-    isLabelHidden,
+    isLabelIdentifierCompact,
+    disableChipClick,
   } = useChipFieldDisplay();
 
   if (!isDefined(recordValue)) {
@@ -21,7 +22,8 @@ export const ChipFieldDisplay = () => {
       record={recordValue}
       size={ChipSize.Small}
       to={labelIdentifierLink}
-      isLabelHidden={isLabelHidden}
+      isLabelHidden={isLabelIdentifierCompact}
+      forceDisableClick={disableChipClick}
     />
   );
 };

@@ -1,14 +1,14 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIndex } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
-import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -26,7 +26,6 @@ import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.work
   description: msg`(System) View Sorts`,
   icon: STANDARD_OBJECT_ICONS.viewSort,
 })
-@WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
 @WorkspaceIndex(['fieldMetadataId', 'viewId'], {
   isUnique: true,
@@ -53,12 +52,13 @@ export class ViewSortWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: VIEW_SORT_STANDARD_FIELD_IDS.view,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`View`,
     description: msg`View Sort related view`,
     icon: 'IconLayoutCollage',
     inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'viewSorts',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   view: Relation<ViewWorkspaceEntity> | null;

@@ -62,6 +62,7 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
           workspaceId: '',
         },
       },
+      fieldsByJoinColumnName: {},
     },
     {
       id: '',
@@ -140,6 +141,7 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
           workspaceId: '',
         },
       },
+      fieldsByJoinColumnName: {},
     },
     {
       id: '',
@@ -218,6 +220,7 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
           workspaceId: '',
         },
       },
+      fieldsByJoinColumnName: {},
     },
     {
       id: '',
@@ -243,5 +246,6 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
       indexMetadatas: [],
       fieldsById: {},
       fieldsByName: {},
+      fieldsByJoinColumnName: {},
     },
   ];

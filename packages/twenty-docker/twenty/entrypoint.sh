@@ -1,30 +1,34 @@
 #!/bin/sh
 set -e
 
-# Warn if deprecated STORAGE_LOCAL_PATH is set
-if [ -n "$STORAGE_LOCAL_PATH" ]; then
-  echo "WARNING: The STORAGE_LOCAL_PATH environment variable is deprecated and no longer used. The local storage path is fixed to /app/packages/twenty-server/.local-storage."
-fi
+setup_and_migrate_db() {
+    if [ "${DISABLE_DB_MIGRATIONS}" = "true" ]; then
+        echo "Database setup and migrations are disabled, skipping..."
+        return
+    fi
 
-# Extract database connection details from the connection string
-PGUSER=$(echo $PG_DATABASE_URL | awk -F '//' '{print $2}' | awk -F ':' '{print $1}')
-PGPASS=$(echo $PG_DATABASE_URL | awk -F ':' '{print $3}' | awk -F '@' '{print $1}')
-PGHOST=$(echo $PG_DATABASE_URL | awk -F '@' '{print $2}' | awk -F ':' '{print $1}')
-PGPORT=$(echo $PG_DATABASE_URL | awk -F ':' '{print $4}' | awk -F '/' '{print $1}')
-PGDATABASE=$(echo $PG_DATABASE_URL | awk -F ':' '{print $4}' | awk -F '/' '{print $2}')
-
-# Create database if it doesn't exist
-PGPASSWORD=${PGPASS} psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = '${PGDATABASE}'" | grep -q 1 || \
-PGPASSWORD=${PGPASS} psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -c "CREATE DATABASE \"${PGDATABASE}\""
-
-# Always run setup and migrations on startup, unless explicitly disabled
-if [ "${DISABLE_DB_MIGRATIONS}" != "true" ]; then
     echo "Running database setup and migrations..."
-    NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
+    PGUSER=$(echo $PG_DATABASE_URL | awk -F '//' '{print $2}' | awk -F ':' '{print $1}')
+    PGPASS=$(echo $PG_DATABASE_URL | awk -F ':' '{print $3}' | awk -F '@' '{print $1}')
+    PGHOST=$(echo $PG_DATABASE_URL | awk -F '@' '{print $2}' | awk -F ':' '{print $1}')
+    PGPORT=$(echo $PG_DATABASE_URL | awk -F ':' '{print $4}' | awk -F '/' '{print $1}')
+    PGDATABASE=$(echo $PG_DATABASE_URL | awk -F ':' '{print $4}' | awk -F '/' '{print $2}')
+
+    # Creating the database if it doesn't exist
+    db_count=$(PGPASSWORD=${PGPASS} psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -tAc "SELECT COUNT(*) FROM pg_database WHERE datname = '${PGDATABASE}'")
+    if [ "$db_count" = "0" ]; then
+        echo "Database ${PGDATABASE} does not exist, creating..."
+        PGPASSWORD=${PGPASS} psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -c "CREATE DATABASE \"${PGDATABASE}\""
+
+        # Run setup and migration scripts
+        NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
+    fi
+    
     yarn database:migrate:prod
     yarn command:prod upgrade
-    echo "Database setup and migrations complete!"
-fi
+    echo "Successfully migrated DB!"
+}
+setup_and_migrate_db
 
 # Continue with the original Docker command
 exec "$@"

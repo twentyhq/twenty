@@ -17,7 +17,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
-import { Outlet, useSearchParams } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { useScreenSize } from 'twenty-ui/utilities';
 
 const StyledLayout = styled.div`
@@ -26,7 +26,7 @@ const StyledLayout = styled.div`
   flex-direction: column;
   height: 100dvh;
   position: relative;
-  scrollbar-color: ${({ theme }) => theme.border.color.medium};
+  scrollbar-color: ${({ theme }) => theme.border.color.medium} transparent;
   scrollbar-width: 4px;
   width: 100%;
 
@@ -63,8 +63,6 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
-  const [searchParams] = useSearchParams();
-  const animateModal = searchParams.get('animateModal') !== 'false';
 
   return (
     <>
@@ -84,7 +82,7 @@ export const DefaultLayout = () => {
                   ? (windowsWidth -
                       (OBJECT_SETTINGS_WIDTH +
                         NAV_DRAWER_WIDTHS.menu.desktop.expanded +
-                        64)) /
+                        76)) /
                     2
                   : 0,
             }}
@@ -105,10 +103,12 @@ export const DefaultLayout = () => {
             )}
             {showAuthModal ? (
               <>
-                <SignInBackgroundMockPage />
+                <StyledMainContainer>
+                  <SignInBackgroundMockPage />
+                </StyledMainContainer>
                 <AnimatePresence mode="wait">
                   <LayoutGroup>
-                    <AuthModal isOpenAnimated={animateModal}>
+                    <AuthModal>
                       <Outlet />
                     </AuthModal>
                   </LayoutGroup>
@@ -122,7 +122,7 @@ export const DefaultLayout = () => {
               </StyledMainContainer>
             )}
           </StyledPageContainer>
-          {isMobile && <MobileNavigationBar />}
+          {isMobile && !showAuthModal && <MobileNavigationBar />}
         </AppErrorBoundary>
       </StyledLayout>
     </>

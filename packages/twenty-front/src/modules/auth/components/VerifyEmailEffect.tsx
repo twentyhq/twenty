@@ -5,6 +5,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -19,6 +20,7 @@ export const VerifyEmailEffect = () => {
 
   const [searchParams] = useSearchParams();
   const [isError, setIsError] = useState(false);
+
   const email = searchParams.get('email');
   const emailVerificationToken = searchParams.get('emailVerificationToken');
 
@@ -48,9 +50,8 @@ export const VerifyEmailEffect = () => {
 
         const workspaceUrl = getWorkspaceUrl(workspaceUrls);
         if (workspaceUrl.slice(0, -1) !== window.location.origin) {
-          return redirectToWorkspaceDomain(workspaceUrl, AppPath.Verify, {
+          return await redirectToWorkspaceDomain(workspaceUrl, AppPath.Verify, {
             loginToken: loginToken.token,
-            animateModal: false,
           });
         }
         verifyLoginToken(loginToken.token);
@@ -70,7 +71,11 @@ export const VerifyEmailEffect = () => {
   }, []);
 
   if (isError) {
-    return <EmailVerificationSent email={email} isError={true} />;
+    return (
+      <Modal.Content isVerticalCentered isHorizontalCentered>
+        <EmailVerificationSent email={email} isError={true} />
+      </Modal.Content>
+    );
   }
 
   return <></>;

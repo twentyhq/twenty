@@ -29,6 +29,8 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
     const { authContext, objectMetadataMaps, objectMetadataItemWithFieldMaps } =
       executionArgs.options;
 
+    const { roleId } = executionArgs;
+
     const objectRecords: InsertResult = !executionArgs.args.upsert
       ? await executionArgs.repository.insert(executionArgs.args.data)
       : await executionArgs.repository.upsert(executionArgs.args.data, {
@@ -51,6 +53,7 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
       nonFormattedUpsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     this.apiEventEmitterService.emitCreateEvents(
@@ -70,6 +73,8 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
         dataSource: executionArgs.dataSource,
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
+        roleId,
+        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
 

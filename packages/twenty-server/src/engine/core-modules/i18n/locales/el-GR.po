@@ -113,6 +113,11 @@ msgstr "Ένα webhook"
 msgid "A workflow"
 msgstr "Μια ροή εργασιών"
 
+#. js-lingui-id: YwBCp8
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "A workflow automated trigger"
+msgstr ""
+
 #. js-lingui-id: juBVjt
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "A workflow event listener"
@@ -213,13 +218,13 @@ msgstr "Ένα συνημμένο"
 
 #. js-lingui-id: +bL++X
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "An audit log of actions performed in the system"
-msgstr "Ένα αρχείο ιστορικού ενεργειών που εκτελέστηκαν στο σύστημα"
+#~ msgid "An audit log of actions performed in the system"
+#~ msgstr "Ένα αρχείο ιστορικού ενεργειών που εκτελέστηκαν στο σύστημα"
 
 #. js-lingui-id: muVHgL
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "An event related to user behavior"
-msgstr "Ένα συμβάν σχετικό με τη συμπεριφορά χρήστη"
+#~ msgid "An event related to user behavior"
+#~ msgstr "Ένα συμβάν σχετικό με τη συμπεριφορά χρήστη"
 
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -364,19 +369,19 @@ msgstr "Συνημμένα συνδεδεμένα με το {label}"
 
 #. js-lingui-id: ilRCh1
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Audit Log"
-msgstr "Αρχείο Ελέγχου"
+#~ msgid "Audit Log"
+#~ msgstr "Αρχείο Ελέγχου"
 
 #. js-lingui-id: EPEFrH
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Audit Logs"
-msgstr "Αρχεία Ελέγχου"
+#~ msgid "Audit Logs"
+#~ msgstr "Αρχεία Ελέγχου"
 
 #. js-lingui-id: RqCC/0
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Audit Logs linked to the workspace member"
-msgstr "Αρχεία Ελέγχου που συνδέονται με το μέλος του χώρου εργασίας"
+#~ msgid "Audit Logs linked to the workspace member"
+#~ msgstr "Αρχεία Ελέγχου που συνδέονται με το μέλος του χώρου εργασίας"
 
 #. js-lingui-id: cNBqH+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -393,6 +398,16 @@ msgstr "Συγγραφέας"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Authored attachments"
 msgstr "Συνημμένα με συγγραφέα"
+
+#. js-lingui-id: cvSznK
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "Automated Trigger Type"
+msgstr ""
+
+#. js-lingui-id: 2mtBXs
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+msgid "Automated Triggers"
+msgstr ""
 
 #. js-lingui-id: RpExX0
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -416,13 +431,13 @@ msgstr "Διεύθυνση URL Εικονικής Εικόνας"
 
 #. js-lingui-id: 20B9kW
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Behavioral Event"
-msgstr "Γεγονός Συμπεριφοράς"
+#~ msgid "Behavioral Event"
+#~ msgstr "Γεγονός Συμπεριφοράς"
 
 #. js-lingui-id: Jeh/Q/
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Behavioral Events"
-msgstr "Γεγονότα Συμπεριφοράς"
+#~ msgid "Behavioral Events"
+#~ msgstr "Γεγονότα Συμπεριφοράς"
 
 #. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -767,13 +782,11 @@ msgstr "Εταιρεία Συμβάντος"
 #. js-lingui-id: FJ7QI4
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Event context"
-msgstr "Πλαίσιο Συμβάντος"
+#~ msgid "Event context"
+#~ msgstr "Πλαίσιο Συμβάντος"
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event details"
 msgstr "Λεπτομέρειες Συμβάντος"
 
@@ -799,17 +812,14 @@ msgstr "Ακροατήριο Συμβάντων"
 #. js-lingui-id: PYs3rP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event name"
 msgstr "Όνομα Συμβάντος"
 
 #. js-lingui-id: evIGwh
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Event name/type"
-msgstr "Όνομα/Τύπος Συμβάντος"
+#~ msgid "Event name/type"
+#~ msgstr "Όνομα/Τύπος Συμβάντος"
 
 #. js-lingui-id: vv99Wu
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -854,7 +864,6 @@ msgstr "Έκδοση Workflow Συμβάντος"
 
 #. js-lingui-id: LxOGsB
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event workspace member"
 msgstr "Μέλος Workspace Συμβάντος"
 
@@ -1152,8 +1161,8 @@ msgstr "Ιδανικό Προφίλ Πελάτη: Δείχνει εάν η ετ�
 
 #. js-lingui-id: NrA0WZ
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "If the event is related to a particular object"
-msgstr "Αν το γεγονός σχετίζεται με ένα συγκεκριμένο αντικείμενο"
+#~ msgid "If the event is related to a particular object"
+#~ msgstr "Αν το γεγονός σχετίζεται με ένα συγκεκριμένο αντικείμενο"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1202,8 +1211,8 @@ msgstr "Συμμετέχετε στην ομάδα σας στο Twenty"
 #. js-lingui-id: shbh25
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Json object to provide context (user, device, workspace, etc.)"
-msgstr "Αντικείμενο JSON για την παροχή πλαισίου (χρήστης, συσκευή, χώρος εργασίας, κλπ.)"
+#~ msgid "Json object to provide context (user, device, workspace, etc.)"
+#~ msgstr "Αντικείμενο JSON για την παροχή πλαισίου (χρήστης, συσκευή, χώρος εργασίας, κλπ.)"
 
 #. js-lingui-id: HgJ9jQ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -1222,8 +1231,6 @@ msgstr "Αντικείμενο JSON για την παροχή εναύσματ�
 
 #. js-lingui-id: TVc0/Q
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json value for event details"
 msgstr "Αξία JSON για λεπτομέρειες γεγονότος"
 
@@ -1609,14 +1616,14 @@ msgstr "Αριθμός εργαζομένων στην εταιρεία"
 
 #. js-lingui-id: hhe7Ce
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Object id"
-msgstr "Αναγνωριστικό αντικειμένου"
+#~ msgid "Object id"
+#~ msgstr "Αναγνωριστικό αντικειμένου"
 
 #. js-lingui-id: dnPgTI
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Object metadata id"
-msgstr "Αναγνωριστικό μετα-δεδομένων αντικειμένου"
+#~ msgid "Object metadata id"
+#~ msgstr "Αναγνωριστικό μετα-δεδομένων αντικειμένου"
 
 #. js-lingui-id: T/nPf5
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1627,8 +1634,8 @@ msgstr "Αναγνωριστικό Μετα-δεδομένων Αντικειμ�
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Object name"
-msgstr "Όνομα αντικειμένου"
+#~ msgid "Object name"
+#~ msgstr "Όνομα αντικειμένου"
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1841,8 +1848,8 @@ msgstr "Λήφθηκε στις"
 #. js-lingui-id: 4Tvtbu
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Record id"
-msgstr "Αναγνωριστικό εγγραφής"
+#~ msgid "Record id"
+#~ msgstr "Αναγνωριστικό εγγραφής"
 
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -1905,6 +1912,11 @@ msgstr "Διάνυσμα Αναζήτησης"
 msgid "Secret"
 msgstr "Μυστικό"
 
+#. js-lingui-id: Tz0i8g
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "Settings"
+msgstr ""
+
 #. js-lingui-id: Cj2Gtd
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Size"
@@ -1930,6 +1942,12 @@ msgstr "Κατάσταση"
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Statuses"
 msgstr "Καταστάσεις"
+
+#. js-lingui-id: g4jxXh
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
+msgid "Sub field name"
+msgstr ""
 
 #. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -2163,6 +2181,16 @@ msgstr "Ο φάκελος που ανήκει αυτό το αγαπημένο"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "The opportunity name"
 msgstr "Το όνομα της ευκαιρίας"
+
+#. js-lingui-id: 5N6QtE
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "The workflow automated trigger settings"
+msgstr ""
+
+#. js-lingui-id: SpKbfT
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "The workflow automated trigger type"
+msgstr ""
 
 #. js-lingui-id: 7mPrpl
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
@@ -2594,12 +2622,18 @@ msgstr "Καλώς ήρθατε στο Twenty: Παρακαλώ επιβεβαι
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Workflow"
 msgstr "Ροή Εργασίας"
+
+#. js-lingui-id: hdtWQn
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+msgid "Workflow automated triggers linked to the workflow."
+msgstr ""
 
 #. js-lingui-id: E03XpH
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -2690,6 +2724,21 @@ msgstr "Εκδόσεις Ροής Εργασίας"
 msgid "Workflow versions linked to the workflow."
 msgstr "Εκδόσεις ροής εργασίας συνδεδεμένες με τη ροή εργασίας."
 
+#. js-lingui-id: s7p+TL
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "WorkflowAutomatedTrigger"
+msgstr ""
+
+#. js-lingui-id: 96bCgZ
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "WorkflowAutomatedTrigger workflow"
+msgstr ""
+
+#. js-lingui-id: 5z92T9
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "WorkflowAutomatedTriggers"
+msgstr ""
+
 #. js-lingui-id: ENOy6I
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "WorkflowEventListener"
@@ -2728,7 +2777,6 @@ msgstr "Μέλος χώρου εργασίας"
 #. js-lingui-id: qc38qR
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts

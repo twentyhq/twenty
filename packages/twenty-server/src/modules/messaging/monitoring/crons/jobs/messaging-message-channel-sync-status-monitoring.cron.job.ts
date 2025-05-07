@@ -2,8 +2,8 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import snakeCase from 'lodash.snakecase';
-import { Repository } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -13,7 +13,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
+import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 
 export const MESSAGING_MESSAGE_CHANNEL_SYNC_STATUS_MONITORING_CRON_PATTERN =
   '2/10 * * * *'; //Every 10 minutes, starting at 2 minutes past the hour
@@ -27,7 +27,7 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly messagingTelemetryService: MessagingTelemetryService,
+    private readonly messagingMonitoringService: MessagingMonitoringService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
@@ -40,7 +40,7 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
   async handle(): Promise<void> {
     this.logger.log('Starting message channel sync status monitoring...');
 
-    await this.messagingTelemetryService.track({
+    await this.messagingMonitoringService.track({
       eventName: 'message_channel.monitoring.sync_status.start',
       message: 'Starting message channel sync status monitoring',
     });
@@ -66,7 +66,7 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
           if (!messageChannel.syncStatus) {
             continue;
           }
-          await this.messagingTelemetryService.track({
+          await this.messagingMonitoringService.track({
             eventName: `message_channel.monitoring.sync_status.${snakeCase(
               messageChannel.syncStatus,
             )}`,

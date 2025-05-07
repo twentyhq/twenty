@@ -20,11 +20,12 @@ import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/consta
 import { useMemo } from 'react';
 
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
-import { PublicWorkspaceDataOutput } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
+import { PublicWorkspaceDataOutput } from '~/generated/graphql';
 
 const StandardContent = ({
   workspacePublicData,
@@ -38,14 +39,14 @@ const StandardContent = ({
   title: string;
 }) => {
   return (
-    <>
+    <Modal.Content isVerticalCentered isHorizontalCentered>
       <AnimatedEaseIn>
         <Logo secondaryLogo={workspacePublicData?.logo} />
       </AnimatedEaseIn>
       <Title animate>{title}</Title>
       {signInUpForm}
       {signInUpStep !== SignInUpStep.Password && <FooterNote />}
-    </>
+    </Modal.Content>
   );
 };
 
@@ -119,7 +120,11 @@ export const SignInUp = () => {
   ]);
 
   if (signInUpStep === SignInUpStep.EmailVerification) {
-    return <EmailVerificationSent email={searchParams.get('email')} />;
+    return (
+      <Modal.Content isVerticalCentered isHorizontalCentered>
+        <EmailVerificationSent email={searchParams.get('email')} />
+      </Modal.Content>
+    );
   }
 
   return (

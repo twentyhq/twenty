@@ -2,9 +2,7 @@ import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useContext, useRef } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
-import { Key } from 'ts-key-enum';
 
-import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
@@ -28,13 +26,13 @@ import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { ViewType } from '@/views/types/ViewType';
+import { getIndexNeighboursElementsFromArray } from '~/utils/array/getIndexNeighboursElementsFromArray';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -65,7 +63,7 @@ export const RecordBoard = () => {
     useContext(RecordBoardContext);
   const boardRef = useRef<HTMLDivElement>(null);
 
-  const { toggleClickOutsideListener } = useClickOutsideListener(
+  const { toggleClickOutside } = useClickOutsideListener(
     RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
   );
 
@@ -76,11 +74,11 @@ export const RecordBoard = () => {
   const handleDragSelectionStart = () => {
     closeDropdown(actionMenuId);
 
-    toggleClickOutsideListener(false);
+    toggleClickOutside(false);
   };
 
   const handleDragSelectionEnd = () => {
-    toggleClickOutsideListener(true);
+    toggleClickOutside(true);
   };
 
   const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(
@@ -136,13 +134,6 @@ export const RecordBoard = () => {
   );
 
   useScopedHotkeys('ctrl+a,meta+a', selectAll, TableHotkeyScope.Table);
-  useScopedHotkeys('ctrl+a,meta+a', selectAll, ActionBarHotkeyScope.ActionBar);
-
-  useScopedHotkeys(
-    Key.Escape,
-    resetRecordSelection,
-    ActionBarHotkeyScope.ActionBar,
-  );
 
   const setIsRemoveSortingModalOpen = useSetRecoilState(
     isRemoveSortingModalOpenState,
@@ -183,14 +174,15 @@ export const RecordBoard = () => {
               )
             : destinationRecordByGroupIds;
 
-        const recordBeforeId =
-          otherRecordIdsInDestinationColumn[destinationIndexInColumn - 1];
+        const { before: recordBeforeId, after: recordAfterId } =
+          getIndexNeighboursElementsFromArray({
+            index: destinationIndexInColumn,
+            array: otherRecordIdsInDestinationColumn,
+          });
         const recordBefore = recordBeforeId
           ? getSnapshotValue(snapshot, recordStoreFamilyState(recordBeforeId))
           : null;
 
-        const recordAfterId =
-          otherRecordIdsInDestinationColumn[destinationIndexInColumn];
         const recordAfter = recordAfterId
           ? getSnapshotValue(snapshot, recordStoreFamilyState(recordAfterId))
           : null;
@@ -225,7 +217,7 @@ export const RecordBoard = () => {
 
   return (
     <RecordBoardScope
-      recordBoardScopeId={getScopeIdFromComponentId(recordBoardId)}
+      recordBoardScopeId={recordBoardId}
       onColumnsChange={() => {}}
       onFieldsChange={() => {}}
     >

@@ -1,4 +1,5 @@
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
@@ -9,6 +10,7 @@ import {
   AvatarChip,
   AvatarChipVariant,
   ChipSize,
+  ChipVariant,
   LinkAvatarChip,
 } from 'twenty-ui/components';
 import { isModifiedEvent } from 'twenty-ui/utilities';
@@ -46,7 +48,10 @@ export const RecordChip = ({
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
 
   // TODO temporary until we create a record show page for Workspaces members
-  if (forceDisableClick) {
+  if (
+    forceDisableClick ||
+    objectNameSingular === CoreObjectNameSingular.WorkspaceMember
+  ) {
     return (
       <AvatarChip
         size={size}
@@ -56,12 +61,14 @@ export const RecordChip = ({
         avatarType={recordChipData.avatarType}
         avatarUrl={recordChipData.avatarUrl ?? ''}
         className={className}
+        variant={ChipVariant.Static}
       />
     );
   }
 
   const isSidePanelViewOpenRecordInType =
     recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL;
+
   const onClick = isSidePanelViewOpenRecordInType
     ? () =>
         openRecordInCommandMenu({

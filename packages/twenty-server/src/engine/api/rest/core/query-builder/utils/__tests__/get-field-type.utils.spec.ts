@@ -32,6 +32,7 @@ describe('getFieldType', () => {
     ...objectMetadataItemMock,
     fieldsById,
     fieldsByName,
+    fieldsByJoinColumnName: {},
   };
 
   it('should get field type', () => {

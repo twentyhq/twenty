@@ -92,14 +92,16 @@ describe('useFieldPreviewValue', () => {
     );
 
     // Then
-    expect(result.current).toEqual({
-      __typename: 'Person',
-      id: '',
-      name: {
-        firstName: 'John',
-        lastName: 'Doe',
+    expect(result.current).toEqual([
+      {
+        __typename: 'Person',
+        id: '',
+        name: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
       },
-    });
+    ]);
   });
 
   it("returns the field's preview value for a Select field", () => {

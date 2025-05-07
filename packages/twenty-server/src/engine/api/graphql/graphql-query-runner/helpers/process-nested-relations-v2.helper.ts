@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
-  DataSource,
   FindOptionsRelations,
   ObjectLiteral,
   SelectQueryBuilder,
 } from 'typeorm';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -22,8 +21,9 @@ import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.typ
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { isFieldMetadataOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 @Injectable()
 export class ProcessNestedRelationsV2Helper {
@@ -41,6 +41,8 @@ export class ProcessNestedRelationsV2Helper {
     limit,
     authContext,
     dataSource,
+    roleId,
+    shouldBypassPermissionChecks,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -50,7 +52,9 @@ export class ProcessNestedRelationsV2Helper {
     aggregate?: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    dataSource: DataSource;
+    dataSource: WorkspaceDataSource;
+    shouldBypassPermissionChecks: boolean;
+    roleId?: string;
   }): Promise<void> {
     const processRelationTasks = Object.entries(relations).map(
       ([sourceFieldName, nestedRelations]) =>
@@ -65,6 +69,8 @@ export class ProcessNestedRelationsV2Helper {
           limit,
           authContext,
           dataSource,
+          shouldBypassPermissionChecks,
+          roleId,
         }),
     );
 
@@ -82,6 +88,8 @@ export class ProcessNestedRelationsV2Helper {
     limit,
     authContext,
     dataSource,
+    shouldBypassPermissionChecks,
+    roleId,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -92,13 +100,18 @@ export class ProcessNestedRelationsV2Helper {
     aggregate: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    dataSource: DataSource;
+    dataSource: WorkspaceDataSource;
+    shouldBypassPermissionChecks: boolean;
+    roleId?: string;
   }): Promise<void> {
     const sourceFieldMetadata =
       parentObjectMetadataItem.fieldsByName[sourceFieldName];
 
     if (
-      !isFieldMetadataOfType(sourceFieldMetadata, FieldMetadataType.RELATION)
+      !isFieldMetadataInterfaceOfType(
+        sourceFieldMetadata,
+        FieldMetadataType.RELATION,
+      )
     ) {
       // TODO: Maybe we should throw an error here ?
       return;
@@ -121,7 +134,10 @@ export class ProcessNestedRelationsV2Helper {
 
     const targetObjectRepository = dataSource.getRepository(
       targetObjectMetadata.nameSingular,
+      shouldBypassPermissionChecks,
+      roleId,
     );
+
     const targetObjectQueryBuilder = targetObjectRepository.createQueryBuilder(
       targetObjectMetadata.nameSingular,
     );
@@ -142,7 +158,7 @@ export class ProcessNestedRelationsV2Helper {
             ? `"${targetRelationName}Id"`
             : 'id',
         ids: relationIds,
-        limit,
+        limit: limit * parentObjectRecords.length,
         objectMetadataMaps,
         targetObjectMetadata,
         aggregate,
@@ -189,6 +205,8 @@ export class ProcessNestedRelationsV2Helper {
         limit,
         authContext,
         dataSource,
+        shouldBypassPermissionChecks,
+        roleId,
       });
     }
   }
@@ -306,6 +324,7 @@ export class ProcessNestedRelationsV2Helper {
       result,
       targetObjectMetadata,
       objectMetadataMaps,
+      true,
     );
 
     return { relationResults, relationAggregatedFieldsResult };

@@ -11,9 +11,9 @@ import {
   IconSquareRoundedCheck,
   IconX,
 } from 'twenty-ui/display';
+import { ProgressBar, useProgressAnimation } from 'twenty-ui/feedback';
 import { LightButton, LightIconButton } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { ProgressBar, useProgressAnimation } from 'twenty-ui/feedback';
 
 export enum SnackBarVariant {
   Default = 'default',
@@ -205,7 +205,7 @@ export const SnackBar = ({
       {...{ className, id, role, variant }}
     >
       <StyledProgressBar
-        color={theme.snackBar[variant].backgroundColor}
+        barColor={theme.snackBar[variant].backgroundColor}
         value={progressValue}
       />
       <StyledHeader>

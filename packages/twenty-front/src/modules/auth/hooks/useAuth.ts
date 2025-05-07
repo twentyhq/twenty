@@ -56,15 +56,16 @@ import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useL
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
 import { useSearchParams } from 'react-router-dom';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
+import { iconsState } from 'twenty-ui/display';
+import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { iconsState } from 'twenty-ui/display';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -73,9 +74,7 @@ export const useAuth = () => {
     currentWorkspaceMemberState,
   );
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
-  const setIsAppWaitingForFreshObjectMetadataState = useSetRecoilState(
-    isAppWaitingForFreshObjectMetadataState,
-  );
+
   const setCurrentWorkspaceMembers = useSetRecoilState(
     currentWorkspaceMembersState,
   );
@@ -83,6 +82,8 @@ export const useAuth = () => {
   const isEmailVerificationRequired = useRecoilValue(
     isEmailVerificationRequiredState,
   );
+
+  const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
 
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -312,7 +313,6 @@ export const useAuth = () => {
 
       setWorkspaces(validWorkspaces);
     }
-    setIsAppWaitingForFreshObjectMetadataState(true);
 
     return {
       user,
@@ -328,7 +328,6 @@ export const useAuth = () => {
     setCurrentWorkspaceMember,
     setCurrentWorkspaceMembers,
     setDateTimeFormat,
-    setIsAppWaitingForFreshObjectMetadataState,
     setLastAuthenticateWorkspaceDomain,
     setWorkspaces,
   ]);
@@ -350,10 +349,22 @@ export const useAuth = () => {
       setTokenPair(
         getAuthTokensResult.data?.getAuthTokensFromLoginToken.tokens,
       );
+      cookieStorage.setItem(
+        'tokenPair',
+        JSON.stringify(
+          getAuthTokensResult.data?.getAuthTokensFromLoginToken.tokens,
+        ),
+      );
 
+      await refreshObjectMetadataItems();
       await loadCurrentUser();
     },
-    [getAuthTokensFromLoginToken, setTokenPair, loadCurrentUser],
+    [
+      getAuthTokensFromLoginToken,
+      setTokenPair,
+      refreshObjectMetadataItems,
+      loadCurrentUser,
+    ],
   );
 
   const handleCredentialsSignIn = useCallback(
@@ -409,14 +420,12 @@ export const useAuth = () => {
       }
 
       if (isMultiWorkspaceEnabled) {
-        return redirectToWorkspaceDomain(
+        return await redirectToWorkspaceDomain(
           getWorkspaceUrl(signUpResult.data.signUp.workspace.workspaceUrls),
-
           isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
           {
             ...(!isEmailVerificationRequired && {
               loginToken: signUpResult.data.signUp.loginToken.token,
-              animateModal: false,
             }),
             email,
           },

@@ -3,13 +3,12 @@ import { useContext } from 'react';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { CellHotkeyScopeContext } from '@/object-record/record-table/contexts/CellHotkeyScopeContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
+import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 export const DEFAULT_CELL_SCOPE: HotkeyScope = {
@@ -27,7 +26,6 @@ export type OpenTableCellArgs = {
 };
 
 export const useOpenRecordTableCellFromCell = () => {
-  const customCellHotkeyScope = useContext(CellHotkeyScopeContext);
   const { recordId, fieldDefinition, isReadOnly } = useContext(FieldContext);
 
   const { pathToShowPage, objectNameSingular } =
@@ -35,7 +33,7 @@ export const useOpenRecordTableCellFromCell = () => {
 
   const { onOpenTableCell } = useRecordTableBodyContextOrThrow();
 
-  const cellPosition = useCurrentTableCellPosition();
+  const { cellPosition } = useContext(RecordTableCellContext);
 
   const openTableCell = (
     initialValue?: string,
@@ -44,7 +42,6 @@ export const useOpenRecordTableCellFromCell = () => {
   ) => {
     onOpenTableCell({
       cellPosition,
-      customCellHotkeyScope,
       recordId,
       fieldDefinition,
       isReadOnly,

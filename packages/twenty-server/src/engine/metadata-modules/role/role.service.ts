@@ -20,6 +20,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { isArgDefinedIfProvidedOrThrow } from 'src/engine/metadata-modules/utils/is-arg-defined-if-provided-or-throw.util';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 export class RoleService {
   constructor(
@@ -30,6 +31,7 @@ export class RoleService {
     @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
     private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
     private readonly userRoleService: UserRoleService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   public async getWorkspaceRoles(workspaceId: string): Promise<RoleEntity[]> {
@@ -37,7 +39,11 @@ export class RoleService {
       where: {
         workspaceId,
       },
-      relations: ['userWorkspaceRoles', 'settingPermissions'],
+      relations: [
+        'userWorkspaceRoles',
+        'settingPermissions',
+        'objectPermissions',
+      ],
     });
   }
 
@@ -63,7 +69,7 @@ export class RoleService {
   }): Promise<RoleEntity> {
     await this.validateRoleInput({ input, workspaceId });
 
-    return this.roleRepository.save({
+    const role = await this.roleRepository.save({
       label: input.label,
       description: input.description,
       icon: input.icon,
@@ -75,6 +81,13 @@ export class RoleService {
       isEditable: true,
       workspaceId,
     });
+
+    await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
+      workspaceId,
+      roleIds: [role.id],
+    });
+
+    return role;
   }
 
   public async updateRole({
@@ -112,6 +125,11 @@ export class RoleService {
     const updatedRole = await this.roleRepository.save({
       id: input.id,
       ...input.update,
+    });
+
+    await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
+      workspaceId,
+      roleIds: [input.id],
     });
 
     return { ...existingRole, ...updatedRole };
@@ -173,6 +191,10 @@ export class RoleService {
 
     await this.roleRepository.delete({
       id: roleId,
+      workspaceId,
+    });
+
+    await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
     });
 
@@ -291,10 +313,11 @@ export class RoleService {
     workspaceId: string;
     defaultRoleId: string;
   }): Promise<void> {
-    const userWorkspaceIds = await this.getUserWorkspaceIdsForRole(
-      roleId,
-      workspaceId,
-    );
+    const userWorkspaceIds =
+      await this.userRoleService.getUserWorkspaceIdsAssignedToRole(
+        roleId,
+        workspaceId,
+      );
 
     await Promise.all(
       userWorkspaceIds.map((userWorkspaceId) =>
@@ -305,24 +328,6 @@ export class RoleService {
         }),
       ),
     );
-  }
-
-  private async getUserWorkspaceIdsForRole(
-    roleId: string,
-    workspaceId: string,
-  ): Promise<string[]> {
-    return this.userWorkspaceRoleRepository
-      .find({
-        where: {
-          roleId: roleId,
-          workspaceId,
-        },
-      })
-      .then((userWorkspaceRoles) =>
-        userWorkspaceRoles.map(
-          (userWorkspaceRole) => userWorkspaceRole.userWorkspaceId,
-        ),
-      );
   }
 
   private async getRole(

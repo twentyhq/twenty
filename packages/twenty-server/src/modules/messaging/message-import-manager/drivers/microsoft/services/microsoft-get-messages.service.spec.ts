@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
 import {
   microsoftGraphBatchWithHtmlMessagesResponse,
@@ -21,7 +21,6 @@ describe('Microsoft get messages service', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [EnvironmentModule.forRoot({})],
       providers: [
         MicrosoftGetMessagesService,
         MicrosoftHandleErrorService,
@@ -29,12 +28,20 @@ describe('Microsoft get messages service', () => {
         MicrosoftOAuth2ClientManagerService,
         MicrosoftFetchByBatchService,
         ConfigService,
+        {
+          provide: TwentyConfigService,
+          useValue: {},
+        },
       ],
     }).compile();
 
     service = module.get<MicrosoftGetMessagesService>(
       MicrosoftGetMessagesService,
     );
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('Should be defined', () => {

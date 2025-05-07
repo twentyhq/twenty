@@ -19,6 +19,7 @@ export enum ChipVariant {
   Regular = 'regular',
   Transparent = 'transparent',
   Rounded = 'rounded',
+  Static = 'static',
 }
 
 export type ChipProps = {
@@ -30,10 +31,14 @@ export type ChipProps = {
   maxWidth?: number;
   variant?: ChipVariant;
   accent?: ChipAccent;
-  leftComponent?: (() => ReactNode) | null;
+  leftComponent?: ReactNode | null;
   rightComponent?: (() => ReactNode) | null;
   className?: string;
 };
+
+const StyledDiv = withTheme(styled.div<{ theme: Theme }>`
+  color: ${({ theme }) => theme.font.color.tertiary};
+`);
 
 const StyledContainer = withTheme(styled.div<
   Pick<
@@ -85,7 +90,9 @@ const StyledContainer = withTheme(styled.div<
         ? theme.background.transparent.light
         : variant === ChipVariant.Highlighted
           ? theme.background.transparent.medium
-          : 'inherit'};
+          : variant === ChipVariant.Static
+            ? theme.background.transparent.light
+            : 'inherit'};
   }
 
   &:active {
@@ -94,11 +101,13 @@ const StyledContainer = withTheme(styled.div<
         ? theme.background.transparent.medium
         : variant === ChipVariant.Highlighted
           ? theme.background.transparent.strong
-          : 'inherit'};
+          : variant === ChipVariant.Static
+            ? theme.background.transparent.light
+            : 'inherit'};
   }
 
   background-color: ${({ theme, variant }) =>
-    variant === ChipVariant.Highlighted
+    variant === ChipVariant.Highlighted || variant === ChipVariant.Static
       ? theme.background.transparent.light
       : variant === ChipVariant.Rounded
         ? theme.background.transparent.lighter
@@ -146,9 +155,11 @@ export const Chip = ({
       className={className}
       maxWidth={maxWidth}
     >
-      {leftComponent?.()}
-      {!isLabelHidden && (
+      {leftComponent}
+      {!isLabelHidden && label && label.trim() ? (
         <OverflowingTextWithTooltip size={size} text={label} />
+      ) : (
+        <StyledDiv>Untitled</StyledDiv>
       )}
       {rightComponent?.()}
     </StyledContainer>

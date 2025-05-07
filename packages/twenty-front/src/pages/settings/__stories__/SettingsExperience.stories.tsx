@@ -9,8 +9,6 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { userEvent, within } from '@storybook/test';
 import { SettingsExperience } from '../profile/appearance/components/SettingsExperience';
 
-Date.now = () => new Date('2022-06-13T12:33:37.000Z').getTime();
-
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsExperience',
   component: SettingsExperience,
@@ -44,15 +42,15 @@ export const DateTimeSettingsTimeFormat: Story = {
 
     await canvas.findByText('Date and time');
 
-    const timeFormatSelect = await canvas.findByText('24h (08:33)');
+    const timeFormatSelect = await canvas.findByText('24h (05:30)');
 
-    userEvent.click(timeFormatSelect);
+    await userEvent.click(timeFormatSelect);
 
-    const timeFormatOptions = await canvas.findByText('12h (8:33 AM)');
+    const timeFormatOptions = await canvas.findByText('12h (5:30 AM)');
 
-    userEvent.click(timeFormatOptions);
+    await userEvent.click(timeFormatOptions);
 
-    await canvas.findByText('12h (8:33 AM)');
+    await canvas.findByText('12h (5:30 AM)');
   },
 };
 
@@ -66,13 +64,13 @@ export const DateTimeSettingsTimezone: Story = {
       '(GMT-04:00) Eastern Daylight Time - New York',
     );
 
-    userEvent.click(timezoneSelect);
+    await userEvent.click(timezoneSelect);
 
     const systemSettingsOptions = await canvas.findByText(
       '(GMT-11:00) Niue Time',
     );
 
-    userEvent.click(systemSettingsOptions);
+    await userEvent.click(systemSettingsOptions);
 
     await canvas.findByText('(GMT-11:00) Niue Time');
   },
@@ -84,14 +82,14 @@ export const DateTimeSettingsDateFormat: Story = {
 
     await canvas.findByText('Date and time');
 
-    const timeFormatSelect = await canvas.findByText('13 Jun, 2022');
+    const timeFormatSelect = await canvas.findByText('12 Mar, 2024');
 
-    userEvent.click(timeFormatSelect);
+    await userEvent.click(timeFormatSelect);
 
-    const timeFormatOptions = await canvas.findByText('Jun 13, 2022');
+    const timeFormatOptions = await canvas.findByText('Mar 12, 2024');
 
-    userEvent.click(timeFormatOptions);
+    await userEvent.click(timeFormatOptions);
 
-    await canvas.findByText('Jun 13, 2022');
+    await canvas.findByText('Mar 12, 2024');
   },
 };

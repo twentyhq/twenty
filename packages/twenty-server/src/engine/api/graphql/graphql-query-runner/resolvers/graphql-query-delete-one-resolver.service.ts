@@ -31,6 +31,8 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
 
+    const { roleId } = executionArgs;
+
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
@@ -45,6 +47,7 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
       nonFormattedDeletedObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     this.apiEventEmitterService.emitDeletedEvents(
@@ -73,6 +76,8 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
         dataSource: executionArgs.dataSource,
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
+        roleId,
+        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
 

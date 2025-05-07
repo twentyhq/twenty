@@ -15,8 +15,11 @@ import {
 } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
+import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -28,6 +31,10 @@ export const useOpenFieldInputEditMode = () => {
   const { openActivityTargetCellEditMode } =
     useOpenActivityTargetCellEditMode();
 
+  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope(
+    INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
+  );
+
   const openFieldInput = useRecoilCallback(
     ({ snapshot }) =>
       ({
@@ -37,13 +44,6 @@ export const useOpenFieldInputEditMode = () => {
         fieldDefinition: FieldDefinition<FieldMetadata>;
         recordId: string;
       }) => {
-        if (isFieldRelationToOneObject(fieldDefinition)) {
-          openRelationToOneFieldInput({
-            fieldName: fieldDefinition.metadata.fieldName,
-            recordId: recordId,
-          });
-        }
-
         if (
           isFieldRelationFromManyObjects(fieldDefinition) &&
           ['taskTarget', 'noteTarget'].includes(
@@ -80,6 +80,15 @@ export const useOpenFieldInputEditMode = () => {
           return;
         }
 
+        if (isFieldRelationToOneObject(fieldDefinition)) {
+          openRelationToOneFieldInput({
+            fieldName: fieldDefinition.metadata.fieldName,
+            recordId: recordId,
+          });
+
+          return;
+        }
+
         if (isFieldRelationFromManyObjects(fieldDefinition)) {
           if (
             isDefined(
@@ -92,13 +101,20 @@ export const useOpenFieldInputEditMode = () => {
                 fieldDefinition.metadata.relationObjectMetadataNameSingular,
               recordId: recordId,
             });
+            return;
           }
         }
+
+        setHotkeyScopeAndMemorizePreviousScope(
+          DEFAULT_CELL_SCOPE.scope,
+          DEFAULT_CELL_SCOPE.customScopes,
+        );
       },
     [
       openActivityTargetCellEditMode,
       openRelationFromManyFieldInput,
       openRelationToOneFieldInput,
+      setHotkeyScopeAndMemorizePreviousScope,
     ],
   );
 

@@ -68,6 +68,7 @@ msgstr ": Idag"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "[empty string]"
 msgstr ""
 
@@ -93,8 +94,8 @@ msgid "{contextStoreNumberOfSelectedRecords} selected"
 msgstr "{contextStoreNumberOfSelectedRecords} valda"
 
 #. js-lingui-id: 6j5rE1
-#: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx
-#: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
+#: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
 msgid "{name}"
 msgstr "{name}"
 
@@ -121,8 +122,13 @@ msgstr "1. Typ"
 
 #. js-lingui-id: AvXug3
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "10 000 workflow node executions"
-msgstr "10 000 utf\\u00f6randen av arbetsfl\\u00f6desnoder"
+#~ msgid "10 000 workflow node executions"
+#~ msgstr "10 000 utf\\u00f6randen av arbetsfl\\u00f6desnoder"
+
+#. js-lingui-id: 7IIx+y
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "10,000 workflow node executions"
+msgstr ""
 
 #. js-lingui-id: 4EdXYs
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -142,8 +148,13 @@ msgstr "2. Konfigurera f\\u00e4lt"
 
 #. js-lingui-id: kAtmAv
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "20 000 workflow node executions"
-msgstr "20 000 utf\\u00f6randen av arbetsfl\\u00f6desnoder"
+#~ msgid "20 000 workflow node executions"
+#~ msgstr "20 000 utf\\u00f6randen av arbetsfl\\u00f6desnoder"
+
+#. js-lingui-id: YfwnsU
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "20,000 workflow node executions"
+msgstr ""
 
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -156,14 +167,24 @@ msgid "A shared environment where you will be able to manage your customer relat
 msgstr "En delad milj\\u00f6 d\\u00e4r du kommer att kunna hantera dina kundrelationer tillsammans med ditt team."
 
 #. js-lingui-id: JE9zuL
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Ability to edit all settings"
 msgstr ""
 
 #. js-lingui-id: 09tRFp
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
-msgid "Ability to interact with each object"
-msgstr "Möjlighet att interagera med varje objekt"
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+#~ msgid "Ability to interact with each object"
+#~ msgstr "Möjlighet att interagera med varje objekt"
+
+#. js-lingui-id: 4lzAkF
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "Ability to interact with specific objects"
+msgstr ""
+
+#. js-lingui-id: nJHSWx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "Ability to interact with this specific object"
+msgstr ""
 
 #. js-lingui-id: ssjjFt
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -212,20 +233,27 @@ msgid "Action"
 msgstr "Åtgärder"
 
 #. js-lingui-id: 7L01XJ
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 msgid "Actions"
 msgstr "Åtgärder"
+
+#. js-lingui-id: Ws0qQB
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Actions you can perform on all objects"
+msgstr ""
 
 #. js-lingui-id: FQBaXG
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Activate"
 msgstr "Aktivera"
 
 #. js-lingui-id: tu8A/k
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Activate Workflow"
 msgstr "Aktivera arbetsfl\\u00f6de"
 
@@ -262,7 +290,7 @@ msgid "Add Field"
 msgstr "L\\u00e4gg till f\\u00e4lt"
 
 #. js-lingui-id: vCSBPD
-#: src/modules/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton.tsx
+#: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
 msgid "Add filter"
 msgstr "Lägg till filter"
 
@@ -282,8 +310,13 @@ msgid "Add option"
 msgstr "Lägg till alternativ"
 
 #. js-lingui-id: M067Bn
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Add or remove users"
+msgstr ""
+
+#. js-lingui-id: O8tK4v
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "Add rule"
 msgstr ""
 
 #. js-lingui-id: sgXUv+
@@ -303,10 +336,10 @@ msgid "Add to Favorite"
 msgstr "Lägg till i favoriter"
 
 #. js-lingui-id: pBsoKL
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Add to favorites"
 msgstr "L\\u00e4gg till i favoriter"
 
@@ -341,19 +374,18 @@ msgid "Adjust the role-related settings"
 msgstr "Justera de rollrelaterade inställningarna"
 
 #. js-lingui-id: g1in8j
-#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Admin Panel"
 msgstr "Administratörspanel"
 
 #. js-lingui-id: ae6Tab
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
-msgid "Admin settings and system tools"
-msgstr ""
+#~ msgid "Admin settings and system tools"
+#~ msgstr ""
 
 #. js-lingui-id: sxkWRg
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
@@ -361,12 +393,12 @@ msgid "Advanced"
 msgstr ""
 
 #. js-lingui-id: tMFFwF
-#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
+#: src/modules/views/components/ViewBarFilterDropdownAdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "Avancerat filter"
 
 #. js-lingui-id: WsKDNF
-#: src/modules/navigation/components/AppNavigationDrawer.tsx
+#: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 msgid "Advanced:"
 msgstr "Avancerat:"
 
@@ -396,7 +428,7 @@ msgid "All emails and events linked to this account will be deleted"
 msgstr "Alla e-post och händelser kopplade till detta konto kommer att raderas"
 
 #. js-lingui-id: 623MHa
-#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+#: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "All lines"
 msgstr "Alla rader"
 
@@ -494,7 +526,7 @@ msgid "API keys"
 msgstr "API-nycklar"
 
 #. js-lingui-id: vByqA1
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "API Keys & Webhooks"
 msgstr ""
 
@@ -551,8 +583,13 @@ msgstr "Arabic"
 
 #. js-lingui-id: 3iX0kh
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Are you sure that you want to change your billing interval?"
-msgstr "Är du säker på att du vill ändra din faktureringsintervall?"
+#~ msgid "Are you sure that you want to change your billing interval?"
+#~ msgstr "Är du säker på att du vill ändra din faktureringsintervall?"
+
+#. js-lingui-id: CWb74a
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Are you sure that you want to change your billing interval? You will be charged immediately for the full year."
+msgstr ""
 
 #. js-lingui-id: 3SRf5B
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
@@ -565,7 +602,7 @@ msgstr "Är du säker på att du vill ändra din faktureringsintervall?"
 #~ msgstr "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
 
 #. js-lingui-id: 2BZAqa
-#: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
+#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
 msgid "Are you sure you want to delete these records? They can be recovered from the Command menu."
 msgstr "Är du säker på att du vill ta bort dessa poster? De kan återställas från Kommandomenyn."
 
@@ -575,7 +612,7 @@ msgstr "Är du säker på att du vill ta bort dessa poster? De kan återställas
 #~ msgstr "Are you sure you want to delete this record? It can be recovered from the Command menu ({osControlSymbol} + K)."
 
 #. js-lingui-id: yb2hF4
-#: src/modules/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction.tsx
+#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
 msgid "Are you sure you want to delete this record? It can be recovered from the Command menu."
 msgstr "Är du säker på att du vill ta bort denna post? Den kan återställas från kommandomenyn."
 
@@ -681,6 +718,11 @@ msgstr "Skapa automatiskt personposter när du tar emot eller skickar e-post"
 msgid "Average"
 msgstr "Genomsnittlig"
 
+#. js-lingui-id: iH8pgl
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
+msgid "Back"
+msgstr ""
+
 #. js-lingui-id: Dht9W3
 #: src/pages/not-found/NotFound.tsx
 msgid "Back to content"
@@ -763,8 +805,8 @@ msgstr "Avbryt"
 
 #. js-lingui-id: 0TllC8
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Cancel anytime"
-msgstr "Avsluta när som helst"
+#~ msgid "Cancel anytime"
+#~ msgstr "Avsluta när som helst"
 
 #. js-lingui-id: rRK/Lf
 #: src/pages/settings/SettingsBilling.tsx
@@ -783,8 +825,8 @@ msgstr "Catalan"
 
 #. js-lingui-id: OfzMnb
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Change {to}"
-msgstr "Ändra till {to}"
+#~ msgid "Change {to}"
+#~ msgstr "Ändra till {to}"
 
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
@@ -792,6 +834,21 @@ msgstr "Ändra till {to}"
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Change Password"
 msgstr "Byt Lösenord"
+
+#. js-lingui-id: wRtBJP
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "Change Plan"
+msgstr ""
+
+#. js-lingui-id: EYSFEW
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Change subdomain?"
+msgstr ""
+
+#. js-lingui-id: b0h4XW
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Change to yearly"
+msgstr ""
 
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -823,6 +880,11 @@ msgstr "Välj standardvalutan som kommer att användas"
 msgid "Choose the fields that will identify your records"
 msgstr "Välj de fält som kommer att identifiera dina poster"
 
+#. js-lingui-id: hIJigY
+#: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
+msgid "Choose the format used to display date value"
+msgstr ""
+
 #. js-lingui-id: KT6rEB
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
 msgid "Choose your provider"
@@ -837,6 +899,16 @@ msgstr "Välj din provperiod"
 #: src/modules/ui/input/components/internal/date/components/InternalDatePicker.tsx
 msgid "Clear"
 msgstr "Rensa"
+
+#. js-lingui-id: wu0RfR
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "Clear the field or \"X\" to revert to environment/default value."
+msgstr ""
+
+#. js-lingui-id: b8wwse
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "Click on the checkmark to apply your changes."
+msgstr ""
 
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -872,6 +944,7 @@ msgstr "Kod"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Collapse"
 msgstr "Kollapsa"
 
@@ -891,8 +964,15 @@ msgid "Compact view"
 msgstr "Kompakt vy"
 
 #. js-lingui-id: s2QZS6
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Companies"
+msgstr ""
+
+#. js-lingui-id: Vj43Y/
+#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
+#: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+msgid "Config Variables"
 msgstr ""
 
 #. js-lingui-id: +zUMwJ
@@ -967,7 +1047,6 @@ msgstr "Sammanhang"
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/auth/SignInUpLoading.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
@@ -997,7 +1076,7 @@ msgstr ""
 #. js-lingui-id: u+VWhB
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminEnvCopyableText.tsx
+#: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigCopyableText.tsx
 msgid "Copied to clipboard!"
 msgstr "Kopierad till urklipp!"
 
@@ -1035,13 +1114,23 @@ msgid "Copy this key as it will not be visible again"
 msgstr "Kopiera denna nyckel då den inte kommer att vara synlig igen"
 
 #. js-lingui-id: SGsgDO
-#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+#: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
 msgid "Core"
 msgstr "Kärna"
 
 #. js-lingui-id: w5Stxm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Correct the issues and fill the missing data."
+msgstr ""
+
+#. js-lingui-id: I99Miw
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Cost"
+msgstr ""
+
+#. js-lingui-id: iX2opZ
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Cost per 1k Extra Credits"
 msgstr ""
 
 #. js-lingui-id: s8lFtq
@@ -1103,12 +1192,12 @@ msgid "Create API key"
 msgstr "Skapa API-nyckel"
 
 #. js-lingui-id: d0DCww
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Create new record"
 msgstr "Skapa ny post"
 
 #. js-lingui-id: UDbEyl
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Create new workflow"
 msgstr ""
 
@@ -1158,6 +1247,11 @@ msgstr "Skapa din arbetsyta"
 msgid "Created"
 msgstr "Skapad"
 
+#. js-lingui-id: 6YzXhC
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "Current value from server environment. Set a custom value to override."
+msgstr ""
+
 #. js-lingui-id: Hd06oy
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Current version"
@@ -1167,6 +1261,11 @@ msgstr "Nuvarande version"
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 #~ msgid "Current version:"
 #~ msgstr "Current version:"
+
+#. js-lingui-id: 8Tg/JR
+#: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
+msgid "Custom"
+msgstr ""
 
 #. js-lingui-id: XQ681Q
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
@@ -1241,7 +1340,7 @@ msgid "Data model"
 msgstr "Datamodell"
 
 #. js-lingui-id: 4BuYDo
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Data Model"
 msgstr ""
 
@@ -1250,6 +1349,11 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Data type"
 msgstr "Datatyp"
+
+#. js-lingui-id: GEMJqo
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "Database configuration is currently disabled."
+msgstr ""
 
 #. js-lingui-id: mYGY3B
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -1273,7 +1377,7 @@ msgstr "Datumformat"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Deactivate"
 msgstr "Inaktivera"
 
@@ -1294,14 +1398,19 @@ msgid "Deactivate this field"
 msgstr "Inaktivera detta fält"
 
 #. js-lingui-id: 4tpC8V
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Deactivate Workflow"
 msgstr "Inaktivera arbetsflöde"
 
 #. js-lingui-id: yAT3be
-#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+#: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "Deactivated"
 msgstr "Inaktiverad"
+
+#. js-lingui-id: ovBPCi
+#: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
+msgid "Default"
+msgstr ""
 
 #. js-lingui-id: mC21D6
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
@@ -1312,6 +1421,11 @@ msgstr "Standardland"
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "Default Country Code"
 msgstr "Standardlandskod"
+
+#. js-lingui-id: TlEEts
+#: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
+msgid "Default value"
+msgstr ""
 
 #. js-lingui-id: aQ8swY
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -1325,7 +1439,7 @@ msgid "Define the name and description of your object"
 msgstr "Definiera namnet och beskrivningen av ditt objekt"
 
 #. js-lingui-id: Ntu10D
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Define user roles and access levels"
 msgstr ""
 
@@ -1343,13 +1457,11 @@ msgstr "Definiera vad som ska vara synligt för andra användare i din arbetsyta
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete"
 msgstr "Ta bort"
 
@@ -1377,12 +1489,17 @@ msgstr "Ta bort API-nyckel"
 #~ msgstr "Ta bort post"
 
 #. js-lingui-id: kf0A63
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete records"
 msgstr "Ta bort poster"
 
+#. js-lingui-id: 0ptEoK
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "Delete Records on {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: mcXHCJ
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Delete Records on All Objects"
 msgstr ""
 
@@ -1404,12 +1521,12 @@ msgid "Delete webhook"
 msgstr "Ta bort webhook"
 
 #. js-lingui-id: UA2IpC
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Delete workflow"
 msgstr "Ta bort arbetsflöde"
 
 #. js-lingui-id: ABwG9x
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Delete workflows"
 msgstr "Ta bort arbetsflöden"
 
@@ -1435,7 +1552,7 @@ msgstr "Raderad"
 #~ msgstr "Deleted {objectNamePlural}"
 
 #. js-lingui-id: WH/5rN
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Deleted records"
 msgstr "Raderade poster"
 
@@ -1464,18 +1581,23 @@ msgstr "Fallande"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
 msgid "Description"
 msgstr "Beskrivning"
 
 #. js-lingui-id: 2xxBws
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Destroy"
 msgstr "Förstör"
 
+#. js-lingui-id: fq4Wxy
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "Destroy Records on {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: L68qSB
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Destroy Records on All Objects"
 msgstr ""
 
@@ -1485,8 +1607,8 @@ msgid "Developers"
 msgstr "Utvecklare"
 
 #. js-lingui-id: zAg2B9
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Discard Draft"
 msgstr "Kassera utkast"
 
@@ -1502,8 +1624,13 @@ msgstr "Visa som ett vanligt nummer eller en procentandel"
 
 #. js-lingui-id: i66xz9
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
-msgid "Display as relative date"
-msgstr "Visa som relativt datum"
+#~ msgid "Display as relative date"
+#~ msgstr "Visa som relativt datum"
+
+#. js-lingui-id: e/xgrw
+#: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
+msgid "Display Format"
+msgstr ""
 
 #. js-lingui-id: GoHpxA
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
@@ -1512,6 +1639,7 @@ msgstr "Visa text på flera rader"
 
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn.tsx
+#: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Do not import"
 msgstr ""
 
@@ -1587,6 +1715,8 @@ msgstr "Tidigaste datumet"
 #. js-lingui-id: ePK91l
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Edit"
 msgstr "Redigera"
 
@@ -1596,7 +1726,7 @@ msgid "Edit billing interval"
 msgstr "Redigera faktureringsintervall"
 
 #. js-lingui-id: 6vZ75d
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Edit CRM data structure and fields"
 msgstr ""
 
@@ -1615,8 +1745,13 @@ msgstr "Redigera fält"
 msgid "Edit payment method, see your invoices and more"
 msgstr "Redigera betalningsmetod, se dina fakturor och mer"
 
+#. js-lingui-id: MGkYcE
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "Edit Records on {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: 6n2zpV
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Edit Records on All Objects"
 msgstr ""
 
@@ -1716,6 +1851,7 @@ msgstr "Tom"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Array"
 msgstr "Tom Array"
 
@@ -1723,6 +1859,7 @@ msgstr "Tom Array"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Object"
 msgstr "Tomt Objekt"
 
@@ -1740,6 +1877,16 @@ msgstr "Engelska"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "Njut av en {withCreditCardTrialPeriodDuration}-dagars gratis provperiod"
+
+#. js-lingui-id: oiVP/+
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
+msgid "Enter a value to store in database"
+msgstr ""
+
+#. js-lingui-id: 9/30HU
+#: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
+msgid "Enter in <0>Unicode</0> format"
+msgstr ""
 
 #. js-lingui-id: XJU8BD
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -1768,8 +1915,13 @@ msgstr "Enhets-ID kopierat till urklipp"
 
 #. js-lingui-id: 7RnAWe
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
-msgid "Env Variables"
-msgstr "Miljövariabler"
+#~ msgid "Env Variables"
+#~ msgstr "Miljövariabler"
+
+#. js-lingui-id: vPWtZ+
+#: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
+msgid "Environment variable"
+msgstr ""
 
 #. js-lingui-id: XOEl9R
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
@@ -1796,6 +1948,11 @@ msgstr "Fel vid radering av SSO-identitetsleverantör"
 msgid "Error editing SSO Identity Provider"
 msgstr "Fel vid redigering av SSO-identitetsleverantör"
 
+#. js-lingui-id: 2GvilU
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
+msgid "Error loading message"
+msgstr ""
+
 #. js-lingui-id: bj7nh3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error regenerating api key: {err}"
@@ -1806,10 +1963,20 @@ msgstr "Fel vid regenerering av api-nyckel: {err}"
 msgid "Error resending invitation"
 msgstr "Fel vid omförsök av inbjudan"
 
+#. js-lingui-id: QmR+2U
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "Error while ending trial period. Please contact Twenty team."
+msgstr ""
+
 #. js-lingui-id: VSQxWH
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Error while switching subscription {to}."
-msgstr "Fel vid byte av prenumeration {to}."
+#~ msgid "Error while switching subscription {to}."
+#~ msgstr "Fel vid byte av prenumeration {to}."
+
+#. js-lingui-id: k06M7e
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Error while switching subscription to yearly."
+msgstr ""
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -1865,8 +2032,8 @@ msgstr ""
 
 #. js-lingui-id: LFNXuj
 #: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
-msgid "Exit Full Screen"
-msgstr "Avsluta helskärm"
+#~ msgid "Exit Full Screen"
+#~ msgstr "Avsluta helskärm"
 
 #. js-lingui-id: XB4onr
 #: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
@@ -1874,7 +2041,7 @@ msgid "Exit import flow"
 msgstr ""
 
 #. js-lingui-id: IZ4o2e
-#: src/modules/navigation/components/AppNavigationDrawer.tsx
+#: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 msgid "Exit Settings"
 msgstr "Avsluta inställningar"
 
@@ -1882,6 +2049,7 @@ msgstr "Avsluta inställningar"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Expand"
 msgstr "Expandera"
 
@@ -1920,12 +2088,13 @@ msgstr "Löper ut om"
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
-#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export"
 msgstr "Exportera"
 
@@ -1935,49 +2104,49 @@ msgstr "Exportera"
 #~ msgstr "Exportera post"
 
 #. js-lingui-id: ep2rbf
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export records"
 msgstr "Exportera poster"
 
 #. js-lingui-id: iHK6np
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "Export run"
 msgstr "Exportera körning"
 
 #. js-lingui-id: vwtAUW
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "Export runs"
 msgstr "Exportera körningar"
 
 #. js-lingui-id: q46CjD
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export to PDF"
 msgstr "Exportera till PDF"
 
 #. js-lingui-id: BuprEs
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Export version"
 msgstr "Exportera version"
 
 #. js-lingui-id: 4FLUle
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Export versions"
 msgstr "Exportera versioner"
 
 #. js-lingui-id: DaGxE0
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export view"
 msgstr "Exportera vy"
 
 #. js-lingui-id: +FMXdE
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Export workflow"
 msgstr "Exportera arbetsflöde"
 
 #. js-lingui-id: XcAij/
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Export workflows"
 msgstr "Exportera arbetsflöden"
 
@@ -1986,13 +2155,28 @@ msgstr "Exportera arbetsflöden"
 #~ msgid "Export Workflows"
 #~ msgstr "Export Workflows"
 
+#. js-lingui-id: uE7S0L
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Extra Credits Used"
+msgstr ""
+
+#. js-lingui-id: bVax4d
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Failed to remove  override"
+msgstr ""
+
+#. js-lingui-id: Dzh4a2
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Failed to update variable"
+msgstr ""
+
 #. js-lingui-id: jARNNi
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
-msgid "Failed to validate API key. Please check your API key and try again."
-msgstr "Det gick inte att validera API-nyckeln. Kontrollera din API-nyckel och försök igen."
+#~ msgid "Failed to validate API key. Please check your API key and try again."
+#~ msgstr "Det gick inte att validera API-nyckeln. Kontrollera din API-nyckel och försök igen."
 
 #. js-lingui-id: ocUvR+
-#: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
+#: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "False"
 msgstr "Falskt"
@@ -2038,9 +2222,8 @@ msgid "Fields Count"
 msgstr "Antal fält"
 
 #. js-lingui-id: o7J4JM
+#: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
-#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx
-#: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx
 msgid "Filter"
 msgstr "Filtrera"
 
@@ -2060,17 +2243,17 @@ msgid "Finnish"
 msgstr "Finnish"
 
 #. js-lingui-id: ZyIk6Y
-#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+#: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "First 10 lines"
 msgstr "Första 10 raderna"
 
 #. js-lingui-id: I3hko2
-#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+#: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "First 2 lines"
 msgstr "Första 2 raderna"
 
 #. js-lingui-id: BDDkm3
-#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+#: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "First 5 lines"
 msgstr "Första 5 raderna"
 
@@ -2085,6 +2268,16 @@ msgstr "Förnamn"
 msgid "Forgot your password?"
 msgstr "Glömt ditt lösenord?"
 
+#. js-lingui-id: abDZwc
+#: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
+msgid "Format e.g. d-MMM-y (qqq''yy)"
+msgstr ""
+
+#. js-lingui-id: wjsFMQ
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Free Credits Used"
+msgstr ""
+
 #. js-lingui-id: nLC6tu
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "French"
@@ -2092,13 +2285,13 @@ msgstr "Franska"
 
 #. js-lingui-id: aTieE0
 #: src/pages/settings/SettingsBilling.tsx
-msgid "from monthly to yearly"
-msgstr "från månadsvis till årligen"
+#~ msgid "from monthly to yearly"
+#~ msgstr "från månadsvis till årligen"
 
 #. js-lingui-id: K04lE5
 #: src/pages/settings/SettingsBilling.tsx
-msgid "from yearly to monthly"
-msgstr "från årligen till månadsvis"
+#~ msgid "from yearly to monthly"
+#~ msgstr "från årligen till månadsvis"
 
 #. js-lingui-id: scmRyR
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -2141,41 +2334,45 @@ msgid "Global"
 msgstr "Global"
 
 #. js-lingui-id: mUbv8L
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Companies"
 msgstr ""
 
+#. js-lingui-id: BQE4ob
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to Notes"
+msgstr ""
+
 #. js-lingui-id: buPcNi
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Opportunities"
 msgstr ""
 
 #. js-lingui-id: MrE/Qb
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to People"
 msgstr ""
 
 #. js-lingui-id: iS69s6
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Go to runs"
 msgstr "Gå till körningar"
 
 #. js-lingui-id: mT57+Q
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Settings"
 msgstr "Gå till inställningar"
 
 #. js-lingui-id: BM24SF
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Tasks"
 msgstr ""
 
 #. js-lingui-id: A5WHZY
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to workflows"
 msgstr "Gå till arbetsflöden"
 
@@ -2210,6 +2407,7 @@ msgid "Greek"
 msgstr "Greek"
 
 #. js-lingui-id: L8fEEm
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Group"
@@ -2217,6 +2415,7 @@ msgstr ""
 
 #. js-lingui-id: ALoP4W
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "Group by"
 msgstr "Gruppera efter"
 
@@ -2245,21 +2444,22 @@ msgstr "Dolda fält"
 
 #. js-lingui-id: vLyv1R
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Hide"
 msgstr "Dölj"
 
 #. js-lingui-id: OlbYor
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Hide deleted"
 msgstr "Dölj raderade"
 
 #. js-lingui-id: FHhlye
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Hide deleted records"
 msgstr "Dölj raderade poster"
 
 #. js-lingui-id: 0dZtKR
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "Hide deleted runs"
 msgstr "Dölj raderade körningar"
 
@@ -2269,7 +2469,7 @@ msgstr "Dölj raderade körningar"
 #~ msgstr "Dölj raderade versioner"
 
 #. js-lingui-id: aOZAIB
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Hide deleted workflows"
 msgstr "Dölj raderade arbetsflöden"
 
@@ -2277,6 +2477,11 @@ msgstr "Dölj raderade arbetsflöden"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Hide empty groups"
 msgstr "Dölj tomma grupper"
+
+#. js-lingui-id: wgmt7A
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
+msgid "Hide hidden groups"
+msgstr ""
 
 #. js-lingui-id: B06Bgk
 #: src/pages/onboarding/CreateProfile.tsx
@@ -2336,17 +2541,17 @@ msgid "Impersonate"
 msgstr "Imitera"
 
 #. js-lingui-id: l3s5ri
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Import"
 msgstr "Importera"
 
 #. js-lingui-id: eECp4f
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Import records"
 msgstr "Importera poster"
 
 #. js-lingui-id: ZsIcZZ
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Import workflows"
 msgstr "Importera arbetsflöden"
 
@@ -2388,6 +2593,11 @@ msgstr "Instanser"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
 msgstr "Integrationer"
+
+#. js-lingui-id: GNRDhm
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Invalid API key"
+msgstr ""
 
 #. js-lingui-id: NtFk/Z
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -2547,7 +2757,7 @@ msgid "Japanese"
 msgstr "Japanska"
 
 #. js-lingui-id: OGXtL8
-#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+#: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Kanban"
 msgstr "Kanban"
@@ -2570,7 +2780,7 @@ msgid "Language"
 msgstr "Spr\\u00e5k"
 
 #. js-lingui-id: DU27lO
-#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+#: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 1 hour"
 msgstr "Senaste 1 timmen"
 
@@ -2580,7 +2790,7 @@ msgid "Last 1 Hour (oldest → newest)"
 msgstr "Senaste 1 timmen (äldst → nyast)"
 
 #. js-lingui-id: XUlP/Y
-#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+#: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 12 hours"
 msgstr "Senaste 12 timmarna"
 
@@ -2595,7 +2805,7 @@ msgid "Last 24 Hours (oldest → newest)"
 msgstr "Senaste 24 timmarna (äldst → nyast)"
 
 #. js-lingui-id: gdAJ4I
-#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+#: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 4 hours"
 msgstr "Senaste 4 timmarna"
 
@@ -2667,10 +2877,21 @@ msgstr "L\\u00e4nk kopierad till urklipp"
 msgid "Listings"
 msgstr "Listningar"
 
+#. js-lingui-id: Nx262D
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "Loading csv ... "
+msgstr ""
+
 #. js-lingui-id: s1MstR
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Loading metrics data..."
 msgstr "Laddar metrikdata..."
+
+#. js-lingui-id: Z3FXyt
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
+msgid "Loading..."
+msgstr ""
 
 #. js-lingui-id: FgAxTj
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -2694,7 +2915,7 @@ msgid "Look up users to impersonate them."
 msgstr "Sök efter användare för att imitera dem."
 
 #. js-lingui-id: n0FHLv
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Manage API keys and webhooks"
 msgstr ""
 
@@ -2710,7 +2931,7 @@ msgid "Manage Members"
 msgstr "Hantera medlemmar"
 
 #. js-lingui-id: eGGH1l
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Manage security policies"
 msgstr ""
 
@@ -2737,8 +2958,8 @@ msgstr "Hantera din prenumeration"
 #. js-lingui-id: 3Sdni6
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-msgid "Mark as done"
-msgstr "Markera som kla\\u00f6r"
+#~ msgid "Mark as done"
+#~ msgstr "Markera som kla\\u00f6r"
 
 #. js-lingui-id: 7h8ch8
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -2764,6 +2985,11 @@ msgstr "Högsta"
 msgid "Members"
 msgstr "Medlemmar"
 
+#. js-lingui-id: U15XwX
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
+msgid "Message not found"
+msgstr ""
+
 #. js-lingui-id: elpx6r
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Message Sync"
@@ -2775,7 +3001,7 @@ msgstr "Meddelandesynkronisering"
 #~ msgstr "Message Sync Status"
 
 #. js-lingui-id: 6GBt0m
-#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+#: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -2803,6 +3029,11 @@ msgstr "Övervaka utförandet av ditt jobb för synkning av kalenderhändelser"
 msgid "Monitor the execution of your emails sync job"
 msgstr "Övervaka utförandet av ditt jobb för synkning av e-postmeddelanden"
 
+#. js-lingui-id: 1cOZuL
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Monthly Credits"
+msgstr ""
+
 #. js-lingui-id: 3Siwmw
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
@@ -2812,11 +3043,13 @@ msgstr "Fler alternativ"
 
 #. js-lingui-id: iSLA/r
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move left"
 msgstr "Flytta \\u00e5t v\\u00e4nster"
 
 #. js-lingui-id: Ubl2by
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move right"
 msgstr "Flytta \\u00e5t h\\u00f6ger"
 
@@ -2834,8 +3067,9 @@ msgstr "Flytta \\u00e5t h\\u00f6ger"
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
@@ -2866,7 +3100,7 @@ msgid "Name of your workspace"
 msgstr "Namn p\\u00e5 ditt arbetsomr\\u00e5de"
 
 #. js-lingui-id: 2T8KCk
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to next record"
 msgstr "Navigera till n\\u00e4sta post"
 
@@ -2876,17 +3110,17 @@ msgstr "Navigera till n\\u00e4sta post"
 #~ msgstr "Navigera till nästa körning"
 
 #. js-lingui-id: veSA19
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Navigate to next version"
 msgstr "Navigera till nästa version"
 
 #. js-lingui-id: ZTEho+
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Navigate to next workflow"
 msgstr "Navigera till nästa arbetsflöde"
 
 #. js-lingui-id: 2tw9bo
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to previous record"
 msgstr "Navigera till föregående post"
 
@@ -2896,12 +3130,12 @@ msgstr "Navigera till föregående post"
 #~ msgstr "Navigera till föregående körning"
 
 #. js-lingui-id: I+Pm5V
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Navigate to previous version"
 msgstr "Navigera till föregående version"
 
 #. js-lingui-id: QVUN3K
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Navigate to previous workflow"
 msgstr "Navigera till föregående arbetsflöde"
 
@@ -2953,7 +3187,7 @@ msgstr "Nytt Lösenord"
 #. js-lingui-id: BcCzLv
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "New record"
 msgstr "Ny post"
 
@@ -2988,6 +3222,11 @@ msgstr ""
 msgid "No change detected"
 msgstr "Ingen ändring upptäckt"
 
+#. js-lingui-id: YFLMyY
+#: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
+msgid "No config variables match your current filters. Try adjusting your filters or search criteria."
+msgstr ""
+
 #. js-lingui-id: pwenQu
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "No connected account"
@@ -3006,6 +3245,16 @@ msgstr ""
 #. js-lingui-id: dihZwh
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "No data found"
+msgstr ""
+
+#. js-lingui-id: xlUOps
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "No free workflow executions left. End trial period and activate your billing to continue."
+msgstr ""
+
+#. js-lingui-id: OcMef3
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+msgid "No latest version found"
 msgstr ""
 
 #. js-lingui-id: UwvrGq
@@ -3054,6 +3303,21 @@ msgstr "Ingen metrikdata tillgänglig"
 msgid "No more members to assign"
 msgstr "Inga fler medlemmar att tilldela"
 
+#. js-lingui-id: tTItk7
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+msgid "No output available"
+msgstr ""
+
+#. js-lingui-id: fE7upK
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "No overrides found"
+msgstr ""
+
+#. js-lingui-id: 5pSj4j
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "No payment method found. Please update your billing details."
+msgstr ""
+
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "No records found"
@@ -3065,7 +3329,7 @@ msgstr "Inga poster hittades"
 #~ msgstr "No Result"
 
 #. js-lingui-id: Ev2r9A
-#: src/modules/spreadsheet-import/components/MatchColumnSelect.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "No results"
 msgstr ""
 
@@ -3083,6 +3347,11 @@ msgstr ""
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "No Select field"
 msgstr "Inget valfält"
+
+#. js-lingui-id: A5XQ/A
+#: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
+msgid "No variables found"
+msgstr ""
 
 #. js-lingui-id: 0uWxPM
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
@@ -3133,13 +3402,28 @@ msgstr "Inte tom"
 msgid "Not Found"
 msgstr "Hittades inte"
 
+#. js-lingui-id: 51G4/+
+#: src/modules/activities/calendar/components/CalendarEventNotSharedContent.tsx
+msgid "Not shared"
+msgstr ""
+
+#. js-lingui-id: uzFo/5
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessageBodyNotShared.tsx
+msgid "Not shared by {notSharedByFullName}"
+msgstr ""
+
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Not synced"
 msgstr "Inte synkroniserad"
 
+#. js-lingui-id: 1DBGsz
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Notes"
+msgstr ""
+
 #. js-lingui-id: HptUxX
-#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+#: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 msgid "Number"
 msgstr "Nummer"
 
@@ -3154,6 +3438,7 @@ msgid "Number type"
 msgstr "Nummer typ"
 
 #. js-lingui-id: W0i24j
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
 msgstr "Objekt"
@@ -3163,6 +3448,12 @@ msgstr "Objekt"
 msgid "Object destination"
 msgstr "Objekt destination"
 
+#. js-lingui-id: ZXhr6E
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "Object-Level Permissions"
+msgstr ""
+
 #. js-lingui-id: B3toQF
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -3170,7 +3461,7 @@ msgstr "Objekt destination"
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Objects"
 msgstr "Objekt"
 
@@ -3206,7 +3497,7 @@ msgid "Opened"
 msgstr "Öppnad"
 
 #. js-lingui-id: 4MyDFl
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Opportunities"
 msgstr ""
 
@@ -3231,8 +3522,8 @@ msgstr "eller"
 #. js-lingui-id: /IX/7x
 #: src/pages/settings/Releases.tsx
 #: src/pages/settings/lab/SettingsLab.tsx
-#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Other"
@@ -3241,19 +3532,24 @@ msgstr "Annat"
 #. js-lingui-id: 3V8SRM
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
-msgid "Other Environment Variables"
-msgstr "Andra miljövariabler"
+#~ msgid "Other Environment Variables"
+#~ msgstr "Andra miljövariabler"
 
 #. js-lingui-id: P7KMWx
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid "Other Variables"
-msgstr "Andra variabler"
+#~ msgid "Other Variables"
+#~ msgstr "Andra variabler"
 
 #. js-lingui-id: +vDFPm
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Other workspaces"
 msgstr "Andra arbetsytor"
+
+#. js-lingui-id: bv8ZsZ
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
+#~ msgid "Overridden on {isOverriddenBy} {pluralizedObject}"
+#~ msgstr ""
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -3276,7 +3572,8 @@ msgid "Password reset link has been sent to the email"
 msgstr "En länk för återställning av lösenordet har skickats till e-postadressen"
 
 #. js-lingui-id: 1wdjme
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "People"
 msgstr ""
 
@@ -3308,31 +3605,37 @@ msgid "Percent not empty"
 msgstr "Procent inte tom"
 
 #. js-lingui-id: /roQKz
-#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+#: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 msgid "Percentage"
 msgstr "Procent"
 
 #. js-lingui-id: Bv3y5w
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Permanently destroy record"
 msgstr "Förstöra posten permanent"
 
 #. js-lingui-id: xjWlSJ
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Permanently destroy records"
 msgstr "Förstöra posterna permanent"
 
 #. js-lingui-id: 0bQ5ba
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Permanently destroy workflow"
 msgstr ""
 
 #. js-lingui-id: uKWXhB
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Permanently destroy workflows"
 msgstr "Förstöra arbetsflödena permanent"
 
+#. js-lingui-id: UjCOlM
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
+#~ msgid "Permission overrides"
+#~ msgstr ""
+
 #. js-lingui-id: 9cDpsw
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
 msgstr "Behörigheter"
@@ -3528,6 +3831,11 @@ msgstr "Återskapa nyckel"
 msgid "Relation type"
 msgstr "Relationstyp"
 
+#. js-lingui-id: HR+PwH
+#: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
+msgid "Relative"
+msgstr ""
+
 #. js-lingui-id: 5icoS1
 #: src/pages/settings/Releases.tsx
 #: src/pages/settings/Releases.tsx
@@ -3562,8 +3870,8 @@ msgid "Remove as default"
 msgstr "Ta bort som standard"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Remove from favorites"
 msgstr "Ta bort från favoriter"
 
@@ -3573,6 +3881,7 @@ msgid "Remove option"
 msgstr "Ta bort alternativ"
 
 #. js-lingui-id: OfhWJH
+#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
 msgid "Reset"
 msgstr "Återställ"
@@ -3587,6 +3896,16 @@ msgstr "Återställ lösenord"
 msgid "Reset to"
 msgstr "Återställ till"
 
+#. js-lingui-id: Tj36Dr
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
+msgid "Reset to Default"
+msgstr ""
+
+#. js-lingui-id: 6rzsES
+#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
+msgid "Reset variable"
+msgstr ""
+
 #. js-lingui-id: WHiaOl
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -3594,18 +3913,18 @@ msgid "REST"
 msgstr "REST"
 
 #. js-lingui-id: yKu/3Y
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore"
 msgstr "Återställ"
 
 #. js-lingui-id: y4Ib1n
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore record"
 msgstr "Återställ post"
 
 #. js-lingui-id: Vw369F
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore records"
 msgstr "Återställ poster"
 
@@ -3619,13 +3938,28 @@ msgstr "Resultat"
 msgid "Review your import"
 msgstr ""
 
+#. js-lingui-id: GG37FL
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
+msgid "Revoked for this object"
+msgstr ""
+
+#. js-lingui-id: 4+uhWL
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
+msgid "Revoked on {revokedBy} {pluralizedObject}"
+msgstr ""
+
 #. js-lingui-id: iSfzXo
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "Role name"
 msgstr ""
 
+#. js-lingui-id: gF4nBH
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
+msgid "Role name cannot be empty"
+msgstr ""
+
 #. js-lingui-id: 5dJK4M
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -3650,6 +3984,7 @@ msgstr "Russian"
 #. js-lingui-id: tfDRzk
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 msgid "Save"
 msgstr "Spara"
 
@@ -3666,12 +4001,13 @@ msgstr "Schema"
 #. js-lingui-id: A1taO8
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPickerDropdownContent.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-#: src/modules/navigation/components/MainNavigationDrawerItems.tsx
+#: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Search"
 msgstr "Sök"
 
@@ -3710,10 +4046,20 @@ msgstr "Sök en tilldelad teammedlem..."
 msgid "Search an index..."
 msgstr "Sök ett index..."
 
+#. js-lingui-id: 3UPqHL
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableSearchInput.tsx
+msgid "Search config variables"
+msgstr ""
+
+#. js-lingui-id: sSARNY
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
+msgid "Search currency"
+msgstr ""
+
 #. js-lingui-id: 7taA9j
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFieldSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
 msgid "Search fields"
 msgstr "Sök fält"
@@ -3729,8 +4075,8 @@ msgid "Search icon"
 msgstr "Sökikon"
 
 #. js-lingui-id: IMeaSJ
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Search records"
 msgstr "Sök poster"
 
@@ -3744,24 +4090,24 @@ msgstr "Hemlighet"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Security"
 msgstr "Säkerhet"
 
 #. js-lingui-id: QREcJS
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See active version"
 msgstr "Se aktiv version"
 
 #. js-lingui-id: BxIUpp
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "See deleted records"
 msgstr "Se raderade poster"
 
 #. js-lingui-id: Z+SGGW
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "See deleted runs"
 msgstr "Se raderade körningar"
 
@@ -3771,55 +4117,58 @@ msgstr "Se raderade körningar"
 #~ msgstr "Se raderade versioner"
 
 #. js-lingui-id: 5jZIe5
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See deleted workflows"
 msgstr "Se raderade arbetsflöden"
 
+#. js-lingui-id: FvBwjM
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "See Records on {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: irbH/8
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "See Records on All Objects"
 msgstr ""
 
 #. js-lingui-id: OpPn5Z
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See runs"
 msgstr "Se körningar"
 
 #. js-lingui-id: gGEfj/
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "See version"
 msgstr "Se version"
 
 #. js-lingui-id: EtyY4+
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See versions"
 msgstr "Se versioner"
 
 #. js-lingui-id: lYhPN0
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See versions history"
 msgstr "Se versionshistorik"
 
 #. js-lingui-id: qEKLJV
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "See workflow"
 msgstr "Se arbetsflöde"
 
 #. js-lingui-id: XThiR2
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "See workflows"
 msgstr "Se arbetsflöden"
 
@@ -3844,9 +4193,19 @@ msgstr ""
 msgid "Select file"
 msgstr ""
 
+#. js-lingui-id: llc/hA
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
+msgid "Select Group"
+msgstr ""
+
 #. js-lingui-id: ljSvAs
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 msgid "Select header row"
+msgstr ""
+
+#. js-lingui-id: UKCiEd
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
+msgid "Select Source"
 msgstr ""
 
 #. js-lingui-id: mWHn81
@@ -3918,6 +4277,11 @@ msgstr "Detaljer för tjänsteleverantör"
 msgid "Set a default role for this workspace"
 msgstr "Ange en standardroll för det här arbetsutrymmet"
 
+#. js-lingui-id: M97je1
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+#~ msgid "Set additional object-level permissions"
+#~ msgstr ""
+
 #. js-lingui-id: PPcets
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
@@ -3929,7 +4293,7 @@ msgid "Set email visibility, manage your blocklist and more."
 msgstr "Ställ in e-postns synlighet, hantera din blocklista och mer."
 
 #. js-lingui-id: 6KA8xy
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Set global workspace preferences"
 msgstr ""
 
@@ -3951,21 +4315,21 @@ msgstr "Ange namnet på din subdomän"
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
-#: src/modules/navigation/components/MainNavigationDrawerItems.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Settings"
 msgstr "Inställningar"
 
 #. js-lingui-id: uXW4pg
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Settings All Access"
 msgstr ""
 
 #. js-lingui-id: p8fNBm
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Settings permissions"
 msgstr "Inställningsbehörigheter"
 
@@ -3983,6 +4347,11 @@ msgstr "Bör en ändring av ett fälts etikett även ändra API-namnet?"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Should changing an object's label also change the API?"
 msgstr "Bör ändring av ett objekts etikett också ändra APIet?"
+
+#. js-lingui-id: 1OVrop
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
+msgid "Show hidden groups"
+msgstr ""
 
 #. js-lingui-id: qi+g0a
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -4042,6 +4411,11 @@ msgstr "Hoppa över"
 msgid "Sort"
 msgstr "Sortera"
 
+#. js-lingui-id: wdxz7K
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
+msgid "Source"
+msgstr ""
+
 #. js-lingui-id: 65A04M
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Spanish"
@@ -4067,6 +4441,11 @@ msgstr "Stadier"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
 msgstr "Status"
+
+#. js-lingui-id: qn1Xxf
+#: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
+msgid "Stored in database"
+msgstr ""
 
 #. js-lingui-id: ku9TbG
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
@@ -4105,6 +4484,11 @@ msgstr "Ämne och metadata"
 msgid "Subject and metadata will be shared with your team."
 msgstr "Ämne och metadata kommer att delas med ditt team."
 
+#. js-lingui-id: DvSvG9
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessageForbidden.tsx
+msgid "Subject not shared"
+msgstr ""
+
 #. js-lingui-id: J9ylmk
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Subject, body and attachments will be shared with your team."
@@ -4115,10 +4499,20 @@ msgstr "Ämne, kropp och bilagor kommer att delas med ditt team."
 msgid "Submit"
 msgstr ""
 
+#. js-lingui-id: uvY7Wk
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "Subscription activated."
+msgstr ""
+
 #. js-lingui-id: B5jRKH
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Subscription has been switched {to}"
-msgstr "Prenumerationen har bytts till {to}"
+#~ msgid "Subscription has been switched {to}"
+#~ msgstr "Prenumerationen har bytts till {to}"
+
+#. js-lingui-id: TXH0ad
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Subscription has been switched to yearly."
+msgstr ""
 
 #. js-lingui-id: AxQiPW
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -4138,23 +4532,43 @@ msgstr "Swedish"
 
 #. js-lingui-id: 9yk9d1
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch {from}"
-msgstr "Byt från {from}"
+#~ msgid "Switch {from}"
+#~ msgstr "Byt från {from}"
 
 #. js-lingui-id: qi74XZ
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch {to}"
-msgstr "Byt till {to}"
+#~ msgid "Switch {to}"
+#~ msgstr "Byt till {to}"
 
 #. js-lingui-id: L6Fg36
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch billing {to}"
-msgstr "Byt fakturering till {to}"
+#~ msgid "Switch billing {to}"
+#~ msgstr "Byt fakturering till {to}"
+
+#. js-lingui-id: o04bjR
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Switch billing to yearly"
+msgstr ""
+
+#. js-lingui-id: /IYUDq
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Switch from monthly to yearly"
+msgstr ""
+
+#. js-lingui-id: E4rPXj
+#: src/pages/onboarding/ChooseYourPlan.tsx
+#~ msgid "Switch Plan"
+#~ msgstr ""
 
 #. js-lingui-id: lz+f/E
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Switch to {alternatePlanName}"
-msgstr "Byt till {alternatePlanName}"
+#~ msgid "Switch to {alternatePlanName}"
+#~ msgstr "Byt till {alternatePlanName}"
+
+#. js-lingui-id: 1EwZPZ
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Switch to yearly"
+msgstr ""
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -4194,13 +4608,13 @@ msgid "System Settings - {systemTimeFormatLabel}"
 msgstr "Systeminställningar - {systemTimeFormatLabel}"
 
 #. js-lingui-id: 4hJhzz
-#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+#: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Table"
 msgstr "Tabell"
 
 #. js-lingui-id: GtycJ/
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Tasks"
 msgstr ""
 
@@ -4210,12 +4624,12 @@ msgid "Terms of Service"
 msgstr "Användarvillkor"
 
 #. js-lingui-id: NnH3pK
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Test"
 msgstr "Testa"
 
 #. js-lingui-id: bU9B27
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Test Workflow"
 msgstr "Testa arbetsflöde"
 
@@ -4325,8 +4739,8 @@ msgstr "Det uppstod ett problem"
 
 #. js-lingui-id: DHjmMm
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
-msgstr "Det här är bara servervärdena. Se till att din arbetarmiljö har samma variabler och värden, detta krävs för asynkrona uppgifter som e-postsynkronisering."
+#~ msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
+#~ msgstr "Det här är bara servervärdena. Se till att din arbetarmiljö har samma variabler och värden, detta krävs för asynkrona uppgifter som e-postsynkronisering."
 
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -4337,6 +4751,11 @@ msgstr "Denna åtgärd kan inte ångras. Det här kommer att radera denna använ
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
 msgstr "Denna åtgärd kan inte ångras. Detta kommer att permanent radera hela din arbetsyta. <0/> Vänligen skriv in din e-post för att bekräfta."
+
+#. js-lingui-id: SLIRqz
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "This database value overrides environment settings. "
+msgstr ""
 
 #. js-lingui-id: yHIStW
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
@@ -4358,10 +4777,30 @@ msgstr "Denna åtgärd kan inte ångras. Detta kommer att permanent radera hela 
 msgid "This role is assigned to these workspace members."
 msgstr "Denna roll är tilldelad till dessa arbetsytemedlemmar."
 
+#. js-lingui-id: C/wr0z
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "This setting can only be configured through environment variables."
+msgstr ""
+
+#. js-lingui-id: iAubP2
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "This should never happen"
+msgstr ""
+
+#. js-lingui-id: MMGDfe
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "This value will be saved to the database."
+msgstr ""
+
 #. js-lingui-id: yByRxz
-#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+#: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "This week"
 msgstr "Denna vecka"
+
+#. js-lingui-id: 4YifBe
+#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
+msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
+msgstr ""
 
 #. js-lingui-id: n9nSNJ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -4380,21 +4819,21 @@ msgstr "Tidsstämpel och deltagare kommer att delas med ditt team."
 
 #. js-lingui-id: aqMzDX
 #: src/pages/settings/SettingsBilling.tsx
-msgid "to monthly"
-msgstr "till månadsvis"
+#~ msgid "to monthly"
+#~ msgstr "till månadsvis"
 
 #. js-lingui-id: WXXiXO
 #: src/pages/settings/SettingsBilling.tsx
-msgid "to yearly"
-msgstr "till årsvis"
+#~ msgid "to yearly"
+#~ msgstr "till årsvis"
 
 #. js-lingui-id: ecUA8p
-#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+#: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Today"
 msgstr "Idag"
 
 #. js-lingui-id: XArpJK
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Toggle all object permissions"
 msgstr ""
 
@@ -4402,6 +4841,11 @@ msgstr ""
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Total Users"
 #~ msgstr "Total Users"
+
+#. js-lingui-id: dshGKq
+#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+msgid "Track your monthly workflow credit consumption."
+msgstr ""
 
 #. js-lingui-id: PiUt3N
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
@@ -4415,7 +4859,7 @@ msgstr "Utlösartyp"
 #~ msgstr "Trigger type should be Manual - when no record(s) are selected"
 
 #. js-lingui-id: c+xCSz
-#: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
+#: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "True"
 msgstr "Sant"
@@ -4452,6 +4896,11 @@ msgstr "Ukrainian"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Unique"
 msgstr "Unik"
+
+#. js-lingui-id: Ef7StM
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+msgid "Unknown"
+msgstr ""
 
 #. js-lingui-id: 29VNqC
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -4496,8 +4945,8 @@ msgid "URL"
 msgstr "URL"
 
 #. js-lingui-id: 6dMpmz
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Use as draft"
 msgstr "Använd som utkast"
 
@@ -4553,13 +5002,34 @@ msgstr "Användaren är inte inloggad"
 #~ msgstr "User Name"
 
 #. js-lingui-id: Sxm8rQ
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Users"
 msgstr "Users"
+
+#. js-lingui-id: vUr1/5
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "Using default application value. Configure via environment variables."
+msgstr ""
+
+#. js-lingui-id: 8Drj7i
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "Using default value. Set a custom value to override."
+msgstr ""
 
 #. js-lingui-id: MGeZsN
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
 msgid "Validate data"
+msgstr ""
+
+#. js-lingui-id: wMHvYH
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
+msgid "Value"
+msgstr ""
+
+#. js-lingui-id: UZHvVi
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
+msgid "Value is set in the server environment, it may be a different value on the worker."
 msgstr ""
 
 #. js-lingui-id: fXVIZq
@@ -4573,6 +5043,11 @@ msgstr "Värden"
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Variable not found"
 msgstr "Variabel hittades inte"
+
+#. js-lingui-id: N/89ho
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Variable updated successfully"
+msgstr ""
 
 #. js-lingui-id: IHIWR4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -4630,6 +5105,21 @@ msgstr "Synliga grupper"
 msgid "Visualize"
 msgstr "Visualisera"
 
+#. js-lingui-id: zFSQY3
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx
+msgid "was created by"
+msgstr ""
+
+#. js-lingui-id: uHpu1c
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx
+msgid "was deleted by"
+msgstr ""
+
+#. js-lingui-id: S0enzB
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx
+msgid "was restored by"
+msgstr ""
+
 #. js-lingui-id: id6ein
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
@@ -4664,7 +5154,6 @@ msgstr "Webkrokar"
 #~ msgstr "Welcome to"
 
 #. js-lingui-id: ke0EDP
-#: src/pages/auth/SignInUpLoading.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to {workspaceName}"
 msgstr "Välkommen till {workspaceName}"
@@ -4717,7 +5206,7 @@ msgstr "Arbetsflödeskörning misslyckades"
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
@@ -4780,8 +5269,8 @@ msgstr "ja"
 
 #. js-lingui-id: qsAug0
 #: src/modules/spreadsheet-import/components/MatchColumnSelect.tsx
-msgid "You are already importing this column."
-msgstr ""
+#~ msgid "You are already importing this column."
+#~ msgstr ""
 
 #. js-lingui-id: MFDARJ
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -4800,13 +5289,18 @@ msgstr "Du har inte tillåtelse att skapa poster i detta objekt"
 
 #. js-lingui-id: zSkMV0
 #: src/pages/settings/SettingsBilling.tsx
-msgid "You will be charged immediately for the full year."
-msgstr "Du kommer att debiteras omedelbart för hela året."
+#~ msgid "You will be charged immediately for the full year."
+#~ msgstr "Du kommer att debiteras omedelbart för hela året."
+
+#. js-lingui-id: Cl+hUj
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "You're about to change your workspace subdomain. This action will log out all users."
+msgstr ""
 
 #. js-lingui-id: XVnj6K
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Your credit balance will be used to pay the monthly bills."
-msgstr "Din kreditbalans kommer att användas för att betala de månatliga räkningarna."
+#~ msgid "Your credit balance will be used to pay the monthly bills."
+#~ msgstr "Din kreditbalans kommer att användas för att betala de månatliga räkningarna."
 
 #. js-lingui-id: +5YqGH
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -4829,7 +5323,6 @@ msgid "Your name as it will be displayed on the app"
 msgstr "Ditt namn som det kommer att visas i appen"
 
 #. js-lingui-id: YQK8fJ
-#: src/pages/auth/SignInUpLoading.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
 msgstr "Din arbetsyta"

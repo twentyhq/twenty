@@ -7,21 +7,23 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 @Injectable()
 export class PermissionsService {
   constructor(
-    private readonly environmentService: EnvironmentService,
     private readonly userRoleService: UserRoleService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   public async getUserWorkspacePermissions({
@@ -43,14 +45,27 @@ export class PermissionsService {
 
     let hasPermissionOnSettingFeature = false;
 
-    if (roleOfUserWorkspace?.canUpdateAllSettings === true) {
+    if (!isDefined(roleOfUserWorkspace)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+      );
+    }
+
+    if (roleOfUserWorkspace.canUpdateAllSettings === true) {
       hasPermissionOnSettingFeature = true;
     }
+
+    const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
 
     const settingsPermissionsMap = Object.keys(SettingPermissionType).reduce(
       (acc, feature) => ({
         ...acc,
-        [feature]: hasPermissionOnSettingFeature,
+        [feature]:
+          hasPermissionOnSettingFeature ||
+          settingPermissions.some(
+            (settingPermission) => settingPermission.setting === feature,
+          ),
       }),
       {} as Record<SettingPermissionType, boolean>,
     );
@@ -60,13 +75,13 @@ export class PermissionsService {
       boolean
     > = {
       [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]:
-        roleOfUserWorkspace?.canReadAllObjectRecords ?? false,
+        roleOfUserWorkspace.canReadAllObjectRecords ?? false,
       [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]:
-        roleOfUserWorkspace?.canUpdateAllObjectRecords ?? false,
+        roleOfUserWorkspace.canUpdateAllObjectRecords ?? false,
       [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]:
-        roleOfUserWorkspace?.canSoftDeleteAllObjectRecords ?? false,
+        roleOfUserWorkspace.canSoftDeleteAllObjectRecords ?? false,
       [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]:
-        roleOfUserWorkspace?.canDestroyAllObjectRecords ?? false,
+        roleOfUserWorkspace.canDestroyAllObjectRecords ?? false,
     };
 
     return {
@@ -78,12 +93,12 @@ export class PermissionsService {
   public async userHasWorkspaceSettingPermission({
     userWorkspaceId,
     workspaceId,
-    _setting,
+    setting,
     isExecutedByApiKey,
   }: {
     userWorkspaceId?: string;
     workspaceId: string;
-    _setting: SettingPermissionType;
+    setting: SettingPermissionType;
     isExecutedByApiKey: boolean;
   }): Promise<boolean> {
     if (isExecutedByApiKey) {
@@ -104,11 +119,32 @@ export class PermissionsService {
       })
       .then((roles) => roles?.get(userWorkspaceId) ?? []);
 
-    if (roleOfUserWorkspace?.canUpdateAllSettings === true) {
+    if (!isDefined(roleOfUserWorkspace)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+      );
+    }
+
+    if (roleOfUserWorkspace.canUpdateAllSettings === true) {
       return true;
     }
 
-    return false;
+    const isPermissionsV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsPermissionsV2Enabled,
+        workspaceId,
+      );
+
+    if (isPermissionsV2Enabled) {
+      const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
+
+      return settingPermissions.some(
+        (settingPermission) => settingPermission.setting === setting,
+      );
+    } else {
+      return false;
+    }
   }
 
   public async userHasObjectRecordsPermission({
@@ -122,6 +158,18 @@ export class PermissionsService {
     requiredPermission: PermissionsOnAllObjectRecords;
     isExecutedByApiKey: boolean;
   }): Promise<boolean> {
+    const isPermissionsV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsPermissionsV2Enabled,
+        workspaceId,
+      );
+
+    if (isPermissionsV2Enabled) {
+      throw new Error(
+        'This should not be called once Permissions V2 is enabled',
+      );
+    }
+
     if (isExecutedByApiKey) {
       return true;
     }
@@ -133,31 +181,51 @@ export class PermissionsService {
       );
     }
 
-    const [roleOfUserWorkspace] = await this.userRoleService
-      .getRolesByUserWorkspaces({
-        userWorkspaceIds: [userWorkspaceId],
+    const roleIdOfUserWorkspace =
+      await this.userRoleService.getRoleIdForUserWorkspace({
+        userWorkspaceId,
         workspaceId,
-      })
-      .then((roles) => roles?.get(userWorkspaceId) ?? []);
+      });
 
-    const roleColumn =
-      this.getRoleColumnForRequiredPermission(requiredPermission);
+    if (!isDefined(roleIdOfUserWorkspace)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+      );
+    }
 
-    return roleOfUserWorkspace?.[roleColumn] === true;
+    const { data: rolesPermissions } =
+      await this.workspacePermissionsCacheService.getRolesPermissionsFromCache({
+        workspaceId,
+      });
+
+    const rolePermissionsForUserWorkspaceRole =
+      rolesPermissions[roleIdOfUserWorkspace];
+
+    const objectPermissionKey =
+      this.getObjectPermissionKeyForRequiredPermission(requiredPermission);
+
+    // until permissions V2 is enabled all objects have the same permission values deriving from role, ex role.canReadAllObjectRecords
+    const objectPermissionValue =
+      rolePermissionsForUserWorkspaceRole[
+        Object.keys(rolePermissionsForUserWorkspaceRole)[0]
+      ]?.[objectPermissionKey];
+
+    return objectPermissionValue === true;
   }
 
-  private getRoleColumnForRequiredPermission(
+  private getObjectPermissionKeyForRequiredPermission(
     requiredPermission: PermissionsOnAllObjectRecords,
-  ): keyof RoleEntity {
+  ) {
     switch (requiredPermission) {
       case PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS:
-        return 'canReadAllObjectRecords';
+        return 'canRead';
       case PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS:
-        return 'canUpdateAllObjectRecords';
+        return 'canUpdate';
       case PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS:
-        return 'canSoftDeleteAllObjectRecords';
+        return 'canSoftDelete';
       case PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS:
-        return 'canDestroyAllObjectRecords';
+        return 'canDestroy';
       default:
         throw new PermissionsException(
           PermissionsExceptionMessage.UNKNOWN_REQUIRED_PERMISSION,
