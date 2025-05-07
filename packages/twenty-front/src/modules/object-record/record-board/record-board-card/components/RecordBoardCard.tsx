@@ -3,8 +3,8 @@ import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/get
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
-import { isBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isBoardCardActiveComponentFamilyState';
-import { isBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isBoardCardFocusedComponentFamilyState';
+import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
+import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
@@ -116,7 +116,7 @@ export const RecordBoardCard = () => {
     );
 
   const isCurrentCardFocused = useRecoilComponentFamilyValueV2(
-    isBoardCardFocusedComponentFamilyState,
+    isRecordBoardCardFocusedComponentFamilyState,
     {
       rowIndex,
       columnIndex,
@@ -124,7 +124,7 @@ export const RecordBoardCard = () => {
   );
 
   const isCurrentCardActive = useRecoilComponentFamilyValueV2(
-    isBoardCardActiveComponentFamilyState,
+    isRecordBoardCardActiveComponentFamilyState,
     {
       rowIndex,
       columnIndex,

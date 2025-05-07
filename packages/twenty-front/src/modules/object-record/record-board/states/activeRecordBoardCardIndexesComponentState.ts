@@ -2,9 +2,9 @@ import { RecordBoardComponentInstanceContext } from '@/object-record/record-boar
 import { BoardCardIndexes } from '@/object-record/record-board/types/BoardCardIndexes';
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
-export const activeBoardCardIndexesComponentState =
+export const activeRecordBoardCardIndexesComponentState =
   createComponentStateV2<BoardCardIndexes | null>({
-    key: 'activeBoardCardIndexesComponentState',
+    key: 'activeRecordBoardCardIndexesComponentState',
     defaultValue: null,
     componentInstanceContext: RecordBoardComponentInstanceContext,
   });

@@ -1,18 +1,18 @@
-import { activeBoardCardIndexesComponentState } from '@/object-record/record-board/states/activeBoardCardIndexesComponentState';
-import { isBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isBoardCardActiveComponentFamilyState';
+import { activeRecordBoardCardIndexesComponentState } from '@/object-record/record-board/states/activeRecordBoardCardIndexesComponentState';
+import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
 import { BoardCardIndexes } from '@/object-record/record-board/types/BoardCardIndexes';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useActiveBoardCard = (recordBoardId?: string) => {
+export const useActiveRecordBoardCard = (recordBoardId?: string) => {
   const isCardActiveState = useRecoilComponentCallbackStateV2(
-    isBoardCardActiveComponentFamilyState,
+    isRecordBoardCardActiveComponentFamilyState,
     recordBoardId,
   );
 
   const activeBoardCardIndexesState = useRecoilComponentCallbackStateV2(
-    activeBoardCardIndexesComponentState,
+    activeRecordBoardCardIndexesComponentState,
     recordBoardId,
   );
 

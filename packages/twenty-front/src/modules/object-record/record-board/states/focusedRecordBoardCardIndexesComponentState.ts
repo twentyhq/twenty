@@ -2,9 +2,9 @@ import { RecordBoardComponentInstanceContext } from '@/object-record/record-boar
 import { BoardCardIndexes } from '@/object-record/record-board/types/BoardCardIndexes';
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
-export const focusedBoardCardIndexesComponentState =
+export const focusedRecordBoardCardIndexesComponentState =
   createComponentStateV2<BoardCardIndexes | null>({
-    key: 'focusedBoardCardIndexesComponentState',
+    key: 'focusedRecordBoardCardIndexesComponentState',
     defaultValue: null,
     componentInstanceContext: RecordBoardComponentInstanceContext,
   });

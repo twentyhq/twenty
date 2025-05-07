@@ -2,9 +2,9 @@ import { RecordBoardComponentInstanceContext } from '@/object-record/record-boar
 import { BoardCardIndexes } from '@/object-record/record-board/types/BoardCardIndexes';
 import { createComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentFamilyStateV2';
 
-export const isBoardCardFocusedComponentFamilyState =
+export const isRecordBoardCardFocusedComponentFamilyState =
   createComponentFamilyStateV2<boolean, BoardCardIndexes>({
-    key: 'isBoardCardFocusedComponentFamilyState',
+    key: 'isRecordBoardCardFocusedComponentFamilyState',
     defaultValue: false,
     componentInstanceContext: RecordBoardComponentInstanceContext,
   });

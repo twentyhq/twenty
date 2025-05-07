@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { useFocusedBoardCard } from '@/object-record/record-board/hooks/useFocusedBoardCard';
+import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { BoardHotkeyScope } from '@/object-record/record-board/types/BoardHotkeyScope';
@@ -15,7 +15,7 @@ export const RecordBoardBodyEscapeHotkeyEffect = () => {
 
   const { resetRecordSelection } = useRecordBoardSelection(recordBoardId);
 
-  const { unfocusBoardCard } = useFocusedBoardCard(recordBoardId);
+  const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
   const selectedRecordIds = useRecoilComponentValueV2(
     recordBoardSelectedRecordIdsComponentSelector,

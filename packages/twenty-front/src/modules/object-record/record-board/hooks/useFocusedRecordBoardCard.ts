@@ -1,24 +1,24 @@
-import { focusedBoardCardIndexesComponentState } from '@/object-record/record-board/states/focusedBoardCardIndexesComponentState';
-import { isBoardCardFocusActiveComponentState } from '@/object-record/record-board/states/isBoardCardFocusActiveComponentState';
-import { isBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isBoardCardFocusedComponentFamilyState';
+import { focusedRecordBoardCardIndexesComponentState } from '@/object-record/record-board/states/focusedRecordBoardCardIndexesComponentState';
+import { isRecordBoardCardFocusActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCardFocusActiveComponentState';
+import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
 import { BoardCardIndexes } from '@/object-record/record-board/types/BoardCardIndexes';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useFocusedBoardCard = (recordBoardId?: string) => {
+export const useFocusedRecordBoardCard = (recordBoardId?: string) => {
   const isCardFocusedState = useRecoilComponentCallbackStateV2(
-    isBoardCardFocusedComponentFamilyState,
+    isRecordBoardCardFocusedComponentFamilyState,
     recordBoardId,
   );
 
   const focusedBoardCardIndexesState = useRecoilComponentCallbackStateV2(
-    focusedBoardCardIndexesComponentState,
+    focusedRecordBoardCardIndexesComponentState,
     recordBoardId,
   );
 
   const isCardFocusActiveState = useRecoilComponentCallbackStateV2(
-    isBoardCardFocusActiveComponentState,
+    isRecordBoardCardFocusActiveComponentState,
     recordBoardId,
   );
 

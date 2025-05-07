@@ -20,8 +20,8 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import { useActiveBoardCard } from '@/object-record/record-board/hooks/useActiveBoardCard';
-import { useFocusedBoardCard } from '@/object-record/record-board/hooks/useFocusedBoardCard';
+import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
+import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
@@ -84,8 +84,8 @@ export const PageChangeEffect = () => {
   const { deactivateRecordTableRow } = useActiveRecordTableRow(recordIndexId);
 
   const { resetRecordSelection } = useRecordBoardSelection(recordIndexId);
-  const { deactivateBoardCard } = useActiveBoardCard(recordIndexId);
-  const { unfocusBoardCard } = useFocusedBoardCard(recordIndexId);
+  const { deactivateBoardCard } = useActiveRecordBoardCard(recordIndexId);
+  const { unfocusBoardCard } = useFocusedRecordBoardCard(recordIndexId);
 
   const { executeTasksOnAnyLocationChange } =
     useExecuteTasksOnAnyLocationChange();

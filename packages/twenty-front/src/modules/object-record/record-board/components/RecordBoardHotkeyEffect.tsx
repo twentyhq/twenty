@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { useBoardCardNavigation } from '@/object-record/record-board/hooks/useBoardCardNavigation';
+import { useRecordBoardCardNavigation } from '@/object-record/record-board/hooks/useRecordBoardCardNavigation';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { BoardHotkeyScope } from '@/object-record/record-board/types/BoardHotkeyScope';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
@@ -16,7 +16,7 @@ import { useRecoilCallback } from 'recoil';
 export const RecordBoardHotkeyEffect = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
 
-  const { move } = useBoardCardNavigation(recordBoardId);
+  const { move } = useRecordBoardCardNavigation(recordBoardId);
 
   const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
 

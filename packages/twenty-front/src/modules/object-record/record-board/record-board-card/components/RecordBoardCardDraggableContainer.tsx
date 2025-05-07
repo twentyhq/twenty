@@ -6,7 +6,7 @@ import { RecordBoardCard } from '@/object-record/record-board/record-board-card/
 import { RecordBoardCardFocusHotkeyEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardCardFocusHotkeyEffect';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { isBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isBoardCardFocusedComponentFamilyState';
+import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 
@@ -30,7 +30,7 @@ export const RecordBoardCardDraggableContainer = ({
   const { columnIndex } = useContext(RecordBoardColumnContext);
 
   const isRecordBoardCardFocusActive = useRecoilComponentFamilyValueV2(
-    isBoardCardFocusedComponentFamilyState,
+    isRecordBoardCardFocusedComponentFamilyState,
     {
       rowIndex,
       columnIndex,

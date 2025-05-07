@@ -3,7 +3,7 @@ import { Key } from 'ts-key-enum';
 
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { useActiveBoardCard } from '@/object-record/record-board/hooks/useActiveBoardCard';
+import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
@@ -19,7 +19,7 @@ export const RecordBoardCardFocusHotkeyEffect = () => {
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-  const { activateBoardCard } = useActiveBoardCard();
+  const { activateBoardCard } = useActiveRecordBoardCard();
 
   const { setRecordAsSelected } = useRecordBoardSelection();
 
