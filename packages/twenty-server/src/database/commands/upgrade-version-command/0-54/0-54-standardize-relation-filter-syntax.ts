@@ -2,9 +2,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { In, Repository } from 'typeorm';
 import { z } from 'zod';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -36,7 +36,7 @@ const jsonRelationFilterValueSchema = z
   .pipe(relationFilterValueSchemaObject);
 
 @Command({
-  name: 'upgrade:0-53:standardize-relation-filter-syntax',
+  name: 'upgrade:0-54:standardize-relation-filter-syntax',
   description: 'Standardize relation filter syntax',
 })
 export class StandardizeRelationFilterSyntaxCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
@@ -54,6 +54,7 @@ export class StandardizeRelationFilterSyntaxCommand extends ActiveOrSuspendedWor
     index,
     total,
     workspaceId,
+    options,
   }: RunOnWorkspaceArgs): Promise<void> {
     this.logger.log(
       `Running command for workspace ${workspaceId} ${index + 1}/${total}`,
@@ -85,10 +86,14 @@ export class StandardizeRelationFilterSyntaxCommand extends ActiveOrSuspendedWor
       });
 
       for (const relationViewFilter of relationViewFilters) {
-        await viewFilterRepository.update(relationViewFilter.id, {
-          ...relationViewFilter,
-          value: this.convertRelationViewFilterValue(relationViewFilter.value),
-        });
+        if (!options.dryRun) {
+          await viewFilterRepository.update(relationViewFilter.id, {
+            ...relationViewFilter,
+            value: this.convertRelationViewFilterValue(
+              relationViewFilter.value,
+            ),
+          });
+        }
       }
 
       this.logger.log(
