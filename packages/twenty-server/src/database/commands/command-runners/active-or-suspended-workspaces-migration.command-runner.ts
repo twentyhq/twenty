@@ -93,6 +93,7 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
   })
   parseWorkspaceId(val: string): Set<string> {
     this.workspaceIds.add(val);
+
     return this.workspaceIds;
   }
 
