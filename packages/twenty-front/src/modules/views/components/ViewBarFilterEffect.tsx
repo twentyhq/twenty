@@ -23,11 +23,6 @@ export const ViewBarFilterEffect = ({
     filterDropdownId,
   );
 
-  const setObjectFilterDropdownSelectedRecordIds = useSetRecoilComponentStateV2(
-    objectFilterDropdownSelectedRecordIdsComponentState,
-    filterDropdownId,
-  );
-
   const setObjectFilterDropdownSelectedOptionValues =
     useSetRecoilComponentStateV2(
       objectFilterDropdownSelectedOptionValuesComponentState,
@@ -62,7 +57,7 @@ export const ViewBarFilterEffect = ({
         );
       }
 
-      setObjectFilterDropdownSelectedRecordIds(selectedRecordIds);
+      setObjectFilterDropdownSelectedOptionValues(selectedRecordIds);
     } else if (
       isDefined(fieldMetadataItemUsedInDropdown) &&
       ['SELECT', 'MULTI_SELECT'].includes(fieldMetadataItemUsedInDropdown.type)
@@ -81,7 +76,6 @@ export const ViewBarFilterEffect = ({
     }
   }, [
     fieldMetadataItemUsedInDropdown,
-    setObjectFilterDropdownSelectedRecordIds,
     setObjectFilterDropdownSelectedOptionValues,
     currentRecordFilters,
   ]);
