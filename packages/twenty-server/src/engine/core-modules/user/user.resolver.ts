@@ -211,7 +211,6 @@ export class UserResolver {
         userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
         workspaceId: workspace.id,
       },
-      // withDeleted: true,
     });
 
     userWorkspacesByUserId = new Map(

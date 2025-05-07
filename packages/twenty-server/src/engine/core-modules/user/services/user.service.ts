@@ -74,8 +74,7 @@ export class UserService extends TypeOrmQueryService<User> {
         'workspaceMember',
       );
 
-    return workspaceMemberRepository.find();
-    // return workspaceMemberRepository.find({ withDeleted: true });
+    return workspaceMemberRepository.find({ withDeleted: true });
   }
 
   private async deleteUserFromWorkspace({
