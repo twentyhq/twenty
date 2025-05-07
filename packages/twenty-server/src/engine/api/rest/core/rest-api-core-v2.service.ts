@@ -330,10 +330,16 @@ export class RestApiCoreServiceV2 {
       depth: depth,
     });
 
-    return await repository.find({
+    const unorderedRecords = await repository.find({
       where: { id: In(recordIds) },
       relations,
     });
+
+    const recordMap = new Map(unorderedRecords.map((r) => [r.id, r]));
+
+    const orderedRecords = recordIds.map((id) => recordMap.get(id));
+
+    return orderedRecords;
   }
 
   private getRelations({

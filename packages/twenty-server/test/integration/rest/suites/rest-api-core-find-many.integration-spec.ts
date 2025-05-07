@@ -173,10 +173,10 @@ describe('Core REST API Find Many endpoint', () => {
     expect(nextPagePeople[0].id).toBe(people[0].id);
   });
 
-  it('should support ordering of results', async () => {
+  it('should support ordering Asc of results', async () => {
     const ascResponse = await makeRestAPIRequest({
       method: 'get',
-      path: '/people?orderBy=position[AscNullsLast]',
+      path: '/people?order_by=position[AscNullsLast]',
     }).expect(200);
 
     const ascPeople = ascResponse.body.data.people;
@@ -184,10 +184,12 @@ describe('Core REST API Find Many endpoint', () => {
     expect(ascPeople).toEqual(
       [...ascPeople].sort((a, b) => a.position - b.position),
     );
+  });
 
+  it('should support ordering Desc of results', async () => {
     const descResponse = await makeRestAPIRequest({
       method: 'get',
-      path: '/people?orderBy=position[DescNullsLast]',
+      path: '/people?order_by=position[DescNullsLast]',
     }).expect(200);
 
     const descPeople = descResponse.body.data.people;
@@ -212,7 +214,7 @@ describe('Core REST API Find Many endpoint', () => {
   it('should combine filtering, ordering, and pagination', async () => {
     const response = await makeRestAPIRequest({
       method: 'get',
-      path: '/people?filter=position[gt]:0&orderBy=city[AscNullsFirst]&limit=2',
+      path: '/people?filter=position[gt]:0&order_by=city[AscNullsFirst]&limit=2',
     }).expect(200);
 
     const people = response.body.data.people;
@@ -223,12 +225,7 @@ describe('Core REST API Find Many endpoint', () => {
     expect(people.length).toBeLessThanOrEqual(2);
     expect(pageInfo).toBeDefined();
 
-    // Check that cities are in ascending order
-    for (let i = 1; i < people.length; i++) {
-      if (people[i - 1].city && people[i].city) {
-        expect(people[i - 1].city <= people[i].city).toBe(true);
-      }
-    }
+    expect(people).toEqual([...people].sort((a, b) => a.city - b.city));
   });
 
   it('should support depth 0 parameter', async () => {
