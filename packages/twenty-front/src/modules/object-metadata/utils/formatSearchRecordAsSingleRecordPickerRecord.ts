@@ -18,6 +18,7 @@ export const formatSearchRecordAsSingleRecordPickerRecord = (
     record: {
       id: searchRecord.recordId,
       __typename: searchRecord.objectNameSingular,
+      status: searchRecord?.status,
     },
   };
 };

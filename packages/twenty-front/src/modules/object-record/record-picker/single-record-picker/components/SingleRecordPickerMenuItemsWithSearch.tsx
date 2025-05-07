@@ -14,6 +14,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 
@@ -68,11 +69,26 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
     />
   );
 
+  const shouldShowCreateButton = useMemo(() => {
+    if (records.loading) return false;
+
+    const hasPermissionAndCreator =
+      isDefined(onCreate) && !hasObjectReadOnlyPermission;
+
+    if (!hasPermissionAndCreator) return false;
+
+    const hasProduct =
+      records?.recordsToSelect?.[0]?.record?.__typename === 'product' ||
+      records?.recordsToSelect?.[0]?.record?.__typename === 'integration';
+
+    return !hasProduct;
+  }, [records, onCreate, hasObjectReadOnlyPermission]);
+
   return (
     <>
       {layoutDirection === 'search-bar-on-bottom' && (
         <>
-          {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
+          {shouldShowCreateButton && (
             <DropdownMenuItemsContainer scrollable={false}>
               {createNewButton}
             </DropdownMenuItemsContainer>
@@ -116,7 +132,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
           {records.recordsToSelect.length > 0 && isDefined(onCreate) && (
             <DropdownMenuSeparator />
           )}
-          {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
+          {shouldShowCreateButton && (
             <DropdownMenuItemsContainer scrollable={false}>
               {createNewButton}
             </DropdownMenuItemsContainer>

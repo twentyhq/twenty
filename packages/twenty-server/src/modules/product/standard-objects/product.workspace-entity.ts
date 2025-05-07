@@ -111,7 +111,7 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Charges using this product`,
     icon: 'IconSettings',
     inverseSideTarget: () => ChargeWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   charges: Relation<ChargeWorkspaceEntity[]> | null;
