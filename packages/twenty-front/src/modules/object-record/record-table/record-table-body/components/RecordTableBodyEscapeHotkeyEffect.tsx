@@ -7,6 +7,7 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { isAtLeastOneTableRowSelectedSelector } from '@/object-record/record-table/record-table-row/states/isAtLeastOneTableRowSelectedSelector';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+
 export const RecordTableBodyEscapeHotkeyEffect = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
@@ -32,5 +33,5 @@ export const RecordTableBodyEscapeHotkeyEffect = () => {
     [isAtLeastOneRecordSelected, resetTableRowSelection, unfocusRecordTableRow],
   );
 
-  return <></>;
+  return null;
 };

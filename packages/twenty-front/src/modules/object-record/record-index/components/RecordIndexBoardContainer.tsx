@@ -5,11 +5,11 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordBoard } from '@/object-record/record-board/components/RecordBoard';
+import { RecordBoardBodyEscapeHotkeyEffect } from '@/object-record/record-board/components/RecordBoardBodyEscapeHotkeyEffect';
 import { RecordBoardHotkeyEffect } from '@/object-record/record-board/components/RecordBoardHotkeyEffect';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
-
 type RecordIndexBoardContainerProps = {
   recordBoardId: string;
   viewBarId: string;
@@ -57,6 +57,7 @@ export const RecordIndexBoardContainer = ({
       <RecordBoard />
       <RecordIndexRemoveSortingModal />
       <RecordBoardHotkeyEffect />
+      <RecordBoardBodyEscapeHotkeyEffect />
     </RecordBoardContext.Provider>
   );
 };
