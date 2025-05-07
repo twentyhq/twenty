@@ -9,6 +9,7 @@ import {
   CreatePabxCompanyInput,
   CreatePabxTrunkInput,
   CreateTelephonyInput,
+  UpdateRoutingRulesInput,
   UpdateTelephonyInput,
 } from 'src/engine/core-modules/telephony/inputs';
 import { PabxService } from 'src/engine/core-modules/telephony/services/pabx.service';
@@ -27,6 +28,7 @@ import {
 import { PabxCompanyResponseType } from './types/Create/PabxCompanyResponse.type';
 import { PabxDialingPlanResponseType } from './types/Create/PabxDialingPlanResponse.type';
 import { PabxTrunkResponseType } from './types/Create/PabxTrunkResponse.type';
+import { UpdateRoutingRulesResponseType } from './types/Create/UpdateRoutingRulesResponse.type';
 
 @Resolver(() => Telephony)
 export class TelephonyResolver {
@@ -374,6 +376,8 @@ export class TelephonyResolver {
     try {
       const result = await this.pabxService.createTrunk(input);
 
+      console.log('result: ', result);
+
       return {
         success: true,
         message: `Trunk created successfully: ${input.nome}`,
@@ -410,6 +414,34 @@ export class TelephonyResolver {
       return {
         success: false,
         message: `Failed to create dialing plan: ${error.message}`,
+      };
+    }
+  }
+
+  @Mutation(() => UpdateRoutingRulesResponseType, {
+    name: 'updateRoutingRules',
+  })
+  async updateRoutingRules(
+    @AuthUser() { id: userId }: User,
+    @Args('input') input: UpdateRoutingRulesInput,
+  ): Promise<UpdateRoutingRulesResponseType> {
+    if (!userId) {
+      throw new Error('User id not found');
+    }
+
+    try {
+      const result = await this.pabxService.updateRoutingRules(input);
+
+      return {
+        success: true,
+        message: `Routing rules updated successfully for dialing plan ID: ${input.plano_discagem_id}`,
+      };
+    } catch (error) {
+      console.error('Error updating routing rules:', error);
+
+      return {
+        success: false,
+        message: `Failed to update routing rules: ${error.message}`,
       };
     }
   }

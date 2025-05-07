@@ -564,3 +564,54 @@ export class CreatePabxTrunkInput {
   @IsOptional()
   tarifas?: TarifaTroncoInput[];
 }
+
+@InputType()
+export class RoutingRuleInput {
+  @Field(() => Int)
+  @IsNumber()
+  prioridade: number;
+
+  @Field(() => Int)
+  @IsNumber()
+  tronco_id: number;
+
+  @Field()
+  @IsString()
+  tronco_nome: string;
+}
+
+@InputType()
+export class RegionInput {
+  @Field(() => Int)
+  @IsNumber()
+  regiao_id: number;
+
+  @Field()
+  @IsString()
+  regiao_nome: string;
+
+  @Field(() => [RoutingRuleInput])
+  @IsArray()
+  roteamentos: RoutingRuleInput[];
+}
+
+@InputType()
+export class UpdateRoutingRulesDataInput {
+  @Field(() => [RegionInput])
+  @IsArray()
+  regioes: RegionInput[];
+}
+
+@InputType()
+export class UpdateRoutingRulesInput {
+  @Field(() => Int)
+  @IsNumber()
+  plano_discagem_id: number;
+
+  @Field(() => Int)
+  @IsNumber()
+  cliente_id: number;
+
+  @Field(() => UpdateRoutingRulesDataInput)
+  dados: UpdateRoutingRulesDataInput;
+}

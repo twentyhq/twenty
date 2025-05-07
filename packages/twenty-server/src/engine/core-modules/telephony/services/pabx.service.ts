@@ -8,7 +8,10 @@ import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/
 import { PabxServiceInterface } from 'src/engine/core-modules/telephony/interfaces/pabx.interface';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { CreateDialingPlanInput } from 'src/engine/core-modules/telephony/inputs';
+import {
+  CreateDialingPlanInput,
+  UpdateRoutingRulesInput,
+} from 'src/engine/core-modules/telephony/inputs';
 import { InsereEmpresa } from 'src/engine/core-modules/telephony/types/Create/InsereEmpresa.type';
 import { InsereTronco } from 'src/engine/core-modules/telephony/types/Create/InsereTronco.type';
 import { ExtetionBody } from 'src/engine/core-modules/telephony/types/Extention.type';
@@ -194,6 +197,11 @@ export class PabxService implements PabxServiceInterface {
           payload,
         );
 
+        console.log(
+          'createDialingPlanResponse: ',
+          createDialingPlanResponse.data,
+        );
+
         this.logger.log(`Dialing plan created successfully: ${data.nome}`);
 
         return createDialingPlanResponse;
@@ -205,4 +213,37 @@ export class PabxService implements PabxServiceInterface {
         throw error;
       }
     };
+
+  updateRoutingRules: (
+    data: UpdateRoutingRulesInput,
+  ) => Promise<AxiosResponse> = async (data) => {
+    try {
+      this.logger.log(
+        `Updating routing rules for dialing plan ID: ${data.plano_discagem_id}`,
+      );
+
+      const payload = {
+        plano_discagem_id: data.plano_discagem_id,
+        cliente_id: data.cliente_id,
+        dados: data.dados,
+      };
+
+      const updateRoutingRulesResponse = await this.pabxAxiosInstance.post(
+        '/alterar_regras_roteamento',
+        payload,
+      );
+
+      this.logger.log(
+        `Routing rules updated successfully for dialing plan ID: ${data.plano_discagem_id}`,
+      );
+
+      return updateRoutingRulesResponse;
+    } catch (error) {
+      this.logger.error(
+        `Failed to update routing rules: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
+  };
 }
