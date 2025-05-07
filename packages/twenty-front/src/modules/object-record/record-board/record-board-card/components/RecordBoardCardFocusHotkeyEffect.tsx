@@ -37,7 +37,7 @@ export const RecordBoardCardFocusHotkeyEffect = () => {
   );
 
   useScopedHotkeys(
-    [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
+    [Key.Enter, `${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
     () => {
       openRecordInCommandMenu({
         recordId: recordId,
