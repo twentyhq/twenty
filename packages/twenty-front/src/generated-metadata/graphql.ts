@@ -1013,7 +1013,6 @@ export type Mutation = {
   switchToYearlyInterval: BillingUpdateOutput;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
-  track: Analytics;
   trackAnalytics: Analytics;
   unsyncRemoteTable: RemoteTable;
   updateDatabaseConfigVariable: Scalars['Boolean']['output'];
@@ -1308,12 +1307,6 @@ export type MutationSyncRemoteTableArgs = {
 
 export type MutationSyncRemoteTableSchemaChangesArgs = {
   input: RemoteTableInput;
-};
-
-
-export type MutationTrackArgs = {
-  action: Scalars['String']['input'];
-  payload: Scalars['JSON']['input'];
 };
 
 

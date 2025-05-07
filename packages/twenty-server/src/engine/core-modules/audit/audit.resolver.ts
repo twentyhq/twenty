@@ -11,7 +11,6 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 
 import {
-  CreateAnalyticsInput,
   CreateAnalyticsInputV2,
   isPageviewAnalyticsInput,
   isTrackAnalyticsInput,
@@ -22,16 +21,6 @@ import { AuditService } from './services/audit.service';
 @Resolver(() => Analytics)
 export class AuditResolver {
   constructor(private readonly auditService: AuditService) {}
-
-  // deprecated
-  @Mutation(() => Analytics)
-  track(
-    @Args() _createAnalyticsInput: CreateAnalyticsInput,
-    @AuthWorkspace() _workspace: Workspace | undefined,
-    @AuthUser({ allowUndefined: true }) _user: User | undefined,
-  ) {
-    return { success: true };
-  }
 
   // preparing for new name
   async createPageview(
