@@ -38,7 +38,7 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
   Options extends
     ActiveOrSuspendedWorkspacesMigrationCommandOptions = ActiveOrSuspendedWorkspacesMigrationCommandOptions,
 > extends MigrationCommandRunner {
-  private workspaceIds: string[] = [];
+  private workspaceIds: Set<string> = new Set();
   private startFromWorkspaceId: string | undefined;
   private workspaceCountLimit: number | undefined;
   public migrationReport: WorkspaceMigrationReport = {
@@ -91,8 +91,8 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
       'workspace id. Command runs on all active workspaces if not provided.',
     required: false,
   })
-  parseWorkspaceId(val: string): string[] {
-    this.workspaceIds.push(val);
+  parseWorkspaceId(val: string): Set<string> {
+    this.workspaceIds.add(val);
 
     return this.workspaceIds;
   }
@@ -123,8 +123,8 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
     options: Options,
   ) {
     const activeWorkspaceIds =
-      this.workspaceIds.length > 0
-        ? this.workspaceIds
+      this.workspaceIds.size > 0
+        ? Array.from(this.workspaceIds)
         : await this.fetchActiveWorkspaceIds();
 
     if (options.dryRun) {
