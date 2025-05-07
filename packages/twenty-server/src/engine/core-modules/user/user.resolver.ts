@@ -197,9 +197,13 @@ export class UserResolver {
   async workspaceMembers(
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace,
+    @Args({ name: 'withDeleted', type: () => Boolean, nullable: true })
+    withDeleted: boolean,
   ): Promise<WorkspaceMember[]> {
-    const workspaceMemberEntities =
-      await this.userService.loadWorkspaceMembers(workspace);
+    const workspaceMemberEntities = await this.userService.loadWorkspaceMembers(
+      workspace,
+      withDeleted,
+    );
 
     const workspaceMembers: WorkspaceMember[] = [];
 

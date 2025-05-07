@@ -63,7 +63,7 @@ export class UserService extends TypeOrmQueryService<User> {
     });
   }
 
-  async loadWorkspaceMembers(workspace: Workspace) {
+  async loadWorkspaceMembers(workspace: Workspace, withDeleted = false) {
     if (!isWorkspaceActiveOrSuspended(workspace)) {
       return [];
     }
@@ -74,7 +74,7 @@ export class UserService extends TypeOrmQueryService<User> {
         'workspaceMember',
       );
 
-    return workspaceMemberRepository.find({ withDeleted: true });
+    return workspaceMemberRepository.find({ withDeleted });
   }
 
   private async deleteUserFromWorkspace({

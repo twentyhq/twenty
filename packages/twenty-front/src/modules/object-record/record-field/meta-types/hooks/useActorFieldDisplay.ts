@@ -9,7 +9,7 @@ import { FieldContext } from '../../contexts/FieldContext';
 export const useActorFieldDisplay = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
-  const { currentWorkspaceMembers } = useContext(AuthContext);
+  const { currentWorkspaceMembersWithDeleted } = useContext(AuthContext);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
@@ -22,7 +22,7 @@ export const useActorFieldDisplay = () => {
     fieldDefinition,
     fieldValue: {
       ...fieldValue,
-      workspaceMember: currentWorkspaceMembers?.find(
+      workspaceMember: currentWorkspaceMembersWithDeleted?.find(
         (member) => member.id === fieldValue?.workspaceMemberId,
       ),
     },
