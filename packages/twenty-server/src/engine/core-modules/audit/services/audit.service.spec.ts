@@ -60,7 +60,7 @@ describe('AuditService', () => {
 
       expect(context).toHaveProperty('insertWorkspaceEvent');
       expect(context).toHaveProperty('insertObjectEvent');
-      expect(context).toHaveProperty('insertPageviewEvent');
+      expect(context).toHaveProperty('createPageviewEvent');
     });
 
     it('should call insertWorkspaceEvent with correct parameters', async () => {
@@ -83,12 +83,12 @@ describe('AuditService', () => {
       );
     });
 
-    it('should call insertPageviewEvent with correct parameters', async () => {
-      const insertPageviewEventSpy = jest
+    it('should call createPageviewEvent with correct parameters', async () => {
+      const createPageviewEventSpy = jest
         .fn()
         .mockResolvedValue({ success: true });
       const mockContext = AuditContextMock({
-        insertPageviewEvent: insertPageviewEventSpy,
+        createPageviewEvent: createPageviewEventSpy,
       });
 
       jest.spyOn(service, 'createContext').mockReturnValue(mockContext);
@@ -104,9 +104,9 @@ describe('AuditService', () => {
         userAgent: '',
       };
 
-      await context.insertPageviewEvent('page-view', testPageviewProperties);
+      await context.createPageviewEvent('page-view', testPageviewProperties);
 
-      expect(insertPageviewEventSpy).toHaveBeenCalledWith(
+      expect(createPageviewEventSpy).toHaveBeenCalledWith(
         'page-view',
         testPageviewProperties,
       );
@@ -123,10 +123,10 @@ describe('AuditService', () => {
       expect(result).toEqual({ success: true });
     });
 
-    it('should return success when insertPageviewEvent is called', async () => {
+    it('should return success when createPageviewEvent is called', async () => {
       const context = service.createContext(mockUserIdAndWorkspaceId);
 
-      const result = await context.insertPageviewEvent('page-view', {});
+      const result = await context.createPageviewEvent('page-view', {});
 
       expect(result).toEqual({ success: true });
     });

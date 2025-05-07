@@ -1,4 +1,16 @@
 import {
+  OBJECT_RECORD_CREATED_EVENT,
+  ObjectRecordCreatedTrackEvent,
+} from 'src/engine/core-modules/audit/utils/events/object-event/object-record-created';
+import {
+  OBJECT_RECORD_DELETED_EVENT,
+  ObjectRecordDeletedTrackEvent,
+} from 'src/engine/core-modules/audit/utils/events/object-event/object-record-delete';
+import {
+  OBJECT_RECORD_UPDATED_EVENT,
+  ObjectRecordUpdatedTrackEvent,
+} from 'src/engine/core-modules/audit/utils/events/object-event/object-record-updated';
+import {
   CUSTOM_DOMAIN_ACTIVATED_EVENT,
   CustomDomainActivatedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
@@ -10,18 +22,6 @@ import {
   MONITORING_EVENT,
   MonitoringTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
-import {
-  OBJECT_RECORD_CREATED_EVENT,
-  ObjectRecordCreatedTrackEvent,
-} from 'src/engine/core-modules/audit/utils/events/workspace-event/object-record/object-record-created';
-import {
-  OBJECT_RECORD_DELETED_EVENT,
-  ObjectRecordDeletedTrackEvent,
-} from 'src/engine/core-modules/audit/utils/events/workspace-event/object-record/object-record-delete';
-import {
-  OBJECT_RECORD_UPDATED_EVENT,
-  ObjectRecordUpdatedTrackEvent,
-} from 'src/engine/core-modules/audit/utils/events/workspace-event/object-record/object-record-updated';
 import {
   SERVERLESS_FUNCTION_EXECUTED_EVENT,
   ServerlessFunctionExecutedTrackEvent,

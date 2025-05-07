@@ -10,7 +10,7 @@ The `AuditService` provides a `createContext` method that returns an object with
 
 - `insertWorkspaceEvent`: For tracking workspace-level events
 - `insertObjectEvent`: For tracking object-level events that include record and metadata IDs
-- `insertPageviewEvent`: For tracking page views
+- `createPageviewEvent`: For tracking page views
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -39,7 +39,7 @@ export class MyService {
     });
     
     // Track a pageview
-    analytics.insertPageviewEvent('page-name', {
+    analytics.createPageviewEvent('page-name', {
       href: '/path',
       locale: 'en-US',
       // other properties
@@ -115,7 +115,7 @@ Returns an object with the following methods:
 
 - `insertWorkspaceEvent<T extends TrackEventName>(event: T, properties: TrackEventProperties<T>)`: Tracks a workspace-level event
 - `insertObjectEvent<T extends TrackEventName>(event: T, properties: TrackEventProperties<T> & { recordId: string; objectMetadataId: string })`: Tracks an object-level event
-- `insertPageviewEvent(name: string, properties: Partial<PageviewProperties>)`: Tracks a pageview
+- `createPageviewEvent(name: string, properties: Partial<PageviewProperties>)`: Tracks a pageview
 
 ### Types
 

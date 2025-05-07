@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS objectEvent
     `workspaceId` String NOT NULL,
     `recordId`    String NOT NULL,
     `objectMetadataId`  String NOT NULL,
-    `properties`  JSON
+    `properties`  JSON,
+    `isCustom`    Boolean DEFAULT FALSE,
 )
     ENGINE = MergeTree
         ORDER BY (workspaceId, event, userId, timestamp);

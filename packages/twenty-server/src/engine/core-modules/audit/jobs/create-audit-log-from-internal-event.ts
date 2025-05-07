@@ -1,7 +1,7 @@
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/object-record/object-record-created';
-import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/object-record/object-record-delete';
-import { OBJECT_RECORD_UPDATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/object-record/object-record-updated';
+import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-created';
+import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-delete';
+import { OBJECT_RECORD_UPDATED_EVENT } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-updated';
 import { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';

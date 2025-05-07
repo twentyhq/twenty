@@ -56,7 +56,7 @@ export class AuditService {
             { ...userIdAndWorkspaceId, ...makeTrackEvent(event, properties) },
           ]),
         ),
-      insertPageviewEvent: (
+      createPageviewEvent: (
         name: string,
         properties: Partial<PageviewProperties>,
       ) =>

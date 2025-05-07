@@ -43,7 +43,7 @@ describe('AuditResolver', () => {
       .mockResolvedValue('Pageview created');
 
     auditService.createContext.mockReturnValue({
-      insertPageviewEvent: mockInsertPageviewEvent,
+      createPageviewEvent: mockInsertPageviewEvent,
       insertWorkspaceEvent: jest.fn(),
       insertObjectEvent: jest.fn(),
     });
@@ -75,7 +75,7 @@ describe('AuditResolver', () => {
     auditService.createContext.mockReturnValue({
       insertWorkspaceEvent: mockInsertWorkspaceEvent,
       insertObjectEvent: jest.fn(),
-      insertPageviewEvent: jest.fn(),
+      createPageviewEvent: jest.fn(),
     });
 
     const input = {
@@ -100,6 +100,47 @@ describe('AuditResolver', () => {
     expect(result).toBe('Track created');
   });
 
+  it('should handle object event creation', async () => {
+    const mockInsertObjectEvent = jest
+      .fn()
+      .mockResolvedValue('Object event created');
+
+    auditService.createContext.mockReturnValue({
+      insertWorkspaceEvent: jest.fn(),
+      insertObjectEvent: mockInsertObjectEvent,
+      createPageviewEvent: jest.fn(),
+    });
+
+    const input = {
+      event: 'Object Record Created' as const,
+      recordId: 'test-record-id',
+      objectMetadataId: 'test-object-metadata-id',
+      properties: { additionalData: 'test-data' },
+    };
+
+    const result = await resolver.insertObjectEvent(
+      input,
+      { id: 'workspace-3' } as Workspace,
+      { id: 'user-3' } as User,
+    );
+
+    expect(auditService.createContext).toHaveBeenCalledWith({
+      workspaceId: 'workspace-3',
+      userId: 'user-3',
+    });
+
+    expect(mockInsertObjectEvent).toHaveBeenCalledWith(
+      'Object Record Created',
+      {
+        additionalData: 'test-data',
+        recordId: 'test-record-id',
+        objectMetadataId: 'test-object-metadata-id',
+        isCustom: true,
+      },
+    );
+    expect(result).toBe('Object event created');
+  });
+
   it('should throw an AuditException for invalid input', async () => {
     const invalidInput = { type: 'invalid' };
 
@@ -110,6 +151,20 @@ describe('AuditResolver', () => {
         'Invalid analytics input',
         AuditExceptionCode.INVALID_TYPE,
       ),
+    );
+  });
+
+  it('should throw an AuditException when workspace is missing for insertObjectEvent', async () => {
+    const input = {
+      event: 'Object Record Created' as const,
+      recordId: 'test-record-id',
+      objectMetadataId: 'test-object-metadata-id',
+    };
+
+    await expect(
+      resolver.insertObjectEvent(input, undefined, undefined),
+    ).rejects.toThrowError(
+      new AuditException('Missing workspace', AuditExceptionCode.INVALID_INPUT),
     );
   });
 });
