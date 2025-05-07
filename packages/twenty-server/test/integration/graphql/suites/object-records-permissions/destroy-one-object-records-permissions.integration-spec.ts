@@ -28,7 +28,6 @@ describe('destroyOneObjectRecordsPermissions', () => {
     });
 
     it('should throw a permission error when user does not have permission (guest role)', async () => {
-      const personId = randomUUID();
       const graphqlOperation = destroyOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS,

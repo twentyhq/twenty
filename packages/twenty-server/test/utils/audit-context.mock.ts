@@ -1,19 +1,31 @@
 import { TrackEventName } from 'src/engine/core-modules/audit/types/events.type';
 
 export const AuditContextMock = (params?: {
-  track?:
+  insertWorkspaceEvent?:
     | ((
         event: TrackEventName,
         properties: any,
       ) => Promise<{ success: boolean }>)
     | jest.Mock<any, any>;
-  pageview?:
+  createObjectEvent?:
+    | ((
+        event: TrackEventName,
+        properties: any,
+      ) => Promise<{ success: boolean }>)
+    | jest.Mock<any, any>;
+  createPageviewEvent?:
     | ((name: string, properties: any) => Promise<{ success: boolean }>)
     | jest.Mock<any, any>;
 }) => {
   return {
-    track: params?.track ?? jest.fn().mockResolvedValue({ success: true }),
-    pageview:
-      params?.pageview ?? jest.fn().mockResolvedValue({ success: true }),
+    insertWorkspaceEvent:
+      params?.insertWorkspaceEvent ??
+      jest.fn().mockResolvedValue({ success: true }),
+    createObjectEvent:
+      params?.createObjectEvent ??
+      jest.fn().mockResolvedValue({ success: true }),
+    createPageviewEvent:
+      params?.createPageviewEvent ??
+      jest.fn().mockResolvedValue({ success: true }),
   };
 };

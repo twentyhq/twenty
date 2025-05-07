@@ -12,7 +12,7 @@ import {
 import {
   eventsRegistry,
   GenericTrackEvent,
-} from 'src/engine/core-modules/audit/utils/events/track/track';
+} from 'src/engine/core-modules/audit/utils/events/workspace-event/track';
 
 const common = (): Record<AuditCommonPropertiesType, string> => ({
   timestamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),

@@ -1,9 +1,9 @@
-import { EntityManager } from 'typeorm';
 
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { peopleDemo } from 'src/engine/workspace-manager/demo-objects-prefill-data/people-demo.json';
 
 export const seedPersonWithDemoData = async (
-  entityManager: EntityManager,
+  entityManager: WorkspaceEntityManager,
   schemaName: string,
 ) => {
   const companies = await entityManager?.query(
@@ -27,7 +27,9 @@ export const seedPersonWithDemoData = async (
   }));
 
   await entityManager
-    .createQueryBuilder()
+    .createQueryBuilder(undefined, undefined, undefined, {
+      shouldBypassPermissionChecks: true,
+    })
     .insert()
     .into(`${schemaName}.person`, [
       'nameFirstName',

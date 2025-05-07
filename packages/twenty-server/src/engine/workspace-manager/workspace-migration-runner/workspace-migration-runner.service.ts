@@ -55,13 +55,11 @@ export class WorkspaceMigrationRunnerService {
   public async executeMigrationFromPendingMigrations(
     workspaceId: string,
   ): Promise<WorkspaceMigrationTableAction[]> {
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
+    const mainDataSource =
+      await this.workspaceDataSourceService.connectToMainDataSource();
 
-    if (!workspaceDataSource) {
-      throw new Error('Workspace data source not found');
+    if (!mainDataSource) {
+      throw new Error('Main data source not found');
     }
 
     const pendingMigrations =
@@ -76,7 +74,7 @@ export class WorkspaceMigrationRunnerService {
         return [...acc, ...pendingMigration.migrations];
       }, []);
 
-    const queryRunner = workspaceDataSource?.createQueryRunner();
+    const queryRunner = mainDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
