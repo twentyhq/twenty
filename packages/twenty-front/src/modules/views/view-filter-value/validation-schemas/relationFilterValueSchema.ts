@@ -1,4 +1,5 @@
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 const relationFilterValueItemSchema = z.union([
@@ -12,7 +13,7 @@ export const relationFilterValueSchema = z
   .string()
   .optional()
   .transform((value, ctx) => {
-    if (value === '' || value === undefined) {
+    if (!isDefined(value) || value === '') {
       return [];
     }
 
