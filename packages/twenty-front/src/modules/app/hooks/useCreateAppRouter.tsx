@@ -25,12 +25,13 @@ import { DashboardLinks } from '~/pages/dashboard-links/DashboarLinks';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
-import { ChooseYourPlan } from '~/pages/onboarding/ChooseYourPlan';
 import { CreateProfile } from '~/pages/onboarding/CreateProfile';
 import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
 import { InviteTeam } from '~/pages/onboarding/InviteTeam';
 import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
+import { Plans } from '~/pages/onboarding/Plans';
+import { PaymentOptions } from '~/pages/onboarding/PaymentOptions';
 
 export const useCreateAppRouter = (
   isFunctionSettingsEnabled?: boolean,
@@ -54,9 +55,10 @@ export const useCreateAppRouter = (
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
           <Route path={AppPath.SyncEmails} element={<SyncEmails />} />
           <Route path={AppPath.InviteTeam} element={<InviteTeam />} />
-          <Route path={AppPath.PlanRequired} element={<ChooseYourPlan />} />
+          <Route path={AppPath.PlanRequired} element={<Plans />} />
+          <Route path={AppPath.PaymentRequired} element={<PaymentOptions />} />
           <Route
-            path={AppPath.PlanRequiredSuccess}
+            path={AppPath.PaymentRequiredSuccess}
             element={<PaymentSuccess />}
           />
           <Route path={indexAppPath.getIndexAppPath()} element={<></>} />

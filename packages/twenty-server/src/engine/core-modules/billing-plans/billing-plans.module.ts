@@ -12,13 +12,17 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { BillingPlans } from 'src/engine/core-modules/billing-plans/billing-plans.entity';
 import { BillingPlansResolver } from 'src/engine/core-modules/billing-plans/billing-plans.resolver';
 import { BillingPlansService } from 'src/engine/core-modules/billing-plans/billing-plans.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([BillingPlans], 'core'),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([BillingPlans, Workspace], 'core'),
+        NestjsQueryTypeOrmModule.forFeature(
+          [BillingPlans, Workspace, User],
+          'core',
+        ),
         WorkspaceModule,
       ],
     }),

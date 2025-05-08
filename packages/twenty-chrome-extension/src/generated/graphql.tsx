@@ -5021,6 +5021,7 @@ export enum OnboardingStatus {
   Completed = 'COMPLETED',
   InviteTeam = 'INVITE_TEAM',
   PlanRequired = 'PLAN_REQUIRED',
+  PaymentRequired = 'PAYMENT_REQUIRED',
   ProfileCreation = 'PROFILE_CREATION',
   SyncEmail = 'SYNC_EMAIL',
   WorkspaceActivation = 'WORKSPACE_ACTIVATION'

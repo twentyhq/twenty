@@ -16,6 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Key } from 'ts-key-enum';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
+import { useSaveBillingPlan } from '~/pages/onboarding/hooks/useSaveBillingPlan';
 
 export const plans = [
   {
@@ -162,7 +163,7 @@ const StyledFooterContainer = styled.div`
 
 export const selectedPlanState = atom<number>({
   key: 'selectedPlanState',
-  default: 0,
+  default: 1,
 });
 
 export const Plans = () => {
