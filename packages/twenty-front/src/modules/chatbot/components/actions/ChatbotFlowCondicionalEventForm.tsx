@@ -1,4 +1,5 @@
 import { LogicOption } from '@/chatbot/components/ui/LogicOption';
+import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
 import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
 import {
@@ -101,21 +102,20 @@ const StyledLabel = styled(Label)`
   width: 100%;
 `;
 
-// TO DO Create handleBlur to change the data
 export const ChatbotFlowCondicionalEventForm = ({
   selectedNode,
 }: ChatbotFlowCondicionalEventFormProps) => {
-  const initialTitle = selectedNode.data.title ?? 'Node title';
+  const initialTitle = (selectedNode.data.title as string) ?? 'Node title';
   const initialText =
-    (selectedNode.data?.text as string | undefined) ?? 'Insert text to be sent';
+    (selectedNode.data?.text as string) ?? 'Insert text to be sent';
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [title, setTitle] = useState(initialTitle);
   const [text, setText] = useState<string>(initialText);
-  const [state, setState] = useState<NewConditionalState>(initialState);
+  const [nodeData, setNodeData] = useState<NewConditionalState>(initialState);
 
-  // const { updateFlow } = useUpdateChatbotFlow();
+  const { updateFlow } = useUpdateChatbotFlow();
 
   const chatbotFlow = useRecoilValue(chatbotFlowState);
 
@@ -126,9 +126,22 @@ export const ChatbotFlowCondicionalEventForm = ({
   useEffect(() => {
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (selectedNode.data.logic) {
-      setState(selectedNode.data.logic);
+      setNodeData(selectedNode.data.logic);
     }
-    // console.log('selectedNode.data: ', state);
+  }, [selectedNode.data.logic]);
+
+  useEffect(() => {
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+    if (textareaRef.current) {
+      textareaRef.current.style.height = '30px';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [selectedNode.data.text]);
+
+  useEffect(() => {
+    if (!selectedNode.data.logic) {
+      addCondition();
+    }
   }, [selectedNode.data.logic]);
 
   const handleChange = (newTitle: string) => {
@@ -159,118 +172,75 @@ export const ChatbotFlowCondicionalEventForm = ({
     setChatbotFlowSelectedNode(flow);
   };
 
-  useEffect(() => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-    if (textareaRef.current) {
-      textareaRef.current.style.height = '30px';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }, [selectedNode.data.text]);
+  const persistNode = (updatedLogic?: NewConditionalState) => {
+    if (!chatbotFlow) return;
 
-  const handleBlur = () => {
-    if (!selectedNode || !chatbotFlow) return;
-
-    const selectedNodeAltered: Node = {
+    const updatedNode: Node = {
       ...selectedNode,
       data: {
         ...selectedNode.data,
         title,
         text,
+        logic: updatedLogic ?? nodeData,
       },
     };
 
-    const updatedNodes = chatbotFlow.nodes.map((node) =>
-      node.id === selectedNode.id ? selectedNodeAltered : node,
+    const updatedNodes = chatbotFlow.nodes.map((n) =>
+      n.id === selectedNode.id ? updatedNode : n,
     );
 
-    const { id, __typename, ...chatbotFlowWithoutId } = chatbotFlow;
+    const { id, __typename, ...flowRest } = chatbotFlow;
+    const newFlow = { ...flowRest, nodes: updatedNodes };
 
-    const updatedChatbotFlow = {
-      ...chatbotFlowWithoutId,
-      nodes: updatedNodes,
-    };
-
-    // setChatbotFlowSelectedNode(selectedNodeAltered);
-    // updateFlow(updatedChatbotFlow);
+    setChatbotFlowSelectedNode(updatedNode);
+    updateFlow(newFlow);
   };
 
+  const handleTitleBlur = () => persistNode();
+  const handleTextBlur = () => persistNode();
+
   const addCondition = () => {
-    const newLogicNode = state.logicNodes.length;
+    const newIndex = nodeData.logicNodes.length;
+
     const newCondition: NewLogicNodeData = {
-      option: `${state.logicNodes.length + 1}`,
+      option: `${newIndex + 1}`,
       comparison: '==',
-      inputText: '',
+      sectorId: '',
       conditionValue: '||',
     };
 
-    setState((prev) => ({
-      logicNodes: [...prev.logicNodes, newLogicNode],
-      logicNodeData: [...prev.logicNodeData, newCondition],
-    }));
+    const updated = {
+      logicNodes: [...nodeData.logicNodes, newIndex],
+      logicNodeData: [...nodeData.logicNodeData, newCondition],
+    };
+
+    setNodeData(updated);
+    persistNode(updated);
   };
 
-  const updateCondition = (nodeIndex: number, updates: NewLogicNodeData) => {
-    const newLogicNodeData = [...state.logicNodeData];
-    newLogicNodeData[nodeIndex] = updates;
+  const updateCondition = (index: number, updates: NewLogicNodeData) => {
+    const newData = [...nodeData.logicNodeData];
+    newData[index] = updates;
 
-    setState((prev) => ({
-      ...prev,
-      logicNodeData: newLogicNodeData,
-    }));
+    const updated = { ...nodeData, logicNodeData: newData };
 
-    // TO DO Change onSave when progressing when inserting a new node
-    // if (onSave) {
-    //   onSave({
-    //     id: nodeId,
-    //     title,
-    //     text,
-    //     logic: {
-    //       logicNodes: state.logicNodes,
-    //       logicNodeData: newLogicNodeData,
-    //     },
-    //   });
-    // }
+    setNodeData(updated);
+    persistNode(updated);
   };
 
-  const deleteCondition = (nodeIndex: number) => {
-    if (state.logicNodes.length <= 1) return;
+  const deleteCondition = (index: number) => {
+    if (nodeData.logicNodes.length <= 1) return;
 
-    setState((prev) => {
-      const newLogicNodes = prev.logicNodes.filter((_, i) => i !== nodeIndex);
-      const newLogicNodeData = prev.logicNodeData.filter(
-        (_, i) => i !== nodeIndex,
-      );
+    const newNodes = nodeData.logicNodes.filter((_, i) => i !== index);
+    const newData = nodeData.logicNodeData
+      .filter((_, i) => i !== index)
+      .map((d, i) => ({ ...d, option: `${i + 1}` }));
 
-      const updatedLogicNodeData = newLogicNodeData.map((data, index) => ({
-        ...data,
-        option: `${index + 1}`,
-      }));
+    const updated = { logicNodes: newNodes, logicNodeData: newData };
 
-      // TO DO Change onSave when progressing when inserting a new node
-      // if (onSave) {
-      //   onSave({
-      //     id: nodeId,
-      //     title,
-      //     text,
-      //     logic: {
-      //       logicNodes: newLogicNodes,
-      //       logicNodeData: updatedLogicNodeData,
-      //     },
-      //   });
-      // }
-
-      return {
-        logicNodes: newLogicNodes,
-        logicNodeData: updatedLogicNodeData,
-      };
-    });
+    setNodeData(updated);
+    persistNode(updated);
   };
-
-  useEffect(() => {
-    if (state.logicNodes.length === 0) {
-      addCondition();
-    }
-  }, []);
 
   return (
     <>
@@ -279,11 +249,12 @@ export const ChatbotFlowCondicionalEventForm = ({
           <StyledHeaderTitle>
             <TitleInput
               sizeVariant="md"
-              value={title as string}
+              value={title}
               onChange={handleChange}
               onEscape={() => {
                 setTitle(initialTitle);
               }}
+              onClickOutside={handleTitleBlur}
             />
           </StyledHeaderTitle>
           <StyledHeaderType>
@@ -300,20 +271,20 @@ export const ChatbotFlowCondicionalEventForm = ({
             value={text}
             onChange={handleInputChange}
             disabled={text.length >= 4000}
-            onBlur={handleBlur}
+            onBlur={handleTextBlur}
           />
           <StyledLabel>{text.length}/4000</StyledLabel>
         </StyledDiv>
         <StyledDiv>
-          {state.logicNodes.map((_, index) => {
+          {nodeData.logicNodes.map((_, index) => {
             return (
               <LogicOption
                 key={index}
                 nodeIndex={index}
-                condition={state.logicNodeData[index]}
+                condition={nodeData.logicNodeData[index]}
                 onDelete={() => deleteCondition(index)}
                 onUpdate={(updates) => updateCondition(index, updates)}
-                showDeleteButton={state.logicNodes.length > 1}
+                showDeleteButton={nodeData.logicNodes.length > 1}
               />
             );
           })}

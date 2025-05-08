@@ -46,13 +46,7 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
   const { getIcon } = useIcons();
   const { sectors } = useFindAllSectors();
 
-  const updateComparison = (value: string) => {
-    onUpdate({ ...condition, comparison: value });
-  };
-
-  const updateSelectInput = (value: string) => {
-    onUpdate({ ...condition, inputText: value });
-  };
+  if (!sectors) return;
 
   const sectorsOptions =
     sectors?.map((sector) => ({
@@ -73,15 +67,15 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
           dropdownId={`select-comparison-condition-${condition.option}`}
           options={comparisonOptions}
           value={condition.comparison}
-          onChange={updateComparison}
+          onChange={(val) => onUpdate({ ...condition, comparison: val })}
         />
         {/* Add objects and records to this container in the future */}
         <Select
           label="Sectors"
           dropdownId={`select-sector-condition-${condition.option}`}
           options={sectorsOptions}
-          value={condition.inputText}
-          onChange={updateSelectInput}
+          value={condition.sectorId}
+          onChange={(val) => onUpdate({ ...condition, sectorId: val })}
         />
       </StyledLogicNodeWrapper>
     </>
