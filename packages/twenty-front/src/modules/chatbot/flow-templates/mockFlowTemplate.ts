@@ -16,15 +16,15 @@ export const initialNodes: Node[] = [
     id: '2',
     type: 'condition',
     data: {
-      title: 'Condicional',
       logic: {
-        logicNodes: [0, 1],
+        logicNodes: [0],
         logicNodeData: [
-          [
-            { comparison: '==', inputText: '', conditionValue: '' },
-            { comparison: '==', inputText: '', conditionValue: '||' },
-          ],
-          [{ comparison: '==', inputText: '', conditionValue: '' }],
+          {
+            option: '1',
+            comparison: '==',
+            sectorId: '',
+            conditionValue: '||',
+          },
         ],
       },
     },
@@ -37,22 +37,10 @@ export const initialNodes: Node[] = [
     position: { x: 500, y: 300 },
   },
   {
-    id: '4',
-    type: 'text',
-    data: { nodeStart: false, title: 'Mensagem' },
-    position: { x: 500, y: 600 },
-  },
-  {
     id: '5',
     type: 'addNode',
     data: {},
-    position: { x: 700, y: 900 },
-  },
-  {
-    id: '6',
-    type: 'text',
-    data: {},
-    position: { x: 900, y: 900 },
+    position: { x: 200, y: 400 },
   },
 ];
 
@@ -63,15 +51,15 @@ export const initialEdges: Edge[] = [
     target: '2',
   },
   {
-    id: 'xy-edge__2b-0-3',
+    id: 'xy-edge__2b-1-3',
     source: '2',
     target: '3',
-    sourceHandle: 'b-0',
+    sourceHandle: 'b-1',
   },
   {
-    id: 'xy-edge__2b-1-4',
+    id: 'xy-edge__2-5',
     source: '2',
-    target: '4',
-    sourceHandle: 'b-1',
+    target: '5',
+    sourceHandle: 'a',
   },
 ];
