@@ -123,7 +123,7 @@ export const RecordDetailRelationSection = ({
     isRecordReadOnly,
   });
 
-  if (loading || aggregateLoading || isFieldReadOnly) return null;
+  if (loading || isFieldReadOnly) return null;
 
   const relationRecordsCount = relationAggregateResult?.id?.COUNT ?? 0;
 
