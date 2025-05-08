@@ -331,6 +331,7 @@ export type ClientConfig = {
   defaultSubdomain?: Maybe<Scalars['String']['output']>;
   frontDomain: Scalars['String']['output'];
   isAttachmentPreviewEnabled: Scalars['Boolean']['output'];
+  isConfigVariablesInDbEnabled: Scalars['Boolean']['output'];
   isEmailVerificationRequired: Scalars['Boolean']['output'];
   isGoogleCalendarEnabled: Scalars['Boolean']['output'];
   isGoogleMessagingEnabled: Scalars['Boolean']['output'];
@@ -355,13 +356,31 @@ export type ComputeStepOutputSchemaInput = {
   step: Scalars['JSON']['input'];
 };
 
+export enum ConfigSource {
+  DATABASE = 'DATABASE',
+  DEFAULT = 'DEFAULT',
+  ENVIRONMENT = 'ENVIRONMENT'
+}
+
 export type ConfigVariable = {
   __typename?: 'ConfigVariable';
   description: Scalars['String']['output'];
+  isEnvOnly: Scalars['Boolean']['output'];
   isSensitive: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
-  value: Scalars['String']['output'];
+  options?: Maybe<Scalars['JSON']['output']>;
+  source: ConfigSource;
+  type: ConfigVariableType;
+  value?: Maybe<Scalars['JSON']['output']>;
 };
+
+export enum ConfigVariableType {
+  ARRAY = 'ARRAY',
+  BOOLEAN = 'BOOLEAN',
+  ENUM = 'ENUM',
+  NUMBER = 'NUMBER',
+  STRING = 'STRING'
+}
 
 export enum ConfigVariablesGroup {
   AnalyticsConfig = 'AnalyticsConfig',
@@ -741,11 +760,8 @@ export type FeatureFlagDto = {
 
 export enum FeatureFlagKey {
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
-  IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
-  IsApprovedAccessDomainsEnabled = 'IsApprovedAccessDomainsEnabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
   IsCustomDomainEnabled = 'IsCustomDomainEnabled',
-  IsEventObjectEnabled = 'IsEventObjectEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsMeteredProductBillingEnabled = 'IsMeteredProductBillingEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
@@ -1112,9 +1128,11 @@ export type Mutation = {
   computeStepOutputSchema: Scalars['JSON']['output'];
   createAgent: Agent;
   createApprovedAccessDomain: ApprovedAccessDomain;
+  createDatabaseConfigVariable: Scalars['Boolean']['output'];
   createDraftFromWorkflowVersion: WorkflowVersion;
   createInterIntegration: InterIntegration;
   createOIDCIdentityProvider: SetupSsoOutput;
+  createObjectEvent: Analytics;
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
@@ -1132,6 +1150,7 @@ export type Mutation = {
   deleteAgent: Agent;
   deleteApprovedAccessDomain: Scalars['Boolean']['output'];
   deleteCurrentWorkspace: Workspace;
+  deleteDatabaseConfigVariable: Scalars['Boolean']['output'];
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRelation: RelationMetadata;
@@ -1179,10 +1198,10 @@ export type Mutation = {
   toggleAgentStatus: Scalars['Boolean']['output'];
   toggleInterIntegrationStatus: Scalars['String']['output'];
   toggleWhatsappIntegrationStatus: Scalars['Boolean']['output'];
-  track: Analytics;
   trackAnalytics: Analytics;
   unsyncRemoteTable: RemoteTable;
   updateAgent: Agent;
+  updateDatabaseConfigVariable: Scalars['Boolean']['output'];
   updateInterIntegration: InterIntegration;
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneField: Field;
@@ -1253,6 +1272,12 @@ export type MutationCreateApprovedAccessDomainArgs = {
 };
 
 
+export type MutationCreateDatabaseConfigVariableArgs = {
+  key: Scalars['String']['input'];
+  value: Scalars['JSON']['input'];
+};
+
+
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
 };
@@ -1265,6 +1290,14 @@ export type MutationCreateInterIntegrationArgs = {
 
 export type MutationCreateOidcIdentityProviderArgs = {
   input: SetupOidcSsoInput;
+};
+
+
+export type MutationCreateObjectEventArgs = {
+  event: Scalars['String']['input'];
+  objectMetadataId: Scalars['String']['input'];
+  properties?: InputMaybe<Scalars['JSON']['input']>;
+  recordId: Scalars['String']['input'];
 };
 
 
@@ -1345,6 +1378,11 @@ export type MutationDeleteAgentArgs = {
 
 export type MutationDeleteApprovedAccessDomainArgs = {
   input: DeleteApprovedAccessDomainInput;
+};
+
+
+export type MutationDeleteDatabaseConfigVariableArgs = {
+  key: Scalars['String']['input'];
 };
 
 
@@ -1556,12 +1594,6 @@ export type MutationToggleWhatsappIntegrationStatusArgs = {
 };
 
 
-export type MutationTrackArgs = {
-  action: Scalars['String']['input'];
-  payload: Scalars['JSON']['input'];
-};
-
-
 export type MutationTrackAnalyticsArgs = {
   event?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
@@ -1577,6 +1609,12 @@ export type MutationUnsyncRemoteTableArgs = {
 
 export type MutationUpdateAgentArgs = {
   updateInput: UpdateAgentInput;
+};
+
+
+export type MutationUpdateDatabaseConfigVariableArgs = {
+  key: Scalars['String']['input'];
+  value: Scalars['JSON']['input'];
 };
 
 
@@ -1965,6 +2003,7 @@ export type Query = {
   getAvailablePackages: Scalars['JSON']['output'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getDashboardLinklogs: Array<LinkLogsWorkspaceEntity>;
+  getDatabaseConfigVariable: ConfigVariable;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getInterAccountInfo: Scalars['String']['output'];
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -2079,6 +2118,11 @@ export type QueryGetAllStripeIntegrationsArgs = {
 
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
+};
+
+
+export type QueryGetDatabaseConfigVariableArgs = {
+  key: Scalars['String']['input'];
 };
 
 
@@ -3195,6 +3239,7 @@ export type WorkflowAction = {
   __typename?: 'WorkflowAction';
   id: Scalars['UUID']['output'];
   name: Scalars['String']['output'];
+  nextStepIds?: Maybe<Array<Scalars['UUID']['output']>>;
   settings: Scalars['JSON']['output'];
   type: Scalars['String']['output'];
   valid: Scalars['Boolean']['output'];

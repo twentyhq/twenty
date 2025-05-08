@@ -42,10 +42,13 @@ export const CleanSuspendedWorkspaceEmail = ({
         <br />
         <Trans id="If you wish to use Twenty again, you can create a new workspace." />
       </MainText>
+      <br />
       <CallToAction
         href="https://app.twenty.com/"
         value={i18n._('Create a new workspace')}
       />
+      <br />
+      <br />
     </BaseEmail>
   );
 };

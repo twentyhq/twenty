@@ -198,20 +198,18 @@ export class WorkspaceManagerService {
     dataSourceMetadata: DataSourceEntity,
     workspaceId: string,
   ) {
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
+    const mainDataSource =
+      await this.workspaceDataSourceService.connectToMainDataSource();
 
-    if (!workspaceDataSource) {
-      throw new Error('Could not connect to workspace data source');
+    if (!mainDataSource) {
+      throw new Error('Could not connect to main data source');
     }
 
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
     await standardObjectsPrefillData(
-      workspaceDataSource,
+      mainDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
     );
@@ -228,20 +226,18 @@ export class WorkspaceManagerService {
     dataSourceMetadata: DataSourceEntity,
     workspaceId: string,
   ) {
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
+    const mainDataSource =
+      await this.workspaceDataSourceService.connectToMainDataSource();
 
-    if (!workspaceDataSource) {
-      throw new Error('Could not connect to workspace data source');
+    if (!mainDataSource) {
+      throw new Error('Could not connect to main data source');
     }
 
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
     await seedWorkspaceWithDemoData(
-      workspaceDataSource,
+      mainDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
     );

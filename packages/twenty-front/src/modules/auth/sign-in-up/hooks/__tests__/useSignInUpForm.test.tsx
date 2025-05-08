@@ -1,9 +1,9 @@
-import { RecoilRoot, useSetRecoilState } from 'recoil';
-import { renderHook } from '@testing-library/react';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
+import { renderHook } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
+import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 describe('useSignInUpForm', () => {
   beforeEach(() => {
@@ -61,7 +61,7 @@ describe('useSignInUpForm', () => {
     expect(result.current.form.getValues()).toEqual({
       exist: false,
       email: 'test@test.com',
-      password: 'Applecar2025',
+      password: 'tim@apple.dev',
       captchaToken: '',
     });
   });

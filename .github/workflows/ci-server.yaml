@@ -232,7 +232,7 @@ jobs:
           path: reset-logs.log
   ci-server-status-check:
     if: always() && !cancelled()
-    timeout-minutes: 1
+    timeout-minutes: 5
     runs-on: depot-ubuntu-24.04-8
     needs:
       [changed-files-check, server-setup, server-test, server-integration-test]

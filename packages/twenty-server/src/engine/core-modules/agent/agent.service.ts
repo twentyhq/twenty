@@ -11,6 +11,7 @@ import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export class AgentService {
   constructor(
@@ -24,6 +25,7 @@ export class AgentService {
     private readonly typeORMService: TypeORMService,
     @InjectRepository(Inbox, 'core')
     private readonly inboxRepository: Repository<Inbox>,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   async create(createInput: CreateAgentInput): Promise<Agent> {
@@ -179,7 +181,9 @@ export class AgentService {
       );
 
     const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
 
     const workspaceMembers = await workspaceDataSource?.query(
       `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "id"='${memberId}'`,
@@ -199,7 +203,9 @@ export class AgentService {
       );
 
     const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
 
     await workspaceDataSource?.query(
       `UPDATE ${dataSourceMetadata.schema}."workspaceMember" SET "agentId"='${newAgentId}' WHERE "id"='${memberId}'`,
@@ -222,7 +228,9 @@ export class AgentService {
       );
 
     const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
 
     await workspaceDataSource?.query(
       `UPDATE ${dataSourceMetadata.schema}."workspaceMember" SET "agentId"='' WHERE "id"='${memberId}'`,

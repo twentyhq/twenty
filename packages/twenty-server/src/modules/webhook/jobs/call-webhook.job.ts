@@ -3,11 +3,11 @@ import { Logger } from '@nestjs/common';
 
 import crypto from 'crypto';
 
-import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { WEBHOOK_RESPONSE_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/webhook/webhook-response';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { WEBHOOK_RESPONSE_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/webhook/webhook-response';
 
 export type CallWebhookJobData = {
   targetUrl: string;
@@ -26,7 +26,7 @@ export class CallWebhookJob {
   private readonly logger = new Logger(CallWebhookJob.name);
   constructor(
     private readonly httpService: HttpService,
-    private readonly analyticsService: AnalyticsService,
+    private readonly auditService: AuditService,
   ) {}
 
   private generateSignature(
@@ -47,7 +47,7 @@ export class CallWebhookJob {
       webhookId: data.webhookId,
       eventName: data.eventName,
     };
-    const analytics = this.analyticsService.createAnalyticsContext({
+    const analytics = this.auditService.createContext({
       workspaceId: data.workspaceId,
     });
 
@@ -78,13 +78,13 @@ export class CallWebhookJob {
 
       const success = response.status >= 200 && response.status < 300;
 
-      analytics.track(WEBHOOK_RESPONSE_EVENT, {
+      analytics.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
         status: response.status,
         success,
         ...commonPayload,
       });
     } catch (err) {
-      analytics.track(WEBHOOK_RESPONSE_EVENT, {
+      analytics.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
         success: false,
         ...commonPayload,
         ...(err.response && { status: err.response.status }),

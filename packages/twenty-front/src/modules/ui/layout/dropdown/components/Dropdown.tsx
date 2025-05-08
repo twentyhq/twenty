@@ -25,19 +25,24 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useDropdown } from '../hooks/useDropdown';
 
+type Width = `${string}px` | `${number}%` | 'auto' | number;
 const StyledDropdownFallbackAnchor = styled.div`
   left: 0;
   position: fixed;
   top: 0;
 `;
 
-const StyledClickableComponent = styled.div`
+const StyledClickableComponent = styled.div<{
+  width?: Width;
+}>`
   height: fit-content;
+  width: ${({ width }) => width ?? 'auto'};
 `;
 
 export type DropdownProps = {
   className?: string;
   clickableComponent?: ReactNode;
+  clickableComponentWidth?: Width;
   dropdownComponents: ReactNode;
   hotkey?: {
     key: Keys;
@@ -46,7 +51,7 @@ export type DropdownProps = {
   dropdownHotkeyScope: HotkeyScope;
   dropdownId: string;
   dropdownPlacement?: Placement;
-  dropdownWidth?: `${string}px` | `${number}%` | 'auto' | number;
+  dropdownWidth?: Width;
   dropdownOffset?: DropdownOffset;
   dropdownStrategy?: 'fixed' | 'absolute';
   onClickOutside?: () => void;
@@ -70,6 +75,7 @@ export const Dropdown = ({
   onClose,
   onOpen,
   avoidPortal,
+  clickableComponentWidth = 'auto',
 }: DropdownProps) => {
   const { isDropdownOpen, toggleDropdown } = useDropdown(dropdownId);
 
@@ -159,6 +165,7 @@ export const Dropdown = ({
               aria-expanded={isDropdownOpen}
               aria-haspopup={true}
               role="button"
+              width={clickableComponentWidth}
             >
               {clickableComponent}
             </StyledClickableComponent>

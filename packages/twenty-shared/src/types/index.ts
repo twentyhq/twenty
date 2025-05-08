@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export { FieldMetadataType } from './FieldMetadataType';
 export type { IsExactly } from './IsExactly';

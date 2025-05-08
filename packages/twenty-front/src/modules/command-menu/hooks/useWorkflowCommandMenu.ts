@@ -1,5 +1,7 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
-import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
+import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
+import { commandMenuWorkflowRunIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowRunIdComponentState';
+import { commandMenuWorkflowVersionIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowVersionIdComponentState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useSetInitialWorkflowRunRightDrawerTab } from '@/workflow/workflow-diagram/hooks/useSetInitialWorkflowRunRightDrawerTab';
 import { WorkflowDiagramRunStatus } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -23,7 +25,9 @@ export const useWorkflowCommandMenu = () => {
         const pageId = v4();
 
         set(
-          workflowIdComponentState.atomFamily({ instanceId: pageId }),
+          commandMenuWorkflowIdComponentState.atomFamily({
+            instanceId: pageId,
+          }),
           workflowId,
         );
 
@@ -44,7 +48,9 @@ export const useWorkflowCommandMenu = () => {
         const pageId = v4();
 
         set(
-          workflowIdComponentState.atomFamily({ instanceId: pageId }),
+          commandMenuWorkflowIdComponentState.atomFamily({
+            instanceId: pageId,
+          }),
           workflowId,
         );
 
@@ -65,7 +71,9 @@ export const useWorkflowCommandMenu = () => {
         const pageId = v4();
 
         set(
-          workflowIdComponentState.atomFamily({ instanceId: pageId }),
+          commandMenuWorkflowIdComponentState.atomFamily({
+            instanceId: pageId,
+          }),
           workflowId,
         );
 
@@ -82,12 +90,30 @@ export const useWorkflowCommandMenu = () => {
 
   const openWorkflowViewStepInCommandMenu = useRecoilCallback(
     ({ set }) => {
-      return (workflowId: string, title: string, icon: IconComponent) => {
+      return ({
+        workflowId,
+        workflowVersionId,
+        title,
+        icon,
+      }: {
+        workflowId: string;
+        workflowVersionId: string;
+        title: string;
+        icon: IconComponent;
+      }) => {
         const pageId = v4();
 
         set(
-          workflowIdComponentState.atomFamily({ instanceId: pageId }),
+          commandMenuWorkflowIdComponentState.atomFamily({
+            instanceId: pageId,
+          }),
           workflowId,
+        );
+        set(
+          commandMenuWorkflowVersionIdComponentState.atomFamily({
+            instanceId: pageId,
+          }),
+          workflowVersionId,
         );
 
         navigateCommandMenu({
@@ -105,12 +131,14 @@ export const useWorkflowCommandMenu = () => {
     ({ set }) => {
       return ({
         workflowId,
+        workflowRunId,
         title,
         icon,
         workflowSelectedNode,
         stepExecutionStatus,
       }: {
         workflowId: string;
+        workflowRunId: string;
         title: string;
         icon: IconComponent;
         workflowSelectedNode: string;
@@ -119,8 +147,16 @@ export const useWorkflowCommandMenu = () => {
         const pageId = v4();
 
         set(
-          workflowIdComponentState.atomFamily({ instanceId: pageId }),
+          commandMenuWorkflowIdComponentState.atomFamily({
+            instanceId: pageId,
+          }),
           workflowId,
+        );
+        set(
+          commandMenuWorkflowRunIdComponentState.atomFamily({
+            instanceId: pageId,
+          }),
+          workflowRunId,
         );
 
         navigateCommandMenu({

@@ -7,6 +7,7 @@ import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionId
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
+import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
@@ -21,8 +22,8 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { useGetClientConfigQuery } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { useGetClientConfigQuery } from '~/generated/graphql';
 
 export const ClientConfigProviderEffect = () => {
   const setIsDebugMode = useSetRecoilState(isDebugModeState);
@@ -80,6 +81,10 @@ export const ClientConfigProviderEffect = () => {
 
   const setIsAttachmentPreviewEnabled = useSetRecoilState(
     isAttachmentPreviewEnabledState,
+  );
+
+  const setIsConfigVariablesInDbEnabled = useSetRecoilState(
+    isConfigVariablesInDbEnabledState,
   );
 
   const { data, loading, error } = useGetClientConfigQuery({
@@ -157,6 +162,9 @@ export const ClientConfigProviderEffect = () => {
     setIsAttachmentPreviewEnabled(
       data?.clientConfig?.isAttachmentPreviewEnabled,
     );
+    setIsConfigVariablesInDbEnabled(
+      data?.clientConfig?.isConfigVariablesInDbEnabled,
+    );
   }, [
     data,
     setIsDebugMode,
@@ -182,6 +190,7 @@ export const ClientConfigProviderEffect = () => {
     setGoogleMessagingEnabled,
     setGoogleCalendarEnabled,
     setIsAttachmentPreviewEnabled,
+    setIsConfigVariablesInDbEnabled,
   ]);
 
   return <></>;

@@ -54,4 +54,5 @@ export const STANDARD_OBJECT_IDS = {
   linklogs: '20202020-1f2e-3d4c-5b6a-7a8b9c0d1e2f',
   integration: '20202020-4b4b-4b4b-4b4b-4b4b4b4b4b4b',
   product: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c63',
+  workflowAutomatedTrigger: '20202020-3319-4234-a34c-7f3b9d2e4d1f',
 };
