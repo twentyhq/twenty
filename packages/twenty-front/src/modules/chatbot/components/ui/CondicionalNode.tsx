@@ -1,12 +1,8 @@
 /* eslint-disable @nx/workspace-component-props-naming */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/ui/BaseNode';
-import LogicNode from '@/chatbot/components/ui/LogicNode';
-import {
-  CondicionalState,
-  ExtendedLogicNodeData,
-  LogicNodeData,
-} from '@/chatbot/types/LogicNodeDataType';
+import { NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
+import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
 import styled from '@emotion/styled';
 import {
   Handle,
@@ -14,12 +10,11 @@ import {
   NodeProps,
   Position,
   useNodeConnections,
-  useReactFlow,
 } from '@xyflow/react';
-import { memo, useCallback, useEffect, useState } from 'react';
-import { Button } from 'twenty-ui/input';
+import { memo, useEffect, useState } from 'react';
+import { H3Title, Label } from 'twenty-ui/display';
 
-const initialState: CondicionalState = {
+const initialState: NewConditionalState = {
   logicNodes: [],
   logicNodeData: [],
 };
@@ -33,13 +28,74 @@ const StyledDiv = styled.div`
   margin-top: 8px;
 `;
 
+const StyledLogicNodeWrapper = styled.div`
+  background-color: ${({ theme }) => theme.background.primary};
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme }) => theme.spacing(2)};
+  position: relative;
+`;
+
+const StyledTextContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.quaternary};
+  border: none;
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  box-sizing: border-box;
+  color: ${({ theme }) => theme.font.color.primary};
+  display: flex;
+  flex-direction: column;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  outline: none;
+  padding: ${({ theme }) => theme.spacing(2)};
+  white-space: pre-wrap;
+  width: 100%;
+`;
+
+const StyledH3Title = styled(H3Title)`
+  font-size: ${({ theme }) => theme.font.size.md};
+`;
+
+const StyledOptionsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledOption = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.background.quaternary};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  display: flex;
+  padding: ${({ theme }) => theme.spacing(2)};
+  position: relative;
+`;
+
+const StyledLabel = styled(Label)`
+  color: ${({ theme }) => theme.font.color.primary};
+`;
+
+const StyledHandle = styled(Handle)`
+  position: absolute;
+  right: 0;
+`;
+
 function CondicionalNode({
   id,
   data,
   isConnectable,
-}: NodeProps<Node<{ title: string; logic: CondicionalState }>>) {
-  const { updateNodeData } = useReactFlow();
-  const [state, setState] = useState<CondicionalState>(initialState);
+}: NodeProps<
+  Node<{ title: string; text?: string; logic: NewConditionalState }>
+>) {
+  const [state, setState] = useState<NewConditionalState>(initialState);
+
+  // const { updateNodeData } = useReactFlow();
+  const { sectors } = useFindAllSectors();
+
+  const connections = useNodeConnections({
+    id,
+    handleType: 'source',
+  });
 
   useEffect(() => {
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
@@ -48,67 +104,11 @@ function CondicionalNode({
     }
   }, [data.logic]);
 
-  const connections = useNodeConnections({
-    id,
-    handleType: 'source',
-  });
-
-  const handleAddLogicNode = () => {
-    setState((prevState) => {
-      const newLogicNodeData = [
-        ...prevState.logicNodeData,
-        [
-          {
-            comparison: '==',
-            inputText: '',
-            conditionValue: '',
-          },
-        ],
-      ];
-
-      updateNodeData(id, {
-        logic: {
-          logicNodes: [...prevState.logicNodes, prevState.logicNodes.length],
-          logicNodeData: newLogicNodeData,
-        },
-      });
-
-      return {
-        ...prevState,
-        logicNodes: [...prevState.logicNodes, prevState.logicNodes.length],
-        logicNodeData: newLogicNodeData,
-      };
-    });
-  };
-
-  const handleGroupsChange = useCallback(
-    (updatedGroups: ExtendedLogicNodeData[], nodeIndex: number) => {
-      setState((prevState) => {
-        const updatedLogicNodeData = [...prevState.logicNodeData];
-
-        if (updatedLogicNodeData[nodeIndex] !== updatedGroups) {
-          updatedLogicNodeData[nodeIndex] = updatedGroups;
-
-          const newState = {
-            ...prevState,
-            logicNodeData: updatedLogicNodeData,
-          };
-
-          updateNodeData(id, {
-            logic: newState,
-          });
-
-          return newState;
-        }
-
-        return prevState;
-      });
-    },
-    [],
-  );
+  const getSectorName = (sectorId: string) =>
+    sectors?.find((s) => s.id === sectorId)?.name ?? sectorId;
 
   return (
-    <BaseNode icon={'IconLogicAnd'} title={'Condicional'}>
+    <BaseNode icon={'IconHierarchy'} title={data.title ?? 'Node title'}>
       <Handle
         title={data.title}
         type="target"
@@ -116,54 +116,32 @@ function CondicionalNode({
         isConnectable={isConnectable}
       />
       <StyledDiv>
-        {state.logicNodes.map((_, index) => {
-          const conn = connections[index];
-          const nodeId = conn.target ?? undefined;
-          const sourceHandle = conn.sourceHandle ?? undefined;
+        <StyledLogicNodeWrapper>
+          {data.text && <StyledTextContainer>{data.text}</StyledTextContainer>}
+          <StyledH3Title title={'Options'} />
+          <StyledOptionsContainer>
+            {state.logicNodeData.map((nodeData) => {
+              // const conn = connections[Number(nodeData.option)];
+              // const nodeId = conn?.target;
+              // const sourceHandle = conn?.sourceHandle;
 
-          const rawGroup = state.logicNodeData[index];
-
-          const sanitizedGroup: ExtendedLogicNodeData[] = Array.isArray(
-            rawGroup,
-          )
-            ? rawGroup
-            : Object.entries(rawGroup)
-                .filter(([key]) => !isNaN(Number(key)))
-                .map(([, value]) => value as LogicNodeData);
-
-          return (
-            <LogicNode
-              key={index}
-              dropdownId={`logicSelect-${index}`}
-              groupsData={sanitizedGroup}
-              onGroupsChange={(updatedGroups) => {
-                const extendedGroups: ExtendedLogicNodeData[] =
-                  updatedGroups.map((group) => ({
-                    ...group,
-                    outgoingEdgeId: sourceHandle,
-                    outgoingNodeId: nodeId,
-                  }));
-
-                handleGroupsChange(extendedGroups, index);
-              }}
-            >
-              <Handle
-                id={`b-${index}`}
-                type="source"
-                position={Position.Right}
-                isConnectable={isConnectable}
-              />
-            </LogicNode>
-          );
-        })}
+              return (
+                <StyledOption key={nodeData.option}>
+                  <StyledLabel>
+                    {nodeData.option} - {getSectorName(nodeData.sectorId)}
+                  </StyledLabel>
+                  <StyledHandle
+                    id={`b-${nodeData.option}`}
+                    type="source"
+                    position={Position.Right}
+                    isConnectable={isConnectable}
+                  />
+                </StyledOption>
+              );
+            })}
+          </StyledOptionsContainer>
+        </StyledLogicNodeWrapper>
       </StyledDiv>
-
-      <Button
-        onClick={handleAddLogicNode}
-        title={'Adicionar'}
-        fullWidth
-        justify="center"
-      />
       <Handle
         id={'a'}
         type="source"
