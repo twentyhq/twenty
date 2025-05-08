@@ -7,7 +7,6 @@ import styled from '@emotion/styled';
 import { Node } from '@xyflow/react';
 import { useEffect, useRef, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import { Label } from 'twenty-ui/display';
 
 type ChatbotFlowTextEventFormProps = {
@@ -95,9 +94,9 @@ const StyledLabel = styled(Label)`
 export const ChatbotFlowTextEventForm = ({
   selectedNode,
 }: ChatbotFlowTextEventFormProps) => {
-  const initialTitle = selectedNode.data.title ?? 'Node title';
+  const initialTitle = (selectedNode.data.title as string) ?? 'Node title';
   const initialText =
-    (selectedNode.data?.text as string | undefined) ?? 'Insert text to be sent';
+    (selectedNode.data?.text as string) ?? 'Insert text to be sent';
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [title, setTitle] = useState(initialTitle);
@@ -141,26 +140,25 @@ export const ChatbotFlowTextEventForm = ({
 
   useEffect(() => {
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-    if (isDefined(textareaRef.current)) {
+    if (textareaRef.current) {
       textareaRef.current.style.height = '30px';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [selectedNode.data.text]);
 
-  const handleBlur = () => {
+  const handleFieldBlur = (field: 'title' | 'text', value: string) => {
     if (!selectedNode || !chatbotFlow) return;
 
-    const selectedNodeAltered: Node = {
+    const updatedNode: Node = {
       ...selectedNode,
       data: {
         ...selectedNode.data,
-        title,
-        text,
+        [field]: value,
       },
     };
 
     const updatedNodes = chatbotFlow.nodes.map((node) =>
-      node.id === selectedNode.id ? selectedNodeAltered : node,
+      node.id === selectedNode.id ? updatedNode : node,
     );
 
     const { id, __typename, ...chatbotFlowWithoutId } = chatbotFlow;
@@ -170,7 +168,7 @@ export const ChatbotFlowTextEventForm = ({
       nodes: updatedNodes,
     };
 
-    setChatbotFlowSelectedNode(selectedNodeAltered);
+    setChatbotFlowSelectedNode(updatedNode);
     updateFlow(updatedChatbotFlow);
   };
 
@@ -186,6 +184,7 @@ export const ChatbotFlowTextEventForm = ({
               onEscape={() => {
                 setTitle(initialTitle);
               }}
+              onClickOutside={() => handleFieldBlur('title', title)}
             />
           </StyledHeaderTitle>
           <StyledHeaderType>
@@ -202,7 +201,7 @@ export const ChatbotFlowTextEventForm = ({
             value={text}
             onChange={handleInputChange}
             disabled={text.length >= 4000}
-            onBlur={handleBlur}
+            onBlur={() => handleFieldBlur('text', text)}
           />
           <StyledLabel>{text.length}/4000</StyledLabel>
         </StyledDiv>

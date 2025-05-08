@@ -11,7 +11,6 @@ const StyledContainer = styled.div`
 `;
 
 export const CommandMenuChatbotFlowEditStep = () => {
-  // Criar switch para qual componente de node deve abrir
   const chatbotFlowSelectedNode = useRecoilValue(chatbotFlowSelectedNodeState);
 
   let content = null;

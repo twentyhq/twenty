@@ -11,32 +11,10 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { memo, useEffect, useRef } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 const StyledDiv = styled.div`
-  width: 100%;
   display: flex;
-
-  textarea {
-    resize: none;
-    width: 100%;
-    padding: ${({ theme }) => theme.spacing(2)};
-    border: none;
-    outline: none;
-    color: ${({ theme }) => theme.font.color.primary};
-    font-size: ${({ theme }) => theme.font.size.sm};
-    box-sizing: border-box;
-    background-color: ${({ theme }) => theme.background.quaternary};
-    border-radius: ${({ theme }) => theme.border.radius.md};
-
-    &:focus {
-      border: 1px solid ${({ theme }) => theme.color.blue};
-    }
-
-    &:hover {
-      cursor: pointer;
-    }
-  }
+  width: 100%;
 `;
 
 const StyledTextContainer = styled.div`
@@ -97,7 +75,7 @@ function TextNode({
 
   useEffect(() => {
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-    if (isDefined(textareaRef.current)) {
+    if (textareaRef.current) {
       textareaRef.current.style.height = '30px';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
@@ -106,7 +84,7 @@ function TextNode({
   return (
     <BaseNode
       icon={'IconTextSize'}
-      title={data.title}
+      title={data.title ?? 'Node title'}
       nodeStart={data.nodeStart}
     >
       {!data.nodeStart && (
@@ -117,7 +95,9 @@ function TextNode({
         />
       )}
       <StyledDiv>
-        <StyledTextContainer>{data.text}</StyledTextContainer>
+        <StyledTextContainer>
+          {data.text ?? 'Insert text to be sent'}
+        </StyledTextContainer>
       </StyledDiv>
       {data.nodeStart && (
         <Handle

@@ -8,7 +8,7 @@ export interface LogicNodeData {
 export interface NewLogicNodeData {
   option: string;
   comparison: string;
-  inputText: string;
+  selectInput: string;
   conditionValue: '||';
   outgoingEdgeId?: string;
   outgoingNodeId?: string;
