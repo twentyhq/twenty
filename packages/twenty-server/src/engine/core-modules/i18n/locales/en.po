@@ -128,6 +128,11 @@ msgstr "A webhook"
 msgid "A workflow"
 msgstr "A workflow"
 
+#. js-lingui-id: YwBCp8
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "A workflow automated trigger"
+msgstr "A workflow automated trigger"
+
 #. js-lingui-id: juBVjt
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "A workflow event listener"
@@ -233,13 +238,13 @@ msgstr "An attachment"
 
 #. js-lingui-id: +bL++X
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "An audit log of actions performed in the system"
-msgstr "An audit log of actions performed in the system"
+#~ msgid "An audit log of actions performed in the system"
+#~ msgstr "An audit log of actions performed in the system"
 
 #. js-lingui-id: muVHgL
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "An event related to user behavior"
-msgstr "An event related to user behavior"
+#~ msgid "An event related to user behavior"
+#~ msgstr "An event related to user behavior"
 
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -426,19 +431,19 @@ msgstr "Attachments tied to the {label}"
 
 #. js-lingui-id: ilRCh1
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Audit Log"
-msgstr "Audit Log"
+#~ msgid "Audit Log"
+#~ msgstr "Audit Log"
 
 #. js-lingui-id: EPEFrH
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Audit Logs"
-msgstr "Audit Logs"
+#~ msgid "Audit Logs"
+#~ msgstr "Audit Logs"
 
 #. js-lingui-id: RqCC/0
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Audit Logs linked to the workspace member"
-msgstr "Audit Logs linked to the workspace member"
+#~ msgid "Audit Logs linked to the workspace member"
+#~ msgstr "Audit Logs linked to the workspace member"
 
 #. js-lingui-id: cNBqH+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -455,6 +460,16 @@ msgstr "Author"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Authored attachments"
 msgstr "Authored attachments"
+
+#. js-lingui-id: cvSznK
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "Automated Trigger Type"
+msgstr "Automated Trigger Type"
+
+#. js-lingui-id: 2mtBXs
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+msgid "Automated Triggers"
+msgstr "Automated Triggers"
 
 #. js-lingui-id: RpExX0
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -478,13 +493,13 @@ msgstr "Avatar Url"
 
 #. js-lingui-id: 20B9kW
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Behavioral Event"
-msgstr "Behavioral Event"
+#~ msgid "Behavioral Event"
+#~ msgstr "Behavioral Event"
 
 #. js-lingui-id: Jeh/Q/
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Behavioral Events"
-msgstr "Behavioral Events"
+#~ msgid "Behavioral Events"
+#~ msgstr "Behavioral Events"
 
 #. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -936,13 +951,11 @@ msgstr "Event company"
 #. js-lingui-id: FJ7QI4
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Event context"
-msgstr "Event context"
+#~ msgid "Event context"
+#~ msgstr "Event context"
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event details"
 msgstr "Event details"
 
@@ -973,17 +986,14 @@ msgstr "Event Listeners"
 #. js-lingui-id: PYs3rP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event name"
 msgstr "Event name"
 
 #. js-lingui-id: evIGwh
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Event name/type"
-msgstr "Event name/type"
+#~ msgid "Event name/type"
+#~ msgstr "Event name/type"
 
 #. js-lingui-id: vv99Wu
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1033,7 +1043,6 @@ msgstr "Event workflow version"
 
 #. js-lingui-id: LxOGsB
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event workspace member"
 msgstr "Event workspace member"
 
@@ -1374,8 +1383,8 @@ msgstr "Ideal Customer Profile:  Indicates whether the company is the most suita
 
 #. js-lingui-id: NrA0WZ
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "If the event is related to a particular object"
-msgstr "If the event is related to a particular object"
+#~ msgid "If the event is related to a particular object"
+#~ msgstr "If the event is related to a particular object"
 
 #. js-lingui-id: AHWM9N
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1457,8 +1466,8 @@ msgstr "Join your team on Twenty"
 #. js-lingui-id: shbh25
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Json object to provide context (user, device, workspace, etc.)"
-msgstr "Json object to provide context (user, device, workspace, etc.)"
+#~ msgid "Json object to provide context (user, device, workspace, etc.)"
+#~ msgstr "Json object to provide context (user, device, workspace, etc.)"
 
 #. js-lingui-id: HgJ9jQ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -1477,8 +1486,6 @@ msgstr "Json object to provide trigger"
 
 #. js-lingui-id: TVc0/Q
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json value for event details"
 msgstr "Json value for event details"
 
@@ -1917,14 +1924,14 @@ msgstr "Number of employees in the company"
 
 #. js-lingui-id: hhe7Ce
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Object id"
-msgstr "Object id"
+#~ msgid "Object id"
+#~ msgstr "Object id"
 
 #. js-lingui-id: dnPgTI
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Object metadata id"
-msgstr "Object metadata id"
+#~ msgid "Object metadata id"
+#~ msgstr "Object metadata id"
 
 #. js-lingui-id: T/nPf5
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1935,8 +1942,8 @@ msgstr "Object Metadata Id"
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Object name"
-msgstr "Object name"
+#~ msgid "Object name"
+#~ msgstr "Object name"
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2227,8 +2234,8 @@ msgstr "Received At"
 #. js-lingui-id: 4Tvtbu
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Record id"
-msgstr "Record id"
+#~ msgid "Record id"
+#~ msgstr "Record id"
 
 #. js-lingui-id: QBQXiF
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
@@ -2295,6 +2302,11 @@ msgstr "Search vector"
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Secret"
 msgstr "Secret"
+
+#. js-lingui-id: Tz0i8g
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "Settings"
+msgstr "Settings"
 
 #. js-lingui-id: Cj2Gtd
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
@@ -2617,6 +2629,16 @@ msgstr "The URL used to track final url metadata."
 #~ msgid "The used to track final url metadata."
 #~ msgstr "The used to track final url metadata."
 
+#. js-lingui-id: 5N6QtE
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "The workflow automated trigger settings"
+msgstr "The workflow automated trigger settings"
+
+#. js-lingui-id: SpKbfT
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "The workflow automated trigger type"
+msgstr "The workflow automated trigger type"
+
 #. js-lingui-id: 7mPrpl
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "The workflow event listener name"
@@ -2853,8 +2875,8 @@ msgstr "UTM Source"
 #. js-lingui-id: cNWodE
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "UV"
-msgstr "UV"
+#~ msgid "UV"
+#~ msgstr "UV"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -3134,12 +3156,18 @@ msgstr "Welcome to Twenty: Please Confirm Your Email"
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Workflow"
 msgstr "Workflow"
+
+#. js-lingui-id: hdtWQn
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+msgid "Workflow automated triggers linked to the workflow."
+msgstr "Workflow automated triggers linked to the workflow."
 
 #. js-lingui-id: E03XpH
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -3230,6 +3258,21 @@ msgstr "Workflow Versions"
 msgid "Workflow versions linked to the workflow."
 msgstr "Workflow versions linked to the workflow."
 
+#. js-lingui-id: s7p+TL
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "WorkflowAutomatedTrigger"
+msgstr "WorkflowAutomatedTrigger"
+
+#. js-lingui-id: 96bCgZ
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "WorkflowAutomatedTrigger workflow"
+msgstr "WorkflowAutomatedTrigger workflow"
+
+#. js-lingui-id: 5z92T9
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "WorkflowAutomatedTriggers"
+msgstr "WorkflowAutomatedTriggers"
+
 #. js-lingui-id: ENOy6I
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "WorkflowEventListener"
@@ -3268,7 +3311,6 @@ msgstr "Workspace member"
 #. js-lingui-id: qc38qR
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts

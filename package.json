@@ -80,6 +80,7 @@
     "bytes": "^3.1.2",
     "class-transformer": "^0.5.1",
     "clsx": "^2.1.1",
+    "cron-parser": "^5.1.1",
     "cron-validate": "^1.4.5",
     "cross-env": "^7.0.3",
     "css-loader": "^7.1.2",

@@ -133,6 +133,11 @@ msgstr "Bir webhook"
 msgid "A workflow"
 msgstr "Bir iş akışı"
 
+#. js-lingui-id: YwBCp8
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "A workflow automated trigger"
+msgstr ""
+
 #. js-lingui-id: juBVjt
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "A workflow event listener"
@@ -238,13 +243,13 @@ msgstr "Bir ek"
 
 #. js-lingui-id: +bL++X
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "An audit log of actions performed in the system"
-msgstr "Sistemde gerçekleştirilen işlemlerin bir denetim günlüğü"
+#~ msgid "An audit log of actions performed in the system"
+#~ msgstr "Sistemde gerçekleştirilen işlemlerin bir denetim günlüğü"
 
 #. js-lingui-id: muVHgL
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "An event related to user behavior"
-msgstr "Kullanıcı davranışıyla ilgili bir olay"
+#~ msgid "An event related to user behavior"
+#~ msgstr "Kullanıcı davranışıyla ilgili bir olay"
 
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -431,19 +436,19 @@ msgstr "{label} ile bağlı ekler"
 
 #. js-lingui-id: ilRCh1
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Audit Log"
-msgstr "Denetim Kaydı"
+#~ msgid "Audit Log"
+#~ msgstr "Denetim Kaydı"
 
 #. js-lingui-id: EPEFrH
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Audit Logs"
-msgstr "Denetim Kayıtları"
+#~ msgid "Audit Logs"
+#~ msgstr "Denetim Kayıtları"
 
 #. js-lingui-id: RqCC/0
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Audit Logs linked to the workspace member"
-msgstr "İş alanı üyesi ile ilişkilendirilmiş denetim kayıtları"
+#~ msgid "Audit Logs linked to the workspace member"
+#~ msgstr "İş alanı üyesi ile ilişkilendirilmiş denetim kayıtları"
 
 #. js-lingui-id: cNBqH+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -460,6 +465,16 @@ msgstr "Yazar"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Authored attachments"
 msgstr "Yazılmış ekler"
+
+#. js-lingui-id: cvSznK
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "Automated Trigger Type"
+msgstr ""
+
+#. js-lingui-id: 2mtBXs
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+msgid "Automated Triggers"
+msgstr ""
 
 #. js-lingui-id: RpExX0
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -483,13 +498,13 @@ msgstr "Avatar URL"
 
 #. js-lingui-id: 20B9kW
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Behavioral Event"
-msgstr "Davranışsal Etkinlik"
+#~ msgid "Behavioral Event"
+#~ msgstr "Davranışsal Etkinlik"
 
 #. js-lingui-id: Jeh/Q/
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Behavioral Events"
-msgstr "Davranışsal Etkinlikler"
+#~ msgid "Behavioral Events"
+#~ msgstr "Davranışsal Etkinlikler"
 
 #. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -941,13 +956,11 @@ msgstr "Etkinlik şirketi"
 #. js-lingui-id: FJ7QI4
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Event context"
-msgstr "Etkinlik bağlamı"
+#~ msgid "Event context"
+#~ msgstr "Etkinlik bağlamı"
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event details"
 msgstr "Etkinlik detayları"
 
@@ -978,17 +991,14 @@ msgstr "Etkinlik Dinleyicileri"
 #. js-lingui-id: PYs3rP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event name"
 msgstr "Etkinlik adı"
 
 #. js-lingui-id: evIGwh
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Event name/type"
-msgstr "Etkinlik adı/tipi"
+#~ msgid "Event name/type"
+#~ msgstr "Etkinlik adı/tipi"
 
 #. js-lingui-id: vv99Wu
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1038,7 +1048,6 @@ msgstr "Etkinlik iş akışı versiyonu"
 
 #. js-lingui-id: LxOGsB
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event workspace member"
 msgstr "Etkinlik çalışma alanı üyesi"
 
@@ -1369,8 +1378,8 @@ msgstr "Ideal Müşteri Profili: Şirketin sizin için en uygun ve değerli mü�
 
 #. js-lingui-id: NrA0WZ
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "If the event is related to a particular object"
-msgstr "Etkinliğin belirli bir nesneyle ilgili olup olmadığı"
+#~ msgid "If the event is related to a particular object"
+#~ msgstr "Etkinliğin belirli bir nesneyle ilgili olup olmadığı"
 
 #. js-lingui-id: AHWM9N
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1452,8 +1461,8 @@ msgstr "Ekibinize Twenty'de katılın"
 #. js-lingui-id: shbh25
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Json object to provide context (user, device, workspace, etc.)"
-msgstr "Bağlam sağlamak için Json nesnesi (kullanıcı, cihaz, çalışma alanı, vb.)"
+#~ msgid "Json object to provide context (user, device, workspace, etc.)"
+#~ msgstr "Bağlam sağlamak için Json nesnesi (kullanıcı, cihaz, çalışma alanı, vb.)"
 
 #. js-lingui-id: HgJ9jQ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -1472,8 +1481,6 @@ msgstr "Tetikleyici sağlamak için Json nesnesi"
 
 #. js-lingui-id: TVc0/Q
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json value for event details"
 msgstr "Etkinlik detayları için Json değeri"
 
@@ -1912,14 +1919,14 @@ msgstr "Şirkette çalışanların sayısı"
 
 #. js-lingui-id: hhe7Ce
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Object id"
-msgstr "Nesne kimliği"
+#~ msgid "Object id"
+#~ msgstr "Nesne kimliği"
 
 #. js-lingui-id: dnPgTI
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Object metadata id"
-msgstr "Nesne metaveri kimliği"
+#~ msgid "Object metadata id"
+#~ msgstr "Nesne metaveri kimliği"
 
 #. js-lingui-id: T/nPf5
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1930,8 +1937,8 @@ msgstr "Nesne Metaveri Kimliği"
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Object name"
-msgstr "Nesne adı"
+#~ msgid "Object name"
+#~ msgstr "Nesne adı"
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2222,8 +2229,8 @@ msgstr "Alındığı Zaman"
 #. js-lingui-id: 4Tvtbu
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Record id"
-msgstr "Kayıt kimliği"
+#~ msgid "Record id"
+#~ msgstr "Kayıt kimliği"
 
 #. js-lingui-id: QBQXiF
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
@@ -2290,6 +2297,11 @@ msgstr "Arama vektörü"
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Secret"
 msgstr "Gizli"
+
+#. js-lingui-id: Tz0i8g
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "Settings"
+msgstr ""
 
 #. js-lingui-id: Cj2Gtd
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
@@ -2612,6 +2624,16 @@ msgstr ""
 #~ msgid "The used to track final url metadata."
 #~ msgstr ""
 
+#. js-lingui-id: 5N6QtE
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "The workflow automated trigger settings"
+msgstr ""
+
+#. js-lingui-id: SpKbfT
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "The workflow automated trigger type"
+msgstr ""
+
 #. js-lingui-id: 7mPrpl
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "The workflow event listener name"
@@ -2848,8 +2870,8 @@ msgstr ""
 #. js-lingui-id: cNWodE
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "UV"
-msgstr ""
+#~ msgid "UV"
+#~ msgstr ""
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -3129,12 +3151,18 @@ msgstr "Twenty'e Hoş Geldiniz: Lütfen E-postanızı Onaylayın"
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Workflow"
 msgstr "İş Akışları"
+
+#. js-lingui-id: hdtWQn
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+msgid "Workflow automated triggers linked to the workflow."
+msgstr ""
 
 #. js-lingui-id: E03XpH
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -3225,6 +3253,21 @@ msgstr "İş Akışı Versiyonları"
 msgid "Workflow versions linked to the workflow."
 msgstr "İş akışına bağlı versiyonlar."
 
+#. js-lingui-id: s7p+TL
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "WorkflowAutomatedTrigger"
+msgstr ""
+
+#. js-lingui-id: 96bCgZ
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "WorkflowAutomatedTrigger workflow"
+msgstr ""
+
+#. js-lingui-id: 5z92T9
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "WorkflowAutomatedTriggers"
+msgstr ""
+
 #. js-lingui-id: ENOy6I
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "WorkflowEventListener"
@@ -3263,7 +3306,6 @@ msgstr "Çalışma alanı üyesi"
 #. js-lingui-id: qc38qR
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts

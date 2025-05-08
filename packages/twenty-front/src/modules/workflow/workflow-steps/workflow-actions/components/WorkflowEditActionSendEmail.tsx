@@ -8,7 +8,8 @@ import { FormTextFieldInput } from '@/object-record/record-field/form-types/comp
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
@@ -20,11 +21,11 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { IconPlus, useIcons } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { IconPlus, useIcons } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
 
 type WorkflowEditActionSendEmailProps = {
   action: WorkflowSendEmailAction;
@@ -53,8 +54,10 @@ export const WorkflowEditActionSendEmail = ({
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { triggerApisOAuth } = useTriggerApisOAuth();
 
-  const workflowId = useRecoilValue(workflowIdState);
-  const redirectUrl = `/object/workflow/${workflowId}`;
+  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
+  const redirectUrl = `/object/workflow/${workflowVisualizerWorkflowId}`;
 
   const [formData, setFormData] = useState<SendEmailFormData>({
     connectedAccountId: action.settings.input.connectedAccountId,

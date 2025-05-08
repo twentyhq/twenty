@@ -9,6 +9,7 @@ import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/compos
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -54,6 +55,7 @@ export type WorkflowRunOutput = {
   labelIdentifierStandardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.name,
   icon: STANDARD_OBJECT_ICONS.workflowRun,
 })
+@WorkspaceIsNotAuditLogged()
 export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.name,

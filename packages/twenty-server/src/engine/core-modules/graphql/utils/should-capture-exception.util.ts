@@ -12,6 +12,7 @@ export const graphQLErrorCodesToFilterOut = [
   ErrorCode.TIMEOUT,
   ErrorCode.CONFLICT,
   ErrorCode.BAD_USER_INPUT,
+  ErrorCode.EMAIL_NOT_VERIFIED,
 ];
 
 export const shouldCaptureException = (exception: Error): boolean => {

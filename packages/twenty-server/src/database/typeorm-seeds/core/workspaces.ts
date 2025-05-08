@@ -10,7 +10,7 @@ export const SEED_APPLE_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 export const SEED_ACME_WORKSPACE_ID = '3b8e6458-5fc1-4e63-8563-008ccddaa6db';
 
 export type SeedWorkspaceArgs = {
-  workspaceDataSource: DataSource;
+  dataSource: DataSource;
   schemaName: string;
   workspaceId: string;
   appVersion: string | undefined;
@@ -34,7 +34,7 @@ type WorkspaceSeederFields = Pick<
 
 export const seedWorkspaces = async ({
   schemaName,
-  workspaceDataSource,
+  dataSource,
   workspaceId,
   appVersion,
 }: SeedWorkspaceArgs) => {
@@ -63,7 +63,7 @@ export const seedWorkspaces = async ({
     },
   };
 
-  await workspaceDataSource
+  await dataSource
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, workspaceSeederFields)
@@ -73,11 +73,11 @@ export const seedWorkspaces = async ({
 };
 
 export const deleteWorkspaces = async (
-  workspaceDataSource: DataSource,
+  dataSource: DataSource,
   schemaName: string,
   workspaceId: string,
 ) => {
-  await workspaceDataSource
+  await dataSource
     .createQueryBuilder()
     .delete()
     .from(`${schemaName}.${tableName}`)

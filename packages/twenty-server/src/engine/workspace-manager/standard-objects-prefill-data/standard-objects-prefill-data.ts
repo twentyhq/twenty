@@ -1,7 +1,8 @@
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { seedWorkspaceFavorites } from 'src/database/typeorm-seeds/workspace/favorites';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { companyPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/company';
 import { personPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/person';
@@ -10,7 +11,7 @@ import { seedViewWithDemoData } from 'src/engine/workspace-manager/standard-obje
 import { integrationPrefillData } from './integration';
 
 export const standardObjectsPrefillData = async (
-  workspaceDataSource: DataSource,
+  mainDataSource: DataSource,
   schemaName: string,
   objectMetadata: ObjectMetadataEntity[],
 ) => {
@@ -35,7 +36,7 @@ export const standardObjectsPrefillData = async (
     return acc;
   }, {});
 
-  workspaceDataSource.transaction(async (entityManager: EntityManager) => {
+  mainDataSource.transaction(async (entityManager: WorkspaceEntityManager) => {
     await companyPrefillData(entityManager, schemaName);
     await personPrefillData(entityManager, schemaName);
     await integrationPrefillData(entityManager, schemaName);

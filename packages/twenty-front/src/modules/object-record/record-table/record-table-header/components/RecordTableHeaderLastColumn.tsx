@@ -2,41 +2,36 @@ import styled from '@emotion/styled';
 
 import { HIDDEN_TABLE_COLUMN_DROPDOWN_ID } from '@/object-record/record-table/constants/HiddenTableColumnDropdownId';
 import { RecordTableHeaderPlusButtonContent } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent';
+import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
+import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useTheme } from '@emotion/react';
 import { IconPlus } from 'twenty-ui/display';
 
 const StyledPlusIconHeaderCell = styled.th<{
   isTableWiderThanScreen: boolean;
+  isFirstRowActiveOrFocused: boolean;
 }>`
-  ${({ theme }) => {
-    return `
-  &:hover {
-    background: ${theme.background.transparent.light};
-  };
-  `;
-  }};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: ${({ isFirstRowActiveOrFocused, theme }) =>
+    isFirstRowActiveOrFocused
+      ? 'none'
+      : `1px solid ${theme.border.color.light}`};
   background-color: ${({ theme }) => theme.background.primary};
   border-left: none !important;
   color: ${({ theme }) => theme.font.color.tertiary};
   border-right: none !important;
-  width: 32px;
+  cursor: default;
 
   ${({ isTableWiderThanScreen, theme }) =>
     isTableWiderThanScreen
       ? `
     background-color: ${theme.background.primary};
+    width: 32px;
     `
-      : ''};
+      : 'width: 100%'};
   z-index: 1;
-`;
-
-const StyledEmptyHeaderCell = styled.th`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  background-color: ${({ theme }) => theme.background.primary};
-  width: 100%;
 `;
 
 const StyledPlusIconContainer = styled.div`
@@ -44,7 +39,13 @@ const StyledPlusIconContainer = styled.div`
   display: flex;
   height: 32px;
   justify-content: center;
-  width: 100%;
+`;
+
+const StyledDropdownContainer = styled.div`
+  &:hover {
+    background: ${({ theme }) => theme.background.transparent.light};
+  }
+  cursor: pointer;
 `;
 
 const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
@@ -59,9 +60,24 @@ export const RecordTableHeaderLastColumn = () => {
     (scrollWrapperHTMLElement?.clientWidth ?? 0) <
     (scrollWrapperHTMLElement?.scrollWidth ?? 0);
 
+  const isFirstRowActive = useRecoilComponentFamilyValueV2(
+    isRecordTableRowActiveComponentFamilyState,
+    0,
+  );
+
+  const isFirstRowFocused = useRecoilComponentFamilyValueV2(
+    isRecordTableRowFocusedComponentFamilyState,
+    0,
+  );
+
+  const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
+
   return (
-    <>
-      <StyledPlusIconHeaderCell isTableWiderThanScreen={isTableWiderThanScreen}>
+    <StyledPlusIconHeaderCell
+      isTableWiderThanScreen={isTableWiderThanScreen}
+      isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
+    >
+      <StyledDropdownContainer>
         <Dropdown
           dropdownId={HIDDEN_TABLE_COLUMN_DROPDOWN_ID}
           clickableComponent={
@@ -75,8 +91,7 @@ export const RecordTableHeaderLastColumn = () => {
             scope: HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID,
           }}
         />
-      </StyledPlusIconHeaderCell>
-      <StyledEmptyHeaderCell />
-    </>
+      </StyledDropdownContainer>
+    </StyledPlusIconHeaderCell>
   );
 };

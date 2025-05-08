@@ -1,4 +1,4 @@
-import { useRecordGroupReorder } from '@/object-record/record-group/hooks/useRecordGroupReorder';
+import { useReorderRecordGroups } from '@/object-record/record-group/hooks/useReorderRecordGroups';
 import { isRecordGroupReorderConfirmationModalVisibleState } from '@/object-record/record-group/states/isRecordGroupReorderConfirmationModalVisibleState';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
@@ -30,15 +30,24 @@ export const useRecordGroupReorderConfirmationModal = ({
     isRecordGroupReorderConfirmationModalVisibleState,
   );
 
-  const [pendingDragEndReorder, setPendingDragEndReorder] =
+  const [pendingDragEndHandlerParams, setPendingDragEndHandlerParams] =
     useState<Parameters<OnDragEndResponder> | null>(null);
 
-  const { handleOrderChange: handleRecordGroupOrderChange } =
-    useRecordGroupReorder({
-      viewBarId: recordIndexId,
-      viewType,
-    });
+  const { reorderRecordGroups } = useReorderRecordGroups({
+    viewBarId: recordIndexId,
+    viewType,
+  });
 
+  const handleDragEnd: OnDragEndResponder = (result) => {
+    if (!result.destination) {
+      return;
+    }
+
+    reorderRecordGroups({
+      fromIndex: result.source.index - 1,
+      toIndex: result.destination.index - 1,
+    });
+  };
   const isDragableSortRecordGroup = useRecoilComponentValueV2(
     recordIndexRecordGroupIsDraggableSortComponentSelector,
   );
@@ -47,32 +56,29 @@ export const useRecordGroupReorderConfirmationModal = ({
     recordIndexRecordGroupSortComponentState,
   );
 
-  const handleRecordGroupOrderChangeWithModal: OnDragEndResponder = (
-    result,
-    provided,
-  ) => {
+  const handleDragEndWithModal: OnDragEndResponder = (result, provided) => {
     if (!isDragableSortRecordGroup) {
       setIsRecordGroupReorderConfirmationModalVisible(true);
       setActiveDropdownFocusIdAndMemorizePrevious(null);
-      setPendingDragEndReorder([result, provided]);
+      setPendingDragEndHandlerParams([result, provided]);
     } else {
-      handleRecordGroupOrderChange(result, provided);
+      handleDragEnd(result, provided);
     }
   };
 
   const handleConfirmClick = () => {
-    if (!pendingDragEndReorder) {
+    if (!pendingDragEndHandlerParams) {
       throw new Error('pendingDragEndReorder is not set');
     }
 
     setRecordGroupSort(RecordGroupSort.Manual);
-    setPendingDragEndReorder(null);
-    handleRecordGroupOrderChange(...pendingDragEndReorder);
+    setPendingDragEndHandlerParams(null);
+    handleDragEnd(...pendingDragEndHandlerParams);
     goBackToPreviousDropdownFocusId();
   };
 
   return {
-    handleRecordGroupOrderChangeWithModal,
+    handleRecordGroupOrderChangeWithModal: handleDragEndWithModal,
     handleRecordGroupReorderConfirmClick: handleConfirmClick,
   };
 };

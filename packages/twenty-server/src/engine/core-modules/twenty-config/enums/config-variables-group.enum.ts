@@ -16,6 +16,6 @@ export enum ConfigVariablesGroup {
   ServerlessConfig = 'serverless-config',
   SSL = 'ssl',
   SupportChatConfig = 'support-chat-config',
-  AnalyticsConfig = 'analytics-config',
+  AnalyticsConfig = 'audit-config',
   TokensDuration = 'tokens-duration',
 }

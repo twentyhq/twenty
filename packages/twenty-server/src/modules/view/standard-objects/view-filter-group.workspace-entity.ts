@@ -4,10 +4,10 @@ import { Relation } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -15,7 +15,6 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { VIEW_FILTER_GROUP_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 export enum ViewFilterGroupLogicalOperator {
   AND = 'AND',
@@ -31,7 +30,6 @@ export enum ViewFilterGroupLogicalOperator {
   description: msg`(System) View Filter Groups`,
   icon: 'IconFilterBolt',
 })
-@WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
 export class ViewFilterGroupWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({

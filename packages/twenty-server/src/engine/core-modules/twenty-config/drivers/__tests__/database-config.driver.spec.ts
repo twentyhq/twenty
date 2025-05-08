@@ -19,12 +19,10 @@ const CONFIG_ENV_ONLY_KEY = 'ENV_ONLY_VAR';
 const CONFIG_PORT_KEY = 'NODE_PORT';
 
 class TestDatabaseConfigDriver extends DatabaseConfigDriver {
-  // Expose the protected/private property for testing
   public get testAllPossibleConfigKeys(): Array<keyof ConfigVariables> {
     return this['allPossibleConfigKeys'];
   }
 
-  // Override Object.keys usage in constructor with our test keys
   constructor(
     configCache: ConfigCacheService,
     configStorage: ConfigStorageService,
@@ -210,51 +208,6 @@ describe('DatabaseConfigDriver', () => {
       (isEnvOnlyConfigVar as jest.Mock).mockReturnValue(true);
 
       await expect(driver.update(CONFIG_PASSWORD_KEY, value)).rejects.toThrow();
-    });
-  });
-
-  describe('fetchAndCacheConfigVariable', () => {
-    it('should refresh config variable from storage', async () => {
-      const value = true;
-
-      jest.spyOn(configStorage, 'get').mockResolvedValue(value);
-
-      await driver.fetchAndCacheConfigVariable(CONFIG_PASSWORD_KEY);
-
-      expect(configStorage.get).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY);
-      expect(configCache.set).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY, value);
-    });
-
-    it('should mark key as missing when value is undefined', async () => {
-      jest.spyOn(configStorage, 'get').mockResolvedValue(undefined);
-
-      await driver.fetchAndCacheConfigVariable(CONFIG_PASSWORD_KEY);
-
-      expect(configStorage.get).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY);
-      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(
-        CONFIG_PASSWORD_KEY,
-      );
-      expect(configCache.set).not.toHaveBeenCalled();
-    });
-
-    it('should mark key as missing when storage fetch fails', async () => {
-      const error = new Error('Storage error');
-
-      jest.spyOn(configStorage, 'get').mockRejectedValue(error);
-      const loggerSpy = jest
-        .spyOn(driver['logger'], 'error')
-        .mockImplementation();
-
-      await driver.fetchAndCacheConfigVariable(CONFIG_PASSWORD_KEY);
-
-      expect(configStorage.get).toHaveBeenCalledWith(CONFIG_PASSWORD_KEY);
-      expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(
-        CONFIG_PASSWORD_KEY,
-      );
-      expect(loggerSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Failed to fetch config'),
-        error,
-      );
     });
   });
 

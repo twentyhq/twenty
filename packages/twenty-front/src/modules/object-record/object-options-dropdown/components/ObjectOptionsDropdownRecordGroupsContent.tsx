@@ -102,7 +102,6 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const selectableItemIdArray = [
     ...(currentView?.key !== 'INDEX' ? ['GroupBy', 'Sort'] : []),
     'HideEmptyGroups',
-    ...(hiddenRecordGroupIds.length > 0 ? ['HiddenGroups'] : []),
   ];
 
   return (
@@ -185,16 +184,22 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
         <>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer scrollable={false}>
-            <SelectableListItem
-              itemId="HiddenGroups"
-              onEnter={() => onContentChange('hiddenRecordGroups')}
+            <SelectableList
+              selectableListInstanceId={`${OBJECT_OPTIONS_DROPDOWN_ID}-hidden-groups`}
+              hotkeyScope={TableOptionsHotkeyScope.Dropdown}
+              selectableItemIdArray={['HiddenGroups']}
             >
-              <MenuItemNavigate
-                onClick={() => onContentChange('hiddenRecordGroups')}
-                LeftIcon={IconEyeOff}
-                text={`Hidden ${recordGroupFieldMetadata?.label ?? ''}`}
-              />
-            </SelectableListItem>
+              <SelectableListItem
+                itemId="HiddenGroups"
+                onEnter={() => onContentChange('hiddenRecordGroups')}
+              >
+                <MenuItemNavigate
+                  onClick={() => onContentChange('hiddenRecordGroups')}
+                  LeftIcon={IconEyeOff}
+                  text={`Hidden ${recordGroupFieldMetadata?.label ?? ''}`}
+                />
+              </SelectableListItem>
+            </SelectableList>
           </DropdownMenuItemsContainer>
         </>
       )}
