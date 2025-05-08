@@ -209,17 +209,18 @@ export const useRecordShowContainerTabs = (
         },
       },
       [CoreObjectNameSingular.Traceable]: {
+        hideSummaryAndFields: false,
         tabs: {
-          recordShow: {
-            title: 'Record show',
+          fields: {
+            title: 'Traceable',
             position: 101,
             Icon: IconSettings,
-            cards: [],
+            cards: [{ type: CardType.TraceableFieldsCard }],
             hide: {
               ifMobile: false,
               ifDesktop: false,
               ifInRightDrawer: false,
-              ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
+              ifFeaturesDisabled: [],
               ifRequiredObjectsInactive: [],
               ifRelationsMissing: [],
             },

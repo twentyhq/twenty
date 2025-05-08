@@ -1,4 +1,3 @@
-import { COMMAND_MENU_PAGES_CONFIG } from '@/command-menu/constants/CommandMenuPagesConfig';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
@@ -19,7 +18,7 @@ import { useRunWorkflowRunOpeningInCommandMenuSideEffects } from '@/workflow/hoo
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { capitalize } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 
@@ -142,16 +141,8 @@ export const useOpenRecordInCommandMenu = () => {
 
         const capitalizedObjectNameSingular = capitalize(objectNameSingular);
 
-        const navigateTo = isDefined(
-          COMMAND_MENU_PAGES_CONFIG.get(objectNameSingular as CommandMenuPages),
-        )
-          ? CommandMenuPages[
-              capitalizedObjectNameSingular as keyof typeof CommandMenuPages
-            ]
-          : (CommandMenuPages.ViewRecord as CommandMenuPages);
-
         navigateCommandMenu({
-          page: navigateTo,
+          page: CommandMenuPages.ViewRecord,
           pageTitle: isNewRecord
             ? t`New ${capitalizedObjectNameSingular}`
             : capitalizedObjectNameSingular,
