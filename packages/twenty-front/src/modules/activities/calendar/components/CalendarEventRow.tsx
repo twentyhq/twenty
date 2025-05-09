@@ -5,24 +5,19 @@ import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
+import { CalendarEventNotSharedContent } from '@/activities/calendar/components/CalendarEventNotSharedContent';
+import { CalendarEventParticipantsAvatarGroup } from '@/activities/calendar/components/CalendarEventParticipantsAvatarGroup';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useOpenCalendarEventInCommandMenu } from '@/command-menu/hooks/useOpenCalendarEventInCommandMenu';
+import { IconArrowRight } from 'twenty-ui/display';
 import {
   CalendarChannelVisibility,
   TimelineCalendarEvent,
 } from '~/generated-metadata/graphql';
-import { isDefined } from 'twenty-shared/utils';
-import {
-  Avatar,
-  AvatarGroup,
-  IconArrowRight,
-  IconLock,
-} from 'twenty-ui/display';
-import { Card, CardContent } from 'twenty-ui/layout';
 
 type CalendarEventRowProps = {
   calendarEvent: TimelineCalendarEvent;
@@ -87,25 +82,6 @@ const StyledTitle = styled.div<{ active: boolean; canceled: boolean }>`
     `}
 `;
 
-const StyledVisibilityCard = styled(Card)<{ active: boolean }>`
-  color: ${({ active, theme }) =>
-    active ? theme.font.color.primary : theme.font.color.light};
-  border-color: ${({ theme }) => theme.border.color.light};
-  flex: 1 0 auto;
-  transition: color ${({ theme }) => theme.animation.duration.normal} ease;
-`;
-
-const StyledVisibilityCardContent = styled(CardContent)`
-  align-items: center;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(0, 1)};
-  height: ${({ theme }) => theme.spacing(6)};
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-`;
-
 export const CalendarEventRow = ({
   calendarEvent,
   className,
@@ -159,33 +135,12 @@ export const CalendarEventRow = ({
             {calendarEvent.title}
           </StyledTitle>
         ) : (
-          <StyledVisibilityCard active={!hasEnded}>
-            <StyledVisibilityCardContent>
-              <IconLock size={theme.icon.size.sm} />
-              Not shared
-            </StyledVisibilityCardContent>
-          </StyledVisibilityCard>
+          <CalendarEventNotSharedContent />
         )}
       </StyledLabels>
       {!!calendarEvent.participants?.length && (
-        <AvatarGroup
-          avatars={calendarEvent.participants.map((participant) => (
-            <Avatar
-              key={[participant.workspaceMemberId, participant.displayName]
-                .filter(isDefined)
-                .join('-')}
-              avatarUrl={participant.avatarUrl}
-              placeholder={
-                participant.firstName && participant.lastName
-                  ? `${participant.firstName} ${participant.lastName}`
-                  : participant.displayName
-              }
-              placeholderColorSeed={
-                participant.workspaceMemberId || participant.personId
-              }
-              type="rounded"
-            />
-          ))}
+        <CalendarEventParticipantsAvatarGroup
+          participants={calendarEvent.participants}
         />
       )}
       {displayCurrentEventCursor && (

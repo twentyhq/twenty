@@ -1,18 +1,21 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
-import { flowState } from '@/workflow/states/flowState';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
-import { workflowRunIdState } from '@/workflow/states/workflowRunIdState';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
 import { WorkflowRunOutput } from '@/workflow/types/Workflow';
-import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
-import { workflowDiagramStatusState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusState';
-import { workflowRunStepToOpenByDefaultState } from '@/workflow/workflow-diagram/states/workflowRunStepToOpenByDefaultState';
+import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
+import { workflowDiagramStatusComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusComponentState';
+import { workflowRunStepToOpenByDefaultComponentState } from '@/workflow/workflow-diagram/states/workflowRunStepToOpenByDefaultComponentState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { selectWorkflowDiagramNode } from '@/workflow/workflow-diagram/utils/selectWorkflowDiagramNode';
 import { useContext, useEffect } from 'react';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowRunVisualizerEffect = ({
@@ -23,8 +26,24 @@ export const WorkflowRunVisualizerEffect = ({
   const workflowRun = useWorkflowRun({ workflowRunId });
   const workflowVersion = useWorkflowVersion(workflowRun?.workflowVersionId);
 
-  const setWorkflowRunId = useSetRecoilState(workflowRunIdState);
-  const setWorkflowId = useSetRecoilState(workflowIdState);
+  const setWorkflowRunId = useSetRecoilComponentStateV2(
+    workflowVisualizerWorkflowRunIdComponentState,
+  );
+  const setWorkflowVisualizerWorkflowId = useSetRecoilComponentStateV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
+
+  const flowState = useRecoilComponentCallbackStateV2(flowComponentState);
+  const workflowDiagramState = useRecoilComponentCallbackStateV2(
+    workflowDiagramComponentState,
+  );
+  const workflowDiagramStatusState = useRecoilComponentCallbackStateV2(
+    workflowDiagramStatusComponentState,
+  );
+  const workflowRunStepToOpenByDefaultState = useRecoilComponentCallbackStateV2(
+    workflowRunStepToOpenByDefaultComponentState,
+  );
+
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
@@ -38,11 +57,11 @@ export const WorkflowRunVisualizerEffect = ({
       return;
     }
 
-    setWorkflowId(workflowRun.workflowId);
-  }, [setWorkflowId, workflowRun]);
+    setWorkflowVisualizerWorkflowId(workflowRun.workflowId);
+  }, [setWorkflowVisualizerWorkflowId, workflowRun]);
 
   const handleWorkflowRunDiagramGeneration = useRecoilCallback(
-    ({ set }) =>
+    ({ snapshot, set }) =>
       ({
         workflowRunOutput,
         workflowVersionId,
@@ -59,7 +78,14 @@ export const WorkflowRunVisualizerEffect = ({
           return;
         }
 
-        set(workflowDiagramStatusState, 'computing-diagram');
+        const workflowDiagramStatus = getSnapshotValue(
+          snapshot,
+          workflowDiagramStatusState,
+        );
+
+        if (workflowDiagramStatus !== 'done') {
+          set(workflowDiagramStatusState, 'computing-diagram');
+        }
 
         set(flowState, {
           workflowVersionId,
@@ -89,9 +115,16 @@ export const WorkflowRunVisualizerEffect = ({
           set(workflowDiagramState, baseWorkflowRunDiagram);
         }
 
-        set(workflowDiagramStatusState, 'computing-dimensions');
+        if (workflowDiagramStatus !== 'done') {
+          set(workflowDiagramStatusState, 'computing-dimensions');
+        }
       },
-    [],
+    [
+      flowState,
+      workflowDiagramState,
+      workflowDiagramStatusState,
+      workflowRunStepToOpenByDefaultState,
+    ],
   );
 
   useEffect(() => {

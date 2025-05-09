@@ -75,6 +75,8 @@ export const ObjectFilterDropdownFilterInput = ({
     subFieldNameUsedInDropdown,
   );
 
+  const isNotASubFieldFilter = !isDefined(subFieldNameUsedInDropdown);
+
   return (
     <>
       {isConfigurable && selectedOperandInDropdown && (
@@ -99,7 +101,7 @@ export const ObjectFilterDropdownFilterInput = ({
             </>
           )}
           {filterType === 'ACTOR' &&
-            (isActorSourceCompositeFilter ? (
+            (isActorSourceCompositeFilter || isNotASubFieldFilter ? (
               <>
                 <ObjectFilterDropdownSourceSelect />
               </>
@@ -107,6 +109,14 @@ export const ObjectFilterDropdownFilterInput = ({
               <>
                 <ObjectFilterDropdownTextInput />
               </>
+            ))}
+          {filterType === 'ADDRESS' &&
+            (isNotASubFieldFilter ? (
+              <>
+                <ObjectFilterDropdownTextInput />
+              </>
+            ) : (
+              <></>
             ))}
           {filterType === 'CURRENCY' &&
             (isExpectedSubFieldName(
@@ -126,7 +136,7 @@ export const ObjectFilterDropdownFilterInput = ({
                 <ObjectFilterDropdownNumberInput />
               </>
             ) : (
-              <></>
+              <ObjectFilterDropdownNumberInput />
             ))}
           {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
             <>

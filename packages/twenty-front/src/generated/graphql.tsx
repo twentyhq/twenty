@@ -575,11 +575,8 @@ export type FeatureFlagDto = {
 
 export enum FeatureFlagKey {
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
-  IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
-  IsApprovedAccessDomainsEnabled = 'IsApprovedAccessDomainsEnabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
   IsCustomDomainEnabled = 'IsCustomDomainEnabled',
-  IsEventObjectEnabled = 'IsEventObjectEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPermissionsV2Enabled = 'IsPermissionsV2Enabled',
@@ -890,6 +887,7 @@ export type Mutation = {
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDraftFromWorkflowVersion: WorkflowVersion;
   createOIDCIdentityProvider: SetupSsoOutput;
+  createObjectEvent: Analytics;
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
@@ -933,7 +931,6 @@ export type Mutation = {
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean'];
   switchToYearlyInterval: BillingUpdateOutput;
-  track: Analytics;
   trackAnalytics: Analytics;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
@@ -1006,6 +1003,14 @@ export type MutationCreateDraftFromWorkflowVersionArgs = {
 
 export type MutationCreateOidcIdentityProviderArgs = {
   input: SetupOidcSsoInput;
+};
+
+
+export type MutationCreateObjectEventArgs = {
+  event: Scalars['String'];
+  objectMetadataId: Scalars['String'];
+  properties?: InputMaybe<Scalars['JSON']>;
+  recordId: Scalars['String'];
 };
 
 
@@ -1178,12 +1183,6 @@ export type MutationSignUpArgs = {
 
 export type MutationSubmitFormStepArgs = {
   input: SubmitFormStepInput;
-};
-
-
-export type MutationTrackArgs = {
-  action: Scalars['String'];
-  payload: Scalars['JSON'];
 };
 
 
@@ -2511,14 +2510,6 @@ export type TrackAnalyticsMutationVariables = Exact<{
 
 export type TrackAnalyticsMutation = { __typename?: 'Mutation', trackAnalytics: { __typename?: 'Analytics', success: boolean } };
 
-export type TrackMutationVariables = Exact<{
-  action: Scalars['String'];
-  payload: Scalars['JSON'];
-}>;
-
-
-export type TrackMutation = { __typename?: 'Mutation', track: { __typename?: 'Analytics', success: boolean } };
-
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
@@ -3514,40 +3505,6 @@ export function useTrackAnalyticsMutation(baseOptions?: Apollo.MutationHookOptio
 export type TrackAnalyticsMutationHookResult = ReturnType<typeof useTrackAnalyticsMutation>;
 export type TrackAnalyticsMutationResult = Apollo.MutationResult<TrackAnalyticsMutation>;
 export type TrackAnalyticsMutationOptions = Apollo.BaseMutationOptions<TrackAnalyticsMutation, TrackAnalyticsMutationVariables>;
-export const TrackDocument = gql`
-    mutation Track($action: String!, $payload: JSON!) {
-  track(action: $action, payload: $payload) {
-    success
-  }
-}
-    `;
-export type TrackMutationFn = Apollo.MutationFunction<TrackMutation, TrackMutationVariables>;
-
-/**
- * __useTrackMutation__
- *
- * To run a mutation, you first call `useTrackMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useTrackMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [trackMutation, { data, loading, error }] = useTrackMutation({
- *   variables: {
- *      action: // value for 'action'
- *      payload: // value for 'payload'
- *   },
- * });
- */
-export function useTrackMutation(baseOptions?: Apollo.MutationHookOptions<TrackMutation, TrackMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<TrackMutation, TrackMutationVariables>(TrackDocument, options);
-      }
-export type TrackMutationHookResult = ReturnType<typeof useTrackMutation>;
-export type TrackMutationResult = Apollo.MutationResult<TrackMutation>;
-export type TrackMutationOptions = Apollo.BaseMutationOptions<TrackMutation, TrackMutationVariables>;
 export const UploadFileDocument = gql`
     mutation uploadFile($file: Upload!, $fileFolder: FileFolder) {
   uploadFile(file: $file, fileFolder: $fileFolder)

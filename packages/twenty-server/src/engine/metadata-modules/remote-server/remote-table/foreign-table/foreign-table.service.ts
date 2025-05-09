@@ -37,13 +37,11 @@ export class ForeignTableService {
     workspaceId: string,
     foreignDataWrapperId: string,
   ): Promise<string[]> {
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
+    const mainDataSource =
+      await this.workspaceDataSourceService.connectToMainDataSource();
 
     return (
-      await workspaceDataSource.query(
+      await mainDataSource.query(
         `SELECT foreign_table_name, foreign_server_name FROM information_schema.foreign_tables WHERE foreign_server_name = $1`,
         [foreignDataWrapperId],
       )

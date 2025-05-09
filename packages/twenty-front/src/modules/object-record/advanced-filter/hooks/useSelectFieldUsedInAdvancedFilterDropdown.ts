@@ -1,14 +1,17 @@
 import { useGetFieldMetadataItemById } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
+import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
-import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
+import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
+import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -18,7 +21,7 @@ import { isDefined } from 'twenty-shared/utils';
 type SelectFilterParams = {
   fieldMetadataItemId: string;
   recordFilterId: string;
-  subFieldName?: string | null | undefined;
+  subFieldName?: CompositeFieldSubFieldName | null | undefined;
 };
 
 export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
@@ -40,13 +43,18 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
 
   const setHotkeyScope = useSetHotkeyScope();
 
-  const { applyRecordFilter } = useApplyRecordFilter();
-
   const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
 
   const setSubFieldNameUsedInDropdown = useSetRecoilComponentStateV2(
     subFieldNameUsedInDropdownComponentState,
   );
+
+  const setObjectFilterDropdownCurrentRecordFilter =
+    useSetRecoilComponentStateV2(
+      objectFilterDropdownCurrentRecordFilterComponentState,
+    );
+
+  const { upsertRecordFilter } = useUpsertRecordFilter();
 
   const selectFieldUsedInAdvancedFilterDropdown = ({
     fieldMetadataItemId,
@@ -86,7 +94,7 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       (recordFilter) => recordFilter.id === recordFilterId,
     );
 
-    applyRecordFilter({
+    const newAdvancedFilter = {
       id: recordFilterId,
       fieldMetadataId: fieldMetadataItem.id,
       displayValue,
@@ -97,12 +105,15 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
         existingRecordFilter?.positionInRecordFilterGroup,
       type: filterType,
       label: fieldMetadataItem.label,
-      subFieldName: subFieldName ?? null,
-    });
+      subFieldName,
+    } satisfies RecordFilter;
 
     setSubFieldNameUsedInDropdown(subFieldName);
 
     setObjectFilterDropdownSearchInput('');
+
+    setObjectFilterDropdownCurrentRecordFilter(newAdvancedFilter);
+    upsertRecordFilter(newAdvancedFilter);
   };
 
   return {

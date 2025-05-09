@@ -6,6 +6,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { injectIdsInCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/inject-ids-in-calendar-events.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
@@ -113,71 +114,73 @@ export class CalendarSaveEventsService {
 
     const workspaceDataSource = await this.twentyORMManager.getDatasource();
 
-    await workspaceDataSource?.transaction(async (transactionManager) => {
-      await calendarEventRepository.save(
-        eventsToSave.map(
-          (calendarEvent) =>
-            ({
-              id: calendarEvent.id,
-              iCalUID: calendarEvent.iCalUID,
-              title: calendarEvent.title,
-              description: calendarEvent.description,
-              startsAt: calendarEvent.startsAt,
-              endsAt: calendarEvent.endsAt,
-              location: calendarEvent.location,
-              isFullDay: calendarEvent.isFullDay,
-              isCanceled: calendarEvent.isCanceled,
-              conferenceSolution: calendarEvent.conferenceSolution,
-              conferenceLink: {
-                primaryLinkLabel: calendarEvent.conferenceLinkLabel,
-                primaryLinkUrl: calendarEvent.conferenceLinkUrl,
-              },
-              externalCreatedAt: calendarEvent.externalCreatedAt,
-              externalUpdatedAt: calendarEvent.externalUpdatedAt,
-            }) satisfies DeepPartial<CalendarEventWorkspaceEntity>,
-        ),
-        {},
-        transactionManager,
-      );
+    await workspaceDataSource?.transaction(
+      async (transactionManager: WorkspaceEntityManager) => {
+        await calendarEventRepository.save(
+          eventsToSave.map(
+            (calendarEvent) =>
+              ({
+                id: calendarEvent.id,
+                iCalUID: calendarEvent.iCalUID,
+                title: calendarEvent.title,
+                description: calendarEvent.description,
+                startsAt: calendarEvent.startsAt,
+                endsAt: calendarEvent.endsAt,
+                location: calendarEvent.location,
+                isFullDay: calendarEvent.isFullDay,
+                isCanceled: calendarEvent.isCanceled,
+                conferenceSolution: calendarEvent.conferenceSolution,
+                conferenceLink: {
+                  primaryLinkLabel: calendarEvent.conferenceLinkLabel,
+                  primaryLinkUrl: calendarEvent.conferenceLinkUrl,
+                },
+                externalCreatedAt: calendarEvent.externalCreatedAt,
+                externalUpdatedAt: calendarEvent.externalUpdatedAt,
+              }) satisfies DeepPartial<CalendarEventWorkspaceEntity>,
+          ),
+          {},
+          transactionManager,
+        );
 
-      await calendarEventRepository.save(
-        eventsToUpdate.map(
-          (calendarEvent) =>
-            ({
-              id: calendarEvent.id,
-              iCalUID: calendarEvent.iCalUID,
-              title: calendarEvent.title,
-              description: calendarEvent.description,
-              startsAt: calendarEvent.startsAt,
-              endsAt: calendarEvent.endsAt,
-              location: calendarEvent.location,
-              isFullDay: calendarEvent.isFullDay,
-              isCanceled: calendarEvent.isCanceled,
-              conferenceSolution: calendarEvent.conferenceSolution,
-              conferenceLink: {
-                primaryLinkLabel: calendarEvent.conferenceLinkLabel,
-                primaryLinkUrl: calendarEvent.conferenceLinkUrl,
-              },
-              externalCreatedAt: calendarEvent.externalCreatedAt,
-              externalUpdatedAt: calendarEvent.externalUpdatedAt,
-            }) satisfies DeepPartial<CalendarEventWorkspaceEntity>,
-        ),
-        {},
-        transactionManager,
-      );
+        await calendarEventRepository.save(
+          eventsToUpdate.map(
+            (calendarEvent) =>
+              ({
+                id: calendarEvent.id,
+                iCalUID: calendarEvent.iCalUID,
+                title: calendarEvent.title,
+                description: calendarEvent.description,
+                startsAt: calendarEvent.startsAt,
+                endsAt: calendarEvent.endsAt,
+                location: calendarEvent.location,
+                isFullDay: calendarEvent.isFullDay,
+                isCanceled: calendarEvent.isCanceled,
+                conferenceSolution: calendarEvent.conferenceSolution,
+                conferenceLink: {
+                  primaryLinkLabel: calendarEvent.conferenceLinkLabel,
+                  primaryLinkUrl: calendarEvent.conferenceLinkUrl,
+                },
+                externalCreatedAt: calendarEvent.externalCreatedAt,
+                externalUpdatedAt: calendarEvent.externalUpdatedAt,
+              }) satisfies DeepPartial<CalendarEventWorkspaceEntity>,
+          ),
+          {},
+          transactionManager,
+        );
 
-      await calendarChannelEventAssociationRepository.save(
-        calendarChannelEventAssociationsToSave,
-        {},
-        transactionManager,
-      );
+        await calendarChannelEventAssociationRepository.save(
+          calendarChannelEventAssociationsToSave,
+          {},
+          transactionManager,
+        );
 
-      await this.calendarEventParticipantService.upsertAndDeleteCalendarEventParticipants(
-        participantsToSave,
-        participantsToUpdate,
-        transactionManager,
-      );
-    });
+        await this.calendarEventParticipantService.upsertAndDeleteCalendarEventParticipants(
+          participantsToSave,
+          participantsToUpdate,
+          transactionManager,
+        );
+      },
+    );
 
     if (calendarChannel.isContactAutoCreationEnabled) {
       await this.messageQueueService.add<CreateCompanyAndContactJobData>(

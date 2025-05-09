@@ -5,9 +5,11 @@ import { ObjectFilterDropdownSearchInput } from '@/object-record/object-filter-d
 import { ObjectFilterDropdownSourceSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSourceSelect';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
-import { AdvancedFilterDropdownDateInput } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownDateInput';
+import { AdvancedFilterDropdownTextInput } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownTextInput';
 import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect';
+import { ObjectFilterDropdownCountrySelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect';
 import { ObjectFilterDropdownCurrencySelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect';
+import { ObjectFilterDropdownDateInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownDateInput';
 import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
@@ -39,9 +41,15 @@ export const AdvancedFilterDropdownFilterInput = ({
 
   return (
     <>
+      {filterType === 'ADDRESS' &&
+        (subFieldNameUsedInDropdown === 'addressCountry' ? (
+          <ObjectFilterDropdownCountrySelect />
+        ) : (
+          <AdvancedFilterDropdownTextInput recordFilter={recordFilter} />
+        ))}
       {filterType === 'RATING' && <ObjectFilterDropdownRatingInput />}
       {DATE_FILTER_TYPES.includes(filterType) && (
-        <AdvancedFilterDropdownDateInput />
+        <ObjectFilterDropdownDateInput />
       )}
       {filterType === 'RELATION' && (
         <>
@@ -75,7 +83,7 @@ export const AdvancedFilterDropdownFilterInput = ({
           recordFilter.subFieldName,
         ) ? (
           <>
-            <ObjectFilterDropdownCurrencySelect dropdownWidth={280} />
+            <ObjectFilterDropdownCurrencySelect />
           </>
         ) : (
           <></>

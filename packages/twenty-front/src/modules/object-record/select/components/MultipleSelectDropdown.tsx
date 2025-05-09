@@ -85,7 +85,7 @@ export const MultipleSelectDropdown = ({
       selectableItemIdArray={selectableItemIds}
       hotkeyScope={hotkeyScope}
     >
-      <DropdownMenuItemsContainer hasMaxHeight>
+      <DropdownMenuItemsContainer hasMaxHeight width="auto">
         {itemsInDropdown?.map((item) => {
           return (
             <SelectableListItem

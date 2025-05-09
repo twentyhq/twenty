@@ -11,7 +11,7 @@ export const PETS_DATA_SEEDS = [
       addressStreet2: '7344 Haley Loop',
       addressCity: 'Jacksonstad',
       addressCountry: 'United States',
-      addressPostCode: '32048-5208',
+      addressPostcode: '32048-5208',
       addressState: 'North Dakota',
     },
     vetPhone: {

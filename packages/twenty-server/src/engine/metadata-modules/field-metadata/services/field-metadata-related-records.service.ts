@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager, In } from 'typeorm';
+import { In } from 'typeorm';
 
 import {
   FieldMetadataComplexOption,
@@ -28,7 +28,6 @@ export class FieldMetadataRelatedRecordsService {
   public async updateRelatedViewGroups(
     oldFieldMetadata: FieldMetadataEntity,
     newFieldMetadata: FieldMetadataEntity,
-    transactionManager?: EntityManager,
   ): Promise<void> {
     if (
       !isSelectFieldMetadataType(newFieldMetadata.type) ||
@@ -67,7 +66,7 @@ export class FieldMetadataRelatedRecordsService {
         }),
       );
 
-      await viewGroupRepository.insert(viewGroupsToCreate, transactionManager);
+      await viewGroupRepository.insert(viewGroupsToCreate);
 
       for (const { old: oldOption, new: newOption } of updated) {
         const existingViewGroup = view.viewGroups.find(
@@ -83,25 +82,20 @@ export class FieldMetadataRelatedRecordsService {
         await viewGroupRepository.update(
           { id: existingViewGroup.id },
           { fieldValue: newOption.value },
-          transactionManager,
         );
       }
 
       const valuesToDelete = deleted.map((option) => option.value);
 
-      await viewGroupRepository.delete(
-        {
-          fieldMetadataId: newFieldMetadata.id,
-          fieldValue: In(valuesToDelete),
-        },
-        transactionManager,
-      );
+      await viewGroupRepository.delete({
+        fieldMetadataId: newFieldMetadata.id,
+        fieldValue: In(valuesToDelete),
+      });
 
       await this.syncNoValueViewGroup(
         newFieldMetadata,
         view,
         viewGroupRepository,
-        transactionManager,
       );
     }
   }
@@ -110,7 +104,6 @@ export class FieldMetadataRelatedRecordsService {
     fieldMetadata: FieldMetadataEntity,
     view: ViewWorkspaceEntity,
     viewGroupRepository: WorkspaceRepository<ViewGroupWorkspaceEntity>,
-    transactionManager?: EntityManager,
   ): Promise<void> {
     const noValueGroup = view.viewGroups.find(
       (group) => group.fieldValue === '',
@@ -126,12 +119,9 @@ export class FieldMetadataRelatedRecordsService {
         viewId: view.id,
       });
 
-      await viewGroupRepository.insert(newGroup, transactionManager);
+      await viewGroupRepository.insert(newGroup);
     } else if (!fieldMetadata.isNullable && noValueGroup) {
-      await viewGroupRepository.delete(
-        { id: noValueGroup.id },
-        transactionManager,
-      );
+      await viewGroupRepository.delete({ id: noValueGroup.id });
     }
   }
 
