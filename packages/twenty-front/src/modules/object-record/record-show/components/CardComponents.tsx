@@ -9,6 +9,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { ListenRecordUpdatesEffect } from '@/subscription/components/ListenUpdatesEffect';
+import { TraceableFieldsCard } from '@/traceable/record-show/TraceableFieldsCard';
 import { TraceableCardContainer } from '@/traceable/record-show/components/TraceableCardContainer';
 import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
@@ -149,8 +150,7 @@ export const CardComponents: Record<CardType, CardComponentType> = {
 
   [CardType.TraceableFieldsCard]: ({ targetableObject, isInRightDrawer }) => (
     <TraceableCardContainer isInRightDrawer={isInRightDrawer}>
-      {/* // TODO Create Traceable fields card for traceable specific fields layout disposition. */}
-      <FieldsCard
+      <TraceableFieldsCard
         objectNameSingular={CoreObjectNameSingular.Traceable}
         objectRecordId={targetableObject.id}
       />
