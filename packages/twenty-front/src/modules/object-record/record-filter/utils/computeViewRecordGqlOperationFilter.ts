@@ -34,8 +34,6 @@ import { getEmptyRecordGqlOperationFilter } from '@/object-record/record-filter/
 
 import { resolveDateViewFilterValue } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { resolveSelectViewFilterValue } from '@/views/view-filter-value/utils/resolveSelectViewFilterValue';
-import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
-import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 
@@ -44,7 +42,12 @@ import { RecordFilterGroup } from '@/object-record/record-filter-group/types/Rec
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { isEmptinessOperand } from '@/object-record/record-filter/utils/isEmptinessOperand';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
+import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from 'twenty-shared/constants';
+import {
+  FieldMetadataType,
+  jsonRelationFilterValueSchema,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type ComputeFilterRecordGqlOperationFilterParams = {
@@ -306,22 +309,28 @@ export const computeFilterRecordGqlOperationFilter = ({
           );
       }
     case 'RELATION': {
-      const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
-        jsonRelationFilterValueSchema
-          .catch({
-            isCurrentWorkspaceMemberSelected: false,
-            selectedRecordIds: simpleRelationFilterValueSchema.parse(
-              filter.value,
-            ),
-          })
-          .parse(filter.value);
+      let recordIds;
 
-      const recordIds = isCurrentWorkspaceMemberSelected
-        ? [
-            ...selectedRecordIds,
-            filterValueDependencies.currentWorkspaceMemberId,
-          ]
-        : selectedRecordIds;
+      try {
+        const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
+          jsonRelationFilterValueSchema.parse(filter.value);
+
+        recordIds = isCurrentWorkspaceMemberSelected
+          ? [
+              ...selectedRecordIds,
+              filterValueDependencies.currentWorkspaceMemberId,
+            ]
+          : selectedRecordIds;
+      } catch {
+        const relationFilterValue = relationFilterValueSchema.parse(
+          filter.value,
+        );
+        recordIds = relationFilterValue.map((item) =>
+          item === CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID
+            ? filterValueDependencies.currentWorkspaceMemberId
+            : item,
+        );
+      }
 
       if (recordIds.length === 0) return;
 

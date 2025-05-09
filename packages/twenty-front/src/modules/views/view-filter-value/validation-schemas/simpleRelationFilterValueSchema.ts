@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+/**
+ * @deprecated
+ */
 export const simpleRelationFilterValueSchema = z
   .preprocess((value) => {
     try {

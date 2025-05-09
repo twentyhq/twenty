@@ -1,9 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getRelationObjectMetadataNameSingular } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { ObjectFilterDropdownRecordPinnedItems } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordPinnedItems';
-import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
-import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
@@ -14,16 +12,11 @@ import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForS
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
-import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
-import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
+import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
+import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from 'twenty-shared/constants';
+import { jsonRelationFilterValueSchema } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconUserCircle } from 'twenty-ui/display';
-
-export const EMPTY_FILTER_VALUE: string = JSON.stringify({
-  isCurrentWorkspaceMemberSelected: false,
-  selectedRecordIds: [],
-} satisfies RelationFilterValue);
 
 export const MAX_RECORDS_TO_DISPLAY = 3;
 
@@ -37,9 +30,6 @@ export const ObjectFilterDropdownRecordSelect = ({
   const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentValueV2(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
-
-  const { objectFilterDropdownFilterValue } =
-    useObjectFilterDropdownFilterValue();
 
   const { applyObjectFilterDropdownFilterValue } =
     useApplyObjectFilterDropdownFilterValue();
@@ -56,14 +46,8 @@ export const ObjectFilterDropdownRecordSelect = ({
     currentRecordFiltersComponentState,
   );
 
-  const { isCurrentWorkspaceMemberSelected } = jsonRelationFilterValueSchema
-    .catch({
-      isCurrentWorkspaceMemberSelected: false,
-      selectedRecordIds: simpleRelationFilterValueSchema.parse(
-        objectFilterDropdownFilterValue,
-      ),
-    })
-    .parse(objectFilterDropdownFilterValue);
+  let isCurrentWorkspaceMemberSelected: boolean;
+  let selectedRecordIds: string[];
 
   if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
     throw new Error('fieldMetadataItemUsedInFilterDropdown is not defined');
@@ -102,14 +86,26 @@ export const ObjectFilterDropdownRecordSelect = ({
     ? recordFilterPassedInProps
     : firstSimpleRecordFilterForFieldMetadataItemUsedInDropdown;
 
-  const { selectedRecordIds } = jsonRelationFilterValueSchema
-    .catch({
-      isCurrentWorkspaceMemberSelected: false,
-      selectedRecordIds: simpleRelationFilterValueSchema.parse(
-        recordFilterUsedInDropdown?.value,
-      ),
-    })
-    .parse(recordFilterUsedInDropdown?.value);
+  try {
+    const relationFilterValue = relationFilterValueSchema.parse(
+      recordFilterUsedInDropdown?.value,
+    );
+
+    isCurrentWorkspaceMemberSelected = relationFilterValue.includes(
+      CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID,
+    );
+    selectedRecordIds = relationFilterValue.filter(
+      (item) => item !== CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID,
+    );
+  } catch {
+    const jsonRelationFilterValueParseResult =
+      jsonRelationFilterValueSchema.parse(recordFilterUsedInDropdown?.value);
+
+    isCurrentWorkspaceMemberSelected =
+      jsonRelationFilterValueParseResult.isCurrentWorkspaceMemberSelected ??
+      false;
+    selectedRecordIds = jsonRelationFilterValueParseResult.selectedRecordIds;
+  }
 
   const { loading, filteredSelectedRecords, recordsToSelect, selectedRecords } =
     useRecordsForSelect({
@@ -196,11 +192,14 @@ export const ObjectFilterDropdownRecordSelect = ({
     if (isDefined(selectedOperandInDropdown)) {
       const newFilterValue =
         newSelectedRecordIds.length > 0 || newIsCurrentWorkspaceMemberSelected
-          ? JSON.stringify({
-              isCurrentWorkspaceMemberSelected:
-                newIsCurrentWorkspaceMemberSelected,
-              selectedRecordIds: newSelectedRecordIds,
-            } satisfies RelationFilterValue)
+          ? JSON.stringify(
+              [
+                ...newSelectedRecordIds,
+                newIsCurrentWorkspaceMemberSelected
+                  ? CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID
+                  : undefined,
+              ].filter(isDefined),
+            )
           : '';
 
       applyObjectFilterDropdownFilterValue(newFilterValue, filterDisplayValue);
