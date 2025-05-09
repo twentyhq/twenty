@@ -4,8 +4,8 @@ import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import {
-    ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-    RunOnWorkspaceArgs,
+  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
+  RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
