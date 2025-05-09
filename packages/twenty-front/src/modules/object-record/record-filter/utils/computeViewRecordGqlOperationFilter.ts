@@ -581,10 +581,16 @@ export const computeFilterRecordGqlOperationFilter = ({
             };
           } else {
             if (subFieldName === 'addressCountry') {
+              const parsedCountryCodes = JSON.parse(filter.value) as string[];
+
+              if (filter.value === '[]' || parsedCountryCodes.length === 0) {
+                return {};
+              }
+
               return {
                 [correspondingField.name]: {
                   [subFieldName]: {
-                    in: JSON.parse(filter.value),
+                    in: parsedCountryCodes,
                   } as AddressFilter,
                 },
               };
@@ -726,6 +732,12 @@ export const computeFilterRecordGqlOperationFilter = ({
             };
           } else {
             if (subFieldName === 'addressCountry') {
+              const parsedCountryCodes = JSON.parse(filter.value) as string[];
+
+              if (filter.value === '[]' || parsedCountryCodes.length === 0) {
+                return {};
+              }
+
               return {
                 or: [
                   {
