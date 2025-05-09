@@ -18,13 +18,7 @@ import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 export const EMPTY_FILTER_VALUE = '[]';
 export const MAX_ITEMS_TO_DISPLAY = 3;
 
-type ObjectFilterDropdownCurrencySelectProps = {
-  dropdownWidth?: number;
-};
-
-export const ObjectFilterDropdownCurrencySelect = ({
-  dropdownWidth,
-}: ObjectFilterDropdownCurrencySelectProps) => {
+export const ObjectFilterDropdownCurrencySelect = () => {
   const [searchText, setSearchText] = useState('');
 
   const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValueV2(
@@ -112,7 +106,7 @@ export const ObjectFilterDropdownCurrencySelect = ({
         }}
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight width={dropdownWidth ?? 200}>
+      <DropdownMenuItemsContainer hasMaxHeight width="auto">
         {filteredSelectedItems?.map((item) => {
           return (
             <MenuItemMultiSelectAvatar
