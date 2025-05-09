@@ -38,6 +38,7 @@ const MIGRATED_REST_METHODS = [
   RequestMethod.POST,
   RequestMethod.PATCH,
   RequestMethod.PUT,
+  RequestMethod.GET,
 ];
 
 @Module({

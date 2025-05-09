@@ -15,32 +15,8 @@ export class RestApiCoreService {
     private readonly restApiService: RestApiService,
   ) {}
 
-  async get(request: Request) {
-    const data = await this.coreQueryBuilderFactory.get(request);
-
-    return await this.restApiService.call(GraphqlApiType.CORE, request, data);
-  }
-
-  async delete(request: Request) {
-    const data = await this.coreQueryBuilderFactory.delete(request);
-
-    return await this.restApiService.call(GraphqlApiType.CORE, request, data);
-  }
-
-  async createOne(request: Request) {
-    const data = await this.coreQueryBuilderFactory.createOne(request);
-
-    return await this.restApiService.call(GraphqlApiType.CORE, request, data);
-  }
-
   async createMany(request: Request) {
     const data = await this.coreQueryBuilderFactory.createMany(request);
-
-    return await this.restApiService.call(GraphqlApiType.CORE, request, data);
-  }
-
-  async update(request: Request) {
-    const data = await this.coreQueryBuilderFactory.update(request);
 
     return await this.restApiService.call(GraphqlApiType.CORE, request, data);
   }

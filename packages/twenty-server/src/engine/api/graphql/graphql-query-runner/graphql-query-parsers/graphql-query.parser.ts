@@ -21,6 +21,10 @@ import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metada
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 
 export class GraphqlQueryParser {
   private fieldMetadataMapByName: FieldMetadataMap;
@@ -47,7 +51,6 @@ export class GraphqlQueryParser {
     );
     this.orderFieldParser = new GraphqlQueryOrderFieldParser(
       this.fieldMetadataMapByName,
-      featureFlagsMap,
     );
   }
 
@@ -125,8 +128,9 @@ export class GraphqlQueryParser {
     )?.fieldsByName;
 
     if (!parentFields) {
-      throw new Error(
+      throw new GraphqlQueryRunnerException(
         `Could not find object metadata for ${parentObjectMetadata.nameSingular}`,
+        GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
     }
 

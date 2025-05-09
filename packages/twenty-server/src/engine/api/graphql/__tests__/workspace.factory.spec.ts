@@ -9,6 +9,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 describe('WorkspaceSchemaFactory', () => {
   let service: WorkspaceSchemaFactory;
@@ -47,6 +48,10 @@ describe('WorkspaceSchemaFactory', () => {
         },
         {
           provide: FeatureFlagService,
+          useValue: {},
+        },
+        {
+          provide: TwentyConfigService,
           useValue: {},
         },
       ],

@@ -24,8 +24,8 @@ type CacheResult<T, U> = {
   data: U;
 };
 
-const USER_WORKSPACE_ROLE_MAP = 'User workspace role map';
-const ROLES_PERMISSIONS = 'Roles permissions';
+export const USER_WORKSPACE_ROLE_MAP = 'User workspace role map';
+export const ROLES_PERMISSIONS = 'Roles permissions';
 
 @Injectable()
 export class WorkspacePermissionsCacheService {
