@@ -199,6 +199,13 @@ export type BillingPlanOutput = {
   planKey: BillingPlanKey;
 };
 
+export type BillingPlans = {
+  __typename?: 'BillingPlans';
+  id: Scalars['UUID']['output'];
+  planId: Scalars['String']['output'];
+  workspace: Workspace;
+};
+
 export type BillingPriceLicensedDto = {
   __typename?: 'BillingPriceLicensedDTO';
   priceUsageType: BillingUsageType;
@@ -432,6 +439,12 @@ export type CreateAppTokenInput = {
 export type CreateApprovedAccessDomainInput = {
   domain: Scalars['String']['input'];
   email: Scalars['String']['input'];
+};
+
+export type CreateBillingPlansInput = {
+  planId: Scalars['String']['input'];
+  planPrice: Scalars['Float']['input'];
+  workspaceId: Scalars['ID']['input'];
 };
 
 export type CreateDraftFromWorkflowVersionInput = {
@@ -1128,6 +1141,7 @@ export type Mutation = {
   computeStepOutputSchema: Scalars['JSON']['output'];
   createAgent: Agent;
   createApprovedAccessDomain: ApprovedAccessDomain;
+  createBillingPlans: BillingPlans;
   createDatabaseConfigVariable: Scalars['Boolean']['output'];
   createDraftFromWorkflowVersion: WorkflowVersion;
   createInterIntegration: InterIntegration;
@@ -1177,11 +1191,13 @@ export type Mutation = {
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
+  removeBillingPlan: Scalars['Boolean']['output'];
   removeStripeIntegration: Scalars['Boolean']['output'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
+  saveBillingPlanId: BillingPlans;
   saveStripeAccountId: StripeIntegration;
   sendEventMessage: Scalars['Boolean']['output'];
   sendInvitations: SendInvitationsOutput;
@@ -1201,6 +1217,7 @@ export type Mutation = {
   trackAnalytics: Analytics;
   unsyncRemoteTable: RemoteTable;
   updateAgent: Agent;
+  updateBillingPlans: BillingPlans;
   updateDatabaseConfigVariable: Scalars['Boolean']['output'];
   updateInterIntegration: InterIntegration;
   updateLabPublicFeatureFlag: FeatureFlagDto;
@@ -1269,6 +1286,11 @@ export type MutationCreateAgentArgs = {
 
 export type MutationCreateApprovedAccessDomainArgs = {
   input: CreateApprovedAccessDomainInput;
+};
+
+
+export type MutationCreateBillingPlansArgs = {
+  createBillingPlansInput: CreateBillingPlansInput;
 };
 
 
@@ -1497,6 +1519,11 @@ export type MutationPublishServerlessFunctionArgs = {
 };
 
 
+export type MutationRemoveBillingPlanArgs = {
+  planId: Scalars['String']['input'];
+};
+
+
 export type MutationRemoveStripeIntegrationArgs = {
   accountId: Scalars['String']['input'];
 };
@@ -1519,6 +1546,12 @@ export type MutationResendWorkspaceInvitationArgs = {
 
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
+};
+
+
+export type MutationSaveBillingPlanIdArgs = {
+  planId: Scalars['String']['input'];
+  workspaceId: Scalars['String']['input'];
 };
 
 
@@ -1609,6 +1642,11 @@ export type MutationUnsyncRemoteTableArgs = {
 
 export type MutationUpdateAgentArgs = {
   updateInput: UpdateAgentInput;
+};
+
+
+export type MutationUpdateBillingPlansArgs = {
+  updateBillingPlansInput: UpdateBillingPlansInput;
 };
 
 
@@ -1903,8 +1941,8 @@ export type OnDbEventInput = {
 export enum OnboardingStatus {
   COMPLETED = 'COMPLETED',
   INVITE_TEAM = 'INVITE_TEAM',
-  PLAN_REQUIRED = 'PLAN_REQUIRED',
   PAYMENT_REQUIRED = 'PAYMENT_REQUIRED',
+  PLAN_REQUIRED = 'PLAN_REQUIRED',
   PROFILE_CREATION = 'PROFILE_CREATION',
   SYNC_EMAIL = 'SYNC_EMAIL',
   WORKSPACE_ACTIVATION = 'WORKSPACE_ACTIVATION'
@@ -1998,10 +2036,12 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  getAllBillingPlans: Array<BillingPlans>;
   getAllExtensions?: Maybe<Array<TelephonyExtension>>;
   getAllStripeIntegrations: Array<StripeIntegration>;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
+  getBillingPlansById: BillingPlans;
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getDashboardLinklogs: Array<LinkLogsWorkspaceEntity>;
   getDatabaseConfigVariable: ConfigVariable;
@@ -2112,6 +2152,11 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 };
 
 
+export type QueryGetAllBillingPlansArgs = {
+  workspaceId: Scalars['String']['input'];
+};
+
+
 export type QueryGetAllStripeIntegrationsArgs = {
   workspaceId: Scalars['String']['input'];
 };
@@ -2119,6 +2164,11 @@ export type QueryGetAllStripeIntegrationsArgs = {
 
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
+};
+
+
+export type QueryGetBillingPlansByIdArgs = {
+  id: Scalars['String']['input'];
 };
 
 
@@ -2904,6 +2954,12 @@ export type UpdateAgentInput = {
   isAdmin: Scalars['Boolean']['input'];
   memberId: Scalars['ID']['input'];
   sectorIds: Array<Scalars['String']['input']>;
+};
+
+export type UpdateBillingPlansInput = {
+  id: Scalars['String']['input'];
+  planId?: InputMaybe<Scalars['String']['input']>;
+  planPrice?: InputMaybe<Scalars['Float']['input']>;
 };
 
 export type UpdateFieldInput = {
