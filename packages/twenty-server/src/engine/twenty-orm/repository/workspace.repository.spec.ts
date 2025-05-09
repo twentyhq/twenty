@@ -1,11 +1,11 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import {
-    DeepPartial,
-    FindManyOptions,
-    FindOneOptions,
-    FindOptionsWhere,
-    ObjectLiteral,
-    QueryRunner,
+  DeepPartial,
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+  ObjectLiteral,
+  QueryRunner,
 } from 'typeorm';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
