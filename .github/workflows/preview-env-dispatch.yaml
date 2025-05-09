@@ -23,7 +23,7 @@ jobs:
       contents: write
       actions: write
       pull-requests: read
-    if: contains(github.event.pull_request.labels.*.name, 'preview')
+    if: github.event.action == 'opened' || github.event.action == 'synchronize' || github.event.action == 'reopened' || (github.event.action == 'labeled' && github.event.label.name == 'preview-app')
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
