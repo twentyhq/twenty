@@ -1,5 +1,6 @@
 import { calendar_v3 as calendarV3 } from 'googleapis';
 
+import { sanitizeObject } from 'src/modules/calendar/calendar-event-import-manager/drivers/utils/sanitize';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
 
@@ -25,7 +26,8 @@ const formatGoogleCalendarEvent = (
     }
   };
 
-  return {
+  // Create the event object
+  const calendarEvent: CalendarEventWithParticipants = {
     title: event.summary ?? '',
     isCanceled: event.status === 'cancelled',
     isFullDay: event.start?.dateTime == null,
@@ -51,4 +53,23 @@ const formatGoogleCalendarEvent = (
       })) ?? [],
     status: event.status ?? '',
   };
+
+  const propertiesToSanitize: (keyof CalendarEventWithParticipants)[] = [
+    'title',
+    'startsAt',
+    'endsAt',
+    'externalId',
+    'externalCreatedAt',
+    'externalUpdatedAt',
+    'description',
+    'location',
+    'iCalUID',
+    'conferenceSolution',
+    'conferenceLinkLabel',
+    'conferenceLinkUrl',
+    'recurringEventExternalId',
+    'status',
+  ];
+
+  return sanitizeObject(calendarEvent, propertiesToSanitize);
 };
