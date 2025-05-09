@@ -83,14 +83,9 @@ const getColumnExpression = (
     case FieldMetadataType.EMAILS:
       return `
       COALESCE(
-        replace(
-          ${quotedColumnName},
-          '@',
-          ' '
-        ),
-        ''
-      )
-    `;
+      ${quotedColumnName},
+       '')`;
+
     default:
       return `COALESCE(${quotedColumnName}, '')`;
   }

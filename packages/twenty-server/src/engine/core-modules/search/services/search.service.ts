@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
 import { Brackets, ObjectLiteral } from 'typeorm';
@@ -96,7 +97,7 @@ export class SearchService {
       ...(imageIdentifierField ? [imageIdentifierField] : []),
     ].map((field) => `"${field}"`);
 
-    const searchQuery = searchTerms
+    const searchQuery = isNonEmptyString(searchTerms)
       ? queryBuilder
           .select(fieldsToSelect)
           .addSelect(
