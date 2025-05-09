@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { Command } from 'nest-commander';
+import { Repository } from 'typeorm';
 
 import {
   AllCommands,
