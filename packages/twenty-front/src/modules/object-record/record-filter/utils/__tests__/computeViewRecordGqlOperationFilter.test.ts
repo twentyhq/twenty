@@ -640,6 +640,20 @@ describe('should work as expected for the different field types', () => {
                 },
               },
             },
+            {
+              phones: {
+                primaryPhoneCallingCode: {
+                  ilike: '%1234567890%',
+                },
+              },
+            },
+            {
+              phones: {
+                additionalPhones: {
+                  like: '%1234567890%',
+                },
+              },
+            },
           ],
         },
         {
@@ -653,6 +667,35 @@ describe('should work as expected for the different field types', () => {
                 },
               },
             },
+            {
+              not: {
+                phones: {
+                  primaryPhoneCallingCode: {
+                    ilike: '%1234567890%',
+                  },
+                },
+              },
+            },
+            {
+              or: [
+                {
+                  not: {
+                    phones: {
+                      additionalPhones: {
+                        like: `%1234567890%`,
+                      },
+                    },
+                  },
+                },
+                {
+                  phones: {
+                    additionalPhones: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
+            },
           ],
         },
         {
@@ -661,16 +704,40 @@ describe('should work as expected for the different field types', () => {
               or: [
                 {
                   phones: {
-                    primaryPhoneNumber: {
-                      is: 'NULL',
-                    },
+                    primaryPhoneNumber: { is: 'NULL' },
                   },
                 },
                 {
                   phones: {
-                    primaryPhoneNumber: {
-                      ilike: '',
-                    },
+                    primaryPhoneNumber: { ilike: '' },
+                  },
+                },
+              ],
+            },
+            {
+              or: [
+                {
+                  phones: {
+                    primaryPhoneCallingCode: { is: 'NULL' },
+                  },
+                },
+                {
+                  phones: {
+                    primaryPhoneCallingCode: { ilike: '' },
+                  },
+                },
+              ],
+            },
+            {
+              or: [
+                {
+                  phones: {
+                    additionalPhones: { is: 'NULL' },
+                  },
+                },
+                {
+                  phones: {
+                    additionalPhones: { like: '[]' },
                   },
                 },
               ],
@@ -684,16 +751,40 @@ describe('should work as expected for the different field types', () => {
                 or: [
                   {
                     phones: {
-                      primaryPhoneNumber: {
-                        is: 'NULL',
-                      },
+                      primaryPhoneNumber: { is: 'NULL' },
                     },
                   },
                   {
                     phones: {
-                      primaryPhoneNumber: {
-                        ilike: '',
-                      },
+                      primaryPhoneNumber: { ilike: '' },
+                    },
+                  },
+                ],
+              },
+              {
+                or: [
+                  {
+                    phones: {
+                      primaryPhoneCallingCode: { is: 'NULL' },
+                    },
+                  },
+                  {
+                    phones: {
+                      primaryPhoneCallingCode: { ilike: '' },
+                    },
+                  },
+                ],
+              },
+              {
+                or: [
+                  {
+                    phones: {
+                      additionalPhones: { is: 'NULL' },
+                    },
+                  },
+                  {
+                    phones: {
+                      additionalPhones: { like: '[]' },
                     },
                   },
                 ],
