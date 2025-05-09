@@ -2,6 +2,7 @@ import { BotDiagramBase } from '@/chatbot/components/BotDiagramBase';
 import { ChatbotFlowDiagramCanvasEditableEffect } from '@/chatbot/components/ChatbotFlowDiagramCanvasEditableEffect';
 import ButtonAddNode from '@/chatbot/components/ui/ButtonAddNode';
 import CondicionalNode from '@/chatbot/components/ui/CondicionalNode';
+import FileNode from '@/chatbot/components/ui/FileNode';
 import ImageNode from '@/chatbot/components/ui/ImageNode';
 import TextNode from '@/chatbot/components/ui/TextNode';
 import { useGetChatbot } from '@/chatbot/hooks/useGetChatbot';
@@ -21,6 +22,7 @@ const types: NodeTypes = {
   text: TextNode,
   condition: CondicionalNode,
   image: ImageNode,
+  file: FileNode,
   addNode: ButtonAddNode,
 };
 

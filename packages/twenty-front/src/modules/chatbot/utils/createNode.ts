@@ -41,5 +41,12 @@ export const createNode = (type: string) => {
           imageUrl: '',
         },
       };
+    case 'file':
+      return {
+        ...baseNode,
+        data: {
+          fileUrl: '',
+        },
+      };
   }
 };

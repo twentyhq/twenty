@@ -26,11 +26,11 @@ export const NODE_ACTIONS: Array<NodeAction> = [
     type: 'image',
     icon: 'IconPhoto',
   },
-  // {
-  //   label: 'File',
-  //   type: 'file',
-  //   icon: 'IconFileImport',
-  // },
+  {
+    label: 'File',
+    type: 'file',
+    icon: 'IconFileImport',
+  },
 ];
 
 export const OTHER_NODE_ACTIONS: Array<OtherNodeAction> = [
