@@ -254,9 +254,13 @@ export class WorkspaceMetadataUpdaterService {
       const fieldMetadataRepository =
         manager.getRepository(FieldMetadataEntity);
 
-      await fieldMetadataRepository.delete(
-        storage.fieldRelationMetadataDeleteCollection.map((field) => field.id),
-      );
+      if (storage.fieldRelationMetadataDeleteCollection.length > 0) {
+        await fieldMetadataRepository.delete(
+          storage.fieldRelationMetadataDeleteCollection.map(
+            (field) => field.id,
+          ),
+        );
+      }
     }
 
     return {
