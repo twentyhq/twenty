@@ -728,33 +728,6 @@ export const computeFilterRecordGqlOperationFilter = ({
                     },
                   ],
                 },
-                {
-                  not: {
-                    [correspondingField.name]: {
-                      addressState: {
-                        ilike: `%${filter.value}%`,
-                      },
-                    } as AddressFilter,
-                  },
-                },
-                {
-                  not: {
-                    [correspondingField.name]: {
-                      addressCountry: {
-                        ilike: `%${filter.value}%`,
-                      },
-                    } as AddressFilter,
-                  },
-                },
-                {
-                  not: {
-                    [correspondingField.name]: {
-                      addressPostcode: {
-                        ilike: `%${filter.value}%`,
-                      },
-                    } as AddressFilter,
-                  },
-                },
               ],
             };
           } else {
