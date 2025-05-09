@@ -10,6 +10,7 @@ import {
   NodeProps,
   Position,
   useNodeConnections,
+  useReactFlow,
 } from '@xyflow/react';
 import { memo, useEffect, useState } from 'react';
 import { H3Title, Label } from 'twenty-ui/display';
@@ -89,10 +90,10 @@ function CondicionalNode({
 >) {
   const [state, setState] = useState<NewConditionalState>(initialState);
 
-  // const { updateNodeData } = useReactFlow();
+  const { updateNodeData } = useReactFlow();
   const { sectors } = useFindAllSectors();
 
-  const connections = useNodeConnections({
+  const sourceConnections = useNodeConnections({
     id,
     handleType: 'source',
   });
@@ -103,6 +104,31 @@ function CondicionalNode({
       setState(data.logic);
     }
   }, [data.logic]);
+
+  useEffect(() => {
+    if (!state.logicNodeData.length) return;
+
+    const updatedLogic = {
+      logicNodes: [...state.logicNodes],
+      logicNodeData: state.logicNodeData.map((nodeData) => {
+        const handleId = `b-${nodeData.option}`;
+        const conn = sourceConnections.find((c) => c.sourceHandle === handleId);
+
+        return {
+          ...nodeData,
+          outgoingEdgeId: conn?.sourceHandle || '',
+          outgoingNodeId: conn?.target || '',
+        };
+      }),
+    };
+
+    updateNodeData(id, {
+      ...data,
+      logic: updatedLogic,
+    });
+
+    setState(updatedLogic);
+  }, [sourceConnections]);
 
   const getSectorName = (sectorId: string) =>
     sectors?.find((s) => s.id === sectorId)?.name ?? sectorId;
@@ -121,10 +147,6 @@ function CondicionalNode({
           <StyledH3Title title={'Options'} />
           <StyledOptionsContainer>
             {state.logicNodeData.map((nodeData) => {
-              // const conn = connections[Number(nodeData.option)];
-              // const nodeId = conn?.target;
-              // const sourceHandle = conn?.sourceHandle;
-
               return (
                 <StyledOption key={nodeData.option}>
                   <StyledLabel>
