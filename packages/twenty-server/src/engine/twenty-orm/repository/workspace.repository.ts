@@ -284,7 +284,6 @@ export class WorkspaceRepository<
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
     let result: U | U[];
 
-    const savedOptions = options as SaveOptions & { reload: false };
     const permissionOptions = {
       shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
       objectRecordsPermissions: this.objectRecordsPermissions,
@@ -295,14 +294,14 @@ export class WorkspaceRepository<
       result = await manager.save(
         this.target,
         formattedEntityOrEntities,
-        savedOptions,
+        options,
         permissionOptions,
       );
     } else {
       result = await manager.save(
         this.target,
         formattedEntityOrEntities,
-        savedOptions,
+        options,
         permissionOptions,
       );
     }
@@ -414,7 +413,7 @@ export class WorkspaceRepository<
     };
     let result: U | U[];
 
-    // Needed becasuse save method has multiple signature, otherwise we will need to do a type assertion
+    // Needed because save method has multiple signature, otherwise we will need to do a type assertion
     if (Array.isArray(formattedEntityOrEntities)) {
       result = await manager.softRemove(
         this.target,
@@ -503,7 +502,7 @@ export class WorkspaceRepository<
     };
     let result: U | U[];
 
-    // Needed becasuse save method has multiple signature, otherwise we will need to do a type assertion
+    // Needed because save method has multiple signature, otherwise we will need to do a type assertion
     if (Array.isArray(formattedEntityOrEntities)) {
       result = await manager.recover(
         this.target,

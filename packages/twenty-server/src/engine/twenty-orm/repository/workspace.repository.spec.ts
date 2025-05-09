@@ -7,7 +7,6 @@ import {
   ObjectLiteral,
   QueryRunner,
 } from 'typeorm';
-import { undefined } from 'zod';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -70,7 +69,14 @@ describe('WorkspaceRepository', () => {
       (acc, key) => ({ ...acc, [key]: false }),
       {} as FeatureFlagMap,
     );
-    mockObjectRecordsPermissions = {};
+    mockObjectRecordsPermissions = {
+      'test-entity': {
+        canRead: true,
+        canUpdate: false,
+        canSoftDelete: false,
+        canDestroy: false,
+      },
+    };
     mockQueryRunner = {} as QueryRunner;
 
     repository = new WorkspaceRepository(
@@ -95,18 +101,18 @@ describe('WorkspaceRepository', () => {
 
     jest.spyOn(repository as any, 'formatData').mockImplementation((data) => {
       if (Array.isArray(data)) {
-        return data.map((item) => Object.assign({}, item, { formatted: true }));
+        return data.map((item) => Object.assign({}, item));
       }
 
-      return Object.assign({}, data, { formatted: true });
+      return Object.assign({}, data);
     });
 
     jest.spyOn(repository as any, 'formatResult').mockImplementation((data) => {
       if (Array.isArray(data)) {
-        return data.map((item) => Object.assign({}, item, { formatted: true }));
+        return data.map((item) => Object.assign({}, item));
       }
 
-      return Object.assign({}, data, { formatted: true });
+      return Object.assign({}, data);
     });
   });
 
@@ -122,7 +128,7 @@ describe('WorkspaceRepository', () => {
 
       expect(mockEntityManager.find).toHaveBeenCalledWith(
         'test-entity',
-        expect.any(Object),
+        { where: { id: 'test-id' } },
         {
           shouldBypassPermissionChecks: false,
           objectRecordsPermissions: mockObjectRecordsPermissions,
@@ -139,7 +145,7 @@ describe('WorkspaceRepository', () => {
 
       expect(mockEntityManager.findBy).toHaveBeenCalledWith(
         'test-entity',
-        expect.any(Object),
+        { id: 'test-id' },
         {
           shouldBypassPermissionChecks: false,
           objectRecordsPermissions: mockObjectRecordsPermissions,
@@ -161,7 +167,7 @@ describe('WorkspaceRepository', () => {
 
       expect(mockEntityManager.findAndCount).toHaveBeenCalledWith(
         'test-entity',
-        expect.any(Object),
+        { where: { id: 'test-id' } },
         {
           shouldBypassPermissionChecks: false,
           objectRecordsPermissions: mockObjectRecordsPermissions,
@@ -180,7 +186,7 @@ describe('WorkspaceRepository', () => {
 
       expect(mockEntityManager.findOne).toHaveBeenCalledWith(
         'test-entity',
-        expect.any(Object),
+        { where: { id: 'test-id' } },
         {
           shouldBypassPermissionChecks: false,
           objectRecordsPermissions: mockObjectRecordsPermissions,
@@ -199,7 +205,7 @@ describe('WorkspaceRepository', () => {
 
       expect(mockEntityManager.save).toHaveBeenCalledWith(
         'test-entity',
-        { formatted: true, id: 'test-id' },
+        { id: 'test-id' },
         undefined,
         {
           shouldBypassPermissionChecks: false,
@@ -258,7 +264,7 @@ describe('WorkspaceRepository', () => {
 
       expect(mockEntityManager.insert).toHaveBeenCalledWith(
         'test-entity',
-        expect.any(Object),
+        { id: 'test-id' },
         {
           shouldBypassPermissionChecks: false,
           objectRecordsPermissions: mockObjectRecordsPermissions,
@@ -282,8 +288,8 @@ describe('WorkspaceRepository', () => {
 
       expect(mockEntityManager.update).toHaveBeenCalledWith(
         'test-entity',
-        expect.any(Object),
-        expect.any(Object),
+        { id: 'test-id' },
+        { name: 'test' },
         {
           shouldBypassPermissionChecks: false,
           objectRecordsPermissions: mockObjectRecordsPermissions,
@@ -303,7 +309,7 @@ describe('WorkspaceRepository', () => {
       expect(mockEntityManager.sum).toHaveBeenCalledWith(
         'test-entity',
         'testColumn',
-        expect.any(Object),
+        { id: 'test-id' },
         {
           shouldBypassPermissionChecks: false,
           objectRecordsPermissions: mockObjectRecordsPermissions,
@@ -324,7 +330,7 @@ describe('WorkspaceRepository', () => {
 
       expect(mockEntityManager.increment).toHaveBeenCalledWith(
         'test-entity',
-        expect.any(Object),
+        { id: 'test-id' },
         'testColumn',
         1,
         {
@@ -345,7 +351,7 @@ describe('WorkspaceRepository', () => {
 
       expect(mockEntityManager.preload).toHaveBeenCalledWith(
         'test-entity',
-        expect.any(Object),
+        { id: 'test-id' },
         {
           shouldBypassPermissionChecks: false,
           objectRecordsPermissions: mockObjectRecordsPermissions,

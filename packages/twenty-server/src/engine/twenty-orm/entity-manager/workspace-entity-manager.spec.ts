@@ -59,15 +59,15 @@ describe('WorkspaceEntityManager', () => {
       objectRecordsPermissions: {
         'test-entity': {
           canRead: true,
-          canUpdate: true,
-          canSoftDelete: true,
-          canDestroy: true,
+          canUpdate: false,
+          canSoftDelete: false,
+          canDestroy: false,
         },
       },
     };
 
     // Mock TypeORM connection methods
-    const mockConnection = {
+    const mockWorkspaceDataSource = {
       getMetadata: jest.fn().mockReturnValue({
         name: 'test-entity',
         columns: [],
@@ -105,24 +105,17 @@ describe('WorkspaceEntityManager', () => {
       mockDataSource,
     );
 
-    // Mock the connection property
     Object.defineProperty(entityManager, 'connection', {
-      get: () => mockConnection,
+      get: () => mockWorkspaceDataSource,
     });
 
-    // Mock validatePermissions
+    jest.spyOn(entityManager as any, 'validatePermissions');
+
     jest
-      .spyOn(entityManager as any, 'validatePermissions')
-      .mockImplementation(
-        (entityName: string, operationType: string, options: any) => {
-          validateOperationIsPermittedOrThrow({
-            entityName: entityName || 'test-entity',
-            operationType: operationType as any,
-            objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-            objectRecordsPermissions: options.objectRecordsPermissions,
-          });
-        },
-      );
+      .spyOn(entityManager as any, 'extractTargetNameSingularFromEntityTarget')
+      .mockImplementation((entityName: string) => {
+        return entityName;
+      });
 
     // Mock getFeatureFlagMap
     jest.spyOn(entityManager as any, 'getFeatureFlagMap').mockReturnValue({
@@ -130,7 +123,7 @@ describe('WorkspaceEntityManager', () => {
       [FeatureFlagKey.IsNewRelationEnabled]: true,
     });
 
-    // Mock parent EntityManager methods
+    // Mock typeORM's EntityManager methods
     jest
       .spyOn(EntityManager.prototype, 'find')
       .mockImplementation(() => Promise.resolve([]));
@@ -226,8 +219,10 @@ describe('WorkspaceEntityManager', () => {
       findColumnWithPropertyPath: jest.fn(),
     };
 
-    // Update mockConnection to include metadata
-    mockConnection.getMetadata = jest.fn().mockReturnValue(mockMetadata);
+    // Update mockWorkspaceDataSource to include metadata
+    mockWorkspaceDataSource.getMetadata = jest
+      .fn()
+      .mockReturnValue(mockMetadata);
 
     // Reset the mock before each test
     jest.clearAllMocks();

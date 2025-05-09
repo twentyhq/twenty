@@ -237,9 +237,16 @@ export class WorkspaceEntityManager extends EntityManager {
   override save<Entity, T extends DeepPartial<Entity>>(
     targetOrEntity: EntityTarget<Entity>,
     entity: T,
-    options?: SaveOptions & {
+    options: SaveOptions & {
       reload: false;
     },
+    permissionOptions?: PermissionOptions,
+  ): Promise<T>;
+
+  override save<Entity, T extends DeepPartial<Entity>>(
+    targetOrEntity: EntityTarget<Entity>,
+    entity: T,
+    options?: SaveOptions,
     permissionOptions?: PermissionOptions,
   ): Promise<T>;
 
