@@ -16,7 +16,7 @@ const StyledTd = styled.td`
 const StyledTableRow = styled.tr<{
   hasHorizontalOverflow?: boolean;
 }>`
-  z-index: 6;
+  z-index: 5;
   position: sticky;
   border: none;
 
