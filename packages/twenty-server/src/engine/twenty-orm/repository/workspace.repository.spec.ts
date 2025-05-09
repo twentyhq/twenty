@@ -1,11 +1,11 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import {
-  DeepPartial,
-  FindManyOptions,
-  FindOneOptions,
-  FindOptionsWhere,
-  ObjectLiteral,
-  QueryRunner,
+    DeepPartial,
+    FindManyOptions,
+    FindOneOptions,
+    FindOptionsWhere,
+    ObjectLiteral,
+    QueryRunner,
 } from 'typeorm';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
@@ -215,40 +215,46 @@ describe('WorkspaceRepository', () => {
     });
   });
 
-  //   describe('Remove Methods', () => {
-  //     it('should delegate to workspaceEntityManager remove', async () => {
-  //       const entity: ObjectLiteral = { id: 'test-id' };
-  //       const expectedResult = { id: 'test-id' };
+  describe('Remove Methods', () => {
+    it('should delegate to workspaceEntityManager remove', async () => {
+      const entity: ObjectLiteral = { id: 'test-id' };
+      const expectedResult = [{ id: 'test-id' }];
 
-  //       mockEntityManager.remove.mockResolvedValue(expectedResult);
+      mockEntityManager.remove.mockResolvedValue(expectedResult);
 
-  //       const result = await repository.remove(entity);
+      const result = await repository.remove(entity);
 
-  //       expect(mockEntityManager.remove).toHaveBeenCalledWith(
-  //         'test-entity',
-  //         expect.any(Object),
-  //         expect.any(Object),
-  //         expect.any(Object),
-  //       );
-  //       expect(result).toEqual(expectedResult);
-  //     });
+      expect(mockEntityManager.remove).toHaveBeenCalledWith(
+        'test-entity',
+        { id: 'test-id' },
+        undefined,
+        {
+          shouldBypassPermissionChecks: false,
+          objectRecordsPermissions: mockObjectRecordsPermissions,
+        },
+      );
+      expect(result).toEqual(expectedResult);
+    });
 
-  //     it('should delegate to workspaceEntityManager delete', async () => {
-  //       const criteria: FindOptionsWhere<ObjectLiteral> = { id: 'test-id' };
-  //       const expectedResult = { affected: 1, raw: [] };
+    it('should delegate to workspaceEntityManager delete', async () => {
+      const criteria: FindOptionsWhere<ObjectLiteral> = { id: 'test-id' };
+      const expectedResult = { affected: 1, raw: [] };
 
-  //       mockEntityManager.delete.mockResolvedValue(expectedResult);
+      mockEntityManager.delete.mockResolvedValue(expectedResult);
 
-  //       const result = await repository.delete(criteria);
+      const result = await repository.delete(criteria);
 
-  //       expect(mockEntityManager.delete).toHaveBeenCalledWith(
-  //         'test-entity',
-  //         expect.any(Object),
-  //         expect.any(Object),
-  //       );
-  //       expect(result).toEqual(expectedResult);
-  //     });
-  //   });
+      expect(mockEntityManager.delete).toHaveBeenCalledWith(
+        'test-entity',
+        { id: 'test-id' },
+        {
+          shouldBypassPermissionChecks: false,
+          objectRecordsPermissions: mockObjectRecordsPermissions,
+        },
+      );
+      expect(result).toEqual(expectedResult);
+    });
+  });
 
   describe('Insert Methods', () => {
     it('should delegate to workspaceEntityManager insert', async () => {
