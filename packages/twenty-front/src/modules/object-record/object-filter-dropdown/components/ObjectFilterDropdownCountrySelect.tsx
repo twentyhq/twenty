@@ -1,10 +1,10 @@
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
-import { turnCurrencyIntoSelectableItem } from '@/object-record/object-filter-dropdown/utils/turnCurrencyIntoSelectableItem';
-import { StyledMultipleSelectDropdownAvatarChip } from '@/object-record/select/components/StyledMultipleSelectDropdownAvatarChip';
+import { getCountryFlagMenuItemAvatar } from '@/object-record/object-filter-dropdown/utils/getCountryFlagMenuItemAvatar';
+import { turnCountryIntoSelectableItem } from '@/object-record/object-filter-dropdown/utils/turnCountryIntoSelectableItem';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
-import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
+import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -16,9 +16,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 
 export const EMPTY_FILTER_VALUE = '[]';
-export const MAX_ITEMS_TO_DISPLAY = 3;
+export const MAX_ITEMS_TO_DISPLAY = 5;
 
-export const ObjectFilterDropdownCurrencySelect = () => {
+type ObjectFilterDropdownCountrySelectProps = {
+  dropdownWidth?: number;
+};
+
+export const ObjectFilterDropdownCountrySelect = ({
+  dropdownWidth,
+}: ObjectFilterDropdownCountrySelectProps) => {
   const [searchText, setSearchText] = useState('');
 
   const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValueV2(
@@ -32,37 +38,37 @@ export const ObjectFilterDropdownCurrencySelect = () => {
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const currenciesAsSelectableItems = CURRENCIES.map(
-    turnCurrencyIntoSelectableItem,
+  const countries = useCountries();
+
+  const countriesAsSelectableItems = countries.map(
+    turnCountryIntoSelectableItem,
   );
 
-  const selectedCurrencies = isNonEmptyString(
+  const selectedCountryNames = isNonEmptyString(
     objectFilterDropdownCurrentRecordFilter?.value,
   )
     ? (JSON.parse(objectFilterDropdownCurrentRecordFilter.value) as string[]) // TODO: replace by a safe parse
     : [];
 
-  const filteredSelectableItems = currenciesAsSelectableItems.filter(
+  const filteredSelectableItems = countriesAsSelectableItems.filter(
     (selectableItem) =>
       selectableItem.name.toLowerCase().includes(searchText.toLowerCase()) &&
-      !selectedCurrencies.includes(selectableItem.id),
+      !selectedCountryNames.includes(selectableItem.name),
   );
 
-  const filteredSelectedItems = currenciesAsSelectableItems.filter(
+  const filteredSelectedItems = countriesAsSelectableItems.filter(
     (selectableItem) =>
       selectableItem.name.toLowerCase().includes(searchText.toLowerCase()) &&
-      selectedCurrencies.includes(selectableItem.id),
+      selectedCountryNames.includes(selectableItem.name),
   );
-
-  const { t } = useLingui();
 
   const handleMultipleItemSelectChange = (
     itemToSelect: SelectableItem,
     newSelectedValue: boolean,
   ) => {
-    const newSelectedItemIds = newSelectedValue
-      ? [...selectedCurrencies, itemToSelect.id]
-      : selectedCurrencies.filter((id) => id !== itemToSelect.id);
+    const newSelectedItemNames = newSelectedValue
+      ? [...selectedCountryNames, itemToSelect.name]
+      : selectedCountryNames.filter((name) => name !== itemToSelect.name);
 
     if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
       throw new Error(
@@ -70,20 +76,18 @@ export const ObjectFilterDropdownCurrencySelect = () => {
       );
     }
 
-    const selectedItemNames = currenciesAsSelectableItems
-      .filter((option) => newSelectedItemIds.includes(option.id))
+    const selectedItemNames = countriesAsSelectableItems
+      .filter((option) => newSelectedItemNames.includes(option.name))
       .map((option) => option.name);
-
-    const currenciesLabel = t`currencies`;
 
     const filterDisplayValue =
       selectedItemNames.length > MAX_ITEMS_TO_DISPLAY
-        ? `${selectedItemNames.length} ${currenciesLabel}`
+        ? `${selectedItemNames.length} countries`
         : selectedItemNames.join(', ');
 
     const newFilterValue =
-      newSelectedItemIds.length > 0
-        ? JSON.stringify(newSelectedItemIds)
+      newSelectedItemNames.length > 0
+        ? JSON.stringify(selectedItemNames)
         : EMPTY_FILTER_VALUE;
 
     applyObjectFilterDropdownFilterValue(newFilterValue, filterDisplayValue);
@@ -94,19 +98,21 @@ export const ObjectFilterDropdownCurrencySelect = () => {
     filteredSelectedItems.length === 0 &&
     searchText !== '';
 
+  const { t } = useLingui();
+
   return (
     <>
       <DropdownMenuSearchInput
         autoFocus
         type="text"
         value={searchText}
-        placeholder={t`Search currency`}
+        placeholder={t`Search country`}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           setSearchText(event.target.value);
         }}
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight width="auto">
+      <DropdownMenuItemsContainer hasMaxHeight width={dropdownWidth ?? 200}>
         {filteredSelectedItems?.map((item) => {
           return (
             <MenuItemMultiSelectAvatar
@@ -115,17 +121,8 @@ export const ObjectFilterDropdownCurrencySelect = () => {
               onSelectChange={(newCheckedValue) => {
                 handleMultipleItemSelectChange(item, newCheckedValue);
               }}
-              avatar={
-                <StyledMultipleSelectDropdownAvatarChip
-                  className="avatar-icon-container"
-                  name={item.name}
-                  avatarUrl={item.avatarUrl}
-                  LeftIcon={item.AvatarIcon}
-                  avatarType={item.avatarType}
-                  isIconInverted={item.isIconInverted}
-                  placeholderColorSeed={item.id}
-                />
-              }
+              text={item.name}
+              avatar={getCountryFlagMenuItemAvatar(item.name, countries)}
             />
           );
         })}
@@ -137,17 +134,8 @@ export const ObjectFilterDropdownCurrencySelect = () => {
               onSelectChange={(newCheckedValue) => {
                 handleMultipleItemSelectChange(item, newCheckedValue);
               }}
-              avatar={
-                <StyledMultipleSelectDropdownAvatarChip
-                  className="avatar-icon-container"
-                  name={item.name}
-                  avatarUrl={item.avatarUrl}
-                  LeftIcon={item.AvatarIcon}
-                  avatarType={item.avatarType}
-                  isIconInverted={item.isIconInverted}
-                  placeholderColorSeed={item.id}
-                />
-              }
+              text={item.name}
+              avatar={getCountryFlagMenuItemAvatar(item.name, countries)}
             />
           );
         })}

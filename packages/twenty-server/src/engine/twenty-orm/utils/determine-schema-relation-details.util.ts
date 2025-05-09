@@ -35,7 +35,7 @@ export async function determineSchemaRelationDetails(
     objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
 
   if (!sourceObjectMetadata || !targetObjectMetadata) {
-    throw new Error('Object metadata not found');
+    throw new Error(`Object metadata not found for field ${fieldMetadata.id}`);
   }
 
   if (!fieldMetadata.relationTargetFieldMetadataId) {

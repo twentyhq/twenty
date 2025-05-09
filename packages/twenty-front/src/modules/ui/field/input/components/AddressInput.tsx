@@ -76,7 +76,7 @@ export const AddressInput = ({
   const addressStreet2InputRef = useRef<HTMLInputElement>(null);
   const addressCityInputRef = useRef<HTMLInputElement>(null);
   const addressStateInputRef = useRef<HTMLInputElement>(null);
-  const addressPostCodeInputRef = useRef<HTMLInputElement>(null);
+  const addressPostcodeInputRef = useRef<HTMLInputElement>(null);
 
   const inputRefs: {
     [key in keyof FieldAddressDraftValue]?: RefObject<HTMLInputElement>;
@@ -85,7 +85,7 @@ export const AddressInput = ({
     addressStreet2: addressStreet2InputRef,
     addressCity: addressCityInputRef,
     addressState: addressStateInputRef,
-    addressPostcode: addressPostCodeInputRef,
+    addressPostcode: addressPostcodeInputRef,
   };
 
   const [focusPosition, setFocusPosition] =
