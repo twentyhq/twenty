@@ -96,7 +96,8 @@ export class RecordInputTransformerService {
 
     const serverBlockNoteEditor = ServerBlockNoteEditor.create();
 
-    //patch : some block (custom or code) conversion to markdown fails
+    // Patch: Handle cases where blocknote to markdown conversion fails for certain block types (custom/code blocks)
+    // Todo : This could be resolved once the server-utils library is updated with proper conversion support
     let convertedMarkdown: string | null = null;
 
     try {
