@@ -95,7 +95,7 @@ export type LinksFilter = {
 
 export type ActorFilter = {
   name?: StringFilter;
-  source?: IsFilter;
+  source?: SelectFilter;
 };
 
 export type EmailsFilter = {
@@ -104,6 +104,8 @@ export type EmailsFilter = {
 
 export type PhonesFilter = {
   primaryPhoneNumber?: StringFilter;
+  primaryPhoneCallingCode?: StringFilter;
+  additionalPhones?: RawJsonFilter;
 };
 
 export type SelectFilter = {
