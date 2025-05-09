@@ -130,10 +130,6 @@ export class WorkspaceFieldRelationComparator {
         throw new Error(`Field ${fieldId} not found in originalObjectMetadata`);
       }
 
-      if (!standardFieldMetadata) {
-        throw new Error(`Field ${fieldId} not found in standardObjectMetadata`);
-      }
-
       for (const difference of differences) {
         const property = difference.path[difference.path.length - 1];
 
@@ -191,6 +187,10 @@ export class WorkspaceFieldRelationComparator {
         } else {
           propertiesMap[fieldId][property] = difference.value;
         }
+      }
+
+      if (!standardFieldMetadata) {
+        throw new Error(`Field ${fieldId} not found in standardObjectMetadata`);
       }
 
       if (relationTypeChange) {
