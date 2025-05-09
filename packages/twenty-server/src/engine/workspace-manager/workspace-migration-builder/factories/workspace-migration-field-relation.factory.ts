@@ -314,6 +314,19 @@ export class WorkspaceMigrationFieldRelationFactory {
         );
       }
 
+      if (!sourceFieldMetadata.settings) {
+        throw new Error(
+          `FieldMetadata for relation with id ${sourceFieldMetadata.id} has no settings`,
+        );
+      }
+
+      if (
+        sourceFieldMetadata.settings.relationType !== RelationType.MANY_TO_ONE
+      ) {
+        // Only MANY_TO_ONE relations deletion have consequences on the database schema
+        continue;
+      }
+
       if (!targetObjectMetadata) {
         throw new Error(
           `ObjectMetadata with id ${sourceFieldMetadata.relationTargetObjectMetadataId} not found`,
@@ -339,20 +352,6 @@ export class WorkspaceMigrationFieldRelationFactory {
       ) {
         throw new Error(
           `FieldMetadata with id ${sourceFieldMetadata.relationTargetFieldMetadataId} is not a relation`,
-        );
-      }
-
-      if (!sourceFieldMetadata.settings) {
-        throw new Error(
-          `FieldMetadata for relation with id ${sourceFieldMetadata.id} has no settings`,
-        );
-      }
-
-      if (
-        sourceFieldMetadata.settings.relationType !== RelationType.MANY_TO_ONE
-      ) {
-        throw new Error(
-          `FieldMetadata for relation with id ${sourceFieldMetadata.id} is not a many to one relation, it should not generate a workspace migration`,
         );
       }
 
