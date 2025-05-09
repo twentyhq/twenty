@@ -35,7 +35,6 @@ export const RecordTableContent = ({
 }: RecordTableContentProps) => {
   const [isDragging, setIsDragging] = useState(false);
 
-  //todod
   const handleDragStart = () => {
     setIsDragging(true);
     handleDragSelectionStart();

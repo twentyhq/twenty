@@ -13,6 +13,7 @@ import { SearchVectorService } from 'src/engine/metadata-modules/search-vector/s
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { SEARCH_FIELDS_FOR_PERSON } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Command({
@@ -48,7 +49,7 @@ export class UpgradeSearchVectorOnPersonEntityCommand extends ActiveOrSuspendedW
         select: ['id'],
         where: {
           workspaceId,
-          nameSingular: 'person',
+          nameSingular: STANDARD_OBJECT_IDS.person,
         },
       });
 
