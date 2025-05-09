@@ -1,4 +1,5 @@
 import { ChatbotFlowCondicionalEventForm } from '@/chatbot/components/actions/ChatbotFlowCondicionalEventForm';
+import { ChatbotFlowFileEventForm } from '@/chatbot/components/actions/ChatbotFlowFileEventForm';
 import { ChatbotFlowImageEventForm } from '@/chatbot/components/actions/ChatbotFlowImageEventForm';
 import { ChatbotFlowTextEventForm } from '@/chatbot/components/actions/ChatbotFlowTextEventForm';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
@@ -35,6 +36,12 @@ export const CommandMenuChatbotFlowEditStep = () => {
     case 'image': {
       content = (
         <ChatbotFlowImageEventForm selectedNode={chatbotFlowSelectedNode} />
+      );
+      break;
+    }
+    case 'file': {
+      content = (
+        <ChatbotFlowFileEventForm selectedNode={chatbotFlowSelectedNode} />
       );
       break;
     }
