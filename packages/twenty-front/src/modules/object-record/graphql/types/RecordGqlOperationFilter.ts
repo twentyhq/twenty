@@ -95,7 +95,7 @@ export type LinksFilter = {
 
 export type ActorFilter = {
   name?: StringFilter;
-  source?: IsFilter;
+  source?: SelectFilter;
 };
 
 export type EmailsFilter = {

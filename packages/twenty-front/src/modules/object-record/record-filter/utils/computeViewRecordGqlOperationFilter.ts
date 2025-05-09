@@ -927,73 +927,139 @@ export const computeFilterRecordGqlOperationFilter = ({
           );
       }
     }
-    // TODO: fix this with a new composite field in ViewFilter entity
     case 'ACTOR': {
-      switch (filter.operand) {
-        case RecordFilterOperand.Is: {
-          if (filter.value === '[]') {
-            return;
-          }
+      if (isSubFieldFilter) {
+        switch (subFieldName) {
+          case 'source': {
+            switch (filter.operand) {
+              case RecordFilterOperand.Is: {
+                if (filter.value === '[]') {
+                  return;
+                }
 
-          const parsedRecordIds = JSON.parse(filter.value) as string[];
+                const parsedSources = JSON.parse(filter.value) as string[];
 
-          return {
-            [correspondingField.name]: {
-              source: {
-                in: parsedRecordIds,
-              } as RelationFilter,
-            },
-          };
-        }
-        case RecordFilterOperand.IsNot: {
-          if (filter.value === '[]') {
-            return;
-          }
-
-          const parsedRecordIds = JSON.parse(filter.value) as string[];
-
-          if (parsedRecordIds.length === 0) return;
-
-          return {
-            not: {
-              [correspondingField.name]: {
-                source: {
-                  in: parsedRecordIds,
-                } as RelationFilter,
-              },
-            },
-          };
-        }
-        case RecordFilterOperand.Contains:
-          return {
-            or: [
-              {
-                [correspondingField.name]: {
-                  name: {
-                    ilike: `%${filter.value}%`,
-                  },
-                } as ActorFilter,
-              },
-            ],
-          };
-        case RecordFilterOperand.DoesNotContain:
-          return {
-            and: [
-              {
-                not: {
+                return {
                   [correspondingField.name]: {
-                    name: {
-                      ilike: `%${filter.value}%`,
+                    source: {
+                      in: parsedSources,
+                    } satisfies RelationFilter,
+                  },
+                };
+              }
+              case RecordFilterOperand.IsNot: {
+                if (filter.value === '[]') {
+                  return;
+                }
+
+                const parsedSources = JSON.parse(filter.value) as string[];
+
+                if (parsedSources.length === 0) return;
+
+                return {
+                  not: {
+                    [correspondingField.name]: {
+                      source: {
+                        in: parsedSources,
+                      } satisfies RelationFilter,
                     },
-                  } as ActorFilter,
+                  },
+                };
+              }
+              default:
+                throw new Error(
+                  `Unknown operand ${filter.operand} for ${filter.label} filter`,
+                );
+            }
+          }
+          case 'name': {
+            switch (filter.operand) {
+              case RecordFilterOperand.Contains:
+                return {
+                  or: [
+                    {
+                      [correspondingField.name]: {
+                        name: {
+                          ilike: `%${filter.value}%`,
+                        },
+                      } satisfies ActorFilter,
+                    },
+                  ],
+                };
+              case RecordFilterOperand.DoesNotContain:
+                return {
+                  and: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          name: {
+                            ilike: `%${filter.value}%`,
+                          },
+                        } satisfies ActorFilter,
+                      },
+                    },
+                  ],
+                };
+              default:
+                throw new Error(
+                  `Unknown operand ${filter.operand} for ${filter.label} filter`,
+                );
+            }
+          }
+        }
+        break;
+      } else {
+        if (filter.value === '[]') {
+          return;
+        }
+
+        const parsedSources = JSON.parse(filter.value) as string[];
+
+        if (parsedSources.length === 0) return;
+
+        switch (filter.operand) {
+          case RecordFilterOperand.Contains:
+            return {
+              or: [
+                {
+                  [correspondingField.name]: {
+                    source: {
+                      in: parsedSources,
+                    },
+                  } satisfies ActorFilter,
                 },
-              },
-            ],
-          };
-        default:
-          throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.label} filter`,
-          );
+              ],
+            };
+          case RecordFilterOperand.DoesNotContain:
+            return {
+              and: [
+                {
+                  or: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          source: {
+                            in: parsedSources,
+                          },
+                        } satisfies ActorFilter,
+                      },
+                    },
+                    {
+                      [correspondingField.name]: {
+                        source: {
+                          is: 'NULL',
+                        },
+                      } satisfies ActorFilter,
+                    },
+                  ],
+                },
+              ],
+            };
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filter.label} filter`,
+            );
+        }
       }
     }
     case 'EMAILS':

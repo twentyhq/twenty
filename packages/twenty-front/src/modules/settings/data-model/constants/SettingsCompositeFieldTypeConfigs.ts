@@ -177,8 +177,8 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     label: 'Actor',
     Icon: IllustrationIconSetting,
     category: 'Basic',
-    subFields: ['source'],
-    filterableSubFields: ['source'],
+    subFields: ['source', 'name'],
+    filterableSubFields: ['source', 'name'],
     labelBySubField: {
       source: 'Source',
       name: 'Name',

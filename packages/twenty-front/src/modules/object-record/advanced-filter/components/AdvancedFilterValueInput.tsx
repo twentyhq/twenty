@@ -93,7 +93,12 @@ export const AdvancedFilterValueInput = ({
       recordFilter.subFieldName,
     ) ||
     (filterType === 'ADDRESS' &&
-      subFieldNameUsedInDropdown !== 'addressCountry');
+      subFieldNameUsedInDropdown !== 'addressCountry') ||
+    isExpectedSubFieldName(
+      FieldMetadataType.ACTOR,
+      'name',
+      recordFilter.subFieldName,
+    );
 
   return (
     <StyledValueDropdownContainer>
