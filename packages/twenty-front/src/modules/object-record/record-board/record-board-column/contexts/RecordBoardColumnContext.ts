@@ -6,6 +6,7 @@ type RecordBoardColumnContextProps = {
   columnDefinition: RecordGroupDefinition;
   columnId: string;
   recordIds: string[];
+  columnIndex: number;
 };
 
 export const RecordBoardColumnContext =

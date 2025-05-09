@@ -4,6 +4,7 @@ import { TableCellPosition } from '@/object-record/record-table/types/TableCellP
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
+import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
@@ -38,8 +39,8 @@ export const useMoveHoverToCurrentCell = (recordTableId: string) => {
         if (
           currentHotkeyScope.scope !== TableHotkeyScope.TableFocus &&
           currentHotkeyScope.scope !== TableHotkeyScope.CellEditMode &&
-          currentHotkeyScope.scope !== TableHotkeyScope.Table &&
-          currentHotkeyScope.scope !== AppHotkeyScope.CommandMenuOpen
+          currentHotkeyScope.scope !== AppHotkeyScope.CommandMenuOpen &&
+          currentHotkeyScope.scope !== RecordIndexHotkeyScope.RecordIndex
         ) {
           return;
         }

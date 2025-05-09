@@ -8,10 +8,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 type RecordBoardColumnHeaderWrapperProps = {
   columnId: string;
+  columnIndex: number;
 };
 
 export const RecordBoardColumnHeaderWrapper = ({
   columnId,
+  columnIndex,
 }: RecordBoardColumnHeaderWrapperProps) => {
   const recordGroupDefinition = useRecoilValue(
     recordGroupDefinitionFamilyState(columnId),
@@ -32,6 +34,7 @@ export const RecordBoardColumnHeaderWrapper = ({
         columnId,
         columnDefinition: recordGroupDefinition,
         recordIds: recordIdsByGroup,
+        columnIndex,
       }}
     >
       <RecordBoardColumnHeader />

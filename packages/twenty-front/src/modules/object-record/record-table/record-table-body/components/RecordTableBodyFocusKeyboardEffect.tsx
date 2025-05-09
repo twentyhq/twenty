@@ -1,3 +1,4 @@
+import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
@@ -37,7 +38,7 @@ export const RecordTableBodyFocusKeyboardEffect = () => {
         restoreRecordTableRowFocusFromCellPosition();
         setIsFocusActiveForCurrentPosition(false);
       } else {
-        setHotkeyScope(TableHotkeyScope.Table, {
+        setHotkeyScope(RecordIndexHotkeyScope.RecordIndex, {
           goto: true,
           keyboardShortcutMenu: true,
         });

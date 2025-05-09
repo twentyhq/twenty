@@ -31,9 +31,10 @@ export const RecordBoardHeader = () => {
 
   return (
     <StyledHeaderContainer id="record-board-header">
-      {visibleRecordGroupIds.map((recordGroupId) => (
+      {visibleRecordGroupIds.map((recordGroupId, index) => (
         <RecordBoardColumnHeaderWrapper
           columnId={recordGroupId}
+          columnIndex={index}
           key={recordGroupId}
         />
       ))}
