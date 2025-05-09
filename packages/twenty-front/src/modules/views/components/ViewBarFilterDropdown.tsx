@@ -51,7 +51,7 @@ export const ViewBarFilterDropdown = ({
       dropdownHotkeyScope={hotkeyScope}
       dropdownOffset={{ y: 8 }}
       onClickOutside={handleDropdownClickOutside}
-      dropdownWidth={200}
+      dropdownWidth={208}
     />
   );
 };
