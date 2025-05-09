@@ -34,5 +34,12 @@ export const createNode = (type: string) => {
         },
       };
     }
+    case 'image':
+      return {
+        ...baseNode,
+        data: {
+          imageUrl: '',
+        },
+      };
   }
 };

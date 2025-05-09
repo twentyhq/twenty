@@ -21,11 +21,11 @@ export const NODE_ACTIONS: Array<NodeAction> = [
     type: 'text',
     icon: 'IconTextSize',
   },
-  // {
-  //   label: 'Image',
-  //   type: 'image',
-  //   icon: 'IconPhoto',
-  // },
+  {
+    label: 'Image',
+    type: 'image',
+    icon: 'IconPhoto',
+  },
   // {
   //   label: 'File',
   //   type: 'file',
