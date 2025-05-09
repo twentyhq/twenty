@@ -94,7 +94,7 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
           />
         }
         dropdownComponents={
-          <DropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer width="auto">
             <SelectableList
               hotkeyScope={dropdownId}
               selectableItemIdArray={operandsForFilterType.map(
@@ -125,6 +125,7 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
         dropdownHotkeyScope={{ scope: dropdownId }}
         dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
         dropdownPlacement="bottom-start"
+        dropdownWidth={200}
       />
     </StyledContainer>
   );
