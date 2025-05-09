@@ -221,8 +221,6 @@ export class WorkspaceMetadataUpdaterService {
       [];
     let updatedFieldRelationMetadataCollection: FieldMetadataUpdate<FieldMetadataType.RELATION>[] =
       [];
-    let deletedFieldRelationMetadataCollection: FieldMetadataUpdate<FieldMetadataType.RELATION>[] =
-      [];
 
     /**
      * Create field relation metadata
@@ -253,20 +251,22 @@ export class WorkspaceMetadataUpdaterService {
     }
 
     if (!options || options.actions.includes('delete')) {
-      deletedFieldRelationMetadataCollection = await this.updateEntities<
-        FieldMetadataEntity<FieldMetadataType.RELATION>
-      >(
-        manager,
-        FieldMetadataEntity,
-        storage.fieldRelationMetadataDeleteCollection,
-        ['objectMetadataId', 'workspaceId'],
+      const fieldMetadataRepository =
+        manager.getRepository(FieldMetadataEntity);
+
+      await fieldMetadataRepository.delete(
+        storage.fieldRelationMetadataDeleteCollection.map((field) => field.id),
       );
     }
 
     return {
       createdFieldRelationMetadataCollection,
       updatedFieldRelationMetadataCollection,
-      deletedFieldRelationMetadataCollection,
+      deletedFieldRelationMetadataCollection:
+        storage.fieldRelationMetadataDeleteCollection.map((field) => ({
+          current: field,
+          altered: field,
+        })),
     };
   }
 
