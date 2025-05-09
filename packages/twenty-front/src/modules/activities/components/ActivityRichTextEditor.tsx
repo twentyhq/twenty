@@ -179,7 +179,6 @@ export const ActivityRichTextEditor = ({
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
 
   const handleEditorChange = () => {
-    console.log('handleEditorChange');
     setIsActivityAttachmentDeletionCheckNeeded(true);
     const newStringifiedBody = JSON.stringify(editor.document) ?? '';
 
