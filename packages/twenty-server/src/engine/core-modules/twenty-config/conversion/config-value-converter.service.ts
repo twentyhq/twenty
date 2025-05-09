@@ -4,6 +4,10 @@ import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-va
 import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { ConfigVariablesMetadataMap } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
+import {
+  ConfigVariableException,
+  ConfigVariableExceptionCode,
+} from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { ConfigVariableOptions } from 'src/engine/core-modules/twenty-config/types/config-variable-options.type';
 import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
@@ -16,6 +20,87 @@ export class ConfigValueConverterService {
     @Inject(CONFIG_VARIABLES_INSTANCE_TOKEN)
     private readonly configVariables: ConfigVariables,
   ) {}
+
+  /**
+   * Transforms and validates an input value to the correct type for a config variable
+   * This is used when receiving values from frontend/API and ensures proper type conversion
+   * @param inputValue The input value (often a string from frontend)
+   * @param key The config variable key
+   * @returns The properly typed value if valid
+   * @throws ConfigVariableException if the value cannot be converted to the required type
+   */
+  transformAndValidateInputValue<T extends keyof ConfigVariables>(
+    inputValue: any,
+    key: T,
+  ): ConfigVariables[T] {
+    const metadata = this.getConfigVariableMetadata(key);
+    const configType = metadata?.type;
+    const options = metadata?.options;
+
+    let convertedValue: any;
+
+    try {
+      switch (configType) {
+        case ConfigVariableType.BOOLEAN: {
+          convertedValue = configTransformers.boolean(inputValue);
+
+          if (convertedValue === undefined) {
+            throw new Error(`Cannot convert value to boolean`);
+          }
+          break;
+        }
+
+        case ConfigVariableType.NUMBER: {
+          convertedValue = configTransformers.number(inputValue);
+
+          if (convertedValue === undefined) {
+            throw new Error(`Cannot convert value to number`);
+          }
+
+          break;
+        }
+
+        case ConfigVariableType.STRING: {
+          convertedValue = configTransformers.string(inputValue);
+
+          if (convertedValue === undefined) {
+            throw new Error(`Cannot convert value to string`);
+          }
+          break;
+        }
+
+        case ConfigVariableType.ARRAY: {
+          convertedValue = this.convertToArray(inputValue, options);
+
+          if (convertedValue === undefined || !Array.isArray(convertedValue)) {
+            throw new Error(`Cannot convert value to array`);
+          }
+          break;
+        }
+
+        case ConfigVariableType.ENUM: {
+          convertedValue = this.convertToEnum(inputValue, options);
+
+          if (convertedValue === undefined) {
+            throw new Error(
+              `Value must be one of [${Array.isArray(options) ? options.join(', ') : ''}]`,
+            );
+          }
+          break;
+        }
+
+        default:
+          convertedValue = inputValue;
+      }
+
+      return convertedValue as ConfigVariables[T];
+    } catch (error) {
+      throw new ConfigVariableException(
+        `Type validation failed for ${key as string}: ${(error as Error).message}`,
+        ConfigVariableExceptionCode.TYPE_VALIDATION_FAILED,
+      );
+    }
+  }
 
   convertDbValueToAppValue<T extends keyof ConfigVariables>(
     dbValue: unknown,
@@ -179,12 +264,29 @@ export class ConfigValueConverterService {
     value: unknown,
     options?: ConfigVariableOptions,
   ): unknown | undefined {
-    if (!options || !Array.isArray(options) || options.length === 0) {
+    if (!options) {
       return value;
     }
 
-    if (options.includes(value as string)) {
-      return value;
+    // Convert value to string for comparison
+    const stringValue = String(value);
+
+    // Check if options is an array
+    if (Array.isArray(options)) {
+      // Use standard for loop to avoid TypeScript issues with includes
+      for (let i = 0; i < options.length; i++) {
+        if (String(options[i]) === stringValue) {
+          return value;
+        }
+      }
+    }
+    // Check if options is a record
+    else if (typeof options === 'object') {
+      for (const key in options) {
+        if (key === stringValue || options[key] === stringValue) {
+          return value;
+        }
+      }
     }
 
     return undefined;
