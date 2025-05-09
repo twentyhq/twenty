@@ -35,13 +35,17 @@ export const ActivityRichTextEditorDeleteAttachmentsEffect = ({
           return;
         }
 
-        set(isActivityAttachmentDeletionCheckNeededState, false);
-
         const activity = snapshot
           .getLoadable(recordStoreFamilyState(activityId))
-          .getValue() as Activity;
+          .getValue() as Activity | null;
 
-        const activityAttachments = activity?.attachments;
+        if (!isDefined(activity)) {
+          return;
+        }
+
+        set(isActivityAttachmentDeletionCheckNeededState, false);
+
+        const activityAttachments = activity.attachments;
 
         if (
           !isDefined(activityAttachments) ||
@@ -52,8 +56,11 @@ export const ActivityRichTextEditorDeleteAttachmentsEffect = ({
 
         const activityAttachmentIdsToDelete = activityAttachments
           .filter((attachment) => {
-            return !activity?.bodyV2?.blocknote?.includes(
-              attachment.fullPath.split('?')[0],
+            return (
+              isDefined(activity?.bodyV2?.blocknote) &&
+              !activity.bodyV2.blocknote.includes(
+                attachment.fullPath.split('?')[0],
+              )
             );
           })
           .map((attachment) => attachment.id);
