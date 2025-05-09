@@ -9,6 +9,7 @@ import { AgentModule } from 'src/engine/core-modules/agent/agent.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { BillingPlansModule } from 'src/engine/core-modules/billing-plans/billing-plans.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
@@ -92,6 +93,7 @@ import { StripeModule } from './stripe/stripe.module';
     LabModule,
     RoleModule,
     StripeModule,
+    BillingPlansModule,
     InterModule,
     TwentyConfigModule,
     RedisClientModule,
@@ -156,6 +158,9 @@ import { StripeModule } from './stripe/stripe.module';
     WorkspaceModule,
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
+    StripeModule,
+    BillingPlansModule,
+    InterModule,
   ],
 })
 export class CoreEngineModule {}

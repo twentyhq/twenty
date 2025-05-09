@@ -24,6 +24,7 @@ import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/worksp
 import { StripeIntegration } from 'src/engine/core-modules/stripe/integrations/stripe-integration.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { BillingPlans } from 'src/engine/core-modules/billing-plans/billing-plans.entity';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
@@ -161,6 +162,10 @@ export class Workspace {
   @Field()
   @Column({ default: false })
   isCustomDomainEnabled: boolean;
+
+  // @Field(() => [BillingPlans])
+  // @OneToMany(() => BillingPlans, (billingPlans) => billingPlans.workspace)
+  // billingPlans: Relation<BillingPlans[]>;
 
   @Field(() => [StripeIntegration])
   @OneToMany(

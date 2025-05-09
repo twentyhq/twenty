@@ -29,13 +29,14 @@ export const usePageChangeEffectNavigateLocation = () => {
     AppPath.VerifyEmail,
     AppPath.Verify,
   ];
+
   const onboardingPaths = [
     AppPath.CreateWorkspace,
     AppPath.CreateProfile,
     AppPath.SyncEmails,
     AppPath.InviteTeam,
     AppPath.PlanRequired,
-    AppPath.PlanRequiredSuccess,
+    AppPath.PaymentRequiredSuccess,
   ];
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
@@ -56,7 +57,10 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.PLAN_REQUIRED &&
-    !someMatchingLocationOf([AppPath.PlanRequired, AppPath.PlanRequiredSuccess])
+    !someMatchingLocationOf([
+      AppPath.PlanRequired,
+      AppPath.PaymentRequiredSuccess,
+    ])
   ) {
     return AppPath.PlanRequired;
   }
@@ -71,7 +75,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION &&
     !someMatchingLocationOf([
       AppPath.CreateWorkspace,
-      AppPath.PlanRequiredSuccess,
+      AppPath.PaymentRequiredSuccess,
     ])
   ) {
     return AppPath.CreateWorkspace;
@@ -82,6 +86,25 @@ export const usePageChangeEffectNavigateLocation = () => {
     !isMatchingLocation(AppPath.CreateProfile)
   ) {
     return AppPath.CreateProfile;
+  }
+
+  if (
+    onboardingStatus === OnboardingStatus.PLAN_REQUIRED &&
+    !isMatchingLocation(AppPath.PlanRequired)
+  ) {
+    return AppPath.PlanRequired;
+  }
+
+  const allowedPaths = [
+    AppPath.PaymentRequired,
+    AppPath.PaymentRequiredSuccess,
+  ];
+
+  if (
+    onboardingStatus === OnboardingStatus.PAYMENT_REQUIRED &&
+    !allowedPaths.some((path) => isMatchingLocation(path))
+  ) {
+    return AppPath.PaymentRequired;
   }
 
   if (

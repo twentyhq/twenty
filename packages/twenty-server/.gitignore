@@ -3,3 +3,9 @@ dist/*
 logs/**/*
 *.log
 secrets/*
+# Certificados SSL
+*.crt
+*.key
+ssl_certs/
+packages/twenty-server/modules/charges/*.crt
+packages/twenty-server/modules/charges/*.key

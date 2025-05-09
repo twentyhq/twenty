@@ -267,6 +267,12 @@ export class SignInUpService {
   }
 
   private async activateOnboardingForUser(user: User, workspace: Workspace) {
+    await this.onboardingService.setOnboardingPlanPaymentPending({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: true,
+    });
+
     await this.onboardingService.setOnboardingConnectAccountPending({
       userId: user.id,
       workspaceId: workspace.id,

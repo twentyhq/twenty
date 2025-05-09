@@ -87,6 +87,16 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   discount: number;
 
   @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.requestCode,
+    type: FieldMetadataType.TEXT,
+    label: msg`Request Code`,
+    description: msg`Charge request code`,
+    icon: 'IconSettings',
+  })
+  @WorkspaceIsNullable()
+  requestCode: string;
+
+  @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.recurrence,
     type: FieldMetadataType.SELECT,
     label: msg`Recurrence`,
@@ -105,6 +115,30 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   recurrence: string;
+
+  @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.taxId,
+    type: FieldMetadataType.TEXT,
+    label: msg`Tax ID`,
+    description: msg`CPF or CNPJ identifier for the charge`,
+    icon: 'IconId',
+  })
+  @WorkspaceIsNullable()
+  taxId: string;
+
+  @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.entityType,
+    type: FieldMetadataType.SELECT,
+    label: msg`Entity Type`,
+    description: msg`Indicates if the entity is an individual or a company`,
+    icon: 'IconUserCheck',
+    options: [
+      { value: 'individual', label: 'Individual', position: 0, color: 'blue' },
+      { value: 'company', label: 'Company', position: 1, color: 'green' },
+    ],
+  })
+  @WorkspaceIsNullable()
+  entityType: string;
 
   @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.position,
@@ -146,6 +180,22 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('product')
   productId: string | null;
+
+  @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.chargeAction,
+    type: FieldMetadataType.SELECT,
+    label: msg`Charge Action`,
+    description: msg`Product charge action(issue products can be used in charges)`,
+    icon: 'IconProgress',
+    options: [
+      { value: 'none', label: 'None', position: 0, color: 'gray' },
+      { value: 'issue', label: 'Issue', position: 1, color: 'green' },
+      { value: 'cancel', label: 'Cancel', position: 2, color: 'red' },
+    ],
+    defaultValue: "'none'",
+  })
+  @WorkspaceFieldIndex()
+  chargeAction: string;
 
   //Relations
   @WorkspaceRelation({
