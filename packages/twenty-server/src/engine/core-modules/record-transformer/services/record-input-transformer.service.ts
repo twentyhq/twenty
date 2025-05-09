@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
+import { ServerBlockNoteEditor } from '@blocknote/server-util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ServerBlockNoteEditor } from '@blocknote/server-util';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
+import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import {
   RichTextV2Metadata,
   richTextV2ValueSchema,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
-import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
-import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
 @Injectable()
 export class RecordInputTransformerService {
@@ -96,11 +96,18 @@ export class RecordInputTransformerService {
 
     const serverBlockNoteEditor = ServerBlockNoteEditor.create();
 
-    const convertedMarkdown = parsedValue.blocknote
-      ? await serverBlockNoteEditor.blocksToMarkdownLossy(
-          JSON.parse(parsedValue.blocknote),
-        )
-      : null;
+    //patch : some block (custom or code) conversion to markdown fails
+    let convertedMarkdown: string | null = null;
+
+    try {
+      convertedMarkdown = parsedValue.blocknote
+        ? await serverBlockNoteEditor.blocksToMarkdownLossy(
+            JSON.parse(parsedValue.blocknote),
+          )
+        : null;
+    } catch {
+      convertedMarkdown = parsedValue.blocknote;
+    }
 
     const convertedBlocknote = parsedValue.markdown
       ? JSON.stringify(
