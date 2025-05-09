@@ -2440,7 +2440,13 @@ export type User = {
   userVars: Scalars['JSONObject']['output'];
   workspaceMember?: Maybe<WorkspaceMember>;
   workspaceMembers?: Maybe<Array<WorkspaceMember>>;
+  workspaceMembersWithDeleted?: Maybe<Array<WorkspaceMember>>;
   workspaces: Array<UserWorkspace>;
+};
+
+
+export type UserWorkspaceMembersArgs = {
+  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type UserEdge = {
