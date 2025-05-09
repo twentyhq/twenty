@@ -135,9 +135,10 @@ export class WorkspaceMigrationFieldRelationFactory {
         );
       }
 
+      //TODO: fix this
       const migrations: WorkspaceMigrationTableAction[] = [
         {
-          name: computeObjectTargetTable(targetObjectMetadata),
+          name: computeObjectTargetTable(sourceObjectMetadata),
           action: WorkspaceMigrationTableActionType.ALTER,
           columns: [
             {
@@ -147,7 +148,7 @@ export class WorkspaceMigrationFieldRelationFactory {
           ],
         },
         {
-          name: computeObjectTargetTable(targetObjectMetadata),
+          name: computeObjectTargetTable(sourceObjectMetadata),
           action: WorkspaceMigrationTableActionType.ALTER,
           columns: [
             {
