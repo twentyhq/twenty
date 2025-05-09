@@ -175,11 +175,11 @@ export class WorkspaceFieldRelationComparator {
           (fieldPropertiesToStringify as readonly string[]).includes(property)
         ) {
           const newValue = this.parseJSONOrString(difference.value);
+          const oldValue = this.parseJSONOrString(difference.oldValue);
 
           if (property === 'settings' && difference.oldValue) {
             const newSettings = newValue as FieldMetadataRelationSettings;
-            const oldSettings =
-              difference.oldValue as FieldMetadataRelationSettings;
+            const oldSettings = oldValue as FieldMetadataRelationSettings;
 
             // Check if the relation type has changed
             if (oldSettings.relationType !== newSettings.relationType) {

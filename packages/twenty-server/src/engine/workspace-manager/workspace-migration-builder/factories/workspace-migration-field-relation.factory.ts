@@ -342,32 +342,44 @@ export class WorkspaceMigrationFieldRelationFactory {
         );
       }
 
-      if (!targetFieldMetadata.settings) {
+      if (!sourceFieldMetadata.settings) {
         throw new Error(
           `FieldMetadata for relation with id ${sourceFieldMetadata.id} has no settings`,
         );
       }
 
+      if (
+        sourceFieldMetadata.settings.relationType !== RelationType.MANY_TO_ONE
+      ) {
+        throw new Error(
+          `FieldMetadata for relation with id ${sourceFieldMetadata.id} is not a many to one relation, it should not generate a workspace migration`,
+        );
+      }
+
+      if (!sourceFieldMetadata.settings.joinColumnName) {
+        throw new Error(
+          `FieldMetadata for relation with id ${sourceFieldMetadata.id} has no join column name, it should not generate a workspace migration`,
+        );
+      }
+
       const migrations: WorkspaceMigrationTableAction[] = [
         {
-          name: computeObjectTargetTable(targetObjectMetadata),
+          name: computeObjectTargetTable(sourceObjectMetadata),
           action: WorkspaceMigrationTableActionType.ALTER,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY,
-              columnName: `${camelCase(targetFieldMetadata.name)}Id`,
+              columnName: sourceFieldMetadata.settings.joinColumnName,
             },
           ],
         },
         {
-          name: computeObjectTargetTable(targetObjectMetadata),
+          name: computeObjectTargetTable(sourceObjectMetadata),
           action: WorkspaceMigrationTableActionType.ALTER,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.DROP,
-              columnName:
-                targetFieldMetadata.settings.joinColumnName ??
-                `${camelCase(targetFieldMetadata.name)}Id`,
+              columnName: sourceFieldMetadata.settings.joinColumnName,
             },
           ],
         },
