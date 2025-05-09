@@ -83,7 +83,7 @@ export const AdvancedFilterDropdownFilterInput = ({
           recordFilter.subFieldName,
         ) ? (
           <>
-            <ObjectFilterDropdownCurrencySelect dropdownWidth={280} />
+            <ObjectFilterDropdownCurrencySelect />
           </>
         ) : (
           <></>

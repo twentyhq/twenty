@@ -728,6 +728,33 @@ export const computeFilterRecordGqlOperationFilter = ({
                     },
                   ],
                 },
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      addressState: {
+                        ilike: `%${filter.value}%`,
+                      },
+                    } as AddressFilter,
+                  },
+                },
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      addressCountry: {
+                        ilike: `%${filter.value}%`,
+                      },
+                    } as AddressFilter,
+                  },
+                },
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      addressPostcode: {
+                        ilike: `%${filter.value}%`,
+                      },
+                    } as AddressFilter,
+                  },
+                },
               ],
             };
           } else {
@@ -1030,25 +1057,146 @@ export const computeFilterRecordGqlOperationFilter = ({
           );
       }
     case 'PHONES': {
-      const filterValue = filter.value.replace(/[^0-9]/g, '');
+      if (!isSubFieldFilter) {
+        const filterValue = filter.value.replace(/[^0-9]/g, '');
 
-      switch (filter.operand) {
-        case RecordFilterOperand.Contains:
-          return {
-            or: [
-              {
+        if (!isNonEmptyString(filterValue)) {
+          return;
+        }
+
+        switch (filter.operand) {
+          case RecordFilterOperand.Contains:
+            return {
+              or: [
+                {
+                  [correspondingField.name]: {
+                    primaryPhoneNumber: {
+                      ilike: `%${filterValue}%`,
+                    },
+                  } as PhonesFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    primaryPhoneCallingCode: {
+                      ilike: `%${filterValue}%`,
+                    },
+                  } as PhonesFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    additionalPhones: {
+                      like: `%${filterValue}%`,
+                    },
+                  } as PhonesFilter,
+                },
+              ],
+            };
+          case RecordFilterOperand.DoesNotContain:
+            return {
+              and: [
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      primaryPhoneNumber: {
+                        ilike: `%${filterValue}%`,
+                      },
+                    } as PhonesFilter,
+                  },
+                },
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      primaryPhoneCallingCode: {
+                        ilike: `%${filterValue}%`,
+                      },
+                    } as PhonesFilter,
+                  },
+                },
+                {
+                  or: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          additionalPhones: {
+                            like: `%${filterValue}%`,
+                          },
+                        } as PhonesFilter,
+                      },
+                    },
+                    {
+                      [correspondingField.name]: {
+                        additionalPhones: {
+                          is: 'NULL',
+                        } as PhonesFilter,
+                      },
+                    },
+                  ],
+                },
+              ],
+            };
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filterType} filter`,
+            );
+        }
+      }
+
+      const filterValue = filter.value;
+
+      switch (subFieldName) {
+        case 'additionalPhones': {
+          switch (filter.operand) {
+            case RecordFilterOperand.Contains:
+              return {
+                or: [
+                  {
+                    [correspondingField.name]: {
+                      additionalPhones: {
+                        like: `%${filterValue}%`,
+                      },
+                    } as PhonesFilter,
+                  },
+                ],
+              };
+            case RecordFilterOperand.DoesNotContain:
+              return {
+                or: [
+                  {
+                    not: {
+                      [correspondingField.name]: {
+                        additionalPhones: {
+                          like: `%${filterValue}%`,
+                        },
+                      } as PhonesFilter,
+                    },
+                  },
+                  {
+                    [correspondingField.name]: {
+                      additionalPhones: {
+                        is: 'NULL',
+                      } as PhonesFilter,
+                    },
+                  },
+                ],
+              };
+            default:
+              throw new Error(
+                `Unknown operand ${filter.operand} for ${filterType} filter`,
+              );
+          }
+        }
+        case 'primaryPhoneNumber': {
+          switch (filter.operand) {
+            case RecordFilterOperand.Contains:
+              return {
                 [correspondingField.name]: {
                   primaryPhoneNumber: {
                     ilike: `%${filterValue}%`,
                   },
                 } as PhonesFilter,
-              },
-            ],
-          };
-        case RecordFilterOperand.DoesNotContain:
-          return {
-            and: [
-              {
+              };
+            case RecordFilterOperand.DoesNotContain:
+              return {
                 not: {
                   [correspondingField.name]: {
                     primaryPhoneNumber: {
@@ -1056,12 +1204,42 @@ export const computeFilterRecordGqlOperationFilter = ({
                     },
                   } as PhonesFilter,
                 },
-              },
-            ],
-          };
+              };
+            default:
+              throw new Error(
+                `Unknown operand ${filter.operand} for ${filterType} filter`,
+              );
+          }
+        }
+        case 'primaryPhoneCallingCode': {
+          switch (filter.operand) {
+            case RecordFilterOperand.Contains:
+              return {
+                [correspondingField.name]: {
+                  primaryPhoneCallingCode: {
+                    ilike: `%${filterValue}%`,
+                  },
+                } as PhonesFilter,
+              };
+            case RecordFilterOperand.DoesNotContain:
+              return {
+                not: {
+                  [correspondingField.name]: {
+                    primaryPhoneCallingCode: {
+                      ilike: `%${filterValue}%`,
+                    },
+                  } as PhonesFilter,
+                },
+              };
+            default:
+              throw new Error(
+                `Unknown operand ${filter.operand} for ${filterType} filter`,
+              );
+          }
+        }
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filterType} filter`,
+            `Unknown subfield ${subFieldName} for ${filterType} filter`,
           );
       }
     }

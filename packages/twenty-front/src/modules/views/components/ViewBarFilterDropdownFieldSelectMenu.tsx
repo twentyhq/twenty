@@ -79,7 +79,7 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
         selectableItemIdArray={selectableFieldMetadataItemIds}
         selectableListInstanceId={FILTER_FIELD_LIST_ID}
       >
-        <DropdownMenuItemsContainer>
+        <DropdownMenuItemsContainer width="auto">
           {selectableVisibleFieldMetadataItems.map(
             (visibleFieldMetadataItem) => (
               <ViewBarFilterDropdownFieldSelectMenuItem
