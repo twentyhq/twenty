@@ -197,12 +197,10 @@ export class UserResolver {
   async workspaceMembers(
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace,
-    @Args({ name: 'withDeleted', type: () => Boolean, nullable: true })
-    withDeleted: boolean,
   ): Promise<WorkspaceMember[]> {
     const workspaceMemberEntities = await this.userService.loadWorkspaceMembers(
       workspace,
-      withDeleted,
+      false,
     );
 
     const workspaceMembers: WorkspaceMember[] = [];
@@ -280,6 +278,63 @@ export class UserResolver {
     }
 
     // TODO: Fix typing disrepency between Entity and DTO
+    return workspaceMembers;
+  }
+
+  @ResolveField(() => [WorkspaceMember], {
+    nullable: true,
+  })
+  async workspaceMembersWithDeleted(
+    @Parent() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<WorkspaceMember[]> {
+    const workspaceMemberEntities = await this.userService.loadWorkspaceMembers(
+      workspace,
+      true,
+    );
+
+    const workspaceMembers: WorkspaceMember[] = [];
+
+    let userWorkspacesByUserId = new Map<string, UserWorkspace>();
+
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      where: {
+        userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
+        workspaceId: workspace.id,
+      },
+      withDeleted: true,
+    });
+
+    userWorkspacesByUserId = new Map(
+      userWorkspaces.map((userWorkspace) => [
+        userWorkspace.userId,
+        userWorkspace,
+      ]),
+    );
+
+    for (const workspaceMemberEntity of workspaceMemberEntities) {
+      if (workspaceMemberEntity.avatarUrl) {
+        const avatarUrlToken = this.fileService.encodeFileToken({
+          workspaceMemberId: workspaceMemberEntity.id,
+          workspaceId: workspace.id,
+        });
+
+        workspaceMemberEntity.avatarUrl = `${workspaceMemberEntity.avatarUrl}?token=${avatarUrlToken}`;
+      }
+
+      const workspaceMember = workspaceMemberEntity as WorkspaceMember;
+
+      const userWorkspace = userWorkspacesByUserId.get(
+        workspaceMemberEntity.userId,
+      );
+
+      if (userWorkspace) {
+        workspaceMember.userWorkspaceId = userWorkspace.id;
+      }
+
+      workspaceMembers.push(workspaceMember);
+    }
+
     return workspaceMembers;
   }
 

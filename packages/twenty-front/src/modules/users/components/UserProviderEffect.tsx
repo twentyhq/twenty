@@ -154,6 +154,7 @@ export const UserProviderEffect = () => {
     queryData?.currentUser,
     setIsCurrentUserLoaded,
     setDateTimeFormat,
+    setCurrentWorkspaceMembersWithDeleted,
   ]);
 
   return <></>;
