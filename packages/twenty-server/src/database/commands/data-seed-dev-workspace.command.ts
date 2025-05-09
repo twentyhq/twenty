@@ -30,9 +30,6 @@ import { seedPeople } from 'src/database/typeorm-seeds/workspace/seedPeople';
 import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspace-members';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -45,12 +42,12 @@ import { SURVEY_RESULTS_METADATA_SEEDS } from 'src/engine/seeder/metadata-seeds/
 import { SeederService } from 'src/engine/seeder/seeder.service';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { createWorkspaceViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/create-workspace-views';
 import { seedViewWithDemoData } from 'src/engine/workspace-manager/standard-objects-prefill-data/seed-view-with-demo-data';
 import { opportunitiesTableByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-
 // TODO: implement dry-run
 @Command({
   name: 'workspace:seed:dev',
@@ -66,11 +63,10 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     private readonly typeORMService: TypeORMService,
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly objectMetadataService: ObjectMetadataService,
-    @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
-    private readonly workspaceSchemaCache: CacheStorageService,
     private readonly seederService: SeederService,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {
     super();
   }
@@ -92,7 +88,13 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
   }
 
   async createWorkspaceSchema(workspaceId: string) {
-    await this.workspaceSchemaCache.flush();
+    const workspaceCachedMetadataVersion =
+      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
+
+    await this.workspaceCacheStorageService.flush(
+      workspaceId,
+      workspaceCachedMetadataVersion,
+    );
 
     await rawDataSource.initialize();
 
@@ -100,7 +102,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
     await seedCoreSchema({
-      workspaceDataSource: rawDataSource,
+      dataSource: rawDataSource,
       workspaceId,
       seedBilling: isBillingEnabled,
       appVersion,
@@ -117,10 +119,9 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         workspaceId,
       );
 
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+    const mainDataSource = this.typeORMService.getMainDataSource();
 
-    if (!workspaceDataSource) {
+    if (!mainDataSource) {
       throw new Error('Could not connect to workspace data source');
     }
 
@@ -140,10 +141,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         workspaceId,
       );
 
-      await this.seedStandardObjectRecords(
-        workspaceDataSource,
-        dataSourceMetadata,
-      );
+      await this.seedStandardObjectRecords(mainDataSource, dataSourceMetadata);
 
       await this.seederService.seedCustomObjects(
         dataSourceMetadata.id,
@@ -161,15 +159,13 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     } catch (error) {
       this.logger.error(error);
     }
-
-    await this.typeORMService.disconnectFromDataSource(dataSourceMetadata.id);
   }
 
   async seedStandardObjectRecords(
-    workspaceDataSource: DataSource,
+    mainDataSource: DataSource,
     dataSourceMetadata: DataSourceEntity,
   ) {
-    await workspaceDataSource.transaction(
+    await mainDataSource.transaction(
       async (entityManager: WorkspaceEntityManager) => {
         const { objectMetadataStandardIdToIdMap } =
           await this.objectMetadataService.getObjectMetadataStandardIdToIdMap(

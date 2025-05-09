@@ -60,16 +60,19 @@ export class WorkspaceEntityManager extends EntityManager {
 
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
-    shouldBypassPermissionChecks = false,
-    roleId?: string,
+    permissionOptions?: {
+      shouldBypassPermissionChecks?: boolean;
+      roleId?: string;
+    },
   ): WorkspaceRepository<Entity> {
     const dataSource = this.connection;
 
     const repositoryKey = this.getRepositoryKey({
       target,
       dataSource,
-      roleId,
-      shouldBypassPermissionChecks,
+      roleId: permissionOptions?.roleId,
+      shouldBypassPermissionChecks:
+        permissionOptions?.shouldBypassPermissionChecks ?? false,
     });
     const repoFromMap = this.repositories.get(repositoryKey);
 
@@ -79,10 +82,11 @@ export class WorkspaceEntityManager extends EntityManager {
 
     let objectPermissions = {};
 
-    if (roleId) {
+    if (permissionOptions?.roleId) {
       const objectPermissionsByRoleId = dataSource.permissionsPerRoleId;
 
-      objectPermissions = objectPermissionsByRoleId?.[roleId] ?? {};
+      objectPermissions =
+        objectPermissionsByRoleId?.[permissionOptions?.roleId] ?? {};
     }
 
     const newRepository = new WorkspaceRepository<Entity>(
@@ -92,7 +96,7 @@ export class WorkspaceEntityManager extends EntityManager {
       dataSource.featureFlagMap,
       this.queryRunner,
       objectPermissions,
-      shouldBypassPermissionChecks,
+      permissionOptions?.shouldBypassPermissionChecks,
     );
 
     this.repositories.set(repositoryKey, newRepository);
@@ -156,9 +160,12 @@ export class WorkspaceEntityManager extends EntityManager {
     entityOrEntities:
       | QueryDeepPartialEntity<Entity>
       | QueryDeepPartialEntity<Entity>[],
-    options?: PermissionOptions,
+    permissionOptions?: {
+      shouldBypassPermissionChecks?: boolean;
+      objectRecordsPermissions?: ObjectRecordsPermissions;
+    },
   ): Promise<InsertResult> {
-    this.validatePermissions(target, 'insert', options);
+    this.validatePermissions(target, 'insert', permissionOptions);
 
     return super.insert(target, entityOrEntities);
   }
@@ -169,9 +176,12 @@ export class WorkspaceEntityManager extends EntityManager {
       | QueryDeepPartialEntity<Entity>
       | QueryDeepPartialEntity<Entity>[],
     conflictPathsOrOptions: string[] | UpsertOptions<Entity>,
-    options?: PermissionOptions,
+    permissionOptions?: {
+      shouldBypassPermissionChecks?: boolean;
+      objectRecordsPermissions?: ObjectRecordsPermissions;
+    },
   ): Promise<InsertResult> {
-    this.validatePermissions(target, 'update', options);
+    this.validatePermissions(target, 'update', permissionOptions);
 
     return super.upsert(target, entityOrEntities, conflictPathsOrOptions);
   }
@@ -320,7 +330,10 @@ export class WorkspaceEntityManager extends EntityManager {
   validatePermissions<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity> | Entity,
     operationType: OperationType,
-    options?: PermissionOptions,
+    permissionOptions?: {
+      shouldBypassPermissionChecks?: boolean;
+      objectRecordsPermissions?: ObjectRecordsPermissions;
+    },
   ): void {
     const featureFlagMap = this.getFeatureFlagMap();
 
@@ -331,7 +344,7 @@ export class WorkspaceEntityManager extends EntityManager {
       return;
     }
 
-    if (options?.shouldBypassPermissionChecks === true) {
+    if (permissionOptions?.shouldBypassPermissionChecks === true) {
       return;
     }
 
@@ -343,7 +356,8 @@ export class WorkspaceEntityManager extends EntityManager {
     validateOperationIsPermittedOrThrow({
       entityName,
       operationType,
-      objectRecordsPermissions: options?.objectRecordsPermissions ?? {},
+      objectRecordsPermissions:
+        permissionOptions?.objectRecordsPermissions ?? {},
       objectMetadataMaps: this.internalContext.objectMetadataMaps,
     });
   }

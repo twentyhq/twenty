@@ -102,7 +102,7 @@ export const SettingsDataModelFieldPreview = ({
     fieldMetadataItem.name || `${fieldMetadataItem.type}-new-field`;
   const recordId =
     previewRecord?.id ??
-    `${objectMetadataItem.nameSingular}-${fieldName}-${fieldMetadataItem.relationDefinition?.direction}-preview`;
+    `${objectMetadataItem.nameSingular}-${fieldName}-${fieldMetadataItem.relationDefinition?.direction}-${relationObjectMetadataItem?.nameSingular}-preview`;
 
   return (
     <>

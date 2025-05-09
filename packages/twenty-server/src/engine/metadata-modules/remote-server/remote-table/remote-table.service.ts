@@ -182,16 +182,14 @@ export class RemoteTableService {
         workspaceId,
       );
 
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
+    const mainDataSource =
+      await this.workspaceDataSourceService.connectToMainDataSource();
 
     const { baseName: localTableBaseName, suffix: localTableSuffix } =
       await getRemoteTableLocalName(
         input.name,
         dataSourceMetatada.schema,
-        workspaceDataSource,
+        mainDataSource,
       );
 
     const localTableName = localTableSuffix

@@ -1,21 +1,31 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
+import { useReorderRecordGroups } from '@/object-record/record-group/hooks/useReorderRecordGroups';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
+import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useHasSettingsPermission } from '@/settings/roles/hooks/useHasSettingsPermission';
 import { SettingsPath } from '@/types/SettingsPath';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
+import { t } from '@lingui/core/macro';
+import { isUndefined } from '@sniptt/guards';
 import { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconEyeOff,
+  IconSettings,
+} from 'twenty-ui/display';
 import { SettingPermissionType } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { IconEyeOff, IconSettings } from 'twenty-ui/display';
 
 type UseRecordGroupActionsParams = {
   viewType: ViewType;
@@ -50,6 +60,16 @@ export const useRecordGroupActions = ({
     navigationMemorizedUrlState,
   );
 
+  const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(
+    visibleRecordGroupIdsComponentFamilySelector,
+    viewType,
+  );
+
+  const { reorderRecordGroups } = useReorderRecordGroups({
+    viewBarId: objectMetadataItem.id,
+    viewType,
+  });
+
   const navigateToSelectSettings = useCallback(() => {
     setNavigationMemorizedUrl(location.pathname + location.search);
 
@@ -73,33 +93,60 @@ export const useRecordGroupActions = ({
   const hasAccessToDataModelSettings = useHasSettingsPermission(
     SettingPermissionType.DATA_MODEL,
   );
+  const currentIndex = visibleRecordGroupIds.findIndex(
+    (id) => id === recordGroupDefinition.id,
+  );
+  const isCurrentRecordGroupNotFound = currentIndex === -1;
 
-  const recordGroupActions: RecordGroupAction[] = [];
-
-  if (hasAccessToDataModelSettings) {
-    recordGroupActions.push({
+  const recordGroupActions: RecordGroupAction[] = [
+    {
       id: 'edit',
-      label: 'Edit',
+      label: t`Edit`,
       icon: IconSettings,
       position: 0,
-      callback: () => {
-        navigateToSelectSettings();
-      },
-    });
-  }
-
-  recordGroupActions.push({
-    id: 'hide',
-    label: 'Hide',
-    icon: IconEyeOff,
-    position: 1,
-    callback: () => {
-      handleRecordGroupVisibilityChange({
-        ...recordGroupDefinition,
-        isVisible: false,
-      });
+      condition: hasAccessToDataModelSettings,
+      callback: navigateToSelectSettings,
     },
-  });
+    {
+      id: 'moveRight',
+      label: t`Move right`,
+      icon: IconArrowRight,
+      condition:
+        !isCurrentRecordGroupNotFound &&
+        currentIndex < visibleRecordGroupIds.length - 1,
+      position: 1,
+      callback: () =>
+        reorderRecordGroups({
+          fromIndex: currentIndex,
+          toIndex: currentIndex + 1,
+        }),
+    },
+    {
+      id: 'moveLeft',
+      label: t`Move left`,
+      icon: IconArrowLeft,
+      condition: !isCurrentRecordGroupNotFound && currentIndex > 0,
+      position: 2,
+      callback: () =>
+        reorderRecordGroups({
+          fromIndex: currentIndex,
+          toIndex: currentIndex - 1,
+        }),
+    },
+    {
+      id: 'hide',
+      label: t`Hide`,
+      icon: IconEyeOff,
+      position: 3,
+      callback: () =>
+        handleRecordGroupVisibilityChange({
+          ...recordGroupDefinition,
+          isVisible: false,
+        }),
+    },
+  ];
 
-  return recordGroupActions;
+  return recordGroupActions.filter(
+    ({ condition }) => isUndefined(condition) || condition !== false,
+  );
 };

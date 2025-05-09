@@ -6,7 +6,11 @@ This module provides analytics tracking functionality for the Twenty application
 
 ### Tracking Events
 
-The `AuditService` provides a `createContext` method that returns an object with a `track` method. The `track` method is used to track events.
+The `AuditService` provides a `createContext` method that returns an object with three methods:
+
+- `insertWorkspaceEvent`: For tracking workspace-level events
+- `createObjectEvent`: For tracking object-level events that include record and metadata IDs
+- `createPageviewEvent`: For tracking page views
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -24,10 +28,22 @@ export class MyService {
       userId: 'user-id',
     });
 
-    // Track an event
-    // The event name will be autocompleted
-    // The properties will be type-checked based on the event name
-    analytics.track(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
+    // Track a workspace event
+    analytics.insertWorkspaceEvent(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
+    
+    // Track an object event
+    analytics.createObjectEvent(OBJECT_RECORD_CREATED_EVENT, {
+      recordId: 'record-id',
+      objectMetadataId: 'object-metadata-id',
+      // other properties
+    });
+    
+    // Track a pageview
+    analytics.createPageviewEvent('page-name', {
+      href: '/path',
+      locale: 'en-US',
+      // other properties
+    });
   }
 }
 ```
@@ -97,8 +113,9 @@ Creates an analytics context with the given user ID and workspace ID.
 
 Returns an object with the following methods:
 
-- `track<T extends TrackEventName>(event: T, properties: TrackEventProperties<T>)`: Tracks an event with the given name and properties
-- `pageview(name: string, properties: Partial<PageviewProperties>)`: Tracks a pageview with the given name and properties
+- `insertWorkspaceEvent<T extends TrackEventName>(event: T, properties: TrackEventProperties<T>)`: Tracks a workspace-level event
+- `createObjectEvent<T extends TrackEventName>(event: T, properties: TrackEventProperties<T> & { recordId: string; objectMetadataId: string })`: Tracks an object-level event
+- `createPageviewEvent(name: string, properties: Partial<PageviewProperties>)`: Tracks a pageview
 
 ### Types
 
@@ -128,16 +145,4 @@ This approach makes it easier to add new events without having to modify a compl
 
 #### PageviewProperties
 
-A type that defines the structure of pageview properties:
-
-```typescript
-type PageviewProperties = {
-  href: string;
-  locale: string;
-  pathname: string;
-  referrer: string;
-  sessionId: string;
-  timeZone: string;
-  userAgent: string;
-};
-```
+Properties for pageview events, including href, locale, pathname, referrer, sessionId, timeZone, and userAgent.
