@@ -163,7 +163,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     );
 
     useScopedHotkeys(
-      [Key.ArrowUp, 'k'],
+      [Key.ArrowUp],
       () => {
         setHotkeyScopeAndMemorizePreviousScope(TableHotkeyScope.TableFocus);
         move('up');
@@ -173,7 +173,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     );
 
     useScopedHotkeys(
-      [Key.ArrowDown, 'j'],
+      [Key.ArrowDown],
       () => {
         setHotkeyScopeAndMemorizePreviousScope(TableHotkeyScope.TableFocus);
         move('down');

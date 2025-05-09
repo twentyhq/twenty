@@ -392,7 +392,8 @@ export const computeFilterRecordGqlOperationFilter = ({
           FieldMetadataType.CURRENCY,
           'amountMicros',
           subFieldName,
-        )
+        ) ||
+        !isSubFieldFilter
       ) {
         switch (filter.operand) {
           case RecordFilterOperand.GreaterThan:
@@ -579,6 +580,22 @@ export const computeFilterRecordGqlOperationFilter = ({
               ],
             };
           } else {
+            if (subFieldName === 'addressCountry') {
+              const parsedCountryCodes = JSON.parse(filter.value) as string[];
+
+              if (filter.value === '[]' || parsedCountryCodes.length === 0) {
+                return {};
+              }
+
+              return {
+                [correspondingField.name]: {
+                  [subFieldName]: {
+                    in: parsedCountryCodes,
+                  } as AddressFilter,
+                },
+              };
+            }
+
             return {
               [correspondingField.name]: {
                 [subFieldName]: {
@@ -592,43 +609,176 @@ export const computeFilterRecordGqlOperationFilter = ({
             return {
               and: [
                 {
-                  not: {
-                    [correspondingField.name]: {
-                      addressStreet1: {
-                        ilike: `%${filter.value}%`,
+                  or: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          addressStreet1: {
+                            ilike: `%${filter.value}%`,
+                          },
+                        } as AddressFilter,
                       },
-                    } as AddressFilter,
-                  },
+                    },
+                    {
+                      [correspondingField.name]: {
+                        addressStreet1: {
+                          is: 'NULL',
+                        },
+                      },
+                    },
+                  ],
                 },
                 {
-                  not: {
-                    [correspondingField.name]: {
-                      addressStreet2: {
-                        ilike: `%${filter.value}%`,
+                  or: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          addressStreet2: {
+                            ilike: `%${filter.value}%`,
+                          },
+                        } as AddressFilter,
                       },
-                    } as AddressFilter,
-                  },
+                    },
+                    {
+                      [correspondingField.name]: {
+                        addressStreet2: {
+                          is: 'NULL',
+                        },
+                      },
+                    },
+                  ],
                 },
                 {
-                  not: {
-                    [correspondingField.name]: {
-                      addressCity: {
-                        ilike: `%${filter.value}%`,
+                  or: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          addressCity: {
+                            ilike: `%${filter.value}%`,
+                          },
+                        } as AddressFilter,
                       },
-                    } as AddressFilter,
-                  },
+                    },
+                    {
+                      [correspondingField.name]: {
+                        addressCity: {
+                          is: 'NULL',
+                        },
+                      },
+                    },
+                  ],
+                },
+                {
+                  or: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          addressState: {
+                            ilike: `%${filter.value}%`,
+                          },
+                        } as AddressFilter,
+                      },
+                    },
+                    {
+                      [correspondingField.name]: {
+                        addressState: {
+                          is: 'NULL',
+                        },
+                      },
+                    },
+                  ],
+                },
+                {
+                  or: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          addressPostcode: {
+                            ilike: `%${filter.value}%`,
+                          },
+                        } as AddressFilter,
+                      },
+                    },
+                    {
+                      [correspondingField.name]: {
+                        addressPostcode: {
+                          is: 'NULL',
+                        },
+                      },
+                    },
+                  ],
+                },
+                {
+                  or: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          addressCountry: {
+                            ilike: `%${filter.value}%`,
+                          },
+                        } as AddressFilter,
+                      },
+                    },
+                    {
+                      [correspondingField.name]: {
+                        addressCountry: {
+                          is: 'NULL',
+                        },
+                      },
+                    },
+                  ],
                 },
               ],
             };
           } else {
+            if (subFieldName === 'addressCountry') {
+              const parsedCountryCodes = JSON.parse(filter.value) as string[];
+
+              if (filter.value === '[]' || parsedCountryCodes.length === 0) {
+                return {};
+              }
+
+              return {
+                or: [
+                  {
+                    not: {
+                      [correspondingField.name]: {
+                        addressCountry: {
+                          in: JSON.parse(filter.value),
+                        } as AddressFilter,
+                      },
+                    },
+                  },
+                  {
+                    [correspondingField.name]: {
+                      addressCountry: {
+                        is: 'NULL',
+                      } as AddressFilter,
+                    },
+                  },
+                ],
+              };
+            }
+
             return {
-              not: {
-                [correspondingField.name]: {
-                  [subFieldName]: {
-                    ilike: `%${filter.value}%`,
-                  } as AddressFilter,
+              or: [
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      [subFieldName]: {
+                        ilike: `%${filter.value}%`,
+                      } as AddressFilter,
+                    },
+                  },
                 },
-              },
+                {
+                  [correspondingField.name]: {
+                    [subFieldName]: {
+                      is: 'NULL',
+                    } as AddressFilter,
+                  },
+                },
+              ],
             };
           }
         default:
