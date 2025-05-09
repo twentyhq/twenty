@@ -18,6 +18,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
   providers: [
     MigrateWorkflowEventListenersToAutomatedTriggersCommand,
     CopyTypeormMigrationsCommand,
+    BackfillWorkflowNextStepIdsCommand,
     RemoveRelationForeignKeyFieldMetadataCommand,
   ],
   exports: [
