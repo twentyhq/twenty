@@ -1,11 +1,11 @@
 import {
-    TEST_KEY_DEFAULT,
-    TEST_KEY_DELETION,
-    TEST_KEY_ENV_ONLY,
-    TEST_KEY_METRICS,
-    TEST_KEY_NONEXISTENT,
-    TEST_KEY_NOTIFICATION,
-    TEST_KEY_SOFT_DELETION,
+  TEST_KEY_DEFAULT,
+  TEST_KEY_DELETION,
+  TEST_KEY_ENV_ONLY,
+  TEST_KEY_METRICS,
+  TEST_KEY_NONEXISTENT,
+  TEST_KEY_NOTIFICATION,
+  TEST_KEY_SOFT_DELETION,
 } from 'test/integration/twenty-config/constants/config-test-keys.constants';
 
 import { createConfigVariable } from './utils/create-config-variable.util';

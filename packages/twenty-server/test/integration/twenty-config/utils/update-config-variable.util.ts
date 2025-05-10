@@ -2,8 +2,8 @@ import { PerformTwentyConfigQueryParams } from 'test/integration/twenty-config/t
 
 import { makeAdminPanelAPIRequest } from './make-admin-panel-api-request.util';
 import {
-    UpdateConfigVariableFactoryInput,
-    updateConfigVariableQueryFactory,
+  UpdateConfigVariableFactoryInput,
+  updateConfigVariableQueryFactory,
 } from './update-config-variable.query-factory.util';
 
 export const updateConfigVariable = async ({

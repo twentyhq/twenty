@@ -1,8 +1,8 @@
 import { PerformTwentyConfigQueryParams } from 'test/integration/twenty-config/types/perform-twenty-config-query.type';
 
 import {
-    CreateConfigVariableFactoryInput,
-    createConfigVariableQueryFactory,
+  CreateConfigVariableFactoryInput,
+  createConfigVariableQueryFactory,
 } from './create-config-variable.query-factory.util';
 import { makeAdminPanelAPIRequest } from './make-admin-panel-api-request.util';
 
@@ -22,8 +22,7 @@ export const createConfigVariable = async ({
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.createDatabaseConfigVariable).toBeDefined();
   } else {
-    // For validation failures, we may not always get errors in the response
-    // So we won't assert here, but check in the test
+    // For failure cases, we'll check in the individual tests
   }
 
   return {
