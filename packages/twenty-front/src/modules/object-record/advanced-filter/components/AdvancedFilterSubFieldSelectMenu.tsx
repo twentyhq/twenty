@@ -15,6 +15,7 @@ import { ICON_NAME_BY_SUB_FIELD } from '@/object-record/record-filter/constants/
 import { areCompositeTypeSubFieldsFilterable } from '@/object-record/record-filter/utils/areCompositeTypeSubFieldsFilterable';
 import { isCompositeTypeFilterableByAnySubField } from '@/object-record/record-filter/utils/isCompositeTypeFilterableByAnySubField';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
+import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -57,7 +58,7 @@ export const AdvancedFilterSubFieldSelectMenu = ({
 
   const handleSelectFilter = (
     selectedFieldMetadataItem: FieldMetadataItem | null | undefined,
-    subFieldName?: string | null | undefined,
+    subFieldName?: CompositeFieldSubFieldName | null | undefined,
   ) => {
     if (!isDefined(selectedFieldMetadataItem)) {
       return;

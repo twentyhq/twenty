@@ -115,6 +115,16 @@ export class GraphqlQueryFilterFieldParser {
         subFieldFilter as Record<string, any>,
       );
 
+      if (
+        ARRAY_OPERATORS.includes(operator) &&
+        (!Array.isArray(value) || value.length === 0)
+      ) {
+        throw new GraphqlQueryRunnerException(
+          `Invalid filter value for field ${subFieldKey}. Expected non-empty array`,
+          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        );
+      }
+
       const { sql, params } = computeWhereConditionParts(
         operator,
         objectNameSingular,
