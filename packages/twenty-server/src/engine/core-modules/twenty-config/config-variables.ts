@@ -762,7 +762,7 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  IS_CONFIG_VARIABLES_IN_DB_ENABLED = false;
+  IS_CONFIG_VARIABLES_IN_DB_ENABLED = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
