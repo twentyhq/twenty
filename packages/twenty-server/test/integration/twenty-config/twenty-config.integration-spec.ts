@@ -16,6 +16,9 @@ const TEST_KEY_ENV_ONLY = 'PG_DATABASE_URL';
 const TEST_KEY_NONEXISTENT = 'NONEXISTENT_CONFIG_KEY';
 
 // Error messages constants
+// I am aware that this is probably not the best way to do this, but it's the best I can think of for now
+// will clean up later
+// TODO: check how its done in other places and follow that pattern
 const ENV_ONLY_ERROR_MESSAGE = `Cannot create environment-only variable: ${TEST_KEY_ENV_ONLY}`;
 const VARIABLE_NOT_FOUND_ERROR_MESSAGE = `Config variable "${TEST_KEY_NONEXISTENT}" does not exist in ConfigVariables`;
 const GRAPHQL_ERROR_MESSAGE =

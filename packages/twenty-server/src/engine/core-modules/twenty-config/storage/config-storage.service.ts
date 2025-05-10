@@ -129,14 +129,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
     value: ConfigVariables[T],
   ): Promise<void> {
     try {
-      const validatedValue =
-        this.configValueConverter.transformAndValidateInputValue(value, key);
-
-      const dbValue = await this.convertAndSecureValue(
-        validatedValue,
-        key,
-        false,
-      );
+      const dbValue = await this.convertAndSecureValue(value, key, false);
 
       const existingRecord = await this.keyValuePairRepository.findOne({
         where: this.getConfigVariableWhereClause(key as string),
