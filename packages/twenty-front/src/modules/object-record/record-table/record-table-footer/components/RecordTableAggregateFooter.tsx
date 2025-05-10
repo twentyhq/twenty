@@ -16,14 +16,14 @@ const StyledTd = styled.td`
 const StyledTableRow = styled.tr<{
   hasHorizontalOverflow?: boolean;
 }>`
-  z-index: 6;
+  z-index: 4;
   position: sticky;
   border: none;
 
   &.footer-sticky {
     td {
       border-top: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-      z-index: 5;
+      z-index: 4;
       position: sticky;
       bottom: 0;
     }
@@ -35,9 +35,12 @@ const StyledTableRow = styled.tr<{
     border-top: none;
   }
   &.first-columns-sticky {
+    td:nth-of-type(1) {
+      z-index: 5;
+    }
     td:nth-of-type(2) {
       position: sticky;
-      z-index: 10;
+      z-index: 5;
       transition: 0.3s ease;
       &::after {
         content: '';
