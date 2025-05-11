@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from './CurrentWorkspaceMemberSelectableItemId';
 export { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from './FieldForTotalCountAggregateOperation';
 export { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from './FieldRestrictedAdditionalPermissionsRequired';
 export { PermissionsOnAllObjectRecords } from './PermissionsOnAllObjectRecords';

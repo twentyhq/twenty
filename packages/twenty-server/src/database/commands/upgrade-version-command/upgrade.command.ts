@@ -18,6 +18,7 @@ import { UpdateViewAggregateOperationsCommand } from 'src/database/commands/upgr
 import { UpgradeCreatedByEnumCommand } from 'src/database/commands/upgrade-version-command/0-51/0-51-update-workflow-trigger-type-enum.command';
 import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/0-52/0-52-migrate-relations-to-field-metadata.command';
 import { UpgradeDateAndDateTimeFieldsSettingsJsonCommand } from 'src/database/commands/upgrade-version-command/0-52/0-52-upgrade-settings-field';
+import { StandardizeRelationFilterSyntaxCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-standardize-relation-filter-syntax';
 import { BackfillWorkflowNextStepIdsCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-backfill-workflow-next-step-ids.command';
 import { CopyTypeormMigrationsCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-copy-typeorm-migrations.command';
 import { MigrateWorkflowEventListenersToAutomatedTriggersCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-migrate-workflow-event-listeners-to-automated-triggers.command';
@@ -62,6 +63,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly migrateWorkflowEventListenersToAutomatedTriggersCommand: MigrateWorkflowEventListenersToAutomatedTriggersCommand,
     protected readonly backfillWorkflowNextStepIdsCommand: BackfillWorkflowNextStepIdsCommand,
     protected readonly copyTypeormMigrationsCommand: CopyTypeormMigrationsCommand,
+
+    // 0.54 Commands
+    protected readonly standardizeRelationFilterSyntaxCommand: StandardizeRelationFilterSyntaxCommand,
   ) {
     super(
       workspaceRepository,
@@ -115,6 +119,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.backfillWorkflowNextStepIdsCommand,
         this.copyTypeormMigrationsCommand,
       ],
+    };
+
+    const _commands_054: VersionCommands = {
+      beforeSyncMetadata: [this.standardizeRelationFilterSyntaxCommand],
+      afterSyncMetadata: [],
     };
 
     this.allCommands = {
