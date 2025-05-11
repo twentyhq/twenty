@@ -179,7 +179,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     position: 7,
     Icon: IconTrash,
     accent: 'default',
-    isPinned: true,
+    isPinned: false,
     shouldBeRegistered: ({ selectedRecord }) =>
       isDefined(selectedRecord) && !selectedRecord.isRemote,
     availableOn: [
