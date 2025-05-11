@@ -3,6 +3,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
+import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useSetRecordTableFocusPosition } from '@/object-record/record-table/hooks/internal/useSetRecordTableFocusPosition';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
@@ -27,7 +28,7 @@ const StyledEditableCellEditModeContainer = styled.div<{
   height: 100%;
   position: absolute;
   width: calc(100% + 2px);
-  z-index: 6;
+  z-index: ${TABLE_Z_INDEX.cell.editMode};
 `;
 
 const StyledInputModeOnlyContainer = styled.div`
