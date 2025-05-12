@@ -9,6 +9,7 @@ import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInput
 
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
+import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import {
   AppTooltip,
   OverflowingTextWithTooltip,
@@ -86,8 +87,14 @@ export const StyledSkeletonDiv = styled.div`
 `;
 
 export const RecordInlineCellContainer = () => {
-  const { readonly, IconLabel, label, labelWidth, showLabel } =
-    useRecordInlineCellContext();
+  const {
+    readonly,
+    IconLabel,
+    label,
+    labelWidth,
+    showLabel,
+    editModeContentOnly,
+  } = useRecordInlineCellContext();
 
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
@@ -96,6 +103,14 @@ export const RecordInlineCellContainer = () => {
   }
 
   const { setIsFocused } = useFieldFocus();
+
+  const { openInlineCell } = useInlineCell();
+
+  const handleDisplayModeClick = () => {
+    if (!readonly && !editModeContentOnly) {
+      openInlineCell();
+    }
+  };
 
   const handleContainerMouseEnter = () => {
     if (!readonly) {
@@ -119,6 +134,7 @@ export const RecordInlineCellContainer = () => {
     <StyledInlineCellBaseContainer
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
+      onClick={handleDisplayModeClick}
     >
       {(IconLabel || label) && (
         <StyledLabelAndIconContainer id={labelId}>
