@@ -13,12 +13,12 @@ export const sanitizeCalendarEvent = <T extends Record<string, any>>(
   return sanitizedObject;
 };
 
-export const sanitizeString = (
+const sanitizeString = (
   value: string | null | undefined,
 ): string | null | undefined => {
   if (value === null || value === undefined || typeof value !== 'string') {
     return value;
   }
 
-  return value.replace(/[^\x20-\x7E]/g, '');
+  return value.replace('\u0000', '');
 };
