@@ -14,7 +14,7 @@ import { MainButton } from 'twenty-ui/input';
 import { RGBA } from 'twenty-ui/theme';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { useSaveBillingPlan } from '~/pages/onboarding/hooks/useSaveBillingPlan';
-import { plans, selectedPlanState } from '~/pages/onboarding/Plans';
+import { selectedPlanState } from '~/pages/onboarding/Plans';
 
 const StyledCheckContainer = styled.div`
   align-items: center;
@@ -55,14 +55,9 @@ export const PaymentSuccess = () => {
         throw new Error('User is not logged in');
       }
 
-      const selectedPlan = plans.find((p) => p.id === selectedPlanId);
+      const onboardingId = selectedPlanId.id;
 
-      if (!selectedPlan) {
-        enqueueSnackBar('Plano inválido', { variant: SnackBarVariant.Error });
-        return;
-      }
-
-      await savePlan(selectedPlan.id.toString());
+      await savePlan(onboardingId);
 
       setNextOnboardingStatus();
     } catch (error: any) {

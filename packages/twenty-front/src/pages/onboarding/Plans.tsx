@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 
 import { Title } from '@/auth/components/Title';
 import { Modal } from '@/ui/layout/modal/components/Modal';
@@ -16,64 +16,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Key } from 'ts-key-enum';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { useSaveBillingPlan } from '~/pages/onboarding/hooks/useSaveBillingPlan';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
-export const plans = [
-  {
-    id: 1,
-    title: 'Plan 1',
-    price: 900,
-    displayPrice: '$9',
-    type: 'Prepaid',
-    features: [
-      '4 extensions',
-      '2 simultaneous calls',
-      'Chats & Omnichannel',
-      'Full access CRM',
-      'Unlimited contacts',
-      'Stripe, WhatsApp Meta API e Zapier',
-    ],
-  },
-  {
-    id: 2,
-    title: 'Plan 2',
-    price: 9000,
-    displayPrice: '$90',
-    type: 'Postpaid',
-    features: [
-      'All from Plan 1',
-      'Email integration',
-      'Custom Objects',
-      'API & Webhooks',
-    ],
-  },
-  {
-    id: 3,
-    title: 'Plan 3',
-    price: 9000,
-    displayPrice: '$90',
-    type: 'Postpaid',
-    features: [
-      'All from Plan 1',
-      'Email integration',
-      'Custom Objects',
-      'API & Webhooks',
-    ],
-  },
-  {
-    id: 4,
-    title: 'Plan 4',
-    price: 9000,
-    displayPrice: '$90',
-    type: 'Postpaid',
-    features: [
-      'All from Plan 1',
-      'Email integration',
-      'Custom Objects',
-      'API & Webhooks',
-    ],
-  },
-];
+export type plans = {
+  id: string;
+  title: string;
+  price: number;
+  displayPrice: string;
+  type: string;
+  features: string[];
+};
 
 const StyledButtonContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(8)};
@@ -161,9 +113,9 @@ const StyledFooterContainer = styled.div`
   }
 `;
 
-export const selectedPlanState = atom<number>({
+export const selectedPlanState = atom<plans | string>({
   key: 'selectedPlanState',
-  default: 1,
+  default: '',
 });
 
 export const Plans = () => {
@@ -175,9 +127,42 @@ export const Plans = () => {
   );
 
   const [selectedPlan, setSelectedPlan] = useRecoilState(selectedPlanState);
+  const [onboardingPlans, setOnboardingPlans] = useState<plans[]>([]);
+
+  useEffect(() => {
+    const fetchOnboardingPlans = async () => {
+      try {
+        const response = await fetch(
+          `${REACT_APP_SERVER_BASE_URL}/onboarding-plans`,
+          {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+          },
+        );
+
+        const data = await response.json();
+
+        setOnboardingPlans(data);
+      } catch (error) {
+        throw new Error(
+          `Failed to fetch plans: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    };
+
+    fetchOnboardingPlans();
+  }, []);
+
+  useEffect(() => {
+    if (onboardingPlans.length > 0 && !selectedPlan) {
+      setSelectedPlan(onboardingPlans[0].id);
+    }
+  }, [onboardingPlans]);
+
+  const onboardingId = selectedPlan?.id;
 
   const planSchema = z.object({
-    selectedPlanId: z.number().min(1, 'select a valid plan'),
+    selectedPlanId: z.string().min(1, 'select a valid plan'),
   });
 
   type Form = z.infer<typeof planSchema>;
@@ -191,20 +176,20 @@ export const Plans = () => {
   } = useForm<Form>({
     mode: 'onTouched',
     reValidateMode: 'onChange',
-    defaultValues: { selectedPlanId: selectedPlan },
+    defaultValues: { selectedPlanId: onboardingId },
     resolver: zodResolver(planSchema),
   });
 
   const onSubmit: SubmitHandler<Form> = useCallback(
     async (data) => {
       try {
-        planSchema.parse({ selectedPlanId: selectedPlan });
+        planSchema.parse({ selectedPlanId: selectedPlan?.id });
 
         if (!currentWorkspaceMember?.id) {
           throw new Error('User is not logged in');
         }
-
-        setSelectedPlan(data.selectedPlanId);
+        const dataToPayement = selectedPlan;
+        setSelectedPlan(dataToPayement);
         setNextOnboardingStatus();
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
@@ -234,6 +219,10 @@ export const Plans = () => {
     PageHotkeyScope.PlanRequired,
   );
 
+  const formatPrice = (priceInCents: number) => {
+    return `$${(priceInCents / 100).toFixed(0)}`;
+  };
+
   return (
     <Modal size="large" className="custom-modal">
       <style>{`
@@ -254,7 +243,7 @@ export const Plans = () => {
             marginTop: '1.5rem',
           }}
         >
-          {plans.map((plan) => (
+          {onboardingPlans.map((plan) => (
             <StyledPlanLabel key={plan.id}>
               <Controller
                 name="selectedPlanId"
@@ -268,7 +257,7 @@ export const Plans = () => {
                       checked={field.value === plan.id}
                       onChange={() => {
                         field.onChange(plan.id);
-                        setSelectedPlan(plan.id);
+                        setSelectedPlan(plan);
                       }}
                     />
                     <StyledPlanOptionContainer
@@ -278,7 +267,7 @@ export const Plans = () => {
 
                       <StyledPlanTitle>{plan.title}</StyledPlanTitle>
                       <StyledPrice>
-                        {plan.displayPrice} <span>/ month</span>
+                        {formatPrice(plan.price)} <span>/ month</span>
                       </StyledPrice>
                       <StyledDescription>{plan.type}</StyledDescription>
                     </StyledPlanOptionContainer>
@@ -290,8 +279,8 @@ export const Plans = () => {
         </div>
 
         <StyledFeaturesList>
-          {plans
-            .find((p) => p.id === selectedPlan)
+          {onboardingPlans
+            .find((p) => p.id === selectedPlan?.id)
             ?.features.map((feat, i) => <li key={i}>✔ {feat}</li>)}
         </StyledFeaturesList>
 
