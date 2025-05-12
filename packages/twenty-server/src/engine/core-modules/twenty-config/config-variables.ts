@@ -811,6 +811,7 @@ export class ConfigVariables {
     description: 'Redis password',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
+    isSensitive: true,
   })
   @IsOptional()
   REDIS_PASSWORD?: string;
