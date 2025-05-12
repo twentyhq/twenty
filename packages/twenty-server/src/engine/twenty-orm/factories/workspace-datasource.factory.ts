@@ -12,7 +12,10 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import {
+  ROLES_PERMISSIONS,
+  WorkspacePermissionsCacheService,
+} from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import {
   TwentyORMException,
@@ -229,7 +232,7 @@ export class WorkspaceDatasourceFactory {
           workspaceId,
           ignoreLock: true,
         }),
-      cachedEntityName: 'Roles permissions',
+      cachedEntityName: ROLES_PERMISSIONS,
       exceptionCode: TwentyORMExceptionCode.ROLES_PERMISSIONS_VERSION_NOT_FOUND,
     });
   }

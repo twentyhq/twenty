@@ -124,6 +124,7 @@ export class FieldMetadataEntity<
     () => ObjectMetadataEntity,
     (objectMetadata: ObjectMetadataEntity) =>
       objectMetadata.targetRelationFields,
+    { onDelete: 'CASCADE' },
   )
   @JoinColumn({ name: 'relationTargetObjectMetadataId' })
   relationTargetObjectMetadata: Relation<ObjectMetadataEntity>;

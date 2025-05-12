@@ -1,8 +1,8 @@
 import { capitalize } from 'twenty-shared/utils';
 import { WhereExpressionBuilder } from 'typeorm';
 
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import {
   GraphqlQueryRunnerException,
