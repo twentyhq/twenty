@@ -14,16 +14,22 @@ export class RedisClientService implements OnModuleDestroy {
     if (!this.redisClient) {
       const clusterMode = this.twentyConfigService.get('REDIS_CLUSTER_MODE');
       const redisPassword = this.twentyConfigService.get('REDIS_PASSWORD');
-      if (clusterMode === 'true' || clusterMode === true) {
+
+      if (clusterMode === true) {
         // Expect comma-separated list of host:port
         const nodesString = this.twentyConfigService.get('REDIS_CLUSTER_NODES');
+
         if (!nodesString) {
-          throw new Error('REDIS_CLUSTER_NODES must be defined when REDIS_CLUSTER_MODE is enabled');
+          throw new Error(
+            'REDIS_CLUSTER_NODES must be defined when REDIS_CLUSTER_MODE is enabled',
+          );
         }
         const nodes = nodesString.split(',').map((node) => {
           const [host, port] = node.trim().split(':');
+
           return { host, port: Number(port) };
         });
+
         this.redisClient = new Cluster(nodes, {
           dnsLookup: (address, callback) => callback(null, address),
           redisOptions: {
@@ -34,6 +40,7 @@ export class RedisClientService implements OnModuleDestroy {
         });
       } else {
         const redisUrl = this.twentyConfigService.get('REDIS_URL');
+
         if (!redisUrl) {
           throw new Error('REDIS_URL must be defined');
         }
@@ -43,6 +50,7 @@ export class RedisClientService implements OnModuleDestroy {
         });
       }
     }
+
     return this.redisClient;
   }
 
