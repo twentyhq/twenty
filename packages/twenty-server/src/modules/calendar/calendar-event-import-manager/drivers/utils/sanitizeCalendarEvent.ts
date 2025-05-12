@@ -1,16 +1,14 @@
 export const sanitizeCalendarEvent = <T extends Record<string, any>>(
-  object: T,
+  event: T,
   propertiesToSanitize: (keyof T)[],
 ): T => {
-  const sanitizedObject = { ...object };
+  const sanitizedEvent = { ...event };
 
   for (const property of propertiesToSanitize) {
-    sanitizedObject[property] = sanitizeString(
-      sanitizedObject[property],
-    ) as any;
+    sanitizedEvent[property] = sanitizeString(sanitizedEvent[property]) as any;
   }
 
-  return sanitizedObject;
+  return sanitizedEvent;
 };
 
 const sanitizeString = (
