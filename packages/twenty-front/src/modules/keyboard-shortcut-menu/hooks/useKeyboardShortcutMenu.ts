@@ -45,9 +45,9 @@ export const useKeyboardShortcutMenu = () => {
           .getValue();
 
         if (isKeyboardShortcutMenuOpened === false) {
-          closeKeyboardShortcutMenu();
-        } else {
           openKeyboardShortcutMenu();
+        } else {
+          closeKeyboardShortcutMenu();
         }
       },
     [closeKeyboardShortcutMenu, openKeyboardShortcutMenu],
