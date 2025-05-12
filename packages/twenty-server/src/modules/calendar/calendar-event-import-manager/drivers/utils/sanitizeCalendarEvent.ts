@@ -13,7 +13,9 @@ export const sanitizeCalendarEvent = <T extends Record<string, any>>(
     if (typeof sanitizedEvent[property] !== 'string') {
       continue;
     }
-    sanitizedEvent[property] = sanitizeString(sanitizedEvent[property]) as any;
+    sanitizedEvent[property] = sanitizeString(
+      sanitizedEvent[property],
+    ) as T[typeof property];
   }
 
   return sanitizedEvent;
