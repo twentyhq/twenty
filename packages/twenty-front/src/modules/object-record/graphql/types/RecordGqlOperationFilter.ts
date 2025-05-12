@@ -91,6 +91,7 @@ export type AddressFilter = {
 export type LinksFilter = {
   primaryLinkUrl?: StringFilter;
   primaryLinkLabel?: StringFilter;
+  secondaryLinks?: RawJsonFilter;
 };
 
 export type ActorFilter = {
@@ -100,6 +101,7 @@ export type ActorFilter = {
 
 export type EmailsFilter = {
   primaryEmail?: StringFilter;
+  additionalEmails?: RawJsonFilter;
 };
 
 export type PhonesFilter = {

@@ -32,6 +32,11 @@ describe('getOperandsForFilterType', () => {
     RecordFilterOperand.IsNot,
   ];
 
+  const actorSourceOperands = [
+    RecordFilterOperand.Is,
+    RecordFilterOperand.IsNot,
+  ];
+
   const dateOperands = [
     RecordFilterOperand.Is,
     RecordFilterOperand.IsRelative,
@@ -49,7 +54,12 @@ describe('getOperandsForFilterType', () => {
     ['FULL_NAME', [...containsOperands, ...emptyOperands]],
     ['ADDRESS', [...containsOperands, ...emptyOperands]],
     ['LINKS', [...containsOperands, ...emptyOperands]],
-    ['ACTOR', [...containsOperands, ...emptyOperands]],
+    ['LINKS', [...containsOperands, ...emptyOperands], 'primaryLinkUrl'],
+    ['LINKS', [...containsOperands, ...emptyOperands], 'primaryLinkLabel'],
+    ['LINKS', [...containsOperands, ...emptyOperands], 'secondaryLinks'],
+    ['ACTOR', [...containsOperands, ...emptyOperands], 'name'],
+    ['ACTOR', [...actorSourceOperands, ...emptyOperands], 'source'],
+    ['ACTOR', [...actorSourceOperands, ...emptyOperands]],
     [
       'CURRENCY',
       [...currencyCurrencyCodeOperands, ...emptyOperands],
