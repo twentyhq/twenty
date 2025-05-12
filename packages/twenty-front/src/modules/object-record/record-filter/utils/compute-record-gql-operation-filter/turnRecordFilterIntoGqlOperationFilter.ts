@@ -982,15 +982,11 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         switch (recordFilter.operand) {
           case RecordFilterOperand.Is:
             return {
-              or: [
-                {
-                  [correspondingFieldMetadataItem.name]: {
-                    source: {
-                      in: parsedSources,
-                    },
-                  } satisfies ActorFilter,
+              [correspondingFieldMetadataItem.name]: {
+                source: {
+                  in: parsedSources,
                 },
-              ],
+              } satisfies ActorFilter,
             };
           case RecordFilterOperand.IsNot:
             return {

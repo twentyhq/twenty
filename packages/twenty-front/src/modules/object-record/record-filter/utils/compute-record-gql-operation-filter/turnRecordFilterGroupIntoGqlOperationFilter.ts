@@ -44,13 +44,13 @@ export const turnRecordFilterGroupsIntoGqlOperationFilter = (
         recordFilterGroup.parentRecordFilterGroupId ===
         currentRecordFilterGroupId,
     )
-    .map((subViewFilterGroup) =>
+    .map((subRecordFilterGroup) =>
       turnRecordFilterGroupsIntoGqlOperationFilter(
         filterValueDependencies,
         filters,
         fields,
         recordFilterGroups,
-        subViewFilterGroup.id,
+        subRecordFilterGroup.id,
       ),
     )
     .filter(isDefined);
