@@ -12,7 +12,8 @@ export enum AppPath {
   SyncEmails = '/sync/emails',
   InviteTeam = '/invite-team',
   PlanRequired = '/plan-required',
-  PlanRequiredSuccess = '/plan-required/payment-success',
+  PaymentRequired = '/payment-required',
+  PaymentRequiredSuccess = '/payment-required/payment-success',
 
   // Onboarded
   Index = '/',

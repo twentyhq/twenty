@@ -95,8 +95,8 @@ export class SripeController {
           },
         ],
         mode: 'payment',
-        success_url: `${req.headers.origin}/settings/integrations/stripe?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${req.headers.origin}/settings/integrations/stripe`,
+        success_url: req.body.success_url,
+        cancel_url: req.body.cancel_url,
       });
 
       return res.json({ id: session.id });
