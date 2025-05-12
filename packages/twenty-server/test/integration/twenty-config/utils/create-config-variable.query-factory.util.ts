@@ -1,8 +1,9 @@
 import { gql } from 'apollo-server-core';
+import { ConfigVariableValue } from 'twenty-shared/src/types/ConfigVariableValue';
 
 export type CreateConfigVariableFactoryInput = {
   key: string;
-  value: any;
+  value: ConfigVariableValue;
 };
 
 export const createConfigVariableQueryFactory = ({
