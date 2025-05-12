@@ -205,9 +205,9 @@ export const RecordBoardCard = () => {
       <InView>
         <StyledBoardCard
           ref={cardRef}
-          data-selected={isCurrentCardSelected ? 'true' : 'false'}
-          data-focused={isCurrentCardFocused ? 'true' : 'false'}
-          data-active={isCurrentCardActive ? 'true' : 'false'}
+          data-selected={isCurrentCardSelected}
+          data-focused={isCurrentCardFocused}
+          data-active={isCurrentCardActive}
           onMouseLeave={onMouseLeaveBoard}
           onClick={handleCardClick}
         >
