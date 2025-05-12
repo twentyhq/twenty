@@ -20,7 +20,7 @@ export const turnRecordFilterGroupsIntoGqlOperationFilter = (
     (recordFilterGroup) => recordFilterGroup.id === currentRecordFilterGroupId,
   );
 
-  if (!currentRecordFilterGroup) {
+  if (!isDefined(currentRecordFilterGroup)) {
     return;
   }
 
