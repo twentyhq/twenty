@@ -789,6 +789,24 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
+    description: 'Enable Redis Cluster mode (true/false)',
+    type: ConfigVariableType.BOOLEAN,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  REDIS_CLUSTER_MODE?: boolean;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
+    description: 'Comma-separated list of Redis cluster nodes (host:port,host:port,...)',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  REDIS_CLUSTER_NODES?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
     description: 'Node environment (development, production, etc.)',
     type: ConfigVariableType.ENUM,
     options: Object.values(NodeEnvironment),
