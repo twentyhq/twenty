@@ -120,7 +120,7 @@ describe('applyBasicValidators', () => {
       );
 
       expect(IsString).toHaveBeenCalled();
-      expect(Transform).not.toHaveBeenCalled(); // String doesn't need a transform
+      expect(Transform).not.toHaveBeenCalled();
     });
   });
 
@@ -136,7 +136,7 @@ describe('applyBasicValidators', () => {
       );
 
       expect(IsEnum).toHaveBeenCalledWith(enumOptions);
-      expect(Transform).not.toHaveBeenCalled(); // Enum doesn't need a transform
+      expect(Transform).not.toHaveBeenCalled();
     });
 
     it('should apply enum validator with enum object options', () => {
@@ -146,6 +146,25 @@ describe('applyBasicValidators', () => {
         Option3 = 'value3',
       }
 
+      jest.mock(
+        'src/engine/core-modules/twenty-config/utils/type-transformers.registry',
+        () => ({
+          typeTransformers: {
+            enum: {
+              getValidators: jest.fn().mockImplementation((options) => {
+                if (options && Object.keys(options).length > 0) {
+                  return [IsEnum(options)];
+                }
+
+                return [];
+              }),
+              getTransformers: jest.fn().mockReturnValue([]),
+            },
+          },
+        }),
+        { virtual: true },
+      );
+
       applyBasicValidators(
         ConfigVariableType.ENUM,
         mockTarget,
@@ -154,7 +173,7 @@ describe('applyBasicValidators', () => {
       );
 
       expect(IsEnum).toHaveBeenCalledWith(TestEnum);
-      expect(Transform).not.toHaveBeenCalled(); // Enum doesn't need a transform
+      expect(Transform).not.toHaveBeenCalled();
     });
 
     it('should not apply enum validator without options', () => {
@@ -178,7 +197,7 @@ describe('applyBasicValidators', () => {
       );
 
       expect(IsArray).toHaveBeenCalled();
-      expect(Transform).not.toHaveBeenCalled(); // Array doesn't need a transform
+      expect(Transform).not.toHaveBeenCalled();
     });
   });
 

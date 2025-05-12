@@ -64,7 +64,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
     try {
       const convertedValue = isDecrypt
         ? this.configValueConverter.convertDbValueToAppValue(value, key)
-        : this.configValueConverter.convertAppValueToDbValue(value);
+        : this.configValueConverter.convertAppValueToDbValue(value, key);
 
       const metadata = this.getConfigMetadata(key);
       const isSensitiveString =

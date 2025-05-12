@@ -1,11 +1,12 @@
 import {
-  TEST_KEY_DEFAULT,
-  TEST_KEY_DELETION,
-  TEST_KEY_ENV_ONLY,
-  TEST_KEY_METRICS,
-  TEST_KEY_NONEXISTENT,
-  TEST_KEY_NOTIFICATION,
-  TEST_KEY_SOFT_DELETION,
+    TEST_KEY_DEFAULT,
+    TEST_KEY_DELETION,
+    TEST_KEY_ENV_ONLY,
+    TEST_KEY_METRICS,
+    TEST_KEY_NONEXISTENT,
+    TEST_KEY_NOTIFICATION,
+    TEST_KEY_SOFT_DELETION,
+    TEST_KEY_STRING_VALUE,
 } from 'test/integration/twenty-config/constants/config-test-keys.constants';
 
 import { createConfigVariable } from './utils/create-config-variable.util';
@@ -150,6 +151,19 @@ describe('TwentyConfig Integration', () => {
         },
       });
     });
+
+    it('should reject creating config variables with invalid types', async () => {
+      const result = await createConfigVariable({
+        input: {
+          key: TEST_KEY_DEFAULT,
+          value: 'not-a-boolean',
+        },
+        expectToFail: true,
+      });
+
+      expect(result.errors).toBeDefined();
+      expect(result.errors[0].message).toContain('Expected boolean');
+    });
   });
 
   describe('Update operations', () => {
@@ -242,6 +256,30 @@ describe('TwentyConfig Integration', () => {
 
       await deleteConfigVariable({
         input: { key: testKey },
+      });
+    });
+
+    it('should reject updating config variables with invalid types', async () => {
+      await createConfigVariable({
+        input: {
+          key: 'NODE_PORT',
+          value: 3000,
+        },
+      });
+
+      const updateResult = await updateConfigVariable({
+        input: {
+          key: 'NODE_PORT',
+          value: 'not-a-number',
+        },
+        expectToFail: true,
+      });
+
+      expect(updateResult.errors).toBeDefined();
+      expect(updateResult.errors[0].message).toContain('Expected number');
+
+      await deleteConfigVariable({
+        input: { key: 'NODE_PORT' },
       });
     });
   });
@@ -405,7 +443,7 @@ describe('TwentyConfig Integration', () => {
     });
 
     it('should handle empty string config values', async () => {
-      const testKey = TEST_KEY_NOTIFICATION;
+      const testKey = TEST_KEY_STRING_VALUE;
       const emptyValue = '';
 
       await createConfigVariable({
@@ -427,7 +465,7 @@ describe('TwentyConfig Integration', () => {
     });
 
     it('should preserve types correctly when retrieving config variables', async () => {
-      const booleanKey = 'IS_ATTACHMENT_PREVIEW_ENABLED';
+      const booleanKey = TEST_KEY_DEFAULT;
       const booleanValue = false;
 
       await createConfigVariable({
