@@ -48,7 +48,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     );
 
     this.apiEventEmitterService.emitCreateEvents(
-      upsertedRecords,
+      structuredClone(upsertedRecords),
       authContext,
       objectMetadataItemWithFieldMaps,
     );

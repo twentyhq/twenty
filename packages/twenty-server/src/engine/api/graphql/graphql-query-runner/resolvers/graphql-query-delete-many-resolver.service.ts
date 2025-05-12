@@ -57,6 +57,12 @@ export class GraphqlQueryDeleteManyResolverService extends GraphqlQueryBaseResol
       featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
+    this.apiEventEmitterService.emitDeletedEvents(
+      structuredClone(formattedDeletedRecords),
+      authContext,
+      objectMetadataItemWithFieldMaps,
+    );
+
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
@@ -72,12 +78,6 @@ export class GraphqlQueryDeleteManyResolverService extends GraphqlQueryBaseResol
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
-
-    this.apiEventEmitterService.emitDeletedEvents(
-      formattedDeletedRecords,
-      authContext,
-      objectMetadataItemWithFieldMaps,
-    );
 
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(

@@ -59,6 +59,12 @@ export class GraphqlQueryRestoreOneResolverService extends GraphqlQueryBaseResol
 
     const restoredRecord = formattedRestoredRecords[0];
 
+    this.apiEventEmitterService.emitRestoreEvents(
+      structuredClone(formattedRestoredRecords),
+      authContext,
+      objectMetadataItemWithFieldMaps,
+    );
+
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
@@ -74,12 +80,6 @@ export class GraphqlQueryRestoreOneResolverService extends GraphqlQueryBaseResol
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
-
-    this.apiEventEmitterService.emitRestoreEvents(
-      formattedRestoredRecords,
-      authContext,
-      objectMetadataItemWithFieldMaps,
-    );
 
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(

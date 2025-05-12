@@ -88,6 +88,14 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
     const updatedRecord = formattedUpdatedRecords[0];
     const existingRecord = formattedExistingRecords[0];
 
+    this.apiEventEmitterService.emitUpdateEvents(
+      structuredClone(formattedExistingRecords),
+      structuredClone(formattedUpdatedRecords),
+      Object.keys(executionArgs.args.data),
+      authContext,
+      objectMetadataItemWithFieldMaps,
+    );
+
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
@@ -103,14 +111,6 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
-
-    this.apiEventEmitterService.emitUpdateEvents(
-      formattedExistingRecords,
-      formattedUpdatedRecords,
-      Object.keys(executionArgs.args.data),
-      authContext,
-      objectMetadataItemWithFieldMaps,
-    );
 
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(
