@@ -20,8 +20,6 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { ActivityRichTextEditorChangeOnActivityIdEffect } from '@/activities/components/ActivityRichTextEditorChangeOnActivityIdEffect';
-import { ActivityRichTextEditorDeleteAttachmentsEffect } from '@/activities/components/ActivityRichTextEditorDeleteAttachmentsEffect';
-import { isActivityAttachmentDeletionCheckNeededState } from '@/activities/states/shouldCheckForAttachmentToDeleteFamilyState';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
@@ -50,10 +48,6 @@ export const ActivityRichTextEditor = ({
 
   const cache = useApolloClient().cache;
   const activity = activityInStore as Task | Note | null;
-
-  const [, setIsActivityAttachmentDeletionCheckNeeded] = useRecoilState(
-    isActivityAttachmentDeletionCheckNeededState,
-  );
 
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItem({
@@ -179,7 +173,6 @@ export const ActivityRichTextEditor = ({
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
 
   const handleEditorChange = () => {
-    setIsActivityAttachmentDeletionCheckNeeded(true);
     const newStringifiedBody = JSON.stringify(editor.document) ?? '';
 
     handleBodyChangeDebounced(newStringifiedBody);
@@ -290,7 +283,6 @@ export const ActivityRichTextEditor = ({
 
   return (
     <>
-      <ActivityRichTextEditorDeleteAttachmentsEffect activityId={activityId} />
       <ActivityRichTextEditorChangeOnActivityIdEffect
         editor={editor}
         activityId={activityId}
