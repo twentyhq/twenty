@@ -60,6 +60,7 @@ import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { BillingPlansModule } from 'src/engine/core-modules/billing-plans/billing-plans.module';
+import { OnboardingPlansModule } from 'src/engine/core-modules/onboarding-plans/onboarding-plans.module';
 
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -77,6 +78,7 @@ import { StripeModule } from './stripe/stripe.module';
     FeatureFlagModule,
     FileModule,
     OpenApiModule,
+    OnboardingPlansModule,
     AppTokenModule,
     TimelineMessagingModule,
     TimelineCalendarEventModule,
@@ -160,6 +162,7 @@ import { StripeModule } from './stripe/stripe.module';
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
     StripeModule,
+    OnboardingPlansModule,
     BillingPlansModule,
     InterModule,
   ],

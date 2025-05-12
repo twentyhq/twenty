@@ -31,6 +31,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { BillingPlans } from 'src/engine/core-modules/billing-plans/billing-plans.entity';
+import { OnboardingPlans } from 'src/engine/core-modules/onboarding-plans/onboarding-plans.entity';
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
   private mainDataSource: DataSource;
@@ -56,6 +57,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         BillingMeter,
         BillingCustomer,
         BillingPlans,
+        OnboardingPlans,
         BillingProduct,
         BillingPrice,
         BillingEntitlement,
