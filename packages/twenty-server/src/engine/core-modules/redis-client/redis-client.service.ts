@@ -12,7 +12,7 @@ export class RedisClientService implements OnModuleDestroy {
 
   getClient() {
     if (!this.redisClient) {
-      const clusterMode = this.twentyConfigService.get('REDIS_CLUSTER_MODE');
+      const clusterMode = this.twentyConfigService.get('REDIS_CLUSTER_MODE') === true;
       const redisPassword = this.twentyConfigService.get('REDIS_PASSWORD');
 
       if (clusterMode === true) {
@@ -26,8 +26,14 @@ export class RedisClientService implements OnModuleDestroy {
         }
         const nodes = nodesString.split(',').map((node) => {
           const [host, port] = node.trim().split(':');
-
-          return { host, port: Number(port) };
+          if (!host || !port) {
+            throw new Error(`Invalid node format: ${node}. Expected host:port`);
+          }
+          const portNum = Number(port);
+          if (isNaN(portNum) || portNum < 1 || portNum > 65535) {
+            throw new Error(`Invalid port number: ${port}`);
+          }
+          return { host, port: portNum };
         });
 
         this.redisClient = new Cluster(nodes, {
