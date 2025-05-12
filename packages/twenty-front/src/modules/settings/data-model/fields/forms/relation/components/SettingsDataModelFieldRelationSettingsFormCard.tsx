@@ -6,19 +6,19 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import {
-  SettingsDataModelFieldRelationForm,
-  SettingsDataModelFieldRelationFormValues,
+    SettingsDataModelFieldRelationForm,
+    SettingsDataModelFieldRelationFormValues,
 } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
 import { useRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/relation/hooks/useRelationSettingsFormInitialValues';
 import {
-  SettingsDataModelFieldPreviewCard,
-  SettingsDataModelFieldPreviewCardProps,
+    SettingsDataModelFieldPreviewCard,
+    SettingsDataModelFieldPreviewCardProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
-  FieldMetadataType,
-  RelationDefinition,
-  RelationDefinitionType,
+    FieldMetadataType,
+    RelationDefinition,
+    RelationMetadataType,
 } from '~/generated-metadata/graphql';
 type SettingsDataModelFieldRelationSettingsFormCardProps = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> &
@@ -82,9 +82,9 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
   const relationTypeConfig = RELATION_TYPES[relationType];
 
   const oppositeRelationType =
-    relationType === RelationDefinitionType.MANY_TO_ONE
-      ? RelationDefinitionType.ONE_TO_MANY
-      : RelationDefinitionType.MANY_TO_ONE;
+    relationType === RelationMetadataType.MANY_TO_ONE
+      ? RelationMetadataType.ONE_TO_MANY
+      : RelationMetadataType.MANY_TO_ONE;
 
   return (
     <SettingsDataModelPreviewFormCard
@@ -102,7 +102,7 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
             relationObjectMetadataItem={relationObjectMetadataItem}
             pluralizeLabel={
               watchFormValue('relation.type') ===
-              RelationDefinitionType.MANY_TO_ONE
+              RelationMetadataType.MANY_TO_ONE
             }
           />
           <StyledRelationImage
@@ -133,7 +133,7 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
             relationObjectMetadataItem={objectMetadataItem}
             pluralizeLabel={
               watchFormValue('relation.type') !==
-              RelationDefinitionType.MANY_TO_ONE
+              RelationMetadataType.MANY_TO_ONE
             }
           />
         </StyledPreviewContent>

@@ -9,8 +9,8 @@ import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  FieldMetadataType,
-  RelationDefinitionType,
+    FieldMetadataType,
+    RelationMetadataType,
 } from '~/generated-metadata/graphql';
 import { pascalCase } from '~/utils/string/pascalCase';
 
@@ -64,7 +64,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
         if (
           field.type === FieldMetadataType.RELATION &&
           field.relationDefinition?.direction ===
-            RelationDefinitionType.ONE_TO_MANY
+            RelationMetadataType.ONE_TO_MANY
         ) {
           const oneToManyObjectMetadataItem = objectMetadataItems.find(
             (item) =>

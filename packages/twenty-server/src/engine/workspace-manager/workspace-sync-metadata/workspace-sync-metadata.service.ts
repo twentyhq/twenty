@@ -133,17 +133,18 @@ export class WorkspaceSyncMetadataService {
         `Workspace relation migrations took ${workspaceRelationMigrationsEnd - workspaceRelationMigrationsStart}ms`,
       );
 
-      let workspaceIndexMigrations: Partial<WorkspaceMigrationEntity>[] = [];
+      const workspaceIndexMigrations: Partial<WorkspaceMigrationEntity>[] = [];
 
       // 4 - Sync standard indexes on standard objects
       const workspaceIndexMigrationsStart = performance.now();
 
-      workspaceIndexMigrations =
-        await this.workspaceSyncIndexMetadataService.synchronize(
-          context,
-          manager,
-          storage,
-        );
+      // TODO: Re-enable this once we have a way to handle index migrations
+      // workspaceIndexMigrations =
+      //   await this.workspaceSyncIndexMetadataService.synchronize(
+      //     context,
+      //     manager,
+      //     storage,
+      //   );
       const workspaceIndexMigrationsEnd = performance.now();
 
       this.logger.log(

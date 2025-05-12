@@ -2,10 +2,10 @@ import { FieldDateMetadataSettings } from '@/object-record/record-field/types/Fi
 
 import { ThemeColor } from 'twenty-ui/theme';
 import {
-  Field,
-  Object as MetadataObject,
-  RelationDefinition,
-  RelationDefinitionType,
+    Field,
+    Object as MetadataObject,
+    RelationDefinition,
+    RelationMetadataType,
 } from '~/generated-metadata/graphql';
 
 export type FieldMetadataItemOption = {
@@ -25,7 +25,7 @@ export type FieldMetadataItem = Omit<
   options?: FieldMetadataItemOption[] | null;
   relationDefinition?: {
     relationId: RelationDefinition['relationId'];
-    direction: RelationDefinitionType;
+    direction: RelationMetadataType;
     sourceFieldMetadata: Pick<Field, 'id' | 'name'>;
     sourceObjectMetadata: Pick<
       MetadataObject,

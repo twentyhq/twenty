@@ -3,7 +3,7 @@ import { FilterableFieldType } from '@/object-record/record-filter/types/Filtera
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationMetadataType } from '~/generated-metadata/graphql';
 import { buildValueFromFilter } from './buildRecordInputFromFilter';
 
 // TODO: fix the dates, and test the not supported types
@@ -238,7 +238,7 @@ describe('buildValueFromFilter', () => {
           isCurrentWorkspaceMemberSelected: false,
           selectedRecordIds: ['record-1'],
         }),
-        relationType: RelationDefinitionType.MANY_TO_ONE,
+        relationType: RelationMetadataType.MANY_TO_ONE,
         label: 'belongs to one',
         expected: 'record-1',
       },
@@ -248,7 +248,7 @@ describe('buildValueFromFilter', () => {
           isCurrentWorkspaceMemberSelected: true,
           selectedRecordIds: ['record-1'],
         }),
-        relationType: RelationDefinitionType.MANY_TO_ONE,
+        relationType: RelationMetadataType.MANY_TO_ONE,
         label: 'Assignee',
         expected: 'current-workspace-member-id',
       },
@@ -258,7 +258,7 @@ describe('buildValueFromFilter', () => {
           isCurrentWorkspaceMemberSelected: false,
           selectedRecordIds: ['record-1', 'record-2'],
         }),
-        relationType: RelationDefinitionType.MANY_TO_MANY,
+        relationType: RelationMetadataType.MANY_TO_MANY,
         label: 'hasmany',
         expected: undefined,
       },
@@ -268,7 +268,7 @@ describe('buildValueFromFilter', () => {
           isCurrentWorkspaceMemberSelected: false,
           selectedRecordIds: ['record-1'],
         }),
-        relationType: RelationDefinitionType.MANY_TO_ONE,
+        relationType: RelationMetadataType.MANY_TO_ONE,
         label: 'Assignee',
         expected: undefined,
       },
@@ -278,7 +278,7 @@ describe('buildValueFromFilter', () => {
           isCurrentWorkspaceMemberSelected: false,
           selectedRecordIds: ['record-1'],
         }),
-        relationType: RelationDefinitionType.MANY_TO_ONE,
+        relationType: RelationMetadataType.MANY_TO_ONE,
         label: 'Assignee',
         expected: undefined,
       },

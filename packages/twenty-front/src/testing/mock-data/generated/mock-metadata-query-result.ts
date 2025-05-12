@@ -63,7 +63,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Title",
               description: "Title"
             },
@@ -84,7 +83,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Is canceled",
               description: "Is canceled"
             },
@@ -105,7 +103,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Is Full Day",
               description: "Is Full Day"
             },
@@ -126,7 +123,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Start Date",
               description: "Start Date"
             },
@@ -147,7 +143,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "End Date",
               description: "End Date"
             },
@@ -168,7 +163,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation DateTime",
               description: "Creation DateTime"
             },
@@ -189,7 +183,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Update DateTime",
               description: "Update DateTime"
             },
@@ -210,7 +203,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Description",
               description: "Description"
             },
@@ -231,7 +223,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Location",
               description: "Location"
             },
@@ -252,7 +243,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "iCal UID",
               description: "iCal UID"
             },
@@ -273,7 +263,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Conference Solution",
               description: "Conference Solution"
             },
@@ -298,7 +287,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Meet Link",
               description: "Meet Link"
             },
@@ -319,7 +307,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -342,7 +329,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -365,7 +351,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -388,7 +373,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -411,33 +395,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Calendar Channel Event Associations",
               description: "Calendar Channel Event Associations",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "50eb0856-11b5-4b7f-8f63-a60685e9ff33",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "e327588e-09dd-445f-b7b3-28b707beb1fe",
-                  nameSingular: "calendarEvent",
-                  namePlural: "calendarEvents"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "6626ca4a-91cc-4483-a9c4-1eefdecf5ea9",
-                  name: "calendarChannelEventAssociations"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "aef9c77c-0623-4d60-adb6-1aaa3e07538f",
-                  nameSingular: "calendarChannelEventAssociation",
-                  namePlural: "calendarChannelEventAssociations"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "34bcd5d2-bd75-49d2-b1f2-c5aa9e377e11",
-                  name: "calendarEvent"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -458,33 +415,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Event Participants",
               description: "Event Participants",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "8e46a49b-4fab-421f-9dcd-862fd2e53600",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "e327588e-09dd-445f-b7b3-28b707beb1fe",
-                  nameSingular: "calendarEvent",
-                  namePlural: "calendarEvents"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "52d53fb3-1199-42c2-b89a-f1a0de2e8776",
-                  name: "calendarEventParticipants"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "dd054a83-dfee-4231-bbe0-ad690f189196",
-                  nameSingular: "calendarEventParticipant",
-                  namePlural: "calendarEventParticipants"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "21a3c4e8-39aa-4394-8a6c-6d34009190ef",
-                  name: "calendarEvent"
-                }
-              }
             }
           ]
         }
@@ -530,7 +460,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Event name",
               description: "Event name/type"
             },
@@ -551,7 +480,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Event details",
               description: "Json value for event details"
             },
@@ -572,7 +500,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Event context",
               description: "Json object to provide context (user, device, workspace, etc.)"
             },
@@ -593,7 +520,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Object name",
               description: "Object name"
             },
@@ -614,7 +540,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Object metadata id",
               description: "Object metadata id"
             },
@@ -635,7 +560,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Record id",
               description: "Record id"
             },
@@ -656,7 +580,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -679,7 +602,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -702,7 +624,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -725,7 +646,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -746,7 +666,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workspace Member id (foreign key)",
               description: "Event workspace member id foreign key"
             },
@@ -769,33 +688,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Workspace Member",
               description: "Event workspace member",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "0aa8e034-da5b-4c62-bcba-625bad969e66",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "e21f9dfe-5af9-4e02-b7b4-4467240243a7",
-                  nameSingular: "auditLog",
-                  namePlural: "auditLogs"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "6f5a9d78-2e2c-43a3-abe1-c4159784f6fe",
-                  name: "workspaceMember"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "6ab4ce90-581f-425b-bbba-6ce5adc70f25",
-                  name: "auditLogs"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -886,7 +778,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -909,7 +800,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -932,7 +822,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -955,7 +844,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -976,7 +864,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Note id (foreign key)",
               description: "NoteTarget note id foreign key"
             },
@@ -999,33 +886,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Note",
               description: "NoteTarget note",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "f5a31487-4899-45fa-a496-c93b030f7026",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "e17eb8fc-5ba9-4479-9c76-f731f8584a9a",
-                  nameSingular: "noteTarget",
-                  namePlural: "noteTargets"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "e10a3026-1d61-400c-a018-281eec277d12",
-                  name: "note"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "cf1e3f15-1ce2-444b-9507-69eb7dc40972",
-                  nameSingular: "note",
-                  namePlural: "notes"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "629b0b99-d07c-4dd8-8a15-d57c558f4046",
-                  name: "noteTargets"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -1044,7 +904,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Person id (foreign key)",
               description: "NoteTarget person id foreign key"
             },
@@ -1067,33 +926,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Person",
               description: "NoteTarget person",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "4beca7eb-f154-4a91-930b-91433dfa3d3a",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "e17eb8fc-5ba9-4479-9c76-f731f8584a9a",
-                  nameSingular: "noteTarget",
-                  namePlural: "noteTargets"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "5401a0b6-64af-4736-b19f-ca03bcf9c955",
-                  name: "person"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "bcd93e0f-5451-45a5-b9e2-bc4c8a4a0b8d",
-                  name: "noteTargets"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -1112,7 +944,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Company id (foreign key)",
               description: "NoteTarget company id foreign key"
             },
@@ -1135,33 +966,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Company",
               description: "NoteTarget company",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "24585994-494b-4c58-aa4f-257a6e775006",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "e17eb8fc-5ba9-4479-9c76-f731f8584a9a",
-                  nameSingular: "noteTarget",
-                  namePlural: "noteTargets"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "93478ac2-8f9f-4cc4-888e-dbd6766f1769",
-                  name: "company"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "d6742106-e3ac-4e28-95ad-0ae1f9f2c202",
-                  nameSingular: "company",
-                  namePlural: "companies"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "2be876ac-ef40-4e6d-86d0-bc89bea40ca9",
-                  name: "noteTargets"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -1180,7 +984,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Opportunity id (foreign key)",
               description: "NoteTarget opportunity id foreign key"
             },
@@ -1203,33 +1006,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Opportunity",
               description: "NoteTarget opportunity",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "85aefb41-952c-4b00-960d-b435da7ca073",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "e17eb8fc-5ba9-4479-9c76-f731f8584a9a",
-                  nameSingular: "noteTarget",
-                  namePlural: "noteTargets"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "875de814-cf1d-4b7e-8038-f179c051ac0e",
-                  name: "opportunity"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "4afa7501-4bd9-4ec7-bd07-ce6f69ad0d98",
-                  nameSingular: "opportunity",
-                  namePlural: "opportunities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "74c12c73-15b2-425c-ac93-2f877d2cfde5",
-                  name: "noteTargets"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -1250,33 +1026,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Pet",
               description: "NoteTargets Pet",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "d925935b-7152-41a1-8859-56e6544cb93c",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "e17eb8fc-5ba9-4479-9c76-f731f8584a9a",
-                  nameSingular: "noteTarget",
-                  namePlural: "noteTargets"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "d80e2c74-31a0-43cc-b32f-394d260f837f",
-                  name: "pet"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "055c2349-c786-4389-b09d-09c89fc131bc",
-                  nameSingular: "pet",
-                  namePlural: "pets"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "5e47fe4c-df0d-4b12-98db-68a450fd7396",
-                  name: "noteTargets"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -1297,7 +1046,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Pet ID (foreign key)",
               description: "Note Target Pet id foreign key"
             },
@@ -1320,33 +1068,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Survey result",
               description: "NoteTargets Survey result",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "5ec3cb38-9988-4c02-8652-3d3da682a342",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "e17eb8fc-5ba9-4479-9c76-f731f8584a9a",
-                  nameSingular: "noteTarget",
-                  namePlural: "noteTargets"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "ba3ef494-ed06-406e-8fba-adef99807abb",
-                  name: "surveyResult"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "3433f66e-e32c-4b99-b48b-38e6d23501cc",
-                  nameSingular: "surveyResult",
-                  namePlural: "surveyResults"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "ff3bb487-ad47-469e-a1ac-c483bca36b79",
-                  name: "noteTargets"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -1367,7 +1088,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Survey result ID (foreign key)",
               description: "Note Target Survey result id foreign key"
             }
@@ -1553,7 +1273,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -1576,33 +1295,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "View Fields",
               description: "View Fields",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "c610eb39-51f8-4448-a267-5ddd335da103",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "ded05363-70e6-4a88-95f3-ce04bb547dd2",
-                  nameSingular: "view",
-                  namePlural: "views"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "e083f601-68ca-4596-8f13-c309ec841f57",
-                  name: "viewFields"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "1cfe488b-b2fa-4217-849e-41ed3b1ea2cd",
-                  nameSingular: "viewField",
-                  namePlural: "viewFields"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "c47887a9-10a3-42ad-a48f-42c465e835e0",
-                  name: "view"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -1621,7 +1313,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "View name"
             },
@@ -1642,7 +1333,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Object Metadata Id",
               description: "View target object"
             },
@@ -1663,7 +1353,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Type",
               description: "View type"
             },
@@ -1692,7 +1381,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Key",
               description: "View key"
             },
@@ -1713,7 +1401,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Icon",
               description: "View icon"
             },
@@ -1734,7 +1421,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "kanbanfieldMetadataId",
               description: "View Kanban column field"
             },
@@ -1755,7 +1441,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "View position"
             },
@@ -1776,7 +1461,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Compact View",
               description: "Describes if the view is in compact mode"
             },
@@ -1868,7 +1552,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Aggregate operation",
               description: "Optional aggregate operation"
             },
@@ -1889,7 +1572,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Field metadata used for aggregate operation",
               description: "Field metadata used for aggregate operation"
             },
@@ -1910,7 +1592,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -1933,7 +1614,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -1956,7 +1636,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -1979,33 +1658,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "View Groups",
               description: "View Groups",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "d11b0440-7558-4199-8bc3-3898f8912ba4",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "ded05363-70e6-4a88-95f3-ce04bb547dd2",
-                  nameSingular: "view",
-                  namePlural: "views"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "416300ab-6908-427d-a28e-281b9076934e",
-                  name: "viewGroups"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "91b99843-10ae-412e-b482-bd5691a18b90",
-                  nameSingular: "viewGroup",
-                  namePlural: "viewGroups"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "3431bb7d-0440-44f9-aa04-b34423f2d7c6",
-                  name: "view"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -2026,33 +1678,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "View Filters",
               description: "View Filters",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "0e8cbad2-f76e-495d-8ef9-c3261e6b8269",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "ded05363-70e6-4a88-95f3-ce04bb547dd2",
-                  nameSingular: "view",
-                  namePlural: "views"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "6f0a0296-abf3-42fd-a882-7fadbf281ed0",
-                  name: "viewFilters"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "65d58960-69b9-42b5-ae4b-ab82c0068dbb",
-                  nameSingular: "viewFilter",
-                  namePlural: "viewFilters"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "7c9fe4e1-88a5-4e9a-b02d-3376f1724073",
-                  name: "view"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -2073,33 +1698,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "View Filter Groups",
               description: "View Filter Groups",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "37cf7abf-62b2-4ca1-8de1-f0d2e88c22fb",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "ded05363-70e6-4a88-95f3-ce04bb547dd2",
-                  nameSingular: "view",
-                  namePlural: "views"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "582631ee-0da9-45fd-83eb-35d9e74407c5",
-                  name: "viewFilterGroups"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "b73dc029-8c37-4353-be3b-a16245075f2c",
-                  nameSingular: "viewFilterGroup",
-                  namePlural: "viewFilterGroups"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "33436639-0b6f-4285-85ad-1a8df491ba2a",
-                  name: "view"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -2120,33 +1718,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "View Sorts",
               description: "View Sorts",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "671ed16b-1aa8-4413-9594-5430537ed562",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "ded05363-70e6-4a88-95f3-ce04bb547dd2",
-                  nameSingular: "view",
-                  namePlural: "views"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "bc512167-35d3-42c9-a2e7-1ee07b2f2013",
-                  name: "viewSorts"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "075939c1-63ef-4dfa-8d13-31ce81049259",
-                  nameSingular: "viewSort",
-                  namePlural: "viewSorts"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "aa369f3e-a729-4999-aeac-4fda1101752b",
-                  name: "view"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -2167,33 +1738,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Favorites",
               description: "Favorites linked to the view",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "6a6dd17e-d29a-4c79-a52a-e571072d222f",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "ded05363-70e6-4a88-95f3-ce04bb547dd2",
-                  nameSingular: "view",
-                  namePlural: "views"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "6a6563c4-98dd-4400-bba6-e5c8a93a0d5f",
-                  name: "favorites"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "7a529e4f-5458-4f8e-814e-9c0b283e2365",
-                  name: "view"
-                }
-              }
             }
           ]
         }
@@ -2239,7 +1783,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Event ID id (foreign key)",
               description: "Event ID id foreign key"
             },
@@ -2262,33 +1805,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Event ID",
               description: "Event ID",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "8e46a49b-4fab-421f-9dcd-862fd2e53600",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "dd054a83-dfee-4231-bbe0-ad690f189196",
-                  nameSingular: "calendarEventParticipant",
-                  namePlural: "calendarEventParticipants"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "21a3c4e8-39aa-4394-8a6c-6d34009190ef",
-                  name: "calendarEvent"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "e327588e-09dd-445f-b7b3-28b707beb1fe",
-                  nameSingular: "calendarEvent",
-                  namePlural: "calendarEvents"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "52d53fb3-1199-42c2-b89a-f1a0de2e8776",
-                  name: "calendarEventParticipants"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -2307,7 +1823,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Handle",
               description: "Handle"
             },
@@ -2328,7 +1843,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Display Name",
               description: "Display Name"
             },
@@ -2349,7 +1863,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Is Organizer",
               description: "Is Organizer"
             },
@@ -2399,7 +1912,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Response Status",
               description: "Response Status"
             },
@@ -2420,7 +1932,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -2443,7 +1954,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -2466,7 +1976,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -2489,7 +1998,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -2510,7 +2018,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Person id (foreign key)",
               description: "Person id foreign key"
             },
@@ -2533,33 +2040,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Person",
               description: "Person",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "a2f54abe-3d86-4161-97ca-374207b6a502",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "dd054a83-dfee-4231-bbe0-ad690f189196",
-                  nameSingular: "calendarEventParticipant",
-                  namePlural: "calendarEventParticipants"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "b4d42e71-defb-4547-b82a-7a1b308d7af6",
-                  name: "person"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "067f0ade-20c7-473c-93a9-bcbf08477ef0",
-                  name: "calendarEventParticipants"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -2578,7 +2058,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workspace Member id (foreign key)",
               description: "Workspace Member id foreign key"
             },
@@ -2601,33 +2080,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Workspace Member",
               description: "Workspace Member",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "b90c6915-1600-4ca8-b796-8dd7e5e76f5d",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "dd054a83-dfee-4231-bbe0-ad690f189196",
-                  nameSingular: "calendarEventParticipant",
-                  namePlural: "calendarEventParticipants"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "94edc854-576d-4568-81a8-50fcba749840",
-                  name: "workspaceMember"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "b5af82f8-31d7-4910-ad04-d83dab1ecdd0",
-                  name: "calendarEventParticipants"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -2786,7 +2238,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "Folder name"
             },
@@ -2807,7 +2258,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sync Cursor",
               description: "Sync Cursor"
             },
@@ -2828,7 +2278,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -2851,7 +2300,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -2874,7 +2322,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -2897,7 +2344,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -2918,7 +2364,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Message Channel id (foreign key)",
               description: "Message Channel id foreign key"
             },
@@ -2941,33 +2386,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Message Channel",
               description: "Message Channel",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "9153c4bc-c819-4ca6-b95a-ffabb71badbc",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "dc01c3ca-3140-45d8-a02d-a862055ba945",
-                  nameSingular: "messageFolder",
-                  namePlural: "messageFolders"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "8ca1e781-0c90-4239-8739-a8e053386f86",
-                  name: "messageChannel"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "5deb0840-caf9-44ec-98be-8fcad3816c2f",
-                  nameSingular: "messageChannel",
-                  namePlural: "messageChannels"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "a83b1fe2-5b63-4f9e-96d1-81f0b34858b2",
-                  name: "messageFolders"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -3058,7 +2476,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "The company name"
             },
@@ -3083,7 +2500,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Domain Name",
               description: "The company website URL. We use this url to fetch the company icon"
             },
@@ -3104,7 +2520,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Employees",
               description: "Number of employees in the company"
             },
@@ -3129,7 +2544,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Linkedin",
               description: "The company Linkedin account"
             },
@@ -3154,7 +2568,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "X",
               description: "The company Twitter/X account"
             },
@@ -3178,7 +2591,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "ARR",
               description: "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
             },
@@ -3208,7 +2620,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Address",
               description: "Address of the company"
             },
@@ -3229,7 +2640,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "ICP",
               description: "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
             },
@@ -3250,7 +2660,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Company record position"
             },
@@ -3275,7 +2684,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Created by",
               description: "The creator of the record"
             },
@@ -3296,7 +2704,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Search vector",
               description: "Field used for full-text search"
             },
@@ -3317,7 +2724,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -3340,7 +2746,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -3363,7 +2768,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -3386,7 +2790,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -3409,33 +2812,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "People",
               description: "People linked to the company.",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "139d9ea0-1e53-4fa7-bd92-222eff4c04b3",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "d6742106-e3ac-4e28-95ad-0ae1f9f2c202",
-                  nameSingular: "company",
-                  namePlural: "companies"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "b78b28ae-adf1-4a1f-a984-4f6ab30504fa",
-                  name: "people"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "059cf3a7-47bb-4aef-ada1-3247d1c322c9",
-                  name: "company"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -3454,7 +2830,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Account Owner id (foreign key)",
               description: "Your team member responsible for managing the company account id foreign key"
             },
@@ -3477,33 +2852,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Account Owner",
               description: "Your team member responsible for managing the company account",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "7c74123c-dd7a-4f71-8a75-184c92c55b55",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "d6742106-e3ac-4e28-95ad-0ae1f9f2c202",
-                  nameSingular: "company",
-                  namePlural: "companies"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "6a561a3d-6ae9-4350-9616-7f689f1e293d",
-                  name: "accountOwner"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "c58d0a56-a328-4071-920a-799b74362c7b",
-                  name: "accountOwnerForCompanies"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -3524,33 +2872,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Tasks",
               description: "Tasks tied to the company",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "8f5823cf-7f62-49de-8fb2-f5e79259b06e",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "d6742106-e3ac-4e28-95ad-0ae1f9f2c202",
-                  nameSingular: "company",
-                  namePlural: "companies"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "93ebdd78-0e1c-4ad3-855a-7e655ecb697d",
-                  name: "taskTargets"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "6b82ae18-f0ee-4d8a-bf82-b7b1344b6109",
-                  nameSingular: "taskTarget",
-                  namePlural: "taskTargets"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "34e47260-354e-488e-a6ce-be7d853e0c54",
-                  name: "company"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -3571,33 +2892,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Notes",
               description: "Notes tied to the company",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "24585994-494b-4c58-aa4f-257a6e775006",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "d6742106-e3ac-4e28-95ad-0ae1f9f2c202",
-                  nameSingular: "company",
-                  namePlural: "companies"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "2be876ac-ef40-4e6d-86d0-bc89bea40ca9",
-                  name: "noteTargets"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "e17eb8fc-5ba9-4479-9c76-f731f8584a9a",
-                  nameSingular: "noteTarget",
-                  namePlural: "noteTargets"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "93478ac2-8f9f-4cc4-888e-dbd6766f1769",
-                  name: "company"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -3618,33 +2912,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Opportunities",
               description: "Opportunities linked to the company.",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "3b094cbc-081f-494b-96b3-04d54ba444eb",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "d6742106-e3ac-4e28-95ad-0ae1f9f2c202",
-                  nameSingular: "company",
-                  namePlural: "companies"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "35805f7e-a952-4380-a2ba-00819b01e283",
-                  name: "opportunities"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "4afa7501-4bd9-4ec7-bd07-ce6f69ad0d98",
-                  nameSingular: "opportunity",
-                  namePlural: "opportunities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "f5459822-2e2e-4d4e-be6b-d2499a5c913f",
-                  name: "company"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -3665,33 +2932,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Favorites",
               description: "Favorites linked to the company",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "5cab401b-8f5c-4633-b7c0-29c3fc4069f4",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "d6742106-e3ac-4e28-95ad-0ae1f9f2c202",
-                  nameSingular: "company",
-                  namePlural: "companies"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "6c7f1423-f979-450f-9d27-ac52e0462d4d",
-                  name: "favorites"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "747f73c5-1cdc-4601-99cc-2adfbf7595dd",
-                  name: "company"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -3712,33 +2952,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Attachments",
               description: "Attachments linked to the company",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "ea7adf3b-7673-4cd6-9747-775023bf3c15",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "d6742106-e3ac-4e28-95ad-0ae1f9f2c202",
-                  nameSingular: "company",
-                  namePlural: "companies"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "8cb39349-1e8d-49ca-b73a-195dd690ccaf",
-                  name: "attachments"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "b488fc13-032b-434c-acc9-a1b1cd9ad0d1",
-                  nameSingular: "attachment",
-                  namePlural: "attachments"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "401197af-856a-490a-bc7a-d8fa1b753568",
-                  name: "company"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -3759,33 +2972,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Timeline Activities",
               description: "Timeline Activities linked to the company",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "6552eced-5240-43d2-8e74-c0f4955f92b0",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "d6742106-e3ac-4e28-95ad-0ae1f9f2c202",
-                  nameSingular: "company",
-                  namePlural: "companies"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "bd5614ba-baf1-4929-96f8-9893225809bc",
-                  name: "timelineActivities"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "e1f28827-ab56-483a-af41-e696fcf65b02",
-                  name: "company"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -3804,7 +2990,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Tagline",
               description: "Company's Tagline"
             },
@@ -3829,7 +3014,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Intro Video",
               description: "Company's Intro Video"
             },
@@ -3872,7 +3056,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Work Policy",
               description: "Company's Work Policy"
             },
@@ -3908,7 +3091,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Internal competitions",
               description: "Internal competitions"
             },
@@ -3929,7 +3111,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Visa Sponsorship",
               description: "Company's Visa Sponsorship Policy"
             }
@@ -4057,7 +3238,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Note record position"
             },
@@ -4078,7 +3258,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Title",
               description: "Note title"
             },
@@ -4099,7 +3278,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Body",
               description: "Note body"
             },
@@ -4124,7 +3302,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Created by",
               description: "The creator of the record"
             },
@@ -4145,7 +3322,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Search vector",
               description: "Field used for full-text search"
             },
@@ -4166,7 +3342,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -4189,7 +3364,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -4212,7 +3386,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -4235,7 +3408,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -4258,33 +3430,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Relations",
               description: "Note targets",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "f5a31487-4899-45fa-a496-c93b030f7026",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "cf1e3f15-1ce2-444b-9507-69eb7dc40972",
-                  nameSingular: "note",
-                  namePlural: "notes"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "629b0b99-d07c-4dd8-8a15-d57c558f4046",
-                  name: "noteTargets"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "e17eb8fc-5ba9-4479-9c76-f731f8584a9a",
-                  nameSingular: "noteTarget",
-                  namePlural: "noteTargets"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "e10a3026-1d61-400c-a018-281eec277d12",
-                  name: "note"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -4305,33 +3450,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Attachments",
               description: "Note attachments",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "8c6e551c-fab9-4646-94e5-bdca0050118a",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "cf1e3f15-1ce2-444b-9507-69eb7dc40972",
-                  nameSingular: "note",
-                  namePlural: "notes"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "010c6b85-9845-48b8-8636-91404383538c",
-                  name: "attachments"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "b488fc13-032b-434c-acc9-a1b1cd9ad0d1",
-                  nameSingular: "attachment",
-                  namePlural: "attachments"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "ef1388d8-4dad-42f2-93bb-59d817577917",
-                  name: "note"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -4352,33 +3470,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Timeline Activities",
               description: "Timeline Activities linked to the note.",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "9457ea57-a118-4b96-96a4-a8f83612025d",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "cf1e3f15-1ce2-444b-9507-69eb7dc40972",
-                  nameSingular: "note",
-                  namePlural: "notes"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "2791c2d9-6189-4240-9a9a-d9489faa764e",
-                  name: "timelineActivities"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "e2fd43a9-dc31-4392-8dbf-90b8ad211c3d",
-                  name: "note"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -4399,33 +3490,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Favorites",
               description: "Favorites linked to the note",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "b3ed12e9-211f-406e-9e1b-1928077bd170",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "cf1e3f15-1ce2-444b-9507-69eb7dc40972",
-                  nameSingular: "note",
-                  namePlural: "notes"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "f357864e-28bf-4ea3-b8b6-11610791b673",
-                  name: "favorites"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "ffd3df52-6009-4eb4-9357-04c11f7d2cac",
-                  name: "note"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -4505,7 +3569,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "handle",
               description: "The account handle (email, username, phone number, etc.)"
             },
@@ -4526,7 +3589,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "provider",
               description: "The account provider"
             },
@@ -4547,7 +3609,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Access Token",
               description: "Messaging provider access token"
             },
@@ -4568,7 +3629,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Refresh Token",
               description: "Messaging provider refresh token"
             },
@@ -4589,7 +3649,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last sync history ID",
               description: "Last sync history ID"
             },
@@ -4610,7 +3669,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Auth failed at",
               description: "Auth failed at"
             },
@@ -4631,7 +3689,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Handle Aliases",
               description: "Handle Aliases"
             },
@@ -4652,7 +3709,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Scopes",
               description: "Scopes"
             },
@@ -4673,7 +3729,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -4696,7 +3751,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -4719,7 +3773,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -4742,7 +3795,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -4763,7 +3815,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Account Owner id (foreign key)",
               description: "Account Owner id foreign key"
             },
@@ -4786,33 +3837,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Account Owner",
               description: "Account Owner",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "4cb38c10-1f29-4401-9984-6b10e30ef0ff",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "cd2e1f83-3e54-48b5-83bd-ff4338add50d",
-                  nameSingular: "connectedAccount",
-                  namePlural: "connectedAccounts"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "8bae94b3-c5eb-4d64-9f40-7f44ed39a2cb",
-                  name: "accountOwner"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "466c46f8-22f3-4989-ad1b-3d95b83a2ea6",
-                  name: "connectedAccounts"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -4833,33 +3857,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Message Channels",
               description: "Message Channels",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "6e1db9e6-ab3c-400c-9628-924c4ca05250",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "cd2e1f83-3e54-48b5-83bd-ff4338add50d",
-                  nameSingular: "connectedAccount",
-                  namePlural: "connectedAccounts"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "32f9c6ab-25c0-4d5f-b375-efe1c22dafc7",
-                  name: "messageChannels"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "5deb0840-caf9-44ec-98be-8fcad3816c2f",
-                  nameSingular: "messageChannel",
-                  namePlural: "messageChannels"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "4212965a-5878-495b-a6be-7eb8fa890aae",
-                  name: "connectedAccount"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -4880,33 +3877,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Calendar Channels",
               description: "Calendar Channels",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "2f7c0663-cee2-4b82-b5fc-94c99ef20299",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "cd2e1f83-3e54-48b5-83bd-ff4338add50d",
-                  nameSingular: "connectedAccount",
-                  namePlural: "connectedAccounts"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "67dcf871-9baa-460a-b40a-85d137bd02f6",
-                  name: "calendarChannels"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "5b44308a-da32-447e-b210-bf52f1230689",
-                  nameSingular: "calendarChannel",
-                  namePlural: "calendarChannels"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "93fc5679-12be-4449-be39-437b82da4abb",
-                  name: "connectedAccount"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -5000,7 +3970,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "Workspace member name"
             },
@@ -5021,7 +3990,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Color Scheme",
               description: "Preferred color scheme"
             },
@@ -5042,7 +4010,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Language",
               description: "Preferred language"
             },
@@ -5063,7 +4030,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Avatar Url",
               description: "Workspace member avatar"
             },
@@ -5084,7 +4050,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "User Email",
               description: "Related user email address"
             },
@@ -5105,7 +4070,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "User Id",
               description: "Associated User Id"
             },
@@ -5126,7 +4090,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Time zone",
               description: "User time zone"
             },
@@ -5176,7 +4139,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Date format",
               description: "User's preferred date format"
             },
@@ -5219,7 +4181,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Time format",
               description: "User's preferred time format"
             },
@@ -5240,7 +4201,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Search vector",
               description: "Field used for full-text search"
             },
@@ -5261,7 +4221,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -5284,7 +4243,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -5307,7 +4265,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -5330,7 +4287,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -5353,33 +4309,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Assigned tasks",
               description: "Tasks assigned to the workspace member",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "1ed21ca9-1005-4781-b70b-24ac933ad7d1",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "7e5ed44b-6404-4aca-8af7-047ea149e7f0",
-                  name: "assignedTasks"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "18ff5583-7593-422c-abea-ced0195e281d",
-                  nameSingular: "task",
-                  namePlural: "tasks"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "dcd46f0a-f631-43df-a474-ae72ce2b17dd",
-                  name: "assignee"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -5400,33 +4329,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Favorites",
               description: "Favorites linked to the workspace member",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "68b577d8-35aa-4e4f-8c3c-9010e82b174d",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "2a1f9f54-408d-49b7-8a90-0145828e6fe4",
-                  name: "favorites"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "0447657b-e2a8-4f8b-ad9b-aa9509ac0ac2",
-                  name: "workspaceMember"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -5447,33 +4349,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Account Owner For Companies",
               description: "Account owner for companies",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "7c74123c-dd7a-4f71-8a75-184c92c55b55",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "c58d0a56-a328-4071-920a-799b74362c7b",
-                  name: "accountOwnerForCompanies"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "d6742106-e3ac-4e28-95ad-0ae1f9f2c202",
-                  nameSingular: "company",
-                  namePlural: "companies"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "6a561a3d-6ae9-4350-9616-7f689f1e293d",
-                  name: "accountOwner"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -5494,33 +4369,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Authored attachments",
               description: "Attachments created by the workspace member",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "cf957dc0-f40a-46db-8e3b-32e146127784",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "99ee0445-5b57-418e-af33-8bcf11c1c55c",
-                  name: "authoredAttachments"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "b488fc13-032b-434c-acc9-a1b1cd9ad0d1",
-                  nameSingular: "attachment",
-                  namePlural: "attachments"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "e938336b-1b26-47c4-8242-1a08f82a9ce6",
-                  name: "author"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -5541,33 +4389,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Connected accounts",
               description: "Connected accounts",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "4cb38c10-1f29-4401-9984-6b10e30ef0ff",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "466c46f8-22f3-4989-ad1b-3d95b83a2ea6",
-                  name: "connectedAccounts"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "cd2e1f83-3e54-48b5-83bd-ff4338add50d",
-                  nameSingular: "connectedAccount",
-                  namePlural: "connectedAccounts"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "8bae94b3-c5eb-4d64-9f40-7f44ed39a2cb",
-                  name: "accountOwner"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -5588,33 +4409,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Message Participants",
               description: "Message Participants",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "032354ca-4473-4e89-8b6d-0b47c02b0638",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "ac0efdd1-178e-47c1-a2f4-2add422b5718",
-                  name: "messageParticipants"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "36411ed2-cbfe-44d4-bab6-52148d4d4485",
-                  nameSingular: "messageParticipant",
-                  namePlural: "messageParticipants"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "e9336814-40bf-49d2-9c7e-dae6af9d077b",
-                  name: "workspaceMember"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -5635,33 +4429,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Blocklist",
               description: "Blocklisted handles",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "43b47587-ad44-4259-9eb0-bae019e2f142",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "1b92ad62-0000-47cf-b91d-3293993f8e9c",
-                  name: "blocklist"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "b21d7735-22be-4a25-af4c-b33157e07a90",
-                  nameSingular: "blocklist",
-                  namePlural: "blocklists"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "b37d7cda-7edd-4fb7-8443-4cb60d16bfa5",
-                  name: "workspaceMember"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -5682,33 +4449,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Calendar Event Participants",
               description: "Calendar Event Participants",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "b90c6915-1600-4ca8-b796-8dd7e5e76f5d",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "b5af82f8-31d7-4910-ad04-d83dab1ecdd0",
-                  name: "calendarEventParticipants"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "dd054a83-dfee-4231-bbe0-ad690f189196",
-                  nameSingular: "calendarEventParticipant",
-                  namePlural: "calendarEventParticipants"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "94edc854-576d-4568-81a8-50fcba749840",
-                  name: "workspaceMember"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -5729,33 +4469,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Events",
               description: "Events linked to the workspace member",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "904b7480-638d-4cc2-accc-911e342fc66b",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "deddc049-d741-4f44-a8fb-55c36634b673",
-                  name: "timelineActivities"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "eff8454d-8225-4237-bdc2-22e0117719db",
-                  name: "workspaceMember"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -5776,33 +4489,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Audit Logs",
               description: "Audit Logs linked to the workspace member",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "0aa8e034-da5b-4c62-bcba-625bad969e66",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "6ab4ce90-581f-425b-bbba-6ce5adc70f25",
-                  name: "auditLogs"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "e21f9dfe-5af9-4e02-b7b4-4467240243a7",
-                  nameSingular: "auditLog",
-                  namePlural: "auditLogs"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "6f5a9d78-2e2c-43a3-abe1-c4159784f6fe",
-                  name: "workspaceMember"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -5886,7 +4572,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -5909,7 +4594,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -5932,7 +4616,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -5955,7 +4638,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -5978,33 +4660,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Messages",
               description: "Messages from the thread.",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "fe1d21fc-0f37-4cba-9297-2efaf38d047e",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "c3afbe81-489c-4aa2-bdee-b83beb407bc2",
-                  nameSingular: "messageThread",
-                  namePlural: "messageThreads"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "2f62c4e9-d022-4f6f-9974-bad934659e22",
-                  name: "messages"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "c1eec93b-e57f-4ae5-b51c-d0c33d6a4c02",
-                  nameSingular: "message",
-                  namePlural: "messages"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "302dd589-5477-4f78-b145-3c7f74767023",
-                  name: "messageThread"
-                }
-              }
             }
           ]
         }
@@ -6050,7 +4705,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Header message Id",
               description: "Message id from the message header"
             },
@@ -6071,7 +4725,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Subject",
               description: "Subject"
             },
@@ -6092,7 +4745,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Text",
               description: "Text"
             },
@@ -6113,7 +4765,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Received At",
               description: "The date the message was received"
             },
@@ -6134,7 +4785,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -6157,7 +4807,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -6180,7 +4829,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -6203,7 +4851,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -6224,7 +4871,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Message Thread Id id (foreign key)",
               description: "Message Thread Id id foreign key"
             },
@@ -6247,33 +4893,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Message Thread Id",
               description: "Message Thread Id",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "fe1d21fc-0f37-4cba-9297-2efaf38d047e",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "c1eec93b-e57f-4ae5-b51c-d0c33d6a4c02",
-                  nameSingular: "message",
-                  namePlural: "messages"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "302dd589-5477-4f78-b145-3c7f74767023",
-                  name: "messageThread"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "c3afbe81-489c-4aa2-bdee-b83beb407bc2",
-                  nameSingular: "messageThread",
-                  namePlural: "messageThreads"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "2f62c4e9-d022-4f6f-9974-bad934659e22",
-                  name: "messages"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -6294,33 +4913,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Message Participants",
               description: "Message Participants",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "edd3a04a-b6f9-4b3f-9173-5e0b4a01c6fd",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "c1eec93b-e57f-4ae5-b51c-d0c33d6a4c02",
-                  nameSingular: "message",
-                  namePlural: "messages"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "79a59047-dd05-4e8d-abb3-c9fda7bb1222",
-                  name: "messageParticipants"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "36411ed2-cbfe-44d4-bab6-52148d4d4485",
-                  nameSingular: "messageParticipant",
-                  namePlural: "messageParticipants"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "f94e6131-4976-405a-b570-0d9195624049",
-                  name: "message"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -6341,33 +4933,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Message Channel Association",
               description: "Messages from the channel.",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "d723373b-8971-45fa-ab0a-94eca9c15b76",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "c1eec93b-e57f-4ae5-b51c-d0c33d6a4c02",
-                  nameSingular: "message",
-                  namePlural: "messages"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "7d197dab-8498-4e68-9fa2-ca3839fbd678",
-                  name: "messageChannelMessageAssociations"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "01e5d86a-6039-400a-8004-d9058c5eb2c7",
-                  nameSingular: "messageChannelMessageAssociation",
-                  namePlural: "messageChannelMessageAssociations"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "0e3fa01d-bb7f-49d8-8f94-218120fabe70",
-                  name: "message"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -6447,7 +5012,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Parent View Filter Group Id",
               description: "Parent View Filter Group"
             },
@@ -6490,7 +5054,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Logical Operator",
               description: "Logical operator for the filter group"
             },
@@ -6511,7 +5074,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position in view filter group",
               description: "Position in the parent view filter group"
             },
@@ -6532,7 +5094,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -6555,7 +5116,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -6578,7 +5138,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -6601,7 +5160,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -6622,7 +5180,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "View id (foreign key)",
               description: "View id foreign key"
             },
@@ -6645,33 +5202,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "View",
               description: "View",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "37cf7abf-62b2-4ca1-8de1-f0d2e88c22fb",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "b73dc029-8c37-4353-be3b-a16245075f2c",
-                  nameSingular: "viewFilterGroup",
-                  namePlural: "viewFilterGroups"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "33436639-0b6f-4285-85ad-1a8df491ba2a",
-                  name: "view"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "ded05363-70e6-4a88-95f3-ce04bb547dd2",
-                  nameSingular: "view",
-                  namePlural: "views"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "582631ee-0da9-45fd-83eb-35d9e74407c5",
-                  name: "viewFilterGroups"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -6762,7 +5292,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "Attachment name"
             },
@@ -6783,7 +5312,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Full path",
               description: "Attachment full path"
             },
@@ -6804,7 +5332,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Type",
               description: "Attachment type"
             },
@@ -6825,7 +5352,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -6848,7 +5374,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -6871,7 +5396,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -6894,7 +5418,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -6915,7 +5438,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Author id (foreign key)",
               description: "Attachment author id foreign key"
             },
@@ -6938,33 +5460,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Author",
               description: "Attachment author",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "cf957dc0-f40a-46db-8e3b-32e146127784",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "b488fc13-032b-434c-acc9-a1b1cd9ad0d1",
-                  nameSingular: "attachment",
-                  namePlural: "attachments"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "e938336b-1b26-47c4-8242-1a08f82a9ce6",
-                  name: "author"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "99ee0445-5b57-418e-af33-8bcf11c1c55c",
-                  name: "authoredAttachments"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -6983,7 +5478,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Task id (foreign key)",
               description: "Attachment task id foreign key"
             },
@@ -7006,33 +5500,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Task",
               description: "Attachment task",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "2b5943b4-d59b-4956-90c6-ffab27f7f8da",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "b488fc13-032b-434c-acc9-a1b1cd9ad0d1",
-                  nameSingular: "attachment",
-                  namePlural: "attachments"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "4299edc2-6b91-4886-aeb7-5a1d0de8d689",
-                  name: "task"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "18ff5583-7593-422c-abea-ced0195e281d",
-                  nameSingular: "task",
-                  namePlural: "tasks"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "4e4e4d47-485a-48ac-9a4f-6fa085fbb527",
-                  name: "attachments"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -7051,7 +5518,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Note id (foreign key)",
               description: "Attachment note id foreign key"
             },
@@ -7074,33 +5540,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Note",
               description: "Attachment note",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "8c6e551c-fab9-4646-94e5-bdca0050118a",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "b488fc13-032b-434c-acc9-a1b1cd9ad0d1",
-                  nameSingular: "attachment",
-                  namePlural: "attachments"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "ef1388d8-4dad-42f2-93bb-59d817577917",
-                  name: "note"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "cf1e3f15-1ce2-444b-9507-69eb7dc40972",
-                  nameSingular: "note",
-                  namePlural: "notes"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "010c6b85-9845-48b8-8636-91404383538c",
-                  name: "attachments"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -7119,7 +5558,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Person id (foreign key)",
               description: "Attachment person id foreign key"
             },
@@ -7142,33 +5580,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Person",
               description: "Attachment person",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "6a823e89-a5b7-4ec4-ae6e-9f3358af3c6b",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "b488fc13-032b-434c-acc9-a1b1cd9ad0d1",
-                  nameSingular: "attachment",
-                  namePlural: "attachments"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "2f528146-253c-4080-9755-a09b1a7b4bb6",
-                  name: "person"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "e7394f4c-bf15-4205-b92e-c2be1bce1052",
-                  name: "attachments"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -7187,7 +5598,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Company id (foreign key)",
               description: "Attachment company id foreign key"
             },
@@ -7210,33 +5620,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Company",
               description: "Attachment company",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "ea7adf3b-7673-4cd6-9747-775023bf3c15",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "b488fc13-032b-434c-acc9-a1b1cd9ad0d1",
-                  nameSingular: "attachment",
-                  namePlural: "attachments"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "401197af-856a-490a-bc7a-d8fa1b753568",
-                  name: "company"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "d6742106-e3ac-4e28-95ad-0ae1f9f2c202",
-                  nameSingular: "company",
-                  namePlural: "companies"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "8cb39349-1e8d-49ca-b73a-195dd690ccaf",
-                  name: "attachments"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -7255,7 +5638,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Opportunity id (foreign key)",
               description: "Attachment opportunity id foreign key"
             },
@@ -7278,33 +5660,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Opportunity",
               description: "Attachment opportunity",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "b1a221bc-9192-4ba6-ad06-2bfdf8e173f3",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "b488fc13-032b-434c-acc9-a1b1cd9ad0d1",
-                  nameSingular: "attachment",
-                  namePlural: "attachments"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "80955397-e206-49d8-a745-00ddc96ca76e",
-                  name: "opportunity"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "4afa7501-4bd9-4ec7-bd07-ce6f69ad0d98",
-                  nameSingular: "opportunity",
-                  namePlural: "opportunities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "946569ff-dbe3-4635-a38b-5e744d88e359",
-                  name: "attachments"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -7325,33 +5680,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Pet",
               description: "Attachments Pet",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "f61c9590-f432-4df8-90d0-98b2ad23ece5",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "b488fc13-032b-434c-acc9-a1b1cd9ad0d1",
-                  nameSingular: "attachment",
-                  namePlural: "attachments"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "556e779d-fb1a-4bb7-80ab-fc80035b4933",
-                  name: "pet"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "055c2349-c786-4389-b09d-09c89fc131bc",
-                  nameSingular: "pet",
-                  namePlural: "pets"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "24feadce-321d-4192-9060-3879a0d27b23",
-                  name: "attachments"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -7372,7 +5700,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Pet ID (foreign key)",
               description: "Attachment Pet id foreign key"
             },
@@ -7395,33 +5722,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Survey result",
               description: "Attachments Survey result",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "f8718732-b97f-478e-b748-f6854ca59f8a",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "b488fc13-032b-434c-acc9-a1b1cd9ad0d1",
-                  nameSingular: "attachment",
-                  namePlural: "attachments"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "33f6f21c-70fb-4952-a81b-7a9a0652e273",
-                  name: "surveyResult"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "3433f66e-e32c-4b99-b48b-38e6d23501cc",
-                  nameSingular: "surveyResult",
-                  namePlural: "surveyResults"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "5082fea5-d4a1-4ff2-adfc-9f2ed99d958a",
-                  name: "attachments"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -7442,7 +5742,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Survey result ID (foreign key)",
               description: "Attachment Survey result id foreign key"
             }
@@ -7678,7 +5977,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Target Url",
               description: "Webhook target url"
             },
@@ -7701,7 +5999,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Operations",
               description: "Webhook operations"
             },
@@ -7722,7 +6019,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Description",
               description: ""
             },
@@ -7743,7 +6039,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Secret",
               description: "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
             },
@@ -7764,7 +6059,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -7787,7 +6081,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -7810,7 +6103,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -7833,7 +6125,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             }
@@ -7885,7 +6176,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "The workflow version name"
             },
@@ -7906,7 +6196,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Version trigger",
               description: "Json object to provide trigger"
             },
@@ -7927,7 +6216,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Version steps",
               description: "Json object to provide steps"
             },
@@ -7977,7 +6265,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Version status",
               description: "The workflow version status"
             },
@@ -7998,7 +6285,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Workflow version position"
             },
@@ -8019,7 +6305,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -8042,7 +6327,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -8065,7 +6349,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -8088,7 +6371,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -8109,7 +6391,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow id (foreign key)",
               description: "WorkflowVersion workflow id foreign key"
             },
@@ -8132,33 +6413,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Workflow",
               description: "WorkflowVersion workflow",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "3444601d-b206-4ce6-9678-8dd284bc5b57",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "b38a7efd-b472-4b8e-8988-2b3fab3fe67f",
-                  nameSingular: "workflowVersion",
-                  namePlural: "workflowVersions"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "b0ce1277-33e5-4375-884f-d0ec4d13aeb4",
-                  name: "workflow"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "18d91fb4-c535-425e-8ff7-fb68394dfbf5",
-                  nameSingular: "workflow",
-                  namePlural: "workflows"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "a3509a8d-887a-4dc2-a90a-901e6815ba6c",
-                  name: "versions"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -8179,33 +6433,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Runs",
               description: "Workflow runs linked to the version.",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "2d165a9b-3699-45fa-98cc-b9af92af5c51",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "b38a7efd-b472-4b8e-8988-2b3fab3fe67f",
-                  nameSingular: "workflowVersion",
-                  namePlural: "workflowVersions"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "4a89f0cb-39b3-4532-94e7-b23bc35ef64f",
-                  name: "runs"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "16c29a47-a565-4f4b-90c4-f1b52a32f234",
-                  nameSingular: "workflowRun",
-                  namePlural: "workflowRuns"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "dc394218-f576-42aa-8727-c4182de7f4a0",
-                  name: "workflowVersion"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -8226,33 +6453,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Favorites",
               description: "Favorites linked to the workflow version",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "86d90951-1389-43a6-82b2-e06796f9c041",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "b38a7efd-b472-4b8e-8988-2b3fab3fe67f",
-                  nameSingular: "workflowVersion",
-                  namePlural: "workflowVersions"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "0ab646a0-e40e-465a-9a8e-31c7d733ebe0",
-                  name: "favorites"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "76671851-284f-494a-97dd-9fa6412c4a2d",
-                  name: "workflowVersion"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -8273,33 +6473,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Timeline Activities",
               description: "Timeline activities linked to the version",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "db389c46-c137-406a-8525-bf5229d25be1",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "b38a7efd-b472-4b8e-8988-2b3fab3fe67f",
-                  nameSingular: "workflowVersion",
-                  namePlural: "workflowVersions"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "2f0d7a15-4962-4d8e-a30b-c70f0b5e23b7",
-                  name: "timelineActivities"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "e1d95b52-550a-465b-8e43-324bf25c6958",
-                  name: "workflowVersion"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -8367,7 +6540,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Handle",
               description: "Handle"
             },
@@ -8388,7 +6560,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -8411,7 +6582,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -8434,7 +6604,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -8457,7 +6626,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -8478,7 +6646,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "WorkspaceMember id (foreign key)",
               description: "WorkspaceMember id foreign key"
             },
@@ -8501,33 +6668,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "WorkspaceMember",
               description: "WorkspaceMember",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "43b47587-ad44-4259-9eb0-bae019e2f142",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "b21d7735-22be-4a25-af4c-b33157e07a90",
-                  nameSingular: "blocklist",
-                  namePlural: "blocklists"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "b37d7cda-7edd-4fb7-8443-4cb60d16bfa5",
-                  name: "workspaceMember"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "1b92ad62-0000-47cf-b91d-3293993f8e9c",
-                  name: "blocklist"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -8618,7 +6758,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Event external ID",
               description: "Event external ID"
             },
@@ -8639,7 +6778,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Recurring Event ID",
               description: "Recurring Event ID"
             },
@@ -8660,7 +6798,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -8683,7 +6820,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -8706,7 +6842,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -8729,7 +6864,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -8750,7 +6884,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Channel ID id (foreign key)",
               description: "Channel ID id foreign key"
             },
@@ -8773,33 +6906,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Channel ID",
               description: "Channel ID",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "c19cd272-8d34-40ea-a369-d6bd63bad394",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "aef9c77c-0623-4d60-adb6-1aaa3e07538f",
-                  nameSingular: "calendarChannelEventAssociation",
-                  namePlural: "calendarChannelEventAssociations"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "30a2da43-02a3-4648-851f-65d4ad841515",
-                  name: "calendarChannel"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "5b44308a-da32-447e-b210-bf52f1230689",
-                  nameSingular: "calendarChannel",
-                  namePlural: "calendarChannels"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "fe5e6a90-6cd8-4eaf-9c42-7316c01c5c73",
-                  name: "calendarChannelEventAssociations"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -8818,7 +6924,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Event ID id (foreign key)",
               description: "Event ID id foreign key"
             },
@@ -8841,33 +6946,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Event ID",
               description: "Event ID",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "50eb0856-11b5-4b7f-8f63-a60685e9ff33",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "aef9c77c-0623-4d60-adb6-1aaa3e07538f",
-                  nameSingular: "calendarChannelEventAssociation",
-                  namePlural: "calendarChannelEventAssociations"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "34bcd5d2-bd75-49d2-b1f2-c5aa9e377e11",
-                  name: "calendarEvent"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "e327588e-09dd-445f-b7b3-28b707beb1fe",
-                  nameSingular: "calendarEvent",
-                  namePlural: "calendarEvents"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "6626ca4a-91cc-4483-a9c4-1eefdecf5ea9",
-                  name: "calendarChannelEventAssociations"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -8991,7 +7069,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Favorite folder position"
             },
@@ -9012,7 +7089,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "Name of the favorite folder"
             },
@@ -9033,7 +7109,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -9056,7 +7131,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -9079,7 +7153,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -9102,7 +7175,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -9125,33 +7197,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Favorites",
               description: "Favorites in this folder",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "5f946751-d767-453b-bfd4-0b98a58c6df2",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "a9f0f54b-b691-4133-9136-f25639f05b22",
-                  nameSingular: "favoriteFolder",
-                  namePlural: "favoriteFolders"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "59894c72-b8fe-46fe-b8c2-a94c4bda624a",
-                  name: "favorites"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "afff7566-c70e-4174-ac4b-33229188d303",
-                  name: "favoriteFolder"
-                }
-              }
             }
           ]
         }
@@ -9197,7 +7242,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Favorite position"
             },
@@ -9218,7 +7262,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -9241,7 +7284,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -9264,7 +7306,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -9287,7 +7328,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -9308,7 +7348,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workspace Member id (foreign key)",
               description: "Favorite workspace member id foreign key"
             },
@@ -9331,33 +7370,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Workspace Member",
               description: "Favorite workspace member",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "68b577d8-35aa-4e4f-8c3c-9010e82b174d",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "0447657b-e2a8-4f8b-ad9b-aa9509ac0ac2",
-                  name: "forWorkspaceMember"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "2a1f9f54-408d-49b7-8a90-0145828e6fe4",
-                  name: "favorites"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -9376,7 +7388,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Person id (foreign key)",
               description: "Favorite person id foreign key"
             },
@@ -9399,33 +7410,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Person",
               description: "Favorite person",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "4fff0ed3-ec08-4b53-86bf-2bc3bad9fde3",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "b62541e3-04a0-4569-907d-1eeaf498d296",
-                  name: "person"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "7d26908d-2099-40fe-b83e-64414ceb5b6a",
-                  name: "favorites"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -9444,7 +7428,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Company id (foreign key)",
               description: "Favorite company id foreign key"
             },
@@ -9467,33 +7450,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Company",
               description: "Favorite company",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "5cab401b-8f5c-4633-b7c0-29c3fc4069f4",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "747f73c5-1cdc-4601-99cc-2adfbf7595dd",
-                  name: "company"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "d6742106-e3ac-4e28-95ad-0ae1f9f2c202",
-                  nameSingular: "company",
-                  namePlural: "companies"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "6c7f1423-f979-450f-9d27-ac52e0462d4d",
-                  name: "favorites"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -9512,7 +7468,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Favorite Folder id (foreign key)",
               description: "The folder this favorite belongs to id foreign key"
             },
@@ -9535,33 +7490,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Favorite Folder",
               description: "The folder this favorite belongs to",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "5f946751-d767-453b-bfd4-0b98a58c6df2",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "afff7566-c70e-4174-ac4b-33229188d303",
-                  name: "favoriteFolder"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "a9f0f54b-b691-4133-9136-f25639f05b22",
-                  nameSingular: "favoriteFolder",
-                  namePlural: "favoriteFolders"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "59894c72-b8fe-46fe-b8c2-a94c4bda624a",
-                  name: "favorites"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -9580,7 +7508,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Opportunity id (foreign key)",
               description: "Favorite opportunity id foreign key"
             },
@@ -9603,33 +7530,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Opportunity",
               description: "Favorite opportunity",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "9581c75b-3a72-497f-a007-490e040b1762",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "56d7cf1f-1d98-42d3-a89b-e35310615f69",
-                  name: "opportunity"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "4afa7501-4bd9-4ec7-bd07-ce6f69ad0d98",
-                  nameSingular: "opportunity",
-                  namePlural: "opportunities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "897c675f-511b-47b5-a86b-21a9ebf28403",
-                  name: "favorites"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -9648,7 +7548,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow id (foreign key)",
               description: "Favorite workflow id foreign key"
             },
@@ -9671,33 +7570,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Workflow",
               description: "Favorite workflow",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "81d32c05-6ca9-494f-a509-195868f7a492",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "a0e396c3-a8cd-4934-82bc-7443862b4760",
-                  name: "workflow"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "18d91fb4-c535-425e-8ff7-fb68394dfbf5",
-                  nameSingular: "workflow",
-                  namePlural: "workflows"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "8a0f832b-bf17-4d66-8a44-e835c4d2030b",
-                  name: "favorites"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -9716,7 +7588,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow id (foreign key)",
               description: "Favorite workflow version id foreign key"
             },
@@ -9739,33 +7610,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Workflow",
               description: "Favorite workflow version",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "86d90951-1389-43a6-82b2-e06796f9c041",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "76671851-284f-494a-97dd-9fa6412c4a2d",
-                  name: "workflowVersion"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "b38a7efd-b472-4b8e-8988-2b3fab3fe67f",
-                  nameSingular: "workflowVersion",
-                  namePlural: "workflowVersions"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "0ab646a0-e40e-465a-9a8e-31c7d733ebe0",
-                  name: "favorites"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -9784,7 +7628,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow id (foreign key)",
               description: "Favorite workflow run id foreign key"
             },
@@ -9807,33 +7650,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Workflow",
               description: "Favorite workflow run",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "7bca5b31-61c6-4247-86cf-3eea0761f52d",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "8d10d3da-66df-4cec-b165-1a83b80bb2f5",
-                  name: "workflowRun"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "16c29a47-a565-4f4b-90c4-f1b52a32f234",
-                  nameSingular: "workflowRun",
-                  namePlural: "workflowRuns"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "d0c9aa4a-6e28-4dc6-9892-a121d8f1d025",
-                  name: "favorites"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -9852,7 +7668,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Task id (foreign key)",
               description: "Favorite task id foreign key"
             },
@@ -9875,33 +7690,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Task",
               description: "Favorite task",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "ce24ceea-a777-4728-9a39-22595aed4142",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "d784ae0c-6262-43d7-9c26-da96b3e0d12f",
-                  name: "task"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "18ff5583-7593-422c-abea-ced0195e281d",
-                  nameSingular: "task",
-                  namePlural: "tasks"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "84949de2-f936-4623-9764-5ce4ed1274db",
-                  name: "favorites"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -9920,7 +7708,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Note id (foreign key)",
               description: "Favorite note id foreign key"
             },
@@ -9943,33 +7730,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Note",
               description: "Favorite note",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "b3ed12e9-211f-406e-9e1b-1928077bd170",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "ffd3df52-6009-4eb4-9357-04c11f7d2cac",
-                  name: "note"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "cf1e3f15-1ce2-444b-9507-69eb7dc40972",
-                  nameSingular: "note",
-                  namePlural: "notes"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "f357864e-28bf-4ea3-b8b6-11610791b673",
-                  name: "favorites"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -9988,7 +7748,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "View id (foreign key)",
               description: "Favorite view id foreign key"
             },
@@ -10011,33 +7770,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "View",
               description: "Favorite view",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "6a6dd17e-d29a-4c79-a52a-e571072d222f",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "7a529e4f-5458-4f8e-814e-9c0b283e2365",
-                  name: "view"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "ded05363-70e6-4a88-95f3-ce04bb547dd2",
-                  nameSingular: "view",
-                  namePlural: "views"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "6a6563c4-98dd-4400-bba6-e5c8a93a0d5f",
-                  name: "favorites"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -10058,33 +7790,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Survey result",
               description: "Favorites Survey result",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "232846d1-ca1e-41a4-97a3-fdf6431aa572",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "c081018d-9287-4bce-9b14-75b47b6ef6a4",
-                  name: "surveyResult"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "3433f66e-e32c-4b99-b48b-38e6d23501cc",
-                  nameSingular: "surveyResult",
-                  namePlural: "surveyResults"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "b5f3ac59-dc01-4f51-a9b8-d921adecb78d",
-                  name: "favorites"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -10105,7 +7810,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Survey result ID (foreign key)",
               description: "Favorite Survey result id foreign key"
             },
@@ -10128,33 +7832,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Pet",
               description: "Favorites Pet",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "08f93709-2e7e-4878-9a5e-e4f1e67b0a3b",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "db1a3dd5-0f72-4c6b-a8e3-91956ba6421e",
-                  name: "pet"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "055c2349-c786-4389-b09d-09c89fc131bc",
-                  nameSingular: "pet",
-                  namePlural: "pets"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "5a595ace-7c91-4740-ab7c-e2b1b66d489e",
-                  name: "favorites"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -10175,7 +7852,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Pet ID (foreign key)",
               description: "Favorite Pet id foreign key"
             }
@@ -10590,7 +8266,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Field Metadata Id",
               description: "View Group target field"
             },
@@ -10611,7 +8286,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Visible",
               description: "View Group visibility"
             },
@@ -10632,7 +8306,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Field Value",
               description: "Group by this field value"
             },
@@ -10653,7 +8326,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "View Field position"
             },
@@ -10674,7 +8346,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -10697,7 +8368,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -10720,7 +8390,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -10743,7 +8412,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -10764,7 +8432,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "View id (foreign key)",
               description: "View Group related view id foreign key"
             },
@@ -10787,33 +8454,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "View",
               description: "View Group related view",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "d11b0440-7558-4199-8bc3-3898f8912ba4",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "91b99843-10ae-412e-b482-bd5691a18b90",
-                  nameSingular: "viewGroup",
-                  namePlural: "viewGroups"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "3431bb7d-0440-44f9-aa04-b34423f2d7c6",
-                  name: "view"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "ded05363-70e6-4a88-95f3-ce04bb547dd2",
-                  nameSingular: "view",
-                  namePlural: "views"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "416300ab-6908-427d-a28e-281b9076934e",
-                  name: "viewGroups"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -10904,7 +8544,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "The workflow event listener name"
             },
@@ -10925,7 +8564,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -10948,7 +8586,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -10971,7 +8608,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -10994,7 +8630,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -11015,7 +8650,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow id (foreign key)",
               description: "WorkflowEventListener workflow id foreign key"
             },
@@ -11038,33 +8672,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Workflow",
               description: "WorkflowEventListener workflow",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "eda58ebf-dc0b-4481-b9a6-dafc80afdceb",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "8a943c8f-aceb-48a6-ac07-a0dca6712059",
-                  nameSingular: "workflowEventListener",
-                  namePlural: "workflowEventListeners"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "e43ec871-59cb-40ec-9384-53c4fd2bc5fb",
-                  name: "workflow"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "18d91fb4-c535-425e-8ff7-fb68394dfbf5",
-                  nameSingular: "workflow",
-                  namePlural: "workflows"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "a2162b17-505f-4a9d-bf93-cbc06242a14c",
-                  name: "eventListeners"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -11144,7 +8751,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -11167,7 +8773,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -11190,7 +8795,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -11213,7 +8817,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -11234,7 +8837,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Task id (foreign key)",
               description: "TaskTarget task id foreign key"
             },
@@ -11257,33 +8859,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Task",
               description: "TaskTarget task",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "1b6e98ac-770b-4d19-9f6e-78fe733b7d20",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "6b82ae18-f0ee-4d8a-bf82-b7b1344b6109",
-                  nameSingular: "taskTarget",
-                  namePlural: "taskTargets"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "e43067bc-42c6-4f02-8ffe-3773144180cc",
-                  name: "task"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "18ff5583-7593-422c-abea-ced0195e281d",
-                  nameSingular: "task",
-                  namePlural: "tasks"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "d616da2f-7e9c-46f1-b6cc-7bbb0cf52b99",
-                  name: "taskTargets"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -11302,7 +8877,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Person id (foreign key)",
               description: "TaskTarget person id foreign key"
             },
@@ -11325,33 +8899,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Person",
               description: "TaskTarget person",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "078dea5e-16b9-4896-83b1-919d58a7ec09",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "6b82ae18-f0ee-4d8a-bf82-b7b1344b6109",
-                  nameSingular: "taskTarget",
-                  namePlural: "taskTargets"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "d564534f-f3ce-40d7-9ab4-560c6758d45e",
-                  name: "person"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "d6a47616-3bc2-44de-86e9-68344f82933c",
-                  name: "taskTargets"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -11370,7 +8917,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Company id (foreign key)",
               description: "TaskTarget company id foreign key"
             },
@@ -11393,33 +8939,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Company",
               description: "TaskTarget company",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "8f5823cf-7f62-49de-8fb2-f5e79259b06e",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "6b82ae18-f0ee-4d8a-bf82-b7b1344b6109",
-                  nameSingular: "taskTarget",
-                  namePlural: "taskTargets"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "34e47260-354e-488e-a6ce-be7d853e0c54",
-                  name: "company"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "d6742106-e3ac-4e28-95ad-0ae1f9f2c202",
-                  nameSingular: "company",
-                  namePlural: "companies"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "93ebdd78-0e1c-4ad3-855a-7e655ecb697d",
-                  name: "taskTargets"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -11438,7 +8957,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Opportunity id (foreign key)",
               description: "TaskTarget opportunity id foreign key"
             },
@@ -11461,33 +8979,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Opportunity",
               description: "TaskTarget opportunity",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "b49784f1-76fc-4c0d-b16c-7af02c54e0ed",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "6b82ae18-f0ee-4d8a-bf82-b7b1344b6109",
-                  nameSingular: "taskTarget",
-                  namePlural: "taskTargets"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "695c6f99-bc49-4cc7-895d-71a2172a0da8",
-                  name: "opportunity"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "4afa7501-4bd9-4ec7-bd07-ce6f69ad0d98",
-                  nameSingular: "opportunity",
-                  namePlural: "opportunities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "9aa21b35-52eb-4ad9-a29d-6b92450f8d81",
-                  name: "taskTargets"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -11508,33 +8999,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Pet",
               description: "TaskTargets Pet",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "8e47bced-f608-4dc7-90a2-7ae7a7cf869c",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "6b82ae18-f0ee-4d8a-bf82-b7b1344b6109",
-                  nameSingular: "taskTarget",
-                  namePlural: "taskTargets"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "47a3e14b-dbbd-4c40-b3f5-f51412d8408e",
-                  name: "pet"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "055c2349-c786-4389-b09d-09c89fc131bc",
-                  nameSingular: "pet",
-                  namePlural: "pets"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "8bb25e73-ea02-4fbd-a37e-7f216dd63eb9",
-                  name: "taskTargets"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -11555,7 +9019,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Pet ID (foreign key)",
               description: "Task Target Pet id foreign key"
             },
@@ -11578,33 +9041,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Survey result",
               description: "TaskTargets Survey result",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "748f0c32-6bc4-4bef-9b07-c722989613d7",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "6b82ae18-f0ee-4d8a-bf82-b7b1344b6109",
-                  nameSingular: "taskTarget",
-                  namePlural: "taskTargets"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "c0103f7e-0357-40d6-8c08-7aa1b0716f4a",
-                  name: "surveyResult"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "3433f66e-e32c-4b99-b48b-38e6d23501cc",
-                  nameSingular: "surveyResult",
-                  namePlural: "surveyResults"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "86bbe7f3-8480-4c5c-9eed-3168a563176c",
-                  name: "taskTargets"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -11625,7 +9061,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Survey result ID (foreign key)",
               description: "Task Target Survey result id foreign key"
             }
@@ -11805,7 +9240,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Field Metadata Id",
               description: "View Filter target field"
             },
@@ -11826,7 +9260,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Operand",
               description: "View Filter operand"
             },
@@ -11847,7 +9280,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Value",
               description: "View Filter value"
             },
@@ -11868,7 +9300,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Display Value",
               description: "View Filter Display Value"
             },
@@ -11889,7 +9320,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "View Filter Group Id",
               description: "View Filter Group"
             },
@@ -11910,7 +9340,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position in view filter group",
               description: "Position in the view filter group"
             },
@@ -11931,7 +9360,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -11954,7 +9382,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -11977,7 +9404,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -12000,7 +9426,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -12021,7 +9446,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "View id (foreign key)",
               description: "View Filter related view id foreign key"
             },
@@ -12044,33 +9468,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "View",
               description: "View Filter related view",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "0e8cbad2-f76e-495d-8ef9-c3261e6b8269",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "65d58960-69b9-42b5-ae4b-ab82c0068dbb",
-                  nameSingular: "viewFilter",
-                  namePlural: "viewFilters"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "7c9fe4e1-88a5-4e9a-b02d-3376f1724073",
-                  name: "view"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "ded05363-70e6-4a88-95f3-ce04bb547dd2",
-                  nameSingular: "view",
-                  namePlural: "views"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "6f0a0296-abf3-42fd-a882-7fadbf281ed0",
-                  name: "viewFilters"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -12172,7 +9569,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Visibility",
               description: "Visibility"
             },
@@ -12193,7 +9589,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Handle",
               description: "Handle"
             },
@@ -12229,7 +9624,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Type",
               description: "Channel Type"
             },
@@ -12250,7 +9644,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Is Contact Auto Creation Enabled",
               description: "Is Contact Auto Creation Enabled"
             },
@@ -12293,7 +9686,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Contact auto creation policy",
               description: "Automatically create People records when receiving or sending emails"
             },
@@ -12314,7 +9706,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Exclude non professional emails",
               description: "Exclude non professional emails"
             },
@@ -12335,7 +9726,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Exclude group emails",
               description: "Exclude group emails"
             },
@@ -12356,7 +9746,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Is Sync Enabled",
               description: "Is Sync Enabled"
             },
@@ -12377,7 +9766,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last sync cursor",
               description: "Last sync cursor"
             },
@@ -12398,7 +9786,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last sync date",
               description: "Last sync date"
             },
@@ -12455,7 +9842,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sync status",
               description: "Sync status"
             },
@@ -12519,7 +9905,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sync stage",
               description: "Sync stage"
             },
@@ -12540,7 +9925,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sync stage started at",
               description: "Sync stage started at"
             },
@@ -12561,7 +9945,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Throttle Failure Count",
               description: "Throttle Failure Count"
             },
@@ -12582,7 +9965,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -12605,7 +9987,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -12628,7 +10009,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -12651,7 +10031,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -12672,7 +10051,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Connected Account id (foreign key)",
               description: "Connected Account id foreign key"
             },
@@ -12695,33 +10073,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Connected Account",
               description: "Connected Account",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "6e1db9e6-ab3c-400c-9628-924c4ca05250",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "5deb0840-caf9-44ec-98be-8fcad3816c2f",
-                  nameSingular: "messageChannel",
-                  namePlural: "messageChannels"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "4212965a-5878-495b-a6be-7eb8fa890aae",
-                  name: "connectedAccount"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "cd2e1f83-3e54-48b5-83bd-ff4338add50d",
-                  nameSingular: "connectedAccount",
-                  namePlural: "connectedAccounts"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "32f9c6ab-25c0-4d5f-b375-efe1c22dafc7",
-                  name: "messageChannels"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -12742,33 +10093,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Message Channel Association",
               description: "Messages from the channel.",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "2f5e3858-8121-4eec-9a9e-b8e9adea3510",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "5deb0840-caf9-44ec-98be-8fcad3816c2f",
-                  nameSingular: "messageChannel",
-                  namePlural: "messageChannels"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "f7846b0f-6aad-4fff-be91-4f7978bf29ab",
-                  name: "messageChannelMessageAssociations"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "01e5d86a-6039-400a-8004-d9058c5eb2c7",
-                  nameSingular: "messageChannelMessageAssociation",
-                  namePlural: "messageChannelMessageAssociations"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "e20e3bd7-7e29-4eb6-8fe1-862ed69bcde4",
-                  name: "messageChannel"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -12789,33 +10113,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Message Folders",
               description: "Message Folders",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "9153c4bc-c819-4ca6-b95a-ffabb71badbc",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "5deb0840-caf9-44ec-98be-8fcad3816c2f",
-                  nameSingular: "messageChannel",
-                  namePlural: "messageChannels"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "a83b1fe2-5b63-4f9e-96d1-81f0b34858b2",
-                  name: "messageFolders"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "dc01c3ca-3140-45d8-a02d-a862055ba945",
-                  nameSingular: "messageFolder",
-                  namePlural: "messageFolders"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "8ca1e781-0c90-4239-8739-a8e053386f86",
-                  name: "messageChannel"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -12895,7 +10192,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Handle",
               description: "Handle"
             },
@@ -12952,7 +10248,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sync status",
               description: "Sync status"
             },
@@ -13016,7 +10311,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sync stage",
               description: "Sync stage"
             },
@@ -13052,7 +10346,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Visibility",
               description: "Visibility"
             },
@@ -13073,7 +10366,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Is Contact Auto Creation Enabled",
               description: "Is Contact Auto Creation Enabled"
             },
@@ -13123,7 +10415,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Contact auto creation policy",
               description: "Automatically create records for people you participated with in an event."
             },
@@ -13144,7 +10435,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Is Sync Enabled",
               description: "Is Sync Enabled"
             },
@@ -13165,7 +10455,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sync Cursor",
               description: "Sync Cursor. Used for syncing events from the calendar provider"
             },
@@ -13186,7 +10475,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last sync date",
               description: "Last sync date"
             },
@@ -13207,7 +10495,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sync stage started at",
               description: "Sync stage started at"
             },
@@ -13228,7 +10515,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Throttle Failure Count",
               description: "Throttle Failure Count"
             },
@@ -13249,7 +10535,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -13272,7 +10557,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -13295,7 +10579,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -13318,7 +10601,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -13339,7 +10621,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Connected Account id (foreign key)",
               description: "Connected Account id foreign key"
             },
@@ -13362,33 +10643,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Connected Account",
               description: "Connected Account",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "2f7c0663-cee2-4b82-b5fc-94c99ef20299",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "5b44308a-da32-447e-b210-bf52f1230689",
-                  nameSingular: "calendarChannel",
-                  namePlural: "calendarChannels"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "93fc5679-12be-4449-be39-437b82da4abb",
-                  name: "connectedAccount"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "cd2e1f83-3e54-48b5-83bd-ff4338add50d",
-                  nameSingular: "connectedAccount",
-                  namePlural: "connectedAccounts"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "67dcf871-9baa-460a-b40a-85d137bd02f6",
-                  name: "calendarChannels"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -13409,33 +10663,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Calendar Channel Event Associations",
               description: "Calendar Channel Event Associations",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "c19cd272-8d34-40ea-a369-d6bd63bad394",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "5b44308a-da32-447e-b210-bf52f1230689",
-                  nameSingular: "calendarChannel",
-                  namePlural: "calendarChannels"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "fe5e6a90-6cd8-4eaf-9c42-7316c01c5c73",
-                  name: "calendarChannelEventAssociations"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "aef9c77c-0623-4d60-adb6-1aaa3e07538f",
-                  nameSingular: "calendarChannelEventAssociation",
-                  namePlural: "calendarChannelEventAssociations"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "30a2da43-02a3-4648-851f-65d4ad841515",
-                  name: "calendarChannel"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -13515,7 +10742,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "The opportunity name"
             },
@@ -13539,7 +10765,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Amount",
               description: "Opportunity amount"
             },
@@ -13560,7 +10785,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Close date",
               description: "Opportunity close date"
             },
@@ -13617,7 +10841,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Stage",
               description: "Opportunity stage"
             },
@@ -13638,7 +10861,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Opportunity record position"
             },
@@ -13663,7 +10885,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Created by",
               description: "The creator of the record"
             },
@@ -13684,7 +10905,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Search vector",
               description: "Field used for full-text search"
             },
@@ -13705,7 +10925,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -13728,7 +10947,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -13751,7 +10969,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -13774,7 +10991,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -13795,7 +11011,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Point of Contact id (foreign key)",
               description: "Opportunity point of contact id foreign key"
             },
@@ -13818,33 +11033,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Point of Contact",
               description: "Opportunity point of contact",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "606d9f3e-6ee5-422b-89e2-3fd0b236143a",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "4afa7501-4bd9-4ec7-bd07-ce6f69ad0d98",
-                  nameSingular: "opportunity",
-                  namePlural: "opportunities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "367f57bd-0340-4245-aca4-6127737926d8",
-                  name: "pointOfContact"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "90e607fb-1903-4b29-bcfc-f59bc729730d",
-                  name: "pointOfContactForOpportunities"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -13863,7 +11051,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Company id (foreign key)",
               description: "Opportunity company id foreign key"
             },
@@ -13886,33 +11073,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Company",
               description: "Opportunity company",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "3b094cbc-081f-494b-96b3-04d54ba444eb",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "4afa7501-4bd9-4ec7-bd07-ce6f69ad0d98",
-                  nameSingular: "opportunity",
-                  namePlural: "opportunities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "f5459822-2e2e-4d4e-be6b-d2499a5c913f",
-                  name: "company"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "d6742106-e3ac-4e28-95ad-0ae1f9f2c202",
-                  nameSingular: "company",
-                  namePlural: "companies"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "35805f7e-a952-4380-a2ba-00819b01e283",
-                  name: "opportunities"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -13933,33 +11093,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Favorites",
               description: "Favorites linked to the opportunity",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "9581c75b-3a72-497f-a007-490e040b1762",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "4afa7501-4bd9-4ec7-bd07-ce6f69ad0d98",
-                  nameSingular: "opportunity",
-                  namePlural: "opportunities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "897c675f-511b-47b5-a86b-21a9ebf28403",
-                  name: "favorites"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "56d7cf1f-1d98-42d3-a89b-e35310615f69",
-                  name: "opportunity"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -13980,33 +11113,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Tasks",
               description: "Tasks tied to the opportunity",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "b49784f1-76fc-4c0d-b16c-7af02c54e0ed",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "4afa7501-4bd9-4ec7-bd07-ce6f69ad0d98",
-                  nameSingular: "opportunity",
-                  namePlural: "opportunities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "9aa21b35-52eb-4ad9-a29d-6b92450f8d81",
-                  name: "taskTargets"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "6b82ae18-f0ee-4d8a-bf82-b7b1344b6109",
-                  nameSingular: "taskTarget",
-                  namePlural: "taskTargets"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "695c6f99-bc49-4cc7-895d-71a2172a0da8",
-                  name: "opportunity"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -14027,33 +11133,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Notes",
               description: "Notes tied to the opportunity",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "85aefb41-952c-4b00-960d-b435da7ca073",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "4afa7501-4bd9-4ec7-bd07-ce6f69ad0d98",
-                  nameSingular: "opportunity",
-                  namePlural: "opportunities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "74c12c73-15b2-425c-ac93-2f877d2cfde5",
-                  name: "noteTargets"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "e17eb8fc-5ba9-4479-9c76-f731f8584a9a",
-                  nameSingular: "noteTarget",
-                  namePlural: "noteTargets"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "875de814-cf1d-4b7e-8038-f179c051ac0e",
-                  name: "opportunity"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -14074,33 +11153,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Attachments",
               description: "Attachments linked to the opportunity",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "b1a221bc-9192-4ba6-ad06-2bfdf8e173f3",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "4afa7501-4bd9-4ec7-bd07-ce6f69ad0d98",
-                  nameSingular: "opportunity",
-                  namePlural: "opportunities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "946569ff-dbe3-4635-a38b-5e744d88e359",
-                  name: "attachments"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "b488fc13-032b-434c-acc9-a1b1cd9ad0d1",
-                  nameSingular: "attachment",
-                  namePlural: "attachments"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "80955397-e206-49d8-a745-00ddc96ca76e",
-                  name: "opportunity"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -14121,33 +11173,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Timeline Activities",
               description: "Timeline Activities linked to the opportunity.",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "81aef33e-7929-4186-a036-e7c779df6815",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "4afa7501-4bd9-4ec7-bd07-ce6f69ad0d98",
-                  nameSingular: "opportunity",
-                  namePlural: "opportunities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "6331acfe-ae59-4de2-aad3-3ce9aaa31b6e",
-                  name: "timelineActivities"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "36012ebb-9c32-46b8-89c9-6d38264cb0b8",
-                  name: "opportunity"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -14327,33 +11352,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Attachments",
               description: "Attachments linked to the contact.",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "6a823e89-a5b7-4ec4-ae6e-9f3358af3c6b",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "e7394f4c-bf15-4205-b92e-c2be1bce1052",
-                  name: "attachments"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "b488fc13-032b-434c-acc9-a1b1cd9ad0d1",
-                  nameSingular: "attachment",
-                  namePlural: "attachments"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "2f528146-253c-4080-9755-a09b1a7b4bb6",
-                  name: "person"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -14375,7 +11373,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "Contact’s name"
             },
@@ -14399,7 +11396,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Emails",
               description: "Contact’s Emails"
             },
@@ -14424,7 +11420,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Linkedin",
               description: "Contact’s Linkedin account"
             },
@@ -14449,7 +11444,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "X",
               description: "Contact’s X/Twitter account"
             },
@@ -14470,7 +11464,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Job Title",
               description: "Contact’s job title"
             },
@@ -14496,7 +11489,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Phones",
               description: "Contact’s phone numbers"
             },
@@ -14517,7 +11509,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "City",
               description: "Contact’s city"
             },
@@ -14538,7 +11529,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Avatar",
               description: "Contact’s avatar"
             },
@@ -14559,7 +11549,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Person record Position"
             },
@@ -14584,7 +11573,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Created by",
               description: "The creator of the record"
             },
@@ -14605,7 +11593,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Search vector",
               description: "Field used for full-text search"
             },
@@ -14626,7 +11613,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -14649,7 +11635,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -14672,7 +11657,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -14695,7 +11679,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -14716,7 +11699,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Company id (foreign key)",
               description: "Contact’s company id foreign key"
             },
@@ -14739,33 +11721,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Company",
               description: "Contact’s company",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "139d9ea0-1e53-4fa7-bd92-222eff4c04b3",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "059cf3a7-47bb-4aef-ada1-3247d1c322c9",
-                  name: "company"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "d6742106-e3ac-4e28-95ad-0ae1f9f2c202",
-                  nameSingular: "company",
-                  namePlural: "companies"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "b78b28ae-adf1-4a1f-a984-4f6ab30504fa",
-                  name: "people"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -14786,33 +11741,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Linked Opportunities",
               description: "List of opportunities for which that person is the point of contact",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "606d9f3e-6ee5-422b-89e2-3fd0b236143a",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "90e607fb-1903-4b29-bcfc-f59bc729730d",
-                  name: "pointOfContactForOpportunities"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "4afa7501-4bd9-4ec7-bd07-ce6f69ad0d98",
-                  nameSingular: "opportunity",
-                  namePlural: "opportunities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "367f57bd-0340-4245-aca4-6127737926d8",
-                  name: "pointOfContact"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -14833,33 +11761,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Tasks",
               description: "Tasks tied to the contact",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "078dea5e-16b9-4896-83b1-919d58a7ec09",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "d6a47616-3bc2-44de-86e9-68344f82933c",
-                  name: "taskTargets"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "6b82ae18-f0ee-4d8a-bf82-b7b1344b6109",
-                  nameSingular: "taskTarget",
-                  namePlural: "taskTargets"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "d564534f-f3ce-40d7-9ab4-560c6758d45e",
-                  name: "person"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -14880,33 +11781,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Notes",
               description: "Notes tied to the contact",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "4beca7eb-f154-4a91-930b-91433dfa3d3a",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "bcd93e0f-5451-45a5-b9e2-bc4c8a4a0b8d",
-                  name: "noteTargets"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "e17eb8fc-5ba9-4479-9c76-f731f8584a9a",
-                  nameSingular: "noteTarget",
-                  namePlural: "noteTargets"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "5401a0b6-64af-4736-b19f-ca03bcf9c955",
-                  name: "person"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -14927,33 +11801,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Favorites",
               description: "Favorites linked to the contact",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "4fff0ed3-ec08-4b53-86bf-2bc3bad9fde3",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "7d26908d-2099-40fe-b83e-64414ceb5b6a",
-                  name: "favorites"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "b62541e3-04a0-4569-907d-1eeaf498d296",
-                  name: "person"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -14974,33 +11821,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Message Participants",
               description: "Message Participants",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "a322173d-9c7d-4780-bf93-9960189fd715",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "c11f28b1-68ee-4b28-b56d-194420bc8d1c",
-                  name: "messageParticipants"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "36411ed2-cbfe-44d4-bab6-52148d4d4485",
-                  nameSingular: "messageParticipant",
-                  namePlural: "messageParticipants"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "c4a59428-9163-4470-b1a8-26ca4a109b3f",
-                  name: "person"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -15021,33 +11841,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Calendar Event Participants",
               description: "Calendar Event Participants",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "a2f54abe-3d86-4161-97ca-374207b6a502",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "067f0ade-20c7-473c-93a9-bcbf08477ef0",
-                  name: "calendarEventParticipants"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "dd054a83-dfee-4231-bbe0-ad690f189196",
-                  nameSingular: "calendarEventParticipant",
-                  namePlural: "calendarEventParticipants"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "b4d42e71-defb-4547-b82a-7a1b308d7af6",
-                  name: "person"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -15068,33 +11861,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Events",
               description: "Events linked to the person",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "3be06bb4-2b05-405e-9f4e-1798bdef7f81",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "423a8e73-c293-45aa-b83f-be5b26a110e1",
-                  name: "timelineActivities"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "7c3a24c5-f678-4150-b0ef-c90c08a31252",
-                  name: "person"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -15113,7 +11879,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Intro",
               description: "Contact's Intro"
             },
@@ -15139,7 +11904,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Whatsapp",
               description: "Contact's Whatsapp Number"
             },
@@ -15182,7 +11946,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Work Preference",
               description: "Person's Work Preference"
             },
@@ -15234,7 +11997,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Performance Rating",
               description: "Person's Performance Rating"
             }
@@ -15373,7 +12135,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -15394,7 +12155,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Event name",
               description: "Event name"
             },
@@ -15415,7 +12175,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Event details",
               description: "Json value for event details"
             },
@@ -15436,7 +12195,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Linked Record cached name",
               description: "Cached record name"
             },
@@ -15457,7 +12215,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Linked Record id",
               description: "Linked Record id"
             },
@@ -15478,7 +12235,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Linked Object Metadata Id",
               description: "Linked Object Metadata Id"
             },
@@ -15499,7 +12255,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -15522,7 +12277,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -15545,7 +12299,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -15568,7 +12321,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -15589,7 +12341,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workspace Member id (foreign key)",
               description: "Event workspace member id foreign key"
             },
@@ -15612,33 +12363,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Workspace Member",
               description: "Event workspace member",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "904b7480-638d-4cc2-accc-911e342fc66b",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "eff8454d-8225-4237-bdc2-22e0117719db",
-                  name: "workspaceMember"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "deddc049-d741-4f44-a8fb-55c36634b673",
-                  name: "timelineActivities"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -15657,7 +12381,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Person id (foreign key)",
               description: "Event person id foreign key"
             },
@@ -15680,33 +12403,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Person",
               description: "Event person",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "3be06bb4-2b05-405e-9f4e-1798bdef7f81",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "7c3a24c5-f678-4150-b0ef-c90c08a31252",
-                  name: "person"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "423a8e73-c293-45aa-b83f-be5b26a110e1",
-                  name: "timelineActivities"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -15725,7 +12421,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Company id (foreign key)",
               description: "Event company id foreign key"
             },
@@ -15748,33 +12443,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Company",
               description: "Event company",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "6552eced-5240-43d2-8e74-c0f4955f92b0",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "e1f28827-ab56-483a-af41-e696fcf65b02",
-                  name: "company"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "d6742106-e3ac-4e28-95ad-0ae1f9f2c202",
-                  nameSingular: "company",
-                  namePlural: "companies"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "bd5614ba-baf1-4929-96f8-9893225809bc",
-                  name: "timelineActivities"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -15793,7 +12461,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Opportunity id (foreign key)",
               description: "Event opportunity id foreign key"
             },
@@ -15816,33 +12483,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Opportunity",
               description: "Event opportunity",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "81aef33e-7929-4186-a036-e7c779df6815",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "36012ebb-9c32-46b8-89c9-6d38264cb0b8",
-                  name: "opportunity"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "4afa7501-4bd9-4ec7-bd07-ce6f69ad0d98",
-                  nameSingular: "opportunity",
-                  namePlural: "opportunities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "6331acfe-ae59-4de2-aad3-3ce9aaa31b6e",
-                  name: "timelineActivities"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -15861,7 +12501,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Note id (foreign key)",
               description: "Event note id foreign key"
             },
@@ -15884,33 +12523,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Note",
               description: "Event note",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "9457ea57-a118-4b96-96a4-a8f83612025d",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "e2fd43a9-dc31-4392-8dbf-90b8ad211c3d",
-                  name: "note"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "cf1e3f15-1ce2-444b-9507-69eb7dc40972",
-                  nameSingular: "note",
-                  namePlural: "notes"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "2791c2d9-6189-4240-9a9a-d9489faa764e",
-                  name: "timelineActivities"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -15929,7 +12541,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Task id (foreign key)",
               description: "Event task id foreign key"
             },
@@ -15952,33 +12563,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Task",
               description: "Event task",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "282f54c2-a8ee-498b-a740-28acc55ab8f3",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "6741f8e9-5189-492f-91bd-2956c5902ec8",
-                  name: "task"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "18ff5583-7593-422c-abea-ced0195e281d",
-                  nameSingular: "task",
-                  namePlural: "tasks"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "790b0fb4-291f-49ff-a180-1af3e36dbe78",
-                  name: "timelineActivities"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -15997,7 +12581,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow id (foreign key)",
               description: "Event workflow id foreign key"
             },
@@ -16020,33 +12603,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Workflow",
               description: "Event workflow",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "b358c621-6e8f-41f9-983a-b9f720168122",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "fa45ab2b-e079-408f-b927-475f9810ed00",
-                  name: "workflow"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "18d91fb4-c535-425e-8ff7-fb68394dfbf5",
-                  nameSingular: "workflow",
-                  namePlural: "workflows"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "a7185d4f-43d6-448f-a5a6-58b38df6bab1",
-                  name: "timelineActivities"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -16065,7 +12621,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "WorkflowVersion id (foreign key)",
               description: "Event workflow version id foreign key"
             },
@@ -16088,33 +12643,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "WorkflowVersion",
               description: "Event workflow version",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "db389c46-c137-406a-8525-bf5229d25be1",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "e1d95b52-550a-465b-8e43-324bf25c6958",
-                  name: "workflowVersion"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "b38a7efd-b472-4b8e-8988-2b3fab3fe67f",
-                  nameSingular: "workflowVersion",
-                  namePlural: "workflowVersions"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "2f0d7a15-4962-4d8e-a30b-c70f0b5e23b7",
-                  name: "timelineActivities"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -16133,7 +12661,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow Run id (foreign key)",
               description: "Event workflow run id foreign key"
             },
@@ -16156,33 +12683,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Workflow Run",
               description: "Event workflow run",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "6b5f5e98-4000-4785-91b5-b4c33bdf105d",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "01621d3a-5e97-4af9-ab78-a0461f32d322",
-                  name: "workflowRun"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "16c29a47-a565-4f4b-90c4-f1b52a32f234",
-                  nameSingular: "workflowRun",
-                  namePlural: "workflowRuns"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "d0c44ebf-b37f-4545-9dac-90a79ea2516e",
-                  name: "timelineActivities"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -16203,33 +12703,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Pet",
               description: "TimelineActivities Pet",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "329282e6-5d9c-4743-b451-f175deae0d5b",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "f193caab-9c35-460f-89f1-f506ae7f727f",
-                  name: "pet"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "055c2349-c786-4389-b09d-09c89fc131bc",
-                  nameSingular: "pet",
-                  namePlural: "pets"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "878ab1b9-1ba2-47ad-9ec6-13552ff9750d",
-                  name: "timelineActivities"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -16250,7 +12723,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Pet ID (foreign key)",
               description: "Timeline Activity Pet id foreign key"
             },
@@ -16273,33 +12745,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Survey result",
               description: "TimelineActivities Survey result",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "192bd4e5-80a4-4314-9469-2be0c3b1d833",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "a13d4265-dfb7-4539-8ece-58516fc71bdf",
-                  name: "surveyResult"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "3433f66e-e32c-4b99-b48b-38e6d23501cc",
-                  nameSingular: "surveyResult",
-                  namePlural: "surveyResults"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "62b29e8c-8274-48ed-a773-2a6f2c0c73d4",
-                  name: "timelineActivities"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -16320,7 +12765,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Survey result ID (foreign key)",
               description: "Timeline Activity Survey result id foreign key"
             }
@@ -16707,7 +13151,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Role",
               description: "Role"
             },
@@ -16728,7 +13171,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Handle",
               description: "Handle"
             },
@@ -16749,7 +13191,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Display Name",
               description: "Display Name"
             },
@@ -16770,7 +13211,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -16793,7 +13233,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -16816,7 +13255,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -16839,7 +13277,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -16860,7 +13297,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Message id (foreign key)",
               description: "Message id foreign key"
             },
@@ -16883,33 +13319,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Message",
               description: "Message",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "edd3a04a-b6f9-4b3f-9173-5e0b4a01c6fd",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "36411ed2-cbfe-44d4-bab6-52148d4d4485",
-                  nameSingular: "messageParticipant",
-                  namePlural: "messageParticipants"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "f94e6131-4976-405a-b570-0d9195624049",
-                  name: "message"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "c1eec93b-e57f-4ae5-b51c-d0c33d6a4c02",
-                  nameSingular: "message",
-                  namePlural: "messages"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "79a59047-dd05-4e8d-abb3-c9fda7bb1222",
-                  name: "messageParticipants"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -16928,7 +13337,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Person id (foreign key)",
               description: "Person id foreign key"
             },
@@ -16951,33 +13359,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Person",
               description: "Person",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "a322173d-9c7d-4780-bf93-9960189fd715",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "36411ed2-cbfe-44d4-bab6-52148d4d4485",
-                  nameSingular: "messageParticipant",
-                  namePlural: "messageParticipants"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "c4a59428-9163-4470-b1a8-26ca4a109b3f",
-                  name: "person"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "49029f5c-50d8-41e7-b58c-4584ee54763f",
-                  nameSingular: "person",
-                  namePlural: "people"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "c11f28b1-68ee-4b28-b56d-194420bc8d1c",
-                  name: "messageParticipants"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -16996,7 +13377,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workspace Member id (foreign key)",
               description: "Workspace member id foreign key"
             },
@@ -17019,33 +13399,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Workspace Member",
               description: "Workspace member",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "032354ca-4473-4e89-8b6d-0b47c02b0638",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "36411ed2-cbfe-44d4-bab6-52148d4d4485",
-                  nameSingular: "messageParticipant",
-                  namePlural: "messageParticipants"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "e9336814-40bf-49d2-9c7e-dae6af9d077b",
-                  name: "workspaceMember"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "ac0efdd1-178e-47c1-a2f4-2add422b5718",
-                  name: "messageParticipants"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -17207,33 +13560,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Favorites",
               description: "Favorites tied to the Survey result",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "232846d1-ca1e-41a4-97a3-fdf6431aa572",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "3433f66e-e32c-4b99-b48b-38e6d23501cc",
-                  nameSingular: "surveyResult",
-                  namePlural: "surveyResults"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "b5f3ac59-dc01-4f51-a9b8-d921adecb78d",
-                  name: "favorites"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "c081018d-9287-4bce-9b14-75b47b6ef6a4",
-                  name: "surveyResult"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -17254,33 +13580,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "NoteTargets",
               description: "NoteTargets tied to the Survey result",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "5ec3cb38-9988-4c02-8652-3d3da682a342",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "3433f66e-e32c-4b99-b48b-38e6d23501cc",
-                  nameSingular: "surveyResult",
-                  namePlural: "surveyResults"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "ff3bb487-ad47-469e-a1ac-c483bca36b79",
-                  name: "noteTargets"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "e17eb8fc-5ba9-4479-9c76-f731f8584a9a",
-                  nameSingular: "noteTarget",
-                  namePlural: "noteTargets"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "ba3ef494-ed06-406e-8fba-adef99807abb",
-                  name: "surveyResult"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -17299,7 +13598,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Search vector",
               description: "Field used for full-text search"
             },
@@ -17324,7 +13622,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 decimals: 3
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Score (Float 3 decimals)",
               description: ""
             },
@@ -17349,7 +13646,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 decimals: 6
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Percentage of completion (Float 3 decimals + percentage)",
               description: ""
             },
@@ -17373,7 +13669,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 dataType: "int"
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Participants (Int)",
               description: ""
             },
@@ -17397,7 +13692,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 dataType: "bigint"
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Average estimated number of atoms in the universe (BigInt)",
               description: ""
             },
@@ -17420,7 +13714,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayedMaxRows: 5
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Comments (Max 5 rows)",
               description: ""
             },
@@ -17443,7 +13736,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayedMaxRows: 1
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Short notes (Max 1 row)",
               description: ""
             },
@@ -17464,7 +13756,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -17485,7 +13776,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "Name"
             },
@@ -17506,7 +13796,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -17527,7 +13816,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -17548,7 +13836,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Deletion date"
             },
@@ -17572,7 +13859,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Created by",
               description: "The creator of the record"
             },
@@ -17593,7 +13879,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Position"
             },
@@ -17616,33 +13901,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Attachments",
               description: "Attachments tied to the Survey result",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "f8718732-b97f-478e-b748-f6854ca59f8a",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "3433f66e-e32c-4b99-b48b-38e6d23501cc",
-                  nameSingular: "surveyResult",
-                  namePlural: "surveyResults"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "5082fea5-d4a1-4ff2-adfc-9f2ed99d958a",
-                  name: "attachments"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "b488fc13-032b-434c-acc9-a1b1cd9ad0d1",
-                  nameSingular: "attachment",
-                  namePlural: "attachments"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "33f6f21c-70fb-4952-a81b-7a9a0652e273",
-                  name: "surveyResult"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -17663,33 +13921,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "TaskTargets",
               description: "TaskTargets tied to the Survey result",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "748f0c32-6bc4-4bef-9b07-c722989613d7",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "3433f66e-e32c-4b99-b48b-38e6d23501cc",
-                  nameSingular: "surveyResult",
-                  namePlural: "surveyResults"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "86bbe7f3-8480-4c5c-9eed-3168a563176c",
-                  name: "taskTargets"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "6b82ae18-f0ee-4d8a-bf82-b7b1344b6109",
-                  nameSingular: "taskTarget",
-                  namePlural: "taskTargets"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "c0103f7e-0357-40d6-8c08-7aa1b0716f4a",
-                  name: "surveyResult"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -17710,33 +13941,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "TimelineActivities",
               description: "TimelineActivities tied to the Survey result",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "192bd4e5-80a4-4314-9469-2be0c3b1d833",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "3433f66e-e32c-4b99-b48b-38e6d23501cc",
-                  nameSingular: "surveyResult",
-                  namePlural: "surveyResults"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "62b29e8c-8274-48ed-a773-2a6f2c0c73d4",
-                  name: "timelineActivities"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "a13d4265-dfb7-4539-8ece-58516fc71bdf",
-                  name: "surveyResult"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -17816,7 +14020,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -17837,7 +14040,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "ApiKey name"
             },
@@ -17858,7 +14060,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Expiration date",
               description: "ApiKey expiration date"
             },
@@ -17879,7 +14080,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Revocation date",
               description: "ApiKey revocation date"
             },
@@ -17902,7 +14102,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -17925,7 +14124,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -17948,7 +14146,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             }
@@ -18000,7 +14197,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Field Metadata Id",
               description: "View Field target field"
             },
@@ -18021,7 +14217,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Visible",
               description: "View Field visibility"
             },
@@ -18042,7 +14237,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Size",
               description: "View Field size"
             },
@@ -18063,7 +14257,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "View Field position"
             },
@@ -18155,7 +14348,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Aggregate operation",
               description: "Optional aggregate operation"
             },
@@ -18176,7 +14368,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -18199,7 +14390,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -18222,7 +14412,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -18245,7 +14434,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -18266,7 +14454,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "View id (foreign key)",
               description: "View Field related view id foreign key"
             },
@@ -18289,33 +14476,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "View",
               description: "View Field related view",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "c610eb39-51f8-4448-a267-5ddd335da103",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "1cfe488b-b2fa-4217-849e-41ed3b1ea2cd",
-                  nameSingular: "viewField",
-                  namePlural: "viewFields"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "c47887a9-10a3-42ad-a48f-42c465e835e0",
-                  name: "view"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "ded05363-70e6-4a88-95f3-ce04bb547dd2",
-                  nameSingular: "view",
-                  namePlural: "views"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "e083f601-68ca-4596-8f13-c309ec841f57",
-                  name: "viewFields"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -18412,7 +14572,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Task record position"
             },
@@ -18433,7 +14592,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Title",
               description: "Task title"
             },
@@ -18454,7 +14612,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Body",
               description: "Task body"
             },
@@ -18475,7 +14632,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Due Date",
               description: "Task due date"
             },
@@ -18518,7 +14674,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Status",
               description: "Task status"
             },
@@ -18543,7 +14698,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Created by",
               description: "The creator of the record"
             },
@@ -18564,7 +14718,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Search vector",
               description: "Field used for full-text search"
             },
@@ -18585,7 +14738,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -18608,7 +14760,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -18631,7 +14782,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -18654,7 +14804,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -18677,33 +14826,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Relations",
               description: "Task targets",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "1b6e98ac-770b-4d19-9f6e-78fe733b7d20",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "18ff5583-7593-422c-abea-ced0195e281d",
-                  nameSingular: "task",
-                  namePlural: "tasks"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "d616da2f-7e9c-46f1-b6cc-7bbb0cf52b99",
-                  name: "taskTargets"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "6b82ae18-f0ee-4d8a-bf82-b7b1344b6109",
-                  nameSingular: "taskTarget",
-                  namePlural: "taskTargets"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "e43067bc-42c6-4f02-8ffe-3773144180cc",
-                  name: "task"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -18724,33 +14846,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Attachments",
               description: "Task attachments",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "2b5943b4-d59b-4956-90c6-ffab27f7f8da",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "18ff5583-7593-422c-abea-ced0195e281d",
-                  nameSingular: "task",
-                  namePlural: "tasks"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "4e4e4d47-485a-48ac-9a4f-6fa085fbb527",
-                  name: "attachments"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "b488fc13-032b-434c-acc9-a1b1cd9ad0d1",
-                  nameSingular: "attachment",
-                  namePlural: "attachments"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "4299edc2-6b91-4886-aeb7-5a1d0de8d689",
-                  name: "task"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -18769,7 +14864,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Assignee id (foreign key)",
               description: "Task assignee id foreign key"
             },
@@ -18792,33 +14886,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Assignee",
               description: "Task assignee",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "1ed21ca9-1005-4781-b70b-24ac933ad7d1",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "18ff5583-7593-422c-abea-ced0195e281d",
-                  nameSingular: "task",
-                  namePlural: "tasks"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "dcd46f0a-f631-43df-a474-ae72ce2b17dd",
-                  name: "assignee"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "c841d49e-6664-4008-80bc-905c5540671e",
-                  nameSingular: "workspaceMember",
-                  namePlural: "workspaceMembers"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "7e5ed44b-6404-4aca-8af7-047ea149e7f0",
-                  name: "assignedTasks"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -18839,33 +14906,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Timeline Activities",
               description: "Timeline Activities linked to the task.",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "282f54c2-a8ee-498b-a740-28acc55ab8f3",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "18ff5583-7593-422c-abea-ced0195e281d",
-                  nameSingular: "task",
-                  namePlural: "tasks"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "790b0fb4-291f-49ff-a180-1af3e36dbe78",
-                  name: "timelineActivities"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "6741f8e9-5189-492f-91bd-2956c5902ec8",
-                  name: "task"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -18886,33 +14926,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Favorites",
               description: "Favorites linked to the task",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "ce24ceea-a777-4728-9a39-22595aed4142",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "18ff5583-7593-422c-abea-ced0195e281d",
-                  nameSingular: "task",
-                  namePlural: "tasks"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "84949de2-f936-4623-9764-5ce4ed1274db",
-                  name: "favorites"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "d784ae0c-6262-43d7-9c26-da96b3e0d12f",
-                  name: "task"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -19036,7 +15049,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "The workflow name"
             },
@@ -19057,7 +15069,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last published Version Id",
               description: "The workflow last published version id"
             },
@@ -19097,7 +15108,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Statuses",
               description: "The current statuses of the workflow versions"
             },
@@ -19118,7 +15128,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Workflow record position"
             },
@@ -19143,7 +15152,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Created by",
               description: "The creator of the record"
             },
@@ -19164,7 +15172,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -19187,7 +15194,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -19210,7 +15216,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -19233,7 +15238,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -19256,33 +15260,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Versions",
               description: "Workflow versions linked to the workflow.",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "3444601d-b206-4ce6-9678-8dd284bc5b57",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "18d91fb4-c535-425e-8ff7-fb68394dfbf5",
-                  nameSingular: "workflow",
-                  namePlural: "workflows"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "a3509a8d-887a-4dc2-a90a-901e6815ba6c",
-                  name: "versions"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "b38a7efd-b472-4b8e-8988-2b3fab3fe67f",
-                  nameSingular: "workflowVersion",
-                  namePlural: "workflowVersions"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "b0ce1277-33e5-4375-884f-d0ec4d13aeb4",
-                  name: "workflow"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -19303,33 +15280,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Runs",
               description: "Workflow runs linked to the workflow.",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "626eb97d-542a-4fda-8e13-269aaeeb284d",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "18d91fb4-c535-425e-8ff7-fb68394dfbf5",
-                  nameSingular: "workflow",
-                  namePlural: "workflows"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "c9ca0736-33bb-4b97-aad6-514c6adda4c5",
-                  name: "runs"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "16c29a47-a565-4f4b-90c4-f1b52a32f234",
-                  nameSingular: "workflowRun",
-                  namePlural: "workflowRuns"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "c963cfd5-96a9-4aae-96f9-146e0887cc75",
-                  name: "workflow"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -19350,33 +15300,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Event Listeners",
               description: "Workflow event listeners linked to the workflow.",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "eda58ebf-dc0b-4481-b9a6-dafc80afdceb",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "18d91fb4-c535-425e-8ff7-fb68394dfbf5",
-                  nameSingular: "workflow",
-                  namePlural: "workflows"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "a2162b17-505f-4a9d-bf93-cbc06242a14c",
-                  name: "eventListeners"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "8a943c8f-aceb-48a6-ac07-a0dca6712059",
-                  nameSingular: "workflowEventListener",
-                  namePlural: "workflowEventListeners"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "e43ec871-59cb-40ec-9384-53c4fd2bc5fb",
-                  name: "workflow"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -19397,33 +15320,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Favorites",
               description: "Favorites linked to the workflow",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "81d32c05-6ca9-494f-a509-195868f7a492",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "18d91fb4-c535-425e-8ff7-fb68394dfbf5",
-                  nameSingular: "workflow",
-                  namePlural: "workflows"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "8a0f832b-bf17-4d66-8a44-e835c4d2030b",
-                  name: "favorites"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "a0e396c3-a8cd-4934-82bc-7443862b4760",
-                  name: "workflow"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -19444,33 +15340,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Timeline Activities",
               description: "Timeline activities linked to the workflow",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "b358c621-6e8f-41f9-983a-b9f720168122",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "18d91fb4-c535-425e-8ff7-fb68394dfbf5",
-                  nameSingular: "workflow",
-                  namePlural: "workflows"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "a7185d4f-43d6-448f-a5a6-58b38df6bab1",
-                  name: "timelineActivities"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "fa45ab2b-e079-408f-b927-475f9810ed00",
-                  name: "workflow"
-                }
-              }
             }
           ]
         }
@@ -19516,7 +15385,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "Name of the workflow run"
             },
@@ -19537,7 +15405,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow run started at",
               description: "Workflow run started at"
             },
@@ -19558,7 +15425,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow run ended at",
               description: "Workflow run ended at"
             },
@@ -19608,7 +15474,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow run status",
               description: "Workflow run status"
             },
@@ -19633,7 +15498,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Executed by",
               description: "The executor of the workflow"
             },
@@ -19654,7 +15518,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Output",
               description: "Json object to provide output of the workflow run"
             },
@@ -19675,7 +15538,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Context",
               description: "Context"
             },
@@ -19696,7 +15558,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Workflow run position"
             },
@@ -19717,7 +15578,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -19740,7 +15600,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -19763,7 +15622,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -19786,7 +15644,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -19807,7 +15664,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow version id (foreign key)",
               description: "Workflow version linked to the run. id foreign key"
             },
@@ -19830,33 +15686,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Workflow version",
               description: "Workflow version linked to the run.",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "2d165a9b-3699-45fa-98cc-b9af92af5c51",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "16c29a47-a565-4f4b-90c4-f1b52a32f234",
-                  nameSingular: "workflowRun",
-                  namePlural: "workflowRuns"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "dc394218-f576-42aa-8727-c4182de7f4a0",
-                  name: "workflowVersion"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "b38a7efd-b472-4b8e-8988-2b3fab3fe67f",
-                  nameSingular: "workflowVersion",
-                  namePlural: "workflowVersions"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "4a89f0cb-39b3-4532-94e7-b23bc35ef64f",
-                  name: "runs"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -19875,7 +15704,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow id (foreign key)",
               description: "Workflow linked to the run. id foreign key"
             },
@@ -19898,33 +15726,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Workflow",
               description: "Workflow linked to the run.",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "626eb97d-542a-4fda-8e13-269aaeeb284d",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "16c29a47-a565-4f4b-90c4-f1b52a32f234",
-                  nameSingular: "workflowRun",
-                  namePlural: "workflowRuns"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "c963cfd5-96a9-4aae-96f9-146e0887cc75",
-                  name: "workflow"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "18d91fb4-c535-425e-8ff7-fb68394dfbf5",
-                  nameSingular: "workflow",
-                  namePlural: "workflows"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "c9ca0736-33bb-4b97-aad6-514c6adda4c5",
-                  name: "runs"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -19945,33 +15746,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Favorites",
               description: "Favorites linked to the workflow run",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "7bca5b31-61c6-4247-86cf-3eea0761f52d",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "16c29a47-a565-4f4b-90c4-f1b52a32f234",
-                  nameSingular: "workflowRun",
-                  namePlural: "workflowRuns"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "d0c9aa4a-6e28-4dc6-9892-a121d8f1d025",
-                  name: "favorites"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "8d10d3da-66df-4cec-b165-1a83b80bb2f5",
-                  name: "workflowRun"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -19992,33 +15766,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Timeline Activities",
               description: "Timeline activities linked to the run",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "6b5f5e98-4000-4785-91b5-b4c33bdf105d",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "16c29a47-a565-4f4b-90c4-f1b52a32f234",
-                  nameSingular: "workflowRun",
-                  namePlural: "workflowRuns"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "d0c44ebf-b37f-4545-9dac-90a79ea2516e",
-                  name: "timelineActivities"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "01621d3a-5e97-4af9-ab78-a0461f32d322",
-                  name: "workflowRun"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -20126,7 +15873,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Field Metadata Id",
               description: "View Sort target field"
             },
@@ -20147,7 +15893,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Direction",
               description: "View Sort direction"
             },
@@ -20168,7 +15913,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -20191,7 +15935,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -20214,7 +15957,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -20237,7 +15979,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -20258,7 +15999,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "View id (foreign key)",
               description: "View Sort related view id foreign key"
             },
@@ -20281,33 +16021,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "View",
               description: "View Sort related view",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "671ed16b-1aa8-4413-9594-5430537ed562",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "075939c1-63ef-4dfa-8d13-31ce81049259",
-                  nameSingular: "viewSort",
-                  namePlural: "viewSorts"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "aa369f3e-a729-4999-aeac-4fda1101752b",
-                  name: "view"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "ded05363-70e6-4a88-95f3-ce04bb547dd2",
-                  nameSingular: "view",
-                  namePlural: "views"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "bc512167-35d3-42c9-a2e7-1ee07b2f2013",
-                  name: "viewSorts"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -20417,33 +16130,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Favorites",
               description: "Favorites tied to the Pet",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "08f93709-2e7e-4878-9a5e-e4f1e67b0a3b",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "055c2349-c786-4389-b09d-09c89fc131bc",
-                  nameSingular: "pet",
-                  namePlural: "pets"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "5a595ace-7c91-4740-ab7c-e2b1b66d489e",
-                  name: "favorites"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "96fd8b82-09c4-4caf-90bf-694904feb19e",
-                  nameSingular: "favorite",
-                  namePlural: "favorites"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "db1a3dd5-0f72-4c6b-a8e3-91956ba6421e",
-                  name: "pet"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -20464,33 +16150,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "TaskTargets",
               description: "TaskTargets tied to the Pet",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "8e47bced-f608-4dc7-90a2-7ae7a7cf869c",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "055c2349-c786-4389-b09d-09c89fc131bc",
-                  nameSingular: "pet",
-                  namePlural: "pets"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "8bb25e73-ea02-4fbd-a37e-7f216dd63eb9",
-                  name: "taskTargets"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "6b82ae18-f0ee-4d8a-bf82-b7b1344b6109",
-                  nameSingular: "taskTarget",
-                  namePlural: "taskTargets"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "47a3e14b-dbbd-4c40-b3f5-f51412d8408e",
-                  name: "pet"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -20511,33 +16170,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "NoteTargets",
               description: "NoteTargets tied to the Pet",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "d925935b-7152-41a1-8859-56e6544cb93c",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "055c2349-c786-4389-b09d-09c89fc131bc",
-                  nameSingular: "pet",
-                  namePlural: "pets"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "5e47fe4c-df0d-4b12-98db-68a450fd7396",
-                  name: "noteTargets"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "e17eb8fc-5ba9-4479-9c76-f731f8584a9a",
-                  nameSingular: "noteTarget",
-                  namePlural: "noteTargets"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "d80e2c74-31a0-43cc-b32f-394d260f837f",
-                  name: "pet"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -20558,33 +16190,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Attachments",
               description: "Attachments tied to the Pet",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "f61c9590-f432-4df8-90d0-98b2ad23ece5",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "055c2349-c786-4389-b09d-09c89fc131bc",
-                  nameSingular: "pet",
-                  namePlural: "pets"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "24feadce-321d-4192-9060-3879a0d27b23",
-                  name: "attachments"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "b488fc13-032b-434c-acc9-a1b1cd9ad0d1",
-                  nameSingular: "attachment",
-                  namePlural: "attachments"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "556e779d-fb1a-4bb7-80ab-fc80035b4933",
-                  name: "pet"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -20603,7 +16208,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Search vector",
               description: "Field used for full-text search"
             },
@@ -20667,7 +16271,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Species",
               description: ""
             },
@@ -20731,7 +16334,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Traits",
               description: ""
             },
@@ -20752,7 +16354,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Comments",
               description: ""
             },
@@ -20773,7 +16374,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Age",
               description: ""
             },
@@ -20803,7 +16403,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Location",
               description: ""
             },
@@ -20829,7 +16428,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Vet phone",
               description: ""
             },
@@ -20853,7 +16451,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Vet email",
               description: ""
             },
@@ -20874,7 +16471,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Birthday",
               description: ""
             },
@@ -20895,7 +16491,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Is good with kids",
               description: ""
             },
@@ -20920,7 +16515,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Pictures",
               description: ""
             },
@@ -20944,7 +16538,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Average cost of kibble per month",
               description: ""
             },
@@ -20968,7 +16561,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Makes its owner think of",
               description: ""
             },
@@ -21020,7 +16612,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sound swag (bark style, meow style, etc.)",
               description: ""
             },
@@ -21041,7 +16632,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Bio",
               description: ""
             },
@@ -21062,7 +16652,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Interesting facts",
               description: ""
             },
@@ -21083,7 +16672,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Extra data",
               description: ""
             },
@@ -21104,7 +16692,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -21125,7 +16712,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "Name"
             },
@@ -21146,7 +16732,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -21167,7 +16752,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -21188,7 +16772,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Deletion date"
             },
@@ -21212,7 +16795,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Created by",
               description: "The creator of the record"
             },
@@ -21233,7 +16815,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Position"
             },
@@ -21256,33 +16837,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "TimelineActivities",
               description: "TimelineActivities tied to the Pet",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "329282e6-5d9c-4743-b451-f175deae0d5b",
-                direction: "ONE_TO_MANY",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "055c2349-c786-4389-b09d-09c89fc131bc",
-                  nameSingular: "pet",
-                  namePlural: "pets"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "878ab1b9-1ba2-47ad-9ec6-13552ff9750d",
-                  name: "timelineActivities"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "417786ec-7358-4019-b72b-6002551ed5e8",
-                  nameSingular: "timelineActivity",
-                  namePlural: "timelineActivities"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "f193caab-9c35-460f-89f1-f506ae7f727f",
-                  name: "pet"
-                }
-              }
             }
           ],
           indexMetadatas: {
@@ -21362,7 +16916,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Message External Id",
               description: "Message id from the messaging provider"
             },
@@ -21383,7 +16936,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Thread External Id",
               description: "Thread id from the messaging provider"
             },
@@ -21419,7 +16971,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Direction",
               description: "Message Direction"
             },
@@ -21440,7 +16991,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -21463,7 +17013,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -21486,7 +17035,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -21509,7 +17057,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -21530,7 +17077,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Message Channel Id id (foreign key)",
               description: "Message Channel Id id foreign key"
             },
@@ -21553,33 +17099,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Message Channel Id",
               description: "Message Channel Id",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "2f5e3858-8121-4eec-9a9e-b8e9adea3510",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "01e5d86a-6039-400a-8004-d9058c5eb2c7",
-                  nameSingular: "messageChannelMessageAssociation",
-                  namePlural: "messageChannelMessageAssociations"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "e20e3bd7-7e29-4eb6-8fe1-862ed69bcde4",
-                  name: "messageChannel"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "5deb0840-caf9-44ec-98be-8fcad3816c2f",
-                  nameSingular: "messageChannel",
-                  namePlural: "messageChannels"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "f7846b0f-6aad-4fff-be91-4f7978bf29ab",
-                  name: "messageChannelMessageAssociations"
-                }
-              }
             },
             {
               __typename: "Field",
@@ -21598,7 +17117,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Message Id id (foreign key)",
               description: "Message Id id foreign key"
             },
@@ -21621,33 +17139,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               label: "Message Id",
               description: "Message Id",
-              relationDefinition: {
-                __typename: "RelationDefinition",
-                relationId: "d723373b-8971-45fa-ab0a-94eca9c15b76",
-                direction: "MANY_TO_ONE",
-                sourceObjectMetadata: {
-                  __typename: "Object",
-                  id: "01e5d86a-6039-400a-8004-d9058c5eb2c7",
-                  nameSingular: "messageChannelMessageAssociation",
-                  namePlural: "messageChannelMessageAssociations"
-                },
-                sourceFieldMetadata: {
-                  __typename: "Field",
-                  id: "0e3fa01d-bb7f-49d8-8f94-218120fabe70",
-                  name: "message"
-                },
-                targetObjectMetadata: {
-                  __typename: "Object",
-                  id: "c1eec93b-e57f-4ae5-b51c-d0c33d6a4c02",
-                  nameSingular: "message",
-                  namePlural: "messages"
-                },
-                targetFieldMetadata: {
-                  __typename: "Field",
-                  id: "7d197dab-8498-4e68-9fa2-ca3839fbd678",
-                  name: "messageChannelMessageAssociations"
-                }
-              }
             }
           ],
           indexMetadatas: {

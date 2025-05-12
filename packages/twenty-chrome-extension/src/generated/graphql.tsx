@@ -6357,23 +6357,6 @@ export type RelationConnection = {
   pageInfo: PageInfo;
 };
 
-export type RelationDefinition = {
-  direction: RelationDefinitionType;
-  relationId: Scalars['UUID'];
-  sourceFieldMetadata: Field;
-  sourceObjectMetadata: Object;
-  targetFieldMetadata: Field;
-  targetObjectMetadata: Object;
-};
-
-/** Relation definition type */
-export enum RelationDefinitionType {
-  ManyToMany = 'MANY_TO_MANY',
-  ManyToOne = 'MANY_TO_ONE',
-  OneToMany = 'ONE_TO_MANY',
-  OneToOne = 'ONE_TO_ONE'
-}
-
 /** Type of the relation */
 export enum RelationMetadataType {
   ManyToMany = 'MANY_TO_MANY',
@@ -7800,7 +7783,6 @@ export type Field = {
   label: Scalars['String'];
   name: Scalars['String'];
   options?: Maybe<Scalars['JSON']>;
-  relationDefinition?: Maybe<RelationDefinition>;
   settings?: Maybe<Scalars['JSON']>;
   toRelationMetadata?: Maybe<Relation>;
   type: FieldMetadataType;

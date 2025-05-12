@@ -12,9 +12,9 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
-  FieldContext,
-  RecordUpdateHook,
-  RecordUpdateHookParams,
+    FieldContext,
+    RecordUpdateHook,
+    RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
@@ -36,16 +36,16 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { createPortal } from 'react-dom';
 import {
-  IconChevronDown,
-  IconComponent,
-  IconDotsVertical,
-  IconTrash,
-  IconUnlink,
+    IconChevronDown,
+    IconComponent,
+    IconDotsVertical,
+    IconTrash,
+    IconUnlink,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationMetadataType } from '~/generated-metadata/graphql';
 
 const StyledListItem = styled(RecordDetailRecordsListItem)<{
   isDropdownOpen?: boolean;
@@ -109,7 +109,7 @@ export const RecordDetailRelationRecordsListItem = ({
     relationType,
   } = fieldDefinition.metadata as FieldRelationMetadata;
 
-  const isToOneObject = relationType === RelationDefinitionType.MANY_TO_ONE;
+  const isToOneObject = relationType === RelationMetadataType.MANY_TO_ONE;
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: relationObjectMetadataNameSingular,

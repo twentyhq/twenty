@@ -9,8 +9,8 @@ import { getMultiSelectFieldPreviewValue } from '@/settings/data-model/fields/pr
 import { getPhonesFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getPhonesFieldPreviewValue';
 import { getSelectFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getSelectFieldPreviewValue';
 import {
-  FieldMetadataType,
-  RelationDefinitionType,
+    FieldMetadataType,
+    RelationMetadataType,
 } from '~/generated-metadata/graphql';
 
 type UseFieldPreviewParams = {
@@ -47,7 +47,7 @@ export const useFieldPreviewValue = ({
       return getCurrencyFieldPreviewValue({ fieldMetadataItem });
     case FieldMetadataType.RELATION:
       return fieldMetadataItem.relationDefinition?.direction ===
-        RelationDefinitionType.MANY_TO_ONE
+        RelationMetadataType.MANY_TO_ONE
         ? relationFieldPreviewValue
         : [relationFieldPreviewValue];
     case FieldMetadataType.SELECT:

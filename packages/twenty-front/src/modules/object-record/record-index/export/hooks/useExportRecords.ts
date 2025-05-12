@@ -5,17 +5,17 @@ import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-opti
 import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import {
-  UseRecordDataOptions,
-  useExportFetchRecords,
+    UseRecordDataOptions,
+    useExportFetchRecords,
 } from '@/object-record/record-index/export/hooks/useExportFetchRecords';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
+import { RelationMetadataType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { isDefined } from 'twenty-shared/utils';
 
 type GenerateExportOptions = {
   columns: ColumnDefinition<FieldMetadata>[];
@@ -37,7 +37,7 @@ export const generateCsv: GenerateExport = ({
   const columnsToExport = columns.filter(
     (col) =>
       !('relationType' in col.metadata && col.metadata.relationType) ||
-      col.metadata.relationType === RelationDefinitionType.MANY_TO_ONE,
+      col.metadata.relationType === RelationMetadataType.MANY_TO_ONE,
   );
 
   const objectIdColumn: ColumnDefinition<FieldMetadata> = {

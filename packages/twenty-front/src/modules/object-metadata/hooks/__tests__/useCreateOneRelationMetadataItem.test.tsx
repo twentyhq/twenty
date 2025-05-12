@@ -4,17 +4,17 @@ import { ReactNode, act } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
-import { RelationDefinitionType } from '~/generated/graphql';
+import { RelationMetadataType } from '~/generated/graphql';
 
 import {
-  query,
-  responseData,
-  variables,
+    query,
+    responseData,
+    variables,
 } from '../__mocks__/useCreateOneRelationMetadataItem';
 
 import {
-  query as findManyObjectMetadataItemsQuery,
-  responseData as findManyObjectMetadataItemsResponseData,
+    query as findManyObjectMetadataItemsQuery,
+    responseData as findManyObjectMetadataItemsResponseData,
 } from '../__mocks__/useFindManyObjectMetadataItems';
 
 const mocks = [
@@ -56,7 +56,7 @@ describe('useCreateOneRelationMetadataItem', () => {
 
     await act(async () => {
       const res = await result.current.createOneRelationMetadataItem({
-        relationType: RelationDefinitionType.ONE_TO_ONE,
+        relationType: RelationMetadataType.ONE_TO_ONE,
         field: {
           label: 'label',
           name: 'name',

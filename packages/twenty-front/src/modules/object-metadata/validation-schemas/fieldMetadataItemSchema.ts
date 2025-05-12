@@ -2,12 +2,12 @@ import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metadataLabelSchema';
+import { themeColorSchema } from 'twenty-ui/theme';
 import {
-  FieldMetadataType,
-  RelationDefinitionType,
+    FieldMetadataType,
+    RelationMetadataType,
 } from '~/generated-metadata/graphql';
 import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
-import { themeColorSchema } from 'twenty-ui/theme';
 
 export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
   return z.object({
@@ -42,7 +42,7 @@ export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
       .object({
         __typename: z.literal('RelationDefinition').optional(),
         relationId: z.string().uuid(),
-        direction: z.nativeEnum(RelationDefinitionType),
+        direction: z.nativeEnum(RelationMetadataType),
         sourceFieldMetadata: z.object({
           __typename: z.literal('Field').optional(),
           id: z.string().uuid(),

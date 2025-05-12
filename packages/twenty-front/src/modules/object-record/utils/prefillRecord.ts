@@ -4,8 +4,8 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateDefaultFieldValue } from '@/object-record/utils/generateDefaultFieldValue';
-import { FieldMetadataType, RelationDefinitionType } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType, RelationMetadataType } from '~/generated/graphql';
 
 type PrefillRecordArgs = {
   objectMetadataItem: ObjectMetadataItem;
@@ -22,7 +22,7 @@ export const prefillRecord = <T extends ObjectRecord>({
         if (
           fieldMetadataItem.type === FieldMetadataType.RELATION &&
           fieldMetadataItem.relationDefinition?.direction ===
-            RelationDefinitionType.MANY_TO_ONE
+            RelationMetadataType.MANY_TO_ONE
         ) {
           throwIfInputRelationDataIsInconsistent(input, fieldMetadataItem);
         }

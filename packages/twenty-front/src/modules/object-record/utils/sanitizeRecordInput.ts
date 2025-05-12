@@ -1,7 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationMetadataType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 
 export const sanitizeRecordInput = ({
@@ -39,7 +39,7 @@ export const sanitizeRecordInput = ({
           isDefined(fieldMetadataItem) &&
           fieldMetadataItem.type === FieldMetadataType.RELATION &&
           fieldMetadataItem.relationDefinition?.direction ===
-            RelationDefinitionType.MANY_TO_ONE
+            RelationMetadataType.MANY_TO_ONE
         ) {
           const relationIdFieldName = `${fieldMetadataItem.name}Id`;
           const relationIdFieldMetadataItem = objectMetadataItem.fields.find(
@@ -57,7 +57,7 @@ export const sanitizeRecordInput = ({
           isDefined(fieldMetadataItem) &&
           fieldMetadataItem.type === FieldMetadataType.RELATION &&
           fieldMetadataItem.relationDefinition?.direction ===
-            RelationDefinitionType.ONE_TO_MANY
+            RelationMetadataType.ONE_TO_MANY
         ) {
           return undefined;
         }

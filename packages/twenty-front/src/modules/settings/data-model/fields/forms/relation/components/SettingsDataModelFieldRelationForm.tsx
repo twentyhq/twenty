@@ -15,9 +15,9 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 import { useIcons } from 'twenty-ui/display';
+import { RelationMetadataType } from '~/generated-metadata/graphql';
 
 export const settingsDataModelFieldRelationFormSchema = z.object({
   relation: z.object({
@@ -38,8 +38,8 @@ export const settingsDataModelFieldRelationFormSchema = z.object({
     objectMetadataId: z.string().uuid(),
     type: z.enum(
       Object.keys(RELATION_TYPES) as [
-        RelationDefinitionType,
-        ...RelationDefinitionType[],
+        RelationMetadataType,
+        ...RelationMetadataType[],
       ],
     ),
   }),
@@ -81,8 +81,8 @@ const StyledInputsContainer = styled.div`
 const RELATION_TYPE_OPTIONS = Object.entries(RELATION_TYPES)
   .filter(
     ([value]) =>
-      RelationDefinitionType.ONE_TO_ONE !== value &&
-      RelationDefinitionType.MANY_TO_MANY !== value,
+      RelationMetadataType.ONE_TO_ONE !== value &&
+      RelationMetadataType.MANY_TO_MANY !== value,
   )
   .map(([value, { label, Icon }]) => ({
     label,
@@ -170,7 +170,7 @@ export const SettingsDataModelFieldRelationForm = ({
       </StyledSelectsContainer>
       <StyledInputsLabel>
         Field on{' '}
-        {selectedRelationType === RelationDefinitionType.MANY_TO_ONE
+        {selectedRelationType === RelationMetadataType.MANY_TO_ONE
           ? selectedObjectMetadataItem?.labelSingular
           : selectedObjectMetadataItem?.labelPlural}
       </StyledInputsLabel>

@@ -1,7 +1,7 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
-  FieldMetadataType,
-  RelationDefinitionType,
+    FieldMetadataType,
+    RelationMetadataType,
 } from '~/generated-metadata/graphql';
 
 export const getFilterFilterableFieldMetadataItems = ({
@@ -16,8 +16,8 @@ export const getFilterFilterableFieldMetadataItems = ({
     const isRelationFieldHandled = !(
       field.type === FieldMetadataType.RELATION &&
       field.relationDefinition?.direction !==
-        RelationDefinitionType.MANY_TO_ONE &&
-      field.relationDefinition?.direction !== RelationDefinitionType.ONE_TO_ONE
+        RelationMetadataType.MANY_TO_ONE &&
+      field.relationDefinition?.direction !== RelationMetadataType.ONE_TO_ONE
     );
 
     const isFieldTypeFilterable = [

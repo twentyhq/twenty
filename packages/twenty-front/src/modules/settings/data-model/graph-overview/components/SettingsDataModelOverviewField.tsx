@@ -5,8 +5,8 @@ import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { useIcons } from 'twenty-ui/display';
+import { RelationMetadataType } from '~/generated-metadata/graphql';
 
 type ObjectFieldRowProps = {
   field: FieldMetadataItem;
@@ -45,7 +45,7 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
       <Handle
         type={
           field.relationDefinition?.direction ===
-          RelationDefinitionType.ONE_TO_MANY
+          RelationMetadataType.ONE_TO_MANY
             ? 'source'
             : 'target'
         }
@@ -53,7 +53,7 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
         id={`${field.id}-right`}
         className={
           field.relationDefinition?.direction ===
-          RelationDefinitionType.ONE_TO_MANY
+          RelationMetadataType.ONE_TO_MANY
             ? 'right-handle source-handle'
             : 'right-handle target-handle'
         }
@@ -61,7 +61,7 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
       <Handle
         type={
           field.relationDefinition?.direction ===
-          RelationDefinitionType.ONE_TO_MANY
+          RelationMetadataType.ONE_TO_MANY
             ? 'source'
             : 'target'
         }
@@ -69,7 +69,7 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
         id={`${field.id}-left`}
         className={
           field.relationDefinition?.direction ===
-          RelationDefinitionType.ONE_TO_MANY
+          RelationMetadataType.ONE_TO_MANY
             ? 'left-handle source-handle'
             : 'left-handle target-handle'
         }

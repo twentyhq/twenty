@@ -21,10 +21,6 @@ import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dto
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
-import {
-  RelationDefinitionDTO,
-  RelationDefinitionType,
-} from 'src/engine/metadata-modules/field-metadata/dtos/relation-definition.dto';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import {
   FieldMetadataException,
@@ -42,10 +38,7 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { isSelectFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import {
-  RelationMetadataEntity,
-  RelationMetadataType,
-} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata-name.exception';
 import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
@@ -532,61 +525,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     return updatableStandardFieldInput;
-  }
-
-  public async getRelationDefinitionFromRelationMetadata(
-    fieldMetadataDTO: FieldMetadataDTO,
-    relationMetadata: RelationMetadataEntity,
-  ): Promise<RelationDefinitionDTO | null> {
-    if (fieldMetadataDTO.type !== FieldMetadataType.RELATION) {
-      return null;
-    }
-
-    const isRelationFromSource =
-      relationMetadata.fromFieldMetadata.id === fieldMetadataDTO.id;
-
-    // TODO: implement MANY_TO_MANY
-    if (
-      relationMetadata.relationType === RelationMetadataType.MANY_TO_MANY ||
-      relationMetadata.relationType === RelationMetadataType.MANY_TO_ONE
-    ) {
-      throw new FieldMetadataException(
-        `
-        Relation type ${relationMetadata.relationType} not supported
-      `,
-        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      );
-    }
-
-    if (isRelationFromSource) {
-      const direction =
-        relationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
-          ? RelationDefinitionType.ONE_TO_ONE
-          : RelationDefinitionType.ONE_TO_MANY;
-
-      return {
-        relationId: relationMetadata.id,
-        sourceObjectMetadata: relationMetadata.fromObjectMetadata,
-        sourceFieldMetadata: relationMetadata.fromFieldMetadata,
-        targetObjectMetadata: relationMetadata.toObjectMetadata,
-        targetFieldMetadata: relationMetadata.toFieldMetadata,
-        direction,
-      };
-    } else {
-      const direction =
-        relationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
-          ? RelationDefinitionType.ONE_TO_ONE
-          : RelationDefinitionType.MANY_TO_ONE;
-
-      return {
-        relationId: relationMetadata.id,
-        sourceObjectMetadata: relationMetadata.toObjectMetadata,
-        sourceFieldMetadata: relationMetadata.toFieldMetadata,
-        targetObjectMetadata: relationMetadata.fromObjectMetadata,
-        targetFieldMetadata: relationMetadata.fromFieldMetadata,
-        direction,
-      };
-    }
   }
 
   private async validateFieldMetadata<

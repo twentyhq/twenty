@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -613,7 +613,6 @@ export type Field = {
   object?: Maybe<Object>;
   options?: Maybe<Scalars['JSON']>;
   relation?: Maybe<Relation>;
-  relationDefinition?: Maybe<RelationDefinition>;
   settings?: Maybe<Scalars['JSON']>;
   standardOverrides?: Maybe<StandardOverrides>;
   toRelationMetadata?: Maybe<RelationMetadata>;
@@ -1686,24 +1685,6 @@ export type Relation = {
   targetObjectMetadata: Object;
   type: RelationType;
 };
-
-export type RelationDefinition = {
-  __typename?: 'RelationDefinition';
-  direction: RelationDefinitionType;
-  relationId: Scalars['UUID'];
-  sourceFieldMetadata: Field;
-  sourceObjectMetadata: Object;
-  targetFieldMetadata: Field;
-  targetObjectMetadata: Object;
-};
-
-/** Relation definition type */
-export enum RelationDefinitionType {
-  MANY_TO_MANY = 'MANY_TO_MANY',
-  MANY_TO_ONE = 'MANY_TO_ONE',
-  ONE_TO_MANY = 'ONE_TO_MANY',
-  ONE_TO_ONE = 'ONE_TO_ONE'
-}
 
 export type RelationMetadata = {
   __typename?: 'RelationMetadata';

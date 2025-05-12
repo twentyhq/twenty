@@ -3,13 +3,13 @@ import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataIt
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 
 import {
-  RecordFilter,
-  RecordFilterToRecordInputOperand,
+    RecordFilter,
+    RecordFilterToRecordInputOperand,
 } from '@/object-record/record-filter/types/RecordFilter';
 import { FILTER_OPERANDS_MAP } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationMetadataType } from '~/generated-metadata/graphql';
 import { parseJson } from '~/utils/parseJson';
 
 export const buildValueFromFilter = ({
@@ -21,7 +21,7 @@ export const buildValueFromFilter = ({
 }: {
   filter: RecordFilter;
   options?: FieldMetadataItemOption[];
-  relationType?: RelationDefinitionType;
+  relationType?: RelationMetadataType;
   currentWorkspaceMember?: CurrentWorkspaceMember;
   label?: string;
 }) => {
@@ -265,7 +265,7 @@ const computeValueFromFilterMultiSelect = (
 const computeValueFromFilterRelation = (
   operand: RecordFilterToRecordInputOperand<'RELATION'>,
   value: string,
-  relationType?: RelationDefinitionType,
+  relationType?: RelationMetadataType,
   currentWorkspaceMember?: CurrentWorkspaceMember,
   label?: string,
 ) => {
@@ -276,8 +276,8 @@ const computeValueFromFilterRelation = (
         selectedRecordIds: string[];
       }>(value);
       if (
-        relationType === RelationDefinitionType.MANY_TO_ONE ||
-        relationType === RelationDefinitionType.ONE_TO_ONE
+        relationType === RelationMetadataType.MANY_TO_ONE ||
+        relationType === RelationMetadataType.ONE_TO_ONE
       ) {
         if (label === 'Assignee') {
           return parsedValue?.isCurrentWorkspaceMemberSelected

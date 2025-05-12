@@ -1,9 +1,8 @@
 import { RelationType } from '@/settings/data-model/types/RelationType';
 import {
-  CreateRelationInput,
-  Field,
-  RelationDefinitionType,
-  RelationMetadataType,
+    CreateRelationInput,
+    Field,
+    RelationMetadataType
 } from '~/generated-metadata/graphql';
 
 import { formatFieldMetadataItemInput } from './formatFieldMetadataItemInput';
@@ -25,8 +24,8 @@ export const formatRelationMetadataInput = (
   // => Transform into ONE_TO_MANY and invert "from" and "to" data.
   const isManyToOne = input.relationType === 'MANY_TO_ONE';
   const relationType = isManyToOne
-    ? RelationDefinitionType.ONE_TO_MANY
-    : (input.relationType as RelationDefinitionType);
+    ? RelationMetadataType.ONE_TO_MANY
+    : (input.relationType as RelationMetadataType);
   const { field: fromField, objectMetadataId: fromObjectMetadataId } =
     isManyToOne ? input.connect : input;
   const { field: toField, objectMetadataId: toObjectMetadataId } = isManyToOne

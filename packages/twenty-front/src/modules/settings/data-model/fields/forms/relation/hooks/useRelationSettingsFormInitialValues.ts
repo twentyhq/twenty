@@ -5,7 +5,7 @@ import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMe
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { SettingsDataModelFieldPreviewCardProps } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationMetadataType } from '~/generated-metadata/graphql';
 
 export const useRelationSettingsFormInitialValues = ({
   fieldMetadataItem,
@@ -40,7 +40,7 @@ export const useRelationSettingsFormInitialValues = ({
   );
 
   const initialRelationType =
-    relationTypeFromFieldMetadata ?? RelationDefinitionType.ONE_TO_MANY;
+    relationTypeFromFieldMetadata ?? RelationMetadataType.ONE_TO_MANY;
 
   return {
     disableFieldEdition:
@@ -49,8 +49,8 @@ export const useRelationSettingsFormInitialValues = ({
     initialRelationFieldMetadataItem: relationFieldMetadataItem ?? {
       icon: initialRelationObjectMetadataItem.icon ?? 'IconUsers',
       label: [
-        RelationDefinitionType.MANY_TO_MANY,
-        RelationDefinitionType.MANY_TO_ONE,
+        RelationMetadataType.MANY_TO_MANY,
+        RelationMetadataType.MANY_TO_ONE,
       ].includes(initialRelationType)
         ? initialRelationObjectMetadataItem.labelPlural
         : initialRelationObjectMetadataItem.labelSingular,

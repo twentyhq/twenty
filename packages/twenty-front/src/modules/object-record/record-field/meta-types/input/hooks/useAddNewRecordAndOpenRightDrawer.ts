@@ -9,11 +9,11 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
-import {
-  FieldMetadataType,
-  RelationDefinitionType,
-} from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import {
+    FieldMetadataType,
+    RelationMetadataType,
+} from '~/generated-metadata/graphql';
 
 type RecordDetailRelationSectionProps = {
   relationObjectMetadataNameSingular: string;
@@ -84,7 +84,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
 
       if (
         relationFieldMetadataItem?.relationDefinition?.direction ===
-        RelationDefinitionType.MANY_TO_ONE
+        RelationMetadataType.MANY_TO_ONE
       ) {
         createRecordPayload[
           `${relationFieldMetadataItem?.relationDefinition?.sourceFieldMetadata.name}Id`
@@ -95,7 +95,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
 
       if (
         relationFieldMetadataItem?.relationDefinition?.direction ===
-        RelationDefinitionType.ONE_TO_MANY
+        RelationMetadataType.ONE_TO_MANY
       ) {
         await updateOneRecord({
           idToUpdate: recordId,

@@ -23,10 +23,6 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import {
-  RelationDefinitionDTO,
-  RelationDefinitionType,
-} from 'src/engine/metadata-modules/field-metadata/dtos/relation-definition.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import {
   UpdateFieldInput,
@@ -43,7 +39,6 @@ import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-mod
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver(() => FieldMetadataDTO)
@@ -163,40 +158,6 @@ export class FieldMetadataResolver {
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);
     }
-  }
-
-  @ResolveField(() => RelationDefinitionDTO, { nullable: true })
-  async relationDefinition(
-    @AuthWorkspace() workspace: Workspace,
-    @Parent() fieldMetadata: FieldMetadataDTO,
-    @Context() context: { loaders: IDataloaders },
-  ): Promise<RelationDefinitionDTO | null | undefined> {
-    if (fieldMetadata.type !== FieldMetadataType.RELATION) {
-      return null;
-    }
-
-    const relation = await this.relation(
-      workspace,
-      fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>,
-      context,
-    );
-
-    if (!relation) {
-      return null;
-    }
-
-    return {
-      // Temporary fix as we don't have relationId in the new relation
-      relationId: createDeterministicUuid([
-        relation.sourceFieldMetadata.id,
-        relation.targetFieldMetadata.id,
-      ]),
-      direction: relation.type as unknown as RelationDefinitionType,
-      sourceObjectMetadata: relation.sourceObjectMetadata,
-      targetObjectMetadata: relation.targetObjectMetadata,
-      sourceFieldMetadata: relation.sourceFieldMetadata,
-      targetFieldMetadata: relation.targetFieldMetadata,
-    };
   }
 
   @ResolveField(() => RelationDTO, { nullable: true })

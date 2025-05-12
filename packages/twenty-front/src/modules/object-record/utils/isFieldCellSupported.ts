@@ -3,8 +3,8 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import {
-  FieldMetadataType,
-  RelationDefinitionType,
+    FieldMetadataType,
+    RelationMetadataType,
 } from '~/generated-metadata/graphql';
 
 export const isFieldCellSupported = (
@@ -52,7 +52,7 @@ export const isFieldCellSupported = (
       !fieldMetadataItem.relationDefinition ||
       // TODO: Many to many relations are not supported yet.
       fieldMetadataItem.relationDefinition.direction ===
-        RelationDefinitionType.MANY_TO_MANY ||
+        RelationMetadataType.MANY_TO_MANY ||
       !relationObjectMetadataItem ||
       !isObjectMetadataAvailableForRelation(relationObjectMetadataItem)
     ) {

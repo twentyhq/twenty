@@ -3,22 +3,22 @@ import { act } from 'react';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldMetadataType, RelationDefinitionType } from '~/generated/graphql';
+import { FieldMetadataType, RelationMetadataType } from '~/generated/graphql';
 
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import {
-  FIELD_METADATA_ID,
-  FIELD_RELATION_METADATA_ID,
-  objectMetadataId,
-  queries,
-  RELATION_METADATA_ID,
-  responseData,
-  variables,
+    FIELD_METADATA_ID,
+    FIELD_RELATION_METADATA_ID,
+    objectMetadataId,
+    queries,
+    RELATION_METADATA_ID,
+    responseData,
+    variables,
 } from '../__mocks__/useFieldMetadataItem';
 
 import {
-  query as findManyObjectMetadataItemsQuery,
-  responseData as findManyObjectMetadataItemsResponseData,
+    query as findManyObjectMetadataItemsQuery,
+    responseData as findManyObjectMetadataItemsResponseData,
 } from '../__mocks__/useFindManyObjectMetadataItems';
 
 jest.mock('@/object-metadata/hooks/useUpdateOneFieldMetadataItem', () => ({
@@ -51,7 +51,7 @@ const fieldRelationMetadataItem: FieldMetadataItem = {
   isLabelSyncedWithName: true,
   relationDefinition: {
     relationId: RELATION_METADATA_ID,
-    direction: RelationDefinitionType.ONE_TO_MANY,
+    direction: RelationMetadataType.ONE_TO_MANY,
     sourceFieldMetadata: {
       id: 'e5903d91-9b10-4f3e-b761-35c36e93b7c1',
       name: 'sourceField',

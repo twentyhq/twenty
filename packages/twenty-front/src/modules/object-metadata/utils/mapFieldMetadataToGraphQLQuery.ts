@@ -1,8 +1,8 @@
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { isUndefined } from '@sniptt/guards';
 import {
-  FieldMetadataType,
-  RelationDefinitionType,
+    FieldMetadataType,
+    RelationMetadataType,
 } from '~/generated-metadata/graphql';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -39,7 +39,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
   if (
     fieldType === FieldMetadataType.RELATION &&
     fieldMetadata.relationDefinition?.direction ===
-      RelationDefinitionType.MANY_TO_ONE
+      RelationMetadataType.MANY_TO_ONE
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
@@ -68,7 +68,7 @@ ${mapObjectMetadataToGraphQLQuery({
   if (
     fieldType === FieldMetadataType.RELATION &&
     fieldMetadata.relationDefinition?.direction ===
-      RelationDefinitionType.ONE_TO_MANY
+      RelationMetadataType.ONE_TO_MANY
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
