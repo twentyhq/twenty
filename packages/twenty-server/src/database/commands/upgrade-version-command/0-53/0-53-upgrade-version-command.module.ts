@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BackfillWorkflowNextStepIdsCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-backfill-workflow-next-step-ids.command';
 import { CopyTypeormMigrationsCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-copy-typeorm-migrations.command';
+import { FixStandardSelectFieldsPositionCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-fix-standard-select-fields-position.command';
 import { MigrateWorkflowEventListenersToAutomatedTriggersCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-migrate-workflow-event-listeners-to-automated-triggers.command';
 import { RemoveRelationForeignKeyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-remove-relation-foreign-key-field-metadata.command';
 import { UpgradeSearchVectorOnPersonEntityCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-upgrade-search-vector-on-person-entity.command';
@@ -32,6 +33,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     BackfillWorkflowNextStepIdsCommand,
     RemoveRelationForeignKeyFieldMetadataCommand,
     UpgradeSearchVectorOnPersonEntityCommand,
+    FixStandardSelectFieldsPositionCommand,
   ],
   exports: [
     MigrateWorkflowEventListenersToAutomatedTriggersCommand,
@@ -39,6 +41,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     BackfillWorkflowNextStepIdsCommand,
     CopyTypeormMigrationsCommand,
     UpgradeSearchVectorOnPersonEntityCommand,
+    FixStandardSelectFieldsPositionCommand,
   ],
 })
 export class V0_53_UpgradeVersionCommandModule {}
