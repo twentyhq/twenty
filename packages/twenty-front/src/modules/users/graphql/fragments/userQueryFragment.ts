@@ -1,4 +1,5 @@
 import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
+import { DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/deletedWorkspaceMemberQueryFragment';
 import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
 import { gql } from '@apollo/client';
 
@@ -19,8 +20,8 @@ export const USER_QUERY_FRAGMENT = gql`
     workspaceMembers {
       ...WorkspaceMemberQueryFragment
     }
-    workspaceMembersWithDeleted {
-      ...WorkspaceMemberQueryFragment
+    deletedWorkspaceMembers {
+      ...DeletedWorkspaceMemberQueryFragment
     }
     currentUserWorkspace {
       settingsPermissions
@@ -94,4 +95,5 @@ export const USER_QUERY_FRAGMENT = gql`
   }
 
   ${WORKSPACE_MEMBER_QUERY_FRAGMENT}
+  ${DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT}
 `;

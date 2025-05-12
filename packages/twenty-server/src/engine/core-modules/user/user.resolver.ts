@@ -34,6 +34,7 @@ import {
 } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { DeletedWorkspaceMember } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { DeletedWorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/deleted-workspace-member-transpiler.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -280,13 +281,13 @@ export class UserResolver {
     return workspaceMembers;
   }
 
-  @ResolveField(() => [WorkspaceMember], {
+  @ResolveField(() => [DeletedWorkspaceMember], {
     nullable: true,
   })
-  async workspaceMembersWithDeleted(
+  async deletedWorkspaceMembers(
     @Parent() _user: User,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<WorkspaceMember[]> {
+  ): Promise<DeletedWorkspaceMember[]> {
     const workspaceMemberEntities =
       await this.userService.loadDeletedWorkspaceMembersOnly(workspace);
 

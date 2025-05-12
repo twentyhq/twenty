@@ -74,7 +74,7 @@ export class UserService extends TypeOrmQueryService<User> {
         'workspaceMember',
       );
 
-    return workspaceMemberRepository.find({ withDeleted: withDeleted });
+    return await workspaceMemberRepository.find({ withDeleted: withDeleted });
   }
 
   async loadDeletedWorkspaceMembersOnly(workspace: Workspace) {
@@ -88,8 +88,9 @@ export class UserService extends TypeOrmQueryService<User> {
         'workspaceMember',
       );
 
-    return workspaceMemberRepository.find({
+    return await workspaceMemberRepository.find({
       where: { deletedAt: Not(IsNull()) },
+      withDeleted: true,
     });
   }
 

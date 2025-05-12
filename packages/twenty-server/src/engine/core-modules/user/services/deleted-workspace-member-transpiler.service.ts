@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import {
-  WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum,
-  WorkspaceMemberWorkspaceEntity,
-} from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { DeletedWorkspaceMember } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class DeletedWorkspaceMemberTranspiler {
@@ -29,16 +25,11 @@ export class DeletedWorkspaceMemberTranspiler {
   toDeletedWorkspaceMemberDto(
     workspaceMember: WorkspaceMemberWorkspaceEntity,
     userWorkspaceId?: string,
-  ): WorkspaceMember {
+  ): DeletedWorkspaceMember {
     const {
       avatarUrl: avatarUrlFromEntity,
-      colorScheme,
-      dateFormat,
       id,
-      locale,
       name,
-      timeFormat,
-      timeZone,
       userEmail,
     } = workspaceMember;
 
@@ -52,24 +43,21 @@ export class DeletedWorkspaceMemberTranspiler {
         })
       : null;
 
+    // @ts-expect-error TODO prastoin
     return {
-      avatarUrl,
-      colorScheme,
-      dateFormat: dateFormat as WorkspaceMemberDateFormatEnum,
       id,
-      locale,
       name,
-      timeFormat: timeFormat as WorkspaceMemberTimeFormatEnum,
-      timeZone,
       userEmail,
+      // @ts-expect-error TODO prastoin
+      avatarUrl,
       userWorkspaceId,
-    };
+    } satisfies DeletedWorkspaceMember;
   }
 
   toDeletedWorkspaceMemberDtos(
     workspaceMembers: WorkspaceMemberWorkspaceEntity[],
     userWorkspaceId?: string,
-  ): WorkspaceMember[] {
+  ): DeletedWorkspaceMember[] {
     return workspaceMembers.map((workspaceMember) =>
       this.toDeletedWorkspaceMemberDto(workspaceMember, userWorkspaceId),
     );
