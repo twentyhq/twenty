@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { RecordTableAggregateFooterCell } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooterCell';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { FIRST_TH_WIDTH } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
@@ -16,14 +17,14 @@ const StyledTd = styled.td`
 const StyledTableRow = styled.tr<{
   hasHorizontalOverflow?: boolean;
 }>`
-  z-index: 5;
+  z-index: ${TABLE_Z_INDEX.footer.default};
   position: sticky;
   border: none;
 
   &.footer-sticky {
     td {
       border-top: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-      z-index: 5;
+      z-index: ${TABLE_Z_INDEX.footer.default};
       position: sticky;
       bottom: 0;
     }
@@ -35,9 +36,12 @@ const StyledTableRow = styled.tr<{
     border-top: none;
   }
   &.first-columns-sticky {
+    td:nth-of-type(1) {
+      z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
+    }
     td:nth-of-type(2) {
       position: sticky;
-      z-index: 10;
+      z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
       transition: 0.3s ease;
       &::after {
         content: '';

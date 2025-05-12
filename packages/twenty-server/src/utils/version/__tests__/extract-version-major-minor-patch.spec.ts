@@ -6,7 +6,7 @@ type IsSameVersionTestCase = EachTestingContext<{
   version: string | undefined;
   expected: string | null;
 }>;
-describe('extract-version-major-minor-patch', () => {
+describe('It should extract major.minor.patch values from a', () => {
   const testCase: IsSameVersionTestCase[] = [
     {
       context: {
@@ -101,7 +101,7 @@ describe('extract-version-major-minor-patch', () => {
     },
   ];
 
-  test.each(testCase)('$title', ({ context: { version, expected } }) => {
+  test.each(testCase)(' $title', ({ context: { version, expected } }) => {
     expect(extractVersionMajorMinorPatch(version)).toBe(expected);
   });
 });

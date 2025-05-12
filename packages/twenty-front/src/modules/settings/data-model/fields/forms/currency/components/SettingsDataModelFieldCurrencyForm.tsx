@@ -9,6 +9,7 @@ import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fiel
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
 import { IconCurrencyDollar } from 'twenty-ui/display';
+import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
 export const settingsDataModelFieldCurrencyFormSchema = z.object({
   defaultValue: currencyFieldDefaultValueSchema,
@@ -58,7 +59,10 @@ export const SettingsDataModelFieldCurrencyForm = ({
               onChange={onChange}
               disabled={disabled}
               dropdownId="object-field-default-value-select-currency"
-              options={CURRENCIES}
+              options={CURRENCIES.map(({ value, ...rest }) => ({
+                ...rest,
+                value: applySimpleQuotesToString(value),
+              }))}
               selectSizeVariant="small"
               withSearchInput={true}
             />

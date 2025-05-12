@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { IconListViewGrip } from 'twenty-ui/input';
@@ -17,7 +18,7 @@ const StyledContainer = styled.div`
     opacity: 1;
   }
 
-  z-index: 200;
+  z-index: ${TABLE_Z_INDEX.columnGrip};
 `;
 
 const StyledIconWrapper = styled.div<{ isDragging: boolean }>`

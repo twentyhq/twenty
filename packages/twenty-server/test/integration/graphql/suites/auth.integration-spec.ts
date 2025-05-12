@@ -8,7 +8,7 @@ const ORIGIN = new URL(SERVER_URL);
 
 ORIGIN.hostname =
   process.env.IS_MULTIWORKSPACE_ENABLED === 'true'
-    ? `acme.${ORIGIN.hostname}`
+    ? `apple.${ORIGIN.hostname}`
     : ORIGIN.hostname;
 
 const auth = {
