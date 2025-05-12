@@ -15,15 +15,15 @@ export class CacheStorageService {
   ) {}
 
   async get<T>(key: string): Promise<T | undefined> {
-    return this.cache.get(`${this.namespace}:${key}`);
+    return this.cache.get(this.getKey(key));
   }
 
   async set<T>(key: string, value: T, ttl?: Milliseconds) {
-    return this.cache.set(`${this.namespace}:${key}`, value, ttl);
+    return this.cache.set(this.getKey(key), value, ttl);
   }
 
   async del(key: string) {
-    return this.cache.del(`${this.namespace}:${key}`);
+    return this.cache.del(this.getKey(key));
   }
 
   async setAdd(key: string, value: string[], ttl?: Milliseconds) {
@@ -33,13 +33,13 @@ export class CacheStorageService {
 
     if (this.isRedisCache()) {
       await (this.cache as RedisCache).store.client.sAdd(
-        `${this.namespace}:${key}`,
+        this.getKey(key),
         value,
       );
 
       if (ttl) {
         await (this.cache as RedisCache).store.client.expire(
-          `${this.namespace}:${key}`,
+          this.getKey(key),
           ttl / 1000,
         );
       }
@@ -65,7 +65,7 @@ export class CacheStorageService {
   async setPop(key: string, size = 1) {
     if (this.isRedisCache()) {
       return (this.cache as RedisCache).store.client.sPop(
-        `${this.namespace}:${key}`,
+        this.getKey(key),
         size,
       );
     }
@@ -84,7 +84,7 @@ export class CacheStorageService {
   async getSetLength(key: string) {
     if (this.isRedisCache()) {
       return await (this.cache as RedisCache).store.client.sCard(
-        `${this.namespace}:${key}`,
+        this.getKey(key),
       );
     }
 
@@ -124,5 +124,15 @@ export class CacheStorageService {
 
   private isRedisCache() {
     return (this.cache.store as any)?.name === 'redis';
+  }
+
+  private getKey(key: string) {
+    const formattedKey = `${this.namespace}:${key}`;
+
+    if (process.env.NODE_ENV === 'test') {
+      return `integration-tests:${formattedKey}`;
+    }
+
+    return formattedKey;
   }
 }
