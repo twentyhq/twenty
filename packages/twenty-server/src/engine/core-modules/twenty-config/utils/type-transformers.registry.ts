@@ -168,12 +168,6 @@ export const typeTransformers: Record<
       return arrayValue.filter((item) => {
         const included = options.includes(item as string);
 
-        if (!included) {
-          console.debug(
-            `Filtered out array item '${String(item)}' not in allowed options`,
-          );
-        }
-
         return included;
       });
     },
@@ -193,12 +187,6 @@ export const typeTransformers: Record<
       if (options && Array.isArray(options) && options.length > 0) {
         return value.filter((item) => {
           const included = options.includes(item as string);
-
-          if (!included) {
-            console.debug(
-              `Filtered out array item '${String(item)}' not in allowed options`,
-            );
-          }
 
           return included;
         });
