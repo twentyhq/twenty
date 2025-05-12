@@ -33,23 +33,23 @@ export class WorkspaceMember {
   colorScheme: string;
 
   @Field({ nullable: true })
-  avatarUrl: string;
+  avatarUrl: string | null;
 
   @Field({ nullable: true })
-  locale: string;
+  locale: string | null;
 
   @Field({ nullable: true })
-  timeZone: string;
+  timeZone: string | null;
 
   @Field(() => WorkspaceMemberDateFormatEnum, { nullable: true })
-  dateFormat: WorkspaceMemberDateFormatEnum;
+  dateFormat: WorkspaceMemberDateFormatEnum | null;
 
   @Field(() => WorkspaceMemberTimeFormatEnum, { nullable: true })
-  timeFormat: WorkspaceMemberTimeFormatEnum;
+  timeFormat: WorkspaceMemberTimeFormatEnum | null;
 
   @Field(() => [RoleDTO], { nullable: true })
-  roles?: RoleDTO[];
+  roles?: RoleDTO[] | null;
 
   @Field(() => String, { nullable: true })
-  userWorkspaceId?: string;
+  userWorkspaceId?: string | null;
 }

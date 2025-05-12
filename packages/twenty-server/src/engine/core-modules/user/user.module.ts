@@ -27,6 +27,7 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
 
 import { userAutoResolverOpts } from './user.auto-resolver-opts';
 
+import { DeletedWorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/deleted-workspace-member-transpiler.service';
 import { UserService } from './services/user.service';
 
 @Module({
@@ -53,7 +54,12 @@ import { UserService } from './services/user.service';
     PermissionsModule,
     UserWorkspaceModule,
   ],
-  exports: [UserService],
-  providers: [UserService, UserResolver, TypeORMService],
+  exports: [UserService, DeletedWorkspaceMemberTranspiler],
+  providers: [
+    UserService,
+    UserResolver,
+    TypeORMService,
+    DeletedWorkspaceMemberTranspiler,
+  ],
 })
 export class UserModule {}
