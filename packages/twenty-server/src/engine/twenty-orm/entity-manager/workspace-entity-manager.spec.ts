@@ -22,6 +22,7 @@ jest.mock('../repository/workspace-select-query-builder', () => ({
     execute: jest
       .fn()
       .mockResolvedValue({ affected: 1, raw: [], generatedMaps: [] }),
+    setFindOptions: jest.fn().mockReturnThis(),
   })),
 }));
 
@@ -82,7 +83,6 @@ describe('WorkspaceEntityManager', () => {
         execute: jest
           .fn()
           .mockResolvedValue({ affected: 1, raw: [], generatedMaps: [] }),
-        setFindOptions: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue([]),
         getOne: jest.fn().mockResolvedValue(null),
         getManyAndCount: jest.fn().mockResolvedValue([[], 0]),
@@ -110,6 +110,7 @@ describe('WorkspaceEntityManager', () => {
     });
 
     jest.spyOn(entityManager as any, 'validatePermissions');
+    jest.spyOn(entityManager as any, 'createQueryBuilder');
 
     jest
       .spyOn(entityManager as any, 'extractTargetNameSingularFromEntityTarget')
@@ -125,40 +126,8 @@ describe('WorkspaceEntityManager', () => {
 
     // Mock typeORM's EntityManager methods
     jest
-      .spyOn(EntityManager.prototype, 'find')
-      .mockImplementation(() => Promise.resolve([]));
-    jest
-      .spyOn(EntityManager.prototype, 'findBy')
-      .mockImplementation(() => Promise.resolve([]));
-    jest
-      .spyOn(EntityManager.prototype, 'findOne')
-      .mockImplementation(() => Promise.resolve(null));
-    jest
-      .spyOn(EntityManager.prototype, 'findOneBy')
-      .mockImplementation(() => Promise.resolve(null));
-    jest
-      .spyOn(EntityManager.prototype, 'findAndCount')
-      .mockImplementation(() => Promise.resolve([[], 0]));
-    jest
-      .spyOn(EntityManager.prototype, 'findOneOrFail')
-      .mockImplementation(() => Promise.resolve({}));
-    jest
-      .spyOn(EntityManager.prototype, 'findOneByOrFail')
-      .mockImplementation(() => Promise.resolve({}));
-    jest
-      .spyOn(EntityManager.prototype, 'findAndCountBy')
-      .mockImplementation(() => Promise.resolve([[], 0]));
-    jest
       .spyOn(EntityManager.prototype, 'save')
       .mockImplementation(() => Promise.resolve({}));
-    jest
-      .spyOn(EntityManager.prototype, 'delete')
-      .mockImplementation(() => Promise.resolve({ affected: 1, raw: [] }));
-    jest
-      .spyOn(EntityManager.prototype, 'softDelete')
-      .mockImplementation(() =>
-        Promise.resolve({ affected: 1, raw: [], generatedMaps: [] }),
-      );
     jest
       .spyOn(EntityManager.prototype, 'update')
       .mockImplementation(() =>
@@ -170,42 +139,8 @@ describe('WorkspaceEntityManager', () => {
         Promise.resolve({ affected: 1, raw: [], generatedMaps: [] }),
       );
     jest
-      .spyOn(EntityManager.prototype, 'increment')
-      .mockImplementation(() =>
-        Promise.resolve({ affected: 1, raw: [], generatedMaps: [] }),
-      );
-    jest
-      .spyOn(EntityManager.prototype, 'decrement')
-      .mockImplementation(() =>
-        Promise.resolve({ affected: 1, raw: [], generatedMaps: [] }),
-      );
-    jest
       .spyOn(EntityManager.prototype, 'clear')
       .mockImplementation(() => Promise.resolve());
-    jest
-      .spyOn(EntityManager.prototype, 'exists')
-      .mockImplementation(() => Promise.resolve(true));
-    jest
-      .spyOn(EntityManager.prototype, 'existsBy')
-      .mockImplementation(() => Promise.resolve(true));
-    jest
-      .spyOn(EntityManager.prototype, 'count')
-      .mockImplementation(() => Promise.resolve(0));
-    jest
-      .spyOn(EntityManager.prototype, 'countBy')
-      .mockImplementation(() => Promise.resolve(0));
-    jest
-      .spyOn(EntityManager.prototype, 'sum')
-      .mockImplementation(() => Promise.resolve(0));
-    jest
-      .spyOn(EntityManager.prototype, 'average')
-      .mockImplementation(() => Promise.resolve(0));
-    jest
-      .spyOn(EntityManager.prototype, 'minimum')
-      .mockImplementation(() => Promise.resolve(0));
-    jest
-      .spyOn(EntityManager.prototype, 'maximum')
-      .mockImplementation(() => Promise.resolve(0));
     jest
       .spyOn(EntityManager.prototype, 'preload')
       .mockImplementation(() => Promise.resolve({}));
@@ -228,151 +163,17 @@ describe('WorkspaceEntityManager', () => {
     jest.clearAllMocks();
   });
 
-  describe('Find Methods', () => {
+  describe('Query Method', () => {
     it('should call validatePermissions and validateOperationIsPermittedOrThrow for find', async () => {
       await entityManager.find('test-entity', {}, mockPermissionOptions);
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'select',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'select',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
 
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for findBy', async () => {
-      await entityManager.findBy('test-entity', {}, mockPermissionOptions);
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
+      expect(entityManager.createQueryBuilder).toHaveBeenCalledWith(
         'test-entity',
-        'select',
+        undefined,
+        undefined,
         mockPermissionOptions,
       );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'select',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
     });
-
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for findOne', async () => {
-      await entityManager.findOne('test-entity', {}, mockPermissionOptions);
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'select',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'select',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for findOneBy', async () => {
-      await entityManager.findOneBy('test-entity', {}, mockPermissionOptions);
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'select',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'select',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for findAndCount', async () => {
-      await entityManager.findAndCount(
-        'test-entity',
-        {},
-        mockPermissionOptions,
-      );
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'select',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'select',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for findOneOrFail', async () => {
-      await entityManager.findOneOrFail(
-        'test-entity',
-        {},
-        mockPermissionOptions,
-      );
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'select',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'select',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for findOneByOrFail', async () => {
-      await entityManager.findOneByOrFail(
-        'test-entity',
-        {},
-        mockPermissionOptions,
-      );
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'select',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'select',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for findAndCountBy', async () => {
-      await entityManager.findAndCountBy(
-        'test-entity',
-        {},
-        mockPermissionOptions,
-      );
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'select',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'select',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-
     it('should throw error for query', async () => {
       expect(() => entityManager.query('SELECT * FROM test')).toThrow(
         'Method not allowed.',
@@ -403,40 +204,6 @@ describe('WorkspaceEntityManager', () => {
     });
   });
 
-  describe('Delete Methods', () => {
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for delete', async () => {
-      await entityManager.delete('test-entity', {}, mockPermissionOptions);
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'delete',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'delete',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for softDelete', async () => {
-      await entityManager.softDelete('test-entity', {}, mockPermissionOptions);
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'delete',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'delete',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-  });
-
   describe('Update Methods', () => {
     it('should call validatePermissions and validateOperationIsPermittedOrThrow for update', async () => {
       await entityManager.update('test-entity', {}, {}, mockPermissionOptions);
@@ -448,168 +215,6 @@ describe('WorkspaceEntityManager', () => {
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
         operationType: 'update',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for restore', async () => {
-      await entityManager.restore('test-entity', {}, mockPermissionOptions);
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'update',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'update',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-  });
-
-  describe('Math Methods', () => {
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for increment', async () => {
-      await entityManager.increment(
-        'test-entity',
-        {},
-        'testColumn',
-        1,
-        mockPermissionOptions,
-      );
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'update',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'update',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for decrement', async () => {
-      await entityManager.decrement(
-        'test-entity',
-        {},
-        'testColumn',
-        1,
-        mockPermissionOptions,
-      );
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'update',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'update',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for sum', async () => {
-      await entityManager.sum(
-        'test-entity',
-        'testColumn',
-        {},
-        mockPermissionOptions,
-      );
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'select',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'select',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for average', async () => {
-      await entityManager.average(
-        'test-entity',
-        'testColumn',
-        {},
-        mockPermissionOptions,
-      );
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'select',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'select',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for minimum', async () => {
-      await entityManager.minimum(
-        'test-entity',
-        'testColumn',
-        {},
-        mockPermissionOptions,
-      );
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'select',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'select',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for maximum', async () => {
-      await entityManager.maximum(
-        'test-entity',
-        'testColumn',
-        {},
-        mockPermissionOptions,
-      );
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'select',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'select',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for countBy', async () => {
-      await entityManager.countBy('test-entity', {}, mockPermissionOptions);
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'select',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'select',
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectRecordsPermissions:
           mockPermissionOptions.objectRecordsPermissions,
@@ -628,54 +233,6 @@ describe('WorkspaceEntityManager', () => {
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
         operationType: 'delete',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for exists', async () => {
-      await entityManager.exists('test-entity', {}, mockPermissionOptions);
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'select',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'select',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for existsBy', async () => {
-      await entityManager.existsBy('test-entity', {}, mockPermissionOptions);
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'select',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'select',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
-        objectRecordsPermissions:
-          mockPermissionOptions.objectRecordsPermissions,
-      });
-    });
-
-    it('should call validatePermissions and validateOperationIsPermittedOrThrow for count', async () => {
-      await entityManager.count('test-entity', {}, mockPermissionOptions);
-      expect(entityManager['validatePermissions']).toHaveBeenCalledWith(
-        'test-entity',
-        'select',
-        mockPermissionOptions,
-      );
-      expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
-        entityName: 'test-entity',
-        operationType: 'select',
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectRecordsPermissions:
           mockPermissionOptions.objectRecordsPermissions,

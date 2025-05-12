@@ -1,3 +1,4 @@
+import { Entity } from '@microsoft/microsoft-graph-types';
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -15,10 +16,13 @@ import {
   Repository,
   SaveOptions,
   SelectQueryBuilder,
+  TypeORMError,
   UpdateResult,
 } from 'typeorm';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { PickKeysByType } from 'typeorm/common/PickKeysByType';
+import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError';
+import { FindOptionsUtils } from 'typeorm/find-options/FindOptionsUtils';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
@@ -109,10 +113,11 @@ export class WorkspaceEntityManager extends EntityManager {
     alias?: string,
     queryRunner?: QueryRunner,
     options: {
-      shouldBypassPermissionChecks: boolean;
-      roleId?: string;
+      shouldBypassPermissionChecks?: boolean;
+      objectRecordsPermissions?: ObjectRecordsPermissions;
     } = {
       shouldBypassPermissionChecks: false,
+      objectRecordsPermissions: {},
     },
   ): SelectQueryBuilder<Entity> | WorkspaceSelectQueryBuilder<Entity> {
     let queryBuilder: SelectQueryBuilder<Entity>;
@@ -137,37 +142,13 @@ export class WorkspaceEntityManager extends EntityManager {
     if (!isPermissionsV2Enabled) {
       return queryBuilder;
     } else {
-      let objectPermissions = {};
-
-      if (options?.roleId) {
-        const dataSource = this.connection as WorkspaceDataSource;
-        const objectPermissionsByRoleId = dataSource.permissionsPerRoleId;
-
-        objectPermissions = objectPermissionsByRoleId?.[options.roleId] ?? {};
-      }
-
       return new WorkspaceSelectQueryBuilder(
         queryBuilder,
-        objectPermissions,
+        options?.objectRecordsPermissions ?? {},
         this.internalContext,
         options?.shouldBypassPermissionChecks ?? false,
       );
     }
-  }
-
-  override insert<Entity extends ObjectLiteral>(
-    target: EntityTarget<Entity>,
-    entityOrEntities:
-      | QueryDeepPartialEntity<Entity>
-      | QueryDeepPartialEntity<Entity>[],
-    permissionOptions?: {
-      shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectRecordsPermissions;
-    },
-  ): Promise<InsertResult> {
-    this.validatePermissions(target, 'insert', permissionOptions);
-
-    return super.insert(target, entityOrEntities);
   }
 
   override upsert<Entity extends ObjectLiteral>(
@@ -379,7 +360,7 @@ export class WorkspaceEntityManager extends EntityManager {
     return this.connection.getMetadata(entity.constructor).name;
   }
 
-  // Not in use
+  // Not in use - forbidden or duplicated from EntityManager
   override query<T = any>(_query: string, _parameters?: any[]): Promise<T> {
     throw new Error('Method not allowed.');
   }
@@ -389,9 +370,16 @@ export class WorkspaceEntityManager extends EntityManager {
     options?: FindManyOptions<Entity>,
     permissionOptions?: PermissionOptions,
   ): Promise<Entity[]> {
-    this.validatePermissions(entityClass, 'select', permissionOptions);
+    const metadata = this.connection.getMetadata(entityClass);
 
-    return super.find(entityClass, options);
+    return this.createQueryBuilder(
+      entityClass,
+      FindOptionsUtils.extractFindManyOptionsAlias(options) || metadata.name,
+      this.queryRunner,
+      permissionOptions,
+    )
+      .setFindOptions(options || {})
+      .getMany();
   }
 
   override findBy<Entity extends ObjectLiteral>(
@@ -399,9 +387,16 @@ export class WorkspaceEntityManager extends EntityManager {
     where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     permissionOptions?: PermissionOptions,
   ): Promise<Entity[]> {
-    this.validatePermissions(entityClass, 'select', permissionOptions);
+    const metadata = this.connection.getMetadata(entityClass);
 
-    return super.findBy(entityClass, where);
+    return this.createQueryBuilder(
+      entityClass,
+      metadata.name,
+      this.queryRunner,
+      permissionOptions,
+    )
+      .setFindOptions({ where: where })
+      .getMany();
   }
 
   override findOne<Entity extends ObjectLiteral>(
@@ -409,9 +404,31 @@ export class WorkspaceEntityManager extends EntityManager {
     options: FindOneOptions<Entity>,
     permissionOptions?: PermissionOptions,
   ): Promise<Entity | null> {
-    this.validatePermissions(entityClass, 'select', permissionOptions);
+    const metadata = this.connection.getMetadata(entityClass);
+    // prepare alias for built query
+    let alias = metadata.name;
 
-    return super.findOne(entityClass, options);
+    if (options && options.join) {
+      alias = options.join.alias;
+    }
+    if (!options.where) {
+      throw new Error(
+        `You must provide selection conditions in order to find a single row.`,
+      );
+    }
+
+    // create query builder and apply find options
+    return this.createQueryBuilder(
+      entityClass,
+      alias,
+      this.queryRunner,
+      permissionOptions,
+    )
+      .setFindOptions({
+        ...options,
+        take: 1,
+      })
+      .getOne();
   }
 
   override findOneBy<Entity extends ObjectLiteral>(
@@ -419,9 +436,20 @@ export class WorkspaceEntityManager extends EntityManager {
     where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     permissionOptions?: PermissionOptions,
   ): Promise<Entity | null> {
-    this.validatePermissions(entityClass, 'select', permissionOptions);
+    const metadata = this.connection.getMetadata(entityClass);
 
-    return super.findOneBy(entityClass, where);
+    // create query builder and apply find options
+    return this.createQueryBuilder(
+      entityClass,
+      metadata.name,
+      this.queryRunner,
+      permissionOptions,
+    )
+      .setFindOptions({
+        where,
+        take: 1,
+      })
+      .getOne();
   }
 
   override findAndCount<Entity extends ObjectLiteral>(
@@ -429,9 +457,16 @@ export class WorkspaceEntityManager extends EntityManager {
     options?: FindManyOptions<Entity>,
     permissionOptions?: PermissionOptions,
   ): Promise<[Entity[], number]> {
-    this.validatePermissions(entityClass, 'select', permissionOptions);
+    const metadata = this.connection.getMetadata(entityClass);
 
-    return super.findAndCount(entityClass, options);
+    return this.createQueryBuilder(
+      entityClass,
+      FindOptionsUtils.extractFindManyOptionsAlias(options) || metadata.name,
+      this.queryRunner,
+      permissionOptions,
+    )
+      .setFindOptions(options || {})
+      .getManyAndCount();
   }
 
   override findAndCountBy<Entity extends ObjectLiteral>(
@@ -439,9 +474,16 @@ export class WorkspaceEntityManager extends EntityManager {
     where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     permissionOptions?: PermissionOptions,
   ): Promise<[Entity[], number]> {
-    this.validatePermissions(entityClass, 'select', permissionOptions);
+    const metadata = this.connection.getMetadata(entityClass);
 
-    return super.findAndCountBy(entityClass, where);
+    return this.createQueryBuilder(
+      entityClass,
+      metadata.name,
+      this.queryRunner,
+      permissionOptions,
+    )
+      .setFindOptions({ where })
+      .getManyAndCount();
   }
 
   override findOneOrFail<Entity extends ObjectLiteral>(
@@ -449,9 +491,15 @@ export class WorkspaceEntityManager extends EntityManager {
     options: FindOneOptions<Entity>,
     permissionOptions?: PermissionOptions,
   ): Promise<Entity> {
-    this.validatePermissions(entityClass, 'select', permissionOptions);
+    return this.findOne(entityClass, options, permissionOptions).then(
+      (value) => {
+        if (value === null) {
+          return Promise.reject(new EntityNotFoundError(entityClass, options));
+        }
 
-    return super.findOneOrFail(entityClass, options);
+        return Promise.resolve(value);
+      },
+    );
   }
 
   override findOneByOrFail<Entity extends ObjectLiteral>(
@@ -459,9 +507,15 @@ export class WorkspaceEntityManager extends EntityManager {
     where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     permissionOptions?: PermissionOptions,
   ): Promise<Entity> {
-    this.validatePermissions(entityClass, 'select', permissionOptions);
+    return this.findOneBy(entityClass, where, permissionOptions).then(
+      (value) => {
+        if (value === null) {
+          return Promise.reject(new EntityNotFoundError(entityClass, where));
+        }
 
-    return super.findOneByOrFail(entityClass, where);
+        return Promise.resolve(value);
+      },
+    );
   }
 
   override delete<Entity extends ObjectLiteral>(
@@ -548,9 +602,47 @@ export class WorkspaceEntityManager extends EntityManager {
     criteria: any,
     permissionOptions?: PermissionOptions,
   ): Promise<UpdateResult> {
-    this.validatePermissions(targetOrEntity, 'delete', permissionOptions);
-
-    return super.softDelete(targetOrEntity, criteria);
+    // if user passed empty criteria or empty list of criterias, then throw an error
+    if (
+      criteria === undefined ||
+      criteria === null ||
+      criteria === '' ||
+      (Array.isArray(criteria) && criteria.length === 0)
+    ) {
+      return Promise.reject(
+        new TypeORMError(
+          `Empty criteria(s) are not allowed for the delete method.`,
+        ),
+      );
+    }
+    if (
+      typeof criteria === 'string' ||
+      typeof criteria === 'number' ||
+      criteria instanceof Date ||
+      Array.isArray(criteria)
+    ) {
+      return this.createQueryBuilder(
+        undefined,
+        undefined,
+        this.queryRunner,
+        permissionOptions,
+      )
+        .softDelete()
+        .from(targetOrEntity)
+        .whereInIds(criteria)
+        .execute();
+    } else {
+      return this.createQueryBuilder(
+        undefined,
+        undefined,
+        this.queryRunner,
+        permissionOptions,
+      )
+        .softDelete()
+        .from(targetOrEntity)
+        .where(criteria)
+        .execute();
+    }
   }
 
   override softRemove<Entity extends ObjectLiteral>(
@@ -636,16 +728,6 @@ export class WorkspaceEntityManager extends EntityManager {
     }
   }
 
-  override restore<Entity extends ObjectLiteral>(
-    targetOrEntity: EntityTarget<Entity>,
-    criteria: any,
-    permissionOptions?: PermissionOptions,
-  ): Promise<UpdateResult> {
-    this.validatePermissions(targetOrEntity, 'update', permissionOptions);
-
-    return super.restore(targetOrEntity, criteria);
-  }
-
   override recover<Entity>(
     entities: Entity[],
     options?: SaveOptions,
@@ -727,14 +809,69 @@ export class WorkspaceEntityManager extends EntityManager {
     }
   }
 
+  override restore<Entity extends ObjectLiteral>(
+    targetOrEntity: EntityTarget<Entity>,
+    criteria: any,
+    permissionOptions?: PermissionOptions,
+  ): Promise<UpdateResult> {
+    // if user passed empty criteria or empty list of criterias, then throw an error
+    if (
+      criteria === undefined ||
+      criteria === null ||
+      criteria === '' ||
+      (Array.isArray(criteria) && criteria.length === 0)
+    ) {
+      return Promise.reject(
+        new TypeORMError(
+          `Empty criteria(s) are not allowed for the delete method.`,
+        ),
+      );
+    }
+    if (
+      typeof criteria === 'string' ||
+      typeof criteria === 'number' ||
+      criteria instanceof Date ||
+      Array.isArray(criteria)
+    ) {
+      return this.createQueryBuilder(
+        undefined,
+        undefined,
+        this.queryRunner,
+        permissionOptions,
+      )
+        .restore()
+        .from(targetOrEntity)
+        .whereInIds(criteria)
+        .execute();
+    } else {
+      return this.createQueryBuilder(
+        undefined,
+        undefined,
+        this.queryRunner,
+        permissionOptions,
+      )
+        .restore()
+        .from(targetOrEntity)
+        .where(criteria)
+        .execute();
+    }
+  }
+
   override exists<Entity extends ObjectLiteral>(
     entityClass: EntityTarget<Entity>,
     options?: FindManyOptions<Entity>,
     permissionOptions?: PermissionOptions,
   ): Promise<boolean> {
-    this.validatePermissions(entityClass, 'select', permissionOptions);
+    const metadata = this.connection.getMetadata(entityClass);
 
-    return super.exists(entityClass, options);
+    return this.createQueryBuilder(
+      entityClass,
+      FindOptionsUtils.extractFindManyOptionsAlias(options) || metadata.name,
+      this.queryRunner,
+      permissionOptions,
+    )
+      .setFindOptions(options || {})
+      .getExists();
   }
 
   override existsBy<Entity extends ObjectLiteral>(
@@ -742,9 +879,16 @@ export class WorkspaceEntityManager extends EntityManager {
     where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     permissionOptions?: PermissionOptions,
   ): Promise<boolean> {
-    this.validatePermissions(entityClass, 'select', permissionOptions);
+    const metadata = this.connection.getMetadata(entityClass);
 
-    return super.existsBy(entityClass, where);
+    return this.createQueryBuilder(
+      entityClass,
+      metadata.name,
+      this.queryRunner,
+      permissionOptions,
+    )
+      .setFindOptions({ where })
+      .getExists();
   }
 
   override count<Entity extends ObjectLiteral>(
@@ -752,9 +896,16 @@ export class WorkspaceEntityManager extends EntityManager {
     options?: FindManyOptions<Entity>,
     permissionOptions?: PermissionOptions,
   ): Promise<number> {
-    this.validatePermissions(entityClass, 'select', permissionOptions);
+    const metadata = this.connection.getMetadata(entityClass);
 
-    return super.count(entityClass, options);
+    return this.createQueryBuilder(
+      entityClass,
+      FindOptionsUtils.extractFindManyOptionsAlias(options) || metadata.name,
+      this.queryRunner,
+      permissionOptions,
+    )
+      .setFindOptions(options || {})
+      .getCount();
   }
 
   override countBy<Entity extends ObjectLiteral>(
@@ -762,9 +913,49 @@ export class WorkspaceEntityManager extends EntityManager {
     where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     permissionOptions?: PermissionOptions,
   ): Promise<number> {
-    this.validatePermissions(entityClass, 'select', permissionOptions);
+    const metadata = this.connection.getMetadata(entityClass);
 
-    return super.countBy(entityClass, where);
+    return this.createQueryBuilder(
+      entityClass,
+      metadata.name,
+      this.queryRunner,
+      permissionOptions,
+    )
+      .setFindOptions({ where })
+      .getCount();
+  }
+
+  async callAggregateFunCustom(
+    entityClass: EntityTarget<Entity>,
+    fnName: string,
+    columnName: string,
+    where = {},
+    permissionOptions?: PermissionOptions,
+  ) {
+    const metadata = this.connection.getMetadata(entityClass);
+    const column = metadata.columns.find(
+      (item) => item.propertyPath === columnName,
+    );
+
+    if (!column) {
+      throw new TypeORMError(
+        `Column "${columnName}" was not found in table "${metadata.name}"`,
+      );
+    }
+    const result = await this.createQueryBuilder(
+      entityClass,
+      metadata.name,
+      this.queryRunner,
+      permissionOptions,
+    )
+      .setFindOptions({ where })
+      .select(
+        `${fnName}(${this.connection.driver.escape(column.databaseName)})`,
+        fnName,
+      )
+      .getRawOne();
+
+    return result[fnName] === null ? null : parseFloat(result[fnName]);
   }
 
   override sum<Entity extends ObjectLiteral>(
@@ -773,9 +964,13 @@ export class WorkspaceEntityManager extends EntityManager {
     where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     permissionOptions?: PermissionOptions,
   ): Promise<number | null> {
-    this.validatePermissions(entityClass, 'select', permissionOptions);
-
-    return super.sum(entityClass, columnName, where);
+    return this.callAggregateFunCustom(
+      entityClass,
+      'SUM',
+      columnName,
+      where,
+      permissionOptions,
+    );
   }
 
   override average<Entity extends ObjectLiteral>(
@@ -784,9 +979,13 @@ export class WorkspaceEntityManager extends EntityManager {
     where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     permissionOptions?: PermissionOptions,
   ): Promise<number | null> {
-    this.validatePermissions(entityClass, 'select', permissionOptions);
-
-    return super.average(entityClass, columnName, where);
+    return this.callAggregateFunCustom(
+      entityClass,
+      'AVG',
+      columnName,
+      where,
+      permissionOptions,
+    );
   }
 
   override minimum<Entity extends ObjectLiteral>(
@@ -795,9 +994,13 @@ export class WorkspaceEntityManager extends EntityManager {
     where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     permissionOptions?: PermissionOptions,
   ): Promise<number | null> {
-    this.validatePermissions(entityClass, 'select', permissionOptions);
-
-    return super.minimum(entityClass, columnName, where);
+    return this.callAggregateFunCustom(
+      entityClass,
+      'MIN',
+      columnName,
+      where,
+      permissionOptions,
+    );
   }
 
   override maximum<Entity extends ObjectLiteral>(
@@ -806,9 +1009,13 @@ export class WorkspaceEntityManager extends EntityManager {
     where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     permissionOptions?: PermissionOptions,
   ): Promise<number | null> {
-    this.validatePermissions(entityClass, 'select', permissionOptions);
-
-    return super.maximum(entityClass, columnName, where);
+    return this.callAggregateFunCustom(
+      entityClass,
+      'MAX',
+      columnName,
+      where,
+      permissionOptions,
+    );
   }
 
   override clear<Entity>(
@@ -818,30 +1025,6 @@ export class WorkspaceEntityManager extends EntityManager {
     this.validatePermissions(entityClass, 'delete', permissionOptions);
 
     return super.clear(entityClass);
-  }
-
-  override increment<Entity extends ObjectLiteral>(
-    entityClass: EntityTarget<Entity>,
-    conditions: any,
-    propertyPath: string,
-    value: number | string,
-    permissionOptions?: PermissionOptions,
-  ): Promise<UpdateResult> {
-    this.validatePermissions(entityClass, 'update', permissionOptions);
-
-    return super.increment(entityClass, conditions, propertyPath, value);
-  }
-
-  override decrement<Entity extends ObjectLiteral>(
-    entityClass: EntityTarget<Entity>,
-    conditions: any,
-    propertyPath: string,
-    value: number | string,
-    permissionOptions?: PermissionOptions,
-  ): Promise<UpdateResult> {
-    this.validatePermissions(entityClass, 'update', permissionOptions);
-
-    return super.decrement(entityClass, conditions, propertyPath, value);
   }
 
   override preload<Entity extends ObjectLiteral>(
