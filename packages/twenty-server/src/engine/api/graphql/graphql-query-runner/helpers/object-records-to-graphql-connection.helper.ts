@@ -15,10 +15,8 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { getRelationObjectMetadata } from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -154,9 +152,6 @@ export class ObjectRecordsToGraphqlConnectionHelper {
       );
     }
 
-    const isNewRelationEnabled =
-      this.featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled];
-
     const objectMetadata = getObjectMetadataMapItemByNameSingular(
       this.objectMetadataMaps,
       objectName,
@@ -181,12 +176,10 @@ export class ObjectRecordsToGraphqlConnectionHelper {
 
       if (isRelationFieldMetadataType(fieldMetadata.type)) {
         if (Array.isArray(value)) {
-          const targetObjectMetadata = isNewRelationEnabled
-            ? getTargetObjectMetadataOrThrow(
-                fieldMetadata,
-                this.objectMetadataMaps,
-              )
-            : getRelationObjectMetadata(fieldMetadata, this.objectMetadataMaps);
+          const targetObjectMetadata = getTargetObjectMetadataOrThrow(
+            fieldMetadata,
+            this.objectMetadataMaps,
+          );
 
           processedObjectRecord[key] = this.createConnection({
             objectRecords: value,
@@ -206,12 +199,10 @@ export class ObjectRecordsToGraphqlConnectionHelper {
             depth: depth + 1,
           });
         } else if (isPlainObject(value)) {
-          const targetObjectMetadata = isNewRelationEnabled
-            ? getTargetObjectMetadataOrThrow(
-                fieldMetadata,
-                this.objectMetadataMaps,
-              )
-            : getRelationObjectMetadata(fieldMetadata, this.objectMetadataMaps);
+          const targetObjectMetadata = getTargetObjectMetadataOrThrow(
+            fieldMetadata,
+            this.objectMetadataMaps,
+          );
 
           processedObjectRecord[key] = this.processRecord({
             objectRecord: value,

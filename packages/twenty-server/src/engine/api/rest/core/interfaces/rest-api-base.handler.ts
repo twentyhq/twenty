@@ -1,37 +1,36 @@
 import { BadRequestException, Inject } from '@nestjs/common';
 
 import { Request } from 'express';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { In, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   ObjectRecord,
   OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/get-variables.factory';
+import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
+import { QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
 import {
   Depth,
   DepthInputFactory,
   MAX_DEPTH,
 } from 'src/engine/api/rest/input-factories/depth-input.factory';
-import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
-import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -366,7 +365,6 @@ export abstract class RestApiBaseHandler {
         records,
         objectMetadataItemWithFieldsMaps as any,
         objectMetadata.objectMetadataMaps,
-        dataSource.featureFlagMap[FeatureFlagKey.IsNewRelationEnabled],
       ),
       totalCount,
       hasMoreRecords,

@@ -47,7 +47,6 @@ export class GraphqlQueryRestoreOneResolverService extends GraphqlQueryBaseResol
       nonFormattedRestoredObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     this.apiEventEmitterService.emitRestoreEvents(
@@ -74,8 +73,6 @@ export class GraphqlQueryRestoreOneResolverService extends GraphqlQueryBaseResol
         limit: QUERY_MAX_RECORDS,
         authContext,
         dataSource: executionArgs.dataSource,
-        isNewRelationEnabled:
-          featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });

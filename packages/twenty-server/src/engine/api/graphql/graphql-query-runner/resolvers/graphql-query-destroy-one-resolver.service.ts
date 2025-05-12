@@ -52,7 +52,6 @@ export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResol
       nonFormattedDeletedObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     this.apiEventEmitterService.emitDestroyEvents(
@@ -70,8 +69,6 @@ export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResol
         limit: QUERY_MAX_RECORDS,
         authContext,
         dataSource: executionArgs.dataSource,
-        isNewRelationEnabled:
-          featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });

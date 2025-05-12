@@ -13,7 +13,6 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { getJoinColumn } from 'src/engine/twenty-orm/utils/get-join-column.util';
@@ -169,9 +168,6 @@ export class StandardFieldFactory {
     workspaceRelationMetadataArgs: WorkspaceRelationMetadataArgs,
     context: WorkspaceSyncContext,
   ): PartialFieldMetadata[] {
-    const isNewRelationEnabled =
-      context.featureFlags[FeatureFlagKey.IsNewRelationEnabled];
-
     const fieldMetadataCollection: PartialFieldMetadata[] = [];
     const foreignKeyStandardId = createDeterministicUuid(
       workspaceRelationMetadataArgs.standardId,
@@ -192,28 +188,6 @@ export class StandardFieldFactory {
       )
     ) {
       return [];
-    }
-
-    // We don't want to create the join column field metadata for new relation
-    if (!isNewRelationEnabled && joinColumn) {
-      fieldMetadataCollection.push({
-        type: FieldMetadataType.UUID,
-        standardId: foreignKeyStandardId,
-        name: joinColumn,
-        label: `${workspaceRelationMetadataArgs.label} id (foreign key)`,
-        description: `${workspaceRelationMetadataArgs.description} id foreign key`,
-        icon: workspaceRelationMetadataArgs.icon,
-        defaultValue: null,
-        options: undefined,
-        settings: undefined,
-        workspaceId: context.workspaceId,
-        isCustom: false,
-        isSystem: true,
-        isNullable: workspaceRelationMetadataArgs.isNullable,
-        isUnique:
-          workspaceRelationMetadataArgs.type === RelationType.ONE_TO_ONE,
-        isActive: workspaceRelationMetadataArgs.isActive ?? true,
-      });
     }
 
     fieldMetadataCollection.push({

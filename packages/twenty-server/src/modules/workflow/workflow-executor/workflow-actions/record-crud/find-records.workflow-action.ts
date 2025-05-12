@@ -12,7 +12,6 @@ import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfa
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -129,11 +128,6 @@ export class FindRecordsWorkflowAction implements WorkflowExecutor {
     repository: WorkspaceRepository<T>,
     graphqlQueryParser: GraphqlQueryParser,
   ) {
-    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsNewRelationEnabled,
-      objectMetadataItemWithFieldsMaps.workspaceId,
-    );
-
     const queryBuilder = repository.createQueryBuilder(
       workflowActionInput.objectName,
     );
@@ -164,7 +158,6 @@ export class FindRecordsWorkflowAction implements WorkflowExecutor {
       nonFormattedObjectRecords,
       objectMetadataItemWithFieldsMaps,
       objectMetadataMaps,
-      isNewRelationEnabled,
     );
   }
 

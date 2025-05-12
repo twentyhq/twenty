@@ -59,7 +59,6 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
       nonFormattedObjectRecord,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     if (!objectRecord) {
@@ -80,8 +79,6 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
         limit: QUERY_MAX_RECORDS,
         authContext,
         dataSource: executionArgs.dataSource,
-        isNewRelationEnabled:
-          featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });

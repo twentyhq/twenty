@@ -55,7 +55,6 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
       existingRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     if (isEmpty(formattedExistingRecords)) {
@@ -90,7 +89,6 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
       nonFormattedUpdatedObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     this.apiEventEmitterService.emitUpdateEvents(
@@ -110,8 +108,6 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
         limit: QUERY_MAX_RECORDS,
         authContext,
         dataSource: executionArgs.dataSource,
-        isNewRelationEnabled:
-          featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });

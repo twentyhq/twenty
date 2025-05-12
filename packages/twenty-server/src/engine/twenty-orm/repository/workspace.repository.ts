@@ -729,14 +729,7 @@ export class WorkspaceRepository<
     objectMetadata ??= await this.getObjectMetadataFromTarget();
 
     const objectMetadataMaps = this.internalContext.objectMetadataMaps;
-    const isNewRelationEnabled =
-      this.internalContext.featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled];
 
-    return formatResult(
-      data,
-      objectMetadata,
-      objectMetadataMaps,
-      isNewRelationEnabled,
-    ) as T;
+    return formatResult(data, objectMetadata, objectMetadataMaps) as T;
   }
 }

@@ -36,7 +36,6 @@ export class InputTypeDefinitionFactory {
     objectMetadata: ObjectMetadataInterface,
     kind: InputTypeDefinitionKind,
     options: WorkspaceBuildSchemaOptions,
-    isNewRelationEnabled = false,
   ): InputTypeDefinition {
     const inputType = new GraphQLInputObjectType({
       name: `${pascalCase(objectMetadata.nameSingular)}${kind.toString()}Input`,
@@ -59,7 +58,6 @@ export class InputTypeDefinitionFactory {
                 kind,
                 options,
                 this.inputTypeFactory,
-                isNewRelationEnabled,
               ),
               and: {
                 type: andOrType,
@@ -83,7 +81,6 @@ export class InputTypeDefinitionFactory {
               kind,
               options,
               this.inputTypeFactory,
-              isNewRelationEnabled,
             );
         }
       },

@@ -322,7 +322,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       nonFormattedUpsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
   }
 
@@ -347,8 +346,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       limit: QUERY_MAX_RECORDS,
       authContext: executionArgs.options.authContext,
       dataSource: executionArgs.dataSource,
-      isNewRelationEnabled:
-        featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
       roleId,
       shouldBypassPermissionChecks,
     });
