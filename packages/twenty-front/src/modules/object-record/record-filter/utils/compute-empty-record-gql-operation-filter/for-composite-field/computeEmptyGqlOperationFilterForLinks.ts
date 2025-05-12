@@ -40,12 +40,12 @@ export const computeEmptyGqlOperationFilterForLinks = ({
           or: [
             {
               [correspondingFieldMetadataItem.name]: {
-                primaryLinkLabel: { eq: '' },
+                primaryLinkUrl: { eq: '' },
               } satisfies LinksFilter,
             },
             {
               [correspondingFieldMetadataItem.name]: {
-                primaryLinkLabel: { is: 'NULL' },
+                primaryLinkUrl: { is: 'NULL' },
               } satisfies LinksFilter,
             },
           ],
@@ -56,12 +56,12 @@ export const computeEmptyGqlOperationFilterForLinks = ({
           or: [
             {
               [correspondingFieldMetadataItem.name]: {
-                primaryLinkUrl: { is: 'NULL' },
+                secondaryLinks: { is: 'NULL' },
               } satisfies LinksFilter,
             },
             {
               [correspondingFieldMetadataItem.name]: {
-                primaryLinkUrl: { like: '[]' },
+                secondaryLinks: { like: '[]' },
               } satisfies LinksFilter,
             },
           ],
