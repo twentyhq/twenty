@@ -7,9 +7,14 @@ import { DatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trig
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/cron-trigger.cron.command';
 import { CronTriggerCronJob } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/jobs/cron-trigger.cron.job';
+import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 
 @Module({
-  imports: [FeatureFlagModule, TypeOrmModule.forFeature([Workspace], 'core')],
+  imports: [
+    FeatureFlagModule,
+    TypeOrmModule.forFeature([Workspace], 'core'),
+    WorkflowCommonModule,
+  ],
   providers: [
     AutomatedTriggerWorkspaceService,
     DatabaseEventTriggerListener,
