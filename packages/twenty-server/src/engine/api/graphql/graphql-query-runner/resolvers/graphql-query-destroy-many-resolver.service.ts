@@ -10,7 +10,6 @@ import { DestroyManyResolverArgs } from 'src/engine/api/graphql/workspace-resolv
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
@@ -21,7 +20,6 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
 > {
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<DestroyManyResolverArgs>,
-    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<ObjectRecord[]> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
@@ -75,10 +73,7 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
     }
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(
-        objectMetadataMaps,
-        featureFlagsMap,
-      );
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     return deletedRecords.map((record: ObjectRecord) =>
       typeORMObjectRecordsParser.processRecord({

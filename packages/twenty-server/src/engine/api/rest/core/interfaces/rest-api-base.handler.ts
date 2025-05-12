@@ -27,7 +27,6 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -283,7 +282,6 @@ export abstract class RestApiBaseHandler {
     request,
     recordId,
     repository,
-    dataSource,
     objectMetadata,
     objectMetadataNameSingular,
     objectMetadataItemWithFieldsMaps,
@@ -291,7 +289,6 @@ export abstract class RestApiBaseHandler {
     request: Request;
     recordId?: string;
     repository: WorkspaceRepository<ObjectLiteral>;
-    dataSource: WorkspaceDataSource;
     objectMetadata: any;
     objectMetadataNameSingular: string;
     objectMetadataItemWithFieldsMaps:
@@ -315,7 +312,6 @@ export abstract class RestApiBaseHandler {
       fieldMetadataMapByName,
       fieldMetadataMapByJoinColumnName,
       objectMetadata.objectMetadataMaps,
-      dataSource.featureFlagMap,
     );
 
     const filters = this.computeFilters(inputs);

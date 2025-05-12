@@ -1,4 +1,3 @@
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import {
@@ -10,14 +9,9 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 
 export class GraphqlQuerySelectedFieldsRelationParser {
   private objectMetadataMaps: ObjectMetadataMaps;
-  private featureFlagsMap: FeatureFlagMap;
 
-  constructor(
-    objectMetadataMaps: ObjectMetadataMaps,
-    featureFlagsMap: FeatureFlagMap,
-  ) {
+  constructor(objectMetadataMaps: ObjectMetadataMaps) {
     this.objectMetadataMaps = objectMetadataMaps;
-    this.featureFlagsMap = featureFlagsMap;
   }
 
   parseRelationField(
@@ -40,7 +34,6 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     const targetFields = targetObjectMetadata.fieldsByName;
     const fieldParser = new GraphqlQuerySelectedFieldsParser(
       this.objectMetadataMaps,
-      this.featureFlagsMap,
     );
     const relationAccumulator = fieldParser.parse(fieldValue, targetFields);
 

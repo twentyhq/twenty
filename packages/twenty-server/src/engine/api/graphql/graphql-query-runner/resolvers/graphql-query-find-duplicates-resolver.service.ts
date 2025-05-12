@@ -23,7 +23,6 @@ import {
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { settings } from 'src/engine/constants/settings';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
@@ -39,7 +38,6 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
 > {
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<FindDuplicatesResolverArgs>,
-    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<IConnection<ObjectRecord>[]> {
     const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
@@ -66,14 +64,10 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
       objectMetadataItemWithFieldsMaps?.fieldsByName,
       objectMetadataItemWithFieldsMaps?.fieldsByJoinColumnName,
       objectMetadataMaps,
-      featureFlagsMap,
     );
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(
-        objectMetadataMaps,
-        featureFlagsMap,
-      );
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     let objectRecords: Partial<ObjectRecord>[] = [];
 
