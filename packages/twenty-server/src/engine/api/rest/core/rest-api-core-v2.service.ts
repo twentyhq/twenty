@@ -4,41 +4,41 @@ import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
-import { RestApiDeleteOneResolverService } from 'src/engine/api/rest/core/resolvers/rest-api-delete-one-resolver.service';
-import { RestApiCreateOneResolverService } from 'src/engine/api/rest/core/resolvers/rest-api-create-one-resolver.service';
-import { RestApiUpdateOneResolverService } from 'src/engine/api/rest/core/resolvers/rest-api-update-one-resolver.service';
-import { RestApiGetOneResolverService } from 'src/engine/api/rest/core/resolvers/rest-api-get-one-resolver.service';
-import { RestApiGetManyResolverService } from 'src/engine/api/rest/core/resolvers/rest-api-get-many-resolver.service';
+import { RestApiDeleteOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-delete-one.handler';
+import { RestApiCreateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-create-one.handler';
+import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-one.handler';
+import { RestApiGetOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-get-one.handler';
+import { RestApiGetManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-get-many.handler';
 
 @Injectable()
 export class RestApiCoreServiceV2 {
   constructor(
-    private readonly restApiDeleteOneResolverService: RestApiDeleteOneResolverService,
-    private readonly restApiCreateOneResolverService: RestApiCreateOneResolverService,
-    private readonly restApiUpdateOneResolverService: RestApiUpdateOneResolverService,
-    private readonly restApiGetOneResolverService: RestApiGetOneResolverService,
-    private readonly restApiGetManyResolverService: RestApiGetManyResolverService,
+    private readonly restApiDeleteOneHandler: RestApiDeleteOneHandler,
+    private readonly restApiCreateOneHandler: RestApiCreateOneHandler,
+    private readonly restApiUpdateOneHandler: RestApiUpdateOneHandler,
+    private readonly restApiGetOneHandler: RestApiGetOneHandler,
+    private readonly restApiGetManyHandler: RestApiGetManyHandler,
   ) {}
 
   async delete(request: Request) {
-    return await this.restApiDeleteOneResolverService.resolve(request);
+    return await this.restApiDeleteOneHandler.handle(request);
   }
 
   async createOne(request: Request) {
-    return await this.restApiCreateOneResolverService.resolve(request);
+    return await this.restApiCreateOneHandler.handle(request);
   }
 
   async update(request: Request) {
-    return await this.restApiUpdateOneResolverService.resolve(request);
+    return await this.restApiUpdateOneHandler.handle(request);
   }
 
   async get(request: Request) {
     const { id: recordId } = parseCorePath(request);
 
     if (isDefined(recordId)) {
-      return await this.restApiGetOneResolverService.resolve(request);
+      return await this.restApiGetOneHandler.handle(request);
     } else {
-      return await this.restApiGetManyResolverService.resolve(request);
+      return await this.restApiGetManyHandler.handle(request);
     }
   }
 }

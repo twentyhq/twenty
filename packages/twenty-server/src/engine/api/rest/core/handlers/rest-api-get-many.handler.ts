@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 
-import { RestApiBaseResolverService } from 'src/engine/api/rest/core/interfaces/rest-api-base-resolver.service';
+import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 @Injectable()
-export class RestApiGetManyResolverService extends RestApiBaseResolverService {
-  async resolve(request: Request) {
+export class RestApiGetManyHandler extends RestApiBaseHandler {
+  async handle(request: Request) {
     const {
       objectMetadataNameSingular,
       objectMetadataNamePlural,

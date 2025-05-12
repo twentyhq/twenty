@@ -3,13 +3,13 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
-import { RestApiBaseResolverService } from 'src/engine/api/rest/core/interfaces/rest-api-base-resolver.service';
+import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 
 @Injectable()
-export class RestApiUpdateOneResolverService extends RestApiBaseResolverService {
-  async resolve(request: Request) {
+export class RestApiUpdateOneHandler extends RestApiBaseHandler {
+  async handle(request: Request) {
     const { id: recordId } = parseCorePath(request);
 
     if (!recordId) {

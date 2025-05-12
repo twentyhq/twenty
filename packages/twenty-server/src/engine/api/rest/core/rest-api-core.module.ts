@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 
-import { RestApiDeleteOneResolverService } from 'src/engine/api/rest/core/resolvers/rest-api-delete-one-resolver.service';
-import { RestApiCreateOneResolverService } from 'src/engine/api/rest/core/resolvers/rest-api-create-one-resolver.service';
-import { RestApiUpdateOneResolverService } from 'src/engine/api/rest/core/resolvers/rest-api-update-one-resolver.service';
-import { RestApiGetOneResolverService } from 'src/engine/api/rest/core/resolvers/rest-api-get-one-resolver.service';
-import { RestApiGetManyResolverService } from 'src/engine/api/rest/core/resolvers/rest-api-get-many-resolver.service';
+import { RestApiDeleteOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-delete-one.handler';
+import { RestApiCreateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-create-one.handler';
+import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-one.handler';
+import { RestApiGetOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-get-one.handler';
+import { RestApiGetManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-get-many.handler';
 import { CoreQueryBuilderModule } from 'src/engine/api/rest/core/query-builder/core-query-builder.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
@@ -21,11 +21,11 @@ import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-run
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 
 const restApiCoreResolvers = [
-  RestApiDeleteOneResolverService,
-  RestApiCreateOneResolverService,
-  RestApiUpdateOneResolverService,
-  RestApiGetOneResolverService,
-  RestApiGetManyResolverService,
+  RestApiDeleteOneHandler,
+  RestApiCreateOneHandler,
+  RestApiUpdateOneHandler,
+  RestApiGetOneHandler,
+  RestApiGetManyHandler,
 ];
 
 @Module({

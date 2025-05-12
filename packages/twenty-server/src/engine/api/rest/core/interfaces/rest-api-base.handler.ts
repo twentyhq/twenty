@@ -57,7 +57,7 @@ export interface FormatResult {
   totalCount?: number;
 }
 
-export abstract class RestApiBaseResolverService {
+export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly recordInputTransformerService: RecordInputTransformerService;
   @Inject()
@@ -73,7 +73,7 @@ export abstract class RestApiBaseResolverService {
   @Inject()
   protected readonly apiEventEmitterService: ApiEventEmitterService;
 
-  protected abstract resolve(request: Request): Promise<FormatResult>;
+  protected abstract handle(request: Request): Promise<FormatResult>;
 
   public async getRepositoryAndMetadataOrFail(request: Request) {
     const { workspace, apiKey, userWorkspaceId } = request;

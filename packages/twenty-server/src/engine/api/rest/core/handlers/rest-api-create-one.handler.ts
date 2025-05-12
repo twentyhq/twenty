@@ -3,11 +3,11 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
-import { RestApiBaseResolverService } from 'src/engine/api/rest/core/interfaces/rest-api-base-resolver.service';
+import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 @Injectable()
-export class RestApiCreateOneResolverService extends RestApiBaseResolverService {
-  async resolve(request: Request) {
+export class RestApiCreateOneHandler extends RestApiBaseHandler {
+  async handle(request: Request) {
     const { objectMetadataNameSingular, objectMetadata, repository } =
       await this.getRepositoryAndMetadataOrFail(request);
 
