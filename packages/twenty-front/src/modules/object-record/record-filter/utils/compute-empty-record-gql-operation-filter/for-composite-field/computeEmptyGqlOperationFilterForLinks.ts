@@ -15,7 +15,7 @@ export const computeEmptyGqlOperationFilterForLinks = ({
   correspondingFieldMetadataItem: Pick<FieldMetadataItem, 'name' | 'type'>;
 }): RecordGqlOperationFilter => {
   const subFieldName = recordFilter.subFieldName;
-  const isSubFieldFilter = isNonEmptyString(recordFilter.subFieldName);
+  const isSubFieldFilter = isNonEmptyString(subFieldName);
 
   if (isSubFieldFilter) {
     switch (subFieldName) {
