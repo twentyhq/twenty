@@ -9,7 +9,7 @@ export const relationFilterValueSchemaObject = z.object({
 });
 
 /**
- * @deprecated
+ * @deprecated please use relationFilterValueSchema instead
  */
 export const jsonRelationFilterValueSchema = z
   .string()

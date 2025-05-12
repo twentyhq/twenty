@@ -1,4 +1,4 @@
-import { parseExpression } from 'cron-parser';
+import { CronExpressionParser } from 'cron-parser';
 
 export const shouldRunNow = (
   pattern: string,
@@ -6,7 +6,7 @@ export const shouldRunNow = (
   rootCronIntervalMs = 60_000,
 ) => {
   try {
-    const interval = parseExpression(pattern, {
+    const interval = CronExpressionParser.parse(pattern, {
       currentDate: now,
     });
 

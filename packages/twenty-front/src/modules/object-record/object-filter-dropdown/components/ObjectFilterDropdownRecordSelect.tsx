@@ -1,10 +1,7 @@
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getRelationObjectMetadataNameSingular } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { ObjectFilterDropdownRecordPinnedItems } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordPinnedItems';
-import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
-import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
@@ -15,9 +12,9 @@ import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForS
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
-import { useRecoilValue } from 'recoil';
+import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from 'twenty-shared/constants';
+import { jsonRelationFilterValueSchema } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconUserCircle } from 'twenty-ui/display';
 
@@ -34,9 +31,6 @@ export const ObjectFilterDropdownRecordSelect = ({
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const { objectFilterDropdownFilterValue } =
-    useObjectFilterDropdownFilterValue();
-
   const { applyObjectFilterDropdownFilterValue } =
     useApplyObjectFilterDropdownFilterValue();
 
@@ -51,9 +45,6 @@ export const ObjectFilterDropdownRecordSelect = ({
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
-
-  const { id: currentWorkspaceMemberId } =
-    useRecoilValue(currentWorkspaceMemberState) ?? {};
 
   let isCurrentWorkspaceMemberSelected: boolean;
   let selectedRecordIds: string[];
@@ -101,10 +92,10 @@ export const ObjectFilterDropdownRecordSelect = ({
     );
 
     isCurrentWorkspaceMemberSelected = relationFilterValue.includes(
-      '{{CURRENT_WORKSPACE_MEMBER}}',
+      CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID,
     );
     selectedRecordIds = relationFilterValue.filter(
-      (item) => item !== '{{CURRENT_WORKSPACE_MEMBER}}',
+      (item) => item !== CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID,
     );
   } catch {
     const jsonRelationFilterValueParseResult =
@@ -205,7 +196,7 @@ export const ObjectFilterDropdownRecordSelect = ({
               [
                 ...newSelectedRecordIds,
                 newIsCurrentWorkspaceMemberSelected
-                  ? '{{CURRENT_WORKSPACE_MEMBER}}'
+                  ? CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID
                   : undefined,
               ].filter(isDefined),
             )

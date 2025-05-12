@@ -34,7 +34,6 @@ import { getEmptyRecordGqlOperationFilter } from '@/object-record/record-filter/
 
 import { resolveDateViewFilterValue } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { resolveSelectViewFilterValue } from '@/views/view-filter-value/utils/resolveSelectViewFilterValue';
-import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 
@@ -43,9 +42,13 @@ import { RecordFilterGroup } from '@/object-record/record-filter-group/types/Rec
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { isEmptinessOperand } from '@/object-record/record-filter/utils/isEmptinessOperand';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
+import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from 'twenty-shared/constants';
+import {
+  FieldMetadataType,
+  jsonRelationFilterValueSchema,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 type ComputeFilterRecordGqlOperationFilterParams = {
   filterValueDependencies: RecordFilterValueDependencies;
@@ -313,7 +316,7 @@ export const computeFilterRecordGqlOperationFilter = ({
           filter.value,
         );
         recordIds = relationFilterValue.map((item) =>
-          item === '{{CURRENT_WORKSPACE_MEMBER}}'
+          item === CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID
             ? filterValueDependencies.currentWorkspaceMemberId
             : item,
         );
