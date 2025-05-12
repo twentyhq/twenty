@@ -309,6 +309,15 @@ export const computeFilterRecordGqlOperationFilter = ({
       let recordIds;
 
       try {
+        const relationFilterValue = relationFilterValueSchema.parse(
+          filter.value,
+        );
+        recordIds = relationFilterValue.map((item) =>
+          item === '{{CURRENT_WORKSPACE_MEMBER}}'
+            ? filterValueDependencies.currentWorkspaceMemberId
+            : item,
+        );
+      } catch {
         const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
           jsonRelationFilterValueSchema.parse(filter.value);
 
@@ -318,15 +327,6 @@ export const computeFilterRecordGqlOperationFilter = ({
               filterValueDependencies.currentWorkspaceMemberId,
             ]
           : selectedRecordIds;
-      } catch {
-        const relationFilterValue = relationFilterValueSchema.parse(
-          filter.value,
-        );
-        recordIds = relationFilterValue.map((item) =>
-          item === '{{CURRENT_WORKSPACE_MEMBER}}'
-            ? filterValueDependencies.currentWorkspaceMemberId
-            : item,
-        );
       }
 
       if (recordIds.length === 0) return;
