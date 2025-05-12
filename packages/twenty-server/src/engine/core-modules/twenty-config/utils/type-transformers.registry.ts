@@ -1,16 +1,16 @@
 import { Transform } from 'class-transformer';
 import {
-    IsArray,
-    IsBoolean,
-    IsEnum,
-    IsNumber,
-    IsString,
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsNumber,
+  IsString,
 } from 'class-validator';
 
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import {
-    ConfigVariableException,
-    ConfigVariableExceptionCode,
+  ConfigVariableException,
+  ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { ConfigVariableOptions } from 'src/engine/core-modules/twenty-config/types/config-variable-options.type';
 import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
