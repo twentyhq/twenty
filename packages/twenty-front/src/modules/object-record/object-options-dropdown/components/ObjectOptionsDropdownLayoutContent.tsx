@@ -1,13 +1,18 @@
+import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { useSetViewTypeFromLayoutOptionsMenu } from '@/object-record/object-options-dropdown/hooks/useSetViewTypeFromLayoutOptionsMenu';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
@@ -74,6 +79,18 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   const isDefaultView = currentView?.key === 'INDEX';
   const nbsp = '\u00A0';
 
+  const selectableItemIdArray = [
+    ViewType.Table,
+    ...(isDefaultView ? [] : [ViewType.Kanban]),
+    ViewOpenRecordInType.SIDE_PANEL,
+    ...(currentView?.type === ViewType.Kanban ? ['Group', 'Compact view'] : []),
+  ];
+
+  const selectedItemId = useRecoilComponentValueV2(
+    selectedItemIdComponentState,
+    OBJECT_OPTIONS_DROPDOWN_ID,
+  );
+
   return (
     <>
       <DropdownMenuHeader
@@ -86,81 +103,135 @@ export const ObjectOptionsDropdownLayoutContent = () => {
       >
         {t`Layout`}
       </DropdownMenuHeader>
+
       {!!currentView && (
         <DropdownMenuItemsContainer>
-          <MenuItemSelect
-            LeftIcon={IconTable}
-            text={t`Table`}
-            selected={currentView?.type === ViewType.Table}
-            onClick={async () => {
-              if (currentView?.type !== ViewType.Table) {
-                await setAndPersistViewType(ViewType.Table);
-              }
-            }}
-          />
-          <MenuItemSelect
-            LeftIcon={viewTypeIconMapping(ViewType.Kanban)}
-            text={t`Kanban`}
-            disabled={isDefaultView}
-            contextualText={
-              isDefaultView ? (
-                <>
-                  {nbsp}·{nbsp}
-                  <OverflowingTextWithTooltip
-                    text={t`Not available for default view`}
-                  />
-                </>
-              ) : availableFieldsForKanban.length === 0 ? (
-                t`Create Select...`
-              ) : undefined
-            }
-            selected={currentView?.type === ViewType.Kanban}
-            onClick={handleSelectKanbanViewType}
-          />
-          <DropdownMenuSeparator />
-          <MenuItem
-            onClick={() => onContentChange('layoutOpenIn')}
-            LeftIcon={
-              recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
-                ? IconLayoutSidebarRight
-                : IconLayoutNavbar
-            }
-            text={t`Open in`}
-            contextualText={
-              recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
-                ? t`Side Panel`
-                : t`Record Page`
-            }
-            hasSubMenu
-          />
-          {currentView?.type === ViewType.Kanban && (
-            <>
-              <MenuItem
-                onClick={() =>
-                  isDefined(recordGroupFieldMetadata)
-                    ? onContentChange('recordGroups')
-                    : onContentChange('recordGroupFields')
+          <SelectableList
+            selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
+            hotkeyScope={TableOptionsHotkeyScope.Dropdown}
+            selectableItemIdArray={selectableItemIdArray}
+          >
+            <SelectableListItem
+              itemId={ViewType.Table}
+              onEnter={() => {
+                setAndPersistViewType(ViewType.Table);
+              }}
+            >
+              <MenuItemSelect
+                LeftIcon={IconTable}
+                text={t`Table`}
+                selected={currentView?.type === ViewType.Table}
+                focused={selectedItemId === ViewType.Table}
+                onClick={async () => {
+                  if (currentView?.type !== ViewType.Table) {
+                    await setAndPersistViewType(ViewType.Table);
+                  }
+                }}
+              />
+            </SelectableListItem>
+            <SelectableListItem
+              itemId={ViewType.Kanban}
+              onEnter={() => {
+                setAndPersistViewType(ViewType.Kanban);
+              }}
+            >
+              <MenuItemSelect
+                LeftIcon={viewTypeIconMapping(ViewType.Kanban)}
+                text={t`Kanban`}
+                disabled={isDefaultView}
+                focused={selectedItemId === ViewType.Kanban}
+                contextualText={
+                  isDefaultView ? (
+                    <>
+                      {nbsp}·{nbsp}
+                      <OverflowingTextWithTooltip
+                        text={t`Not available for default view`}
+                      />
+                    </>
+                  ) : availableFieldsForKanban.length === 0 ? (
+                    t`Create Select...`
+                  ) : undefined
                 }
-                LeftIcon={IconLayoutList}
-                text={t`Group`}
-                contextualText={recordGroupFieldMetadata?.label}
+                selected={currentView?.type === ViewType.Kanban}
+                onClick={handleSelectKanbanViewType}
+              />
+            </SelectableListItem>
+            <DropdownMenuSeparator />
+            <SelectableListItem
+              itemId={ViewOpenRecordInType.SIDE_PANEL}
+              onEnter={() => {
+                onContentChange('layoutOpenIn');
+              }}
+            >
+              <MenuItem
+                focused={selectedItemId === ViewOpenRecordInType.SIDE_PANEL}
+                LeftIcon={
+                  recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+                    ? IconLayoutSidebarRight
+                    : IconLayoutNavbar
+                }
+                text={t`Open in`}
+                onClick={() => {
+                  onContentChange('layoutOpenIn');
+                }}
+                contextualText={
+                  recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+                    ? t`Side Panel`
+                    : t`Record Page`
+                }
                 hasSubMenu
               />
+            </SelectableListItem>
+            {currentView?.type === ViewType.Kanban && (
+              <>
+                <SelectableListItem
+                  itemId={'Group'}
+                  onEnter={() => {
+                    isDefined(recordGroupFieldMetadata)
+                      ? onContentChange('recordGroups')
+                      : onContentChange('recordGroupFields');
+                  }}
+                >
+                  <MenuItem
+                    focused={selectedItemId === 'Group'}
+                    onClick={() =>
+                      isDefined(recordGroupFieldMetadata)
+                        ? onContentChange('recordGroups')
+                        : onContentChange('recordGroupFields')
+                    }
+                    LeftIcon={IconLayoutList}
+                    text={t`Group`}
+                    contextualText={recordGroupFieldMetadata?.label}
+                    hasSubMenu
+                  />
+                </SelectableListItem>
 
-              <MenuItemToggle
-                LeftIcon={IconBaselineDensitySmall}
-                onToggleChange={() =>
-                  setAndPersistIsCompactModeActive(
-                    !isCompactModeActive,
-                    currentView,
-                  )
-                }
-                toggled={isCompactModeActive}
-                text={t`Compact view`}
-                toggleSize="small"
-              />
-            </>
-          )}
+                <SelectableListItem
+                  itemId={'Compact view'}
+                  onEnter={() => {
+                    setAndPersistIsCompactModeActive(
+                      !isCompactModeActive,
+                      currentView,
+                    );
+                  }}
+                >
+                  <MenuItemToggle
+                    focused={selectedItemId === 'Compact view'}
+                    LeftIcon={IconBaselineDensitySmall}
+                    onToggleChange={() =>
+                      setAndPersistIsCompactModeActive(
+                        !isCompactModeActive,
+                        currentView,
+                      )
+                    }
+                    toggled={isCompactModeActive}
+                    text={t`Compact view`}
+                    toggleSize="small"
+                  />
+                </SelectableListItem>
+              </>
+            )}
+          </SelectableList>
         </DropdownMenuItemsContainer>
       )}
     </>

@@ -17,7 +17,7 @@ export const getLabelIdentifierFieldValue = (
   }
 
   if (isDefined(labelIdentifierFieldMetadataItem?.name)) {
-    return record[labelIdentifierFieldMetadataItem.name];
+    return record[labelIdentifierFieldMetadataItem.name] ?? '';
   }
 
   return '';

@@ -39,13 +39,7 @@ export const RecordInlineCellValue = () => {
     isCentered,
   } = useRecordInlineCellContext();
 
-  const { isInlineCellInEditMode, openInlineCell } = useInlineCell();
-
-  const handleDisplayModeClick = () => {
-    if (!readonly && !editModeContentOnly) {
-      openInlineCell();
-    }
-  };
+  const { isInlineCellInEditMode } = useInlineCell();
 
   if (loading === true) {
     return <RecordInlineCellSkeletonLoader />;
@@ -63,11 +57,7 @@ export const RecordInlineCellValue = () => {
           </RecordInlineCellDisplayMode>
         </StyledClickableContainer>
       ) : (
-        <StyledClickableContainer
-          readonly={readonly}
-          onClick={handleDisplayModeClick}
-          isCentered={isCentered}
-        >
+        <StyledClickableContainer readonly={readonly} isCentered={isCentered}>
           <RecordInlineCellDisplayMode>
             {displayModeContent}
           </RecordInlineCellDisplayMode>

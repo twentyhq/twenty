@@ -4,13 +4,9 @@ import { DateDisplay } from '@/ui/field/display/components/DateDisplay';
 export const DateFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useDateFieldDisplay();
 
-  const displayAsRelativeDate =
-    fieldDefinition.metadata?.settings?.displayAsRelativeDate;
+  const dateFieldSettings = fieldDefinition.metadata?.settings;
 
   return (
-    <DateDisplay
-      value={fieldValue}
-      displayAsRelativeDate={displayAsRelativeDate}
-    />
+    <DateDisplay value={fieldValue} dateFieldSettings={dateFieldSettings} />
   );
 };

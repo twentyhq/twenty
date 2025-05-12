@@ -9,6 +9,7 @@ import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInput
 
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
+import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import {
   AppTooltip,
   OverflowingTextWithTooltip,
@@ -41,11 +42,28 @@ const StyledLabelAndIconContainer = styled.div`
   height: 24px;
 `;
 
-const StyledValueContainer = styled.div`
+const StyledValueContainer = styled.div<{ readonly: boolean }>`
+  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
   display: flex;
-  flex-grow: 1;
   min-width: 0;
   position: relative;
+
+  &:hover {
+    ${({ readonly, theme }) =>
+      readonly &&
+      `
+      outline: 1px solid ${theme.border.color.medium};
+      border-radius: ${theme.border.radius.sm};
+      
+      ${StyledIconContainer}, ${StyledLabelContainer} {
+        color: ${theme.font.color.secondary};
+      }
+      
+      img {
+        opacity: 0.64;
+      }
+    `}
+  }
 `;
 
 const StyledLabelContainer = styled.div<{ width?: number }>`
@@ -62,7 +80,6 @@ const StyledInlineCellBaseContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   align-items: center;
-  justify-content: center;
 `;
 
 export const StyledSkeletonDiv = styled.div`
@@ -70,8 +87,14 @@ export const StyledSkeletonDiv = styled.div`
 `;
 
 export const RecordInlineCellContainer = () => {
-  const { readonly, IconLabel, label, labelWidth, showLabel } =
-    useRecordInlineCellContext();
+  const {
+    readonly,
+    IconLabel,
+    label,
+    labelWidth,
+    showLabel,
+    editModeContentOnly,
+  } = useRecordInlineCellContext();
 
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
@@ -80,6 +103,14 @@ export const RecordInlineCellContainer = () => {
   }
 
   const { setIsFocused } = useFieldFocus();
+
+  const { openInlineCell } = useInlineCell();
+
+  const handleDisplayModeClick = () => {
+    if (!readonly && !editModeContentOnly) {
+      openInlineCell();
+    }
+  };
 
   const handleContainerMouseEnter = () => {
     if (!readonly) {
@@ -103,6 +134,7 @@ export const RecordInlineCellContainer = () => {
     <StyledInlineCellBaseContainer
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
+      onClick={handleDisplayModeClick}
     >
       {(IconLabel || label) && (
         <StyledLabelAndIconContainer id={labelId}>
@@ -130,7 +162,7 @@ export const RecordInlineCellContainer = () => {
           )}
         </StyledLabelAndIconContainer>
       )}
-      <StyledValueContainer>
+      <StyledValueContainer readonly={readonly ?? false}>
         <RecordInlineCellValue />
       </StyledValueContainer>
     </StyledInlineCellBaseContainer>

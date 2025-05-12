@@ -12,6 +12,8 @@ import {
   WorkflowRunDiagram,
   WorkflowRunDiagramEdge,
   WorkflowRunDiagramNode,
+  WorkflowRunDiagramNodeData,
+  WorkflowRunDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramTriggerNode';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
@@ -26,7 +28,22 @@ export const generateWorkflowRunDiagram = ({
   trigger: WorkflowTrigger;
   steps: Array<WorkflowStep>;
   stepsOutput: WorkflowRunOutputStepsOutput | undefined;
-}): WorkflowRunDiagram => {
+}): {
+  diagram: WorkflowRunDiagram;
+  stepToOpenByDefault:
+    | {
+        id: string;
+        data: WorkflowRunDiagramStepNodeData;
+      }
+    | undefined;
+} => {
+  let stepToOpenByDefault:
+    | {
+        id: string;
+        data: WorkflowRunDiagramStepNodeData;
+      }
+    | undefined = undefined;
+
   const triggerBase = getWorkflowDiagramTriggerNode({ trigger });
 
   const nodes: Array<WorkflowRunDiagramNode> = [
@@ -97,20 +114,28 @@ export const generateWorkflowRunDiagram = ({
       }
     }
 
+    const nodeData: WorkflowRunDiagramNodeData = {
+      nodeType: 'action',
+      actionType: step.type,
+      name: step.name,
+      runStatus,
+    };
+
     nodes.push({
       id: nodeId,
-      data: {
-        nodeType: 'action',
-        actionType: step.type,
-        name: step.name,
-        runStatus,
-      },
+      data: nodeData,
       position: {
         x: xPos,
         y: yPos,
       },
-      selected: isPendingFormAction,
     });
+
+    if (isPendingFormAction) {
+      stepToOpenByDefault = {
+        id: nodeId,
+        data: nodeData,
+      };
+    }
 
     processNode({
       stepIndex: stepIndex + 1,
@@ -134,7 +159,10 @@ export const generateWorkflowRunDiagram = ({
   });
 
   return {
-    nodes,
-    edges,
+    diagram: {
+      nodes,
+      edges,
+    },
+    stepToOpenByDefault,
   };
 };

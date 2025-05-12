@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 import {
   ComparatorAction,
@@ -37,7 +36,6 @@ export class WorkspaceSyncFieldMetadataService {
     context: WorkspaceSyncContext,
     manager: EntityManager,
     storage: WorkspaceSyncStorage,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const objectMetadataRepository =
       manager.getRepository(ObjectMetadataEntity);
@@ -61,14 +59,12 @@ export class WorkspaceSyncFieldMetadataService {
       originalObjectMetadataCollection,
       customObjectMetadataCollection,
       storage,
-      workspaceFeatureFlagsMap,
     );
 
     await this.synchronizeCustomObjectFields(
       context,
       customObjectMetadataCollection,
       storage,
-      workspaceFeatureFlagsMap,
     );
 
     this.logger.log('Updating workspace metadata');
@@ -121,14 +117,12 @@ export class WorkspaceSyncFieldMetadataService {
     originalObjectMetadataCollection: ObjectMetadataEntity[],
     customObjectMetadataCollection: ObjectMetadataEntity[],
     storage: WorkspaceSyncStorage,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Promise<void> {
     // Create standard field metadata map
     const standardObjectStandardFieldMetadataMap =
       this.standardFieldFactory.create(
         standardObjectMetadataDefinitions,
         context,
-        workspaceFeatureFlagsMap,
       );
 
     // Create map of original and standard object metadata by standard ids
@@ -145,6 +139,7 @@ export class WorkspaceSyncFieldMetadataService {
         originalObjectMetadataMap[standardObjectId];
 
       const computedStandardFieldMetadataCollection = computeStandardFields(
+        context,
         standardFieldMetadataCollection,
         originalObjectMetadata,
         // We need to provide this for generated relations with custom objects
@@ -161,24 +156,46 @@ export class WorkspaceSyncFieldMetadataService {
     }
   }
 
+  synchronizeCustomObject(
+    context: WorkspaceSyncContext,
+    customObjectMetadata: ObjectMetadataEntity,
+  ): FieldComparatorResult[] {
+    // Create standard field metadata collection
+    const customObjectStandardFieldMetadataCollection =
+      this.standardFieldFactory.create(CustomWorkspaceEntity, context);
+
+    const standardFieldMetadataCollection = computeStandardFields(
+      context,
+      customObjectStandardFieldMetadataCollection,
+      customObjectMetadata,
+    );
+
+    /**
+     * COMPARE FIELD METADATA
+     */
+    const fieldComparatorResults = this.workspaceFieldComparator.compare(
+      customObjectMetadata.id,
+      customObjectMetadata.fields,
+      standardFieldMetadataCollection,
+    );
+
+    return fieldComparatorResults;
+  }
+
   private async synchronizeCustomObjectFields(
     context: WorkspaceSyncContext,
     customObjectMetadataCollection: ObjectMetadataEntity[],
     storage: WorkspaceSyncStorage,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Promise<void> {
     // Create standard field metadata collection
     const customObjectStandardFieldMetadataCollection =
-      this.standardFieldFactory.create(
-        CustomWorkspaceEntity,
-        context,
-        workspaceFeatureFlagsMap,
-      );
+      this.standardFieldFactory.create(CustomWorkspaceEntity, context);
 
     // Loop over all custom objects from the DB and compare their fields with standard fields
     for (const customObjectMetadata of customObjectMetadataCollection) {
       // Also, maybe it's better to refactor a bit and move generation part into a separate module ?
       const standardFieldMetadataCollection = computeStandardFields(
+        context,
         customObjectStandardFieldMetadataCollection,
         customObjectMetadata,
       );

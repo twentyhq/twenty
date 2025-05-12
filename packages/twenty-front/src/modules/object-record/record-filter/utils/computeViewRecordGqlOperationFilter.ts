@@ -39,9 +39,12 @@ import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/valid
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 
+import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import { isEmptinessOperand } from '@/object-record/record-filter/utils/isEmptinessOperand';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type ComputeFilterRecordGqlOperationFilterParams = {
@@ -61,14 +64,11 @@ export const computeFilterRecordGqlOperationFilter = ({
     (field) => field.id === filter.fieldMetadataId,
   );
 
-  const compositeFieldName = filter.subFieldName;
+  const subFieldName = filter.subFieldName;
 
-  const isCompositeFieldFiter = isNonEmptyString(compositeFieldName);
+  const isSubFieldFilter = isNonEmptyString(subFieldName);
 
-  const isEmptinessOperand = [
-    RecordFilterOperand.IsEmpty,
-    RecordFilterOperand.IsNotEmpty,
-  ].includes(filter.operand);
+  const isAnEmptinessOperand = isEmptinessOperand(filter.operand);
 
   const isDateOperandWithoutValue = [
     RecordFilterOperand.IsInPast,
@@ -85,7 +85,7 @@ export const computeFilterRecordGqlOperationFilter = ({
   const isFilterValueEmpty = !isDefined(filter.value) || filter.value === '';
 
   const shouldSkipFiltering =
-    !isEmptinessOperand && !isDateOperandWithoutValue && isFilterValueEmpty;
+    !isAnEmptinessOperand && !isDateOperandWithoutValue && isFilterValueEmpty;
 
   if (shouldSkipFiltering) {
     return;
@@ -98,7 +98,7 @@ export const computeFilterRecordGqlOperationFilter = ({
   const filterHasEmptinessOperands =
     !filterTypesThatHaveNoEmptinessOperand.includes(filterType);
 
-  if (filterHasEmptinessOperands && isEmptinessOperand) {
+  if (filterHasEmptinessOperands && isAnEmptinessOperand) {
     const emptyOperationFilter = getEmptyRecordGqlOperationFilter({
       operand: filter.operand,
       correspondingField,
@@ -357,25 +357,83 @@ export const computeFilterRecordGqlOperationFilter = ({
           );
       }
     }
-    case 'CURRENCY':
-      switch (filter.operand) {
-        case RecordFilterOperand.GreaterThan:
-          return {
-            [correspondingField.name]: {
-              amountMicros: { gte: parseFloat(filter.value) * 1000000 },
-            } as CurrencyFilter,
-          };
-        case RecordFilterOperand.LessThan:
-          return {
-            [correspondingField.name]: {
-              amountMicros: { lte: parseFloat(filter.value) * 1000000 },
-            } as CurrencyFilter,
-          };
-        default:
-          throw new Error(
-            `Unknown operand ${filter.operand} for ${filterType} filter`,
-          );
+    case 'CURRENCY': {
+      if (
+        isExpectedSubFieldName(
+          FieldMetadataType.CURRENCY,
+          'currencyCode',
+          subFieldName,
+        )
+      ) {
+        const parsedCurrencyCodes = JSON.parse(filter.value) as string[];
+
+        if (parsedCurrencyCodes.length === 0) return undefined;
+
+        const gqlFilter: RecordGqlOperationFilter = {
+          [correspondingField.name]: {
+            currencyCode: { in: parsedCurrencyCodes },
+          } as CurrencyFilter,
+        };
+
+        switch (filter.operand) {
+          case RecordFilterOperand.Is:
+            return gqlFilter;
+          case RecordFilterOperand.IsNot:
+            return {
+              not: gqlFilter,
+            };
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filterType} / ${subFieldName} filter`,
+            );
+        }
+      } else if (
+        isExpectedSubFieldName(
+          FieldMetadataType.CURRENCY,
+          'amountMicros',
+          subFieldName,
+        ) ||
+        !isSubFieldFilter
+      ) {
+        switch (filter.operand) {
+          case RecordFilterOperand.GreaterThan:
+            return {
+              [correspondingField.name]: {
+                amountMicros: { gte: parseFloat(filter.value) * 1000000 },
+              } as CurrencyFilter,
+            };
+          case RecordFilterOperand.LessThan:
+            return {
+              [correspondingField.name]: {
+                amountMicros: { lte: parseFloat(filter.value) * 1000000 },
+              } as CurrencyFilter,
+            };
+          case RecordFilterOperand.Is:
+            return {
+              [correspondingField.name]: {
+                amountMicros: { eq: parseFloat(filter.value) * 1000000 },
+              } as CurrencyFilter,
+            };
+          case RecordFilterOperand.IsNot:
+            return {
+              not: {
+                [correspondingField.name]: {
+                  amountMicros: { eq: parseFloat(filter.value) * 1000000 },
+                } as CurrencyFilter,
+              },
+            };
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filterType} / ${subFieldName}  filter`,
+            );
+        }
+      } else {
+        throw new Error(
+          `Unknown subfield ${subFieldName} for ${filterType} filter`,
+        );
       }
+    }
+
     case 'LINKS': {
       const linksFilters = generateILikeFiltersForCompositeFields(
         filter.value,
@@ -385,21 +443,21 @@ export const computeFilterRecordGqlOperationFilter = ({
 
       switch (filter.operand) {
         case RecordFilterOperand.Contains:
-          if (!isCompositeFieldFiter) {
+          if (!isSubFieldFilter) {
             return {
               or: linksFilters,
             };
           } else {
             return {
               [correspondingField.name]: {
-                [compositeFieldName]: {
+                [subFieldName]: {
                   ilike: `%${filter.value}%`,
                 },
               },
             };
           }
         case RecordFilterOperand.DoesNotContain:
-          if (!isCompositeFieldFiter) {
+          if (!isSubFieldFilter) {
             return {
               and: linksFilters.map((filter) => {
                 return {
@@ -411,7 +469,7 @@ export const computeFilterRecordGqlOperationFilter = ({
             return {
               not: {
                 [correspondingField.name]: {
-                  [compositeFieldName]: {
+                  [subFieldName]: {
                     ilike: `%${filter.value}%`,
                   },
                 },
@@ -432,21 +490,21 @@ export const computeFilterRecordGqlOperationFilter = ({
       );
       switch (filter.operand) {
         case RecordFilterOperand.Contains:
-          if (!isCompositeFieldFiter) {
+          if (!isSubFieldFilter) {
             return {
               or: fullNameFilters,
             };
           } else {
             return {
               [correspondingField.name]: {
-                [compositeFieldName]: {
+                [subFieldName]: {
                   ilike: `%${filter.value}%`,
                 },
               },
             };
           }
         case RecordFilterOperand.DoesNotContain:
-          if (!isCompositeFieldFiter) {
+          if (!isSubFieldFilter) {
             return {
               and: fullNameFilters.map((filter) => {
                 return {
@@ -458,7 +516,7 @@ export const computeFilterRecordGqlOperationFilter = ({
             return {
               not: {
                 [correspondingField.name]: {
-                  [compositeFieldName]: {
+                  [subFieldName]: {
                     ilike: `%${filter.value}%`,
                   },
                 },
@@ -474,7 +532,7 @@ export const computeFilterRecordGqlOperationFilter = ({
     case 'ADDRESS':
       switch (filter.operand) {
         case RecordFilterOperand.Contains:
-          if (!isCompositeFieldFiter) {
+          if (!isSubFieldFilter) {
             return {
               or: [
                 {
@@ -522,56 +580,205 @@ export const computeFilterRecordGqlOperationFilter = ({
               ],
             };
           } else {
+            if (subFieldName === 'addressCountry') {
+              const parsedCountryCodes = JSON.parse(filter.value) as string[];
+
+              if (filter.value === '[]' || parsedCountryCodes.length === 0) {
+                return {};
+              }
+
+              return {
+                [correspondingField.name]: {
+                  [subFieldName]: {
+                    in: parsedCountryCodes,
+                  } as AddressFilter,
+                },
+              };
+            }
+
             return {
               [correspondingField.name]: {
-                [compositeFieldName]: {
+                [subFieldName]: {
                   ilike: `%${filter.value}%`,
                 } as AddressFilter,
               },
             };
           }
         case RecordFilterOperand.DoesNotContain:
-          if (!isCompositeFieldFiter) {
+          if (!isSubFieldFilter) {
             return {
               and: [
                 {
-                  not: {
-                    [correspondingField.name]: {
-                      addressStreet1: {
-                        ilike: `%${filter.value}%`,
+                  or: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          addressStreet1: {
+                            ilike: `%${filter.value}%`,
+                          },
+                        } as AddressFilter,
                       },
-                    } as AddressFilter,
-                  },
+                    },
+                    {
+                      [correspondingField.name]: {
+                        addressStreet1: {
+                          is: 'NULL',
+                        },
+                      },
+                    },
+                  ],
                 },
                 {
-                  not: {
-                    [correspondingField.name]: {
-                      addressStreet2: {
-                        ilike: `%${filter.value}%`,
+                  or: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          addressStreet2: {
+                            ilike: `%${filter.value}%`,
+                          },
+                        } as AddressFilter,
                       },
-                    } as AddressFilter,
-                  },
+                    },
+                    {
+                      [correspondingField.name]: {
+                        addressStreet2: {
+                          is: 'NULL',
+                        },
+                      },
+                    },
+                  ],
                 },
                 {
-                  not: {
-                    [correspondingField.name]: {
-                      addressCity: {
-                        ilike: `%${filter.value}%`,
+                  or: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          addressCity: {
+                            ilike: `%${filter.value}%`,
+                          },
+                        } as AddressFilter,
                       },
-                    } as AddressFilter,
-                  },
+                    },
+                    {
+                      [correspondingField.name]: {
+                        addressCity: {
+                          is: 'NULL',
+                        },
+                      },
+                    },
+                  ],
+                },
+                {
+                  or: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          addressState: {
+                            ilike: `%${filter.value}%`,
+                          },
+                        } as AddressFilter,
+                      },
+                    },
+                    {
+                      [correspondingField.name]: {
+                        addressState: {
+                          is: 'NULL',
+                        },
+                      },
+                    },
+                  ],
+                },
+                {
+                  or: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          addressPostcode: {
+                            ilike: `%${filter.value}%`,
+                          },
+                        } as AddressFilter,
+                      },
+                    },
+                    {
+                      [correspondingField.name]: {
+                        addressPostcode: {
+                          is: 'NULL',
+                        },
+                      },
+                    },
+                  ],
+                },
+                {
+                  or: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          addressCountry: {
+                            ilike: `%${filter.value}%`,
+                          },
+                        } as AddressFilter,
+                      },
+                    },
+                    {
+                      [correspondingField.name]: {
+                        addressCountry: {
+                          is: 'NULL',
+                        },
+                      },
+                    },
+                  ],
                 },
               ],
             };
           } else {
+            if (subFieldName === 'addressCountry') {
+              const parsedCountryCodes = JSON.parse(filter.value) as string[];
+
+              if (filter.value === '[]' || parsedCountryCodes.length === 0) {
+                return {};
+              }
+
+              return {
+                or: [
+                  {
+                    not: {
+                      [correspondingField.name]: {
+                        addressCountry: {
+                          in: JSON.parse(filter.value),
+                        } as AddressFilter,
+                      },
+                    },
+                  },
+                  {
+                    [correspondingField.name]: {
+                      addressCountry: {
+                        is: 'NULL',
+                      } as AddressFilter,
+                    },
+                  },
+                ],
+              };
+            }
+
             return {
-              not: {
-                [correspondingField.name]: {
-                  [compositeFieldName]: {
-                    ilike: `%${filter.value}%`,
-                  } as AddressFilter,
+              or: [
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      [subFieldName]: {
+                        ilike: `%${filter.value}%`,
+                      } as AddressFilter,
+                    },
+                  },
                 },
-              },
+                {
+                  [correspondingField.name]: {
+                    [subFieldName]: {
+                      is: 'NULL',
+                    } as AddressFilter,
+                  },
+                },
+              ],
             };
           }
         default:
@@ -720,73 +927,139 @@ export const computeFilterRecordGqlOperationFilter = ({
           );
       }
     }
-    // TODO: fix this with a new composite field in ViewFilter entity
     case 'ACTOR': {
-      switch (filter.operand) {
-        case RecordFilterOperand.Is: {
-          if (filter.value === '[]') {
-            return;
-          }
+      if (isSubFieldFilter) {
+        switch (subFieldName) {
+          case 'source': {
+            switch (filter.operand) {
+              case RecordFilterOperand.Is: {
+                if (filter.value === '[]') {
+                  return;
+                }
 
-          const parsedRecordIds = JSON.parse(filter.value) as string[];
+                const parsedSources = JSON.parse(filter.value) as string[];
 
-          return {
-            [correspondingField.name]: {
-              source: {
-                in: parsedRecordIds,
-              } as RelationFilter,
-            },
-          };
-        }
-        case RecordFilterOperand.IsNot: {
-          if (filter.value === '[]') {
-            return;
-          }
-
-          const parsedRecordIds = JSON.parse(filter.value) as string[];
-
-          if (parsedRecordIds.length === 0) return;
-
-          return {
-            not: {
-              [correspondingField.name]: {
-                source: {
-                  in: parsedRecordIds,
-                } as RelationFilter,
-              },
-            },
-          };
-        }
-        case RecordFilterOperand.Contains:
-          return {
-            or: [
-              {
-                [correspondingField.name]: {
-                  name: {
-                    ilike: `%${filter.value}%`,
-                  },
-                } as ActorFilter,
-              },
-            ],
-          };
-        case RecordFilterOperand.DoesNotContain:
-          return {
-            and: [
-              {
-                not: {
+                return {
                   [correspondingField.name]: {
-                    name: {
-                      ilike: `%${filter.value}%`,
+                    source: {
+                      in: parsedSources,
+                    } satisfies RelationFilter,
+                  },
+                };
+              }
+              case RecordFilterOperand.IsNot: {
+                if (filter.value === '[]') {
+                  return;
+                }
+
+                const parsedSources = JSON.parse(filter.value) as string[];
+
+                if (parsedSources.length === 0) return;
+
+                return {
+                  not: {
+                    [correspondingField.name]: {
+                      source: {
+                        in: parsedSources,
+                      } satisfies RelationFilter,
                     },
-                  } as ActorFilter,
+                  },
+                };
+              }
+              default:
+                throw new Error(
+                  `Unknown operand ${filter.operand} for ${filter.label} filter`,
+                );
+            }
+          }
+          case 'name': {
+            switch (filter.operand) {
+              case RecordFilterOperand.Contains:
+                return {
+                  or: [
+                    {
+                      [correspondingField.name]: {
+                        name: {
+                          ilike: `%${filter.value}%`,
+                        },
+                      } satisfies ActorFilter,
+                    },
+                  ],
+                };
+              case RecordFilterOperand.DoesNotContain:
+                return {
+                  and: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          name: {
+                            ilike: `%${filter.value}%`,
+                          },
+                        } satisfies ActorFilter,
+                      },
+                    },
+                  ],
+                };
+              default:
+                throw new Error(
+                  `Unknown operand ${filter.operand} for ${filter.label} filter`,
+                );
+            }
+          }
+        }
+        break;
+      } else {
+        if (filter.value === '[]') {
+          return;
+        }
+
+        const parsedSources = JSON.parse(filter.value) as string[];
+
+        if (parsedSources.length === 0) return;
+
+        switch (filter.operand) {
+          case RecordFilterOperand.Contains:
+            return {
+              or: [
+                {
+                  [correspondingField.name]: {
+                    source: {
+                      in: parsedSources,
+                    },
+                  } satisfies ActorFilter,
                 },
-              },
-            ],
-          };
-        default:
-          throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.label} filter`,
-          );
+              ],
+            };
+          case RecordFilterOperand.DoesNotContain:
+            return {
+              and: [
+                {
+                  or: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          source: {
+                            in: parsedSources,
+                          },
+                        } satisfies ActorFilter,
+                      },
+                    },
+                    {
+                      [correspondingField.name]: {
+                        source: {
+                          is: 'NULL',
+                        },
+                      } satisfies ActorFilter,
+                    },
+                  ],
+                },
+              ],
+            };
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filter.label} filter`,
+            );
+        }
       }
     }
     case 'EMAILS':
@@ -823,25 +1096,146 @@ export const computeFilterRecordGqlOperationFilter = ({
           );
       }
     case 'PHONES': {
-      const filterValue = filter.value.replace(/[^0-9]/g, '');
+      if (!isSubFieldFilter) {
+        const filterValue = filter.value.replace(/[^0-9]/g, '');
 
-      switch (filter.operand) {
-        case RecordFilterOperand.Contains:
-          return {
-            or: [
-              {
+        if (!isNonEmptyString(filterValue)) {
+          return;
+        }
+
+        switch (filter.operand) {
+          case RecordFilterOperand.Contains:
+            return {
+              or: [
+                {
+                  [correspondingField.name]: {
+                    primaryPhoneNumber: {
+                      ilike: `%${filterValue}%`,
+                    },
+                  } as PhonesFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    primaryPhoneCallingCode: {
+                      ilike: `%${filterValue}%`,
+                    },
+                  } as PhonesFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    additionalPhones: {
+                      like: `%${filterValue}%`,
+                    },
+                  } as PhonesFilter,
+                },
+              ],
+            };
+          case RecordFilterOperand.DoesNotContain:
+            return {
+              and: [
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      primaryPhoneNumber: {
+                        ilike: `%${filterValue}%`,
+                      },
+                    } as PhonesFilter,
+                  },
+                },
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      primaryPhoneCallingCode: {
+                        ilike: `%${filterValue}%`,
+                      },
+                    } as PhonesFilter,
+                  },
+                },
+                {
+                  or: [
+                    {
+                      not: {
+                        [correspondingField.name]: {
+                          additionalPhones: {
+                            like: `%${filterValue}%`,
+                          },
+                        } as PhonesFilter,
+                      },
+                    },
+                    {
+                      [correspondingField.name]: {
+                        additionalPhones: {
+                          is: 'NULL',
+                        } as PhonesFilter,
+                      },
+                    },
+                  ],
+                },
+              ],
+            };
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filterType} filter`,
+            );
+        }
+      }
+
+      const filterValue = filter.value;
+
+      switch (subFieldName) {
+        case 'additionalPhones': {
+          switch (filter.operand) {
+            case RecordFilterOperand.Contains:
+              return {
+                or: [
+                  {
+                    [correspondingField.name]: {
+                      additionalPhones: {
+                        like: `%${filterValue}%`,
+                      },
+                    } as PhonesFilter,
+                  },
+                ],
+              };
+            case RecordFilterOperand.DoesNotContain:
+              return {
+                or: [
+                  {
+                    not: {
+                      [correspondingField.name]: {
+                        additionalPhones: {
+                          like: `%${filterValue}%`,
+                        },
+                      } as PhonesFilter,
+                    },
+                  },
+                  {
+                    [correspondingField.name]: {
+                      additionalPhones: {
+                        is: 'NULL',
+                      } as PhonesFilter,
+                    },
+                  },
+                ],
+              };
+            default:
+              throw new Error(
+                `Unknown operand ${filter.operand} for ${filterType} filter`,
+              );
+          }
+        }
+        case 'primaryPhoneNumber': {
+          switch (filter.operand) {
+            case RecordFilterOperand.Contains:
+              return {
                 [correspondingField.name]: {
                   primaryPhoneNumber: {
                     ilike: `%${filterValue}%`,
                   },
                 } as PhonesFilter,
-              },
-            ],
-          };
-        case RecordFilterOperand.DoesNotContain:
-          return {
-            and: [
-              {
+              };
+            case RecordFilterOperand.DoesNotContain:
+              return {
                 not: {
                   [correspondingField.name]: {
                     primaryPhoneNumber: {
@@ -849,12 +1243,42 @@ export const computeFilterRecordGqlOperationFilter = ({
                     },
                   } as PhonesFilter,
                 },
-              },
-            ],
-          };
+              };
+            default:
+              throw new Error(
+                `Unknown operand ${filter.operand} for ${filterType} filter`,
+              );
+          }
+        }
+        case 'primaryPhoneCallingCode': {
+          switch (filter.operand) {
+            case RecordFilterOperand.Contains:
+              return {
+                [correspondingField.name]: {
+                  primaryPhoneCallingCode: {
+                    ilike: `%${filterValue}%`,
+                  },
+                } as PhonesFilter,
+              };
+            case RecordFilterOperand.DoesNotContain:
+              return {
+                not: {
+                  [correspondingField.name]: {
+                    primaryPhoneCallingCode: {
+                      ilike: `%${filterValue}%`,
+                    },
+                  } as PhonesFilter,
+                },
+              };
+            default:
+              throw new Error(
+                `Unknown operand ${filter.operand} for ${filterType} filter`,
+              );
+          }
+        }
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filterType} filter`,
+            `Unknown subfield ${subFieldName} for ${filterType} filter`,
           );
       }
     }

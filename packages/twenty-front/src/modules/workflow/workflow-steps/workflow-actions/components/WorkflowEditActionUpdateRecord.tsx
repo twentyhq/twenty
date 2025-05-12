@@ -14,11 +14,11 @@ import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-ac
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { isDefined } from 'twenty-shared/utils';
+import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
 
 type WorkflowEditActionUpdateRecordProps = {
   action: WorkflowUpdateRecordAction;
@@ -94,16 +94,13 @@ export const WorkflowEditActionUpdateRecord = ({
     saveAction(newFormData);
   };
 
-  const selectedObjectMetadataItemNameSingular = formData.objectName;
-
   const selectedObjectMetadataItem = activeObjectMetadataItems.find(
-    (item) => item.nameSingular === selectedObjectMetadataItemNameSingular,
+    (item) => item.nameSingular === formData.objectName,
   );
-  if (!isDefined(selectedObjectMetadataItem)) {
-    throw new Error('Should have found the metadata item');
-  }
 
-  const inlineFieldMetadataItems = selectedObjectMetadataItem.fields
+  const objectNameSingular = selectedObjectMetadataItem?.nameSingular;
+
+  const inlineFieldMetadataItems = selectedObjectMetadataItem?.fields
     .filter(
       (fieldMetadataItem) =>
         !fieldMetadataItem.isSystem &&
@@ -114,15 +111,16 @@ export const WorkflowEditActionUpdateRecord = ({
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
     );
 
-  const inlineFieldDefinitions = inlineFieldMetadataItems.map(
-    (fieldMetadataItem) =>
-      formatFieldMetadataItemAsFieldDefinition({
-        field: fieldMetadataItem,
-        objectMetadataItem: selectedObjectMetadataItem,
-        showLabel: true,
-        labelWidth: 90,
-      }),
-  );
+  const inlineFieldDefinitions = isDefined(selectedObjectMetadataItem)
+    ? inlineFieldMetadataItems?.map((fieldMetadataItem) =>
+        formatFieldMetadataItemAsFieldDefinition({
+          field: fieldMetadataItem,
+          objectMetadataItem: selectedObjectMetadataItem,
+          showLabel: true,
+          labelWidth: 90,
+        }),
+      )
+    : [];
 
   const saveAction = useDebouncedCallback(
     async (formData: UpdateRecordFormData) => {
@@ -209,39 +207,43 @@ export const WorkflowEditActionUpdateRecord = ({
 
         <HorizontalSeparator noMargin />
 
-        <FormSingleRecordPicker
-          testId="workflow-edit-action-record-update-object-record-id"
-          label="Record"
-          onChange={(objectRecordId) =>
-            handleFieldChange('objectRecordId', objectRecordId)
-          }
-          objectNameSingular={formData.objectName}
-          defaultValue={formData.objectRecordId}
-          disabled={isFormDisabled}
-          VariablePicker={WorkflowVariablePicker}
-        />
+        {isDefined(objectNameSingular) && (
+          <FormSingleRecordPicker
+            testId="workflow-edit-action-record-update-object-record-id"
+            label="Record"
+            onChange={(objectRecordId) =>
+              handleFieldChange('objectRecordId', objectRecordId)
+            }
+            objectNameSingular={objectNameSingular}
+            defaultValue={formData.objectRecordId}
+            disabled={isFormDisabled}
+            VariablePicker={WorkflowVariablePicker}
+          />
+        )}
 
-        <FormMultiSelectFieldInput
-          testId="workflow-edit-action-record-update-fields-to-update"
-          label="Fields to update"
-          defaultValue={formData.fieldsToUpdate}
-          options={inlineFieldDefinitions.map((field) => ({
-            label: field.label,
-            value: field.metadata.fieldName,
-            icon: getIcon(field.iconName),
-            color: 'gray',
-          }))}
-          onChange={(fieldsToUpdate) =>
-            handleFieldChange('fieldsToUpdate', fieldsToUpdate)
-          }
-          placeholder="Select fields to update"
-          readonly={isFormDisabled}
-        />
+        {isDefined(inlineFieldDefinitions) && (
+          <FormMultiSelectFieldInput
+            testId="workflow-edit-action-record-update-fields-to-update"
+            label="Fields to update"
+            defaultValue={formData.fieldsToUpdate}
+            options={inlineFieldDefinitions.map((field) => ({
+              label: field.label,
+              value: field.metadata.fieldName,
+              icon: getIcon(field.iconName),
+              color: 'gray',
+            }))}
+            onChange={(fieldsToUpdate) =>
+              handleFieldChange('fieldsToUpdate', fieldsToUpdate)
+            }
+            placeholder="Select fields to update"
+            readonly={isFormDisabled}
+          />
+        )}
 
         <HorizontalSeparator noMargin />
 
         {formData.fieldsToUpdate.map((fieldName) => {
-          const fieldDefinition = inlineFieldDefinitions.find(
+          const fieldDefinition = inlineFieldDefinitions?.find(
             (definition) => definition.metadata.fieldName === fieldName,
           );
 

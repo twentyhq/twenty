@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
@@ -74,8 +75,13 @@ describe('WorkspaceService', () => {
             deleteSubscriptions: jest.fn(),
           },
         },
+        {
+          provide: AuditService,
+          useValue: {
+            createContext: jest.fn(),
+          },
+        },
         ...[
-          WorkspaceManagerService,
           WorkspaceManagerService,
           UserWorkspaceService,
           UserService,

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
+import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
@@ -47,16 +48,18 @@ import { WorkflowApiModule } from 'src/engine/core-modules/workflow/workflow-api
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
+import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 
-import { AnalyticsModule } from './analytics/analytics.module';
+import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
+    TwentyConfigModule.forRoot(),
     HealthModule,
-    AnalyticsModule,
+    AuditModule,
     AuthModule,
     BillingModule,
     ClientConfigModule,
@@ -79,8 +82,9 @@ import { FileModule } from './file/file.module';
     AdminPanelModule,
     LabModule,
     RoleModule,
-    TwentyConfigModule,
     RedisClientModule,
+    WorkspaceQueryRunnerModule,
+    SubscriptionsModule,
     FileStorageModule.forRootAsync({
       useFactory: fileStorageModuleFactory,
       inject: [TwentyConfigService],
@@ -124,7 +128,7 @@ import { FileModule } from './file/file.module';
     SearchModule,
   ],
   exports: [
-    AnalyticsModule,
+    AuditModule,
     AuthModule,
     FeatureFlagModule,
     TimelineMessagingModule,

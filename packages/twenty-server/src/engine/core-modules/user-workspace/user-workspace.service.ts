@@ -2,7 +2,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -20,6 +20,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
@@ -32,7 +33,6 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
@@ -69,33 +69,35 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   }
 
   async createWorkspaceMember(workspaceId: string, user: User) {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
+        'workspaceMember',
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+    await workspaceMemberRepository.insert({
+      name: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+      },
+      colorScheme: 'System',
+      userId: user.id,
+      userEmail: user.email,
+      avatarUrl: user.defaultAvatarUrl ?? '',
+      locale: (user.locale ?? SOURCE_LOCALE) as keyof typeof APP_LOCALES,
+    });
 
-    await workspaceDataSource?.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."workspaceMember"
-        ("nameFirstName", "nameLastName", "colorScheme", "userId", "userEmail", "avatarUrl", "locale")
-        VALUES ($1, $2, 'System', $3, $4, $5, $6)`,
-      [
-        user.firstName,
-        user.lastName,
-        user.id,
-        user.email,
-        user.defaultAvatarUrl ?? '',
-        user.locale ?? SOURCE_LOCALE,
-      ],
-    );
-    const workspaceMember = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId"='${user.id}'`,
-    );
+    const workspaceMember = await workspaceMemberRepository.find({
+      where: {
+        userId: user.id,
+      },
+    });
 
     assert(
-      workspaceMember.length === 1,
+      workspaceMember?.length === 1,
       `Error while creating workspace member ${user.email} on workspace ${workspaceId}`,
     );
     const objectMetadata = await this.objectMetadataRepository.findOneOrFail({

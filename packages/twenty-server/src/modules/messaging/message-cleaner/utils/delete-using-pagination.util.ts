@@ -1,4 +1,4 @@
-import { EntityManager } from 'typeorm';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 
 export const deleteUsingPagination = async (
   workspaceId: string,
@@ -7,14 +7,14 @@ export const deleteUsingPagination = async (
     limit: number,
     offset: number,
     workspaceId: string,
-    transactionManager?: EntityManager,
+    transactionManager?: WorkspaceEntityManager,
   ) => Promise<string[]>,
   deleter: (
     ids: string[],
     workspaceId: string,
-    transactionManager?: EntityManager,
+    transactionManager?: WorkspaceEntityManager,
   ) => Promise<void>,
-  transactionManager?: EntityManager,
+  transactionManager?: WorkspaceEntityManager,
 ) => {
   let hasMoreData = true;
 

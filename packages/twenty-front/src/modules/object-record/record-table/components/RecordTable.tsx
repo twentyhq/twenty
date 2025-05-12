@@ -6,10 +6,14 @@ import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record
 import { RecordTableBodyEffectsWrapper } from '@/object-record/record-table/components/RecordTableBodyEffectsWrapper';
 import { RecordTableContent } from '@/object-record/record-table/components/RecordTableContent';
 import { RecordTableEmpty } from '@/object-record/record-table/components/RecordTableEmpty';
+import { RecordTableScrollToFocusedCellEffect } from '@/object-record/record-table/components/RecordTableScrollToFocusedCellEffect';
+import { RecordTableScrollToFocusedRowEffect } from '@/object-record/record-table/components/RecordTableScrollToFocusedRowEffect';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
+import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
@@ -18,7 +22,7 @@ export const RecordTable = () => {
 
   const tableBodyRef = useRef<HTMLTableElement>(null);
 
-  const { toggleClickOutsideListener } = useClickOutsideListener(
+  const { toggleClickOutside } = useClickOutsideListener(
     RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
   );
 
@@ -44,17 +48,27 @@ export const RecordTable = () => {
   const recordTableIsEmpty =
     !isRecordTableInitialLoading && allRecordIds.length === 0;
 
+  const isRecordTableCellFocusActive = useRecoilComponentValueV2(
+    isRecordTableCellFocusActiveComponentState,
+    recordTableId,
+  );
+
+  const isRecordTableRowFocusActive = useRecoilComponentValueV2(
+    isRecordTableRowFocusActiveComponentState,
+    recordTableId,
+  );
+
   if (!isNonEmptyString(objectNameSingular)) {
     return <></>;
   }
 
   const handleDragSelectionStart = () => {
     resetTableRowSelection();
-    toggleClickOutsideListener(false);
+    toggleClickOutside(false);
   };
 
   const handleDragSelectionEnd = () => {
-    toggleClickOutsideListener(true);
+    toggleClickOutside(true);
   };
 
   return (
@@ -64,7 +78,11 @@ export const RecordTable = () => {
         tableBodyRef={tableBodyRef}
       />
 
-      {recordTableIsEmpty ? (
+      {isRecordTableCellFocusActive && <RecordTableScrollToFocusedCellEffect />}
+
+      {isRecordTableRowFocusActive && <RecordTableScrollToFocusedRowEffect />}
+
+      {recordTableIsEmpty && !hasRecordGroups ? (
         <RecordTableEmpty
           tableBodyRef={tableBodyRef}
           hasRecordGroups={hasRecordGroups}

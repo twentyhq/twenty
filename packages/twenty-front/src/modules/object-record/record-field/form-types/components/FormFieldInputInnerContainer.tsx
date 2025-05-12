@@ -47,6 +47,7 @@ export const FormFieldInputInnerContainer = forwardRef(
       multiline,
       readonly,
       preventSetHotkeyScope = false,
+      onClick,
     }: HTMLAttributes<HTMLDivElement> & FormFieldInputInnerContainerProps,
     ref: Ref<HTMLDivElement>,
   ) => {
@@ -82,6 +83,7 @@ export const FormFieldInputInnerContainer = forwardRef(
         readonly={readonly}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        onClick={onClick}
       >
         {children}
       </StyledFormFieldInputInnerContainer>

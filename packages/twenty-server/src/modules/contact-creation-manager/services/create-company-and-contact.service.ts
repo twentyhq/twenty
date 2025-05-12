@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
-import { Any, EntityManager, Repository } from 'typeorm';
+import { Any, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -45,7 +45,6 @@ export class CreateCompanyAndContactService {
     contactsToCreate: Contact[],
     workspaceId: string,
     source: FieldActorSource,
-    transactionManager?: EntityManager,
   ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
     if (!contactsToCreate || contactsToCreate.length === 0) {
       return [];
@@ -55,13 +54,13 @@ export class CreateCompanyAndContactService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         PersonWorkspaceEntity,
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
     const workspaceMembers =
-      await this.workspaceMemberRepository.getAllByWorkspaceId(
-        workspaceId,
-        transactionManager,
-      );
+      await this.workspaceMemberRepository.getAllByWorkspaceId(workspaceId);
 
     const contactsToCreateFromOtherCompanies =
       filterOutSelfAndContactsFromCompanyOrWorkspace(
@@ -134,7 +133,6 @@ export class CreateCompanyAndContactService {
     const companiesObject = await this.createCompaniesService.createCompanies(
       workDomainNamesToCreateFormatted,
       workspaceId,
-      transactionManager,
     );
 
     const formattedContactsToCreate =
@@ -155,7 +153,6 @@ export class CreateCompanyAndContactService {
     return this.createContactService.createPeople(
       formattedContactsToCreate,
       workspaceId,
-      transactionManager,
     );
   }
 

@@ -51,5 +51,21 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
+    {
+      code: 'const myCss = css`color: #123; background-color: ${theme.background.secondary};`',
+      errors: [
+        {
+          messageId: 'hardcodedColor',
+        },
+      ],
+    },
+    {
+      code: 'const myCss = styled.div`color: ${({ theme }) => theme.font.color.primary};flex-shrink: 0;background-color: #123;text-overflow: ellipsis;white-space: nowrap;max-width: 100%;`',
+      errors: [
+        {
+          messageId: 'hardcodedColor',
+        },
+      ],
+    },
   ],
 });

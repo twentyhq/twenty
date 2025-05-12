@@ -81,6 +81,17 @@ export class BillingAddWorkflowSubscriptionItemCommand extends ActiveOrSuspended
     }
 
     if (!options.dryRun) {
+      await this.stripeSubscriptionService.updateSubscription(
+        subscription.stripeSubscriptionId,
+        {
+          trial_settings: {
+            end_behavior: {
+              missing_payment_method: 'create_invoice',
+            },
+          },
+        },
+      );
+
       await this.stripeSubscriptionItemService.createSubscriptionItem(
         subscription.stripeSubscriptionId,
         associatedWorkflowMeteredPrice.stripePriceId,

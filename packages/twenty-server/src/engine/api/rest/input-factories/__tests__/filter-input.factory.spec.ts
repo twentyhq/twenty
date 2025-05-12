@@ -6,7 +6,7 @@ import {
   fieldCurrencyMock,
   fieldNumberMock,
   fieldTextMock,
-  objectMetadataItemMock,
+  objectMetadataMapItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { FilterInputFactory } from 'src/engine/api/rest/input-factories/filter-input.factory';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
@@ -55,18 +55,18 @@ describe('FilterInputFactory', () => {
   };
 
   const objectMetadataMapItem = {
-    ...objectMetadataItemMock,
+    ...objectMetadataMapItemMock,
     fieldsById,
     fieldsByName,
   };
 
   const objectMetadataMaps = {
     byId: {
-      [objectMetadataItemMock.id || 'mock-id']: objectMetadataMapItem,
+      [objectMetadataMapItemMock.id || 'mock-id']: objectMetadataMapItem,
     },
     idByNameSingular: {
-      [objectMetadataItemMock.nameSingular]:
-        objectMetadataItemMock.id || 'mock-id',
+      [objectMetadataMapItemMock.nameSingular]:
+        objectMetadataMapItemMock.id || 'mock-id',
     },
   };
 

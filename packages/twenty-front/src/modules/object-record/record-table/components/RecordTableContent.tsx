@@ -5,6 +5,18 @@ import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/recor
 import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsBody';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
+import styled from '@emotion/styled';
+import { useState } from 'react';
+
+const StyledTableWithPointerEvents = styled(StyledTable)<{
+  isDragging: boolean;
+}>`
+  & > * {
+    pointer-events: ${({ isDragging }) => (isDragging ? 'none' : 'auto')};
+  }
+  min-height: ${({ isDragging }) => (isDragging ? '100%' : 'auto')};
+  height: ${({ isDragging }) => (isDragging ? '100%' : 'auto')};
+`;
 
 export interface RecordTableContentProps {
   tableBodyRef: React.RefObject<HTMLTableElement>;
@@ -20,23 +32,37 @@ export const RecordTableContent = ({
   handleDragSelectionEnd,
   setRowSelected,
   hasRecordGroups,
-}: RecordTableContentProps) => (
-  <>
-    <StyledTable ref={tableBodyRef}>
-      <RecordTableHeader />
-      {hasRecordGroups ? (
-        <RecordTableRecordGroupsBody />
-      ) : (
-        <RecordTableNoRecordGroupBody />
-      )}
-      <RecordTableStickyEffect />
-      <RecordTableStickyBottomEffect />
-    </StyledTable>
-    <DragSelect
-      dragSelectable={tableBodyRef}
-      onDragSelectionStart={handleDragSelectionStart}
-      onDragSelectionChange={setRowSelected}
-      onDragSelectionEnd={handleDragSelectionEnd}
-    />
-  </>
-);
+}: RecordTableContentProps) => {
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragStart = () => {
+    setIsDragging(true);
+    handleDragSelectionStart();
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+    handleDragSelectionEnd();
+  };
+
+  return (
+    <>
+      <StyledTableWithPointerEvents ref={tableBodyRef} isDragging={isDragging}>
+        <RecordTableHeader />
+        {hasRecordGroups ? (
+          <RecordTableRecordGroupsBody />
+        ) : (
+          <RecordTableNoRecordGroupBody />
+        )}
+        <RecordTableStickyEffect />
+        <RecordTableStickyBottomEffect />
+      </StyledTableWithPointerEvents>
+      <DragSelect
+        dragSelectable={tableBodyRef}
+        onDragSelectionStart={handleDragStart}
+        onDragSelectionChange={setRowSelected}
+        onDragSelectionEnd={handleDragEnd}
+      />
+    </>
+  );
+};

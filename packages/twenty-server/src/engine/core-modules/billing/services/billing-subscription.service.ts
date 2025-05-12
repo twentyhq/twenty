@@ -45,6 +45,8 @@ export class BillingSubscriptionService {
     private readonly stripeCustomerService: StripeCustomerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
+    @InjectRepository(BillingSubscriptionItem, 'core')
+    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
   ) {}
 
   async getCurrentBillingSubscriptionOrThrow(criteria: {
@@ -239,6 +241,11 @@ export class BillingSubscriptionService {
           trial_end: 'now',
         },
       );
+
+    await this.billingSubscriptionItemRepository.update(
+      { stripeSubscriptionId: updatedSubscription.id },
+      { hasReachedCurrentPeriodCap: false },
+    );
 
     return {
       status: getSubscriptionStatus(updatedSubscription.status),

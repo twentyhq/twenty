@@ -26,6 +26,7 @@ import {
   validateStringAgainstInjections,
 } from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input.utils';
 import { validateRemoteServerType } from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-type.util';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
@@ -79,7 +80,7 @@ export class RemoteServerService<T extends RemoteServerType> {
     }
 
     return this.metadataDataSource.transaction(
-      async (entityManager: EntityManager) => {
+      async (entityManager: WorkspaceEntityManager) => {
         const createdRemoteServer = entityManager.create(
           RemoteServerEntity,
           remoteServerToCreate,

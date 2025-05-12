@@ -1,16 +1,16 @@
-import { useGetFieldMetadataItemById } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
-import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
+import { useApplyObjectFilterDropdownOperand } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownOperand';
 
-import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
-import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
@@ -38,42 +38,17 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
     (recordFilter) => recordFilter.id === recordFilterId,
   );
 
-  const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
-
   const isDisabled = !filter?.fieldMetadataId;
 
   const { closeDropdown } = useDropdown(dropdownId);
 
-  const { upsertRecordFilter } = useUpsertRecordFilter();
+  const { applyObjectFilterDropdownOperand } =
+    useApplyObjectFilterDropdownOperand();
 
   const handleOperandChange = (operand: ViewFilterOperand) => {
     closeDropdown();
 
-    if (!filter) {
-      throw new Error('Filter is not defined');
-    }
-
-    const fieldMetadataItem = getFieldMetadataItemById(filter.fieldMetadataId);
-
-    if (!isDefined(fieldMetadataItem)) {
-      throw new Error('Field metadata item is not defined');
-    }
-
-    const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
-
-    const { value, displayValue } = getInitialFilterValue(
-      filterType,
-      operand,
-      filter.value,
-      filter.displayValue,
-    );
-
-    upsertRecordFilter({
-      ...filter,
-      operand,
-      value,
-      displayValue,
-    });
+    applyObjectFilterDropdownOperand(operand);
   };
 
   const filterType = filter?.type;
@@ -84,6 +59,11 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
         subFieldName: filter?.subFieldName,
       })
     : [];
+
+  const selectedItemId = useRecoilComponentValueV2(
+    selectedItemIdComponentState,
+    dropdownId,
+  );
 
   if (isDisabled === true) {
     return (
@@ -114,21 +94,38 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
           />
         }
         dropdownComponents={
-          <DropdownMenuItemsContainer>
-            {operandsForFilterType.map((filterOperand, index) => (
-              <MenuItem
-                key={`select-filter-operand-${index}`}
-                onClick={() => {
-                  handleOperandChange(filterOperand);
-                }}
-                text={getOperandLabel(filterOperand)}
-              />
-            ))}
+          <DropdownMenuItemsContainer width="auto">
+            <SelectableList
+              hotkeyScope={dropdownId}
+              selectableItemIdArray={operandsForFilterType.map(
+                (operand) => operand,
+              )}
+              selectableListInstanceId={dropdownId}
+            >
+              {operandsForFilterType.map((filterOperand, index) => (
+                <SelectableListItem
+                  itemId={filterOperand}
+                  key={`select-filter-operand-${index}`}
+                  onEnter={() => {
+                    handleOperandChange(filterOperand);
+                  }}
+                >
+                  <MenuItem
+                    focused={selectedItemId === filterOperand}
+                    onClick={() => {
+                      handleOperandChange(filterOperand);
+                    }}
+                    text={getOperandLabel(filterOperand)}
+                  />
+                </SelectableListItem>
+              ))}
+            </SelectableList>
           </DropdownMenuItemsContainer>
         }
         dropdownHotkeyScope={{ scope: dropdownId }}
         dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
         dropdownPlacement="bottom-start"
+        dropdownWidth={200}
       />
     </StyledContainer>
   );

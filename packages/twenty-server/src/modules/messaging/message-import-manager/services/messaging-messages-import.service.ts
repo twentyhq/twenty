@@ -26,8 +26,7 @@ import {
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
-import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
-
+import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 @Injectable()
 export class MessagingMessagesImportService {
   private readonly logger = new Logger(MessagingMessagesImportService.name);
@@ -38,7 +37,7 @@ export class MessagingMessagesImportService {
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly saveMessagesAndEnqueueContactCreationService: MessagingSaveMessagesAndEnqueueContactCreationService,
     private readonly connectedAccountRefreshTokensService: ConnectedAccountRefreshTokensService,
-    private readonly messagingTelemetryService: MessagingTelemetryService,
+    private readonly messagingMonitoringService: MessagingMonitoringService,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
     private readonly emailAliasManagerService: EmailAliasManagerService,
@@ -62,7 +61,7 @@ export class MessagingMessagesImportService {
         return;
       }
 
-      await this.messagingTelemetryService.track({
+      await this.messagingMonitoringService.track({
         eventName: 'messages_import.started',
         workspaceId,
         connectedAccountId: messageChannel.connectedAccountId,
@@ -87,7 +86,7 @@ export class MessagingMessagesImportService {
         switch (error.code) {
           case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
           case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
-            await this.messagingTelemetryService.track({
+            await this.messagingMonitoringService.track({
               eventName: `refresh_token.error.insufficient_permissions`,
               workspaceId,
               connectedAccountId: messageChannel.connectedAccountId,
@@ -208,7 +207,7 @@ export class MessagingMessagesImportService {
     messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ) {
-    await this.messagingTelemetryService.track({
+    await this.messagingMonitoringService.track({
       eventName: 'messages_import.completed',
       workspaceId,
       connectedAccountId: messageChannel.connectedAccountId,

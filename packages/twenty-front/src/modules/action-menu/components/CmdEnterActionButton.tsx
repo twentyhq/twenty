@@ -23,7 +23,7 @@ export const CmdEnterActionButton = ({
   return (
     <Button
       title={title}
-      variant="primary"
+      variant={disabled ? 'secondary' : 'primary'}
       accent="blue"
       size="medium"
       onClick={onClick}
