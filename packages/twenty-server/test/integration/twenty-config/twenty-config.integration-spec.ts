@@ -17,11 +17,6 @@ import { makeUnauthenticatedAPIRequest } from './utils/make-unauthenticated-api-
 import { updateConfigVariable } from './utils/update-config-variable.util';
 
 describe('TwentyConfig Integration', () => {
-  // still debating if we should do this or always infer it from the env
-  beforeAll(() => {
-    process.env.IS_CONFIG_VARIABLES_IN_DB_ENABLED = 'true';
-  });
-
   afterAll(async () => {
     await deleteConfigVariable({
       input: { key: TEST_KEY_NOTIFICATION },
