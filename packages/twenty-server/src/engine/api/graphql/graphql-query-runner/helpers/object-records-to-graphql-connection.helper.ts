@@ -6,7 +6,6 @@ import {
   ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { CONNECTION_MAX_DEPTH } from 'src/engine/api/graphql/graphql-query-runner/constants/connection-max-depth.constant';
@@ -27,14 +26,9 @@ import { isPlainObject } from 'src/utils/is-plain-object';
 
 export class ObjectRecordsToGraphqlConnectionHelper {
   private objectMetadataMaps: ObjectMetadataMaps;
-  private featureFlagsMap: FeatureFlagMap;
 
-  constructor(
-    objectMetadataMaps: ObjectMetadataMaps,
-    featureFlagsMap: FeatureFlagMap,
-  ) {
+  constructor(objectMetadataMaps: ObjectMetadataMaps) {
     this.objectMetadataMaps = objectMetadataMaps;
-    this.featureFlagsMap = featureFlagsMap;
   }
 
   public createConnection<T extends ObjectRecord = ObjectRecord>({

@@ -8,7 +8,6 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils/get-composite-field-metadata-collection';
@@ -43,13 +42,6 @@ export function formatResult<T>(
     objectMetadataItemWithFieldMaps,
   );
 
-  const relationMetadataMap: Map<
-    string,
-    {
-      relationMetadata: RelationMetadataEntity | undefined;
-      relationType: string;
-    }
-  > = new Map();
   const newData: object = {};
   const objectMetadaItemFieldsByName =
     objectMetadataMaps.byId[objectMetadataItemWithFieldMaps.id]?.fieldsByName;

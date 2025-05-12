@@ -15,8 +15,6 @@ import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-syn
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
-import { getJoinColumn } from 'src/engine/twenty-orm/utils/get-join-column.util';
-import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
 
 @Injectable()
@@ -169,17 +167,6 @@ export class StandardFieldFactory {
     context: WorkspaceSyncContext,
   ): PartialFieldMetadata[] {
     const fieldMetadataCollection: PartialFieldMetadata[] = [];
-    const foreignKeyStandardId = createDeterministicUuid(
-      workspaceRelationMetadataArgs.standardId,
-    );
-    const joinColumnMetadataArgsCollection =
-      metadataArgsStorage.filterJoinColumns(
-        workspaceRelationMetadataArgs.target,
-      );
-    const joinColumn = getJoinColumn(
-      joinColumnMetadataArgsCollection,
-      workspaceRelationMetadataArgs,
-    );
 
     if (
       isGatedAndNotEnabled(
