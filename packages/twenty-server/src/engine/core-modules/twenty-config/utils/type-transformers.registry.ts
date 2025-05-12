@@ -32,6 +32,7 @@ export const typeTransformers: Record<
   [ConfigVariableType.BOOLEAN]: {
     toApp: (value: unknown): boolean | undefined => {
       if (value === null || value === undefined) return undefined;
+
       const result = configTransformers.boolean(value);
 
       if (result !== undefined && typeof result !== 'boolean') {
@@ -69,6 +70,7 @@ export const typeTransformers: Record<
   [ConfigVariableType.NUMBER]: {
     toApp: (value: unknown): number | undefined => {
       if (value === null || value === undefined) return undefined;
+
       const result = configTransformers.number(value);
 
       if (result !== undefined && typeof result !== 'number') {
@@ -106,6 +108,7 @@ export const typeTransformers: Record<
   [ConfigVariableType.STRING]: {
     toApp: (value: unknown): string | undefined => {
       if (value === null || value === undefined) return undefined;
+
       const result = configTransformers.string(value);
 
       if (result !== undefined && typeof result !== 'string') {
@@ -165,11 +168,7 @@ export const typeTransformers: Record<
         return arrayValue;
       }
 
-      return arrayValue.filter((item) => {
-        const included = options.includes(item as string);
-
-        return included;
-      });
+      return arrayValue.filter((item) => options.includes(item as string));
     },
 
     toStorage: (
@@ -183,16 +182,11 @@ export const typeTransformers: Record<
         );
       }
 
-      // Validate array against options
-      if (options && Array.isArray(options) && options.length > 0) {
-        return value.filter((item) => {
-          const included = options.includes(item as string);
-
-          return included;
-        });
+      if (!options || !Array.isArray(options) || options.length === 0) {
+        return value;
       }
 
-      return value;
+      return value.filter((item) => options.includes(item as string));
     },
 
     getValidators: (): PropertyDecorator[] => [IsArray()],
@@ -222,24 +216,26 @@ export const typeTransformers: Record<
         );
       }
 
-      if (options && Array.isArray(options) && options.length > 0) {
-        if (!options.includes(value)) {
-          throw new ConfigVariableException(
-            `Value '${value}' is not a valid option for enum`,
-            ConfigVariableExceptionCode.VALIDATION_FAILED,
-          );
-        }
+      if (!options || !Array.isArray(options) || options.length === 0) {
+        return value;
+      }
+
+      if (!options.includes(value)) {
+        throw new ConfigVariableException(
+          `Value '${value}' is not a valid option for enum`,
+          ConfigVariableExceptionCode.VALIDATION_FAILED,
+        );
       }
 
       return value;
     },
 
     getValidators: (options?: ConfigVariableOptions): PropertyDecorator[] => {
-      if (options) {
-        return [IsEnum(options)];
+      if (!options) {
+        return [];
       }
 
-      return [];
+      return [IsEnum(options)];
     },
 
     getTransformers: (): PropertyDecorator[] => [],
