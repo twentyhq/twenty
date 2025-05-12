@@ -818,6 +818,15 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
+    description: 'Enable or disable TLS for Redis cluster connections',
+    type: ConfigVariableType.BOOLEAN,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  REDIS_CLUSTER_TLS?: boolean;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
     description: 'Node environment (development, production, etc.)',
     type: ConfigVariableType.ENUM,
     options: Object.values(NodeEnvironment),

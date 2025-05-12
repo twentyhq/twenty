@@ -12,8 +12,11 @@ export class RedisClientService implements OnModuleDestroy {
 
   getClient() {
     if (!this.redisClient) {
-      const clusterMode = this.twentyConfigService.get('REDIS_CLUSTER_MODE') === true;
+      const clusterMode =
+        this.twentyConfigService.get('REDIS_CLUSTER_MODE') === true;
       const redisPassword = this.twentyConfigService.get('REDIS_PASSWORD');
+      const redisClusterTls =
+        this.twentyConfigService.get('REDIS_CLUSTER_TLS') === true;
 
       if (clusterMode === true) {
         // Expect comma-separated list of host:port
@@ -26,13 +29,16 @@ export class RedisClientService implements OnModuleDestroy {
         }
         const nodes = nodesString.split(',').map((node) => {
           const [host, port] = node.trim().split(':');
+
           if (!host || !port) {
             throw new Error(`Invalid node format: ${node}. Expected host:port`);
           }
           const portNum = Number(port);
+
           if (isNaN(portNum) || portNum < 1 || portNum > 65535) {
             throw new Error(`Invalid port number: ${port}`);
           }
+
           return { host, port: portNum };
         });
 
@@ -41,7 +47,7 @@ export class RedisClientService implements OnModuleDestroy {
           redisOptions: {
             maxRetriesPerRequest: null,
             password: redisPassword,
-            tls: {},
+            tls: redisClusterTls ? {} : undefined,
           },
         });
       } else {
