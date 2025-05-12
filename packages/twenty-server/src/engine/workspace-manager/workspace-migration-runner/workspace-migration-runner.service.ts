@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import {
   QueryRunner,
   Table,
@@ -30,7 +31,6 @@ import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/work
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
 import { tableDefaultColumns } from 'src/engine/workspace-manager/workspace-migration-runner/utils/table-default-column.util';
 
-import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
 
 export const RELATION_MIGRATION_PRIORITY_PREFIX = '1000';
@@ -86,7 +86,7 @@ export class WorkspaceMigrationRunnerService {
 
     try {
       // Loop over each migration and create or update the table
-      for (const [index, migration] of flattenedPendingMigrations.entries()) {
+      for (const migration of flattenedPendingMigrations) {
         await this.handleTableChanges(queryRunner, schemaName, migration);
       }
 
@@ -669,7 +669,7 @@ export class WorkspaceMigrationRunnerService {
           onDelete: convertOnDeleteActionToOnDelete(migrationColumn.onDelete),
         }),
       );
-    // TODO remove me after 0.53 release @prastoin @charlesBochet Swallowing blocking false positive constraint
+      // TODO remove me after 0.53 release @prastoin @charlesBochet Swallowing blocking false positive constraint
     } catch (error) {
       if (
         [error.driverError.message, error.message]
