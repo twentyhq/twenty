@@ -20,6 +20,7 @@ import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/up
 import { UpgradeDateAndDateTimeFieldsSettingsJsonCommand } from 'src/database/commands/upgrade-version-command/0-52/0-52-upgrade-settings-field';
 import { BackfillWorkflowNextStepIdsCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-backfill-workflow-next-step-ids.command';
 import { CopyTypeormMigrationsCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-copy-typeorm-migrations.command';
+import { FixStandardSelectFieldsPositionCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-fix-standard-select-fields-position.command';
 import { MigrateWorkflowEventListenersToAutomatedTriggersCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-migrate-workflow-event-listeners-to-automated-triggers.command';
 import { UpgradeSearchVectorOnPersonEntityCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-upgrade-search-vector-on-person-entity.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -64,6 +65,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillWorkflowNextStepIdsCommand: BackfillWorkflowNextStepIdsCommand,
     protected readonly copyTypeormMigrationsCommand: CopyTypeormMigrationsCommand,
     protected readonly upgradeSearchVectorOnPersonEntityCommand: UpgradeSearchVectorOnPersonEntityCommand,
+    protected readonly fixStandardSelectFieldsPositionCommand: FixStandardSelectFieldsPositionCommand,
   ) {
     super(
       workspaceRepository,
@@ -111,7 +113,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_053: VersionCommands = {
-      beforeSyncMetadata: [],
+      beforeSyncMetadata: [this.fixStandardSelectFieldsPositionCommand],
       afterSyncMetadata: [
         this.migrateWorkflowEventListenersToAutomatedTriggersCommand,
         this.backfillWorkflowNextStepIdsCommand,
