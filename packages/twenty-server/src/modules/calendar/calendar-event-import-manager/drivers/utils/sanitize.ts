@@ -1,4 +1,4 @@
-export const sanitizeObject = <T extends Record<string, any>>(
+export const sanitizeCalendarEvent = <T extends Record<string, any>>(
   object: T,
   propertiesToSanitize: (keyof T)[],
 ): T => {
