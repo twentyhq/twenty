@@ -22,6 +22,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Controller('rest/*')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
+@UseFilters(RestApiExceptionFilter)
 export class RestApiCoreController {
   constructor(
     private readonly restApiCoreService: RestApiCoreService,
@@ -38,15 +39,12 @@ export class RestApiCoreController {
 
   @Get()
   async handleApiGet(@Req() request: Request, @Res() res: Response) {
-    const result = await this.restApiCoreService.get(request);
+    const result = await this.restApiCoreServiceV2.get(request);
 
-    res.status(200).send(cleanGraphQLResponse(result.data.data));
+    res.status(200).send(result);
   }
 
   @Delete()
-  // We should move this exception filter to RestApiCoreController class level
-  // when all endpoints are migrated to v2
-  @UseFilters(RestApiExceptionFilter)
   async handleApiDelete(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreServiceV2.delete(request);
 
@@ -54,7 +52,6 @@ export class RestApiCoreController {
   }
 
   @Post()
-  @UseFilters(RestApiExceptionFilter)
   async handleApiPost(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreServiceV2.createOne(request);
 
@@ -73,7 +70,6 @@ export class RestApiCoreController {
   // We keep it to avoid a breaking change since it initially used PUT instead of PATCH,
   // and because the PUT verb is often used as a PATCH.
   @Put()
-  @UseFilters(RestApiExceptionFilter)
   async handleApiPut(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreServiceV2.update(request);
 
