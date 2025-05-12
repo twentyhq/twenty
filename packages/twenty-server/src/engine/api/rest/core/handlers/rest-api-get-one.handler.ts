@@ -21,7 +21,6 @@ export class RestApiGetOneHandler extends RestApiBaseHandler {
     const {
       objectMetadataNameSingular,
       repository,
-      dataSource,
       objectMetadata,
       objectMetadataItemWithFieldsMaps,
     } = await this.getRepositoryAndMetadataOrFail(request);
@@ -30,7 +29,6 @@ export class RestApiGetOneHandler extends RestApiBaseHandler {
       request,
       recordId,
       repository,
-      dataSource,
       objectMetadata,
       objectMetadataNameSingular,
       objectMetadataItemWithFieldsMaps,
