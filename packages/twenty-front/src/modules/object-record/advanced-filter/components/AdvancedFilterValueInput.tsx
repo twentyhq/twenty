@@ -83,17 +83,31 @@ export const AdvancedFilterValueInput = ({
       ? ({ y: -33, x: 0 } satisfies DropdownOffset)
       : DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET;
 
-  const showFilterTextInput =
-    (isDefined(filterType) &&
-      (TEXT_FILTER_TYPES.includes(filterType) ||
-        NUMBER_FILTER_TYPES.includes(filterType))) ||
-    isExpectedSubFieldName(
-      FieldMetadataType.CURRENCY,
-      'amountMicros',
-      recordFilter.subFieldName,
-    ) ||
-    (filterType === 'ADDRESS' &&
-      subFieldNameUsedInDropdown !== 'addressCountry');
+  const isFilterableByTextValue =
+    isDefined(filterType) &&
+    (TEXT_FILTER_TYPES.includes(filterType) ||
+      NUMBER_FILTER_TYPES.includes(filterType));
+
+  const isCurrencyAmountMicrosFilter = isExpectedSubFieldName(
+    FieldMetadataType.CURRENCY,
+    'amountMicros',
+    recordFilter.subFieldName,
+  );
+
+  const isAddressFilterOnSubFieldOtherThanCountry =
+    filterType === 'ADDRESS' && subFieldNameUsedInDropdown !== 'addressCountry';
+
+  const isActorNameFilter = isExpectedSubFieldName(
+    FieldMetadataType.ACTOR,
+    'name',
+    recordFilter.subFieldName,
+  );
+
+  const showFilterTextInputInsteadOfDropdown =
+    isFilterableByTextValue ||
+    isCurrencyAmountMicrosFilter ||
+    isAddressFilterOnSubFieldOtherThanCountry ||
+    isActorNameFilter;
 
   return (
     <StyledValueDropdownContainer>
@@ -103,7 +117,7 @@ export const AdvancedFilterValueInput = ({
         <AdvancedFilterValueInputDropdownButtonClickableSelect
           recordFilterId={recordFilterId}
         />
-      ) : showFilterTextInput ? (
+      ) : showFilterTextInputInsteadOfDropdown ? (
         <AdvancedFilterDropdownTextInput recordFilter={recordFilter} />
       ) : (
         <Dropdown

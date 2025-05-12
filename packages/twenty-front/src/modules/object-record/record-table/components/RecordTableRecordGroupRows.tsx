@@ -55,8 +55,8 @@ export const RecordTableRecordGroupRows = () => {
           />
         );
       })}
-      <RecordTableRecordGroupSectionAddNew />
       <RecordTableRecordGroupSectionLoadMore />
+      <RecordTableRecordGroupSectionAddNew />
       <RecordTableAggregateFooter
         key={currentRecordGroupId}
         currentRecordGroupId={currentRecordGroupId}
