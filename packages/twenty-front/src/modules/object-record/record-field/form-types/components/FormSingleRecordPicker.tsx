@@ -144,7 +144,7 @@ export const FormSingleRecordPicker = ({
   };
 
   return (
-    <FormFieldInputContainer testId={testId}>
+    <FormFieldInputContainer data-testid={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
       <FormFieldInputRowContainer>
         {disabled ? (

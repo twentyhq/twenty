@@ -591,6 +591,15 @@ export type DeleteWorkflowVersionStepInput = {
   workflowVersionId: Scalars['String']['input'];
 };
 
+export type DeletedWorkspaceMember = {
+  __typename?: 'DeletedWorkspaceMember';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  name: FullName;
+  userEmail: Scalars['String']['output'];
+  userWorkspaceId?: Maybe<Scalars['String']['output']>;
+};
+
 /** Schema update on a table */
 export enum DistantTableUpdate {
   COLUMNS_ADDED = 'COLUMNS_ADDED',
@@ -2426,6 +2435,7 @@ export type User = {
   currentWorkspace?: Maybe<Workspace>;
   defaultAvatarUrl?: Maybe<Scalars['String']['output']>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  deletedWorkspaceMembers?: Maybe<Array<DeletedWorkspaceMember>>;
   disabled?: Maybe<Scalars['Boolean']['output']>;
   email: Scalars['String']['output'];
   firstName: Scalars['String']['output'];
