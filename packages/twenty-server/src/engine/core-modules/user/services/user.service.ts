@@ -4,7 +4,7 @@ import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import {
@@ -63,7 +63,7 @@ export class UserService extends TypeOrmQueryService<User> {
     });
   }
 
-  async loadWorkspaceMembers(workspace: Workspace) {
+  async loadWorkspaceMembers(workspace: Workspace, withDeleted = false) {
     if (!isWorkspaceActiveOrSuspended(workspace)) {
       return [];
     }
@@ -74,7 +74,24 @@ export class UserService extends TypeOrmQueryService<User> {
         'workspaceMember',
       );
 
-    return workspaceMemberRepository.find();
+    return await workspaceMemberRepository.find({ withDeleted: withDeleted });
+  }
+
+  async loadDeletedWorkspaceMembersOnly(workspace: Workspace) {
+    if (!isWorkspaceActiveOrSuspended(workspace)) {
+      return [];
+    }
+
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspace.id,
+        'workspaceMember',
+      );
+
+    return await workspaceMemberRepository.find({
+      where: { deletedAt: Not(IsNull()) },
+      withDeleted: true,
+    });
   }
 
   private async deleteUserFromWorkspace({
