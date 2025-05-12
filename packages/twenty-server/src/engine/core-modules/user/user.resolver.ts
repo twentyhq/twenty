@@ -52,6 +52,7 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { isDefined } from 'twenty-shared/utils';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -295,8 +296,6 @@ export class UserResolver {
 
     const workspaceMembers: WorkspaceMember[] = [];
 
-    let userWorkspacesByUserId = new Map<string, UserWorkspace>();
-
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
         userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
@@ -305,7 +304,7 @@ export class UserResolver {
       withDeleted: true,
     });
 
-    userWorkspacesByUserId = new Map(
+    const workspaceMembersByUserIdMap = new Map<string, UserWorkspace>(
       userWorkspaces.map((userWorkspace) => [
         userWorkspace.userId,
         userWorkspace,
@@ -324,11 +323,11 @@ export class UserResolver {
 
       const workspaceMember = workspaceMemberEntity as WorkspaceMember;
 
-      const userWorkspace = userWorkspacesByUserId.get(
+      const userWorkspace = workspaceMembersByUserIdMap.get(
         workspaceMemberEntity.userId,
       );
 
-      if (userWorkspace) {
+      if (isDefined(userWorkspace)) {
         workspaceMember.userWorkspaceId = userWorkspace.id;
       }
 
