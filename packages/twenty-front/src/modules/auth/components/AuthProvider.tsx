@@ -2,20 +2,20 @@ import React from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { AuthContext } from '@/auth/contexts/AuthContext';
+import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersStates';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
-import { currentWorkspaceMembersWithDeletedState } from '@/auth/states/currentWorkspaceMembersWithDeletedStates';
 
 export const AuthProvider = ({ children }: React.PropsWithChildren) => {
   const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
-  const currentWorkspaceMembersWithDeleted = useRecoilValue(
-    currentWorkspaceMembersWithDeletedState,
+  const currentWorkspaceDeletedMembers = useRecoilValue(
+    currentWorkspaceDeletedMembersState,
   );
 
   return (
     <AuthContext.Provider
       value={{
         currentWorkspaceMembers,
-        currentWorkspaceMembersWithDeleted,
+        currentWorkspaceDeletedMembers,
       }}
     >
       {children}

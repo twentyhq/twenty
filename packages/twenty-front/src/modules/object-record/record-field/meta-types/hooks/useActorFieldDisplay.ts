@@ -16,7 +16,8 @@ export type ActorFieldDisplayValue = {
 export const useActorFieldDisplay = (): ActorFieldDisplayValue | undefined => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
-  const { currentWorkspaceMembersWithDeleted } = useContext(AuthContext);
+  const { currentWorkspaceDeletedMembers, currentWorkspaceMembers } =
+    useContext(AuthContext);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
@@ -28,7 +29,10 @@ export const useActorFieldDisplay = (): ActorFieldDisplayValue | undefined => {
     return undefined;
   }
 
-  const relatedWorkspaceMember = currentWorkspaceMembersWithDeleted.find(
+  const relatedWorkspaceMember = [
+    ...currentWorkspaceDeletedMembers,
+    ...currentWorkspaceMembers,
+  ].find(
     (workspaceMember) => workspaceMember.id === fieldValue.workspaceMemberId,
   );
   if (!isDefined(relatedWorkspaceMember)) {

@@ -3,9 +3,9 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersStates';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
-import { currentWorkspaceMembersWithDeletedState } from '@/auth/states/currentWorkspaceMembersWithDeletedStates';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { workspacesState } from '@/auth/states/workspaces';
@@ -47,7 +47,7 @@ export const UserProviderEffect = () => {
     currentWorkspaceMembersState,
   );
   const setCurrentWorkspaceMembersWithDeleted = useSetRecoilState(
-    currentWorkspaceMembersWithDeletedState,
+    currentWorkspaceDeletedMembersState,
   );
 
   const { loading: queryLoading, data: queryData } = useGetCurrentUserQuery({
@@ -81,7 +81,7 @@ export const UserProviderEffect = () => {
     const {
       workspaceMember,
       workspaceMembers,
-      workspaceMembersWithDeleted,
+      deletedWorkspaceMembers,
       workspaces: userWorkspaces,
     } = queryData.currentUser;
 
@@ -127,12 +127,8 @@ export const UserProviderEffect = () => {
       );
     }
 
-    if (isDefined(workspaceMembersWithDeleted)) {
-      setCurrentWorkspaceMembersWithDeleted(
-        workspaceMembersWithDeleted.map(
-          affectDefaultValuesOnEmptyWorkspaceMemberFields,
-        ),
-      );
+    if (isDefined(deletedWorkspaceMembers)) {
+      setCurrentWorkspaceMembersWithDeleted(deletedWorkspaceMembers);
     }
 
     if (isDefined(userWorkspaces)) {
