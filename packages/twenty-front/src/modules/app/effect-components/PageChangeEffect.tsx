@@ -221,7 +221,7 @@ export const PageChangeEffect = () => {
         break;
       }
     }
-  }, [isMatchingLocation, setHotkeyScope, location.search]);
+  }, [isMatchingLocation, setHotkeyScope]);
 
   useEffect(() => {
     setTimeout(() => {
