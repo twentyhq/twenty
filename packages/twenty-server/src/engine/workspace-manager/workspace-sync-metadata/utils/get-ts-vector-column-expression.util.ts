@@ -1,5 +1,3 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
   computeColumnName,
@@ -65,28 +63,14 @@ const getColumnExpressionsFromField = (
           property,
         );
 
-        return getColumnExpression(columnName, fieldMetadataTypeAndName.type);
+        return getColumnExpression(columnName);
       });
   }
   const columnName = computeColumnName(fieldMetadataTypeAndName.name);
 
-  return [getColumnExpression(columnName, fieldMetadataTypeAndName.type)];
+  return [getColumnExpression(columnName)];
 };
 
-const getColumnExpression = (
-  columnName: string,
-  fieldType: FieldMetadataType,
-): string => {
-  const quotedColumnName = `"${columnName}"`;
-
-  switch (fieldType) {
-    case FieldMetadataType.EMAILS:
-      return `
-      COALESCE(
-      ${quotedColumnName},
-       '')`;
-
-    default:
-      return `COALESCE(${quotedColumnName}, '')`;
-  }
+const getColumnExpression = (columnName: string): string => {
+  return `COALESCE("${columnName}", '')`;
 };
