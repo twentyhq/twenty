@@ -44,14 +44,12 @@ export class DeletedWorkspaceMemberTranspiler {
         })
       : null;
 
-    // @ts-expect-error TODO prastoin
     return {
       id,
       name,
       userEmail,
-      // @ts-expect-error TODO prastoin
       avatarUrl,
-      userWorkspaceId,
+      userWorkspaceId: userWorkspaceId ?? null,
     } satisfies DeletedWorkspaceMember;
   }
 
