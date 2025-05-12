@@ -4,13 +4,14 @@ import { ActorDisplay } from '@/ui/field/display/components/ActorDisplay';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ActorFieldDisplay = () => {
-  const { fieldValue, avatarUrl, name } = useActorFieldDisplay();
+  const actorFieldDisplay = useActorFieldDisplay();
 
   const displayActorField = !useIsFieldEmpty();
-  if (!isDefined(fieldValue)) {
+  if (!isDefined(actorFieldDisplay)) {
     return null;
   }
 
+  const { fieldValue, name, avatarUrl } = actorFieldDisplay;
   return displayActorField ? (
     <ActorDisplay
       name={name}

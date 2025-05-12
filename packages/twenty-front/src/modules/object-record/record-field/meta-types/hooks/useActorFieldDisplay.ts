@@ -5,15 +5,15 @@ import { useRecordFieldValue } from '@/object-record/record-store/contexts/Recor
 
 import { AuthContext } from '@/auth/contexts/AuthContext';
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceMember } from '~/generated-metadata/graphql';
 import { FieldContext } from '../../contexts/FieldContext';
 
 export type ActorFieldDisplayValue = {
-  fieldValue: FieldActorValue | undefined;
+  fieldValue: FieldActorValue;
   name: string;
-  avatarUrl: string;
-};
+} & Pick<WorkspaceMember, 'avatarUrl'>;
 
-export const useActorFieldDisplay = (): ActorFieldDisplayValue => {
+export const useActorFieldDisplay = (): ActorFieldDisplayValue | undefined => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const { currentWorkspaceMembersWithDeleted } = useContext(AuthContext);
@@ -24,33 +24,24 @@ export const useActorFieldDisplay = (): ActorFieldDisplayValue => {
     recordId,
     fieldName,
   );
-
   if (!isDefined(fieldValue)) {
+    return undefined;
+  }
+
+  const relatedWorkspaceMember = currentWorkspaceMembersWithDeleted.find(
+    (workspaceMember) => workspaceMember.id === fieldValue.workspaceMemberId,
+  );
+  if (!isDefined(relatedWorkspaceMember)) {
     return {
-      fieldValue: undefined,
-      name: '',
-      avatarUrl: '',
+      fieldValue,
+      name: fieldValue.name,
     };
   }
 
-  let name = fieldValue.name;
-
-  if (!isDefined(name) || name.trim() === '') {
-    const fullname = currentWorkspaceMembersWithDeleted?.find(
-      (member) => member.id === fieldValue?.workspaceMemberId,
-    )?.name;
-
-    name = (fullname?.firstName + ' ' + fullname?.lastName).trim();
-  }
-
-  const avatarUrl =
-    currentWorkspaceMembersWithDeleted?.find(
-      (member) => member.id === fieldValue?.workspaceMemberId,
-    )?.avatarUrl ?? '';
-
+  const { name, avatarUrl } = relatedWorkspaceMember;
   return {
     fieldValue,
-    name,
+    name: `${name.firstName} ${name.lastName}`,
     avatarUrl: avatarUrl,
   };
 };
