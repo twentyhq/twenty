@@ -8,6 +8,7 @@ import {
   EmailsFilter,
   FloatFilter,
   MultiSelectFilter,
+  PhonesFilter,
   RatingFilter,
   RawJsonFilter,
   RecordGqlOperationFilter,
@@ -37,7 +38,7 @@ export const getEmptyRecordGqlOperationFilter = ({
 
   const compositeFieldName = recordFilter.subFieldName;
 
-  const isCompositeField = isNonEmptyString(compositeFieldName);
+  const isSubFieldFilter = isNonEmptyString(compositeFieldName);
 
   const filterType = getFilterTypeFromFieldType(correspondingField.type);
 
@@ -51,35 +52,98 @@ export const getEmptyRecordGqlOperationFilter = ({
       };
       break;
     case 'PHONES': {
-      if (!isCompositeField) {
-        const phonesFilter = generateILikeFiltersForCompositeFields(
-          '',
-          correspondingField.name,
-          ['primaryPhoneNumber'],
-          true,
-        );
-
+      if (!isSubFieldFilter) {
         emptyRecordFilter = {
-          and: phonesFilter,
-        };
-        break;
-      } else {
-        emptyRecordFilter = {
-          or: [
+          and: [
             {
-              [correspondingField.name]: {
-                [compositeFieldName]: { ilike: '' },
-              } as StringFilter,
+              or: [
+                {
+                  [correspondingField.name]: {
+                    primaryPhoneNumber: { is: 'NULL' },
+                  } as PhonesFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    primaryPhoneNumber: { ilike: '' },
+                  } as PhonesFilter,
+                },
+              ],
             },
             {
-              [correspondingField.name]: {
-                [compositeFieldName]: { is: 'NULL' },
-              } as StringFilter,
+              or: [
+                {
+                  [correspondingField.name]: {
+                    primaryPhoneCallingCode: { is: 'NULL' },
+                  } as PhonesFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    primaryPhoneCallingCode: { ilike: '' },
+                  } as PhonesFilter,
+                },
+              ],
+            },
+            {
+              or: [
+                {
+                  [correspondingField.name]: {
+                    additionalPhones: { is: 'NULL' },
+                  } as PhonesFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    additionalPhones: { like: '[]' },
+                  } as PhonesFilter,
+                },
+              ],
             },
           ],
         };
-        break;
+      } else {
+        switch (compositeFieldName) {
+          case 'primaryPhoneNumber':
+          case 'primaryPhoneCallingCode': {
+            emptyRecordFilter = {
+              or: [
+                {
+                  [correspondingField.name]: {
+                    [compositeFieldName]: { is: 'NULL' },
+                  } as PhonesFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    [compositeFieldName]: { ilike: '' },
+                  } as PhonesFilter,
+                },
+              ],
+            };
+            break;
+          }
+          case 'additionalPhones': {
+            emptyRecordFilter = {
+              or: [
+                {
+                  [correspondingField.name]: {
+                    additionalPhones: { is: 'NULL' },
+                  } as PhonesFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    additionalPhones: { like: '[]' },
+                  } as PhonesFilter,
+                },
+              ],
+            };
+            break;
+          }
+          default: {
+            throw new Error(
+              `Unsupported composite field name ${compositeFieldName} for filter type ${filterType}`,
+            );
+          }
+        }
       }
+      break;
     }
     case 'CURRENCY':
       emptyRecordFilter = {
@@ -93,7 +157,7 @@ export const getEmptyRecordGqlOperationFilter = ({
       };
       break;
     case 'FULL_NAME': {
-      if (!isCompositeField) {
+      if (!isSubFieldFilter) {
         const fullNameFilters = generateILikeFiltersForCompositeFields(
           '',
           correspondingField.name,
@@ -123,7 +187,7 @@ export const getEmptyRecordGqlOperationFilter = ({
       break;
     }
     case 'LINKS': {
-      if (!isCompositeField) {
+      if (!isSubFieldFilter) {
         const linksFilters = generateILikeFiltersForCompositeFields(
           '',
           correspondingField.name,
@@ -153,7 +217,7 @@ export const getEmptyRecordGqlOperationFilter = ({
       break;
     }
     case 'ADDRESS':
-      if (!isCompositeField) {
+      if (!isSubFieldFilter) {
         emptyRecordFilter = {
           and: [
             {

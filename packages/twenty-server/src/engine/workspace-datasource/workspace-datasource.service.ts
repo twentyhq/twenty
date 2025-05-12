@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 
 @Injectable()
@@ -20,11 +19,12 @@ export class WorkspaceDataSourceService {
    * @param workspaceId
    * @returns
    */
-  public async connectToWorkspaceDataSource(
-    workspaceId: string,
-  ): Promise<DataSource> {
-    const { dataSource } =
-      await this.connectedToWorkspaceDataSourceAndReturnMetadata(workspaceId);
+  public async connectToMainDataSource(): Promise<DataSource> {
+    const dataSource = this.typeormService.getMainDataSource();
+
+    if (!dataSource) {
+      throw new Error(`Could not connect to workspace data source`);
+    }
 
     return dataSource;
   }
@@ -36,26 +36,6 @@ export class WorkspaceDataSourceService {
       );
 
     return dataSource.length > 0;
-  }
-
-  public async connectedToWorkspaceDataSourceAndReturnMetadata(
-    workspaceId: string,
-  ): Promise<{ dataSource: DataSource; dataSourceMetadata: DataSourceEntity }> {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        workspaceId,
-      );
-
-    const dataSource =
-      await this.typeormService.connectToDataSource(dataSourceMetadata);
-
-    if (!dataSource) {
-      throw new Error(
-        `Could not connect to workspace data source for workspace ${workspaceId}`,
-      );
-    }
-
-    return { dataSource, dataSourceMetadata };
   }
 
   /**
@@ -128,10 +108,9 @@ export class WorkspaceDataSourceService {
       if (transactionManager) {
         return await transactionManager.query(query, parameters);
       }
-      const workspaceDataSource =
-        await this.connectToWorkspaceDataSource(workspaceId);
+      const dataSource = await this.connectToMainDataSource();
 
-      return await workspaceDataSource.query(query, parameters);
+      return await dataSource.query(query, parameters);
     } catch (error) {
       throw new Error(
         `Error executing raw query for workspace ${workspaceId}: ${error.message}`,

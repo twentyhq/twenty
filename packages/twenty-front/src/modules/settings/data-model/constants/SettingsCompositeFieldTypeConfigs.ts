@@ -102,9 +102,14 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     subFields: [
       'primaryPhoneNumber',
       'primaryPhoneCountryCode',
+      'primaryPhoneCallingCode',
       'additionalPhones',
     ],
-    filterableSubFields: ['primaryPhoneNumber', 'primaryPhoneCountryCode'],
+    filterableSubFields: [
+      'primaryPhoneNumber',
+      'primaryPhoneCallingCode',
+      'additionalPhones',
+    ],
     labelBySubField: {
       primaryPhoneNumber: 'Primary Phone Number',
       primaryPhoneCountryCode: 'Primary Phone Country Code',
@@ -172,8 +177,8 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     label: 'Actor',
     Icon: IllustrationIconSetting,
     category: 'Basic',
-    subFields: ['source'],
-    filterableSubFields: ['source'],
+    subFields: ['source', 'name'],
+    filterableSubFields: ['source', 'name'],
     labelBySubField: {
       source: 'Source',
       name: 'Name',

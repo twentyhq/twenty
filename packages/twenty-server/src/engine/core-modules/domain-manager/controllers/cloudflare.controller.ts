@@ -14,7 +14,7 @@ import { Request, Response } from 'express';
 import { Repository } from 'typeorm';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/track/custom-domain/custom-domain-activated';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import {
   DomainManagerException,
@@ -91,7 +91,7 @@ export class CloudflareController {
         ...workspaceUpdated,
       });
 
-      await analytics.track(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
+      await analytics.insertWorkspaceEvent(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
     }
 
     return res.status(200).send();

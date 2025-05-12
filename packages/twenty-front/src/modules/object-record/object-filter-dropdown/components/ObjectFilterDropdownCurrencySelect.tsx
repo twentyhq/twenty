@@ -18,13 +18,7 @@ import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 export const EMPTY_FILTER_VALUE = '[]';
 export const MAX_ITEMS_TO_DISPLAY = 3;
 
-type ObjectFilterDropdownCurrencySelectProps = {
-  dropdownWidth?: number;
-};
-
-export const ObjectFilterDropdownCurrencySelect = ({
-  dropdownWidth,
-}: ObjectFilterDropdownCurrencySelectProps) => {
+export const ObjectFilterDropdownCurrencySelect = () => {
   const [searchText, setSearchText] = useState('');
 
   const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValueV2(
@@ -60,6 +54,8 @@ export const ObjectFilterDropdownCurrencySelect = ({
       selectedCurrencies.includes(selectableItem.id),
   );
 
+  const { t } = useLingui();
+
   const handleMultipleItemSelectChange = (
     itemToSelect: SelectableItem,
     newSelectedValue: boolean,
@@ -78,9 +74,11 @@ export const ObjectFilterDropdownCurrencySelect = ({
       .filter((option) => newSelectedItemIds.includes(option.id))
       .map((option) => option.name);
 
+    const currenciesLabel = t`currencies`;
+
     const filterDisplayValue =
       selectedItemNames.length > MAX_ITEMS_TO_DISPLAY
-        ? `${selectedItemNames.length} currencies`
+        ? `${selectedItemNames.length} ${currenciesLabel}`
         : selectedItemNames.join(', ');
 
     const newFilterValue =
@@ -96,8 +94,6 @@ export const ObjectFilterDropdownCurrencySelect = ({
     filteredSelectedItems.length === 0 &&
     searchText !== '';
 
-  const { t } = useLingui();
-
   return (
     <>
       <DropdownMenuSearchInput
@@ -110,7 +106,7 @@ export const ObjectFilterDropdownCurrencySelect = ({
         }}
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight width={dropdownWidth ?? 200}>
+      <DropdownMenuItemsContainer hasMaxHeight width="auto">
         {filteredSelectedItems?.map((item) => {
           return (
             <MenuItemMultiSelectAvatar

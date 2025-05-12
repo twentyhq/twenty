@@ -38,11 +38,14 @@ describe('AuditResolver', () => {
   });
 
   it('should handle a valid pageview input', async () => {
-    const mockPageview = jest.fn().mockResolvedValue('Pageview created');
+    const mockInsertPageviewEvent = jest
+      .fn()
+      .mockResolvedValue('Pageview created');
 
     auditService.createContext.mockReturnValue({
-      pageview: mockPageview,
-      track: jest.fn(),
+      createPageviewEvent: mockInsertPageviewEvent,
+      insertWorkspaceEvent: jest.fn(),
+      createObjectEvent: jest.fn(),
     });
 
     const input = {
@@ -60,16 +63,19 @@ describe('AuditResolver', () => {
       workspaceId: 'workspace-1',
       userId: 'user-1',
     });
-    expect(mockPageview).toHaveBeenCalledWith('Test Page', {});
+    expect(mockInsertPageviewEvent).toHaveBeenCalledWith('Test Page', {});
     expect(result).toBe('Pageview created');
   });
 
   it('should handle a valid track input', async () => {
-    const mockTrack = jest.fn().mockResolvedValue('Track created');
+    const mockInsertWorkspaceEvent = jest
+      .fn()
+      .mockResolvedValue('Track created');
 
     auditService.createContext.mockReturnValue({
-      track: mockTrack,
-      pageview: jest.fn(),
+      insertWorkspaceEvent: mockInsertWorkspaceEvent,
+      createObjectEvent: jest.fn(),
+      createPageviewEvent: jest.fn(),
     });
 
     const input = {
@@ -87,8 +93,52 @@ describe('AuditResolver', () => {
       workspaceId: 'workspace-2',
       userId: 'user-2',
     });
-    expect(mockTrack).toHaveBeenCalledWith('Custom Domain Activated', {});
+    expect(mockInsertWorkspaceEvent).toHaveBeenCalledWith(
+      'Custom Domain Activated',
+      {},
+    );
     expect(result).toBe('Track created');
+  });
+
+  it('should handle object event creation', async () => {
+    const mockInsertObjectEvent = jest
+      .fn()
+      .mockResolvedValue('Object event created');
+
+    auditService.createContext.mockReturnValue({
+      insertWorkspaceEvent: jest.fn(),
+      createObjectEvent: mockInsertObjectEvent,
+      createPageviewEvent: jest.fn(),
+    });
+
+    const input = {
+      event: 'Object Record Created' as const,
+      recordId: 'test-record-id',
+      objectMetadataId: 'test-object-metadata-id',
+      properties: { additionalData: 'test-data' },
+    };
+
+    const result = await resolver.createObjectEvent(
+      input,
+      { id: 'workspace-3' } as Workspace,
+      { id: 'user-3' } as User,
+    );
+
+    expect(auditService.createContext).toHaveBeenCalledWith({
+      workspaceId: 'workspace-3',
+      userId: 'user-3',
+    });
+
+    expect(mockInsertObjectEvent).toHaveBeenCalledWith(
+      'Object Record Created',
+      {
+        additionalData: 'test-data',
+        recordId: 'test-record-id',
+        objectMetadataId: 'test-object-metadata-id',
+        isCustom: true,
+      },
+    );
+    expect(result).toBe('Object event created');
   });
 
   it('should throw an AuditException for invalid input', async () => {
@@ -101,6 +151,20 @@ describe('AuditResolver', () => {
         'Invalid analytics input',
         AuditExceptionCode.INVALID_TYPE,
       ),
+    );
+  });
+
+  it('should throw an AuditException when workspace is missing for createObjectEvent', async () => {
+    const input = {
+      event: 'Object Record Created' as const,
+      recordId: 'test-record-id',
+      objectMetadataId: 'test-object-metadata-id',
+    };
+
+    await expect(
+      resolver.createObjectEvent(input, undefined, undefined),
+    ).rejects.toThrowError(
+      new AuditException('Missing workspace', AuditExceptionCode.INVALID_INPUT),
     );
   });
 });

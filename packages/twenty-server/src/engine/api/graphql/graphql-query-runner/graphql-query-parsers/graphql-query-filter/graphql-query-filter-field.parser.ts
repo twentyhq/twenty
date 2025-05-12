@@ -1,8 +1,8 @@
 import { capitalize } from 'twenty-shared/utils';
 import { WhereExpressionBuilder } from 'typeorm';
 
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import {
   GraphqlQueryRunnerException,
@@ -114,6 +114,16 @@ export class GraphqlQueryFilterFieldParser {
       const [[operator, value]] = Object.entries(
         subFieldFilter as Record<string, any>,
       );
+
+      if (
+        ARRAY_OPERATORS.includes(operator) &&
+        (!Array.isArray(value) || value.length === 0)
+      ) {
+        throw new GraphqlQueryRunnerException(
+          `Invalid filter value for field ${subFieldKey}. Expected non-empty array`,
+          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        );
+      }
 
       const { sql, params } = computeWhereConditionParts(
         operator,

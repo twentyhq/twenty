@@ -17,17 +17,17 @@ export const getDefaultSubFieldNameForCompositeFilterableFieldType = (
     case 'CURRENCY':
       return 'amountMicros';
     case 'LINKS':
-      return 'primaryLinkUrl';
+      return undefined;
     case 'PHONES':
-      return 'primaryPhoneNumber';
+      return undefined;
     case 'EMAILS':
-      return 'primaryEmail';
+      return undefined;
     case 'ADDRESS':
-      return 'addressCity';
+      return undefined;
     case 'ACTOR':
       return 'source';
     case 'FULL_NAME':
-      return 'firstName';
+      return undefined;
     default:
       assertUnreachable(compositeFieldType);
   }

@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { Trans } from '@lingui/react/macro';
 import { IconLock } from 'twenty-ui/display';
 
 const StyledEmailBodyNotSharedContainer = styled.div`
@@ -44,7 +45,9 @@ export const EventCardMessageBodyNotShared = ({
         <StyledEmailBodyNotSharedIconContainer>
           <IconLock />
         </StyledEmailBodyNotSharedIconContainer>
-        <span>Not shared by {notSharedByFullName}</span>
+        <span>
+          <Trans>Not shared by {notSharedByFullName}</Trans>
+        </span>
       </StyledEmailBodyNotShared>
     </StyledEmailBodyNotSharedContainer>
   );
