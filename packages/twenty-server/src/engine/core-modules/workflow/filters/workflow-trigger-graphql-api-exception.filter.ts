@@ -8,7 +8,6 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import { CustomException } from 'src/utils/custom-exception';
 
 @Catch(WorkflowTriggerException)
 export class WorkflowTriggerGraphqlApiExceptionFilter
@@ -25,8 +24,13 @@ export class WorkflowTriggerGraphqlApiExceptionFilter
         throw new UserInputError(exception.message);
       case WorkflowTriggerExceptionCode.NOT_FOUND:
         throw new NotFoundError(exception.message);
-      default:
-        throw new CustomException(exception.message, exception.code);
+      case WorkflowTriggerExceptionCode.INTERNAL_ERROR:
+        throw exception;
+      default: {
+        const _exhaustiveCheck: never = exception.code;
+
+        throw exception;
+      }
     }
   }
 }

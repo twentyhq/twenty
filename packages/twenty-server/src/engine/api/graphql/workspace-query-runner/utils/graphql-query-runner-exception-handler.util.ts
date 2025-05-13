@@ -6,7 +6,6 @@ import {
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { CustomException } from 'src/utils/custom-exception';
 
 export const graphqlQueryRunnerExceptionHandler = (
   error: GraphqlQueryRunnerException,
@@ -26,7 +25,14 @@ export const graphqlQueryRunnerExceptionHandler = (
       throw new UserInputError(error.message);
     case GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND:
       throw new NotFoundError(error.message);
-    default:
-      throw new CustomException(error.message, error.code);
+    case GraphqlQueryRunnerExceptionCode.RELATION_SETTINGS_NOT_FOUND:
+    case GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND:
+    case GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_COLLECTION_NOT_FOUND:
+      throw error;
+    default: {
+      const _exhaustiveCheck: never = error.code;
+
+      throw error;
+    }
   }
 };

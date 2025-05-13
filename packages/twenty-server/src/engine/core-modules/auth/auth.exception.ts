@@ -1,6 +1,7 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class AuthException extends CustomException {
+  code: AuthExceptionCode;
   constructor(message: string, code: AuthExceptionCode) {
     super(message, code);
   }

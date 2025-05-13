@@ -7,7 +7,6 @@ import {
   RelationMetadataExceptionCode,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.exception';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
-import { CustomException } from 'src/utils/custom-exception';
 
 export const relationMetadataGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof InvalidMetadataException) {
@@ -22,8 +21,12 @@ export const relationMetadataGraphqlApiExceptionHandler = (error: Error) => {
         throw new ConflictError(error.message);
       case RelationMetadataExceptionCode.FOREIGN_KEY_NOT_FOUND:
       case RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND:
-      default:
-        throw new CustomException(error.message, error.code);
+        throw error;
+      default: {
+        const _exhaustiveCheck: never = error.code;
+
+        throw error;
+      }
     }
   }
 

@@ -1,6 +1,7 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class ConfigVariableException extends CustomException {
+  code: ConfigVariableExceptionCode;
   constructor(message: string, code: ConfigVariableExceptionCode) {
     super(message, code);
   }
@@ -12,6 +13,5 @@ export enum ConfigVariableExceptionCode {
   VARIABLE_NOT_FOUND = 'VARIABLE_NOT_FOUND',
   VALIDATION_FAILED = 'VALIDATION_FAILED',
   UNSUPPORTED_CONFIG_TYPE = 'UNSUPPORTED_CONFIG_TYPE',
-  METADATA_NOT_FOUND = 'METADATA_NOT_FOUND',
   INTERNAL_ERROR = 'INTERNAL_ERROR',
 }

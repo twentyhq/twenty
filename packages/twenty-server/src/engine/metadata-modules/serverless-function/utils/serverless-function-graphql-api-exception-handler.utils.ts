@@ -7,7 +7,6 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { CustomException } from 'src/utils/custom-exception';
 
 export const serverlessFunctionGraphQLApiExceptionHandler = (error: any) => {
   if (error instanceof ServerlessFunctionException) {
@@ -20,9 +19,15 @@ export const serverlessFunctionGraphQLApiExceptionHandler = (error: any) => {
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_READY:
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_BUILDING:
       case ServerlessFunctionExceptionCode.FEATURE_FLAG_INVALID:
+      case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_EXECUTION_LIMIT_REACHED:
         throw new ForbiddenError(error.message);
-      default:
-        throw new CustomException(error.message, error.code);
+      case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED:
+        throw error;
+      default: {
+        const _exhaustiveCheck: never = error.code;
+
+        throw error;
+      }
     }
   }
   throw error;

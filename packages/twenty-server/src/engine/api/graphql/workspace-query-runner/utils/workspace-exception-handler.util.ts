@@ -8,7 +8,6 @@ import {
   TimeoutError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { CustomException } from 'src/utils/custom-exception';
 
 export const workspaceExceptionHandler = (
   error: WorkspaceQueryRunnerException,
@@ -26,7 +25,11 @@ export const workspaceExceptionHandler = (
     case WorkspaceQueryRunnerExceptionCode.QUERY_TIMEOUT:
       throw new TimeoutError(error.message);
     case WorkspaceQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR:
-    default:
-      throw new CustomException(error.message, error.code);
+      throw error;
+    default: {
+      const _exhaustiveCheck: never = error.code;
+
+      throw error;
+    }
   }
 };

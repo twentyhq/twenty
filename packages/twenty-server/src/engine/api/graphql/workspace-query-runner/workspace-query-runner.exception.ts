@@ -1,6 +1,7 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class WorkspaceQueryRunnerException extends CustomException {
+  code: WorkspaceQueryRunnerExceptionCode;
   constructor(message: string, code: WorkspaceQueryRunnerExceptionCode) {
     super(message, code);
   }

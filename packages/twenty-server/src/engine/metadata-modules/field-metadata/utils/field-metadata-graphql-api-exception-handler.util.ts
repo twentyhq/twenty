@@ -9,7 +9,6 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
-import { CustomException } from 'src/utils/custom-exception';
 
 export const fieldMetadataGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof InvalidMetadataException) {
@@ -31,8 +30,12 @@ export const fieldMetadataGraphqlApiExceptionHandler = (error: Error) => {
       case FieldMetadataExceptionCode.FIELD_METADATA_RELATION_NOT_ENABLED:
       case FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED:
       case FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND:
-      default:
-        throw new CustomException(error.message, error.code);
+        throw error;
+      default: {
+        const _exhaustiveCheck: never = error.code;
+
+        throw error;
+      }
     }
   }
 

@@ -6,7 +6,6 @@ import {
   ForbiddenError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { CustomException } from 'src/utils/custom-exception';
 
 export const emailVerificationGraphqlApiExceptionHandler = (
   error: EmailVerificationException,
@@ -21,7 +20,10 @@ export const emailVerificationGraphqlApiExceptionHandler = (
     case EmailVerificationExceptionCode.EMAIL_ALREADY_VERIFIED:
     case EmailVerificationExceptionCode.EMAIL_VERIFICATION_NOT_REQUIRED:
       throw new UserInputError(error.message);
-    default:
-      throw new CustomException(error.message, error.code);
+    default: {
+      const _exhaustiveCheck: never = error.code;
+
+      throw error;
+    }
   }
 };

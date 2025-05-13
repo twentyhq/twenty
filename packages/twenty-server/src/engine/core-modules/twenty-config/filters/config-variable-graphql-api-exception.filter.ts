@@ -9,7 +9,6 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
-import { CustomException } from 'src/utils/custom-exception';
 
 @Catch(ConfigVariableException)
 export class ConfigVariableGraphqlApiExceptionFilter
@@ -25,8 +24,13 @@ export class ConfigVariableGraphqlApiExceptionFilter
       case ConfigVariableExceptionCode.VALIDATION_FAILED:
         throw new UserInputError(exception.message);
       case ConfigVariableExceptionCode.INTERNAL_ERROR:
-      default:
-        throw new CustomException(exception.message, exception.code);
+      case ConfigVariableExceptionCode.UNSUPPORTED_CONFIG_TYPE:
+        throw exception;
+      default: {
+        const _exhaustiveCheck: never = exception.code;
+
+        throw exception;
+      }
     }
   }
 }
