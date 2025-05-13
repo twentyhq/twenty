@@ -6,8 +6,8 @@ import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
-    BlocklistItem,
-    BlocklistValidationService,
+  BlocklistItem,
+  BlocklistValidationService,
 } from 'src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service';
 
 @WorkspaceQueryHook(`blocklist.updateOne`)

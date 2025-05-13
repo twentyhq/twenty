@@ -3,8 +3,8 @@ import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolve
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import {
-    WorkflowQueryValidationException,
-    WorkflowQueryValidationExceptionCode,
+  WorkflowQueryValidationException,
+  WorkflowQueryValidationExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
