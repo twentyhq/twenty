@@ -886,6 +886,16 @@ msgstr "Choose the fields that will identify your records"
 msgid "Choose the format used to display date value"
 msgstr "Choose the format used to display date value"
 
+#. js-lingui-id: tjXxZj
+#: src/pages/onboarding/PaymentOptions.tsx
+msgid "Choose your payment method"
+msgstr "Choose your payment method"
+
+#. js-lingui-id: y1elF1
+#: src/pages/onboarding/Plans.tsx
+msgid "Choose your plan"
+msgstr "Choose your plan"
+
 #. js-lingui-id: KT6rEB
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
 msgid "Choose your provider"
@@ -1044,6 +1054,9 @@ msgid "Context"
 msgstr "Context"
 
 #. js-lingui-id: xGVfLh
+#: src/pages/onboarding/Plans.tsx
+#: src/pages/onboarding/PaymentSuccess.tsx
+#: src/pages/onboarding/PaymentOptions.tsx
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
@@ -4982,6 +4995,11 @@ msgstr "Use letter, number and dash only. Start and finish with a letter or a nu
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Use our API or add your first {objectLabel} manually"
+
+#. js-lingui-id: 8jD9Kq
+#: src/modules/traceable/record-show/TraceableFieldsCard.tsx
+msgid "Use the 'Traceable URL' link in any promotinal channels you want to be associated with this custom campaign."
+msgstr "Use the 'Traceable URL' link in any promotinal channels you want to be associated with this custom campaign."
 
 #. js-lingui-id: 7PzzBU
 #: src/pages/settings/SettingsProfile.tsx

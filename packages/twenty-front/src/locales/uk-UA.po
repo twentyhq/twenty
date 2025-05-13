@@ -891,6 +891,16 @@ msgstr "Виберіть поля, які будуть ідентифікува�
 msgid "Choose the format used to display date value"
 msgstr ""
 
+#. js-lingui-id: tjXxZj
+#: src/pages/onboarding/PaymentOptions.tsx
+msgid "Choose your payment method"
+msgstr ""
+
+#. js-lingui-id: y1elF1
+#: src/pages/onboarding/Plans.tsx
+msgid "Choose your plan"
+msgstr ""
+
 #. js-lingui-id: KT6rEB
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
 msgid "Choose your provider"
@@ -1049,6 +1059,9 @@ msgid "Context"
 msgstr "Контекст"
 
 #. js-lingui-id: xGVfLh
+#: src/pages/onboarding/Plans.tsx
+#: src/pages/onboarding/PaymentSuccess.tsx
+#: src/pages/onboarding/PaymentOptions.tsx
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
@@ -4987,6 +5000,11 @@ msgstr "Використовуйте тільки літери, цифри та 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Скористайтеся нашим API або додайте ваш перший {objectLabel} вручну"
+
+#. js-lingui-id: 8jD9Kq
+#: src/modules/traceable/record-show/TraceableFieldsCard.tsx
+msgid "Use the 'Traceable URL' link in any promotinal channels you want to be associated with this custom campaign."
+msgstr ""
 
 #. js-lingui-id: 7PzzBU
 #: src/pages/settings/SettingsProfile.tsx
