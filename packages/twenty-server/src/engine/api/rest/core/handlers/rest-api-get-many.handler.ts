@@ -11,7 +11,6 @@ export class RestApiGetManyHandler extends RestApiBaseHandler {
       objectMetadataNameSingular,
       objectMetadataNamePlural,
       repository,
-      dataSource,
       objectMetadata,
       objectMetadataItemWithFieldsMaps,
     } = await this.getRepositoryAndMetadataOrFail(request);
@@ -20,7 +19,6 @@ export class RestApiGetManyHandler extends RestApiBaseHandler {
       await this.findRecords({
         request,
         repository,
-        dataSource,
         objectMetadata,
         objectMetadataNameSingular,
         objectMetadataItemWithFieldsMaps,

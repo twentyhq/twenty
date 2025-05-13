@@ -41,7 +41,6 @@ export const generateFields = <
   kind: T,
   options: WorkspaceBuildSchemaOptions,
   typeFactory: TypeFactory<T>,
-  isNewRelationEnabled = false,
 ): T extends InputTypeDefinitionKind
   ? GraphQLInputFieldConfigMap
   : GraphQLFieldConfigMap<any, any> => {
@@ -53,8 +52,7 @@ export const generateFields = <
         fieldMetadata,
         FieldMetadataType.RELATION,
       ) &&
-      (fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE ||
-        !isNewRelationEnabled)
+      fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE
     ) {
       continue;
     }

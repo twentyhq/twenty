@@ -9,8 +9,11 @@ import {
   ObjectRecordFilter,
   ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import {
@@ -21,10 +24,6 @@ import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metada
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
-import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 
 export class GraphqlQueryParser {
   private fieldMetadataMapByName: FieldMetadataMap;
@@ -32,22 +31,18 @@ export class GraphqlQueryParser {
   private objectMetadataMaps: ObjectMetadataMaps;
   private filterConditionParser: GraphqlQueryFilterConditionParser;
   private orderFieldParser: GraphqlQueryOrderFieldParser;
-  private featureFlagsMap: FeatureFlagMap;
 
   constructor(
     fieldMetadataMapByName: FieldMetadataMap,
     fieldMetadataMapByJoinColumnName: FieldMetadataMap,
     objectMetadataMaps: ObjectMetadataMaps,
-    featureFlagsMap: FeatureFlagMap,
   ) {
     this.objectMetadataMaps = objectMetadataMaps;
     this.fieldMetadataMapByName = fieldMetadataMapByName;
     this.fieldMetadataMapByJoinColumnName = fieldMetadataMapByJoinColumnName;
-    this.featureFlagsMap = featureFlagsMap;
     this.filterConditionParser = new GraphqlQueryFilterConditionParser(
       this.fieldMetadataMapByName,
       this.fieldMetadataMapByJoinColumnName,
-      featureFlagsMap,
     );
     this.orderFieldParser = new GraphqlQueryOrderFieldParser(
       this.fieldMetadataMapByName,
@@ -136,7 +131,6 @@ export class GraphqlQueryParser {
 
     const selectedFieldsParser = new GraphqlQuerySelectedFieldsParser(
       this.objectMetadataMaps,
-      this.featureFlagsMap,
     );
 
     return selectedFieldsParser.parse(graphqlSelectedFields, parentFields);
