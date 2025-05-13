@@ -206,6 +206,32 @@ describe('Core REST API Find Many endpoint', () => {
     );
   });
 
+  it('should support pagination with ordering', async () => {
+    const descResponse = await makeRestAPIRequest({
+      method: 'get',
+      path: '/people?order_by=position[DescNullsLast]&limit=2',
+    }).expect(200);
+
+    const descPeople = descResponse.body.data.people;
+    const endingBefore = descResponse.body.pageInfo.endCursor;
+    const lastPosition = descPeople[descPeople.length - 1].position;
+
+    expect(descResponse.body.pageInfo.hasNextPage).toBe(true);
+    expect(descPeople.length).toEqual(2);
+    expect(lastPosition).toEqual(2);
+
+    const descResponseWithPaginationResponse = await makeRestAPIRequest({
+      method: 'get',
+      path: `/people?order_by=position[DescNullsLast]&limit=2&starting_after=${endingBefore}`,
+    }).expect(200);
+
+    const descResponseWithPagination =
+      descResponseWithPaginationResponse.body.data.people;
+
+    expect(descResponseWithPagination.length).toEqual(2);
+    expect(descResponseWithPagination[0].position).toEqual(lastPosition - 1);
+  });
+
   it('should handle invalid cursor gracefully', async () => {
     await makeRestAPIRequest({
       method: 'get',
