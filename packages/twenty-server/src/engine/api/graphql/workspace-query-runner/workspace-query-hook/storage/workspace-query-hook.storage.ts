@@ -7,7 +7,6 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   WorkspacePostQueryHookInstance,
   WorkspacePreQueryHookInstance,
-  WorkspacePreQueryHookInstance,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -68,7 +67,7 @@ export class WorkspaceQueryHookStorage {
 
   registerWorkspacePostQueryHookInstance(
     key: WorkspaceQueryHookKey,
-    data: WorkspaceQueryHookData<WorkspacePreQueryHookInstance>,
+    data: WorkspaceQueryHookData<WorkspacePostQueryHookInstance>,
   ) {
     if (!this.postHookInstances.has(key)) {
       this.postHookInstances.set(key, []);
@@ -79,11 +78,11 @@ export class WorkspaceQueryHookStorage {
 
   getWorkspacePostQueryHookInstances(
     key: WorkspaceQueryHookKey,
-  ): WorkspaceQueryHookData<WorkspacePreQueryHookInstance>[] {
+  ): WorkspaceQueryHookData<WorkspacePostQueryHookInstance>[] {
     const methodName = key.split('.')?.[1] as
       | WorkspaceResolverBuilderMethodNames
       | undefined;
-    let wildcardInstances: WorkspaceQueryHookData<WorkspacePreQueryHookInstance>[] =
+    let wildcardInstances: WorkspaceQueryHookData<WorkspacePostQueryHookInstance>[] =
       [];
 
     if (!methodName) {
