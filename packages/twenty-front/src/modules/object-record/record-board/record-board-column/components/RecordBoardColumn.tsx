@@ -22,10 +22,12 @@ const StyledColumn = styled.div`
 
 type RecordBoardColumnProps = {
   recordBoardColumnId: string;
+  recordBoardColumnIndex: number;
 };
 
 export const RecordBoardColumn = ({
   recordBoardColumnId,
+  recordBoardColumnIndex,
 }: RecordBoardColumnProps) => {
   const recordGroupDefinition = useRecoilValue(
     recordGroupDefinitionFamilyState(recordBoardColumnId),
@@ -46,6 +48,7 @@ export const RecordBoardColumn = ({
         columnDefinition: recordGroupDefinition,
         columnId: recordBoardColumnId,
         recordIds: recordIdsByGroup,
+        columnIndex: recordBoardColumnIndex,
       }}
     >
       <Droppable droppableId={recordBoardColumnId}>

@@ -3,6 +3,7 @@ import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dro
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { ViewFilterOperand as RecordFilterOperand } from '@/views/types/ViewFilterOperand';
+import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
@@ -147,6 +148,8 @@ export const getRecordFilterOperands = ({
   filterType,
   subFieldName,
 }: GetRecordFilterOperandsParams) => {
+  const isFilterOnSubField = isNonEmptyString(subFieldName);
+
   switch (filterType) {
     case 'TEXT':
     case 'EMAILS':
@@ -184,7 +187,7 @@ export const getRecordFilterOperands = ({
     case 'SELECT':
       return FILTER_OPERANDS_MAP.SELECT;
     case 'ACTOR': {
-      if (isFilterOnActorSourceSubField(subFieldName)) {
+      if (isFilterOnActorSourceSubField(subFieldName) || !isFilterOnSubField) {
         return [
           RecordFilterOperand.Is,
           RecordFilterOperand.IsNot,

@@ -22,6 +22,7 @@ export class ConfigVariableGraphqlApiExceptionFilter
       case ConfigVariableExceptionCode.ENVIRONMENT_ONLY_VARIABLE:
         throw new ForbiddenError(exception.message);
       case ConfigVariableExceptionCode.DATABASE_CONFIG_DISABLED:
+      case ConfigVariableExceptionCode.VALIDATION_FAILED:
         throw new UserInputError(exception.message);
       case ConfigVariableExceptionCode.INTERNAL_ERROR:
       default:

@@ -4,8 +4,11 @@ import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-va
 import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { ConfigVariablesMetadataMap } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
-import { ConfigVariableOptions } from 'src/engine/core-modules/twenty-config/types/config-variable-options.type';
-import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
+import {
+  ConfigVariableException,
+  ConfigVariableExceptionCode,
+} from 'src/engine/core-modules/twenty-config/twenty-config.exception';
+import { typeTransformers } from 'src/engine/core-modules/twenty-config/utils/type-transformers.registry';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 @Injectable()
@@ -30,164 +33,62 @@ export class ConfigValueConverterService {
     const options = metadata?.options;
 
     try {
-      switch (configType) {
-        case ConfigVariableType.BOOLEAN: {
-          const result = configTransformers.boolean(dbValue);
+      const transformer = typeTransformers[configType];
 
-          if (result !== undefined && typeof result !== 'boolean') {
-            throw new Error(
-              `Expected boolean for key ${key}, got ${typeof result}`,
-            );
-          }
-
-          return result as ConfigVariables[T];
-        }
-
-        case ConfigVariableType.NUMBER: {
-          const result = configTransformers.number(dbValue);
-
-          if (result !== undefined && typeof result !== 'number') {
-            throw new Error(
-              `Expected number for key ${key}, got ${typeof result}`,
-            );
-          }
-
-          return result as ConfigVariables[T];
-        }
-
-        case ConfigVariableType.STRING: {
-          const result = configTransformers.string(dbValue);
-
-          if (result !== undefined && typeof result !== 'string') {
-            throw new Error(
-              `Expected string for key ${key}, got ${typeof result}`,
-            );
-          }
-
-          return result as ConfigVariables[T];
-        }
-
-        case ConfigVariableType.ARRAY: {
-          const result = this.convertToArray(dbValue, options);
-
-          if (result !== undefined && !Array.isArray(result)) {
-            throw new Error(
-              `Expected array for key ${key}, got ${typeof result}`,
-            );
-          }
-
-          return result as ConfigVariables[T];
-        }
-
-        case ConfigVariableType.ENUM: {
-          const result = this.convertToEnum(dbValue, options);
-
-          return result as ConfigVariables[T];
-        }
-
-        default:
-          return dbValue as ConfigVariables[T];
+      if (!transformer) {
+        return dbValue as ConfigVariables[T];
       }
+
+      return transformer.toApp(dbValue, options) as ConfigVariables[T];
     } catch (error) {
-      throw new Error(
+      throw new ConfigVariableException(
         `Failed to convert ${key as string} to app value: ${(error as Error).message}`,
+        ConfigVariableExceptionCode.VALIDATION_FAILED,
       );
     }
   }
 
   convertAppValueToDbValue<T extends keyof ConfigVariables>(
     appValue: ConfigVariables[T] | null | undefined,
+    key: T,
   ): unknown {
-    if (appValue === undefined || appValue === null) {
+    if (appValue === null || appValue === undefined) {
       return null;
     }
 
-    if (
-      typeof appValue === 'string' ||
-      typeof appValue === 'number' ||
-      typeof appValue === 'boolean'
-    ) {
-      return appValue;
-    }
+    const metadata = this.getConfigVariableMetadata(key);
+    const configType = metadata?.type || this.inferTypeFromValue(key);
+    const options = metadata?.options;
 
-    if (Array.isArray(appValue)) {
-      return appValue;
-    }
+    try {
+      const transformer = typeTransformers[configType];
 
-    if (typeof appValue === 'object') {
-      try {
-        return JSON.parse(JSON.stringify(appValue));
-      } catch (error) {
-        throw new Error(
-          `Failed to serialize object value: ${error instanceof Error ? error.message : String(error)}`,
-        );
-      }
-    }
-
-    throw new Error(
-      `Cannot convert value of type ${typeof appValue} to storage format`,
-    );
-  }
-
-  private convertToArray(
-    value: unknown,
-    options?: ConfigVariableOptions,
-  ): unknown[] {
-    if (Array.isArray(value)) {
-      return this.validateArrayAgainstOptions(value, options);
-    }
-
-    if (typeof value === 'string') {
-      try {
-        const parsedArray = JSON.parse(value);
-
-        if (Array.isArray(parsedArray)) {
-          return this.validateArrayAgainstOptions(parsedArray, options);
+      if (!transformer) {
+        if (typeof appValue === 'object') {
+          try {
+            return JSON.parse(JSON.stringify(appValue));
+          } catch (error) {
+            throw new ConfigVariableException(
+              `Failed to serialize object value: ${error instanceof Error ? error.message : String(error)}`,
+              ConfigVariableExceptionCode.VALIDATION_FAILED,
+            );
+          }
         }
-      } catch {
-        const splitArray = value.split(',').map((item) => item.trim());
 
-        return this.validateArrayAgainstOptions(splitArray, options);
-      }
-    }
-
-    return this.validateArrayAgainstOptions([value], options);
-  }
-
-  private validateArrayAgainstOptions(
-    array: unknown[],
-    options?: ConfigVariableOptions,
-  ): unknown[] {
-    if (!options || !Array.isArray(options) || options.length === 0) {
-      return array;
-    }
-
-    return array.filter((item) => {
-      const included = options.includes(item as string);
-
-      if (!included) {
-        this.logger.debug(
-          `Filtered out array item '${String(item)}' not in allowed options`,
-        );
+        return appValue;
       }
 
-      return included;
-    });
-  }
+      return transformer.toStorage(appValue as any, options);
+    } catch (error) {
+      if (error instanceof ConfigVariableException) {
+        throw error;
+      }
 
-  private convertToEnum(
-    value: unknown,
-    options?: ConfigVariableOptions,
-  ): unknown | undefined {
-    if (!options || !Array.isArray(options) || options.length === 0) {
-      return value;
+      throw new ConfigVariableException(
+        `Failed to convert ${key as string} to DB value: ${(error as Error).message}`,
+        ConfigVariableExceptionCode.VALIDATION_FAILED,
+      );
     }
-
-    if (options.includes(value as string)) {
-      return value;
-    }
-
-    return undefined;
   }
 
   private getConfigVariableMetadata<T extends keyof ConfigVariables>(key: T) {

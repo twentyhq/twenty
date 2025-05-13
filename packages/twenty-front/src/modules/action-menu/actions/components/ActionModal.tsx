@@ -33,9 +33,8 @@ export const ActionModal = ({
   const { closeActionMenu } = useCloseActionMenu();
 
   const handleConfirmClick = () => {
-    closeActionMenu();
     onConfirmClick();
-    setIsOpen(false);
+    closeActionMenu();
   };
 
   const actionConfig = useContext(ActionConfigContext);
