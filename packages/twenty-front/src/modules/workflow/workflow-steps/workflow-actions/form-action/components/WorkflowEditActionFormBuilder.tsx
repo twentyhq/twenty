@@ -13,7 +13,7 @@ import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-
 import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
 import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { useTheme } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
@@ -102,10 +102,14 @@ const StyledFieldContainer = styled.div<StyledFieldContainerProps>`
 
   cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
 
-  &:hover,
-  &[data-open='true'] {
-    background-color: ${({ theme }) => theme.background.transparent.lighter};
-  }
+  ${({ isReadOnly, theme }) =>
+    !isReadOnly &&
+    css`
+      &:hover,
+      &[data-open='true'] {
+        background-color: ${theme.background.transparent.lighter};
+      }
+    `}
 `;
 
 const StyledPlaceholder = styled.div`
