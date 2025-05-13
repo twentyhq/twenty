@@ -5,6 +5,8 @@ import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsPro
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingPermissionType } from '~/generated/graphql';
+import { SettingsIntegrationFocusNfeNewDatabaseConnection } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewConnection';
+import { SettingsIntegrationFocusNfeDatabase } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationsFocusNfe';
 import { SettingsIntegrationInterDatabase } from '~/pages/settings/integrations/inter/SettingsIntegrationInterDatabase';
 import { SettingsIntegrationInterEditDatabaseConnection } from '~/pages/settings/integrations/inter/SettingsIntegrationInterEditDatabaseConnection';
 import { SettingsIntegrationInterNewDatabaseConnection } from '~/pages/settings/integrations/inter/SettingsIntegrationInterNewDatabaseConnection';
@@ -597,6 +599,19 @@ export const SettingsRoutes = ({
         path={SettingsPath.IntegrationInterEditDatabaseConnection}
         element={<SettingsIntegrationInterEditDatabaseConnection />}
       />
+
+      <Route
+        path={SettingsPath.IntegrationFocusNfe}
+        element={<SettingsIntegrationFocusNfeDatabase />}
+      />
+      <Route
+        path={SettingsPath.IntegrationFocusNfeNewDatabaseConnection}
+        element={<SettingsIntegrationFocusNfeNewDatabaseConnection />}
+      />
+      {/* <Route
+        path={SettingsPath.IntegrationInterEditDatabaseConnection}
+        element={<SettingsIntegrationInterEditDatabaseConnection />}
+      /> */}
       <Route
         path={SettingsPath.IntegrationWhatsappEditDatabaseConnection}
         element={<SettingsIntegrationWhatsappEditDatabaseConnection />}
