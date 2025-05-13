@@ -20,10 +20,10 @@ import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/up
 import { UpgradeDateAndDateTimeFieldsSettingsJsonCommand } from 'src/database/commands/upgrade-version-command/0-52/0-52-upgrade-settings-field';
 import { BackfillWorkflowNextStepIdsCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-backfill-workflow-next-step-ids.command';
 import { CopyTypeormMigrationsCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-copy-typeorm-migrations.command';
-import { FixStandardSelectFieldsPositionCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-fix-standard-select-fields-position.command';
 import { MigrateWorkflowEventListenersToAutomatedTriggersCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-migrate-workflow-event-listeners-to-automated-triggers.command';
 import { RemoveRelationForeignKeyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-remove-relation-foreign-key-field-metadata.command';
 import { UpgradeSearchVectorOnPersonEntityCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-upgrade-search-vector-on-person-entity.command';
+import { FixStandardSelectFieldsPositionCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-fix-standard-select-fields-position.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -67,6 +67,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly copyTypeormMigrationsCommand: CopyTypeormMigrationsCommand,
     protected readonly upgradeSearchVectorOnPersonEntityCommand: UpgradeSearchVectorOnPersonEntityCommand,
     protected readonly removeRelationForeignKeyFieldMetadataCommand: RemoveRelationForeignKeyFieldMetadataCommand,
+
+    // 0.54 Commands
     protected readonly fixStandardSelectFieldsPositionCommand: FixStandardSelectFieldsPositionCommand,
   ) {
     super(
@@ -127,6 +129,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       ],
     };
 
+    const commands_054: VersionCommands = {
+      beforeSyncMetadata: [this.fixStandardSelectFieldsPositionCommand],
+      afterSyncMetadata: [],
+    };
+
     this.allCommands = {
       '0.43.0': commands_043,
       '0.44.0': commands_044,
@@ -134,6 +141,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '0.51.0': commands_051,
       '0.52.0': commands_052,
       '0.53.0': commands_053,
+      '0.54.0': commands_054,
     };
   }
 }

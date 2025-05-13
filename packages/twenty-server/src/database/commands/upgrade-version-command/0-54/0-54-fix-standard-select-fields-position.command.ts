@@ -21,7 +21,7 @@ import { CalendarChannelSyncStatus } from 'src/modules/calendar/common/standard-
 import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Command({
-  name: 'upgrade:0-53:fix-standard-select-fields-position',
+  name: 'upgrade:0-54:fix-standard-select-fields-position',
   description: 'Fix standard select fields position',
 })
 export class FixStandardSelectFieldsPositionCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
