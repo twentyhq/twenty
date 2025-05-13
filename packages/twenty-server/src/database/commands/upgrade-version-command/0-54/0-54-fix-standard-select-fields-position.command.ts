@@ -8,17 +8,10 @@ import {
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import {
-  CALENDAR_CHANNEL_STANDARD_FIELD_IDS,
-  MESSAGE_CHANNEL_STANDARD_FIELD_IDS,
-  TASK_STANDARD_FIELD_IDS,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { CalendarChannelSyncStatus } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { TASK_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 @Command({
   name: 'upgrade:0-54:fix-standard-select-fields-position',
@@ -48,12 +41,6 @@ export class FixStandardSelectFieldsPositionCommand extends ActiveOrSuspendedWor
 
     if (!options.dryRun) {
       await this.overrideTaskStatusFieldMetadataPosition({ workspaceId });
-      await this.overrideMessageChannelSyncStatusFieldMetadataPosition({
-        workspaceId,
-      });
-      await this.overrideCalendarChannelSyncStatusFieldMetadataPosition({
-        workspaceId,
-      });
 
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
@@ -74,16 +61,33 @@ export class FixStandardSelectFieldsPositionCommand extends ActiveOrSuspendedWor
     });
 
     if (!taskStatusFieldMetadata) {
-      throw new Error(
-        `Task status field metadata not found for workspace ${workspaceId}`,
+      this.logger.warn(
+        `Task status field metadata not found for workspace ${workspaceId}. Exiting.`,
       );
+
+      return;
     }
 
-    const expectedPositionPerStatus: Record<string, number> = {
-      TODO: 0,
-      IN_PROGRESS: 1,
-      DONE: 2,
-    };
+    const scannedPositions = new Set<number>();
+    let biggestPosition = -1;
+
+    // Sort options by position for consistent processing
+    const sortedOptions = [...taskStatusFieldMetadata.options].sort(
+      (a, b) => a.position - b.position,
+    );
+
+    for (const option of sortedOptions) {
+      if (scannedPositions.has(option.position)) {
+        this.logger.warn(
+          `Found duplicate position ${option.position} for option ${option.value} in task status field metadata for workspace ${workspaceId}.`,
+        );
+
+        option.position = biggestPosition + 1;
+      }
+
+      biggestPosition = Math.max(biggestPosition, option.position);
+      scannedPositions.add(option.position);
+    }
 
     await this.fieldMetadataRepository.update(
       {
@@ -91,136 +95,7 @@ export class FixStandardSelectFieldsPositionCommand extends ActiveOrSuspendedWor
         standardId: TASK_STANDARD_FIELD_IDS.status,
       },
       {
-        options: taskStatusFieldMetadata.options.map(
-          (option: FieldMetadataComplexOption) => {
-            const expectedPosition = expectedPositionPerStatus[option.value];
-
-            if (expectedPosition === undefined) {
-              throw new Error(
-                `Expected a position to be defined for the status: ${option.value}`,
-              );
-            }
-
-            return {
-              ...option,
-              position: expectedPosition,
-            };
-          },
-        ),
-      },
-    );
-  }
-
-  private async overrideMessageChannelSyncStatusFieldMetadataPosition({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }) {
-    const messageChannelSyncStatusFieldMetadata =
-      await this.fieldMetadataRepository.findOne({
-        where: {
-          workspaceId,
-          standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
-        },
-      });
-
-    if (!messageChannelSyncStatusFieldMetadata) {
-      throw new Error(
-        `Message channel sync status field metadata not found for workspace ${workspaceId}`,
-      );
-    }
-
-    const expectedPositionPerSyncStatus: Record<
-      MessageChannelSyncStatus,
-      number
-    > = {
-      [MessageChannelSyncStatus.ONGOING]: 0,
-      [MessageChannelSyncStatus.NOT_SYNCED]: 1,
-      [MessageChannelSyncStatus.ACTIVE]: 2,
-      [MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS]: 3,
-      [MessageChannelSyncStatus.FAILED_UNKNOWN]: 4,
-    };
-
-    await this.fieldMetadataRepository.update(
-      {
-        workspaceId,
-        standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
-      },
-      {
-        options: messageChannelSyncStatusFieldMetadata.options.map(
-          (option: FieldMetadataComplexOption) => {
-            const expectedPosition =
-              expectedPositionPerSyncStatus[option.value];
-
-            if (expectedPosition === undefined) {
-              throw new Error(
-                `Expected a position to be defined for the sync status: ${option.value}`,
-              );
-            }
-
-            return {
-              ...option,
-              position: expectedPosition,
-            };
-          },
-        ),
-      },
-    );
-  }
-
-  private async overrideCalendarChannelSyncStatusFieldMetadataPosition({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }) {
-    const calendarChannelSyncStatusFieldMetadata =
-      await this.fieldMetadataRepository.findOne({
-        where: {
-          workspaceId,
-          standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
-        },
-      });
-
-    if (!calendarChannelSyncStatusFieldMetadata) {
-      throw new Error(
-        `Message channel sync status field metadata not found for workspace ${workspaceId}`,
-      );
-    }
-
-    const expectedPositionPerSyncStatus: Record<
-      CalendarChannelSyncStatus,
-      number
-    > = {
-      [CalendarChannelSyncStatus.ONGOING]: 0,
-      [CalendarChannelSyncStatus.NOT_SYNCED]: 1,
-      [CalendarChannelSyncStatus.ACTIVE]: 2,
-      [CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS]: 3,
-      [CalendarChannelSyncStatus.FAILED_UNKNOWN]: 4,
-    };
-
-    await this.fieldMetadataRepository.update(
-      {
-        workspaceId,
-        standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
-      },
-      {
-        options: calendarChannelSyncStatusFieldMetadata.options.map(
-          (option: FieldMetadataComplexOption) => {
-            const expectedPosition =
-              expectedPositionPerSyncStatus[option.value];
-
-            if (expectedPosition === undefined) {
-              throw new Error(
-                `Expected a position to be defined for the sync status: ${option.value}`,
-              );
-            }
-
-            return {
-              ...option,
-              position: expectedPosition,
-            };
-          },
-        ),
+        options: sortedOptions,
       },
     );
   }
