@@ -39,19 +39,18 @@ export class FixStandardSelectFieldsPositionCommand extends ActiveOrSuspendedWor
       `Running command for workspace ${workspaceId} ${index + 1}/${total}`,
     );
 
-    if (!options.dryRun) {
-      await this.overrideTaskStatusFieldMetadataPosition({ workspaceId });
-
-      await this.workspaceMetadataVersionService.incrementMetadataVersion(
-        workspaceId,
-      );
-    }
+    await this.overrideTaskStatusFieldMetadataPosition({
+      workspaceId,
+      dryRun: options.dryRun,
+    });
   }
 
   private async overrideTaskStatusFieldMetadataPosition({
     workspaceId,
+    dryRun,
   }: {
     workspaceId: string;
+    dryRun: boolean | undefined;
   }) {
     const taskStatusFieldMetadata = await this.fieldMetadataRepository.findOne({
       where: {
@@ -89,14 +88,20 @@ export class FixStandardSelectFieldsPositionCommand extends ActiveOrSuspendedWor
       scannedPositions.add(option.position);
     }
 
-    await this.fieldMetadataRepository.update(
-      {
+    if (!dryRun) {
+      await this.fieldMetadataRepository.update(
+        {
+          workspaceId,
+          standardId: TASK_STANDARD_FIELD_IDS.status,
+        },
+        {
+          options: sortedOptions,
+        },
+      );
+
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
-        standardId: TASK_STANDARD_FIELD_IDS.status,
-      },
-      {
-        options: sortedOptions,
-      },
-    );
+      );
+    }
   }
 }
