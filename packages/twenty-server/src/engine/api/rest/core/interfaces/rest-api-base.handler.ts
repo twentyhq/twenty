@@ -366,7 +366,7 @@ export abstract class RestApiBaseHandler {
 
     const finalRecords = formatGetManyData<ObjectRecord[]>(
       records,
-      objectMetadataItemWithFieldsMaps as any,
+      objectMetadataItemWithFieldsMaps,
       objectMetadata.objectMetadataMaps,
     );
 
