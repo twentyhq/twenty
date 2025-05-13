@@ -201,7 +201,7 @@ export class FixStandardSelectFieldsPositionCommand extends ActiveOrSuspendedWor
     await this.fieldMetadataRepository.update(
       {
         workspaceId,
-        standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
+        standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
       },
       {
         options: calendarChannelSyncStatusFieldMetadata.options.map(
