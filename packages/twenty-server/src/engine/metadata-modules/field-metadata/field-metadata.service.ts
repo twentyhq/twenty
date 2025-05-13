@@ -46,7 +46,7 @@ import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata-name.exception';
+import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
@@ -600,7 +600,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       try {
         validateMetadataNameOrThrow(fieldMetadataInput.name);
       } catch (error) {
-        if (error instanceof InvalidMetadataNameException) {
+        if (error instanceof InvalidMetadataException) {
           throw new FieldMetadataException(
             error.message,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -616,7 +616,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           objectMetadata,
         );
       } catch (error) {
-        if (error instanceof InvalidMetadataNameException) {
+        if (error instanceof InvalidMetadataException) {
           throw new FieldMetadataException(
             `Name "${fieldMetadataInput.name}" is not available, check that it is not duplicating another field's name.`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
