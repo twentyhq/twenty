@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { WorkspaceQueryPostHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
+import { WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
@@ -13,8 +13,8 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
-  WorkflowVersionStatus,
-  WorkflowVersionWorkspaceEntity,
+    WorkflowVersionStatus,
+    WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
@@ -23,7 +23,7 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-ob
   type: WorkspaceQueryHookType.PostHook,
 })
 export class WorkflowCreateOnePostQueryHook
-  implements WorkspaceQueryPostHookInstance
+  implements WorkspacePostQueryHookInstance
 {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,

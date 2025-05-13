@@ -3,7 +3,7 @@ import { ResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/
 
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
-export interface WorkspaceQueryHookInstance {
+export interface WorkspacePreQueryHookInstance {
   execute(
     authContext: AuthContext,
     objectName: string,
@@ -11,7 +11,7 @@ export interface WorkspaceQueryHookInstance {
   ): Promise<ResolverArgs>;
 }
 
-export interface WorkspaceQueryPostHookInstance {
+export interface WorkspacePostQueryHookInstance {
   execute(
     authContext: AuthContext,
     objectName: string,

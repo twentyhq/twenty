@@ -4,7 +4,11 @@ import { Module } from '@nestjs/core/injector/module';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
+import {
+  WorkspacePostQueryHookInstance,
+  WorkspacePreQueryHookInstance,
+  WorkspacePreQueryHookInstance,
+} from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHookKey } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
@@ -19,16 +23,16 @@ interface WorkspaceQueryHookData<T> {
 export class WorkspaceQueryHookStorage {
   private preHookInstances = new Map<
     WorkspaceQueryHookKey,
-    WorkspaceQueryHookData<WorkspaceQueryHookInstance>[]
+    WorkspaceQueryHookData<WorkspacePreQueryHookInstance>[]
   >();
   private postHookInstances = new Map<
     WorkspaceQueryHookKey,
-    WorkspaceQueryHookData<WorkspaceQueryHookInstance>[]
+    WorkspaceQueryHookData<WorkspacePostQueryHookInstance>[]
   >();
 
   registerWorkspaceQueryPreHookInstance(
     key: WorkspaceQueryHookKey,
-    data: WorkspaceQueryHookData<WorkspaceQueryHookInstance>,
+    data: WorkspaceQueryHookData<WorkspacePreQueryHookInstance>,
   ) {
     if (!this.preHookInstances.has(key)) {
       this.preHookInstances.set(key, []);
@@ -39,11 +43,11 @@ export class WorkspaceQueryHookStorage {
 
   getWorkspaceQueryPreHookInstances(
     key: WorkspaceQueryHookKey,
-  ): WorkspaceQueryHookData<WorkspaceQueryHookInstance>[] {
+  ): WorkspaceQueryHookData<WorkspacePreQueryHookInstance>[] {
     const methodName = key.split('.')?.[1] as
       | WorkspaceResolverBuilderMethodNames
       | undefined;
-    let wildcardInstances: WorkspaceQueryHookData<WorkspaceQueryHookInstance>[] =
+    let wildcardInstances: WorkspaceQueryHookData<WorkspacePreQueryHookInstance>[] =
       [];
 
     if (!methodName) {
@@ -62,9 +66,9 @@ export class WorkspaceQueryHookStorage {
     return [...wildcardInstances, ...(this.preHookInstances.get(key) ?? [])];
   }
 
-  registerWorkspaceQueryPostHookInstance(
+  registerWorkspacePostQueryHookInstance(
     key: WorkspaceQueryHookKey,
-    data: WorkspaceQueryHookData<WorkspaceQueryHookInstance>,
+    data: WorkspaceQueryHookData<WorkspacePreQueryHookInstance>,
   ) {
     if (!this.postHookInstances.has(key)) {
       this.postHookInstances.set(key, []);
@@ -73,13 +77,13 @@ export class WorkspaceQueryHookStorage {
     this.postHookInstances.get(key)?.push(data);
   }
 
-  getWorkspaceQueryPostHookInstances(
+  getWorkspacePostQueryHookInstances(
     key: WorkspaceQueryHookKey,
-  ): WorkspaceQueryHookData<WorkspaceQueryHookInstance>[] {
+  ): WorkspaceQueryHookData<WorkspacePreQueryHookInstance>[] {
     const methodName = key.split('.')?.[1] as
       | WorkspaceResolverBuilderMethodNames
       | undefined;
-    let wildcardInstances: WorkspaceQueryHookData<WorkspaceQueryHookInstance>[] =
+    let wildcardInstances: WorkspaceQueryHookData<WorkspacePreQueryHookInstance>[] =
       [];
 
     if (!methodName) {

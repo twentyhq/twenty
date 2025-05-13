@@ -62,7 +62,7 @@ export class WorkspaceQueryHookService {
   ): Promise<void> {
     const key: WorkspaceQueryHookKey = `${objectName}.${methodName}`;
     const postHookInstances =
-      this.workspaceQueryHookStorage.getWorkspaceQueryPostHookInstances(key);
+      this.workspaceQueryHookStorage.getWorkspacePostQueryHookInstances(key);
 
     if (!postHookInstances) {
       return;

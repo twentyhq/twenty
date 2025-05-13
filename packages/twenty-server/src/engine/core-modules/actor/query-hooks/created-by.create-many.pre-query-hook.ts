@@ -1,14 +1,14 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
-import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
+import { WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
+    GraphqlQueryRunnerException,
+    GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
@@ -26,7 +26,7 @@ type CustomWorkspaceItem = Omit<
 
 @WorkspaceQueryHook(`*.createMany`)
 export class CreatedByCreateManyPreQueryHook
-  implements WorkspaceQueryHookInstance
+  implements WorkspacePreQueryHookInstance
 {
   constructor(
     @InjectRepository(FieldMetadataEntity, 'metadata')

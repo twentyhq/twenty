@@ -6,8 +6,8 @@ import { Module } from '@nestjs/core/injector/module';
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 import {
-  WorkspaceQueryHookInstance,
-  WorkspaceQueryPostHookInstance,
+  WorkspacePostQueryHookInstance,
+  WorkspacePreQueryHookInstance,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
 import {
@@ -82,11 +82,11 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
   }
 
   async handlePreHook(
-    executeParams: Parameters<WorkspaceQueryHookInstance['execute']>,
+    executeParams: Parameters<WorkspacePreQueryHookInstance['execute']>,
     instance: object,
     host: Module,
     isRequestScoped: boolean,
-  ): Promise<ReturnType<WorkspaceQueryHookInstance['execute']>> {
+  ): Promise<ReturnType<WorkspacePreQueryHookInstance['execute']>> {
     const methodName = 'execute';
 
     if (isRequestScoped) {
@@ -143,11 +143,11 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
   }
 
   async handlePostHook(
-    executeParams: Parameters<WorkspaceQueryPostHookInstance['execute']>,
+    executeParams: Parameters<WorkspacePostQueryHookInstance['execute']>,
     instance: object,
     host: Module,
     isRequestScoped: boolean,
-  ): Promise<ReturnType<WorkspaceQueryPostHookInstance['execute']>> {
+  ): Promise<ReturnType<WorkspacePostQueryHookInstance['execute']>> {
     const methodName = 'execute';
 
     const transformedPayload = this.transformPayload(executeParams[2]);
@@ -194,17 +194,17 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
         this.workspaceQueryHookStorage.registerWorkspaceQueryPreHookInstance(
           key,
           {
-            instance: instance as WorkspaceQueryHookInstance,
+            instance: instance as WorkspacePreQueryHookInstance,
             host,
             isRequestScoped,
           },
         );
         break;
       case WorkspaceQueryHookType.PostHook:
-        this.workspaceQueryHookStorage.registerWorkspaceQueryPostHookInstance(
+        this.workspaceQueryHookStorage.registerWorkspacePostQueryHookInstance(
           key,
           {
-            instance: instance as WorkspaceQueryHookInstance,
+            instance: instance as WorkspacePostQueryHookInstance,
             host,
             isRequestScoped,
           },
