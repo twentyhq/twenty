@@ -4,6 +4,7 @@ export class FieldMetadataException extends CustomException {
   code: FieldMetadataExceptionCode;
   constructor(message: string, code: FieldMetadataExceptionCode) {
     super(message, code);
+    this.code = code;
   }
 }
 

@@ -4,6 +4,7 @@ export class WorkspaceException extends CustomException {
   code: WorkspaceExceptionCode;
   constructor(message: string, code: WorkspaceExceptionCode) {
     super(message, code);
+    this.code = code;
   }
 }
 

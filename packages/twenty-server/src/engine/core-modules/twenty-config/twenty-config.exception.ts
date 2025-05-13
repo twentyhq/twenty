@@ -4,6 +4,7 @@ export class ConfigVariableException extends CustomException {
   code: ConfigVariableExceptionCode;
   constructor(message: string, code: ConfigVariableExceptionCode) {
     super(message, code);
+    this.code = code;
   }
 }
 

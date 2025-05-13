@@ -4,6 +4,7 @@ export class ObjectMetadataException extends CustomException {
   code: ObjectMetadataExceptionCode;
   constructor(message: string, code: ObjectMetadataExceptionCode) {
     super(message, code);
+    this.code = code;
   }
 }
 

@@ -4,6 +4,7 @@ export class EmailVerificationException extends CustomException {
   code: EmailVerificationExceptionCode;
   constructor(message: string, code: EmailVerificationExceptionCode) {
     super(message, code);
+    this.code = code;
   }
 }
 

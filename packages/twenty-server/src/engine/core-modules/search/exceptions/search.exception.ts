@@ -4,6 +4,7 @@ export class SearchException extends CustomException {
   code: SearchExceptionCode;
   constructor(message: string, code: SearchExceptionCode) {
     super(message, code);
+    this.code = code;
   }
 }
 

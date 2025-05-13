@@ -4,6 +4,7 @@ export class RelationMetadataException extends CustomException {
   code: RelationMetadataExceptionCode;
   constructor(message: string, code: RelationMetadataExceptionCode) {
     super(message, code);
+    this.code = code;
   }
 }
 

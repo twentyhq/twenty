@@ -4,6 +4,7 @@ export class ServerlessFunctionException extends CustomException {
   code: ServerlessFunctionExceptionCode;
   constructor(message: string, code: ServerlessFunctionExceptionCode) {
     super(message, code);
+    this.code = code;
   }
 }
 
