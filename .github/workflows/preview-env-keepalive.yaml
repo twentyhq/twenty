@@ -80,7 +80,18 @@ jobs:
           
           echo "All services are up and running!"
         working-directory: ./
-      
+
+      - name: Seed Dev Workspace
+        run: |
+          cd packages/twenty-docker/
+          echo "Seeding full dev workspace..."
+          if ! docker compose exec -T server yarn command:prod -- workspace:seed:dev; then
+            echo "❌ Seeding full dev workspace failed. Dumping server logs..."
+            docker compose logs server
+            exit 1
+          fi
+        working-directory: ./
+
       - name: Output tunnel URL to logs
         run: |
           echo "✅ Preview Environment Ready!"
