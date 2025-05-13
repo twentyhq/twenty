@@ -3,7 +3,6 @@ name: 'Preview Environment Keep Alive'
 on:
   repository_dispatch:
     types: [preview-environment]
-  workflow_dispatch:
 
 jobs:
   preview-environment:
