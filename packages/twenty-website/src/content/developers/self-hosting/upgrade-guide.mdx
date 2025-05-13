@@ -37,13 +37,14 @@ To check if a workspace has been correctly migrated you can review its version i
 It should always be in the range of your current Twenty's instance `major.minor` version, you can view your instance version in the admin panel (at /settings/admin-panel, accessible if your user has `canImpersonate` property set to true in the database) or by running `echo $APP_VERSION` in your `twenty-server` container.
 
 
-To fix a desynchronized workspace version, you will have to pull the corresponding twenty's version and manually run both `migrate` and `upgrade` commands and so on until it reaches desired version:
+To fix a desynchronized workspace version, you will have to pull the corresponding twenty's version sequentially and so on until it reaches desired version.
+
+For Twenty's version that are anterior to `0.53` you will have to manually run:
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade
 ```
-
 
 
 ### v0.51 to v0.52
@@ -55,7 +56,7 @@ yarn database:migrate:prod
 yarn command:prod upgrade
 ```
 
-#### I have a workspace version between `0.52.0` and `0.52.6`
+#### I have a workspace blocked in version between `0.52.0` and `0.52.6`
 
 Unfortunately `0.52.0` and `0.52.6` have been completly removed from dockerHub.
 You will have to manually udpate your workspace version to `0.51.0` and pull twenty `0.52.11` to run the migrate and upgrade command from.
