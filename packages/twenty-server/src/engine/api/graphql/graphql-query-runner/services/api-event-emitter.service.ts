@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 @Injectable()
 export class ApiEventEmitterService {
@@ -15,7 +15,7 @@ export class ApiEventEmitterService {
   public emitCreateEvents<T extends ObjectRecord>(
     records: T[],
     authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
+    objectMetadataItem: ObjectMetadataItemWithFieldMaps,
   ): void {
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
@@ -38,7 +38,7 @@ export class ApiEventEmitterService {
     records: T[],
     updatedFields: string[],
     authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
+    objectMetadataItem: ObjectMetadataItemWithFieldMaps,
   ): void {
     const mappedExistingRecords = existingRecords.reduce(
       (acc, { id, ...record }) => ({
@@ -80,7 +80,7 @@ export class ApiEventEmitterService {
   public emitDeletedEvents<T extends ObjectRecord>(
     records: T[],
     authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
+    objectMetadataItem: ObjectMetadataItemWithFieldMaps,
   ): void {
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
@@ -103,7 +103,7 @@ export class ApiEventEmitterService {
   public emitRestoreEvents<T extends ObjectRecord>(
     records: T[],
     authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
+    objectMetadataItem: ObjectMetadataItemWithFieldMaps,
   ): void {
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
@@ -126,7 +126,7 @@ export class ApiEventEmitterService {
   public emitDestroyEvents<T extends ObjectRecord>(
     records: T[],
     authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
+    objectMetadataItem: ObjectMetadataItemWithFieldMaps,
   ): void {
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
