@@ -20,6 +20,23 @@ const clickHouseUrl = () => {
   );
 };
 
+async function ensureDatabaseExists() {
+  const [url, database] = clickHouseUrl().split(/\/(?=[^/]*$)/);
+  const client = createClient({
+    url,
+  });
+
+  try {
+    await client.command({
+      query: `CREATE DATABASE IF NOT EXISTS "${database}"`,
+    });
+  } catch (error) {
+    // It may fail due to permissions, but the database already exists
+  } finally {
+    await client.close();
+  }
+}
+
 async function ensureMigrationTable(client: ClickHouseClient) {
   await client.command({
     query: `
@@ -57,6 +74,8 @@ async function recordMigration(filename: string, client: ClickHouseClient) {
 async function runMigrations() {
   const dir = path.join(__dirname);
   const files = fs.readdirSync(dir).filter((f) => f.endsWith('.sql'));
+
+  await ensureDatabaseExists();
 
   const client = createClient({
     url: clickHouseUrl(),
