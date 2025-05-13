@@ -330,7 +330,7 @@ export abstract class RestApiBaseHandler {
 
     selectQueryBuilder = graphqlQueryParser.applyOrderToBuilder(
       selectQueryBuilder,
-      [...(inputs.orderBy || []), { id: OrderByDirection.AscNullsFirst }],
+      inputs.orderBy || [],
       objectMetadataNameSingular,
       isForwardPagination,
     );
