@@ -148,16 +148,21 @@ export class CalendarEventImportErrorHandlerService {
       workspaceId,
     );
 
-    this.exceptionHandlerService.captureExceptions([exception], {
-      workspace: {
-        id: workspaceId,
-      },
-    });
-
-    throw new CalendarEventImportException(
+    const calendarEventImportException = new CalendarEventImportException(
       `Unknown error importing calendar events for calendar channel ${calendarChannel.id} in workspace ${workspaceId}: ${exception.message}`,
       CalendarEventImportExceptionCode.UNKNOWN,
     );
+
+    this.exceptionHandlerService.captureExceptions(
+      [calendarEventImportException],
+      {
+        workspace: {
+          id: workspaceId,
+        },
+      },
+    );
+
+    throw calendarEventImportException;
   }
 
   private async handleNotFoundException(
