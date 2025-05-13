@@ -44,6 +44,10 @@ export type WorkflowEditActionFormBuilderProps = {
       };
 };
 
+type StyledFieldContainerProps = {
+  hasDisable: boolean;
+};
+
 type FormData = WorkflowFormActionField[];
 
 const StyledWorkflowStepBody = styled(WorkflowStepBody)`
@@ -87,7 +91,7 @@ const StyledOpenedSettingsContainer = styled.div`
   grid-area: settings;
 `;
 
-const StyledFieldContainer = styled.div`
+const StyledFieldContainer = styled.div<StyledFieldContainerProps>`
   align-items: center;
   background: transparent;
   border: none;
@@ -96,7 +100,7 @@ const StyledFieldContainer = styled.div`
   padding-inline: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 
-  cursor: pointer;
+  cursor: ${({ hasDisable }) => (hasDisable ? 'default' : 'pointer')};
 
   &:hover,
   &[data-open='true'] {
@@ -281,7 +285,9 @@ export const WorkflowEditActionFormBuilder = ({
                                 handleFieldClick(field.id);
                               }}
                             >
-                              <StyledFieldContainer>
+                              <StyledFieldContainer
+                                hasDisable={actionOptions.readonly ?? false}
+                              >
                                 <StyledPlaceholder>
                                   {isDefined(field.placeholder) &&
                                   isNonEmptyString(field.placeholder)
@@ -373,7 +379,7 @@ export const WorkflowEditActionFormBuilder = ({
                     setSelectedField(newField.id);
                   }}
                 >
-                  <StyledFieldContainer>
+                  <StyledFieldContainer hasDisable={false}>
                     <StyledAddFieldButtonContentContainer>
                       <IconPlus size={theme.icon.size.sm} />
                       {t`Add Field`}
