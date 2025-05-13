@@ -23,8 +23,9 @@ import { ActivityRichTextEditorChangeOnActivityIdEffect } from '@/activities/com
 import { Attachment } from '@/activities/files/types/Attachment';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
-import { getActivityAttachmentPaths } from '@/activities/utils/getActivityAttachmentPaths';
-import { getAttachmentPath } from '@/activities/utils/getAttachmentPath';
+import { filterAttachmentsToRestore } from '@/activities/utils/filterAttachmentsToRestore';
+import { getActivityAttachmentIdsToDelete } from '@/activities/utils/getActivityAttachmentIdsToDelete';
+import { getActivityAttachmentPathsToRestore } from '@/activities/utils/getActivityAttachmentPathsToRestore';
 import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
@@ -199,46 +200,30 @@ export const ActivityRichTextEditor = ({
 
         handlePersistBody(newStringifiedBody);
 
-        // delete attachments that are no longer in the body
-        if (oldActivity.attachments.length > 0) {
-          const attachmentIdsToDelete = oldActivity.attachments
-            .filter(
-              (attachment) =>
-                isDefined(newStringifiedBody) &&
-                !newStringifiedBody.includes(attachment.fullPath.split('?')[0]),
-            )
-            .map((attachment) => attachment.id);
-
-          if (attachmentIdsToDelete.length > 0) {
-            await deleteAttachments({
-              recordIdsToDelete: attachmentIdsToDelete,
-            });
-          }
-        }
-
-        const newActivityAttachmentPaths =
-          getActivityAttachmentPaths(newStringifiedBody);
-
-        const attachmentPathsToRestore = newActivityAttachmentPaths.filter(
-          (fullPath) =>
-            oldActivity.attachments.every(
-              (attachment) =>
-                getAttachmentPath(attachment.fullPath) !== fullPath,
-            ),
+        const attachmentIdsToDelete = getActivityAttachmentIdsToDelete(
+          newStringifiedBody,
+          oldActivity.attachments,
         );
 
-        // restore attachments that are present in the body but not in the activity attachments (ex: cmd + z after deleting an attachment)
+        if (attachmentIdsToDelete.length > 0) {
+          await deleteAttachments({
+            recordIdsToDelete: attachmentIdsToDelete,
+          });
+        }
+
+        const attachmentPathsToRestore = getActivityAttachmentPathsToRestore(
+          newStringifiedBody,
+          oldActivity.attachments,
+        );
+
         if (attachmentPathsToRestore.length > 0) {
           const softDeletedAttachments =
             (await findSoftDeletedAttachments()) as Attachment[];
 
-          const attachmentIdsToRestore = softDeletedAttachments
-            .filter((attachment) =>
-              attachmentPathsToRestore.some(
-                (path) => getAttachmentPath(attachment.fullPath) === path,
-              ),
-            )
-            .map((attachment) => attachment.id);
+          const attachmentIdsToRestore = filterAttachmentsToRestore(
+            attachmentPathsToRestore,
+            softDeletedAttachments,
+          );
 
           await restoreAttachments({
             idsToRestore: attachmentIdsToRestore,

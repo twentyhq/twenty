@@ -2,7 +2,7 @@ import { getAttachmentPath } from '@/activities/utils/getAttachmentPath';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const getActivityAttachmentPaths = (
-  stringifiedActivityBlocknote: string | null | undefined,
+  stringifiedActivityBlocknote: string,
 ): string[] => {
   const activityBlocknote = JSON.parse(stringifiedActivityBlocknote ?? '{}');
 
