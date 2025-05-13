@@ -94,8 +94,8 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
     );
 
     this.apiEventEmitterService.emitUpdateEvents(
-      formattedExistingRecords,
-      formattedUpdatedRecords,
+      structuredClone(formattedExistingRecords),
+      structuredClone(formattedUpdatedRecords),
       Object.keys(executionArgs.args.data),
       authContext,
       objectMetadataItemWithFieldMaps,
@@ -105,7 +105,10 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: formattedUpdatedRecords,
+        parentObjectRecords: [
+          ...formattedExistingRecords,
+          ...formattedUpdatedRecords,
+        ],
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,

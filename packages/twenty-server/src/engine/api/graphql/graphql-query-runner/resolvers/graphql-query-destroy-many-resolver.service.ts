@@ -56,7 +56,7 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
     );
 
     this.apiEventEmitterService.emitDestroyEvents(
-      deletedRecords,
+      structuredClone(deletedRecords),
       authContext,
       objectMetadataItemWithFieldMaps,
     );

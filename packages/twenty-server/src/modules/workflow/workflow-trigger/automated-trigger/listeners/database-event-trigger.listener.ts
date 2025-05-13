@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
@@ -18,6 +20,8 @@ import {
   WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
+import { ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-emitter/types/object-record-non-destructive-event';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
 @Injectable()
 export class DatabaseEventTriggerListener {
@@ -28,43 +32,170 @@ export class DatabaseEventTriggerListener {
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly isFeatureFlagEnabledService: FeatureFlagService,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
   async handleObjectRecordCreateEvent(
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
   ) {
-    await this.handleEvent(payload);
+    if (await this.shouldIgnoreEvent(payload)) {
+      return;
+    }
+
+    const clonedPayload = structuredClone(payload);
+
+    await this.enrichCreatedEvent(clonedPayload);
+    await this.handleEvent(clonedPayload);
   }
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.UPDATED)
   async handleObjectRecordUpdateEvent(
     payload: WorkspaceEventBatch<ObjectRecordUpdateEvent>,
   ) {
-    await this.handleEvent(payload);
+    if (await this.shouldIgnoreEvent(payload)) {
+      return;
+    }
+
+    const clonedPayload = structuredClone(payload);
+
+    await this.enrichUpdatedEvent(clonedPayload);
+    await this.handleEvent(clonedPayload);
   }
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DELETED)
   async handleObjectRecordDeleteEvent(
     payload: WorkspaceEventBatch<ObjectRecordDeleteEvent>,
   ) {
-    await this.handleEvent(payload);
+    if (await this.shouldIgnoreEvent(payload)) {
+      return;
+    }
+
+    const clonedPayload = structuredClone(payload);
+
+    await this.enrichDeletedEvent(clonedPayload);
+    await this.handleEvent(clonedPayload);
   }
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DESTROYED)
   async handleObjectRecordDestroyEvent(
     payload: WorkspaceEventBatch<ObjectRecordDestroyEvent>,
   ) {
-    await this.handleEvent(payload);
+    if (await this.shouldIgnoreEvent(payload)) {
+      return;
+    }
+
+    const clonedPayload = structuredClone(payload);
+
+    await this.enrichDestroyedEvent(clonedPayload);
+    await this.handleEvent(clonedPayload);
   }
 
-  private async handleEvent(
-    payload: WorkspaceEventBatch<
-      | ObjectRecordCreateEvent
-      | ObjectRecordUpdateEvent
-      | ObjectRecordDeleteEvent
-      | ObjectRecordDestroyEvent
-    >,
+  private async enrichCreatedEvent(
+    payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
+  ) {
+    const workspaceId = payload.workspaceId;
+
+    for (const event of payload.events) {
+      await this.enrichRecord({
+        event,
+        record: event.properties.after,
+        workspaceId,
+      });
+    }
+  }
+
+  private async enrichUpdatedEvent(
+    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent>,
+  ) {
+    const workspaceId = payload.workspaceId;
+
+    for (const event of payload.events) {
+      await this.enrichRecord({
+        event,
+        record: event.properties.before,
+        workspaceId,
+      });
+      await this.enrichRecord({
+        event,
+        record: event.properties.after,
+        workspaceId,
+      });
+    }
+  }
+
+  private async enrichDeletedEvent(
+    payload: WorkspaceEventBatch<ObjectRecordDeleteEvent>,
+  ) {
+    const workspaceId = payload.workspaceId;
+
+    for (const event of payload.events) {
+      await this.enrichRecord({
+        event,
+        record: event.properties.before,
+        workspaceId,
+      });
+    }
+  }
+
+  private async enrichDestroyedEvent(
+    payload: WorkspaceEventBatch<ObjectRecordDestroyEvent>,
+  ) {
+    const workspaceId = payload.workspaceId;
+
+    for (const event of payload.events) {
+      await this.enrichRecord({
+        event,
+        record: event.properties.before,
+        workspaceId,
+      });
+    }
+  }
+
+  private async enrichRecord({
+    event,
+    record,
+    workspaceId,
+  }: {
+    event: ObjectRecordNonDestructiveEvent;
+    record: object;
+    workspaceId: string;
+  }) {
+    const fieldsByJoinColumnName = event.objectMetadata.fieldsByJoinColumnName;
+
+    for (const [joinColumn, joinField] of Object.entries(
+      fieldsByJoinColumnName,
+    )) {
+      const joinRecordId = record[joinColumn];
+      const relatedObjectMetadataId = joinField.relationTargetObjectMetadataId;
+
+      if (!isDefined(relatedObjectMetadataId)) {
+        continue;
+      }
+
+      const { objectMetadataMaps } =
+        await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+          event.objectMetadata.nameSingular,
+          workspaceId,
+        );
+
+      const relatedObjectMetadataNameSingular =
+        objectMetadataMaps.byId[relatedObjectMetadataId].nameSingular;
+
+      const relatedObjectRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+          workspaceId,
+          relatedObjectMetadataNameSingular,
+        );
+
+      record[joinField.name] = await relatedObjectRepository.findOne({
+        where: { id: joinRecordId },
+      });
+    }
+  }
+
+  private async shouldIgnoreEvent(
+    payload: WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>,
   ) {
     const workspaceId = payload.workspaceId;
     const databaseEventName = payload.name;
@@ -76,7 +207,7 @@ export class DatabaseEventTriggerListener {
         )}`,
       );
 
-      return;
+      return true;
     }
 
     const isWorkflowEnabled =
@@ -85,9 +216,14 @@ export class DatabaseEventTriggerListener {
         workspaceId,
       );
 
-    if (!isWorkflowEnabled) {
-      return;
-    }
+    return !isWorkflowEnabled;
+  }
+
+  private async handleEvent(
+    payload: WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>,
+  ) {
+    const workspaceId = payload.workspaceId;
+    const databaseEventName = payload.name;
 
     // Todo: uncomment that when data are migrated to workflowAutomatedTrigger
     /*
@@ -127,7 +263,7 @@ export class DatabaseEventTriggerListener {
     for (const eventListener of oldEventListeners) {
       // end Todo
       for (const eventPayload of payload.events) {
-        this.messageQueueService.add<WorkflowTriggerJobData>(
+        await this.messageQueueService.add<WorkflowTriggerJobData>(
           WorkflowTriggerJob.name,
           {
             workspaceId,

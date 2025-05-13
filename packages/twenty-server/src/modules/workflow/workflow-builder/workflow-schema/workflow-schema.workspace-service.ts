@@ -112,7 +112,7 @@ export class WorkflowSchemaWorkspaceService {
         nameSingular,
         workspaceId,
       },
-      relations: ['fields'],
+      relations: ['fields', 'fields.relationTargetObjectMetadata.fields'],
     });
 
     if (!isDefined(objectMetadata)) {

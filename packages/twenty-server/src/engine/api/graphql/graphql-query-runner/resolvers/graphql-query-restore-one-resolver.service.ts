@@ -50,12 +50,6 @@ export class GraphqlQueryRestoreOneResolverService extends GraphqlQueryBaseResol
       featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
-    this.apiEventEmitterService.emitRestoreEvents(
-      formattedRestoredRecords,
-      authContext,
-      objectMetadataItemWithFieldMaps,
-    );
-
     if (formattedRestoredRecords.length === 0) {
       throw new GraphqlQueryRunnerException(
         'Record not found',
@@ -64,6 +58,12 @@ export class GraphqlQueryRestoreOneResolverService extends GraphqlQueryBaseResol
     }
 
     const restoredRecord = formattedRestoredRecords[0];
+
+    this.apiEventEmitterService.emitRestoreEvents(
+      structuredClone(formattedRestoredRecords),
+      authContext,
+      objectMetadataItemWithFieldMaps,
+    );
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
