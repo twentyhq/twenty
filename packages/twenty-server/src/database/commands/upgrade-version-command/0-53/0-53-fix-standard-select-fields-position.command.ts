@@ -10,8 +10,8 @@ import {
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import {
   CALENDAR_CHANNEL_STANDARD_FIELD_IDS,
   MESSAGE_CHANNEL_STANDARD_FIELD_IDS,
@@ -31,7 +31,7 @@ export class FixStandardSelectFieldsPositionCommand extends ActiveOrSuspendedWor
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -40,27 +40,25 @@ export class FixStandardSelectFieldsPositionCommand extends ActiveOrSuspendedWor
     index,
     total,
     workspaceId,
+    options,
   }: RunOnWorkspaceArgs): Promise<void> {
     this.logger.log(
       `Running command for workspace ${workspaceId} ${index + 1}/${total}`,
     );
 
-    await this.overrideTaskStatusFieldMetadataPosition({ workspaceId });
-    await this.overrideMessageChannelSyncStatusFieldMetadataPosition({
-      workspaceId,
-    });
-    await this.overrideCalendarChannelSyncStatusFieldMetadataPosition({
-      workspaceId,
-    });
+    if (!options.dryRun) {
+      await this.overrideTaskStatusFieldMetadataPosition({ workspaceId });
+      await this.overrideMessageChannelSyncStatusFieldMetadataPosition({
+        workspaceId,
+      });
+      await this.overrideCalendarChannelSyncStatusFieldMetadataPosition({
+        workspaceId,
+      });
 
-    const workspaceCachedMetadataVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
-
-    // Changing the metadata requires the Redis cache to be flushed.
-    await this.workspaceCacheStorageService.flush(
-      workspaceId,
-      workspaceCachedMetadataVersion,
-    );
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
+        workspaceId,
+      );
+    }
   }
 
   private async overrideTaskStatusFieldMetadataPosition({
