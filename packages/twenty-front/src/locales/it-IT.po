@@ -2835,6 +2835,16 @@ msgstr "Ultimi 7 giorni (più vecchio → più nuovo)"
 msgid "Last Name"
 msgstr "Cognome"
 
+#. js-lingui-id: s0kiVA
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Last payment failed. Please contact your admin."
+msgstr ""
+
+#. js-lingui-id: 3u/3zO
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Last payment failed. Please update your billing details."
+msgstr ""
+
 #. js-lingui-id: wL3cK8
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Latest"
@@ -3260,6 +3270,11 @@ msgstr ""
 #. js-lingui-id: xlUOps
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "No free workflow executions left. End trial period and activate your billing to continue."
+msgstr ""
+
+#. js-lingui-id: pxYUeX
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "No free workflow executions left. Please contact your admin."
 msgstr ""
 
 #. js-lingui-id: OcMef3
@@ -4521,6 +4536,11 @@ msgstr "L'oggetto, il corpo e gli allegati verranno condivisi con il tuo team."
 msgid "Submit"
 msgstr ""
 
+#. js-lingui-id: EDl9kS
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Subscribe"
+msgstr ""
+
 #. js-lingui-id: uvY7Wk
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Subscription activated."
@@ -4869,6 +4889,16 @@ msgstr ""
 msgid "Track your monthly workflow credit consumption."
 msgstr ""
 
+#. js-lingui-id: wN0jHF
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Trial expired. Please contact your admin"
+msgstr ""
+
+#. js-lingui-id: y985qL
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Trial expired. Please update your billing details."
+msgstr ""
+
 #. js-lingui-id: PiUt3N
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
@@ -4934,6 +4964,12 @@ msgstr "Errore sconosciuto"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Unlimited contacts"
 msgstr "Contatti illimitati"
+
+#. js-lingui-id: EkH9pt
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Update"
+msgstr ""
 
 #. js-lingui-id: +b7T3G
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -5348,6 +5384,16 @@ msgstr "Il tuo nome come sarà visualizzato sull'app"
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
 msgstr "Il tuo spazio di lavoro"
+
+#. js-lingui-id: oC6WBs
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Your workspace doesn't have an active subscription."
+msgstr ""
+
+#. js-lingui-id: QBTEtW
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Your workspace doesn't have an active subscription. Please contact your admin."
+msgstr ""
 
 #. js-lingui-id: RhNbPE
 #: src/pages/settings/SettingsBilling.tsx
