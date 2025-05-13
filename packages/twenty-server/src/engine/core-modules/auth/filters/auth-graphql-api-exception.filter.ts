@@ -6,7 +6,6 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
   AuthenticationError,
-  EmailNotVerifiedError,
   ForbiddenError,
   NotFoundError,
   UserInputError,
@@ -20,10 +19,12 @@ export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
         throw new NotFoundError(exception.message);
       case AuthExceptionCode.INVALID_INPUT:
         throw new UserInputError(exception.message);
-      case AuthExceptionCode.EMAIL_NOT_VERIFIED:
-        throw new EmailNotVerifiedError(exception.message);
       case AuthExceptionCode.FORBIDDEN_EXCEPTION:
         throw new ForbiddenError(exception.message);
+      case AuthExceptionCode.EMAIL_NOT_VERIFIED:
+        throw new AuthenticationError(exception.message, {
+          motive: AuthExceptionCode.EMAIL_NOT_VERIFIED,
+        });
       case AuthExceptionCode.UNAUTHENTICATED:
       case AuthExceptionCode.USER_NOT_FOUND:
       case AuthExceptionCode.WORKSPACE_NOT_FOUND:
