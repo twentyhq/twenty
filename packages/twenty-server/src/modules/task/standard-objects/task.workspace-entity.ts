@@ -120,7 +120,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
       {
         value: 'DONE',
         label: 'Done',
-        position: 1,
+        position: 2,
         color: 'green',
       },
     ],
