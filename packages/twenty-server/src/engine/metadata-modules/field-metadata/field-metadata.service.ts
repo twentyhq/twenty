@@ -365,6 +365,20 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           );
         }
 
+        // TODO: remove this once we have deleted the relation metadata table
+        await this.relationMetadataRepository.delete({
+          fromFieldMetadataId: In([
+            fieldMetadata.id,
+            fieldMetadata.relationTargetFieldMetadata.id,
+          ]),
+        });
+        await this.relationMetadataRepository.delete({
+          toFieldMetadataId: In([
+            fieldMetadata.id,
+            fieldMetadata.relationTargetFieldMetadata.id,
+          ]),
+        });
+
         await fieldMetadataRepository.delete({
           id: In([
             fieldMetadata.id,
