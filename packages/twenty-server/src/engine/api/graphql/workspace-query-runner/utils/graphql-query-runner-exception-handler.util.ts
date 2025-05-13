@@ -3,10 +3,10 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import {
-  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { CustomException } from 'src/utils/custom-exception';
 
 export const graphqlQueryRunnerExceptionHandler = (
   error: GraphqlQueryRunnerException,
@@ -27,6 +27,6 @@ export const graphqlQueryRunnerExceptionHandler = (
     case GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND:
       throw new NotFoundError(error.message);
     default:
-      throw new InternalServerError(error.message);
+      throw new CustomException(error.message, error.code);
   }
 };

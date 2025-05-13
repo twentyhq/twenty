@@ -1,7 +1,6 @@
 import {
   ConflictError,
   ForbiddenError,
-  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -10,6 +9,7 @@ import {
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
+import { CustomException } from 'src/utils/custom-exception';
 
 export const objectMetadataGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof InvalidMetadataException) {
@@ -27,7 +27,7 @@ export const objectMetadataGraphqlApiExceptionHandler = (error: Error) => {
       case ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS:
         throw new ConflictError(error.message);
       default:
-        throw new InternalServerError(error.message);
+        throw new CustomException(error.message, error.code);
     }
   }
 

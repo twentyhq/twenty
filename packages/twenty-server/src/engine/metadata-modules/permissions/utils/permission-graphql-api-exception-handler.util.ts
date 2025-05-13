@@ -1,6 +1,5 @@
 import {
   ForbiddenError,
-  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -8,6 +7,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { CustomException } from 'src/utils/custom-exception';
 
 export const permissionGraphqlApiExceptionHandler = (
   error: PermissionsException,
@@ -30,6 +30,6 @@ export const permissionGraphqlApiExceptionHandler = (
       throw new NotFoundError(error.message);
     case PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND:
     default:
-      throw new InternalServerError(error.message);
+      throw new CustomException(error.message, error.code);
   }
 };

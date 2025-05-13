@@ -8,10 +8,10 @@ import {
   AuthenticationError,
   EmailNotVerifiedError,
   ForbiddenError,
-  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { CustomException } from 'src/utils/custom-exception';
 
 @Catch(AuthException)
 export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
@@ -32,7 +32,7 @@ export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
       case AuthExceptionCode.INVALID_DATA:
       case AuthExceptionCode.INTERNAL_SERVER_ERROR:
       default:
-        throw new InternalServerError(exception.message);
+        throw new CustomException(exception.message, exception.code);
     }
   }
 }

@@ -2,7 +2,6 @@ import { Catch, ExceptionFilter } from '@nestjs/common';
 
 import {
   ForbiddenError,
-  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -10,6 +9,7 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
+import { CustomException } from 'src/utils/custom-exception';
 
 @Catch(ConfigVariableException)
 export class ConfigVariableGraphqlApiExceptionFilter
@@ -26,7 +26,7 @@ export class ConfigVariableGraphqlApiExceptionFilter
         throw new UserInputError(exception.message);
       case ConfigVariableExceptionCode.INTERNAL_ERROR:
       default:
-        throw new InternalServerError(exception.message);
+        throw new CustomException(exception.message, exception.code);
     }
   }
 }

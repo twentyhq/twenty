@@ -4,11 +4,11 @@ import {
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import {
   ForbiddenError,
-  InternalServerError,
   NotFoundError,
   TimeoutError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { CustomException } from 'src/utils/custom-exception';
 
 export const workspaceExceptionHandler = (
   error: WorkspaceQueryRunnerException,
@@ -27,6 +27,6 @@ export const workspaceExceptionHandler = (
       throw new TimeoutError(error.message);
     case WorkspaceQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR:
     default:
-      throw new InternalServerError(error.message);
+      throw new CustomException(error.message, error.code);
   }
 };

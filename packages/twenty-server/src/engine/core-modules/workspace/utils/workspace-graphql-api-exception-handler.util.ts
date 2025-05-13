@@ -1,13 +1,13 @@
 import {
   ConflictError,
   ForbiddenError,
-  InternalServerError,
   NotFoundError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   WorkspaceException,
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
+import { CustomException } from 'src/utils/custom-exception';
 
 export const workspaceGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof WorkspaceException) {
@@ -20,7 +20,7 @@ export const workspaceGraphqlApiExceptionHandler = (error: Error) => {
       case WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED:
         throw new ForbiddenError(error.message);
       default:
-        throw new InternalServerError(error.message);
+        throw new CustomException(error.message, error.code);
     }
   }
 

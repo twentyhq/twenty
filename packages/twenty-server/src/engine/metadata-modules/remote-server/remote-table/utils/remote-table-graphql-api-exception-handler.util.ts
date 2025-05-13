@@ -1,6 +1,5 @@
 import {
   ConflictError,
-  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -8,6 +7,7 @@ import {
   RemoteTableException,
   RemoteTableExceptionCode,
 } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.exception';
+import { CustomException } from 'src/utils/custom-exception';
 
 export const remoteTableGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof RemoteTableException) {
@@ -22,7 +22,7 @@ export const remoteTableGraphqlApiExceptionHandler = (error: Error) => {
       case RemoteTableExceptionCode.REMOTE_TABLE_ALREADY_EXISTS:
         throw new ConflictError(error.message);
       default:
-        throw new InternalServerError(error.message);
+        throw new CustomException(error.message, error.code);
     }
   }
 
