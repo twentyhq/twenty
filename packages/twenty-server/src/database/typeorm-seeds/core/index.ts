@@ -5,6 +5,7 @@ import { seedFeatureFlags } from 'src/database/typeorm-seeds/core/feature-flags'
 import { seedUserWorkspaces } from 'src/database/typeorm-seeds/core/user-workspaces';
 import { seedUsers } from 'src/database/typeorm-seeds/core/users';
 import { seedWorkspaces } from 'src/database/typeorm-seeds/core/workspaces';
+import { seedOnboardingPlans } from 'src/database/typeorm-seeds/core/onboarding/onboarding-plans';
 
 type SeedCoreSchemaArgs = {
   dataSource: DataSource;
@@ -12,6 +13,7 @@ type SeedCoreSchemaArgs = {
   appVersion: string | undefined;
   seedBilling?: boolean;
   seedFeatureFlags?: boolean;
+  seedOnboarding?: boolean;
 };
 
 export const seedCoreSchema = async ({
@@ -20,6 +22,7 @@ export const seedCoreSchema = async ({
   workspaceId,
   seedBilling = true,
   seedFeatureFlags: shouldSeedFeatureFlags = true,
+  seedOnboarding = true,
 }: SeedCoreSchemaArgs) => {
   const schemaName = 'core';
 
@@ -38,5 +41,9 @@ export const seedCoreSchema = async ({
 
   if (seedBilling) {
     await seedBillingSubscriptions(dataSource, schemaName, workspaceId);
+  }
+
+  if (seedOnboarding) {
+    await seedOnboardingPlans(workspaceDataSource, schemaName);
   }
 };
