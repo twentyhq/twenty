@@ -20,9 +20,15 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { ActivityRichTextEditorChangeOnActivityIdEffect } from '@/activities/components/ActivityRichTextEditorChangeOnActivityIdEffect';
+import { Attachment } from '@/activities/files/types/Attachment';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
+import { getActivityAttachmentPaths } from '@/activities/utils/getActivityAttachmentPaths';
+import { getAttachmentPath } from '@/activities/utils/getAttachmentPath';
 import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
+import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
+import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
+import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { PartialBlock } from '@blocknote/core';
@@ -38,6 +44,10 @@ type ActivityRichTextEditorProps = {
   activityObjectNameSingular:
     | CoreObjectNameSingular.Task
     | CoreObjectNameSingular.Note;
+};
+
+type Activity = (Task | Note) & {
+  attachments: Attachment[];
 };
 
 export const ActivityRichTextEditor = ({
@@ -60,6 +70,24 @@ export const ActivityRichTextEditor = ({
     objectNameSingular: activityObjectNameSingular,
     isRecordReadOnly,
   });
+
+  const { deleteManyRecords: deleteAttachments } = useDeleteManyRecords({
+    objectNameSingular: CoreObjectNameSingular.Attachment,
+  });
+
+  const { restoreManyRecords: restoreAttachments } = useRestoreManyRecords({
+    objectNameSingular: CoreObjectNameSingular.Attachment,
+  });
+
+  const { fetchAllRecords: findSoftDeletedAttachments } =
+    useLazyFetchAllRecords({
+      objectNameSingular: CoreObjectNameSingular.Attachment,
+      filter: {
+        deletedAt: {
+          is: 'NOT_NULL',
+        },
+      },
+    });
 
   const {
     goBackToPreviousHotkeyScope,
@@ -137,8 +165,12 @@ export const ActivityRichTextEditor = ({
   );
 
   const handleBodyChange = useRecoilCallback(
-    ({ set }) =>
-      (newStringifiedBody: string) => {
+    ({ set, snapshot }) =>
+      async (newStringifiedBody: string) => {
+        const oldActivity = snapshot
+          .getLoadable(recordStoreFamilyState(activityId))
+          .getValue() as Activity;
+
         set(recordStoreFamilyState(activityId), (oldActivity) => {
           return {
             ...oldActivity,
@@ -166,8 +198,62 @@ export const ActivityRichTextEditor = ({
         });
 
         handlePersistBody(newStringifiedBody);
+
+        // delete attachments that are no longer in the body
+        if (oldActivity.attachments.length > 0) {
+          const attachmentIdsToDelete = oldActivity.attachments
+            .filter(
+              (attachment) =>
+                isDefined(newStringifiedBody) &&
+                !newStringifiedBody.includes(attachment.fullPath.split('?')[0]),
+            )
+            .map((attachment) => attachment.id);
+
+          if (attachmentIdsToDelete.length > 0) {
+            await deleteAttachments({
+              recordIdsToDelete: attachmentIdsToDelete,
+            });
+          }
+        }
+
+        const newActivityAttachmentPaths =
+          getActivityAttachmentPaths(newStringifiedBody);
+
+        const attachmentPathsToRestore = newActivityAttachmentPaths.filter(
+          (fullPath) =>
+            oldActivity.attachments.every(
+              (attachment) =>
+                getAttachmentPath(attachment.fullPath) !== fullPath,
+            ),
+        );
+
+        // restore attachments that are present in the body but not in the activity attachments (ex: cmd + z after deleting an attachment)
+        if (attachmentPathsToRestore.length > 0) {
+          const softDeletedAttachments =
+            (await findSoftDeletedAttachments()) as Attachment[];
+
+          const attachmentIdsToRestore = softDeletedAttachments
+            .filter((attachment) =>
+              attachmentPathsToRestore.some(
+                (path) => getAttachmentPath(attachment.fullPath) === path,
+              ),
+            )
+            .map((attachment) => attachment.id);
+
+          await restoreAttachments({
+            idsToRestore: attachmentIdsToRestore,
+          });
+        }
       },
-    [activityId, cache, objectMetadataItemActivity, handlePersistBody],
+    [
+      activityId,
+      cache,
+      objectMetadataItemActivity,
+      handlePersistBody,
+      deleteAttachments,
+      restoreAttachments,
+      findSoftDeletedAttachments,
+    ],
   );
 
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
