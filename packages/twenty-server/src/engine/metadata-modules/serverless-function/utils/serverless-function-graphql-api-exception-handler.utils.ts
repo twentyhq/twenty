@@ -1,13 +1,13 @@
 import {
   ConflictError,
   ForbiddenError,
-  InternalServerError,
   NotFoundError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { CustomException } from 'src/utils/custom-exception';
 
 export const serverlessFunctionGraphQLApiExceptionHandler = (error: any) => {
   if (error instanceof ServerlessFunctionException) {
@@ -22,7 +22,7 @@ export const serverlessFunctionGraphQLApiExceptionHandler = (error: any) => {
       case ServerlessFunctionExceptionCode.FEATURE_FLAG_INVALID:
         throw new ForbiddenError(error.message);
       default:
-        throw new InternalServerError(error.message);
+        throw new CustomException(error.message, error.code);
     }
   }
   throw error;
