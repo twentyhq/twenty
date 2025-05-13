@@ -45,7 +45,7 @@ export type WorkflowEditActionFormBuilderProps = {
 };
 
 type StyledFieldContainerProps = {
-  hasDisable: boolean;
+  isReadOnly: boolean;
 };
 
 type FormData = WorkflowFormActionField[];
@@ -100,7 +100,7 @@ const StyledFieldContainer = styled.div<StyledFieldContainerProps>`
   padding-inline: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 
-  cursor: ${({ hasDisable }) => (hasDisable ? 'default' : 'pointer')};
+  cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
 
   &:hover,
   &[data-open='true'] {
@@ -286,7 +286,7 @@ export const WorkflowEditActionFormBuilder = ({
                               }}
                             >
                               <StyledFieldContainer
-                                hasDisable={actionOptions.readonly ?? false}
+                                isReadOnly={actionOptions.readonly ?? false}
                               >
                                 <StyledPlaceholder>
                                   {isDefined(field.placeholder) &&
@@ -379,7 +379,7 @@ export const WorkflowEditActionFormBuilder = ({
                     setSelectedField(newField.id);
                   }}
                 >
-                  <StyledFieldContainer hasDisable={false}>
+                  <StyledFieldContainer isReadOnly={false}>
                     <StyledAddFieldButtonContentContainer>
                       <IconPlus size={theme.icon.size.sm} />
                       {t`Add Field`}
