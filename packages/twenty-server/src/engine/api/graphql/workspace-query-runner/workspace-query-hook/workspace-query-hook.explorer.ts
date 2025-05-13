@@ -175,10 +175,17 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
 
       return contextInstance[methodName].call(
         contextInstance,
-        ...transformedPayload,
+        executeParams[0],
+        executeParams[1],
+        transformedPayload,
       );
     } else {
-      return instance[methodName].call(instance, ...transformedPayload);
+      return instance[methodName].call(
+        instance,
+        executeParams[0],
+        executeParams[1],
+        transformedPayload,
+      );
     }
   }
 
