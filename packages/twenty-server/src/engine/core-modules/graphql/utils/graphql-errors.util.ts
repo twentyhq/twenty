@@ -114,8 +114,8 @@ export class AuthenticationError extends BaseGraphQLError {
 }
 
 export class ForbiddenError extends BaseGraphQLError {
-  constructor(message: string) {
-    super(message, ErrorCode.FORBIDDEN);
+  constructor(message: string, extensions?: Record<string, any>) {
+    super(message, ErrorCode.FORBIDDEN, extensions);
 
     Object.defineProperty(this, 'name', { value: 'ForbiddenError' });
   }

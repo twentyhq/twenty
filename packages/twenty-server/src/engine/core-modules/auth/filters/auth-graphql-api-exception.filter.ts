@@ -22,7 +22,7 @@ export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
       case AuthExceptionCode.FORBIDDEN_EXCEPTION:
         throw new ForbiddenError(exception.message);
       case AuthExceptionCode.EMAIL_NOT_VERIFIED:
-        throw new AuthenticationError(exception.message, {
+        throw new ForbiddenError(exception.message, {
           subCode: AuthExceptionCode.EMAIL_NOT_VERIFIED,
         });
       case AuthExceptionCode.UNAUTHENTICATED:
