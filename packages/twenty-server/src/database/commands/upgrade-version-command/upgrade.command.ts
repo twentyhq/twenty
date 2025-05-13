@@ -117,10 +117,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_053: VersionCommands = {
-      beforeSyncMetadata: [
-        this.removeRelationForeignKeyFieldMetadataCommand,
-        this.fixStandardSelectFieldsPositionCommand,
-      ],
+      beforeSyncMetadata: [this.removeRelationForeignKeyFieldMetadataCommand],
       afterSyncMetadata: [
         this.migrateWorkflowEventListenersToAutomatedTriggersCommand,
         this.backfillWorkflowNextStepIdsCommand,
