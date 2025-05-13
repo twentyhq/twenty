@@ -8,16 +8,20 @@ import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-build
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
 import { SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record-dto';
-import {
-  SearchException,
-  SearchExceptionCode,
-} from 'src/engine/core-modules/search/exceptions/search.exception';
 import { SearchApiExceptionFilter } from 'src/engine/core-modules/search/filters/search-api-exception.filter';
 import { SearchService } from 'src/engine/core-modules/search/services/search.service';
 import { RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import {
+  WorkspaceMetadataCacheException,
+  WorkspaceMetadataCacheExceptionCode,
+} from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
+import {
+  WorkspaceMetadataVersionException,
+  WorkspaceMetadataVersionExceptionCode,
+} from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -49,9 +53,9 @@ export class SearchResolver {
       await this.workspaceCacheStorageService.getMetadataVersion(workspace.id);
 
     if (currentCacheVersion === undefined) {
-      throw new SearchException(
-        'Metadata cache version not found',
-        SearchExceptionCode.METADATA_CACHE_VERSION_NOT_FOUND,
+      throw new WorkspaceMetadataVersionException(
+        `Metadata version not found for workspace ${workspace.id}`,
+        WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
       );
     }
 
@@ -62,9 +66,9 @@ export class SearchResolver {
       );
 
     if (!objectMetadataMaps) {
-      throw new SearchException(
+      throw new WorkspaceMetadataCacheException(
         `Object metadata map not found for workspace ${workspace.id} and metadata version ${currentCacheVersion}`,
-        SearchExceptionCode.OBJECT_METADATA_MAP_NOT_FOUND,
+        WorkspaceMetadataCacheExceptionCode.OBJECT_METADATA_MAP_NOT_FOUND,
       );
     }
 

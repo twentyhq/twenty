@@ -24,9 +24,17 @@ import {
   RelationMetadataException,
   RelationMetadataExceptionCode,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.exception';
-import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata-name.exception';
+import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import {
+  WorkspaceMetadataCacheException,
+  WorkspaceMetadataCacheExceptionCode,
+} from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
+import {
+  WorkspaceMetadataVersionException,
+  WorkspaceMetadataVersionExceptionCode,
+} from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
@@ -81,7 +89,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       validateMetadataNameOrThrow(relationMetadataInput.fromName);
       validateMetadataNameOrThrow(relationMetadataInput.toName);
     } catch (error) {
-      if (error instanceof InvalidMetadataNameException)
+      if (error instanceof InvalidMetadataException)
         throw new RelationMetadataException(
           error.message,
           RelationMetadataExceptionCode.INVALID_RELATION_INPUT,
@@ -538,8 +546,9 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
 
     if (!isDefined(metadataVersion)) {
-      throw new NotFoundException(
+      throw new WorkspaceMetadataVersionException(
         `Metadata version not found for workspace ${workspaceId}`,
+        WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
       );
     }
 
@@ -550,8 +559,9 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       );
 
     if (!objectMetadataMaps) {
-      throw new NotFoundException(
+      throw new WorkspaceMetadataCacheException(
         `Object metadata map not found for workspace ${workspaceId} and metadata version ${metadataVersion}`,
+        WorkspaceMetadataCacheExceptionCode.OBJECT_METADATA_MAP_NOT_FOUND,
       );
     }
 
