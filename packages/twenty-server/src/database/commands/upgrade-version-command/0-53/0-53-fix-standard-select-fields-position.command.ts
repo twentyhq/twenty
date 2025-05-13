@@ -11,10 +11,13 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import {
+  CALENDAR_CHANNEL_STANDARD_FIELD_IDS,
   MESSAGE_CHANNEL_STANDARD_FIELD_IDS,
   TASK_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { CalendarChannelSyncStatus } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Command({
@@ -28,6 +31,7 @@ export class FixStandardSelectFieldsPositionCommand extends ActiveOrSuspendedWor
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -45,6 +49,18 @@ export class FixStandardSelectFieldsPositionCommand extends ActiveOrSuspendedWor
     await this.overrideMessageChannelSyncStatusFieldMetadataPosition({
       workspaceId,
     });
+    await this.overrideCalendarChannelSyncStatusFieldMetadataPosition({
+      workspaceId,
+    });
+
+    const workspaceCachedMetadataVersion =
+      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
+
+    // Changing the metadata requires the Redis cache to be flushed.
+    await this.workspaceCacheStorageService.flush(
+      workspaceId,
+      workspaceCachedMetadataVersion,
+    );
   }
 
   private async overrideTaskStatusFieldMetadataPosition({
@@ -134,6 +150,63 @@ export class FixStandardSelectFieldsPositionCommand extends ActiveOrSuspendedWor
       },
       {
         options: messageChannelSyncStatusFieldMetadata.options.map(
+          (option: FieldMetadataComplexOption) => {
+            const expectedPosition =
+              expectedPositionPerSyncStatus[option.value];
+
+            if (expectedPosition === undefined) {
+              throw new Error(
+                `Expected a position to be defined for the sync status: ${option.value}`,
+              );
+            }
+
+            return {
+              ...option,
+              position: expectedPosition,
+            };
+          },
+        ),
+      },
+    );
+  }
+
+  private async overrideCalendarChannelSyncStatusFieldMetadataPosition({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }) {
+    const calendarChannelSyncStatusFieldMetadata =
+      await this.fieldMetadataRepository.findOne({
+        where: {
+          workspaceId,
+          standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
+        },
+      });
+
+    if (!calendarChannelSyncStatusFieldMetadata) {
+      throw new Error(
+        `Message channel sync status field metadata not found for workspace ${workspaceId}`,
+      );
+    }
+
+    const expectedPositionPerSyncStatus: Record<
+      CalendarChannelSyncStatus,
+      number
+    > = {
+      [CalendarChannelSyncStatus.ONGOING]: 0,
+      [CalendarChannelSyncStatus.NOT_SYNCED]: 1,
+      [CalendarChannelSyncStatus.ACTIVE]: 2,
+      [CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS]: 3,
+      [CalendarChannelSyncStatus.FAILED_UNKNOWN]: 4,
+    };
+
+    await this.fieldMetadataRepository.update(
+      {
+        workspaceId,
+        standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
+      },
+      {
+        options: calendarChannelSyncStatusFieldMetadata.options.map(
           (option: FieldMetadataComplexOption) => {
             const expectedPosition =
               expectedPositionPerSyncStatus[option.value];
