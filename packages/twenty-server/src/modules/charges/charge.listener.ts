@@ -39,6 +39,12 @@ export class ChargeEventListener {
         'charge',
       );
 
+    const attachmentRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<any>(
+        workspaceId,
+        'attachment',
+      );
+
     const charges = await Promise.all(
       events.map((event) =>
         chargeRepository.findOne({
@@ -59,12 +65,14 @@ export class ChargeEventListener {
         const person = charge.person;
         const company = charge.company;
         const { chargeAction, id, price } = charge;
-        const dataVencimento = '2025-10-21'; //temporario (campo em definição)
+        const dataVencimento = '2025-10-21'; //temporario
 
         if (!person || !company) {
           this.logger.warn(
             `Charge ${id} não possui relação com person ou company. Ignorando.`,
           );
+
+          charge.chargeAction = 'none';
 
           return;
         }
@@ -74,7 +82,7 @@ export class ChargeEventListener {
             typeof person.phones === 'string'
               ? person.phones
               : person.phones.primaryPhoneNumber || '',
-          cpfCnpj: charge.taxId,
+          cpfCnpj: charge.taxId.replace(/\D/g, ''),
           tipoPessoa:
             charge.entityType === 'individual' ? 'FISICA' : 'JURIDICA',
           nome:
@@ -98,7 +106,7 @@ export class ChargeEventListener {
           endereco:
             typeof company.address === 'string'
               ? company.address
-              : company.address?.addressStreet1 || '',
+              : company.address?.addressStreet1 || 'Rua ...',
           bairro:
             typeof company.address === 'string'
               ? company.address
@@ -118,37 +126,42 @@ export class ChargeEventListener {
                 `Emitindo cobrança para charge ${id.slice(0, 11)}`,
               );
 
-              const response = await this.interApiService.issueCharge(
-                workspaceId,
-                {
-                  seuNumero: id.slice(0, 11),
-                  valorNominal: price,
-                  dataVencimento,
-                  numDiasAgenda: 60,
-                  pagador: { ...cliente },
-                  mensagem: { linha1: '-' },
-                },
-              );
+              const response =
+                await this.interApiService.issueChargeAndStoreAttachment(
+                  workspaceId,
+                  attachmentRepository,
+                  {
+                    id: charge.id,
+                    authorId: charge.person?.createdBy.workspaceMemberId ?? '',
+                    seuNumero: id.slice(0, 8),
+                    valorNominal: price,
+                    dataVencimento,
+                    numDiasAgenda: 60,
+                    pagador: { ...cliente },
+                    mensagem: { linha1: '-' },
+                  },
+                );
 
               charge.requestCode = response.codigoSolicitacao;
-              this.logger.log(
-                `Cobrança emitida com sucesso para charge ${id}. Código: ${response.codigoSolicitacao}`,
-              );
 
+              this.logger.log(
+                `Cobrança emitida e attachment salvo para charge ${id}. Código: ${response.codigoSolicitacao}`,
+              );
               break;
 
             case 'cancel':
               this.logger.log(`Cancelando cobrança para charge ${id}`);
+
               await this.interApiService.cancelCharge(
                 workspaceId,
                 charge.requestCode || id,
                 'Cancelamento manual',
               );
               charge.requestCode = '';
+              charge.chargeAction = 'cancel';
               this.logger.log(
                 `Cobrança cancelada com sucesso para charge ${id}`,
               );
-
               break;
 
             case 'none':
@@ -162,6 +175,8 @@ export class ChargeEventListener {
               break;
           }
         } catch (error) {
+          charge.chargeAction = 'none';
+          charge.requestCode = '';
           this.logger.error(
             `Erro processando charge ${id}: ${error.message}`,
             error.stack,

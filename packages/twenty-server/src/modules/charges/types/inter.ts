@@ -21,6 +21,8 @@ export interface ChargeMessage {
 }
 
 export interface ChargeData {
+  id: string;
+  authorId: string;
   seuNumero: string;
   valorNominal: number;
   dataVencimento: string;
