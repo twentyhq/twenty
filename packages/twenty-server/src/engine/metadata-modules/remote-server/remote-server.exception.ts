@@ -1,10 +1,9 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class RemoteServerException extends CustomException {
-  code: RemoteServerExceptionCode;
+  declare code: RemoteServerExceptionCode;
   constructor(message: string, code: RemoteServerExceptionCode) {
     super(message, code);
-    this.code = code;
   }
 }
 

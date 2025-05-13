@@ -1,10 +1,9 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class GraphqlQueryRunnerException extends CustomException {
-  code: GraphqlQueryRunnerExceptionCode;
+  declare code: GraphqlQueryRunnerExceptionCode;
   constructor(message: string, code: GraphqlQueryRunnerExceptionCode) {
     super(message, code);
-    this.code = code;
   }
 }
 

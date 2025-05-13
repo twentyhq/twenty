@@ -1,10 +1,9 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class ServerlessFunctionException extends CustomException {
-  code: ServerlessFunctionExceptionCode;
+  declare code: ServerlessFunctionExceptionCode;
   constructor(message: string, code: ServerlessFunctionExceptionCode) {
     super(message, code);
-    this.code = code;
   }
 }
 

@@ -1,10 +1,9 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class EmailVerificationException extends CustomException {
-  code: EmailVerificationExceptionCode;
+  declare code: EmailVerificationExceptionCode;
   constructor(message: string, code: EmailVerificationExceptionCode) {
     super(message, code);
-    this.code = code;
   }
 }
 

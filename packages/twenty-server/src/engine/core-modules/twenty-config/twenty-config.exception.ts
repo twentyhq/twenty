@@ -1,10 +1,9 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class ConfigVariableException extends CustomException {
-  code: ConfigVariableExceptionCode;
+  declare code: ConfigVariableExceptionCode;
   constructor(message: string, code: ConfigVariableExceptionCode) {
     super(message, code);
-    this.code = code;
   }
 }
 

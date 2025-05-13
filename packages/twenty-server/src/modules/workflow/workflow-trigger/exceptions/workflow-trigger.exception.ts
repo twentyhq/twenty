@@ -1,10 +1,9 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class WorkflowTriggerException extends CustomException {
-  code: WorkflowTriggerExceptionCode;
+  declare code: WorkflowTriggerExceptionCode;
   constructor(message: string, code: WorkflowTriggerExceptionCode) {
     super(message, code);
-    this.code = code;
   }
 }
 

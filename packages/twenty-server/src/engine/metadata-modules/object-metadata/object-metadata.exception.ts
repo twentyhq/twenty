@@ -1,10 +1,9 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class ObjectMetadataException extends CustomException {
-  code: ObjectMetadataExceptionCode;
+  declare code: ObjectMetadataExceptionCode;
   constructor(message: string, code: ObjectMetadataExceptionCode) {
     super(message, code);
-    this.code = code;
   }
 }
 

@@ -1,10 +1,9 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class SearchException extends CustomException {
-  code: SearchExceptionCode;
+  declare code: SearchExceptionCode;
   constructor(message: string, code: SearchExceptionCode) {
     super(message, code);
-    this.code = code;
   }
 }
 
