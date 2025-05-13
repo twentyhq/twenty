@@ -50,6 +50,7 @@ export class ExceptionHandlerSentryDriver
         }
 
         if (exception instanceof CustomException) {
+          scope.setTag('customExceptionCode', exception.code);
           scope.setFingerprint([exception.code]);
         }
 
