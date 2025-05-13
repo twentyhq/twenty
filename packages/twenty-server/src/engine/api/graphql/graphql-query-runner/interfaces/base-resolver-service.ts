@@ -138,7 +138,6 @@ export abstract class GraphqlQueryBaseResolverService<
         objectMetadataItemWithFieldMaps.fieldsByName,
         objectMetadataItemWithFieldMaps.fieldsByJoinColumnName,
         options.objectMetadataMaps,
-        featureFlagsMap,
       );
 
       const selectedFields = graphqlFields(options.info);
@@ -170,7 +169,6 @@ export abstract class GraphqlQueryBaseResolverService<
         objectMetadataItemWithFieldMaps,
         authContext.workspace.id,
         options.objectMetadataMaps,
-        featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
       );
 
       const resultWithGettersArray = Array.isArray(resultWithGetters)
