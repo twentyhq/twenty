@@ -66,6 +66,7 @@ export type DateFilter = {
 
 export type CurrencyFilter = {
   amountMicros?: FloatFilter;
+  currencyCode?: SelectFilter;
 };
 
 export type URLFilter = {

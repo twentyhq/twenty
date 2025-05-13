@@ -12,40 +12,50 @@ import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
 type MapFieldMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];
-  field: Pick<FieldMetadataItem, 'name' | 'type' | 'relationDefinition'>;
+  gqlField: string;
+  fieldMetadata: Pick<
+    FieldMetadataItem,
+    'name' | 'type' | 'relationDefinition' | 'settings'
+  >;
   relationRecordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
 };
 // TODO: change ObjectMetadataItems mock before refactoring with relationDefinition computed field
 export const mapFieldMetadataToGraphQLQuery = ({
   objectMetadataItems,
-  field,
+  gqlField,
+  fieldMetadata,
   relationRecordGqlFields,
   computeReferences = false,
 }: MapFieldMetadataToGraphQLQueryArgs): string => {
-  const fieldType = field.type;
+  const fieldType = fieldMetadata.type;
 
   const fieldIsNonCompositeField = isNonCompositeField(fieldType);
 
   if (fieldIsNonCompositeField) {
-    return field.name;
+    return gqlField;
   }
 
   if (
     fieldType === FieldMetadataType.RELATION &&
-    field.relationDefinition?.direction === RelationDefinitionType.MANY_TO_ONE
+    fieldMetadata.relationDefinition?.direction ===
+      RelationDefinitionType.MANY_TO_ONE
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
         objectMetadataItem.id ===
-        field.relationDefinition?.targetObjectMetadata.id,
+        fieldMetadata.relationDefinition?.targetObjectMetadata.id,
     );
 
     if (isUndefined(relationMetadataItem)) {
       return '';
     }
 
-    return `${field.name}
+    if (gqlField === fieldMetadata.settings?.joinColumnName) {
+      return `${gqlField}`;
+    }
+
+    return `${gqlField}
 ${mapObjectMetadataToGraphQLQuery({
   objectMetadataItems,
   objectMetadataItem: relationMetadataItem,
@@ -57,19 +67,20 @@ ${mapObjectMetadataToGraphQLQuery({
 
   if (
     fieldType === FieldMetadataType.RELATION &&
-    field.relationDefinition?.direction === RelationDefinitionType.ONE_TO_MANY
+    fieldMetadata.relationDefinition?.direction ===
+      RelationDefinitionType.ONE_TO_MANY
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
         objectMetadataItem.id ===
-        field.relationDefinition?.targetObjectMetadata.id,
+        fieldMetadata.relationDefinition?.targetObjectMetadata.id,
     );
 
     if (isUndefined(relationMetadataItem)) {
       return '';
     }
 
-    return `${field.name}
+    return `${gqlField}
 {
   edges {
     node ${mapObjectMetadataToGraphQLQuery({
@@ -84,7 +95,7 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.LINKS) {
-    return `${field.name}
+    return `${gqlField}
 {
   primaryLinkUrl
   primaryLinkLabel
@@ -93,7 +104,7 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.CURRENCY) {
-    return `${field.name}
+    return `${gqlField}
 {
   amountMicros
   currencyCode
@@ -102,7 +113,7 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.FULL_NAME) {
-    return `${field.name}
+    return `${gqlField}
 {
   firstName
   lastName
@@ -110,7 +121,7 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.ADDRESS) {
-    return `${field.name}
+    return `${gqlField}
 {
   addressStreet1
   addressStreet2
@@ -124,7 +135,7 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.ACTOR) {
-    return `${field.name}
+    return `${gqlField}
 {
     source
     workspaceMemberId
@@ -134,7 +145,7 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.EMAILS) {
-    return `${field.name}
+    return `${gqlField}
 {
   primaryEmail
   additionalEmails
@@ -142,7 +153,7 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.PHONES) {
-    return `${field.name}
+    return `${gqlField}
     {
       primaryPhoneNumber
       primaryPhoneCountryCode
@@ -152,7 +163,7 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.RICH_TEXT_V2) {
-    return `${field.name}
+    return `${gqlField}
 {
   blocknote
   markdown

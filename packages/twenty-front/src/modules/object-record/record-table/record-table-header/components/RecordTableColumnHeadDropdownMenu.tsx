@@ -3,7 +3,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
-import { onToggleColumnFilterComponentState } from '@/object-record/record-table/states/onToggleColumnFilterComponentState';
+import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
@@ -76,9 +76,6 @@ export const RecordTableColumnHeadDropdownMenu = ({
     handleColumnVisibilityChange(column);
   };
 
-  const onToggleColumnFilter = useRecoilComponentValueV2(
-    onToggleColumnFilterComponentState,
-  );
   const onToggleColumnSort = useRecoilComponentValueV2(
     onToggleColumnSortComponentState,
   );
@@ -89,10 +86,13 @@ export const RecordTableColumnHeadDropdownMenu = ({
     onToggleColumnSort?.(column.fieldMetadataId);
   };
 
+  const { openRecordFilterChipFromTableHeader } =
+    useOpenRecordFilterChipFromTableHeader();
+
   const handleFilterClick = () => {
     closeDropdownAndToggleScroll();
 
-    onToggleColumnFilter?.(column.fieldMetadataId);
+    openRecordFilterChipFromTableHeader(column.fieldMetadataId);
   };
 
   const isSortable = column.isSortable === true;

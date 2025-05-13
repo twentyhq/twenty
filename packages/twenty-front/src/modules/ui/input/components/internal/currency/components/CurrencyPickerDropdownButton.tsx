@@ -7,8 +7,10 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { CurrencyPickerHotkeyScope } from '../types/CurrencyPickerHotkeyScope';
 
-import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
+import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
+import { Currency } from '@/ui/input/components/internal/types/Currency';
 import { IconChevronDown } from 'twenty-ui/display';
+import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
 
 const StyledDropdownButtonContainer = styled.div`
   align-items: center;
@@ -41,20 +43,12 @@ const StyledIconContainer = styled.div`
   }
 `;
 
-export type Currency = {
-  label: string;
-  value: string;
-  Icon: any;
-};
-
 export const CurrencyPickerDropdownButton = ({
-  valueCode,
+  selectedCurrencyCode,
   onChange,
-  currencies,
 }: {
-  valueCode: string;
+  selectedCurrencyCode: string;
   onChange: (currency: Currency) => void;
-  currencies: Currency[];
 }) => {
   const theme = useTheme();
 
@@ -67,7 +61,9 @@ export const CurrencyPickerDropdownButton = ({
     closeDropdown();
   };
 
-  const currency = currencies.find(({ value }) => value === valueCode);
+  const currency = CURRENCIES.find(
+    ({ value }) => value === selectedCurrencyCode,
+  );
 
   const currencyCode = currency?.value ?? CurrencyCode.USD;
 
@@ -85,7 +81,6 @@ export const CurrencyPickerDropdownButton = ({
       }
       dropdownComponents={
         <CurrencyPickerDropdownSelect
-          currencies={currencies}
           selectedCurrency={currency}
           onChange={handleChange}
         />

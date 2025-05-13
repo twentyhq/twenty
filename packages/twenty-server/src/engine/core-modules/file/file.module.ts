@@ -6,7 +6,6 @@ import { FileWorkspaceFolderDeletionJob } from 'src/engine/core-modules/file/job
 import { FileAttachmentListener } from 'src/engine/core-modules/file/listeners/file-attachment.listener';
 import { FileWorkspaceMemberListener } from 'src/engine/core-modules/file/listeners/file-workspace-member.listener';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { FileController } from './controllers/file.controller';
 import { FileService } from './services/file.service';
@@ -15,7 +14,6 @@ import { FileService } from './services/file.service';
   imports: [JwtModule],
   providers: [
     FileService,
-    TwentyConfigService,
     FilePathGuard,
     FileAttachmentListener,
     FileWorkspaceMemberListener,

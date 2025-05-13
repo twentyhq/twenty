@@ -11,6 +11,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
+import { useSelectableListListenToEnterHotkeyOnItem } from '@/ui/layout/selectable-list/hooks/useSelectableListListenToEnterHotkeyOnItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
@@ -22,7 +23,6 @@ import {
   LightIconButton,
 } from 'twenty-ui/input';
 import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
-
 export type IconPickerProps = {
   disabled?: boolean;
   dropdownId?: string;
@@ -68,6 +68,12 @@ const IconPickerIcon = ({
     selectedItemIdComponentState,
     iconKey,
   );
+
+  useSelectableListListenToEnterHotkeyOnItem({
+    hotkeyScope: IconPickerHotkeyScope.IconPicker,
+    itemId: iconKey,
+    onEnter: onClick,
+  });
 
   return (
     <StyledLightIconButton
@@ -179,10 +185,6 @@ export const IconPicker = ({
             selectableListInstanceId="icon-list"
             selectableItemIdMatrix={iconKeys2d}
             hotkeyScope={IconPickerHotkeyScope.IconPicker}
-            onEnter={(iconKey) => {
-              onChange({ iconKey, Icon: getIcon(iconKey) });
-              closeDropdown();
-            }}
           >
             <DropdownMenu width={176}>
               <DropdownMenuSearchInput

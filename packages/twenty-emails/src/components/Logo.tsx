@@ -7,7 +7,7 @@ const logoStyle = {
 export const Logo = () => {
   return (
     <Img
-      src="icons/windows11/Woulz-logo.png"
+      src="images/icons/windows11/Woulz-logo.png"
       alt="Woulz logo"
       width="40"
       height="40"

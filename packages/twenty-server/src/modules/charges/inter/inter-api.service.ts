@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import fs from 'fs';
+import { randomUUID } from 'crypto';
 import https from 'https';
-import path from 'path';
 import { URLSearchParams } from 'url';
 
 import axios, { AxiosResponse } from 'axios';
 import { Repository } from 'typeorm';
 
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ChargeData, ChargeResponse } from 'src/modules/charges/types/inter';
@@ -31,6 +31,7 @@ export class InterApiService {
     private interIntegrationRepository: Repository<InterIntegration>,
     @InjectRepository(Workspace, 'core')
     private workspaceRepository: Repository<Workspace>,
+    private readonly fileStorageService: FileStorageService,
   ) {}
 
   private formatCertificate(input: string): string {
@@ -262,7 +263,7 @@ export class InterApiService {
     this.logger.log(
       `Iniciando emissão de charge para workspace ${workspaceId}`,
     );
-    this.logger.debug('Dados da charge:', JSON.stringify(data, null, 2));
+    this.logger.log('Dados da charge:', data);
 
     const integration = await this.getIntegration(workspaceId);
     const token = await this.getAccessToken(workspaceId, this.SCOPES.WRITE);
@@ -291,42 +292,34 @@ export class InterApiService {
       );
 
       const requestCode = response?.data?.codigoSolicitacao || '';
-
       const pdfBuffer = await this.getChargePdf(workspaceId, requestCode);
 
-      const filename = `${data.seuNumero}_boleto.pdf`;
-      const attachmentDir = path.join(__dirname, '..', 'attachments');
+      const filename = `${randomUUID()}_boleto.pdf`;
+      const folder = 'attachment';
 
-      if (!fs.existsSync(attachmentDir)) {
-        fs.mkdirSync(attachmentDir, { recursive: true });
-      }
-
-      const filepath = path.join(attachmentDir, filename);
-
-      fs.writeFileSync(filepath, Buffer.from(pdfBuffer));
+      // ✅ Salva o arquivo no storage
+      await this.fileStorageService.write({
+        file: Buffer.from(pdfBuffer),
+        name: filename,
+        folder,
+        mimeType: 'application/pdf',
+      });
 
       await attachmentRepository.save({
         name: filename,
-        fullPath: filepath,
+        fullPath: `${folder}/${filename}`, // <--- caminho relativo para acesso posterior
         type: 'TextDocument',
         authorId: data.authorId,
         chargeId: data.id,
       });
 
-      this.logger.log(`Attachment saved successfully: ${filename}`);
+      this.logger.log(`Attachment salvo com sucesso: ${folder}/${filename}`);
 
       return response.data;
     } catch (error) {
-      this.logger.error('Erro detalhado na emissão da charge:', {
+      this.logger.error('Erro na emissão da cobrança e armazenamento do PDF:', {
         message: error.message,
         stack: error.stack,
-        response: error.response?.data,
-        config: {
-          url: error.config?.url,
-          method: error.config?.method,
-          headers: error.config?.headers,
-          data: error.config?.data,
-        },
       });
       throw error;
     }

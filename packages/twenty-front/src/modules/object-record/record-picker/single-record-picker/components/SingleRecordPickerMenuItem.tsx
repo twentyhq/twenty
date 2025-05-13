@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
@@ -16,7 +16,7 @@ type SingleRecordPickerMenuItemProps = {
   selectedRecord?: SingleRecordPickerRecord;
 };
 
-const StyledSelectableItem = styled(SelectableItem)`
+const StyledSelectableItem = styled(SelectableListItem)`
   width: 100%;
 `;
 
@@ -40,14 +40,19 @@ export const SingleRecordPickerMenuItem = ({
   );
 
   return (
-    <StyledSelectableItem itemId={record.id} key={record.id}>
+    <StyledSelectableItem
+      itemId={record.id}
+      key={record.id}
+      onEnter={() => {
+        onRecordSelected(record);
+      }}
+    >
       <MenuItemSelectAvatar
-        key={record.id}
         testId="menu-item"
         onClick={() => onRecordSelected(record)}
         text={record.name}
         selected={selectedRecord?.id === record.id}
-        hovered={isSelectedItemId}
+        focused={isSelectedItemId}
         avatar={
           <Avatar
             avatarUrl={record.avatarUrl}

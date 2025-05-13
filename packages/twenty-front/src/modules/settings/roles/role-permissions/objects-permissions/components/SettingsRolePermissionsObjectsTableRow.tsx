@@ -50,10 +50,10 @@ export const SettingsRolePermissionsObjectsTableRow = ({
 }: SettingsRolePermissionsObjectsTableRowProps) => {
   const theme = useTheme();
 
-  const isOverriddenBy = permission.overriddenBy;
-  const isOverridden = isOverriddenBy && isOverriddenBy > 0;
+  const revokedBy = permission.revokedBy;
+  const isRevoked = revokedBy && revokedBy > 0;
   const label = permission.label;
-  const pluralizedObject = pluralize('object', isOverriddenBy);
+  const pluralizedObject = pluralize('object', revokedBy);
 
   const { Icon } = SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[permission.key];
 
@@ -62,9 +62,9 @@ export const SettingsRolePermissionsObjectsTableRow = ({
       <StyledPermissionCell>
         <Icon size={theme.icon.size.sm} />
         <StyledLabel>{label}</StyledLabel>
-        {isOverridden ? (
+        {isRevoked ? (
           <StyledOverrideInfo>
-            {t`Overridden on ${isOverriddenBy} ${pluralizedObject}`}
+            {t`Revoked on ${revokedBy} ${pluralizedObject}`}
           </StyledOverrideInfo>
         ) : null}
       </StyledPermissionCell>
@@ -73,7 +73,7 @@ export const SettingsRolePermissionsObjectsTableRow = ({
           checked={permission.value ?? false}
           onChange={() => permission.setValue(!permission.value)}
           disabled={!isEditable}
-          accent={isOverridden ? CheckboxAccent.Orange : CheckboxAccent.Blue}
+          accent={isRevoked ? CheckboxAccent.Orange : CheckboxAccent.Blue}
         />
       </StyledCheckboxCell>
     </StyledTableRow>

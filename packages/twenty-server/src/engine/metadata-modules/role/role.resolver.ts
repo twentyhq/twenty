@@ -17,7 +17,7 @@ import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
-import { UpsertObjectPermissionInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permission-input';
+import { UpsertObjectPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
@@ -147,21 +147,18 @@ export class RoleResolver {
     return deletedRoleId;
   }
 
-  @Mutation(() => ObjectPermissionDTO)
-  async upsertOneObjectPermission(
+  @Mutation(() => [ObjectPermissionDTO])
+  async upsertObjectPermissions(
     @AuthWorkspace() workspace: Workspace,
-    @Args('upsertObjectPermissionInput')
-    upsertObjectPermissionInput: UpsertObjectPermissionInput,
-  ) {
+    @Args('upsertObjectPermissionsInput')
+    upsertObjectPermissionsInput: UpsertObjectPermissionsInput,
+  ): Promise<ObjectPermissionDTO[]> {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
 
-    const objectPermission =
-      await this.objectPermissionService.upsertObjectPermission({
-        workspaceId: workspace.id,
-        input: upsertObjectPermissionInput,
-      });
-
-    return objectPermission;
+    return this.objectPermissionService.upsertObjectPermissions({
+      workspaceId: workspace.id,
+      input: upsertObjectPermissionsInput,
+    });
   }
 
   @Mutation(() => [SettingPermissionDTO])
@@ -169,7 +166,7 @@ export class RoleResolver {
     @AuthWorkspace() workspace: Workspace,
     @Args('upsertSettingPermissionsInput')
     upsertSettingPermissionsInput: UpsertSettingPermissionsInput,
-  ) {
+  ): Promise<SettingPermissionDTO[]> {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
 
     return this.settingPermissionService.upsertSettingPermissions({

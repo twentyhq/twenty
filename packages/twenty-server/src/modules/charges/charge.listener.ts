@@ -6,6 +6,10 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import {
+  FlattenedCompany,
+  FlattenedPerson,
+} from 'src/modules/charges/types/inter';
 
 import { InterApiService } from './inter/inter-api.service';
 import { ChargeWorkspaceEntity } from './standard-objects/charge.workspace-entity';
@@ -62,8 +66,9 @@ export class ChargeEventListener {
           return;
         }
 
-        const person = charge.person;
-        const company = charge.company;
+        const person = charge.person as FlattenedPerson;
+        const company = charge.company as FlattenedCompany;
+
         const { chargeAction, id, price } = charge;
         const dataVencimento = '2025-10-21'; //temporario
 
@@ -77,47 +82,29 @@ export class ChargeEventListener {
           return;
         }
 
+        this.logger.log('person', company);
+
         const cliente = {
-          telefone:
-            typeof person.phones === 'string'
-              ? person.phones
-              : person.phones.primaryPhoneNumber || '',
+          telefone: person.phonesPrimaryPhoneNumber || '',
           cpfCnpj: charge.taxId.replace(/\D/g, ''),
           tipoPessoa:
             charge.entityType === 'individual' ? 'FISICA' : 'JURIDICA',
-          nome:
-            typeof person.name === 'string'
-              ? person.name
-              : person.name?.firstName || '',
-          cidade:
-            typeof person.city === 'string' ? person.city : person.city || '',
-          uf:
-            typeof company.address === 'string'
-              ? company.address
-              : company.address?.addressState || 'SP',
-          cep:
-            typeof company.address === 'string'
-              ? company.address
-              : company.address?.addressZipCode || '18103418',
-          ddd:
-            typeof person.phones === 'string'
-              ? person.phones
-              : person.phones.primaryPhoneCallingCode?.replace(/^\+/, '') || '',
-          endereco:
-            typeof company.address === 'string'
-              ? company.address
-              : company.address?.addressStreet1 || 'Rua ...',
-          bairro:
-            typeof company.address === 'string'
-              ? company.address
-              : company.address?.addressStreet2 || '',
-          email:
-            typeof person.emails === 'string'
-              ? person.emails
-              : person.emails?.primaryEmail || '',
+          nome: person.nameFirstName || '',
+          cidade: person.city || '',
+          uf: company.addressAddressState || 'SP',
+          cep: company.addressAddressPostcode || '18103418',
+          ddd: person.phonesPrimaryPhoneCallingCode?.replace(/^\+/, '') || '',
+          endereco: company.addressAddressStreet1 || 'Rua ...',
+          bairro: company.addressAddressStreet2 || '',
+          email: person.emailsPrimaryEmail || '',
           complemento: '-',
           numero: '-',
         };
+
+        const authorId =
+          person.createdByWorkspaceMemberId ||
+          company.createdByWorkspaceMemberId ||
+          '';
 
         try {
           switch (chargeAction) {
@@ -132,7 +119,7 @@ export class ChargeEventListener {
                   attachmentRepository,
                   {
                     id: charge.id,
-                    authorId: charge.person?.createdBy.workspaceMemberId ?? '',
+                    authorId,
                     seuNumero: id.slice(0, 8),
                     valorNominal: price,
                     dataVencimento,

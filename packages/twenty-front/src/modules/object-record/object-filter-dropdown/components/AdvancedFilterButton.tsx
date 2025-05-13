@@ -1,20 +1,17 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
-import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
-import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
+import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
@@ -85,6 +82,9 @@ export const AdvancedFilterButton = () => {
   const { setRecordFilterUsedInAdvancedFilterDropdownRow } =
     useSetRecordFilterUsedInAdvancedFilterDropdownRow();
 
+  const { createEmptyRecordFilterFromFieldMetadataItem } =
+    useCreateEmptyRecordFilterFromFieldMetadataItem();
+
   const handleClick = () => {
     if (!isDefined(currentView)) {
       throw new Error('Missing current view id');
@@ -96,13 +96,10 @@ export const AdvancedFilterButton = () => {
       const newRecordFilterGroup = {
         id: v4(),
         viewId: currentView.id,
-        logicalOperator: ViewFilterGroupLogicalOperator.AND,
+        logicalOperator: RecordFilterGroupLogicalOperator.AND,
       };
 
-      upsertRecordFilterGroup({
-        id: newRecordFilterGroup.id,
-        logicalOperator: RecordFilterGroupLogicalOperator.AND,
-      });
+      upsertRecordFilterGroup(newRecordFilterGroup);
 
       const defaultFieldMetadataItem =
         availableFieldMetadataItemsForFilter.find(
@@ -115,25 +112,11 @@ export const AdvancedFilterButton = () => {
         throw new Error('Missing default filter definition');
       }
 
-      const filterType = getFilterTypeFromFieldType(
-        defaultFieldMetadataItem.type,
+      const { newRecordFilter } = createEmptyRecordFilterFromFieldMetadataItem(
+        defaultFieldMetadataItem,
       );
 
-      const firstOperand = getRecordFilterOperands({
-        filterType,
-      })[0];
-
-      const newRecordFilter: RecordFilter = {
-        id: v4(),
-        fieldMetadataId: defaultFieldMetadataItem.id,
-        operand: firstOperand,
-        value: '',
-        displayValue: '',
-        recordFilterGroupId: newRecordFilterGroup.id,
-        type: getFilterTypeFromFieldType(defaultFieldMetadataItem.type),
-        label: defaultFieldMetadataItem.label,
-        positionInRecordFilterGroup: 1,
-      };
+      newRecordFilter.recordFilterGroupId = newRecordFilterGroup.id;
 
       upsertRecordFilter(newRecordFilter);
 

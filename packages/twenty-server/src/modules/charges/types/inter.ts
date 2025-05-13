@@ -34,3 +34,24 @@ export interface ChargeData {
 export interface ChargeResponse {
   codigoSolicitacao: string;
 }
+
+export interface FlattenedPerson {
+  phonesPrimaryPhoneNumber?: string;
+  phonesPrimaryPhoneCallingCode?: string;
+  emailsPrimaryEmail?: string;
+  nameFirstName?: string;
+  nameLastName?: string;
+  city?: string;
+  createdByWorkspaceMemberId?: string;
+}
+
+export interface FlattenedCompany {
+  addressAddressStreet1?: string;
+  addressAddressStreet2?: string;
+  addressAddressState?: string;
+  addressAddressPostcode?: string;
+  addressAddressCountry?: string;
+  addressAddressCity?: string;
+  createdByWorkspaceMemberId?: string;
+  name?: string;
+}

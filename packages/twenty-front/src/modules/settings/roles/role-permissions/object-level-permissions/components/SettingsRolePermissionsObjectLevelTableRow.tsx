@@ -5,7 +5,11 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChevronRight, useIcons } from 'twenty-ui/display';
+import {
+  IconChevronRight,
+  OverflowingTextWithTooltip,
+  useIcons,
+} from 'twenty-ui/display';
 import { ObjectPermission } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -44,6 +48,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
         roleId: objectPermission.roleId,
         objectMetadataId: objectPermission.objectMetadataId,
       })}
+      gridAutoColumns="180px 1fr 1fr"
     >
       <StyledNameTableCell>
         {!!Icon && (
@@ -54,7 +59,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
           />
         )}
         <StyledNameLabel title={objectMetadataItem.labelPlural}>
-          {objectMetadataItem.labelPlural}
+          <OverflowingTextWithTooltip text={objectMetadataItem.labelPlural} />
         </StyledNameLabel>
       </StyledNameTableCell>
       <TableCell>
