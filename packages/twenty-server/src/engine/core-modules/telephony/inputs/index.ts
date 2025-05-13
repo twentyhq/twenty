@@ -299,6 +299,10 @@ export class CreateDialingPlanInput {
   @Field(() => Int)
   @IsNumber()
   cliente_id: number;
+
+  @Field(() => ID)
+  @IsString()
+  workspaceId: string;
 }
 
 @InputType()
@@ -494,6 +498,10 @@ export class CreatePabxCompanyInput {
   @IsNumber()
   @IsOptional()
   dias_aviso_remocao_mailings?: number;
+
+  @Field(() => ID)
+  @IsString()
+  workspaceId: string;
 }
 
 @InputType()
@@ -563,6 +571,10 @@ export class CreatePabxTrunkInput {
   @IsArray()
   @IsOptional()
   tarifas?: TarifaTroncoInput[];
+
+  @Field(() => ID)
+  @IsString()
+  workspaceId: string;
 }
 
 @InputType()

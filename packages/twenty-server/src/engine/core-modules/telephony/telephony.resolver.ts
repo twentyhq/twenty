@@ -14,6 +14,7 @@ import {
 } from 'src/engine/core-modules/telephony/inputs';
 import { PabxService } from 'src/engine/core-modules/telephony/services/pabx.service';
 import { TelephonyService } from 'src/engine/core-modules/telephony/services/telephony.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 
 import {
@@ -37,6 +38,7 @@ export class TelephonyResolver {
     private readonly telephonyRepository: Repository<Telephony>,
     private readonly telephonyService: TelephonyService,
     private readonly pabxService: PabxService,
+    private readonly workspaceService: WorkspaceService,
   ) {}
 
   getRamalBody(input: CreateTelephonyInput | UpdateTelephonyInput) {
@@ -345,8 +347,21 @@ export class TelephonyResolver {
       throw new Error('User id not found');
     }
 
+    if (!input.workspaceId) {
+      throw new Error('Workspace id not found in input');
+    }
+
     try {
       const result = await this.pabxService.createCompany(input);
+
+      if (result && result.data && result.data.id) {
+        await this.workspaceService.updateWorkspaceById({
+          payload: {
+            id: input.workspaceId,
+            pabxCompanyId: result.data.id,
+          },
+        });
+      }
 
       console.log('result: ', result);
 
@@ -373,8 +388,21 @@ export class TelephonyResolver {
       throw new Error('User id not found');
     }
 
+    if (!input.workspaceId) {
+      throw new Error('Workspace id not found in input');
+    }
+
     try {
       const result = await this.pabxService.createTrunk(input);
+
+      if (result && result.data && result.data.id) {
+        await this.workspaceService.updateWorkspaceById({
+          payload: {
+            id: input.workspaceId,
+            pabxTrunkId: result.data.id,
+          },
+        });
+      }
 
       console.log('result: ', result);
 
@@ -401,8 +429,21 @@ export class TelephonyResolver {
       throw new Error('User id not found');
     }
 
+    if (!input.workspaceId) {
+      throw new Error('Workspace id not found in input');
+    }
+
     try {
       const result = await this.pabxService.createDialingPlan(input);
+
+      if (result && result.data && result.data.id) {
+        await this.workspaceService.updateWorkspaceById({
+          payload: {
+            id: input.workspaceId,
+            pabxDialingPlanId: result.data.id,
+          },
+        });
+      }
 
       return {
         success: true,

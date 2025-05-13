@@ -178,4 +178,16 @@ export class Workspace {
   @Field(() => String, { nullable: true })
   @Column({ type: 'varchar', nullable: true })
   version: string | null;
+
+  @Field(() => Number, { nullable: true })
+  @Column({ type: 'int', nullable: true })
+  pabxCompanyId?: number;
+
+  @Field(() => Number, { nullable: true })
+  @Column({ type: 'int', nullable: true })
+  pabxTrunkId?: number;
+
+  @Field(() => Number, { nullable: true })
+  @Column({ type: 'int', nullable: true })
+  pabxDialingPlanId?: number;
 }
