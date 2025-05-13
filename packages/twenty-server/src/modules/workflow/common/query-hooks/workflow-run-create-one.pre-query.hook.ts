@@ -1,4 +1,4 @@
-import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
+import { WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
@@ -10,7 +10,7 @@ import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard
 
 @WorkspaceQueryHook(`workflowRun.createOne`)
 export class WorkflowRunCreateOnePreQueryHook
-  implements WorkspaceQueryHookInstance
+  implements WorkspacePreQueryHookInstance
 {
   async execute(): Promise<CreateOneResolverArgs<WorkflowRunWorkspaceEntity>> {
     throw new WorkflowQueryValidationException(
