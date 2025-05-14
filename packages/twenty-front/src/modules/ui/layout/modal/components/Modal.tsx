@@ -1,17 +1,15 @@
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { ModalHotkeysAndClickOutsideEffect } from '@/ui/layout/modal/components/ModalHotkeysAndClickOutsideEffect';
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { ModalComponentInstanceContext } from '@/ui/layout/modal/contexts/ModalComponentInstanceContext';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import {
-  ClickOutsideMode,
-  useListenClickOutside,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import React, { useRef } from 'react';
-import { Key } from 'ts-key-enum';
 
 const StyledModalDiv = styled(motion.div)<{
   size?: ModalSize;
@@ -202,70 +200,58 @@ export const Modal = ({
   const isMobile = useIsMobile();
   const modalRef = useRef<HTMLDivElement>(null);
 
-  useScopedHotkeys(
-    [Key.Enter],
-    () => {
-      onEnter?.();
-    },
-    hotkeyScope,
-  );
-
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      if (isClosable && onClose !== undefined) {
-        onClose();
-      }
-    },
-    hotkeyScope,
-  );
-
-  useListenClickOutside({
-    refs: [modalRef],
-    listenerId: 'MODAL_CLICK_OUTSIDE_LISTENER_ID',
-    callback: () => {
-      if (isClosable && onClose !== undefined) {
-        onClose();
-      }
-    },
-    mode: ClickOutsideMode.comparePixels,
-  });
+  const theme = useTheme();
 
   const stopEventPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
 
-  const theme = useTheme();
+  const isModalOpened = useRecoilComponentValueV2(
+    isModalOpenedComponentState,
+    modalId,
+  );
 
   return (
-    <ModalComponentInstanceContext.Provider
-      value={{
-        instanceId: modalId,
-      }}
-    >
-      <StyledBackDrop
-        className="modal-backdrop"
-        onMouseDown={stopEventPropagation}
-        modalVariant={modalVariant}
-      >
-        <StyledModalDiv
-          ref={modalRef}
-          size={size}
-          padding={padding}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          layout
-          modalVariant={modalVariant}
-          variants={modalAnimation}
-          transition={{ duration: theme.animation.duration.normal }}
-          className={className}
-          isMobile={isMobile}
+    <>
+      {isModalOpened && (
+        <ModalComponentInstanceContext.Provider
+          value={{
+            instanceId: modalId,
+          }}
         >
-          {children}
-        </StyledModalDiv>
-      </StyledBackDrop>
-    </ModalComponentInstanceContext.Provider>
+          <ModalHotkeysAndClickOutsideEffect
+            modalRef={modalRef}
+            modalId={modalId}
+            hotkeyScope={hotkeyScope}
+            onEnter={onEnter}
+            isClosable={isClosable}
+            onClose={onClose}
+          />
+          <StyledBackDrop
+            className="modal-backdrop"
+            onMouseDown={stopEventPropagation}
+            modalVariant={modalVariant}
+          >
+            <StyledModalDiv
+              ref={modalRef}
+              size={size}
+              padding={padding}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              layout
+              modalVariant={modalVariant}
+              variants={modalAnimation}
+              transition={{ duration: theme.animation.duration.normal }}
+              className={className}
+              isMobile={isMobile}
+            >
+              {children}
+            </StyledModalDiv>
+          </StyledBackDrop>
+        </ModalComponentInstanceContext.Provider>
+      )}
+    </>
   );
 };
 
