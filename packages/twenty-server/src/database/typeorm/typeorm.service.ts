@@ -7,7 +7,6 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 import { Agent } from 'src/engine/core-modules/agent/agent.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
-import { BillingPlans } from 'src/engine/core-modules/billing-plans/billing-plans.entity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
@@ -29,6 +28,8 @@ import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-f
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { BillingPlans } from 'src/engine/core-modules/billing-plans/billing-plans.entity';
+import { OnboardingPlans } from 'src/engine/core-modules/onboarding-plans/onboarding-plans.entity';
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
   private mainDataSource: DataSource;
@@ -54,6 +55,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         BillingMeter,
         BillingCustomer,
         BillingPlans,
+        OnboardingPlans,
         BillingProduct,
         BillingPrice,
         BillingEntitlement,
