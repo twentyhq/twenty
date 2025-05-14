@@ -10,13 +10,14 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class ApplyMessagesVisibilityRestrictionsService {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   public async applyMessagesVisibilityRestrictions(
-    workspaceMemberId: string,
+    userId: string,
     messages: MessageWorkspaceEntity[],
   ) {
     const messageChannelMessageAssociationRepository =
@@ -66,13 +67,22 @@ export class ApplyMessagesVisibilityRestrictionsService {
         continue;
       }
 
+      const workspaceMemberRepository =
+        await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          'workspaceMember',
+        );
+
+      const workspaceMember = await workspaceMemberRepository.findOneByOrFail({
+        userId,
+      });
+
       const connectedAccounts = await connectedAccountRepository.find({
         select: ['id'],
         where: {
           messageChannels: {
             id: In(messageChannels.map((channel) => channel.id)),
           },
-          accountOwnerId: workspaceMemberId,
+          accountOwnerId: workspaceMember.id,
         },
       });
 

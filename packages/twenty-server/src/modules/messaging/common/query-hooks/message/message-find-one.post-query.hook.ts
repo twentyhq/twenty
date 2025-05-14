@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
@@ -23,12 +25,14 @@ export class MessageFindOnePostQueryHook
     _objectName: string,
     payload: MessageWorkspaceEntity[],
   ): Promise<void> {
-    if (!authContext.workspaceMemberId) {
-      throw new UserInputError('Workspace member id is required');
+    const user = authContext.user;
+
+    if (!isDefined(user)) {
+      throw new UserInputError('User is required');
     }
 
     await this.applyMessagesVisibilityRestrictionsService.applyMessagesVisibilityRestrictions(
-      authContext.workspaceMemberId,
+      user.id,
       payload,
     );
   }

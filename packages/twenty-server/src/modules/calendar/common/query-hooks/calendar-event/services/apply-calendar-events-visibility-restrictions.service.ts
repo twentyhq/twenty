@@ -9,13 +9,14 @@ import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/cale
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class ApplyCalendarEventsVisibilityRestrictionsService {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   public async applyCalendarEventsVisibilityRestrictions(
-    workspaceMemberId: string,
+    userId: string,
     calendarEvents: CalendarEventWorkspaceEntity[],
   ) {
     const calendarChannelEventAssociationRepository =
@@ -59,13 +60,22 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
         continue;
       }
 
+      const workspaceMemberRepository =
+        await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          'workspaceMember',
+        );
+
+      const workspaceMember = await workspaceMemberRepository.findOneByOrFail({
+        userId: userId,
+      });
+
       const connectedAccounts = await connectedAccountRepository.find({
         select: ['id'],
         where: {
           calendarChannels: {
             id: In(calendarChannels.map((channel) => channel.id)),
           },
-          accountOwnerId: workspaceMemberId,
+          accountOwnerId: workspaceMember.id,
         },
       });
 
