@@ -25,6 +25,7 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { PabxService } from 'src/engine/core-modules/telephony/services/pabx.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -45,6 +46,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
+import { SoapClientService } from 'src/modules/soap-client/soap-client.service';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 @Injectable()
@@ -75,6 +77,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly messageQueueService: MessageQueueService,
     @InjectRepository(FeatureFlag, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlag>,
+    private readonly pabxService: PabxService,
+    private readonly soapClientService: SoapClientService,
   ) {
     super(workspaceRepository);
   }
@@ -285,20 +289,224 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       value: true,
     });
 
-    await this.featureFlagRepository.save(stripeFeatureFlag);
+    const techPrefix = this.generateTechPrefix();
 
-    return await this.workspaceRepository.findOneBy({
-      id: workspace.id,
-    });
+    const clienteData = {
+      nome: user.email,
+      login: user.email,
+      senha: user.email,
+      revenda: 0,
+      max_cps: 10,
+      max_chamadas_simult: 5,
+      prepaid_mode: 1,
+      cota_diaria_limite: 100,
+      cota_mensal_limite: 1000,
+      franquia_minima: 50,
+      cobranca_extra_mensal: 0,
+      cota_diaria_consumo: 0,
+      cota_mensal_consumo: 0,
+      tipo_cobranca: 3,
+      dia_cobranca: 5,
+      bloqueia_prejuizo: 0,
+      expira_saldo: 0,
+      bloqueia_fixo: 0,
+      bloqueia_movel: 0,
+      bloqueia_internacional: 0,
+    };
+
+    const contaVoipData = {
+      numero: techPrefix,
+      dominio: 'log.kvoip.com.br',
+      senha: this.generateRandomPassword(),
+      postpaid: true,
+      aviso_saldo_habilita: 1,
+      aviso_saldo_valor: 1,
+      assinatura_valor: 1,
+      assinatura_dia: 1,
+      saldo: 0,
+    };
+
+    const ipData = {
+      ip: '186.209.119.150',
+      pospago: true,
+      compartilhado: true,
+      tech_prefix: techPrefix,
+      monitora_ping: false,
+      tabela_roteamento_id: 22,
+      tabela_venda_id: 177,
+      notificacao_saldo_habilitado: true,
+      notificacao_saldo_valor: 100.5,
+      local: 11,
+    };
+
+    try {
+      const soapResult = await this.soapClientService.createCompleteClient(
+        clienteData,
+        contaVoipData,
+        ipData,
+        22,
+        177,
+        11,
+      );
+
+      this.logger.log('SOAP client setup completed:', soapResult);
+
+      await this.setupPabxEnvironment(
+        workspace,
+        user,
+        data.displayName,
+        techPrefix,
+      );
+
+      await this.featureFlagRepository.save(stripeFeatureFlag);
+
+      return await this.workspaceRepository.findOneBy({
+        id: workspace.id,
+      });
+    } catch (error) {
+      this.logger.error('Error in workspace activation:', error);
+      throw error;
+    }
   }
 
-  async configureWorkspaceTelephony(workspaceId: string, clientDDD: string) {
-    const workspace = await this.workspaceRepository.findOneBy({
-      id: workspaceId,
-    });
+  async setupPabxEnvironment(
+    workspace: Workspace,
+    user: User,
+    workspaceName: string,
+    techPrefix: string,
+  ) {
+    this.logger.log(
+      'Setting up PABX environment for workspace: ',
+      workspace.id,
+    );
 
-    if (!workspace) {
-      throw new Error('Workspace not found');
+    try {
+      const companyInput = {
+        tipo: 1,
+        login: user.email,
+        senha: user.email,
+        nome: workspaceName,
+        qtd_ramais_max_pabx: 5,
+        qtd_ramais_max_pa: 0,
+        salas_conf_num_max: 1,
+        workspaceId: workspace.id,
+        email_cliente: user.email,
+        espaco_disco: 300,
+        max_chamadas_simultaneas: 1,
+        faixa_min: 1000,
+        faixa_max: 3000,
+        prefixo: this.generateRandomCompanyPrefixBasedOnEmail(user.email),
+        habilita_prefixo_sainte: 0,
+        acao_limite_espaco: 2,
+      };
+
+      const companyResult = await this.pabxService.createCompany(companyInput);
+
+      const companyId = companyResult.data.id;
+
+      if (!companyId) {
+        throw new Error('Failed to create PABX company or retrieve ID.');
+      }
+
+      const trunkInput = {
+        cliente_id: companyId,
+        tronco_id: 0,
+        nome: 'TroncoPadrao',
+        endereco: 'log.kvoip.com.br',
+        qtd_digitos_cortados: 0,
+        insere_digitos: techPrefix,
+        autentica_user_pass: 0,
+        host_dinamico: 0,
+        tarifas: [
+          {
+            regiao_id: 1,
+            tarifa: 0,
+            fracionamento: '4/30/6',
+          },
+          {
+            regiao_id: 2,
+            tarifa: 0,
+            fracionamento: '4/30/6',
+          },
+          {
+            regiao_id: 3,
+            tarifa: 0,
+            fracionamento: '4/30/6',
+          },
+        ],
+      };
+
+      const trunkResult = await this.pabxService.createTrunk(trunkInput);
+
+      const trunkAPIId = trunkResult.data.id;
+
+      if (!trunkAPIId) {
+        throw new Error('Failed to create PABX trunk or retrieve ID.');
+      }
+
+      const dialingPlanInput = {
+        plano_discagem_id: 0,
+        nome: 'PlanoPadrao',
+        cliente_id: companyId,
+        workspaceId: workspace.id,
+      };
+
+      const dialingPlanResult =
+        await this.pabxService.createDialingPlan(dialingPlanInput);
+
+      const dialingPlanAPIId = dialingPlanResult.data.id;
+
+      if (!dialingPlanAPIId) {
+        throw new Error('Failed to create PABX dialing plan or retrieve ID.');
+      }
+
+      await this.workspaceRepository.update(workspace.id, {
+        pabxCompanyId: companyId,
+        pabxTrunkId: trunkAPIId,
+        pabxDialingPlanId: dialingPlanAPIId,
+      });
+
+      const routingRulesData = {
+        regioes: [
+          {
+            regiao_id: 1,
+            regiao_nome: 'RegiaoPadrao',
+            roteamentos: [
+              {
+                prioridade: 1,
+                tronco_id: trunkAPIId,
+                tronco_nome: 'TroncoPadrao',
+              },
+            ],
+          },
+        ],
+      };
+
+      const routingRulesInput = {
+        plano_discagem_id: dialingPlanAPIId,
+        cliente_id: companyId,
+        dados: routingRulesData,
+      };
+
+      await this.pabxService.updateRoutingRules(routingRulesInput);
+
+      this.logger.log('PABX environment set up successfully.');
+
+      return {
+        success: true,
+        message: 'PABX environment set up successfully.',
+        companyId,
+        trunkId: trunkAPIId,
+        dialingPlanId: dialingPlanAPIId,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: `Failed to set up PABX environment: ${error.message}`,
+        companyId: undefined,
+        trunkId: undefined,
+        dialingPlanId: undefined,
+      };
     }
   }
 
@@ -514,5 +722,42 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         );
       }
     }
+  }
+
+  private generateRandomPassword() {
+    return Math.floor(Math.random() * 10000000)
+      .toString()
+      .padStart(8, '0');
+  }
+
+  private generateTechPrefix() {
+    return Math.floor(Math.random() * 10000000)
+      .toString()
+      .padStart(7, '0');
+  }
+
+  private generateRandomCompanyPrefixBasedOnEmail(email: string) {
+    const formatedEmail = email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
+    let randomCompanyPrefix = '';
+    const letters = formatedEmail.replace(/[^a-zA-Z]/g, '');
+
+    if (letters.length > 0) {
+      const randomLetterIndex = Math.floor(Math.random() * letters.length);
+
+      randomCompanyPrefix = letters[randomLetterIndex];
+    } else {
+      randomCompanyPrefix = 'A';
+    }
+    for (let i = 1; i < 7; i++) {
+      if (letters.length > 0) {
+        const randomIndex = Math.floor(Math.random() * letters.length);
+
+        randomCompanyPrefix += letters[randomIndex];
+      } else {
+        randomCompanyPrefix += 'A';
+      }
+    }
+
+    return randomCompanyPrefix;
   }
 }

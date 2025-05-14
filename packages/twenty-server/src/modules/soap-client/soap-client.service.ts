@@ -21,13 +21,9 @@ export class SoapClientService {
     try {
       const client = await soap.createClientAsync(this.wsdlUrl);
 
-      console.log('client', client);
-
-      console.log('params', params);
-
       const result = await client[methodName + 'Async'](params);
 
-      console.log('result', result[0].return);
+      this.logger.log('result', result[0].return);
 
       return result[0];
     } catch (error) {
@@ -112,7 +108,7 @@ export class SoapClientService {
   /**
    * Create a complete client setup with client, VoIP account, and IP origin
    */
-  async criarClienteCompleto(
+  async createCompleteClient(
     clienteData: ClienteEstrutura,
     contaVoipData: Omit<ContaVoipEstrutura, 'cliente_id'>,
     ipData: Omit<IpDeOrigemEstrutura, 'cliente_id'>,
@@ -174,7 +170,7 @@ export class SoapClientService {
         ipDeOrigem: ipResult,
       };
     } catch (error) {
-      this.logger.error('Error in criarClienteCompleto:', error);
+      this.logger.error('Error in createCompleteClient:', error);
       throw error;
     }
   }

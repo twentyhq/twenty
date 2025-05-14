@@ -194,8 +194,6 @@ export class PabxService implements PabxServiceInterface {
           },
         };
 
-        console.log('payload at service: ', payload);
-
         const createDialingPlanResponse = await this.pabxAxiosInstance.post(
           '/inserir_plano_discagem',
           payload,

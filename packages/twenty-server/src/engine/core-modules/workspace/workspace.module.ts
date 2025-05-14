@@ -15,6 +15,7 @@ import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { StripeIntegration } from 'src/engine/core-modules/stripe/integrations/stripe-integration.entity';
+import { TelephonyModule } from 'src/engine/core-modules/telephony/telephony.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -29,6 +30,7 @@ import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
+import { SoapClientModule } from 'src/modules/soap-client/soap-client.module';
 
 @Module({
   imports: [
@@ -55,6 +57,8 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
         PermissionsModule,
         WorkspaceCacheStorageModule,
         RoleModule,
+        TelephonyModule,
+        SoapClientModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,
