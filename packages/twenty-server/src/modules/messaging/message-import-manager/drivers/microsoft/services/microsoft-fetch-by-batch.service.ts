@@ -42,16 +42,45 @@ export class MicrosoftFetchByBatchService {
         },
       }));
 
-      const batchResponse = await client
-        .api('/$batch')
-        .post({ requests: batchRequests });
+      try {
+        const batchResponse = await client
+          .api('/$batch')
+          .post({ requests: batchRequests });
 
-      batchResponses.push(batchResponse);
+        batchResponses.push(batchResponse);
+      } catch (error) {
+        if (this.isTemporaryError(error)) {
+          throw {
+            statusCode: 429,
+            message: error.body,
+            code: error.code,
+          };
+        } else {
+          throw error;
+        }
+      }
     }
 
     return {
       messageIdsByBatch,
       batchResponses,
     };
+  }
+
+  /**
+   * Microsoft client.api.post sometimes throws (hard to catch) temporary errors like this one:
+   *
+   * {
+   *   statusCode: 200,
+   *   code: "SyntaxError",
+   *   requestId: null,
+   *   date: "2025-05-14T11:43:02.024Z",
+   *   body: "SyntaxError: Unexpected token < in JSON at position 19341",
+   *   headers: {
+   *   },
+   * }
+   */
+  private isTemporaryError(error: any): boolean {
+    return error?.body?.includes('Unexpected token < in JSON at position');
   }
 }

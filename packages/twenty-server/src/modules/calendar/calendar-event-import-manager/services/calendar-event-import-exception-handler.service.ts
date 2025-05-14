@@ -85,8 +85,20 @@ export class CalendarEventImportErrorHandlerService {
         workspaceId,
       );
 
+      this.exceptionHandlerService.captureExceptions(
+        [
+          `Temporary error occurred ${CALENDAR_THROTTLE_MAX_ATTEMPTS} times while importing calendar events for calendar channel ${calendarChannel.id.slice(0, 5)}... in workspace ${workspaceId} with throttleFailureCount${calendarChannel.throttleFailureCount}`,
+        ],
+        {
+          calendarChannel: calendarChannel.id,
+          workspace: {
+            id: workspaceId,
+          },
+        },
+      );
+
       throw new CalendarEventImportException(
-        `Unknown temporary error occurred while importing calendar events for calendar channel ${calendarChannel.id} in workspace ${workspaceId} with throttleFailureCount${calendarChannel.throttleFailureCount}`,
+        `Temporary error occurred ${CALENDAR_THROTTLE_MAX_ATTEMPTS} times while importing calendar events for calendar channel ${calendarChannel.id} in workspace ${workspaceId} with throttleFailureCount${calendarChannel.throttleFailureCount}`,
         CalendarEventImportExceptionCode.UNKNOWN,
       );
     }
@@ -149,6 +161,7 @@ export class CalendarEventImportErrorHandlerService {
     );
 
     this.exceptionHandlerService.captureExceptions([exception], {
+      calendarChannel: calendarChannel.id,
       workspace: {
         id: workspaceId,
       },

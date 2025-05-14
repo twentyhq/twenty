@@ -9,6 +9,8 @@ export interface ExceptionHandlerOptions {
     name: string;
   };
   document?: string;
+  messageChannel?: string;
+  calendarChannel?: string;
   user?: ExceptionHandlerUser | null;
   workspace?: ExceptionHandlerWorkspace | null;
 }
