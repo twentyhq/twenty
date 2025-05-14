@@ -191,7 +191,7 @@ export const Modal = ({
   size = 'medium',
   padding = 'medium',
   className,
-  hotkeyScope = ModalHotkeyScope.Default,
+  hotkeyScope = ModalHotkeyScope.ModalFocus,
   onEnter,
   isClosable = false,
   onClose,
