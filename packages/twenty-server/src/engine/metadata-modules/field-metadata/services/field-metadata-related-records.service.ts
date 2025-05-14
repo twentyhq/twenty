@@ -10,14 +10,19 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { isSelectFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata-type.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 type Differences<T> = {
   created: T[];
   updated: { old: T; new: T }[];
   deleted: T[];
 };
+
+type SelectFieldMetadataEntity = FieldMetadataEntity<FieldMetadataType.SELECT>;
 
 @Injectable()
 export class FieldMetadataRelatedRecordsService {
@@ -26,8 +31,8 @@ export class FieldMetadataRelatedRecordsService {
   ) {}
 
   public async updateRelatedViewGroups(
-    oldFieldMetadata: FieldMetadataEntity,
-    newFieldMetadata: FieldMetadataEntity,
+    oldFieldMetadata: SelectFieldMetadataEntity,
+    newFieldMetadata: SelectFieldMetadataEntity,
   ): Promise<void> {
     if (
       !isSelectFieldMetadataType(newFieldMetadata.type) ||
@@ -36,7 +41,10 @@ export class FieldMetadataRelatedRecordsService {
       return;
     }
 
-    const views = await this.getFieldMetadataViews(newFieldMetadata);
+    const views = await this.getFieldMetadataViewEntity(
+      newFieldMetadata,
+      'viewGroups',
+    );
 
     const { created, updated, deleted } = this.getOptionsDifferences(
       oldFieldMetadata.options,
@@ -100,8 +108,93 @@ export class FieldMetadataRelatedRecordsService {
     }
   }
 
+  public async updateRelatedViewFilters(
+    oldFieldMetadata: SelectFieldMetadataEntity,
+    newFieldMetadata: SelectFieldMetadataEntity,
+  ): Promise<void> {
+    if (
+      !isSelectFieldMetadataType(newFieldMetadata.type) ||
+      !isSelectFieldMetadataType(oldFieldMetadata.type)
+    ) {
+      return;
+    }
+
+    const filters = await this.getFieldMetadataViewEntity(
+      newFieldMetadata,
+      'viewFilters',
+    );
+
+    const { updated: updatedFieldMetadata, deleted: deletedFieldMetadata } =
+      this.getOptionsDifferences(
+        oldFieldMetadata.options,
+        newFieldMetadata.options,
+      );
+
+    const viewFilterRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewFilterWorkspaceEntity>(
+        newFieldMetadata.workspaceId,
+        'viewFilter',
+      );
+
+    for (const filter of filters) {
+      if (filter.viewFilters.length === 0) {
+        continue;
+      }
+
+      for (const viewFilter of filter.viewFilters) {
+        try {
+          const viewFilterValue: string[] = JSON.parse(viewFilter.value);
+          const relatedDeletedValues = deletedFieldMetadata
+            .filter((deleted) => viewFilterValue.includes(deleted.value))
+            .map(({ value }) => value);
+
+          if (relatedDeletedValues.length === viewFilterValue.length) {
+            await viewFilterRepository.delete({ id: viewFilter.id });
+            continue;
+          }
+
+          const remainingFilterValues = viewFilterValue.filter(
+            (findBetterName) => !relatedDeletedValues.includes(findBetterName),
+          );
+          const relatedUpdateValues = updatedFieldMetadata
+            .filter((updated) =>
+              remainingFilterValues.includes(updated.old.value),
+            )
+            .map((data) => ({
+              newValue: data.new.value,
+              oldValue: data.old.value,
+            }));
+
+          const updatedFilterValues = remainingFilterValues.flatMap((value) => {
+            const containsUpdatedFilter = relatedUpdateValues.find(
+              ({ oldValue }) => value === oldValue,
+            );
+            if (!isDefined(containsUpdatedFilter)) {
+              return value;
+            }
+
+            return containsUpdatedFilter.newValue;
+          });
+
+          await viewFilterRepository.update(
+            { id: viewFilter.id },
+            {
+              value: JSON.stringify(updatedFilterValues),
+              displayValue: updatedFilterValues.join(','),
+            },
+          );
+
+          ///
+        } catch (error) {
+          // TODO
+          console.error(error);
+        }
+      }
+    }
+  }
+
   async syncNoValueViewGroup(
-    fieldMetadata: FieldMetadataEntity,
+    fieldMetadata: SelectFieldMetadataEntity,
     view: ViewWorkspaceEntity,
     viewGroupRepository: WorkspaceRepository<ViewGroupWorkspaceEntity>,
   ): Promise<void> {
@@ -159,8 +252,9 @@ export class FieldMetadataRelatedRecordsService {
     return differences;
   }
 
-  private async getFieldMetadataViews(
-    fieldMetadata: FieldMetadataEntity,
+  private async getFieldMetadataViewEntity(
+    fieldMetadata: SelectFieldMetadataEntity,
+    entity: 'viewGroups' | 'viewFilters',
   ): Promise<ViewWorkspaceEntity[]> {
     const viewRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
@@ -174,7 +268,7 @@ export class FieldMetadataRelatedRecordsService {
           fieldMetadataId: fieldMetadata.id,
         },
       },
-      relations: ['viewGroups'],
+      relations: [entity],
     });
   }
 
