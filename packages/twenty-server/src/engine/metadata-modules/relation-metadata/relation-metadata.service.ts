@@ -12,8 +12,6 @@ import { FieldMetadataDefaultSettings } from 'src/engine/metadata-modules/field-
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
@@ -68,7 +66,6 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly indexMetadataService: IndexMetadataService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(relationMetadataRepository);
   }
@@ -78,11 +75,6 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
   ): Promise<RelationMetadataEntity> {
     const objectMetadataMap = await this.getObjectMetadataMap(
       relationMetadataInput,
-    );
-
-    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsNewRelationEnabled,
-      relationMetadataInput.workspaceId,
     );
 
     try {
@@ -124,15 +116,6 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
             isCustom,
             toId,
           ),
-          // We don't want to create the join column field metadata for new relation
-          ...(isNewRelationEnabled
-            ? []
-            : [
-                this.createForeignKeyFieldMetadata(
-                  relationMetadataInput,
-                  columnName,
-                ),
-              ]),
         ].flat(),
       );
 
@@ -197,30 +180,6 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     );
 
     this.throwIfDeletedAtFieldMetadataNotFound(deletedAtFieldMetadata);
-
-    if (!isNewRelationEnabled) {
-      const foreignKeyFieldMetadata = createdRelationFieldsMetadata.find(
-        (fieldMetadata) => fieldMetadata.type === FieldMetadataType.UUID,
-      );
-
-      if (!foreignKeyFieldMetadata) {
-        throw new RelationMetadataException(
-          `ForeignKey field metadata not found`,
-          RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND,
-        );
-      }
-
-      await this.indexMetadataService.createIndexMetadata(
-        relationMetadataInput.workspaceId,
-        toObjectMetadata,
-        [
-          foreignKeyFieldMetadata,
-          deletedAtFieldMetadata as FieldMetadataEntity<FieldMetadataType>,
-        ],
-        false,
-        false,
-      );
-    }
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       relationMetadataInput.workspaceId,

@@ -318,31 +318,30 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           id: input.id,
           workspaceId: workspaceId,
         },
+        relations: [
+          'object',
+          'relationTargetFieldMetadata',
+          'relationTargetObjectMetadata',
+        ],
       });
 
-      if (!fieldMetadata) {
+      if (!isDefined(fieldMetadata)) {
         throw new FieldMetadataException(
           'Field does not exist',
           FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
         );
       }
 
-      const [objectMetadata] = await this.objectMetadataRepository.find({
-        where: {
-          id: fieldMetadata.objectMetadataId,
-        },
-        relations: ['fields'],
-        order: {},
-      });
-
-      if (!objectMetadata) {
+      if (!isDefined(fieldMetadata.object)) {
         throw new FieldMetadataException(
           'Object metadata does not exist',
           FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         );
       }
 
-      if (objectMetadata.labelIdentifierFieldMetadataId === fieldMetadata.id) {
+      if (
+        fieldMetadata.object.labelIdentifierFieldMetadataId === fieldMetadata.id
+      ) {
         throw new FieldMetadataException(
           'Cannot delete, please update the label identifier field first',
           FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
@@ -359,41 +358,56 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           (fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>)
             .settings?.relationType === RelationType.MANY_TO_ONE;
 
-        const targetFieldMetadata =
-          await this.fieldMetadataRepository.findOneBy({
-            id: fieldMetadata.relationTargetFieldMetadataId,
-          });
-
-        if (targetFieldMetadata) {
-          await this.relationMetadataRepository.delete({
-            fromFieldMetadataId: In([fieldMetadata.id, targetFieldMetadata.id]),
-          });
-          await this.relationMetadataRepository.delete({
-            toFieldMetadataId: In([fieldMetadata.id, targetFieldMetadata.id]),
-          });
-          await fieldMetadataRepository.delete({
-            id: In([fieldMetadata.id, targetFieldMetadata.id]),
-          });
-
-          await this.workspaceMigrationService.createCustomMigration(
-            generateMigrationName(`delete-${fieldMetadata.name}`),
-            workspaceId,
-            [
-              {
-                name: computeObjectTargetTable(objectMetadata),
-                action: WorkspaceMigrationTableActionType.ALTER,
-                columns: [
-                  {
-                    action: WorkspaceMigrationColumnActionType.DROP,
-                    columnName: isManyToOneRelation
-                      ? `${(fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>).settings?.joinColumnName}`
-                      : `${(targetFieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>).settings?.joinColumnName}`,
-                  } satisfies WorkspaceMigrationColumnDrop,
-                ],
-              } satisfies WorkspaceMigrationTableAction,
-            ],
+        if (!isDefined(fieldMetadata.relationTargetFieldMetadata)) {
+          throw new FieldMetadataException(
+            'Target field metadata does not exist',
+            FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
           );
         }
+
+        // TODO: remove this once we have deleted the relation metadata table
+        await this.relationMetadataRepository.delete({
+          fromFieldMetadataId: In([
+            fieldMetadata.id,
+            fieldMetadata.relationTargetFieldMetadata.id,
+          ]),
+        });
+        await this.relationMetadataRepository.delete({
+          toFieldMetadataId: In([
+            fieldMetadata.id,
+            fieldMetadata.relationTargetFieldMetadata.id,
+          ]),
+        });
+
+        await fieldMetadataRepository.delete({
+          id: In([
+            fieldMetadata.id,
+            fieldMetadata.relationTargetFieldMetadata.id,
+          ]),
+        });
+
+        await this.workspaceMigrationService.createCustomMigration(
+          generateMigrationName(`delete-${fieldMetadata.name}`),
+          workspaceId,
+          [
+            {
+              name: isManyToOneRelation
+                ? computeObjectTargetTable(fieldMetadata.object)
+                : computeObjectTargetTable(
+                    fieldMetadata.relationTargetObjectMetadata,
+                  ),
+              action: WorkspaceMigrationTableActionType.ALTER,
+              columns: [
+                {
+                  action: WorkspaceMigrationColumnActionType.DROP,
+                  columnName: isManyToOneRelation
+                    ? `${(fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>).settings?.joinColumnName}`
+                    : `${(fieldMetadata.relationTargetFieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>).settings?.joinColumnName}`,
+                } satisfies WorkspaceMigrationColumnDrop,
+              ],
+            } satisfies WorkspaceMigrationTableAction,
+          ],
+        );
       } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
         await fieldMetadataRepository.delete(fieldMetadata.id);
         const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
@@ -411,7 +425,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           workspaceId,
           [
             {
-              name: computeObjectTargetTable(objectMetadata),
+              name: computeObjectTargetTable(fieldMetadata.object),
               action: WorkspaceMigrationTableActionType.ALTER,
               columns: compositeType.properties.map((property) => {
                 return {
@@ -432,7 +446,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           workspaceId,
           [
             {
-              name: computeObjectTargetTable(objectMetadata),
+              name: computeObjectTargetTable(fieldMetadata.object),
               action: WorkspaceMigrationTableActionType.ALTER,
               columns: [
                 {

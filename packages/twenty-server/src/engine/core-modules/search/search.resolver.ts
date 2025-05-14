@@ -5,7 +5,6 @@ import chunk from 'lodash.chunk';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
 import { SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record-dto';
 import { SearchApiExceptionFilter } from 'src/engine/core-modules/search/filters/search-api-exception.filter';
@@ -34,7 +33,6 @@ export class SearchResolver {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly twentyORMManager: TwentyORMManager,
     private readonly searchService: SearchService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Query(() => [SearchRecordDTO])
@@ -72,9 +70,6 @@ export class SearchResolver {
       );
     }
 
-    const featureFlagMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
-
     const objectMetadataItemWithFieldMaps = Object.values(
       objectMetadataMaps.byId,
     );
@@ -106,7 +101,6 @@ export class SearchResolver {
             records: await this.searchService.buildSearchQueryAndGetRecords({
               entityManager: repository,
               objectMetadataItem,
-              featureFlagMap,
               searchTerms: formatSearchTerms(searchInput, 'and'),
               searchTermsOr: formatSearchTerms(searchInput, 'or'),
               limit,

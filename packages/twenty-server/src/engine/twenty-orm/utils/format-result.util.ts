@@ -8,10 +8,8 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { computeRelationType } from 'src/engine/twenty-orm/utils/compute-relation-type.util';
 import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils/get-composite-field-metadata-collection';
 import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { isDate } from 'src/utils/date/isDate';
@@ -19,9 +17,8 @@ import { isValidDate } from 'src/utils/date/isValidDate';
 
 export function formatResult<T>(
   data: any,
-  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps | undefined,
   objectMetadataMaps: ObjectMetadataMaps,
-  isNewRelationEnabled: boolean,
 ): T {
   if (!data) {
     return data;
@@ -29,12 +26,7 @@ export function formatResult<T>(
 
   if (Array.isArray(data)) {
     return data.map((item) =>
-      formatResult(
-        item,
-        objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
-        isNewRelationEnabled,
-      ),
+      formatResult(item, objectMetadataItemWithFieldMaps, objectMetadataMaps),
     ) as T;
   }
 
@@ -50,36 +42,6 @@ export function formatResult<T>(
     objectMetadataItemWithFieldMaps,
   );
 
-  const relationMetadataMap: Map<
-    string,
-    {
-      relationMetadata: RelationMetadataEntity | undefined;
-      relationType: string;
-    }
-  > = isNewRelationEnabled
-    ? new Map()
-    : new Map(
-        Object.values(objectMetadataItemWithFieldMaps.fieldsById)
-          .filter((fieldMetadata) =>
-            isFieldMetadataInterfaceOfType(
-              fieldMetadata,
-              FieldMetadataType.RELATION,
-            ),
-          )
-          .map((fieldMetadata) => [
-            fieldMetadata.name,
-            {
-              relationMetadata:
-                fieldMetadata.fromRelationMetadata ??
-                fieldMetadata.toRelationMetadata,
-              relationType: computeRelationType(
-                fieldMetadata,
-                fieldMetadata.fromRelationMetadata ??
-                  (fieldMetadata.toRelationMetadata as RelationMetadataEntity),
-              ),
-            },
-          ]),
-      );
   const newData: object = {};
   const objectMetadaItemFieldsByName =
     objectMetadataMaps.byId[objectMetadataItemWithFieldMaps.id]?.fieldsByName;
@@ -104,7 +66,6 @@ export function formatResult<T>(
           value,
           objectMetadataItemWithFieldMaps,
           objectMetadataMaps,
-          isNewRelationEnabled,
         );
       } else if (objectMetadaItemFieldsByName[key]) {
         newData[key] = formatFieldMetadataValue(
@@ -118,63 +79,27 @@ export function formatResult<T>(
       continue;
     }
 
-    if (!isNewRelationEnabled) {
-      const { relationMetadata, relationType } =
-        relationMetadataMap.get(key) ?? {};
-
-      if (relationMetadata) {
-        const toObjectMetadata =
-          objectMetadataMaps.byId[relationMetadata.toObjectMetadataId];
-
-        const fromObjectMetadata =
-          objectMetadataMaps.byId[relationMetadata.fromObjectMetadataId];
-
-        if (!toObjectMetadata) {
-          throw new Error(
-            `Object metadata for object metadataId "${relationMetadata.toObjectMetadataId}" is missing`,
-          );
-        }
-
-        if (!fromObjectMetadata) {
-          throw new Error(
-            `Object metadata for object metadataId "${relationMetadata.fromObjectMetadataId}" is missing`,
-          );
-        }
-
-        newData[key] = formatResult(
-          value,
-          relationType === 'one-to-many'
-            ? toObjectMetadata
-            : fromObjectMetadata,
-          objectMetadataMaps,
-          isNewRelationEnabled,
-        );
-        continue;
-      }
-    } else {
-      if (isRelation) {
-        if (!isDefined(fieldMetadata?.relationTargetObjectMetadataId)) {
-          throw new Error(
-            `Relation target object metadata ID is missing for field "${key}"`,
-          );
-        }
-
-        const targetObjectMetadata =
-          objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
-
-        if (!targetObjectMetadata) {
-          throw new Error(
-            `Object metadata for object metadataId "${fieldMetadata.relationTargetObjectMetadataId}" is missing`,
-          );
-        }
-
-        newData[key] = formatResult(
-          value,
-          targetObjectMetadata,
-          objectMetadataMaps,
-          isNewRelationEnabled,
+    if (isRelation) {
+      if (!isDefined(fieldMetadata?.relationTargetObjectMetadataId)) {
+        throw new Error(
+          `Relation target object metadata ID is missing for field "${key}"`,
         );
       }
+
+      const targetObjectMetadata =
+        objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
+
+      if (!targetObjectMetadata) {
+        throw new Error(
+          `Object metadata for object metadataId "${fieldMetadata.relationTargetObjectMetadataId}" is missing`,
+        );
+      }
+
+      newData[key] = formatResult(
+        value,
+        targetObjectMetadata,
+        objectMetadataMaps,
+      );
     }
 
     if (!compositePropertyArgs) {
