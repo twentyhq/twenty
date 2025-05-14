@@ -27,6 +27,10 @@ export class ExceptionHandlerSentryDriver
         scope.setExtra('workspace', options.workspace);
       }
 
+      if (options?.additionalData) {
+        scope.setExtra('additionalData', options.additionalData);
+      }
+
       if (options?.user) {
         scope.setUser({
           id: options.user.id,
