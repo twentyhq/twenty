@@ -14,7 +14,7 @@ export const useRelationSettingsFormInitialValues = ({
   fieldMetadataItem?: Pick<FieldMetadataItem, 'type' | 'relationDefinition'>;
   objectMetadataItem?: SettingsDataModelFieldPreviewCardProps['objectMetadataItem'];
 }) => {
-  const { objectMetadataItems } = useFilteredObjectMetadataItems();
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
   const getRelationMetadata = useGetRelationMetadata();
   const {
@@ -27,17 +27,20 @@ export const useRelationSettingsFormInitialValues = ({
     [fieldMetadataItem, getRelationMetadata],
   ) ?? {};
 
-  const initialRelationObjectMetadataItem = useMemo(
-    () =>
+  const initialRelationObjectMetadataItem = useMemo(() => {
+    const availableItems = activeObjectMetadataItems.filter(
+      isObjectMetadataAvailableForRelation,
+    );
+    return (
       relationObjectMetadataItemFromFieldMetadata ??
       objectMetadataItem ??
-      objectMetadataItems.filter(isObjectMetadataAvailableForRelation)[0],
-    [
-      objectMetadataItem,
-      objectMetadataItems,
-      relationObjectMetadataItemFromFieldMetadata,
-    ],
-  );
+      availableItems[0]
+    );
+  }, [
+    objectMetadataItem,
+    activeObjectMetadataItems,
+    relationObjectMetadataItemFromFieldMetadata,
+  ]);
 
   const initialRelationType =
     relationTypeFromFieldMetadata ?? RelationDefinitionType.ONE_TO_MANY;
