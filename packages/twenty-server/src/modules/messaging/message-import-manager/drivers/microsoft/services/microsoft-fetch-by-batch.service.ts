@@ -49,12 +49,12 @@ export class MicrosoftFetchByBatchService {
 
         batchResponses.push(batchResponse);
       } catch (error) {
-        if (this.isTemporaryError(error)) {
-          throw {
-            statusCode: 429,
-            message: error.body,
-            code: error.code,
-          };
+        if (
+          error.body &&
+          typeof error.body === 'string' &&
+          isMicrosoftClientTemporaryError(error.body)
+        ) {
+          throw new MicrosoftImportDriverException(error.body, error.code, 429);
         } else {
           throw error;
         }

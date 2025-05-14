@@ -27,12 +27,8 @@ export class ExceptionHandlerSentryDriver
         scope.setExtra('workspace', options.workspace);
       }
 
-      if (options?.messageChannel) {
-        scope.setExtra('messageChannel', options.messageChannel);
-      }
-
-      if (options?.calendarChannel) {
-        scope.setExtra('calendarChannel', options.calendarChannel);
+      if (options?.additionalData) {
+        scope.setExtra('additionalData', options.additionalData);
       }
 
       if (options?.user) {

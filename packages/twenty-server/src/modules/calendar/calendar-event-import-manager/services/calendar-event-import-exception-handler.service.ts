@@ -93,7 +93,9 @@ export class CalendarEventImportErrorHandlerService {
       this.exceptionHandlerService.captureExceptions(
         [calendarEventImportException],
         {
-          calendarChannel: calendarChannel.id,
+          additionalData: {
+            calendarChannelId: calendarChannel.id,
+          },
           workspace: {
             id: workspaceId,
           },
@@ -168,7 +170,9 @@ export class CalendarEventImportErrorHandlerService {
     this.exceptionHandlerService.captureExceptions(
       [calendarEventImportException],
       {
-        calendarChannel: calendarChannel.id,
+        additionalData: {
+          calendarChannelId: calendarChannel.id,
+        },
         workspace: {
           id: workspaceId,
         },

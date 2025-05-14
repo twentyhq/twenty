@@ -9,8 +9,7 @@ export interface ExceptionHandlerOptions {
     name: string;
   };
   document?: string;
-  messageChannel?: string;
-  calendarChannel?: string;
+  additionalData?: Record<string, any>;
   user?: ExceptionHandlerUser | null;
   workspace?: ExceptionHandlerWorkspace | null;
 }

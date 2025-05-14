@@ -106,7 +106,9 @@ export class MessageImportExceptionHandlerService {
           `Temporary error occurred ${MESSAGING_THROTTLE_MAX_ATTEMPTS} times while importing messages for message channel ${messageChannel.id.slice(0, 5)}... in workspace ${workspaceId}: ${exception?.message}`,
         ],
         {
-          messageChannel: messageChannel.id,
+          additionalData: {
+            messageChannelId: messageChannel.id,
+          },
           workspace: { id: workspaceId },
         },
       );
@@ -180,7 +182,9 @@ export class MessageImportExceptionHandlerService {
     );
 
     this.exceptionHandlerService.captureExceptions([messageImportException], {
-      messageChannel: messageChannel.id,
+      additionalData: {
+        messageChannelId: messageChannel.id,
+      },
       workspace: { id: workspaceId },
     });
 
