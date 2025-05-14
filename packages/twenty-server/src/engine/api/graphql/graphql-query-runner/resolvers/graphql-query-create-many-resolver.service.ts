@@ -270,9 +270,12 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       // For insert, formating is done in the server
       // While for update, formatting is done at the resolver level
 
+      const shouldNotEraseCreatedByField = true;
+
       const formattedRecord = formatData(
         record,
         objectMetadataItemWithFieldMaps,
+        shouldNotEraseCreatedByField,
       );
 
       await repository.update(recordId, formattedRecord);

@@ -1,5 +1,5 @@
-import { capitalize } from 'twenty-shared/utils';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
@@ -12,6 +12,7 @@ import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metada
 export function formatData<T>(
   data: T,
   objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  shouldNotEraseCreatedByField = false,
 ): T {
   if (!data) {
     return data;
@@ -46,6 +47,15 @@ export function formatData<T>(
     const fieldMetadata =
       objectMetadataItemWithFieldMaps.fieldsByName[key] ||
       fieldMetadataByJoinColumnName.get(key);
+
+    if (
+      fieldMetadata?.name === 'createdBy' &&
+      fieldMetadata.isCustom === false
+    ) {
+      if (shouldNotEraseCreatedByField) {
+        continue;
+      }
+    }
 
     if (!fieldMetadata) {
       throw new Error(
