@@ -171,20 +171,14 @@ export abstract class GraphqlQueryBaseResolverService<
         options.objectMetadataMaps,
       );
 
-      const resultWithGettersArray = Array.isArray(resultWithGetters)
-        ? resultWithGetters
-        : [resultWithGetters];
-
       await this.workspaceQueryHookService.executePostQueryHooks(
         authContext,
         objectMetadataItemWithFieldMaps.nameSingular,
         operationName,
-        resultWithGettersArray,
+        resultWithGetters,
       );
 
-      return Array.isArray(resultWithGetters)
-        ? resultWithGettersArray
-        : resultWithGettersArray[0];
+      return resultWithGetters;
     } catch (error) {
       workspaceQueryRunnerGraphqlApiExceptionHandler(error, options);
     }
