@@ -74,6 +74,7 @@ export class FeatureFlagService {
       await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
         {
           workspaceId: workspaceId,
+          ignoreLock: true,
         },
       );
     }
@@ -132,7 +133,8 @@ export class FeatureFlagService {
 
     await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
       {
-        workspaceId: workspaceId,
+        workspaceId,
+        ignoreLock: true,
       },
     );
 
