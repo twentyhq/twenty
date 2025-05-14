@@ -3,6 +3,8 @@ import styled from '@emotion/styled';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { RecoilRoot } from 'recoil';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { ModalCloseButton } from './ModalCloseButton';
 
@@ -43,7 +45,14 @@ export const ModalWrapper = ({
   const { rtl } = useSpreadsheetImportInternal();
 
   return (
-    <>
+    <RecoilRoot
+      initializeState={({ set }) => {
+        set(
+          isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
+          isOpen,
+        );
+      }}
+    >
       {isOpen && (
         <StyledModal size="large" modalId={modalId}>
           <StyledRtlLtr dir={rtl ? 'rtl' : 'ltr'}>
@@ -52,6 +61,6 @@ export const ModalWrapper = ({
           </StyledRtlLtr>
         </StyledModal>
       )}
-    </>
+    </RecoilRoot>
   );
 };
