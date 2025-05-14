@@ -120,6 +120,39 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
     }
   }
 
+  formatPaginatedDuplicatesResult({
+    finalRecords,
+    objectMetadataNameSingular,
+    isForwardPagination,
+    hasMoreRecords,
+    totalCount,
+    startCursor,
+    endCursor,
+  }: {
+    finalRecords: any[];
+    objectMetadataNameSingular: string;
+    isForwardPagination: boolean;
+    hasMoreRecords: boolean;
+    totalCount: number;
+    startCursor: string | null;
+    endCursor: string | null;
+  }) {
+    const hasPreviousPage = !isForwardPagination && hasMoreRecords;
+
+    return this.formatResult({
+      operation: 'findDuplicates',
+      objectNameSingular: objectMetadataNameSingular,
+      data: isForwardPagination ? finalRecords : finalRecords.reverse(),
+      pageInfo: {
+        hasNextPage: isForwardPagination && hasMoreRecords,
+        ...(hasPreviousPage ? { hasPreviousPage } : {}),
+        startCursor,
+        endCursor,
+      },
+      totalCount,
+    });
+  }
+
   buildDuplicateConditions(
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
     records?: Partial<ObjectRecord>[] | undefined,
