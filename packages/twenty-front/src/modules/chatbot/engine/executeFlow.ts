@@ -2,7 +2,6 @@
 import { ChatbotFlowInput } from '@/chatbot/types/chatbotFlow.type';
 import { Node } from '@xyflow/react';
 
-import { SendMessageInput } from '@/chat/call-center/types/SendMessage';
 import { NodeType } from '@/chatbot/constants/NodeTypes';
 import { CondicionalInputHandler } from '@/chatbot/engine/handlers/CondicionalInputHandler';
 import { FileInputHandler } from '@/chatbot/engine/handlers/FileInputHandler';
@@ -10,6 +9,7 @@ import { ImageInputHandler } from '@/chatbot/engine/handlers/ImageInputHandler';
 import { NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
 import { NodeHandler } from './handlers/NodeHandler';
 import { TextInputHandler } from './handlers/TextInputHandler';
+import { SendMessageType } from '@/chat/call-center/hooks/useSendWhatsappMessages';
 
 export class ExecuteFlow {
   private nodes: Node[];
@@ -21,7 +21,7 @@ export class ExecuteFlow {
 
   constructor(
     chatbotFlow: ChatbotFlowInput,
-    sendMessage: (input: SendMessageInput) => void,
+    sendMessage: SendMessageType,
     integrationId: string,
     recipient: string,
     chatbotName: string,
@@ -81,7 +81,7 @@ export class ExecuteFlow {
     this.incomingMessage = input;
   }
 
-  public runFlow(): void {
+  public async runFlow(): Promise<void> {
     while (this.currentNodeId) {
       const currentNode = this.findNodeById(this.currentNodeId);
 
@@ -91,7 +91,7 @@ export class ExecuteFlow {
 
       if (!handler) break;
 
-      const nextNodeId = handler.process(currentNode, {
+      const nextNodeId = await handler.process(currentNode, {
         incomingMessage: this.incomingMessage,
       });
 
@@ -123,7 +123,7 @@ export class ExecuteFlow {
     }
   }
 
-  public runFlowWithLog(): void {
+  public async runFlowWithLog(): Promise<void> {
     const trace: string[] = [];
 
     console.log('User input: ', this.incomingMessage);
@@ -149,7 +149,7 @@ export class ExecuteFlow {
         break;
       }
 
-      const handlerNextNodeId = handler.process(currentNode, {
+      const handlerNextNodeId = await handler.process(currentNode, {
         incomingMessage: this.incomingMessage,
       });
 

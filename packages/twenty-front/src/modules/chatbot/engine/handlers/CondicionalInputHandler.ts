@@ -1,5 +1,5 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
-import { SendMessageInput } from '@/chat/call-center/types/SendMessage';
+import { SendMessageType } from '@/chat/call-center/hooks/useSendWhatsappMessages';
 import { MessageType } from '@/chat/types/MessageType';
 import { NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
 import { Node } from '@xyflow/react';
@@ -24,24 +24,26 @@ export class CondicionalInputHandler implements NodeHandler {
   }
 
   constructor(
-    private sendMessage: (input: SendMessageInput) => void,
+    private sendMessage: SendMessageType,
     private integrationId: string,
     private recipient: string,
     private chatbotName: string,
     private sectors: { id: string; name: string }[],
   ) {}
 
-  process(node: Node, context: { incomingMessage: string }): string | null {
+  async process(
+    node: Node,
+    context: { incomingMessage: string },
+  ): Promise<string | null> {
     const logic = node.data?.logic as NewConditionalState | undefined;
 
     if (!logic || !logic.logicNodeData) return null;
 
     const input = context.incomingMessage.trim();
-
     const prompt = typeof node.data?.text === 'string' ? node.data.text : '';
 
     if (prompt) {
-      this.sendMessage({
+      await this.sendMessage({
         type: MessageType.TEXT,
         message: prompt,
         integrationId: this.integrationId,
@@ -60,7 +62,7 @@ export class CondicionalInputHandler implements NodeHandler {
       .join('\n');
 
     if (optionsList) {
-      this.sendMessage({
+      await this.sendMessage({
         type: MessageType.TEXT,
         message: optionsList,
         integrationId: this.integrationId,
