@@ -11,6 +11,19 @@ here are some solutions for common problems.
 
 ### Self-hosting
 
+#### First install results in `password authentication failed for user "postgres"`
+
+While installing twenty for the first time you might wanna change the default database password.
+The password you set during the first installation becomes permanently stored in the database volume. If you later try to change this password in your configuration without removing the old volume, you'll get authentication errors because the database is still using the original password.
+
+⚠️ WARNING Following steps will remove all your database data ! ⚠️
+In order to update the `PG_DATABASE_PASSWORD` you need to:
+```sh
+# Update the PG_DATABASE_PASSWORD in .env
+docker compose down --volumes
+docker compose up -d
+```
+
 #### CR line breaks found [Windows]
 
 This is due to the line break characters of Windows and the git configuration. Try running:
