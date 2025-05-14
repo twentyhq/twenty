@@ -6,6 +6,8 @@ import { Node } from '@xyflow/react';
 import { NodeHandler } from './NodeHandler';
 
 export class CondicionalInputHandler implements NodeHandler {
+  private askedNodes = new Set<string>();
+
   private compare(
     actual: string,
     expected: string,
@@ -39,36 +41,44 @@ export class CondicionalInputHandler implements NodeHandler {
 
     if (!logic || !logic.logicNodeData) return null;
 
-    const input = context.incomingMessage.trim();
+    const nodeId = node.id;
+
+    const input = context.incomingMessage.toLowerCase().trim();
     const prompt = typeof node.data?.text === 'string' ? node.data.text : '';
 
-    if (prompt) {
-      await this.sendMessage({
-        type: MessageType.TEXT,
-        message: prompt,
-        integrationId: this.integrationId,
-        to: this.recipient,
-        from: this.chatbotName,
-      });
-    }
+    if (!this.askedNodes.has(nodeId)) {
+      this.askedNodes.add(nodeId);
 
-    const optionsList = logic.logicNodeData
-      .map((d) => {
-        const sector = this.sectors.find((s) => s.id === d.sectorId);
-        const name = sector?.name ?? '';
+      if (prompt) {
+        await this.sendMessage({
+          type: MessageType.TEXT,
+          message: prompt,
+          integrationId: this.integrationId,
+          to: this.recipient,
+          from: this.chatbotName,
+        });
+      }
 
-        return `${d.option} - ${name}`;
-      })
-      .join('\n');
+      const optionsList = logic.logicNodeData
+        .map((d) => {
+          const sector = this.sectors.find((s) => s.id === d.sectorId);
+          const name = sector?.name ?? '';
 
-    if (optionsList) {
-      await this.sendMessage({
-        type: MessageType.TEXT,
-        message: optionsList,
-        integrationId: this.integrationId,
-        to: this.recipient,
-        from: this.chatbotName,
-      });
+          return `${d.option} - ${name}`;
+        })
+        .join('\n');
+
+      if (optionsList) {
+        await this.sendMessage({
+          type: MessageType.TEXT,
+          message: optionsList,
+          integrationId: this.integrationId,
+          to: this.recipient,
+          from: this.chatbotName,
+        });
+      }
+
+      return null;
     }
 
     for (const d of logic.logicNodeData) {
