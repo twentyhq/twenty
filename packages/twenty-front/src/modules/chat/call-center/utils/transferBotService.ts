@@ -7,15 +7,13 @@ import { Sector } from '@/settings/service-center/sectors/types/Sector';
 export const transferBotService = (
   integrationId: string,
   phone: string,
-  chosenSector: string,
   currentStatus: statusEnum,
   sendWhatsappEventMessage: (input: SendEventMessageInput) => void,
+  sectorId: string,
   sectors: Sector[],
   chatbotName: string,
 ) => {
-  const sector = sectors.find(
-    (s: Sector) => s.id === chosenSector || s.name === chosenSector,
-  );
+  const sector = sectors.find((s: Sector) => s.id === sectorId);
   if (!sector) return;
 
   const today = new Date();

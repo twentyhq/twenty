@@ -5,7 +5,9 @@ import { Node } from '@xyflow/react';
 import { SendMessageInput } from '@/chat/call-center/types/SendMessage';
 import { NodeType } from '@/chatbot/constants/NodeTypes';
 import { CondicionalInputHandler } from '@/chatbot/engine/handlers/CondicionalInputHandler';
-import { LogicData } from '@/chatbot/types/LogicNodeDataType';
+import { FileInputHandler } from '@/chatbot/engine/handlers/FileInputHandler';
+import { ImageInputHandler } from '@/chatbot/engine/handlers/ImageInputHandler';
+import { NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
 import { NodeHandler } from './handlers/NodeHandler';
 import { TextInputHandler } from './handlers/TextInputHandler';
 
@@ -14,8 +16,8 @@ export class ExecuteFlow {
   private currentNodeId?: string;
   private incomingMessage = '';
   private handlers: Record<string, NodeHandler>;
-  private onFinish?: (finalNode: Node, matchedInputs?: string[]) => void;
-  private chosenGroupInputs: string[] = [];
+  private onFinish?: (finalNode: Node, chosenInput?: string) => void;
+  private chosenInput?: string;
 
   constructor(
     chatbotFlow: ChatbotFlowInput,
@@ -23,19 +25,38 @@ export class ExecuteFlow {
     integrationId: string,
     recipient: string,
     chatbotName: string,
-    onFinish?: (finalNode: Node, matchedInputs?: string[]) => void,
+    sectors: { id: string; name: string }[],
+    onFinish?: (finalNode: Node, chosenInput?: string) => void,
   ) {
     this.nodes = chatbotFlow.nodes;
     this.currentNodeId = this.findStartNode()?.id;
 
     this.handlers = {
-      text: new TextInputHandler(
+      [NodeType.TEXT]: new TextInputHandler(
         sendMessage,
         integrationId,
         recipient,
         chatbotName,
       ),
-      condition: new CondicionalInputHandler(),
+      [NodeType.CONDITION]: new CondicionalInputHandler(
+        sendMessage,
+        integrationId,
+        recipient,
+        chatbotName,
+        sectors,
+      ),
+      [NodeType.IMAGE]: new ImageInputHandler(
+        sendMessage,
+        integrationId,
+        recipient,
+        chatbotName,
+      ),
+      [NodeType.FILE]: new FileInputHandler(
+        sendMessage,
+        integrationId,
+        recipient,
+        chatbotName,
+      ),
     };
 
     this.onFinish = onFinish;
@@ -49,6 +70,13 @@ export class ExecuteFlow {
     return this.nodes.find((node) => node.id === id);
   }
 
+  private getNextNodeId(currentNode: Node): string | null {
+    if (currentNode.data?.outgoingNodeId) {
+      return currentNode.data.outgoingNodeId as string;
+    }
+    return null;
+  }
+
   public setIncomingMessage(input: string) {
     this.incomingMessage = input;
   }
@@ -59,8 +87,7 @@ export class ExecuteFlow {
 
       if (!currentNode || typeof currentNode.type !== 'string') break;
 
-      const handler =
-        this.handlers[currentNode.type as keyof typeof this.handlers];
+      const handler = this.handlers[currentNode.type];
 
       if (!handler) break;
 
@@ -69,21 +96,25 @@ export class ExecuteFlow {
       });
 
       if (currentNode.type === NodeType.CONDITION && nextNodeId) {
-        const logic = (currentNode.data as { logic: LogicData }).logic;
-        const { logicNodeData } = logic;
+        const logic = currentNode.data?.logic as NewConditionalState;
 
-        const matchedGroup = logicNodeData.find((group) =>
-          group.some((item) => item.outgoingNodeId === nextNodeId),
-        );
+        if (logic?.logicNodeData) {
+          const matchedCondition = logic.logicNodeData.find(
+            (condition) => condition.outgoingNodeId === nextNodeId,
+          );
 
-        if (matchedGroup) {
-          this.chosenGroupInputs = matchedGroup.map((item) => item.inputText);
+          if (matchedCondition) {
+            this.chosenInput = matchedCondition.sectorId;
+          }
         }
       }
 
       if (!nextNodeId) {
-        if (this.onFinish && currentNode.type === NodeType.TEXT) {
-          this.onFinish(currentNode, this.chosenGroupInputs);
+        if (
+          this.onFinish &&
+          ['text', 'image', 'file'].includes(currentNode.type)
+        ) {
+          this.onFinish(currentNode, this.chosenInput);
         }
         break;
       }
@@ -92,7 +123,7 @@ export class ExecuteFlow {
     }
   }
 
-  public runFlowWithLog() {
+  public runFlowWithLog(): void {
     const trace: string[] = [];
 
     console.log('User input: ', this.incomingMessage);
@@ -101,46 +132,66 @@ export class ExecuteFlow {
       const currentNode = this.findNodeById(this.currentNodeId);
 
       if (!currentNode || typeof currentNode.type !== 'string') {
-        trace.push(`Node inválido ou tipo indefinido: ${this.currentNodeId}`);
+        trace.push(`Invalid node or undefined type: ${this.currentNodeId}`);
         break;
       }
 
       trace.push(
-        `Processando node ${currentNode.id} (tipo: ${currentNode.type})`,
+        `Processing node ${currentNode.id} (type: ${currentNode.type})`,
       );
 
-      const handler =
-        this.handlers[currentNode.type as keyof typeof this.handlers];
+      const handler = this.handlers[currentNode.type];
+
+      console.log('handler: ', handler);
 
       if (!handler) {
-        trace.push(`Handler não encontrado para tipo: ${currentNode.type}`);
+        trace.push(`Handler not found for type: ${currentNode.type}`);
         break;
       }
 
-      const nextNodeId = handler.process(currentNode, {
+      const handlerNextNodeId = handler.process(currentNode, {
         incomingMessage: this.incomingMessage,
       });
 
-      if (currentNode.type === NodeType.CONDITION && nextNodeId) {
-        const logic = (currentNode.data as { logic: LogicData }).logic;
-        const { logicNodeData } = logic;
+      if (currentNode.type === NodeType.CONDITION && handlerNextNodeId) {
+        const logic = currentNode.data?.logic as NewConditionalState;
 
-        const matchedGroup = logicNodeData.find((group) =>
-          group.some((item) => item.outgoingNodeId === nextNodeId),
-        );
+        if (logic?.logicNodeData) {
+          const matchedCondition = logic.logicNodeData.find(
+            (condition) => condition.outgoingNodeId === handlerNextNodeId,
+          );
 
-        if (matchedGroup) {
-          this.chosenGroupInputs = matchedGroup.map((item) => item.inputText);
+          if (matchedCondition) {
+            this.chosenInput = matchedCondition.sectorId;
+            trace.push(`Conditional matched: ${matchedCondition}`);
+          }
+        }
+      }
+
+      let nextNodeId = handlerNextNodeId;
+
+      if (!nextNodeId) {
+        nextNodeId = this.getNextNodeId(currentNode);
+
+        if (nextNodeId) {
+          trace.push(`Using outgoingNodeId: ${nextNodeId}`);
         }
       }
 
       if (!nextNodeId) {
-        if (this.onFinish && currentNode.type === NodeType.TEXT) {
-          this.onFinish(currentNode, this.chosenGroupInputs);
+        if (
+          this.onFinish &&
+          ['text', 'image', 'file'].includes(currentNode.type)
+        ) {
+          trace.push('Flow finished, calling onFinish callback');
+          this.onFinish(currentNode, this.chosenInput);
+        } else {
+          trace.push('Flow terminated, no next node found');
         }
         break;
       }
 
+      trace.push(`Moving to next node: ${nextNodeId}`);
       this.currentNodeId = nextNodeId;
     }
 

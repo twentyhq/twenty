@@ -1,7 +1,7 @@
-import {
-  CondicionalState,
-  ExtendedLogicNodeData,
-} from '@/chatbot/types/LogicNodeDataType';
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
+import { SendMessageInput } from '@/chat/call-center/types/SendMessage';
+import { MessageType } from '@/chat/types/MessageType';
+import { NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
 import { Node } from '@xyflow/react';
 import { NodeHandler } from './NodeHandler';
 
@@ -23,36 +23,72 @@ export class CondicionalInputHandler implements NodeHandler {
     }
   }
 
+  constructor(
+    private sendMessage: (input: SendMessageInput) => void,
+    private integrationId: string,
+    private recipient: string,
+    private chatbotName: string,
+    private sectors: { id: string; name: string }[],
+  ) {}
+
   process(node: Node, context: { incomingMessage: string }): string | null {
-    const logic = node.data?.logic as CondicionalState | undefined;
+    const logic = node.data?.logic as NewConditionalState | undefined;
 
     if (!logic || !logic.logicNodeData) return null;
 
-    const actualInput = context.incomingMessage.toLowerCase().trim();
+    const input = context.incomingMessage.trim();
 
-    for (let i = 0; i < logic.logicNodeData.length; i++) {
-      const conditionGroup = logic.logicNodeData[i] as ExtendedLogicNodeData[];
+    const prompt = typeof node.data?.text === 'string' ? node.data.text : '';
 
-      let groupResult: boolean | undefined;
+    if (prompt) {
+      this.sendMessage({
+        type: MessageType.TEXT,
+        message: prompt,
+        integrationId: this.integrationId,
+        to: this.recipient,
+        from: this.chatbotName,
+      });
+    }
 
-      for (let j = 0; j < conditionGroup.length; j++) {
-        const cond = conditionGroup[j];
-        const expected = cond.inputText.toLowerCase().trim();
-        const result = this.compare(actualInput, expected, cond.comparison);
+    const optionsList = logic.logicNodeData
+      .map((d) => {
+        const sector = this.sectors.find((s) => s.id === d.sectorId);
+        const name = sector?.name ?? '';
 
-        if (j === 0) {
-          groupResult = result;
-        } else {
-          const op = cond.conditionValue?.trim() || '&&';
-          groupResult =
-            op === '||' ? groupResult || result : groupResult && result;
-        }
-      }
+        return `${d.option} - ${name}`;
+      })
+      .join('\n');
 
-      // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-      if (groupResult) {
-        const nextId = conditionGroup[0]?.outgoingNodeId;
-        return typeof nextId === 'string' ? nextId : null;
+    if (optionsList) {
+      this.sendMessage({
+        type: MessageType.TEXT,
+        message: optionsList,
+        integrationId: this.integrationId,
+        to: this.recipient,
+        from: this.chatbotName,
+      });
+    }
+
+    for (const d of logic.logicNodeData) {
+      const sector = this.sectors.find((s) => s.id === d.sectorId);
+      const sectorName = sector?.name.toLowerCase() ?? '';
+
+      const option = d.option.toLowerCase();
+      const comparison = d.comparison;
+      const condition = d.conditionValue;
+
+      const matchOption = this.compare(input, option, comparison);
+      const matchSector = sectorName
+        ? this.compare(input, sectorName, comparison)
+        : false;
+
+      const matched =
+        condition === '||'
+          ? matchOption || matchSector
+          : matchOption && matchSector;
+
+      if (matched) {
+        return d.outgoingNodeId ?? null;
       }
     }
 

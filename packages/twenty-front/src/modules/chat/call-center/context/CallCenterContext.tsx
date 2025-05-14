@@ -230,7 +230,6 @@ export const CallCenterProvider = ({
         if (!msgs?.length) continue;
 
         const last = msgs[msgs.length - 1];
-        if (last.from === 'system') continue;
 
         const messageKey = `${chat.integrationId}_${chat.client.phone}_${last.createdAt}`;
         if (processedMessageKeys.current.has(messageKey)) continue;
@@ -239,23 +238,25 @@ export const CallCenterProvider = ({
 
         let executor = executors.current[chatKey];
 
+        const integration = whatsappIntegrations.find(
+          (w) => w.id === chat.integrationId,
+        );
+
+        const chatbotId = integration?.chatbot?.id;
+        if (!chatbotId) continue;
+
+        const { data: chatbotData } = await apolloClient.query({
+          query: GET_CHATBOTS,
+          variables: { chatbotId },
+        });
+
+        const findChatbot = chatbotData?.getChatbots?.find(
+          (bot: any) => bot.id === chatbotId,
+        );
+
+        if (last.from === findChatbot.name) continue;
+
         if (!executor) {
-          const integration = whatsappIntegrations.find(
-            (w) => w.id === chat.integrationId,
-          );
-
-          const chatbotId = integration?.chatbot?.id;
-          if (!chatbotId) continue;
-
-          const { data: chatbotData } = await apolloClient.query({
-            query: GET_CHATBOTS,
-            variables: { chatbotId },
-          });
-
-          const findChatbot = chatbotData?.getChatbots?.find(
-            (bot: any) => bot.id === chatbotId,
-          );
-
           // Change the way the request is made to chatbot flow
           const { data } = await apolloClient.query({
             query: GET_CHATBOT_FLOW_BY_ID,
@@ -270,24 +271,18 @@ export const CallCenterProvider = ({
             chat.integrationId,
             chat.client.phone ?? '',
             findChatbot.name,
-            (_, matchedInputs) => {
-              // Refactoring so that the node takes the id of the chosen sector directly will remove all the current complex logic
-              if (matchedInputs && matchedInputs.length) {
-                const sectorName = matchedInputs.find((text) =>
-                  sectors.some((s) => s.name === text),
+            sectors,
+            (_, sectorId) => {
+              if (sectorId) {
+                transferBotService(
+                  chat.integrationId,
+                  chat.client.phone ?? '',
+                  statusEnum.Waiting,
+                  sendWhatsappEventMessage,
+                  sectorId,
+                  sectors,
+                  findChatbot.name,
                 );
-
-                if (sectorName) {
-                  transferBotService(
-                    chat.integrationId,
-                    chat.client.phone ?? '',
-                    sectorName,
-                    statusEnum.Waiting,
-                    sendWhatsappEventMessage,
-                    sectors,
-                    findChatbot.name,
-                  );
-                }
               }
             },
           );
