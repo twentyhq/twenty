@@ -48,19 +48,19 @@ export function formatData<T>(
       objectMetadataItemWithFieldMaps.fieldsByName[key] ||
       fieldMetadataByJoinColumnName.get(key);
 
+    if (!fieldMetadata) {
+      throw new Error(
+        `Field metadata for field "${key}" is missing in object metadata`,
+      );
+    }
+
     if (
-      fieldMetadata?.name === 'createdBy' &&
+      fieldMetadata.name === 'createdBy' &&
       fieldMetadata.isCustom === false
     ) {
       if (shouldNotEraseCreatedByField) {
         continue;
       }
-    }
-
-    if (!fieldMetadata) {
-      throw new Error(
-        `Field metadata for field "${key}" is missing in object metadata`,
-      );
     }
 
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {
