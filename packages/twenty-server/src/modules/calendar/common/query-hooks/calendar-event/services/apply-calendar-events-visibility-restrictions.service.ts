@@ -37,6 +37,11 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
         'connectedAccount',
       );
 
+    const workspaceMemberRepository =
+      await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        'workspaceMember',
+      );
+
     for (let i = calendarEvents.length - 1; i >= 0; i--) {
       const calendarChannelCalendarEventAssociations =
         calendarChannelCalendarEventsAssociations.filter(
@@ -59,11 +64,6 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
       ) {
         continue;
       }
-
-      const workspaceMemberRepository =
-        await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          'workspaceMember',
-        );
 
       const workspaceMember = await workspaceMemberRepository.findOneByOrFail({
         userId: userId,

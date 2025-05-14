@@ -38,6 +38,11 @@ export class ApplyMessagesVisibilityRestrictionsService {
         'connectedAccount',
       );
 
+    const workspaceMemberRepository =
+      await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        'workspaceMember',
+      );
+
     for (let i = messages.length - 1; i >= 0; i--) {
       const messageChannelMessageAssociations =
         messageChannelMessagesAssociations.filter(
@@ -66,11 +71,6 @@ export class ApplyMessagesVisibilityRestrictionsService {
       ) {
         continue;
       }
-
-      const workspaceMemberRepository =
-        await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          'workspaceMember',
-        );
 
       const workspaceMember = await workspaceMemberRepository.findOneByOrFail({
         userId,
