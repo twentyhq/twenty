@@ -228,12 +228,19 @@ export abstract class RestApiBaseHandler {
   }: FormatResultParams<T>) {
     let prefix: string;
 
+    if (isDefined(objectNameSingular) && isDefined(objectNamePlural)) {
+      throw new Error(
+        'Cannot define both objectNameSingular and objectNamePlural',
+      );
+    }
+
     if (operation === 'findOne') {
       prefix = objectNameSingular || '';
     } else if (operation === 'findMany') {
       prefix = objectNamePlural || '';
     } else {
-      prefix = operation + capitalize(objectNameSingular || '');
+      prefix =
+        operation + capitalize(objectNameSingular || objectNamePlural || '');
     }
 
     return {

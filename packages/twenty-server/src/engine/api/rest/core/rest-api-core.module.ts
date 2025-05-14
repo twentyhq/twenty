@@ -13,16 +13,17 @@ import { RecordTransformerModule } from 'src/engine/core-modules/record-transfor
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { RestApiCoreController } from 'src/engine/api/rest/core/controllers/rest-api-core.controller';
 import { coreQueryBuilderFactories } from 'src/engine/api/rest/core/query-builder/factories/factories';
-import { RestApiCoreBatchController } from 'src/engine/api/rest/core/controllers/rest-api-core-batch.controller';
 import { RestApiCoreServiceV2 } from 'src/engine/api/rest/core/rest-api-core-v2.service';
 import { RestApiCoreService } from 'src/engine/api/rest/core/rest-api-core.service';
 import { RestApiService } from 'src/engine/api/rest/rest-api.service';
 import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { RestApiCreateManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-create-many.handler';
 
 const restApiCoreResolvers = [
   RestApiDeleteOneHandler,
   RestApiCreateOneHandler,
+  RestApiCreateManyHandler,
   RestApiUpdateOneHandler,
   RestApiGetOneHandler,
   RestApiGetManyHandler,
@@ -38,7 +39,7 @@ const restApiCoreResolvers = [
     RecordTransformerModule,
     WorkspacePermissionsCacheModule,
   ],
-  controllers: [RestApiCoreController, RestApiCoreBatchController],
+  controllers: [RestApiCoreController],
   providers: [
     RestApiService,
     RestApiCoreService,
