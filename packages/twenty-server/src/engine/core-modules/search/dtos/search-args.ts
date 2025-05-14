@@ -14,6 +14,11 @@ export class SearchArgs {
   @IsInt()
   limit: number;
 
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  offset?: number;
+
   @IsArray()
   @Field(() => [String], { nullable: true })
   @IsOptional()

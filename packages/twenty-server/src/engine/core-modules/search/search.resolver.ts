@@ -43,6 +43,7 @@ export class SearchResolver {
       filter,
       includedObjectNameSingulars,
       excludedObjectNameSingulars,
+      offset,
     }: SearchArgs,
   ) {
     const currentCacheVersion =
@@ -106,6 +107,7 @@ export class SearchResolver {
               searchTerms: formatSearchTerms(searchInput, 'and'),
               searchTermsOr: formatSearchTerms(searchInput, 'or'),
               limit,
+              offset,
               filter: filter ?? ({} as ObjectRecordFilter),
             }),
           };
