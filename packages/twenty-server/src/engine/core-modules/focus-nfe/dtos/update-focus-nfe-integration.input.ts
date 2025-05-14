@@ -8,12 +8,12 @@ export class UpdateFocusNfeIntegrationInput {
   @IsString()
   id: string;
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
   @IsOptional()
   integrationName: string;
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
   @IsOptional()
   token: string;

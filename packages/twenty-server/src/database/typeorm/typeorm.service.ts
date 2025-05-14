@@ -16,6 +16,7 @@ import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FocusNfeIntegration } from 'src/engine/core-modules/focus-nfe/focus-nfe-integration.entity';
 import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
@@ -67,6 +68,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         InterIntegration,
         Inbox,
         StripeIntegration,
+        FocusNfeIntegration,
       ],
       metadataTableName: '_typeorm_generated_columns_and_materialized_views',
       ssl: twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')

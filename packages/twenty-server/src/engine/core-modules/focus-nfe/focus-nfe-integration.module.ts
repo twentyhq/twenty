@@ -27,6 +27,6 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
     forwardRef(() => WorkspaceModule),
   ],
   exports: [FocusNfeService],
-  providers: [FocusNfeService, FocusNfeResolver, TypeORMService],
+  providers: [FocusNfeResolver, FocusNfeService, TypeORMService],
 })
 export class FocusNfeModule {}
