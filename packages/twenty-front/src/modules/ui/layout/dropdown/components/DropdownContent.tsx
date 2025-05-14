@@ -72,7 +72,7 @@ export const DropdownContent = ({
     dropdownId,
   );
 
-  const systemMaxWidth = useRecoilComponentValueV2(
+  const dropdownMaxWidth = useRecoilComponentValueV2(
     dropdownMaxWidthComponentState,
     dropdownId,
   );
@@ -120,7 +120,7 @@ export const DropdownContent = ({
   const dropdownMenuStyles = {
     ...floatingStyles,
     maxHeight: dropdownMaxHeight,
-    maxWidth: systemMaxWidth,
+    maxWidth: dropdownMaxWidth,
   };
 
   return (
