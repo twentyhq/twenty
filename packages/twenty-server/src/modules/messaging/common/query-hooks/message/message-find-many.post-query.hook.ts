@@ -5,7 +5,7 @@ import { WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ApplyMessagesVisibilityRestrictionsService } from 'src/modules/messaging/common/query-hooks/message/apply-messages-visibility-restrictions.service';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
@@ -28,7 +28,7 @@ export class MessageFindManyPostQueryHook
     const { user, apiKey } = authContext;
 
     if (!isDefined(user) && !isDefined(apiKey)) {
-      throw new UserInputError('User is required');
+      throw new ForbiddenError('User is required');
     }
 
     await this.applyMessagesVisibilityRestrictionsService.applyMessagesVisibilityRestrictions(

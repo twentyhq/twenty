@@ -5,7 +5,7 @@ import { WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ApplyCalendarEventsVisibilityRestrictionsService } from 'src/modules/calendar/common/query-hooks/calendar-event/services/apply-calendar-events-visibility-restrictions.service';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
@@ -28,7 +28,7 @@ export class CalendarEventFindManyPostQueryHook
     const { user, apiKey } = authContext;
 
     if (!isDefined(user) && !isDefined(apiKey)) {
-      throw new UserInputError('User is required');
+      throw new ForbiddenError('User is required');
     }
 
     await this.applyCalendarEventsVisibilityRestrictionsService.applyCalendarEventsVisibilityRestrictions(
