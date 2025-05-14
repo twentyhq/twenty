@@ -5,7 +5,7 @@ export interface SendMessageInputBase {
   to: string;
   message?: string;
   type: MessageType;
-  fieldId?: string;
+  fileId?: string;
 }
 
 export interface SendEventMessageInput extends SendMessageInputBase {
