@@ -8,7 +8,7 @@ import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 
 @Injectable()
-export class RestApiGetOneHandler extends RestApiBaseHandler {
+export class RestApiFindOneHandler extends RestApiBaseHandler {
   async handle(request: Request) {
     const { id: recordId } = parseCorePath(request);
 
