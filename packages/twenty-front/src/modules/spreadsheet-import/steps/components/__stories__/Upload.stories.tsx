@@ -23,7 +23,7 @@ export default meta;
 export const Default = () => (
   <DialogManagerScope dialogManagerScopeId="dialog-manager">
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
-      <ModalWrapper isOpen={true} onClose={() => null}>
+      <ModalWrapper modalId="upload-step" isOpen={true} onClose={() => null}>
         <UploadStep
           setUploadedFile={() => null}
           setCurrentStepState={() => null}

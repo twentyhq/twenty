@@ -24,7 +24,11 @@ const sheetNames = ['Sheet1', 'Sheet2', 'Sheet3'];
 export const Default = () => (
   <DialogManagerScope dialogManagerScopeId="dialog-manager">
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
-      <ModalWrapper isOpen={true} onClose={() => null}>
+      <ModalWrapper
+        modalId="select-sheet-step"
+        isOpen={true}
+        onClose={() => null}
+      >
         <SelectSheetStep
           sheetNames={sheetNames}
           setCurrentStepState={() => {}}

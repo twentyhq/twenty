@@ -1,22 +1,20 @@
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
-import { Button } from 'twenty-ui/input';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { H2Title, IconTrash } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
 
 export const DeleteWorkspace = () => {
-  const [isDeleteWorkSpaceModalOpen, setIsDeleteWorkSpaceModalOpen] =
-    useState(false);
-
   const [deleteCurrentWorkspace] = useDeleteCurrentWorkspaceMutation();
   const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
   const { t } = useLingui();
+  const { openModal } = useModal();
 
   const { signOut } = useAuth();
 
@@ -36,14 +34,13 @@ export const DeleteWorkspace = () => {
         variant="secondary"
         title={t`Delete workspace`}
         Icon={IconTrash}
-        onClick={() => setIsDeleteWorkSpaceModalOpen(true)}
+        onClick={() => openModal('delete-workspace-modal')}
       />
 
       <ConfirmationModal
+        modalId={'delete-workspace-modal'}
         confirmationPlaceholder={userEmail}
         confirmationValue={userEmail}
-        isOpen={isDeleteWorkSpaceModalOpen}
-        setIsOpen={setIsDeleteWorkSpaceModalOpen}
         title={t`Workspace Deletion`}
         subtitle={
           <Trans>

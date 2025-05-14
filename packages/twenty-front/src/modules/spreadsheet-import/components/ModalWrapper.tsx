@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import { ModalCloseButton } from './ModalCloseButton';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { ModalCloseButton } from './ModalCloseButton';
 
 const StyledModal = styled(Modal)`
   height: 61%;
@@ -29,11 +29,13 @@ const StyledRtlLtr = styled.div`
 
 type ModalWrapperProps = {
   children: React.ReactNode;
+  modalId: string;
   isOpen: boolean;
   onClose: () => void;
 };
 
 export const ModalWrapper = ({
+  modalId,
   children,
   isOpen,
   onClose,
@@ -43,7 +45,7 @@ export const ModalWrapper = ({
   return (
     <>
       {isOpen && (
-        <StyledModal size="large">
+        <StyledModal size="large" modalId={modalId}>
           <StyledRtlLtr dir={rtl ? 'rtl' : 'ltr'}>
             <ModalCloseButton onClose={onClose} />
             {children}

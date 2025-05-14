@@ -1,10 +1,11 @@
-import { ReactNode, useCallback, useContext, useState } from 'react';
+import { ReactNode, useContext } from 'react';
 import { createPortal } from 'react-dom';
 
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ButtonAccent } from 'twenty-ui/input';
 
 export type ActionModalProps = {
@@ -24,11 +25,7 @@ export const ActionModal = ({
   confirmButtonAccent = 'danger',
   isLoading = false,
 }: ActionModalProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleOpen = useCallback(() => {
-    setIsOpen(true);
-  }, []);
+  const { openModal } = useModal();
 
   const { closeActionMenu } = useCloseActionMenu();
 
@@ -45,21 +42,21 @@ export const ActionModal = ({
 
   return (
     <>
-      <ActionDisplay onClick={handleOpen} />
-      {isOpen &&
-        createPortal(
-          <ConfirmationModal
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            title={title}
-            subtitle={subtitle}
-            onConfirmClick={handleConfirmClick}
-            confirmButtonText={confirmButtonText}
-            confirmButtonAccent={confirmButtonAccent}
-            loading={isLoading}
-          />,
-          document.body,
-        )}
+      <ActionDisplay
+        onClick={() => openModal(`${actionConfig.key}-action-modal`)}
+      />
+      {createPortal(
+        <ConfirmationModal
+          modalId={`${actionConfig.key}-action-modal`}
+          title={title}
+          subtitle={subtitle}
+          onConfirmClick={handleConfirmClick}
+          confirmButtonText={confirmButtonText}
+          confirmButtonAccent={confirmButtonAccent}
+          loading={isLoading}
+        />,
+        document.body,
+      )}
     </>
   );
 };

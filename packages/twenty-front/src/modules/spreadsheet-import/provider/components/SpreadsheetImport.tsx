@@ -31,7 +31,11 @@ export const SpreadsheetImport = <T extends string>(
 
   return (
     <ReactSpreadsheetImportContextProvider values={mergedProps}>
-      <ModalWrapper isOpen={mergedProps.isOpen} onClose={mergedProps.onClose}>
+      <ModalWrapper
+        modalId="spreadsheet-import"
+        isOpen={mergedProps.isOpen}
+        onClose={mergedProps.onClose}
+      >
         <SpreadsheetImportStepperContainer />
       </ModalWrapper>
     </ReactSpreadsheetImportContextProvider>

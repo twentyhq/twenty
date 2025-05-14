@@ -26,7 +26,11 @@ const file = new File([''], 'file.csv');
 export const Default = () => (
   <DialogManagerScope dialogManagerScopeId="dialog-manager">
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
-      <ModalWrapper isOpen={true} onClose={() => null}>
+      <ModalWrapper
+        modalId="validation-step"
+        isOpen={true}
+        onClose={() => null}
+      >
         <ValidationStep
           initialData={editableTableInitialData}
           file={file}

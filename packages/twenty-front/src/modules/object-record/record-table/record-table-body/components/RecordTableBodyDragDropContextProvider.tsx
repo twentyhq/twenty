@@ -1,14 +1,15 @@
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { ReactNode } from 'react';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
+import { RecordIndexRemoveSortingModalId } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -33,15 +34,13 @@ export const RecordTableBodyDragDropContextProvider = ({
     currentRecordSortsComponentState,
   );
 
-  const setIsRemoveSortingModalOpen = useSetRecoilState(
-    isRemoveSortingModalOpenState,
-  );
+  const { openModal } = useModal();
 
   const handleDragEnd = useRecoilCallback(
     ({ snapshot }) =>
       (result: DropResult) => {
         if (currentRecordSorts.length > 0) {
-          setIsRemoveSortingModalOpen(true);
+          openModal(RecordIndexRemoveSortingModalId);
           return;
         }
 
@@ -100,10 +99,10 @@ export const RecordTableBodyDragDropContextProvider = ({
         });
       },
     [
+      currentRecordSorts.length,
       recordIndexAllRecordIdsSelector,
-      setIsRemoveSortingModalOpen,
       updateOneRow,
-      currentRecordSorts,
+      openModal,
     ],
   );
 

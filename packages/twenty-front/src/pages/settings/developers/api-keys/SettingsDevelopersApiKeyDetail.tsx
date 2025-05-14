@@ -21,15 +21,15 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { Button } from 'twenty-ui/input';
-import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
-
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.sm};
@@ -47,9 +47,7 @@ const StyledInputContainer = styled.div`
 export const SettingsDevelopersApiKeyDetail = () => {
   const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
-  const [isRegenerateKeyModalOpen, setIsRegenerateKeyModalOpen] =
-    useState(false);
-  const [isDeleteApiKeyModalOpen, setIsDeleteApiKeyModalOpen] = useState(false);
+  const { openModal } = useModal();
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigateSettings();
@@ -194,7 +192,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                     <Button
                       title={t`Regenerate Key`}
                       Icon={IconRepeat}
-                      onClick={() => setIsRegenerateKeyModalOpen(true)}
+                      onClick={() => openModal(`regenerate-key-modal`)}
                     />
                     <StyledInfo>
                       {formatExpiration(
@@ -242,7 +240,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 variant="secondary"
                 title={t`Delete`}
                 Icon={IconTrash}
-                onClick={() => setIsDeleteApiKeyModalOpen(true)}
+                onClick={() => openModal(`delete-api-key-modal`)}
               />
             </Section>
           </SettingsPageContainer>
@@ -251,8 +249,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        isOpen={isDeleteApiKeyModalOpen}
-        setIsOpen={setIsDeleteApiKeyModalOpen}
+        modalId={`delete-api-key-modal`}
         title={t`Delete API key`}
         subtitle={
           <Trans>
@@ -268,8 +265,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        isOpen={isRegenerateKeyModalOpen}
-        setIsOpen={setIsRegenerateKeyModalOpen}
+        modalId={`regenerate-key-modal`}
         title={t`Regenerate an API key`}
         subtitle={
           <Trans>

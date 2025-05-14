@@ -1,7 +1,6 @@
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { ModalComponentInstanceContext } from '@/ui/layout/modal/contexts/ModalComponentInstanceContext';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import {
   ClickOutsideMode,
@@ -11,7 +10,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
 const StyledModalDiv = styled(motion.div)<{
@@ -202,22 +201,6 @@ export const Modal = ({
 }: ModalProps) => {
   const isMobile = useIsMobile();
   const modalRef = useRef<HTMLDivElement>(null);
-
-  const {
-    goBackToPreviousHotkeyScope,
-    setHotkeyScopeAndMemorizePreviousScope,
-  } = usePreviousHotkeyScope();
-
-  useEffect(() => {
-    setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
-    return () => {
-      goBackToPreviousHotkeyScope();
-    };
-  }, [
-    hotkeyScope,
-    setHotkeyScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeyScope,
-  ]);
 
   useScopedHotkeys(
     [Key.Enter],

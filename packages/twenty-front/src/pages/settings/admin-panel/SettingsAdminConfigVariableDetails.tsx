@@ -12,6 +12,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useRecoilValue } from 'recoil';
 import { ConfigVariableValue } from 'twenty-shared/types';
@@ -23,7 +24,6 @@ import {
   useGetDatabaseConfigVariableQuery,
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-
 const StyledForm = styled(Form)`
   display: flex;
   flex-direction: column;
@@ -52,7 +52,7 @@ export const SettingsAdminConfigVariableDetails = () => {
   const { variableName } = useParams();
   const { t } = useLingui();
   const [isEditing, setIsEditing] = useState(false);
-  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const { openModal } = useModal();
   const isConfigVariablesInDbEnabled = useRecoilValue(
     isConfigVariablesInDbEnabledState,
   );
@@ -101,7 +101,7 @@ export const SettingsAdminConfigVariableDetails = () => {
     }
 
     if (isFromDatabase && !hasValueChanged) {
-      setIsConfirmationModalOpen(true);
+      openModal(`reset-variable-modal`);
       return;
     }
 
@@ -193,13 +193,7 @@ export const SettingsAdminConfigVariableDetails = () => {
       </SubMenuTopBarContainer>
 
       <ConfirmationModal
-        isOpen={isConfirmationModalOpen}
-        setIsOpen={(isOpen) => {
-          setIsConfirmationModalOpen(isOpen);
-          if (!isOpen) {
-            setIsEditing(false);
-          }
-        }}
+        modalId={`reset-variable-modal`}
         title={t`Reset variable`}
         subtitle={t`This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings.`}
         onConfirmClick={handleConfirmReset}

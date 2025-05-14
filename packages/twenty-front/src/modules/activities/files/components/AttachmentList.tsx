@@ -12,9 +12,9 @@ import { useRecoilValue } from 'recoil';
 
 import { ActivityList } from '@/activities/components/ActivityList';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { AttachmentRow } from './AttachmentRow';
-import { IconButton } from 'twenty-ui/input';
 import { IconDownload, IconX } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
+import { AttachmentRow } from './AttachmentRow';
 
 const DocumentViewer = lazy(() =>
   import('@/activities/files/components/DocumentViewer').then((module) => ({
@@ -177,7 +177,12 @@ export const AttachmentList = ({
         </StyledContainer>
       )}
       {previewedAttachment && isAttachmentPreviewEnabled && (
-        <StyledModal size="large" isClosable onClose={handleClosePreview}>
+        <StyledModal
+          modalId={`preview-modal-${previewedAttachment.id}`}
+          size="large"
+          isClosable
+          onClose={handleClosePreview}
+        >
           <StyledModalHeader>
             <StyledHeader>
               <StyledModalTitle>{previewedAttachment.name}</StyledModalTitle>

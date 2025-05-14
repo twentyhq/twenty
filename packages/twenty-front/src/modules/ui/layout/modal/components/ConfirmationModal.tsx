@@ -6,6 +6,9 @@ import { useDebouncedCallback } from 'use-debounce';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 import { Modal, ModalVariants } from '@/ui/layout/modal/components/Modal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import { Button, ButtonAccent } from 'twenty-ui/input';
@@ -13,11 +16,10 @@ import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 
 export type ConfirmationModalProps = {
   modalId: string;
-  isOpen: boolean;
   title: string;
   loading?: boolean;
   subtitle: ReactNode;
-  setIsOpen: (val: boolean) => void;
+  onClose?: () => void;
   onConfirmClick: () => void;
   confirmButtonText?: string;
   confirmationPlaceholder?: string;
@@ -60,12 +62,11 @@ export const StyledConfirmationButton = styled(StyledCenteredButton)`
 
 export const ConfirmationModal = ({
   modalId,
-  isOpen = false,
   title,
   loading,
   subtitle,
-  setIsOpen,
   onConfirmClick,
+  onClose,
   confirmButtonText = 'Confirm',
   confirmationValue,
   confirmationPlaceholder,
@@ -90,11 +91,18 @@ export const ConfirmationModal = ({
     250,
   );
 
+  const { closeModal } = useModal();
+
   const handleConfirmClick = () => {
     onConfirmClick();
 
-    setIsOpen(false);
+    closeModal(modalId);
   };
+
+  const isModalOpen = useRecoilComponentValueV2(
+    isModalOpenedComponentState,
+    modalId,
+  );
 
   const handleEnter = () => {
     if (isValidValue) {
@@ -105,13 +113,12 @@ export const ConfirmationModal = ({
   return (
     <AnimatePresence mode="wait">
       <LayoutGroup>
-        {isOpen && (
+        {isModalOpen && (
           <StyledConfirmationModal
             modalId={modalId}
             onClose={() => {
-              if (isOpen) {
-                setIsOpen(false);
-              }
+              closeModal(modalId);
+              onClose?.();
             }}
             onEnter={handleEnter}
             isClosable={true}
@@ -143,7 +150,7 @@ export const ConfirmationModal = ({
             )}
             <StyledCenteredButton
               onClick={() => {
-                setIsOpen(false);
+                closeModal(modalId);
               }}
               variant="secondary"
               title={t`Cancel`}

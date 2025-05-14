@@ -5,15 +5,14 @@ import { ServerlessFunctionFormValues } from '@/settings/serverless-functions/ho
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useState } from 'react';
 import { Key } from 'ts-key-enum';
+import { H2Title } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { Button } from 'twenty-ui/input';
-import { H2Title } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
-
 export const SettingsServerlessFunctionSettingsTab = ({
   formValues,
   serverlessFunctionId,
@@ -26,8 +25,7 @@ export const SettingsServerlessFunctionSettingsTab = ({
   onCodeChange: (filePath: string, value: string) => void;
 }) => {
   const navigate = useNavigateSettings();
-  const [isDeleteFunctionModalOpen, setIsDeleteFunctionModalOpen] =
-    useState(false);
+  const { openModal } = useModal();
   const { deleteOneServerlessFunction } = useDeleteOneServerlessFunction();
 
   const deleteFunction = async () => {
@@ -42,7 +40,7 @@ export const SettingsServerlessFunctionSettingsTab = ({
   useScopedHotkeys(
     [Key.Delete],
     () => {
-      setIsDeleteFunctionModalOpen(true);
+      openModal(`delete-function-modal`);
     },
     SettingsServerlessFunctionHotkeyScope.ServerlessFunctionSettingsTab,
   );
@@ -68,7 +66,7 @@ export const SettingsServerlessFunctionSettingsTab = ({
         <H2Title title="Danger zone" description="Delete this function" />
         <Button
           accent="danger"
-          onClick={() => setIsDeleteFunctionModalOpen(true)}
+          onClick={() => openModal(`delete-function-modal`)}
           variant="secondary"
           size="small"
           title="Delete function"
@@ -77,8 +75,7 @@ export const SettingsServerlessFunctionSettingsTab = ({
       <ConfirmationModal
         confirmationValue={formValues.name}
         confirmationPlaceholder={formValues.name}
-        isOpen={isDeleteFunctionModalOpen}
-        setIsOpen={setIsDeleteFunctionModalOpen}
+        modalId="delete-function-modal"
         title="Function Deletion"
         subtitle={
           <>

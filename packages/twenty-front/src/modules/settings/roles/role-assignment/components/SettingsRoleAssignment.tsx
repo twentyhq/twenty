@@ -1,5 +1,5 @@
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
 import { SettingsRoleAssignmentConfirmationModal } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal';
 import { SettingsRoleAssignmentTableHeader } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader';
@@ -11,18 +11,14 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  Role,
-  SearchRecord,
-  WorkspaceMember,
-} from '~/generated-metadata/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SettingsRoleAssignmentTableRow } from './SettingsRoleAssignmentTableRow';
 import {
   AppTooltip,
   H2Title,
@@ -32,6 +28,14 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import {
+  Role,
+  SearchRecord,
+  WorkspaceMember,
+} from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { RoleAssignmentConfirmationModalId } from '../constants/RoleAssignmentConfirmationModalId';
+import { SettingsRoleAssignmentTableRow } from './SettingsRoleAssignmentTableRow';
 
 const StyledAssignToMemberContainer = styled.div`
   display: flex;
@@ -84,8 +88,7 @@ export const SettingsRoleAssignment = ({
     updateWorkspaceMemberRoleDraftState,
   } = useUpdateWorkspaceMemberRole(roleId);
 
-  const [confirmationModalIsOpen, setConfirmationModalIsOpen] =
-    useState<boolean>(false);
+  const { openModal, closeModal } = useModal();
   const [selectedWorkspaceMember, setSelectedWorkspaceMember] =
     useState<SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember | null>(
       null,
@@ -135,7 +138,6 @@ export const SettingsRoleAssignment = ({
   );
 
   const handleModalClose = () => {
-    setConfirmationModalIsOpen(false);
     setSelectedWorkspaceMember(null);
   };
 
@@ -152,12 +154,17 @@ export const SettingsRoleAssignment = ({
       role: existingRole,
       avatarUrl: workspaceMemberSearchRecord.imageUrl,
     });
-    setConfirmationModalIsOpen(true);
+    openModal(RoleAssignmentConfirmationModalId);
     closeDropdown();
   };
 
+  const isModalOpened = useRecoilComponentValueV2(
+    isModalOpenedComponentState,
+    RoleAssignmentConfirmationModalId,
+  );
+
   const handleConfirm = async () => {
-    if (!selectedWorkspaceMember || !confirmationModalIsOpen) return;
+    if (!selectedWorkspaceMember || !isModalOpened) return;
 
     if (!isCreateMode) {
       await addWorkspaceMemberToRoleAndUpdateState({
@@ -188,6 +195,7 @@ export const SettingsRoleAssignment = ({
   const handleRoleClick = (roleId: string) => {
     navigateSettings(SettingsPath.RoleDetail, { roleId });
     handleModalClose();
+    closeModal(RoleAssignmentConfirmationModalId);
   };
 
   const handleSearchChange = (text: string) => {
@@ -267,10 +275,9 @@ export const SettingsRoleAssignment = ({
         </StyledAssignToMemberContainer>
       </Section>
 
-      {confirmationModalIsOpen && selectedWorkspaceMember && (
+      {selectedWorkspaceMember && (
         <SettingsRoleAssignmentConfirmationModal
           selectedWorkspaceMember={selectedWorkspaceMember}
-          isOpen={true}
           onClose={handleModalClose}
           onConfirm={handleConfirm}
           onRoleClick={handleRoleClick}

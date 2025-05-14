@@ -64,7 +64,11 @@ const mockData = [
 export const Default = () => (
   <DialogManagerScope dialogManagerScopeId="dialog-manager">
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
-      <ModalWrapper isOpen={true} onClose={() => null}>
+      <ModalWrapper
+        modalId="match-columns-step"
+        isOpen={true}
+        onClose={() => null}
+      >
         <MatchColumnsStep
           headerValues={mockData[0] as string[]}
           data={mockData.slice(1)}

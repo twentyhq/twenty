@@ -9,12 +9,12 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -73,10 +73,7 @@ export const SettingsDomain = () => {
     currentWorkspaceState,
   );
 
-  const [
-    isSubdomainChangeConfirmationModalOpen,
-    setIsSubdomainChangeConfirmationModalOpen,
-  ] = useState(false);
+  const { openModal } = useModal();
 
   const form = useForm<{
     subdomain: string;
@@ -201,7 +198,7 @@ export const SettingsDomain = () => {
       isDefined(values.subdomain) &&
       values.subdomain !== currentWorkspace.subdomain
     ) {
-      setIsSubdomainChangeConfirmationModalOpen(true);
+      openModal(`subdomain-change-confirmation-modal`);
       return;
     }
 
@@ -240,10 +237,9 @@ export const SettingsDomain = () => {
           </SettingsPageContainer>
         </SubMenuTopBarContainer>
         <ConfirmationModal
-          isOpen={isSubdomainChangeConfirmationModalOpen}
+          modalId={`subdomain-change-confirmation-modal`}
           title={t`Change subdomain?`}
           subtitle={t`You're about to change your workspace subdomain. This action will log out all users.`}
-          setIsOpen={setIsSubdomainChangeConfirmationModalOpen}
           onConfirmClick={() => {
             const values = form.getValues();
             currentWorkspace &&

@@ -1,5 +1,4 @@
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -10,6 +9,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,7 +28,6 @@ import {
   useSwitchSubscriptionToYearlyIntervalMutation,
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-
 export const SettingsBilling = () => {
   const { t } = useLingui();
 
@@ -47,8 +46,6 @@ export const SettingsBilling = () => {
 
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
 
-  const [isSwitchingIntervalModalOpen, setIsSwitchingIntervalModalOpen] =
-    useState(false);
   const [switchToYearlyInterval] =
     useSwitchSubscriptionToYearlyIntervalMutation();
   const { data, loading } = useBillingPortalSessionQuery({
@@ -67,9 +64,7 @@ export const SettingsBilling = () => {
     }
   };
 
-  const openSwitchingIntervalModal = () => {
-    setIsSwitchingIntervalModalOpen(true);
-  };
+  const { openModal } = useModal();
 
   const switchInterval = async () => {
     try {
@@ -133,7 +128,7 @@ export const SettingsBilling = () => {
               Icon={IconCalendarEvent}
               title={t`Switch to yearly`}
               variant="secondary"
-              onClick={openSwitchingIntervalModal}
+              onClick={() => openModal(`switch-billing-interval-modal`)}
               disabled={!hasNotCanceledCurrentSubscription}
             />
           </Section>
@@ -154,8 +149,7 @@ export const SettingsBilling = () => {
         </Section>
       </SettingsPageContainer>
       <ConfirmationModal
-        isOpen={isSwitchingIntervalModalOpen}
-        setIsOpen={setIsSwitchingIntervalModalOpen}
+        modalId={`switch-billing-interval-modal`}
         title={t`Switch billing to yearly`}
         subtitle={t`Are you sure that you want to change your billing interval? You will be charged immediately for the full year.`}
         onConfirmClick={switchInterval}

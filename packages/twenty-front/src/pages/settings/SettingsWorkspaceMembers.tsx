@@ -16,6 +16,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -23,13 +24,6 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { formatDistanceToNow } from 'date-fns';
-import { useGetWorkspaceInvitationsQuery } from '~/generated/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
-import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
-import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
-import { useResendWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useResendWorkspaceInvitation';
-import { workspaceInvitationsState } from '../../modules/workspace-invitation/states/workspaceInvitationsStates';
 import { isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
@@ -44,7 +38,13 @@ import {
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-
+import { useGetWorkspaceInvitationsQuery } from '~/generated/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
+import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
+import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
+import { useResendWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useResendWorkspaceInvitation';
+import { workspaceInvitationsState } from '../../modules/workspace-invitation/states/workspaceInvitationsStates';
 const StyledButtonContainer = styled.div`
   align-items: center;
   display: flex;
@@ -92,7 +92,6 @@ export const SettingsWorkspaceMembers = () => {
   const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
   const theme = useTheme();
-  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [workspaceMemberToDelete, setWorkspaceMemberToDelete] = useState<
     string | undefined
   >();
@@ -112,7 +111,6 @@ export const SettingsWorkspaceMembers = () => {
 
   const handleRemoveWorkspaceMember = async (workspaceMemberId: string) => {
     await deleteOneWorkspaceMember?.(workspaceMemberId);
-    setIsConfirmationModalOpen(false);
   };
 
   const workspaceInvitations = useRecoilValue(workspaceInvitationsState);
@@ -176,6 +174,8 @@ export const SettingsWorkspaceMembers = () => {
           email.includes(searchTerm)
         );
       });
+
+  const { openModal } = useModal();
 
   return (
     <SubMenuTopBarContainer
@@ -273,7 +273,7 @@ export const SettingsWorkspaceMembers = () => {
                         <StyledButtonContainer>
                           <IconButton
                             onClick={() => {
-                              setIsConfirmationModalOpen(true);
+                              openModal(`workspace-member-deletion-modal`);
                               setWorkspaceMemberToDelete(workspaceMember.id);
                             }}
                             variant="tertiary"
@@ -371,8 +371,7 @@ export const SettingsWorkspaceMembers = () => {
         </Section>
       </SettingsPageContainer>
       <ConfirmationModal
-        isOpen={isConfirmationModalOpen}
-        setIsOpen={setIsConfirmationModalOpen}
+        modalId={`workspace-member-deletion-modal`}
         title={t`Account Deletion`}
         subtitle={
           <Trans>

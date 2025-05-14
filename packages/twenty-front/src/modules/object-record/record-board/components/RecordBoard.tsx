@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useContext, useRef } from 'react';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
@@ -19,11 +19,12 @@ import { RecordBoardComponentInstanceContext } from '@/object-record/record-boar
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
+import { RecordIndexRemoveSortingModalId } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -120,9 +121,7 @@ export const RecordBoard = () => {
     },
   });
 
-  const setIsRemoveSortingModalOpen = useSetRecoilState(
-    isRemoveSortingModalOpenState,
-  );
+  const { openModal } = useModal();
 
   const handleDragEnd: OnDragEndResponder = useRecoilCallback(
     ({ snapshot }) =>
@@ -130,7 +129,7 @@ export const RecordBoard = () => {
         if (!result.destination) return;
 
         if (currentRecordSorts.length > 0) {
-          setIsRemoveSortingModalOpen(true);
+          openModal(RecordIndexRemoveSortingModalId);
           return;
         }
 
@@ -189,7 +188,7 @@ export const RecordBoard = () => {
       recordIndexRecordIdsByGroupFamilyState,
       selectFieldMetadataItem,
       updateOneRecord,
-      setIsRemoveSortingModalOpen,
+      openModal,
       currentRecordSorts,
     ],
   );

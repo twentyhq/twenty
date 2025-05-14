@@ -1,18 +1,16 @@
-import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useLingui } from '@lingui/react/macro';
-import { useDeleteUserAccountMutation } from '~/generated/graphql';
-import { Button } from 'twenty-ui/input';
 import { H2Title } from 'twenty-ui/display';
-
+import { Button } from 'twenty-ui/input';
+import { useDeleteUserAccountMutation } from '~/generated/graphql';
 export const DeleteAccount = () => {
   const { t } = useLingui();
-  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
-    useState(false);
+  const { openModal } = useModal();
 
   const [deleteUserAccount] = useDeleteUserAccountMutation();
   const currentUser = useRecoilValue(currentUserState);
@@ -33,7 +31,7 @@ export const DeleteAccount = () => {
 
       <Button
         accent="danger"
-        onClick={() => setIsDeleteAccountModalOpen(true)}
+        onClick={() => openModal('delete-account-modal')}
         variant="secondary"
         title={t`Delete account`}
       />
@@ -41,8 +39,7 @@ export const DeleteAccount = () => {
       <ConfirmationModal
         confirmationValue={userEmail}
         confirmationPlaceholder={userEmail ?? ''}
-        isOpen={isDeleteAccountModalOpen}
-        setIsOpen={setIsDeleteAccountModalOpen}
+        modalId={'delete-account-modal'}
         title={t`Account Deletion`}
         subtitle={
           <>

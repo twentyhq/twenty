@@ -1,6 +1,7 @@
 import { FavoriteFolderNavigationDrawerItemDropdown } from '@/favorites/components/FavoriteFolderNavigationDrawerItemDropdown';
 import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
 import { FavoritesDroppable } from '@/favorites/components/FavoritesDroppable';
+import { FavoriteFolderDeleteModalId } from '@/favorites/constants/FavoriteFolderDeleteModalId';
 import { FavoritesDragContext } from '@/favorites/contexts/FavoritesDragContext';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useDeleteFavoriteFolder } from '@/favorites/hooks/useDeleteFavoriteFolder';
@@ -11,6 +12,7 @@ import { ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
@@ -21,10 +23,9 @@ import { useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { IconFolder, IconFolderOpen, IconHeartOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 type CurrentWorkspaceMemberFavoritesProps = {
   folder: {
     folderId: string;
@@ -46,7 +47,7 @@ export const CurrentWorkspaceMemberFavorites = ({
   const [favoriteFolderName, setFavoriteFolderName] = useState(
     folder.folderName,
   );
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const { openModal, closeModal } = useModal();
 
   const [openFavoriteFolderIds, setOpenFavoriteFolderIds] = useRecoilState(
     openFavoriteFolderIdsState,
@@ -104,7 +105,7 @@ export const CurrentWorkspaceMemberFavorites = ({
 
   const handleFavoriteFolderDelete = async () => {
     if (folder.favorites.length > 0) {
-      setIsDeleteModalOpen(true);
+      openModal(FavoriteFolderDeleteModalId);
       closeFavoriteFolderEditDropdown();
     } else {
       await deleteFavoriteFolder(folder.folderId);
@@ -114,7 +115,7 @@ export const CurrentWorkspaceMemberFavorites = ({
 
   const handleConfirmDelete = async () => {
     await deleteFavoriteFolder(folder.folderId);
-    setIsDeleteModalOpen(false);
+    closeModal(FavoriteFolderDeleteModalId);
   };
 
   const rightOptions = (
@@ -209,8 +210,7 @@ export const CurrentWorkspaceMemberFavorites = ({
 
       {createPortal(
         <ConfirmationModal
-          isOpen={isDeleteModalOpen}
-          setIsOpen={setIsDeleteModalOpen}
+          modalId={FavoriteFolderDeleteModalId}
           title={`Remove ${folder.favorites.length} ${folder.favorites.length > 1 ? 'favorites' : 'favorite'}?`}
           subtitle={`This action will delete this favorite folder ${folder.favorites.length > 1 ? `and all ${folder.favorites.length} favorites` : 'and the favorite'} inside. Do you want to continue?`}
           onConfirmClick={handleConfirmDelete}
