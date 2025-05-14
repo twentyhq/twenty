@@ -28,4 +28,10 @@ export class OnboardingPlans {
   @Field(() => [String])
   @Column('text', { array: true })
   features: string[];
+
+  @Column({ nullable: true })
+  stripe_product_id: string;
+
+  @Column({ nullable: true })
+  stripe_price_id: string;
 }

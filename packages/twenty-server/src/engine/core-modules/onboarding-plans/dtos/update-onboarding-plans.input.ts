@@ -20,4 +20,12 @@ export class UpdateOnboardingPlansInput {
   @IsArray()
   @IsString({ each: true })
   features?: string[];
+
+  @IsOptional()
+  @IsString()
+  stripe_product_id?: string;
+
+  @IsOptional()
+  @IsString()
+  stripe_price_id?: string;
 }

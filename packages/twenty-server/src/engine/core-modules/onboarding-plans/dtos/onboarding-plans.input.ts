@@ -13,4 +13,10 @@ export class CreateOnboardingPlansInput {
   @IsArray()
   @IsString({ each: true })
   features: string[];
+
+  @IsString()
+  stripe_product_id: string;
+
+  @IsString()
+  stripe_price_id: string;
 }
