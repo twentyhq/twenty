@@ -41,7 +41,6 @@ export type DropdownContentProps = {
   };
   onHotkeyTriggered?: () => void;
   dropdownWidth?: `${string}px` | `${number}%` | 'auto' | number;
-
   dropdownComponents: React.ReactNode;
   parentDropdownId?: string;
   avoidPortal?: boolean;
@@ -58,7 +57,6 @@ export const DropdownContent = ({
   hotkey,
   onHotkeyTriggered,
   dropdownWidth,
-
   dropdownComponents,
   avoidPortal,
 }: DropdownContentProps) => {
