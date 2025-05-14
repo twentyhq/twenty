@@ -2,15 +2,16 @@ import { useMutation } from '@apollo/client';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CREATE_FOCUS_NFE_INTEGRATION } from '@/settings/integrations/focus-nfe/graphql/mutation/createFocusNfeIntegration';
-import { CreateInterIntegrationInput } from '@/settings/integrations/inter/types/CreateInterIntegrationInput';
+
+import { CreateFocusNfeIntegrationInput } from '@/settings/integrations/focus-nfe/types/CreateFocusNfeIntegrationInput';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilValue } from 'recoil';
 
 interface CreateFocusNfeIntegration {
-  // createFocusNfeIntegration: (
-  //   input: CreateFocusNfeIntegrationInput,
-  // ) => Promise<void>;
+  createFocusNfeIntegration: (
+    input: CreateFocusNfeIntegrationInput,
+  ) => Promise<void>;
   data: any;
   loading: boolean;
   error: Error | undefined;
@@ -35,7 +36,7 @@ export const useCreateFocusNfeIntegration = (): CreateFocusNfeIntegration => {
     });
 
   const createFocusNfeIntegration = async (
-    input: CreateInterIntegrationInput,
+    input: CreateFocusNfeIntegrationInput,
   ) => {
     const createInput = {
       ...input,
@@ -50,7 +51,7 @@ export const useCreateFocusNfeIntegration = (): CreateFocusNfeIntegration => {
   };
 
   return {
-    // createFocusNfeIntegration,
+    createFocusNfeIntegration,
     data,
     loading,
     error,

@@ -16,7 +16,6 @@ export class FocusNfeResolver {
   async createFocusNfeIntegration(
     @Args('createInput') createInput: CreateFocusNfeIntegrationInput,
   ): Promise<FocusNfeIntegration> {
-    console.log('createInput', createInput);
     const newFocusNfeIntegration =
       await this.focusNfeService.create(createInput);
 

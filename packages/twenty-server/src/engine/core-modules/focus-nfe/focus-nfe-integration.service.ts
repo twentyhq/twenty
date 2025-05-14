@@ -7,7 +7,6 @@ import { CreateFocusNfeIntegrationInput } from 'src/engine/core-modules/focus-nf
 import { UpdateFocusNfeIntegrationInput } from 'src/engine/core-modules/focus-nfe/dtos/update-focus-nfe-integration.input';
 import { FocusNfeIntegration } from 'src/engine/core-modules/focus-nfe/focus-nfe-integration.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export class FocusNfeService {
@@ -16,7 +15,6 @@ export class FocusNfeService {
     private readonly focusNfeRepository: Repository<FocusNfeIntegration>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly dataSourceService: DataSourceService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 

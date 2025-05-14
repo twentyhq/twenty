@@ -1,6 +1,7 @@
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationFocusNfeDatabaseConnectionForm } from '@/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeDatabaseConnectionForm';
+import { useCreateFocusNfeIntegration } from '@/settings/integrations/focus-nfe/hooks/useCreateFocusNfeIntegration';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -15,7 +16,6 @@ import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { settingsIntegrationInterConnectionFormSchema } from '~/pages/settings/integrations/inter/SettingsIntegrationInterNewDatabaseConnection';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const settingsIntegrationFocusNfeConnectionFormSchema = z.object({
@@ -35,7 +35,7 @@ export const SettingsIntegrationFocusNfeNewDatabaseConnection = () => {
     SettingsPath.Integrations,
   );
 
-  // const { createFocusNfeIntegration } = useCreateFocusNfeIntegration();
+  const { createFocusNfeIntegration } = useCreateFocusNfeIntegration();
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
   const integration = integrationCategoryAll.integrations.find(
@@ -56,7 +56,7 @@ export const SettingsIntegrationFocusNfeNewDatabaseConnection = () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const formConfig = useForm<SettingsIntegrationFocusNfeConnectionFormValues>({
     mode: 'onChange',
-    resolver: zodResolver(settingsIntegrationInterConnectionFormSchema),
+    resolver: zodResolver(settingsIntegrationFocusNfeConnectionFormSchema),
   });
 
   const canSave = formConfig.formState.isValid;
@@ -65,14 +65,13 @@ export const SettingsIntegrationFocusNfeNewDatabaseConnection = () => {
     const formValues = formConfig.getValues();
 
     try {
-      console.log('formValues', formValues);
-      // await createFocusNfeIntegration({
-      //   integrationName: formValues.integrationName,
-      //   token: formValues.token,
-      //   status: 'active',
-      // });
+      await createFocusNfeIntegration({
+        integrationName: formValues.integrationName,
+        token: formValues.token,
+        status: 'active',
+      });
 
-      // navigate(SettingsPath.IntegrationInterDatabase);
+      navigate(SettingsPath.IntegrationFocusNfe);
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
