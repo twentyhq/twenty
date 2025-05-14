@@ -48,6 +48,10 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
     find: jest.fn(),
   };
 
+  const mockWorkspaceMemberRepository = {
+    findOneByOrFail: jest.fn(),
+  };
+
   const mockTwentyORMManager = {
     getRepository: jest.fn().mockImplementation((name) => {
       if (name === 'calendarChannelEventAssociation') {
@@ -55,6 +59,9 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       }
       if (name === 'connectedAccount') {
         return mockConnectedAccountRepository;
+      }
+      if (name === 'workspaceMember') {
+        return mockWorkspaceMemberRepository;
       }
     }),
   };
@@ -83,6 +90,10 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       createMockCalendarEvent('1', 'Test Event', 'Test Description'),
     ];
 
+    mockWorkspaceMemberRepository.findOneByOrFail.mockResolvedValue({
+      id: 'workspace-member-id',
+    });
+
     mockCalendarEventAssociationRepository.find.mockResolvedValue([
       {
         calendarEventId: '1',
@@ -94,7 +105,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
     ]);
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
-      'workspace-member-id',
+      'user-id',
       calendarEvents,
     );
 
@@ -124,10 +135,14 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       },
     ]);
 
+    mockWorkspaceMemberRepository.findOneByOrFail.mockResolvedValue({
+      id: 'workspace-member-id',
+    });
+
     mockConnectedAccountRepository.find.mockResolvedValue([]);
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
-      'workspace-member-id',
+      'user-id',
       calendarEvents,
     );
 
@@ -155,10 +170,14 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       },
     ]);
 
+    mockWorkspaceMemberRepository.findOneByOrFail.mockResolvedValue({
+      id: 'workspace-member-account-owner-id',
+    });
+
     mockConnectedAccountRepository.find.mockResolvedValue([{ id: '1' }]);
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
-      'workspace-member-id',
+      'user-id',
       calendarEvents,
     );
 
@@ -186,10 +205,14 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       },
     ]);
 
+    mockWorkspaceMemberRepository.findOneByOrFail.mockResolvedValue({
+      id: 'workspace-member-not-account-owner-id',
+    });
+
     mockConnectedAccountRepository.find.mockResolvedValue([]);
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
-      'workspace-member-id',
+      'user-id',
       calendarEvents,
     );
 
@@ -202,6 +225,10 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       createMockCalendarEvent('2', 'Event 2', 'Description 2'),
       createMockCalendarEvent('3', 'Event 3', 'Description 3'),
     ];
+
+    mockWorkspaceMemberRepository.findOneByOrFail.mockResolvedValue({
+      id: 'workspace-member-id',
+    });
 
     mockCalendarEventAssociationRepository.find.mockResolvedValue([
       {
@@ -232,7 +259,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       .mockResolvedValueOnce([{ id: '1' }]); // request for calendar event 2
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
-      'workspace-member-id',
+      'user-id',
       calendarEvents,
     );
 

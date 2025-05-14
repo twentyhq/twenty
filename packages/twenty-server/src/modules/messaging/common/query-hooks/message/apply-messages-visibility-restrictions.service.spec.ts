@@ -229,7 +229,7 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
     mockConnectedAccountRepository.find.mockResolvedValue([]);
 
     const result = await service.applyMessagesVisibilityRestrictions(
-      'workspace-member-id',
+      'user-id',
       messages,
     );
 
@@ -276,7 +276,7 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
       .mockResolvedValueOnce([]); // request for message 2
 
     const result = await service.applyMessagesVisibilityRestrictions(
-      'workspace-member-id',
+      'user-id',
       messages,
     );
 
