@@ -8,18 +8,10 @@ import {
   FormatResult,
   RestApiBaseHandler,
 } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
-import {
-  ObjectRecord,
-  ObjectRecordFilter,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import {
-  formatResult,
-  getCompositeFieldMetadataMap,
-} from 'src/engine/twenty-orm/utils/format-result.util';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { settings } from 'src/engine/constants/settings';
-import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
 
 @Injectable()
 export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
@@ -54,7 +46,7 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
     }
 
     const duplicateConditions = objectRecords.map((record) =>
-      this.buildDuplicateConditions(
+      buildDuplicateConditions(
         objectMetadataItemWithFieldsMaps,
         [record],
         record.id,
@@ -151,71 +143,5 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
       },
       totalCount,
     });
-  }
-
-  buildDuplicateConditions(
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-    records?: Partial<ObjectRecord>[] | undefined,
-    filteringByExistingRecordId?: string,
-  ): Partial<ObjectRecordFilter> {
-    if (!records || records.length === 0) {
-      return {};
-    }
-
-    const criteriaCollection =
-      objectMetadataItemWithFieldMaps.duplicateCriteria || [];
-
-    const formattedRecords = formatData(
-      records,
-      objectMetadataItemWithFieldMaps,
-    );
-
-    const compositeFieldMetadataMap = getCompositeFieldMetadataMap(
-      objectMetadataItemWithFieldMaps,
-    );
-
-    const conditions = formattedRecords.flatMap((record) => {
-      const criteriaWithMatchingArgs = criteriaCollection.filter((criteria) =>
-        criteria.every((columnName) => {
-          const value = record[columnName] as string | undefined;
-
-          return (
-            value && value.length >= settings.minLengthOfStringForDuplicateCheck
-          );
-        }),
-      );
-
-      return criteriaWithMatchingArgs.map((criteria) => {
-        const condition = {};
-
-        criteria.forEach((columnName) => {
-          const compositeFieldMetadata =
-            compositeFieldMetadataMap.get(columnName);
-
-          if (compositeFieldMetadata) {
-            condition[compositeFieldMetadata.parentField] = {
-              ...condition[compositeFieldMetadata.parentField],
-              [compositeFieldMetadata.name]: { eq: record[columnName] },
-            };
-          } else {
-            condition[columnName] = { eq: record[columnName] };
-          }
-        });
-
-        return condition;
-      });
-    });
-
-    const filter: Partial<ObjectRecordFilter> = {};
-
-    if (conditions && !isEmpty(conditions)) {
-      filter.or = conditions;
-
-      if (filteringByExistingRecordId) {
-        filter.id = { neq: filteringByExistingRecordId };
-      }
-    }
-
-    return filter;
   }
 }
