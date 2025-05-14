@@ -2,9 +2,9 @@ import DocsMain from '@/app/_components/docs/DocsMain';
 import { getDocsArticles } from '@/content/user-guide/constants/getDocsArticles';
 
 export const metadata = {
-  title: 'Twenty - User Guide',
+  title: 'InsurOS - User Guide',
   description:
-    'Discover how to use Twenty CRM effectively with our detailed user guide. Explore ways to customize features, manage tasks, integrate emails, and navigate the system with ease.',
+    'Discover how to use InsurOS CRM effectively with our detailed user guide. Explore ways to customize features, manage tasks, integrate emails, and navigate the system with ease.',
   icons: '/images/core/logo.svg',
 };
 

@@ -59,13 +59,13 @@ export class CallWebhookJob {
       const { secret, ...payloadWithoutSecret } = data;
 
       if (secret) {
-        headers['X-Twenty-Webhook-Timestamp'] = Date.now().toString();
-        headers['X-Twenty-Webhook-Signature'] = this.generateSignature(
+        headers['X-InsurOS-Webhook-Timestamp'] = Date.now().toString();
+        headers['X-InsurOS-Webhook-Signature'] = this.generateSignature(
           payloadWithoutSecret,
           secret,
-          headers['X-Twenty-Webhook-Timestamp'],
+          headers['X-InsurOS-Webhook-Timestamp'],
         );
-        headers['X-Twenty-Webhook-Nonce'] = crypto
+        headers['X-InsurOS-Webhook-Nonce'] = crypto
           .randomBytes(16)
           .toString('hex');
       }

@@ -7,6 +7,7 @@ import {
 } from '@apollo/client';
 
 import { loggerLink } from '@/apollo/utils/loggerLink';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AuthTokenPair,
   RenewTokenDocument,
@@ -14,9 +15,8 @@ import {
   RenewTokenMutationVariables,
 } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { isDefined } from 'twenty-shared/utils';
 
-const logger = loggerLink(() => 'Twenty-Refresh');
+const logger = loggerLink(() => 'InsurOS-Refresh');
 
 const renewTokenMutation = async (
   uri: string | UriFunction | undefined,

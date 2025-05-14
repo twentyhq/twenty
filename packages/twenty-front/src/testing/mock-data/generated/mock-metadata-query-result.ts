@@ -7745,7 +7745,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               relationDefinition: null,
               label: "Secret",
-              description: "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
+              description: "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between InsurOS and the webhook consumer to authenticate webhook requests."
             },
             {
               __typename: "Field",

@@ -18,7 +18,7 @@ const mockStep = {
           isLeaf: true,
         },
         fields: {
-          name: { label: 'Name', value: 'Twenty', isLeaf: true },
+          name: { label: 'Name', value: 'InsurOS', isLeaf: true },
           address: { label: 'Address', value: '123 Main St', isLeaf: true },
         },
         _outputSchemaType: 'RECORD',

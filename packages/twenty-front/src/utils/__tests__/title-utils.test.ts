@@ -42,7 +42,7 @@ describe('title-utils', () => {
     expect(getPageTitleFromPath('/settings/workspace')).toBe(
       SettingsPageTitles.General,
     );
-    expect(getPageTitleFromPath('/')).toBe('Twenty');
-    expect(getPageTitleFromPath('/random')).toBe('Twenty');
+    expect(getPageTitleFromPath('/')).toBe('InsurOS');
+    expect(getPageTitleFromPath('/random')).toBe('InsurOS');
   });
 });

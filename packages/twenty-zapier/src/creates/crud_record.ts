@@ -1,3 +1,4 @@
+import { capitalize } from 'twenty-shared/utils';
 import { Bundle, ZObject } from 'zapier-platform-core';
 import { findObjectNamesSingularKey } from '../triggers/find_object_names_singular';
 import { listRecordIdsKey } from '../triggers/list_record_ids';
@@ -6,7 +7,6 @@ import { InputData } from '../utils/data.types';
 import handleQueryParams from '../utils/handleQueryParams';
 import requestDb, { requestSchema } from '../utils/requestDb';
 import { DatabaseEventAction } from '../utils/triggers/triggers.utils';
-import { capitalize } from 'twenty-shared/utils';
 
 export const recordInputFields = async (
   z: ZObject,
@@ -104,7 +104,7 @@ export const crudRecordKey = 'crud_record';
 
 export default {
   display: {
-    description: 'Create, Update or Delete a Record in Twenty.',
+    description: 'Create, Update or Delete a Record in InsurOS.',
     hidden: false,
     label: 'Create, Update or Delete Record',
   },

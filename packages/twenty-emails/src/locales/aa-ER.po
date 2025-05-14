@@ -35,7 +35,7 @@ msgstr "crwdns5:0crwdne5:0"
 
 #. js-lingui-id: nvkBPN
 #: src/emails/password-update-notify.email.tsx
-msgid "Connect to Twenty"
+msgid "Connect to InsurOS"
 msgstr "crwdns7:0crwdne7:0"
 
 #. js-lingui-id: jPQSEz

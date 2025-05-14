@@ -83,7 +83,7 @@ export class EmailVerificationService {
         'EMAIL_FROM_NAME',
       )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
       to: email,
-      subject: t`Welcome to Twenty: Please Confirm Your Email`,
+      subject: t`Welcome to InsurOS: Please Confirm Your Email`,
       text,
       html,
     });
