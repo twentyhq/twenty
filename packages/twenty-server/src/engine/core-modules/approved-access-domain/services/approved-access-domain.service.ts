@@ -79,7 +79,7 @@ export class ApprovedAccessDomainService {
     });
 
     await this.emailService.send({
-      from: `${sender.name.firstName} ${sender.name.lastName} (via Twenty) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
+      from: `${sender.name.firstName} ${sender.name.lastName} (via InsurOS) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
       to,
       subject: 'Approve your access domain',
       text,

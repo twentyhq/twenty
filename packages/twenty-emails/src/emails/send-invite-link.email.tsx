@@ -44,7 +44,7 @@ export const SendInviteLinkEmail = ({
 
   return (
     <BaseEmail width={333} locale={locale}>
-      <Title value={i18n._('Join your team on Twenty')} />
+      <Title value={i18n._('Join your team on InsurOS')} />
       <MainText>
         <Trans
           id="{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
@@ -82,13 +82,13 @@ export const SendInviteLinkEmail = ({
 };
 
 SendInviteLinkEmail.PreviewProps = {
-  link: 'https://app.twenty.com/invite/123',
+  link: 'https://app.insuros.ca/invite/123',
   workspace: {
-    name: 'Acme Inc.',
+    name: 'InsurOS',
     logo: 'https://fakeimg.pl/200x200/?text=ACME&font=lobster',
   },
   sender: { email: 'john.doe@example.com', firstName: 'John', lastName: 'Doe' },
-  serverUrl: 'https://app.twenty.com',
+  serverUrl: 'https://app.insuros.ca',
   locale: 'en',
 } as SendInviteLinkEmailProps;
 

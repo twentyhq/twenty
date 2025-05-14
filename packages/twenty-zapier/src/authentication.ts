@@ -31,7 +31,7 @@ export default {
       type: 'string',
       placeholder: 'https://api.twenty.com',
       helpText:
-        'Set this only if you self-host Twenty. Use the same value as `REACT_APP_SERVER_BASE_URL` in https://docs.twenty.com/start/self-hosting/',
+        'Set this only if you self-host InsurOS. Use the same value as `REACT_APP_SERVER_BASE_URL` in https://docs.twenty.com/start/self-hosting/',
     },
   ],
   connectionLabel: '{{data.currentWorkspace.displayName}}',

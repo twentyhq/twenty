@@ -302,7 +302,7 @@ export class ConfigVariables {
     description: 'Name used in the From header for outgoing emails',
     type: ConfigVariableType.STRING,
   })
-  EMAIL_FROM_NAME = 'Felix from Twenty';
+  EMAIL_FROM_NAME = 'Jordan from InsurOS';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EmailSettings,
@@ -1117,7 +1117,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
-    description: 'Twenty server version',
+    description: 'InsurOS server version',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
   })

@@ -108,7 +108,7 @@ export const SyncEmails = () => {
     <Modal.Content isVerticalCentered isHorizontalCentered>
       <Title noMarginTop>Emails and Calendar</Title>
       <SubTitle>
-        Sync your Emails and Calendar with Twenty. Choose your privacy settings.
+        Sync your Emails and Calendar with InsurOS. Choose your privacy settings.
       </SubTitle>
       <StyledSyncEmailsContainer>
         <OnboardingSyncEmailsSettingsCard

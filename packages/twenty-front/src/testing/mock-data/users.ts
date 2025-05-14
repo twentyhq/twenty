@@ -44,8 +44,8 @@ export const workspaceLogoUrl =
 export const mockCurrentWorkspace: Workspace = {
   subdomain: 'acme.twenty.com',
   id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6w',
-  displayName: 'Twenty',
-  inviteHash: 'twenty.com-invite-hash',
+  displayName: 'InsurOS',
+  inviteHash: 'insuros.ca-invite-hash',
   logo: workspaceLogoUrl,
   isPublicInviteLinkEnabled: true,
   allowImpersonation: true,
@@ -56,7 +56,7 @@ export const mockCurrentWorkspace: Workspace = {
   isCustomDomainEnabled: false,
   workspaceUrls: {
     customUrl: undefined,
-    subdomainUrl: 'twenty.twenty.com',
+    subdomainUrl: 'insuros.insuros.ca',
   },
   isMicrosoftAuthEnabled: false,
   featureFlags: [

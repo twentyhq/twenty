@@ -50,7 +50,7 @@ export const WarnSuspendedWorkspaceEmail = ({
         <br />
         <br />
         <Trans
-          id="If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
+          id="If you wish to continue using InsurOS, please update your subscription within the next {remainingDays} {dayOrDays}."
           values={{ remainingDays, dayOrDays }}
         />
       </MainText>
