@@ -9,6 +9,7 @@ import {
   CreatePabxCompanyInput,
   CreatePabxTrunkInput,
   CreateTelephonyInput,
+  SetupPabxEnvironmentInput,
   UpdateRoutingRulesInput,
   UpdateTelephonyInput,
 } from 'src/engine/core-modules/telephony/inputs';
@@ -30,6 +31,7 @@ import { PabxCompanyResponseType } from './types/Create/PabxCompanyResponse.type
 import { PabxDialingPlanResponseType } from './types/Create/PabxDialingPlanResponse.type';
 import { PabxTrunkResponseType } from './types/Create/PabxTrunkResponse.type';
 import { UpdateRoutingRulesResponseType } from './types/Create/UpdateRoutingRulesResponse.type';
+import { SetupPabxEnvironmentResponseType } from './types/SetupPabxEnvironmentResponse.type';
 
 @Resolver(() => Telephony)
 export class TelephonyResolver {
@@ -162,8 +164,6 @@ export class TelephonyResolver {
 
     const ramalBody = this.getRamalBody(createTelephonyInput);
 
-    console.log('ramalBody: ', ramalBody);
-
     try {
       const createdRamal = await this.pabxService.createExtention(ramalBody);
 
@@ -182,8 +182,6 @@ export class TelephonyResolver {
         return result;
       }
     } catch (error) {
-      console.log('error da telefonia: ', error);
-
       return error;
     }
   }
@@ -363,15 +361,11 @@ export class TelephonyResolver {
         });
       }
 
-      console.log('result: ', result);
-
       return {
         success: true,
         message: `Company created successfully: ${input.nome}, id: ${result.data.id}`,
       };
     } catch (error) {
-      console.error('Error creating PABX company:', error);
-
       return {
         success: false,
         message: `Failed to create company: ${error.message}`,
@@ -404,15 +398,11 @@ export class TelephonyResolver {
         });
       }
 
-      console.log('result: ', result);
-
       return {
         success: true,
         message: `Trunk created successfully: ${input.nome}`,
       };
     } catch (error) {
-      console.error('Error creating PABX trunk:', error);
-
       return {
         success: false,
         message: `Failed to create trunk: ${error.message}`,
@@ -450,8 +440,6 @@ export class TelephonyResolver {
         message: `Dialing plan created successfully: ${input.nome}`,
       };
     } catch (error) {
-      console.error('Error creating dialing plan:', error);
-
       return {
         success: false,
         message: `Failed to create dialing plan: ${error.message}`,
@@ -471,18 +459,126 @@ export class TelephonyResolver {
     }
 
     try {
-      const result = await this.pabxService.updateRoutingRules(input);
+      await this.pabxService.updateRoutingRules(input);
 
       return {
         success: true,
         message: `Routing rules updated successfully for dialing plan ID: ${input.plano_discagem_id}`,
       };
     } catch (error) {
-      console.error('Error updating routing rules:', error);
-
       return {
         success: false,
         message: `Failed to update routing rules: ${error.message}`,
+      };
+    }
+  }
+
+  @Mutation(() => SetupPabxEnvironmentResponseType, {
+    name: 'setupPabxEnvironment',
+  })
+  async setupPabxEnvironment(
+    @AuthUser() { id: userId }: User,
+    @Args('input') input: SetupPabxEnvironmentInput,
+  ): Promise<SetupPabxEnvironmentResponseType> {
+    if (!userId) {
+      throw new Error('User id not found');
+    }
+
+    if (!input.workspaceId) {
+      throw new Error('Workspace ID is required in input');
+    }
+
+    let companyId: number | undefined;
+    let trunkAPIId: number | undefined;
+    let dialingPlanAPIId: number | undefined;
+
+    try {
+      const companyInput: CreatePabxCompanyInput = {
+        ...input.companyDetails,
+        workspaceId: input.workspaceId,
+      };
+
+      const companyResult = await this.pabxService.createCompany(companyInput);
+
+      companyId = companyResult.data.id;
+
+      if (!companyResult || !companyResult.data || !companyId) {
+        throw new Error('Failed to create PABX company or retrieve ID.');
+      }
+
+      const trunkInput: CreatePabxTrunkInput = {
+        ...input.trunkDetails,
+        cliente_id: companyId,
+        workspaceId: input.workspaceId,
+      };
+
+      const trunkResult = await this.pabxService.createTrunk(trunkInput);
+
+      trunkAPIId = trunkResult.data.id;
+
+      if (!trunkResult || !trunkResult.data || !trunkAPIId) {
+        throw new Error('Failed to create PABX trunk or retrieve ID.');
+      }
+
+      // Step 3: Create Dialing Plan
+      const dialingPlanInput: CreateDialingPlanInput = {
+        ...input.dialingPlanDetails,
+        cliente_id: companyId,
+        workspaceId: input.workspaceId,
+      };
+
+      const dialingPlanResult =
+        await this.pabxService.createDialingPlan(dialingPlanInput);
+
+      dialingPlanAPIId = dialingPlanResult.data.id;
+
+      if (!dialingPlanResult || !dialingPlanResult.data || !dialingPlanAPIId) {
+        throw new Error('Failed to create PABX dialing plan or retrieve ID.');
+      }
+
+      await this.workspaceService.updateWorkspaceById({
+        payload: {
+          id: input.workspaceId,
+          pabxCompanyId: companyId,
+          pabxTrunkId: trunkAPIId,
+          pabxDialingPlanId: dialingPlanAPIId,
+        },
+      });
+
+      // Inject trunkAPIId into all routing rules
+      const routingRulesDataWithTrunkId = {
+        ...input.routingRulesData,
+        regioes: input.routingRulesData.regioes.map((region) => ({
+          ...region,
+          roteamentos: region.roteamentos.map((rule) => ({
+            ...rule,
+            tronco_id: trunkAPIId,
+          })),
+        })),
+      };
+
+      const routingRulesInput: UpdateRoutingRulesInput = {
+        plano_discagem_id: dialingPlanAPIId,
+        cliente_id: companyId,
+        dados: routingRulesDataWithTrunkId,
+      };
+
+      await this.pabxService.updateRoutingRules(routingRulesInput);
+
+      return {
+        success: true,
+        message: 'PABX environment set up successfully.',
+        companyId: companyId,
+        trunkId: trunkAPIId,
+        dialingPlanId: dialingPlanAPIId,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: `Failed to set up PABX environment: ${error.message}`,
+        companyId,
+        trunkId: trunkAPIId,
+        dialingPlanId: dialingPlanAPIId,
       };
     }
   }

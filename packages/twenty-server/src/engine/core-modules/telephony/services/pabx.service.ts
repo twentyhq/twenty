@@ -142,12 +142,12 @@ export class PabxService implements PabxServiceInterface {
         { dados: data },
       );
 
-      console.log('createCompanyResponse: ', createCompanyResponse.data);
-
       this.logger.log(`Company created successfully: ${data.nome}`);
 
       return createCompanyResponse;
     } catch (error) {
+      console.log('error: ', error);
+
       this.logger.error(
         `Failed to create company: ${error.message}`,
         error.stack,
@@ -171,6 +171,8 @@ export class PabxService implements PabxServiceInterface {
 
       return createTrunkResponse;
     } catch (error) {
+      console.log('error: ', error);
+
       this.logger.error(
         `Failed to create trunk: ${error.message}`,
         error.stack,
@@ -192,20 +194,19 @@ export class PabxService implements PabxServiceInterface {
           },
         };
 
+        console.log('payload at service: ', payload);
+
         const createDialingPlanResponse = await this.pabxAxiosInstance.post(
           '/inserir_plano_discagem',
           payload,
-        );
-
-        console.log(
-          'createDialingPlanResponse: ',
-          createDialingPlanResponse.data,
         );
 
         this.logger.log(`Dialing plan created successfully: ${data.nome}`);
 
         return createDialingPlanResponse;
       } catch (error) {
+        console.log('error: ', error);
+
         this.logger.error(
           `Failed to create dialing plan: ${error.message}`,
           error.stack,
@@ -239,6 +240,8 @@ export class PabxService implements PabxServiceInterface {
 
       return updateRoutingRulesResponse;
     } catch (error) {
+      console.log('error: ', error);
+
       this.logger.error(
         `Failed to update routing rules: ${error.message}`,
         error.stack,
