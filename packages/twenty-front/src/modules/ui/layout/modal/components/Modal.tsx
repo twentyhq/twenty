@@ -1,5 +1,6 @@
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
+import { ModalComponentInstanceContext } from '@/ui/layout/modal/contexts/ModalComponentInstanceContext';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import {
@@ -169,6 +170,7 @@ export type ModalPadding = 'none' | 'small' | 'medium' | 'large';
 export type ModalVariants = 'primary' | 'secondary' | 'tertiary';
 
 export type ModalProps = React.PropsWithChildren & {
+  modalId: string;
   size?: ModalSize;
   padding?: ModalPadding;
   className?: string;
@@ -187,6 +189,7 @@ const modalAnimation = {
 };
 
 export const Modal = ({
+  modalId,
   children,
   size = 'medium',
   padding = 'medium',
@@ -252,28 +255,34 @@ export const Modal = ({
   const theme = useTheme();
 
   return (
-    <StyledBackDrop
-      className="modal-backdrop"
-      onMouseDown={stopEventPropagation}
-      modalVariant={modalVariant}
+    <ModalComponentInstanceContext.Provider
+      value={{
+        instanceId: modalId,
+      }}
     >
-      <StyledModalDiv
-        ref={modalRef}
-        size={size}
-        padding={padding}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        layout
+      <StyledBackDrop
+        className="modal-backdrop"
+        onMouseDown={stopEventPropagation}
         modalVariant={modalVariant}
-        variants={modalAnimation}
-        transition={{ duration: theme.animation.duration.normal }}
-        className={className}
-        isMobile={isMobile}
       >
-        {children}
-      </StyledModalDiv>
-    </StyledBackDrop>
+        <StyledModalDiv
+          ref={modalRef}
+          size={size}
+          padding={padding}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          layout
+          modalVariant={modalVariant}
+          variants={modalAnimation}
+          transition={{ duration: theme.animation.duration.normal }}
+          className={className}
+          isMobile={isMobile}
+        >
+          {children}
+        </StyledModalDiv>
+      </StyledBackDrop>
+    </ModalComponentInstanceContext.Provider>
   );
 };
 

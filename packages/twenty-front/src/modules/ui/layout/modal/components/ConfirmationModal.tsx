@@ -7,11 +7,12 @@ import { TextInput } from '@/ui/input/components/TextInput';
 
 import { Modal, ModalVariants } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
-import { Button, ButtonAccent } from 'twenty-ui/input';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
+import { Button, ButtonAccent } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 
 export type ConfirmationModalProps = {
+  modalId: string;
   isOpen: boolean;
   title: string;
   loading?: boolean;
@@ -58,6 +59,7 @@ export const StyledConfirmationButton = styled(StyledCenteredButton)`
 `;
 
 export const ConfirmationModal = ({
+  modalId,
   isOpen = false,
   title,
   loading,
@@ -105,6 +107,7 @@ export const ConfirmationModal = ({
       <LayoutGroup>
         {isOpen && (
           <StyledConfirmationModal
+            modalId={modalId}
             onClose={() => {
               if (isOpen) {
                 setIsOpen(false);
