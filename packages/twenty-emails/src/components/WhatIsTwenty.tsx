@@ -5,10 +5,10 @@ import { SubTitle } from 'src/components/SubTitle';
 export const WhatIsTwenty = () => {
   return (
     <>
-      <SubTitle value={i18n._('What is Twenty?')} />
+      <SubTitle value={i18n._('What is InsurOS?')} />
       <MainText>
         {i18n._(
-          "It's a CRM, a software to help businesses manage their customer data and relationships efficiently.",
+          "InsurOS is a CRM designed for the insurance industry to manage customer data, policies, and communications more efficiently",
         )}
       </MainText>
     </>

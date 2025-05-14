@@ -119,7 +119,7 @@ describe('useCombinedFindManyRecordsQueryVariables', () => {
           id: true,
         } as RecordGqlFields,
         variables: {
-          filter: { name: { eq: 'Twenty' } },
+          filter: { name: { eq: 'InsurOS' } },
           limit: 20,
         },
       },
@@ -133,7 +133,7 @@ describe('useCombinedFindManyRecordsQueryVariables', () => {
       filterPerson: { id: { eq: '123' } },
       afterPerson: 'cursor123',
       firstPerson: 10,
-      filterCompany: { name: { eq: 'Twenty' } },
+      filterCompany: { name: { eq: 'InsurOS' } },
       limitCompany: 20,
     });
   });

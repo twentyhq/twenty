@@ -1,1 +1,1 @@
-export const GITHUB_LINK = 'https://github.com/twentyhq/twenty';
+export const GITHUB_LINK = 'https://github.com/InsurOS/twenty';
