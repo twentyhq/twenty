@@ -13,8 +13,9 @@ export const parseCorePath = (
     );
   }
 
-  if (queryAction.length === 2 && queryAction[0] === 'batch')
+  if (queryAction.length === 2 && queryAction[0] === 'batch') {
     return { object: queryAction[1] };
+  }
 
   if (queryAction.length === 1) {
     return { object: queryAction[0] };

@@ -22,7 +22,7 @@ describe('Core REST API Create Many endpoint', () => {
     });
   });
 
-  it('should create a many person', async () => {
+  it('should create many person', async () => {
     const requestBody = [
       {
         id: TEST_PERSON_1_ID,
@@ -66,10 +66,12 @@ describe('Core REST API Create Many endpoint', () => {
     })
       .expect(201)
       .expect((res) => {
-        const createdPerson = res.body.data.createPeople[0];
+        const [createdPerson1, createdPerson2] = res.body.data.createPeople;
 
-        expect(createdPerson.companyId).toBeDefined();
-        expect(createdPerson.company).not.toBeDefined();
+        expect(createdPerson1.companyId).toBeDefined();
+        expect(createdPerson1.company).not.toBeDefined();
+        expect(createdPerson2.companyId).toBeDefined();
+        expect(createdPerson2.company).not.toBeDefined();
       });
   });
 
@@ -92,10 +94,12 @@ describe('Core REST API Create Many endpoint', () => {
     })
       .expect(201)
       .expect((res) => {
-        const createdPerson = res.body.data.createPeople[0];
+        const [createdPerson1, createdPerson2] = res.body.data.createPeople;
 
-        expect(createdPerson.company).toBeDefined();
-        expect(createdPerson.company.people).not.toBeDefined();
+        expect(createdPerson1.company).toBeDefined();
+        expect(createdPerson1.company.people).not.toBeDefined();
+        expect(createdPerson2.company).toBeDefined();
+        expect(createdPerson2.company.people).not.toBeDefined();
       });
   });
 
@@ -118,15 +122,20 @@ describe('Core REST API Create Many endpoint', () => {
     })
       .expect(201)
       .expect((res) => {
-        const createdPerson = res.body.data.createPeople[0];
+        const [createdPerson1, createdPerson2] = res.body.data.createPeople;
 
-        expect(createdPerson.company.people).toBeDefined();
+        expect(createdPerson1.company.people).toBeDefined();
+        expect(createdPerson2.company.people).toBeDefined();
 
-        const depth2Person = createdPerson.company.people.find(
-          (p) => p.id === createdPerson.id,
+        const depth2Person1 = createdPerson1.company.people.find(
+          (p) => p.id === createdPerson1.id,
+        );
+        const depth2Person2 = createdPerson2.company.people.find(
+          (p) => p.id === createdPerson2.id,
         );
 
-        expect(depth2Person).toBeDefined();
+        expect(depth2Person1).toBeDefined();
+        expect(depth2Person2).toBeDefined();
       });
   });
 
