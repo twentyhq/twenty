@@ -17,7 +17,7 @@ import { isValidDate } from 'src/utils/date/isValidDate';
 
 export function formatResult<T>(
   data: any,
-  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps | undefined,
   objectMetadataMaps: ObjectMetadataMaps,
 ): T {
   if (!data) {
