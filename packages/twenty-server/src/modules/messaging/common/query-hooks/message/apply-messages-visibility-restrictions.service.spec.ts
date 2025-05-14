@@ -90,8 +90,8 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
     ]);
 
     const result = await service.applyMessagesVisibilityRestrictions(
-      'user-id',
       messages,
+      'user-id',
     );
 
     expect(result).toEqual(messages);
@@ -126,8 +126,8 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
     });
 
     const result = await service.applyMessagesVisibilityRestrictions(
-      'user-id',
       messages,
+      'user-id',
     );
 
     expect(result).toEqual([
@@ -160,8 +160,8 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
     });
 
     const result = await service.applyMessagesVisibilityRestrictions(
-      'user-id',
       messages,
+      'user-id',
     );
 
     expect(result).toEqual([
@@ -195,8 +195,8 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
     mockConnectedAccountRepository.find.mockResolvedValue([{ id: '1' }]);
 
     const result = await service.applyMessagesVisibilityRestrictions(
-      'user-id',
       messages,
+      'user-id',
     );
 
     expect(result).toEqual(messages);
@@ -229,8 +229,8 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
     mockConnectedAccountRepository.find.mockResolvedValue([]);
 
     const result = await service.applyMessagesVisibilityRestrictions(
-      'user-id',
       messages,
+      'user-id',
     );
 
     expect(result).toEqual([]);
@@ -276,8 +276,8 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
       .mockResolvedValueOnce([]); // request for message 2
 
     const result = await service.applyMessagesVisibilityRestrictions(
-      'user-id',
       messages,
+      'user-id',
     );
 
     expect(result).toEqual([
@@ -334,8 +334,8 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
       .mockResolvedValueOnce([]); // request for message 2
 
     const result = await service.applyMessagesVisibilityRestrictions(
-      undefined,
       messages,
+      undefined,
     );
 
     expect(result).toEqual([

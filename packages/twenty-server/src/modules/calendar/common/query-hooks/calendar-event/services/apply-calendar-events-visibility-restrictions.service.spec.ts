@@ -105,8 +105,8 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
     ]);
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
-      'user-id',
       calendarEvents,
+      'user-id',
     );
 
     expect(result).toEqual(calendarEvents);
@@ -142,8 +142,8 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
     mockConnectedAccountRepository.find.mockResolvedValue([]);
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
-      'user-id',
       calendarEvents,
+      'user-id',
     );
 
     expect(result).toEqual([
@@ -177,8 +177,8 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
     mockConnectedAccountRepository.find.mockResolvedValue([{ id: '1' }]);
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
-      'user-id',
       calendarEvents,
+      'user-id',
     );
 
     expect(result).toEqual(calendarEvents);
@@ -212,8 +212,8 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
     mockConnectedAccountRepository.find.mockResolvedValue([]);
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
-      'user-id',
       calendarEvents,
+      'user-id',
     );
 
     expect(result).toEqual([]);
@@ -259,8 +259,8 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       .mockResolvedValueOnce([{ id: '1' }]); // request for calendar event 2
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
-      'user-id',
       calendarEvents,
+      'user-id',
     );
 
     expect(result).toEqual([
@@ -314,8 +314,8 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       .mockResolvedValueOnce([{ id: '1' }]); // request for calendar event 2
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
-      undefined,
       calendarEvents,
+      undefined,
     );
 
     expect(result).toEqual([

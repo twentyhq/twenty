@@ -32,8 +32,8 @@ export class MessageFindOnePostQueryHook
     }
 
     await this.applyMessagesVisibilityRestrictionsService.applyMessagesVisibilityRestrictions(
-      isDefined(user) ? user.id : undefined,
       payload,
+      user?.id,
     );
   }
 }

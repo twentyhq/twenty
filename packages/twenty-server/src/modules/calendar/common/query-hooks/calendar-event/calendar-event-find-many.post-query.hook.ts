@@ -32,8 +32,8 @@ export class CalendarEventFindManyPostQueryHook
     }
 
     await this.applyCalendarEventsVisibilityRestrictionsService.applyCalendarEventsVisibilityRestrictions(
-      isDefined(user) ? user.id : undefined,
       payload,
+      user?.id,
     );
   }
 }

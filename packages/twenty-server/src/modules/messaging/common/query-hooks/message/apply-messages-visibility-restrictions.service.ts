@@ -18,8 +18,8 @@ export class ApplyMessagesVisibilityRestrictionsService {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   public async applyMessagesVisibilityRestrictions(
-    userId: string | undefined, // undefined when request is made with api key
     messages: MessageWorkspaceEntity[],
+    userId?: string, // undefined when request is made with api key
   ) {
     const messageChannelMessageAssociationRepository =
       await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(

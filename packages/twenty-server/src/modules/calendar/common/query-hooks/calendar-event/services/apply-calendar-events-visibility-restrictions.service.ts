@@ -17,8 +17,8 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   public async applyCalendarEventsVisibilityRestrictions(
-    userId: string | undefined, // undefined when request is made with api key
     calendarEvents: CalendarEventWorkspaceEntity[],
+    userId?: string, // undefined when request is made with api key
   ) {
     const calendarChannelEventAssociationRepository =
       await this.twentyORMManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
