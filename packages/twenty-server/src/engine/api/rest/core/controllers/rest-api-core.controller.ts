@@ -20,7 +20,7 @@ import { cleanGraphQLResponse } from 'src/engine/api/rest/utils/clean-graphql-re
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-@Controller('rest/*')
+@Controller('rest')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 @UseFilters(RestApiExceptionFilter)
 export class RestApiCoreController {
@@ -29,37 +29,42 @@ export class RestApiCoreController {
     private readonly restApiCoreServiceV2: RestApiCoreServiceV2,
   ) {}
 
+  @Post('batch/*')
+  async handleApiPostBatch(@Req() request: Request, @Res() res: Response) {
+    const result = await this.restApiCoreServiceV2.createMany(request);
+
+    res.status(201).send(result);
+  }
+
   @Post('duplicates')
-  @UseFilters(RestApiExceptionFilter)
   async handleApiFindDuplicates(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreService.findDuplicates(request);
 
     res.status(200).send(cleanGraphQLResponse(result.data.data));
   }
 
-  @Get()
-  async handleApiGet(@Req() request: Request, @Res() res: Response) {
-    const result = await this.restApiCoreServiceV2.get(request);
-
-    res.status(200).send(result);
-  }
-
-  @Delete()
-  async handleApiDelete(@Req() request: Request, @Res() res: Response) {
-    const result = await this.restApiCoreServiceV2.delete(request);
-
-    res.status(200).send(result);
-  }
-
-  @Post()
+  @Post('*')
   async handleApiPost(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreServiceV2.createOne(request);
 
     res.status(201).send(result);
   }
 
-  @Patch()
-  @UseFilters(RestApiExceptionFilter)
+  @Get('*')
+  async handleApiGet(@Req() request: Request, @Res() res: Response) {
+    const result = await this.restApiCoreServiceV2.get(request);
+
+    res.status(200).send(result);
+  }
+
+  @Delete('*')
+  async handleApiDelete(@Req() request: Request, @Res() res: Response) {
+    const result = await this.restApiCoreServiceV2.delete(request);
+
+    res.status(200).send(result);
+  }
+
+  @Patch('*')
   async handleApiPatch(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreServiceV2.update(request);
 
@@ -67,9 +72,9 @@ export class RestApiCoreController {
   }
 
   // This endpoint is not documented in the OpenAPI schema.
-  // We keep it to avoid a breaking change since it initially used PUT instead of PATCH,
-  // and because the PUT verb is often used as a PATCH.
-  @Put()
+  // We keep it to avoid a breaking change since it initially used PUT instead
+  // of PATCH, and because the PUT verb is often used as a PATCH.
+  @Put('*')
   async handleApiPut(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreServiceV2.update(request);
 

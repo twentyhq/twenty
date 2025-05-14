@@ -49,6 +49,7 @@ export class WorkspaceFeatureFlagsMapCacheService {
       recomputeCache: (params) => this.recomputeFeatureFlagsMapCache(params),
       cachedEntityName: FEATURE_FLAG_MAP,
       exceptionCode: TwentyORMExceptionCode.FEATURE_FLAG_MAP_VERSION_NOT_FOUND,
+      logger: this.logger,
     });
   }
 
@@ -64,8 +65,18 @@ export class WorkspaceFeatureFlagsMapCacheService {
         workspaceId,
       );
 
-    if (!ignoreLock && isAlreadyCaching) {
-      return;
+    if (isAlreadyCaching) {
+      if (ignoreLock) {
+        this.logger.warn(
+          `Feature flags map cache is already being cached (workspace ${workspaceId}), respecting lock and returning no data`,
+        );
+
+        return;
+      } else {
+        this.logger.warn(
+          `Feature flags map cache is already being cached (workspace ${workspaceId}), ignoring lock`,
+        );
+      }
     }
 
     await this.workspaceCacheStorageService.addFeatureFlagMapOngoingCachingLock(

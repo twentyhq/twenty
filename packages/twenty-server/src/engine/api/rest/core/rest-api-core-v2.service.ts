@@ -9,12 +9,14 @@ import { RestApiCreateOneHandler } from 'src/engine/api/rest/core/handlers/rest-
 import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-one.handler';
 import { RestApiGetOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-get-one.handler';
 import { RestApiGetManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-get-many.handler';
+import { RestApiCreateManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-create-many.handler';
 
 @Injectable()
 export class RestApiCoreServiceV2 {
   constructor(
     private readonly restApiDeleteOneHandler: RestApiDeleteOneHandler,
     private readonly restApiCreateOneHandler: RestApiCreateOneHandler,
+    private readonly restApiCreateManyHandler: RestApiCreateManyHandler,
     private readonly restApiUpdateOneHandler: RestApiUpdateOneHandler,
     private readonly restApiGetOneHandler: RestApiGetOneHandler,
     private readonly restApiGetManyHandler: RestApiGetManyHandler,
@@ -26,6 +28,10 @@ export class RestApiCoreServiceV2 {
 
   async createOne(request: Request) {
     return await this.restApiCreateOneHandler.handle(request);
+  }
+
+  async createMany(request: Request) {
+    return await this.restApiCreateManyHandler.handle(request);
   }
 
   async update(request: Request) {

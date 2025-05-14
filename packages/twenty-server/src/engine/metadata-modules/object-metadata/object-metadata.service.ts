@@ -214,6 +214,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId: objectMetadataInput.workspaceId,
+      ignoreLock: true,
     });
 
     return createdObjectMetadata;
@@ -402,6 +403,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
+      ignoreLock: true,
     });
 
     return objectMetadata;
