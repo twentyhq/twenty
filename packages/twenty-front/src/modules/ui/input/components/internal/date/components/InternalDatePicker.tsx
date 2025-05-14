@@ -16,7 +16,6 @@ import {
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
-import { isDefined } from 'twenty-shared/utils';
 import { IconCalendarX } from 'twenty-ui/display';
 import {
   MenuItemLeftContent,
@@ -442,16 +441,22 @@ export const DateTimePicker = ({
 
   const highlightedDates = getHighlightedDates(highlightedDateRange);
 
-  const selectedDates = isRelative ? highlightedDates : [dateToUse];
+  const hasDate = date != null;
+
+  const selectedDates = isRelative
+    ? highlightedDates
+    : hasDate
+      ? [dateToUse]
+      : [];
 
   return (
     <StyledContainer calendarDisabled={isRelative}>
       <div className={clearable ? 'clearable ' : ''}>
         <ReactDatePicker
           open={true}
-          selected={dateToUse}
+          selected={hasDate ? dateToUse : undefined}
           selectedDates={selectedDates}
-          openToDate={isDefined(dateToUse) ? dateToUse : undefined}
+          openToDate={hasDate ? dateToUse : new Date()}
           disabledKeyboardNavigation
           onChange={handleDateChange as any}
           customInput={
