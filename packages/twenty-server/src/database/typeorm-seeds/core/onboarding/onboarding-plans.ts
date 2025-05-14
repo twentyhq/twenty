@@ -3,10 +3,10 @@ import { DataSource } from 'typeorm';
 const tableName = 'onboardingPlans';
 
 export const seedOnboardingPlans = async (
-  workspaceDataSource: DataSource,
+  dataSource: DataSource,
   schemaName: string,
 ) => {
-  await workspaceDataSource
+  await dataSource
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, ['title', 'price', 'type', 'features'])

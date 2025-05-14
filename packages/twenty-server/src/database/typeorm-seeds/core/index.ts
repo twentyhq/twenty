@@ -44,6 +44,6 @@ export const seedCoreSchema = async ({
   }
 
   if (seedOnboarding) {
-    await seedOnboardingPlans(workspaceDataSource, schemaName);
+    await seedOnboardingPlans(dataSource, schemaName);
   }
 };
