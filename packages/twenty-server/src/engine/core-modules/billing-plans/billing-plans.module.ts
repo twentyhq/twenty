@@ -29,7 +29,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
     HttpModule,
     TwentyConfigModule,
   ],
-  providers: [BillingPlansResolver, BillingPlansService, TwentyConfigService],
+  providers: [BillingPlansResolver, BillingPlansService],
   exports: [],
 })
 export class BillingPlansModule {}
