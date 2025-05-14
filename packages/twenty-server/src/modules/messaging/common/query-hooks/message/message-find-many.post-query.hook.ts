@@ -25,14 +25,14 @@ export class MessageFindManyPostQueryHook
     _objectName: string,
     payload: MessageWorkspaceEntity[],
   ): Promise<void> {
-    const user = authContext.user;
+    const { user, apiKey } = authContext;
 
-    if (!isDefined(user)) {
+    if (!isDefined(user) && !isDefined(apiKey)) {
       throw new UserInputError('User is required');
     }
 
     await this.applyMessagesVisibilityRestrictionsService.applyMessagesVisibilityRestrictions(
-      user.id,
+      isDefined(user) ? user.id : undefined,
       payload,
     );
   }

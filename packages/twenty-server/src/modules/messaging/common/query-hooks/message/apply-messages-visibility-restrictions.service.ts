@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import groupBy from 'lodash.groupby';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -17,7 +18,7 @@ export class ApplyMessagesVisibilityRestrictionsService {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   public async applyMessagesVisibilityRestrictions(
-    userId: string,
+    userId: string | undefined, // undefined when request is made with api key
     messages: MessageWorkspaceEntity[],
   ) {
     const messageChannelMessageAssociationRepository =
@@ -72,23 +73,28 @@ export class ApplyMessagesVisibilityRestrictionsService {
         continue;
       }
 
-      const workspaceMember = await workspaceMemberRepository.findOneByOrFail({
-        userId,
-      });
-
-      const connectedAccounts = await connectedAccountRepository.find({
-        select: ['id'],
-        where: {
-          messageChannels: {
-            id: In(messageChannels.map((channel) => channel.id)),
+      if (isDefined(userId)) {
+        const workspaceMember = await workspaceMemberRepository.findOneByOrFail(
+          {
+            userId,
           },
-          accountOwnerId: workspaceMember.id,
-        },
-      });
+        );
 
-      if (connectedAccounts.length > 0) {
-        continue;
+        const connectedAccounts = await connectedAccountRepository.find({
+          select: ['id'],
+          where: {
+            messageChannels: {
+              id: In(messageChannels.map((channel) => channel.id)),
+            },
+            accountOwnerId: workspaceMember.id,
+          },
+        });
+
+        if (connectedAccounts.length > 0) {
+          continue;
+        }
       }
+
       if (messageChannelsGroupByVisibility[MessageChannelVisibility.SUBJECT]) {
         messages[i].text = FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
         continue;

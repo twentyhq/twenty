@@ -293,4 +293,62 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
       },
     ]);
   });
+
+  it('should return all messages with the right visibility when userId is undefined (api key request)', async () => {
+    const messages = [
+      createMockMessage('1', 'Subject 1', 'Message 1'),
+      createMockMessage('2', 'Subject 2', 'Message 2'),
+      createMockMessage('3', 'Subject 3', 'Message 3'),
+    ];
+
+    mockMessageChannelMessageAssociationRepository.find.mockResolvedValue([
+      {
+        messageId: '1',
+        messageChannel: {
+          id: '1',
+          visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+        },
+      },
+      {
+        messageId: '2',
+        messageChannel: {
+          id: '2',
+          visibility: MessageChannelVisibility.SUBJECT,
+        },
+      },
+      {
+        messageId: '3',
+        messageChannel: {
+          id: '3',
+          visibility: MessageChannelVisibility.METADATA,
+        },
+      },
+    ]);
+
+    mockWorkspaceMemberRepository.findOneByOrFail.mockResolvedValue({
+      id: 'workspace-member-id',
+    });
+
+    mockConnectedAccountRepository.find
+      .mockResolvedValueOnce([]) // request for message 3
+      .mockResolvedValueOnce([]); // request for message 2
+
+    const result = await service.applyMessagesVisibilityRestrictions(
+      undefined,
+      messages,
+    );
+
+    expect(result).toEqual([
+      messages[0],
+      {
+        ...messages[1],
+        text: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+      },
+      {
+        ...messages[2],
+        subject: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+        text: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+      },
+    ]);
+  });
 });

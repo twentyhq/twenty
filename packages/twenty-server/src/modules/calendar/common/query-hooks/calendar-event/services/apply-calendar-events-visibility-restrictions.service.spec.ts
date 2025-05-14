@@ -273,4 +273,59 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       },
     ]);
   });
+
+  it('should return all calendar events with the right visibility when userId is undefined (api key request)', async () => {
+    const calendarEvents = [
+      createMockCalendarEvent('1', 'Event 1', 'Description 1'),
+      createMockCalendarEvent('2', 'Event 2', 'Description 2'),
+      createMockCalendarEvent('3', 'Event 3', 'Description 3'),
+    ];
+
+    mockWorkspaceMemberRepository.findOneByOrFail.mockResolvedValue({
+      id: 'workspace-member-id',
+    });
+
+    mockCalendarEventAssociationRepository.find.mockResolvedValue([
+      {
+        calendarEventId: '1',
+        calendarChannel: {
+          id: '1',
+          visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
+        },
+      },
+      {
+        calendarEventId: '2',
+        calendarChannel: {
+          id: '2',
+          visibility: CalendarChannelVisibility.METADATA,
+        },
+      },
+      {
+        calendarEventId: '3',
+        calendarChannel: {
+          id: '3',
+          visibility: CalendarChannelVisibility.METADATA,
+        },
+      },
+    ]);
+
+    mockConnectedAccountRepository.find
+      .mockResolvedValueOnce([]) // request for calendar event 3
+      .mockResolvedValueOnce([{ id: '1' }]); // request for calendar event 2
+
+    const result = await service.applyCalendarEventsVisibilityRestrictions(
+      undefined,
+      calendarEvents,
+    );
+
+    expect(result).toEqual([
+      calendarEvents[0],
+      calendarEvents[1],
+      {
+        ...calendarEvents[2],
+        title: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+        description: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+      },
+    ]);
+  });
 });

@@ -25,14 +25,14 @@ export class CalendarEventFindManyPostQueryHook
     _objectName: string,
     payload: CalendarEventWorkspaceEntity[],
   ): Promise<void> {
-    const user = authContext.user;
+    const { user, apiKey } = authContext;
 
-    if (!isDefined(user)) {
+    if (!isDefined(user) && !isDefined(apiKey)) {
       throw new UserInputError('User is required');
     }
 
     await this.applyCalendarEventsVisibilityRestrictionsService.applyCalendarEventsVisibilityRestrictions(
-      user.id,
+      isDefined(user) ? user.id : undefined,
       payload,
     );
   }

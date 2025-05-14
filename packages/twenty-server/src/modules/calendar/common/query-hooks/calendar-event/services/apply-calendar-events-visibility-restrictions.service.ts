@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import groupBy from 'lodash.groupby';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -16,7 +17,7 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   public async applyCalendarEventsVisibilityRestrictions(
-    userId: string,
+    userId: string | undefined, // undefined when request is made with api key
     calendarEvents: CalendarEventWorkspaceEntity[],
   ) {
     const calendarChannelEventAssociationRepository =
@@ -65,22 +66,26 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
         continue;
       }
 
-      const workspaceMember = await workspaceMemberRepository.findOneByOrFail({
-        userId: userId,
-      });
-
-      const connectedAccounts = await connectedAccountRepository.find({
-        select: ['id'],
-        where: {
-          calendarChannels: {
-            id: In(calendarChannels.map((channel) => channel.id)),
+      if (isDefined(userId)) {
+        const workspaceMember = await workspaceMemberRepository.findOneByOrFail(
+          {
+            userId: userId,
           },
-          accountOwnerId: workspaceMember.id,
-        },
-      });
+        );
 
-      if (connectedAccounts.length > 0) {
-        continue;
+        const connectedAccounts = await connectedAccountRepository.find({
+          select: ['id'],
+          where: {
+            calendarChannels: {
+              id: In(calendarChannels.map((channel) => channel.id)),
+            },
+            accountOwnerId: workspaceMember.id,
+          },
+        });
+
+        if (connectedAccounts.length > 0) {
+          continue;
+        }
       }
 
       if (
