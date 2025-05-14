@@ -5,10 +5,10 @@ import { Meta, StoryObj } from '@storybook/react';
 import { http, HttpResponse } from 'msw';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { RestPlayground } from '../RestPlayground';
-import { ComponentDecorator } from 'twenty-ui/testing';
 
 const PlaygroundApiKeySetterEffect = () => {
   const setPlaygroundApiKey = useSetRecoilState(playgroundApiKeyState);
@@ -23,9 +23,9 @@ const PlaygroundApiKeySetterEffect = () => {
 const openApiSpec = {
   openapi: '3.1.1',
   info: {
-    title: 'Twenty Api',
+    title: 'InsurOS Api',
     description:
-      'This is a **Twenty REST/API** playground based on the **OpenAPI 3.1 specification**.',
+      'This is a **InsurOS REST/API** playground based on the **OpenAPI 3.1 specification**.',
     version: '1.0.0',
   },
   servers: [

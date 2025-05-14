@@ -30,7 +30,7 @@ export const ChromeExtensionSidecarProvider: React.FC<
 
   // if (!isDefined(chromeExtensionId))
   //   return (
-  //     <AppInaccessible message={`Twenty is not accessible inside an iframe.`} />
+  //     <AppInaccessible message={`InsurOS is not accessible inside an iframe.`} />
   //   );
 
   // if (isDefined(isLoadingTokensFromExtension) && !isLoadingTokensFromExtension)

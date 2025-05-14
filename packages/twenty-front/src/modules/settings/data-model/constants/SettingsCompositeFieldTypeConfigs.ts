@@ -62,11 +62,11 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       additionalEmails: 'Additional Emails',
     },
     exampleValue: {
-      primaryEmail: 'john@twenty.com',
+      primaryEmail: 'john@insuros.ca',
       additionalEmails: [
-        'tim@twenty.com',
-        'timapple@twenty.com',
-        'johnappletim@twenty.com',
+        'tim@insuros.ca',
+        'timapple@insuros.ca',
+        'johnappletim@insuros.ca',
       ],
     },
     category: 'Basic',
@@ -75,9 +75,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     label: 'Links',
     Icon: IllustrationIconLink,
     exampleValue: {
-      primaryLinkUrl: 'twenty.com',
+      primaryLinkUrl: 'insuros.ca',
       primaryLinkLabel: '',
-      secondaryLinks: [{ url: 'twenty.com', label: 'Twenty' }],
+      secondaryLinks: [{ url: 'insuros.ca', label: 'InsurOS' }],
     },
     category: 'Basic',
     subFields: ['primaryLinkUrl', 'primaryLinkLabel', 'secondaryLinks'],

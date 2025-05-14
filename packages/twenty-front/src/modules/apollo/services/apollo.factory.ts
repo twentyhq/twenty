@@ -22,10 +22,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { ApolloManager } from '../types/apolloManager.interface';
-import { loggerLink } from '../utils/loggerLink';
 import { getTokenPair } from '../utils/getTokenPair';
+import { loggerLink } from '../utils/loggerLink';
 
-const logger = loggerLink(() => 'Twenty');
+const logger = loggerLink(() => 'InsurOS');
 
 export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   onError?: (err: readonly GraphQLFormattedError[] | undefined) => void;

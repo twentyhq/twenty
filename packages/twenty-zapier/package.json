@@ -1,7 +1,7 @@
 {
   "name": "twenty-zapier",
   "version": "2.0.1",
-  "description": "Effortlessly sync Twenty with 3000+ apps. Automate tasks, boost productivity, and supercharge your customer relationships!",
+  "description": "Effortlessly sync InsurOS with 3000+ apps. Automate tasks, boost productivity, and supercharge your customer relationships!",
   "main": "src/index.ts",
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-zapier node ../../node_modules/nx/bin/nx.js",

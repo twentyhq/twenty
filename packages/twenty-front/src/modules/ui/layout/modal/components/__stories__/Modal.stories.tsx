@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { Modal } from '../Modal';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { Modal } from '../Modal';
 
 const meta: Meta<typeof Modal> = {
   title: 'UI/Layout/Modal/Modal',
@@ -23,7 +23,7 @@ export const Default: Story = {
           that I expect you to, anyways. :)
         </Modal.Content>
         <Modal.Footer>
-          By using Twenty, you're opting for the finest CRM experience you'll
+          By using InsurOS, you're opting for the finest CRM experience you'll
           ever encounter.
         </Modal.Footer>
       </>

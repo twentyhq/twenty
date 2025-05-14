@@ -42,7 +42,7 @@ export const PasswordUpdateNotifyEmail = ({
         <br />
       </MainText>
       <br />
-      <CallToAction value={i18n._('Connect to Twenty')} href={link} />
+      <CallToAction value={i18n._('Connect to InsurOS')} href={link} />
       <br />
       <br />
     </BaseEmail>
@@ -52,7 +52,7 @@ export const PasswordUpdateNotifyEmail = ({
 PasswordUpdateNotifyEmail.PreviewProps = {
   userName: 'John Doe',
   email: 'john.doe@example.com',
-  link: 'https://app.twenty.com',
+  link: 'https://app.insuros.ca',
   locale: 'en',
 } as PasswordUpdateNotifyEmailProps;
 

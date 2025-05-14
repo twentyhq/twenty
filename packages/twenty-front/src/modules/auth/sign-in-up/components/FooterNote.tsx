@@ -20,7 +20,7 @@ const StyledContainer = styled.div`
 
 export const FooterNote = () => (
   <StyledContainer>
-    <Trans>By using Twenty, you agree to the</Trans>{' '}
+    <Trans>By using InsurOS, you agree to the</Trans>{' '}
     <a
       href="https://twenty.com/legal/terms"
       target="_blank"

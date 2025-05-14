@@ -40,11 +40,11 @@ export const CleanSuspendedWorkspaceEmail = ({
         <Trans id="All data in this workspace has been permanently deleted." />
         <br />
         <br />
-        <Trans id="If you wish to use Twenty again, you can create a new workspace." />
+        <Trans id="If you wish to use InsurOS again, you can create a new workspace." />
       </MainText>
       <br />
       <CallToAction
-        href="https://app.twenty.com/"
+        href="https://app.insuros.ca/"
         value={i18n._('Create a new workspace')}
       />
       <br />
