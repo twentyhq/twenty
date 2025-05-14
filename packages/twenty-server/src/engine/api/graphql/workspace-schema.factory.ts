@@ -19,6 +19,10 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import {
+  WorkspaceMetadataVersionException,
+  WorkspaceMetadataVersionExceptionCode,
+} from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
@@ -89,9 +93,9 @@ export class WorkspaceSchemaFactory {
     }
 
     if (!currentCacheVersion) {
-      throw new GraphqlQueryRunnerException(
+      throw new WorkspaceMetadataVersionException(
         'Metadata cache version not found',
-        GraphqlQueryRunnerExceptionCode.METADATA_CACHE_VERSION_NOT_FOUND,
+        WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
       );
     }
 

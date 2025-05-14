@@ -6,7 +6,7 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata-name.exception';
+import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateMetadataNameIsNotTooLongOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils';
 import { validateMetadataNameIsNotTooShortOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
@@ -28,7 +28,7 @@ export const validateObjectMetadataInputNameOrThrow = (name: string): void => {
   try {
     validateMetadataNameOrThrow(name);
   } catch (error) {
-    if (error instanceof InvalidMetadataNameException) {
+    if (error instanceof InvalidMetadataException) {
       throw new ObjectMetadataException(
         error.message,
         ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
@@ -58,7 +58,7 @@ const validateObjectMetadataInputLabelOrThrow = (name: string): void => {
   try {
     validators.forEach((validator) => validator(name.trim()));
   } catch (error) {
-    if (error instanceof InvalidMetadataNameException) {
+    if (error instanceof InvalidMetadataException) {
       throw new ObjectMetadataException(
         error.message,
         ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,

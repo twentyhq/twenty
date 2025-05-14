@@ -2,11 +2,17 @@ import camelCase from 'lodash.camelcase';
 import { slugify } from 'transliteration';
 import { isDefined } from 'twenty-shared/utils';
 
-import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
+import {
+  InvalidMetadataException,
+  InvalidMetadataExceptionCode,
+} from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 
 export const computeMetadataNameFromLabel = (label: string): string => {
   if (!isDefined(label)) {
-    throw new InvalidMetadataException('Label is required');
+    throw new InvalidMetadataException(
+      'Label is required',
+      InvalidMetadataExceptionCode.LABEL_REQUIRED,
+    );
   }
 
   const prefixedLabel = /^\d/.test(label) ? `n${label}` : label;
@@ -22,7 +28,10 @@ export const computeMetadataNameFromLabel = (label: string): string => {
   });
 
   if (formattedString === '') {
-    throw new InvalidMetadataException(`Invalid label: "${label}"`);
+    throw new InvalidMetadataException(
+      `Invalid label: "${label}"`,
+      InvalidMetadataExceptionCode.INVALID_LABEL,
+    );
   }
 
   return camelCase(formattedString);

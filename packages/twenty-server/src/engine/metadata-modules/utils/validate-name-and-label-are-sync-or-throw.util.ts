@@ -2,7 +2,10 @@ import camelCase from 'lodash.camelcase';
 import { slugify } from 'transliteration';
 import { isDefined } from 'twenty-shared/utils';
 
-import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
+import {
+  InvalidMetadataException,
+  InvalidMetadataExceptionCode,
+} from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 
 export const validateNameAndLabelAreSyncOrThrow = (
   label: string,
@@ -13,13 +16,17 @@ export const validateNameAndLabelAreSyncOrThrow = (
   if (name !== computedName) {
     throw new InvalidMetadataException(
       `Name is not synced with label. Expected name: "${computedName}", got ${name}`,
+      InvalidMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL,
     );
   }
 };
 
 export const computeMetadataNameFromLabel = (label: string): string => {
   if (!isDefined(label)) {
-    throw new InvalidMetadataException('Label is required');
+    throw new InvalidMetadataException(
+      'Label is required',
+      InvalidMetadataExceptionCode.LABEL_REQUIRED,
+    );
   }
 
   const prefixedLabel = /^\d/.test(label) ? `n${label}` : label;
@@ -35,7 +42,10 @@ export const computeMetadataNameFromLabel = (label: string): string => {
   });
 
   if (formattedString === '') {
-    throw new InvalidMetadataException(`Invalid label: "${label}"`);
+    throw new InvalidMetadataException(
+      `Invalid label: "${label}"`,
+      InvalidMetadataExceptionCode.INVALID_LABEL,
+    );
   }
 
   return camelCase(formattedString);
