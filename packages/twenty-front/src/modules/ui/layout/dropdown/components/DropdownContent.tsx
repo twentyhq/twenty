@@ -41,8 +41,7 @@ export type DropdownContentProps = {
   };
   onHotkeyTriggered?: () => void;
   dropdownWidth?: `${string}px` | `${number}%` | 'auto' | number;
-  dropdownMinWidth?: `${string}px` | `${number}%` | 'auto' | number;
-  dropdownMaxWidth?: `${string}px` | `${number}%` | 'auto' | number;
+
   dropdownComponents: React.ReactNode;
   parentDropdownId?: string;
   avoidPortal?: boolean;
@@ -59,8 +58,7 @@ export const DropdownContent = ({
   hotkey,
   onHotkeyTriggered,
   dropdownWidth,
-  dropdownMinWidth,
-  dropdownMaxWidth,
+
   dropdownComponents,
   avoidPortal,
 }: DropdownContentProps) => {
@@ -141,8 +139,6 @@ export const DropdownContent = ({
             <DropdownMenu
               className={className}
               width={dropdownWidth}
-              minWidth={dropdownMinWidth}
-              maxWidth={dropdownMaxWidth}
               data-select-disable
             >
               {dropdownComponents}
@@ -162,8 +158,6 @@ export const DropdownContent = ({
                 id={dropdownId}
                 className={className}
                 width={dropdownWidth}
-                minWidth={dropdownMinWidth}
-                maxWidth={dropdownMaxWidth}
                 data-select-disable
               >
                 {dropdownComponents}

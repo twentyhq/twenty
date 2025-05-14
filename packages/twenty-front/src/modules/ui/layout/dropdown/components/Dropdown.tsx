@@ -52,8 +52,6 @@ export type DropdownProps = {
   dropdownId: string;
   dropdownPlacement?: Placement;
   dropdownWidth?: Width;
-  dropdownMinWidth?: Width;
-  dropdownMaxWidth?: Width;
   dropdownOffset?: DropdownOffset;
   dropdownStrategy?: 'fixed' | 'absolute';
   onClickOutside?: () => void;
@@ -67,8 +65,6 @@ export const Dropdown = ({
   clickableComponent,
   dropdownComponents,
   dropdownWidth,
-  dropdownMinWidth,
-  dropdownMaxWidth,
   hotkey,
   dropdownId,
   dropdownHotkeyScope,
@@ -181,8 +177,6 @@ export const Dropdown = ({
               className={className}
               floatingStyles={floatingStyles}
               dropdownWidth={dropdownWidth}
-              dropdownMinWidth={dropdownMinWidth}
-              dropdownMaxWidth={dropdownMaxWidth}
               dropdownComponents={dropdownComponents}
               dropdownId={dropdownId}
               dropdownPlacement={placement}
