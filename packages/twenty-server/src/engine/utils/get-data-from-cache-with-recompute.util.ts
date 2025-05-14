@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -17,6 +19,7 @@ const getFromCacheWithRecompute = async <T, U>({
   recomputeCache,
   cachedEntityName,
   exceptionCode,
+  logger,
 }: {
   workspaceId: string;
   getCacheData: (workspaceId: string) => Promise<U | undefined>;
@@ -27,6 +30,7 @@ const getFromCacheWithRecompute = async <T, U>({
   }) => Promise<void>;
   cachedEntityName: string;
   exceptionCode: TwentyORMExceptionCode;
+  logger: Logger;
 }): Promise<CacheResult<T, U>> => {
   let cachedVersion: T | undefined;
   let cachedData: U | undefined;
@@ -43,6 +47,13 @@ const getFromCacheWithRecompute = async <T, U>({
     !isDefined(cachedData) ||
     (expectCacheVersion && !isDefined(cachedVersion))
   ) {
+    logger.warn(
+      `Triggering cache recompute for ${cachedEntityName} (workspace ${workspaceId})`,
+      {
+        cachedVersion,
+        cachedData,
+      },
+    );
     await recomputeCache({ workspaceId, ignoreLock: true });
 
     cachedData = await getCacheData(workspaceId);
@@ -54,8 +65,15 @@ const getFromCacheWithRecompute = async <T, U>({
       !isDefined(cachedData) ||
       (expectCacheVersion && !isDefined(cachedVersion))
     ) {
+      logger.warn(
+        `Data still missing after recompute for ${cachedEntityName} (workspace ${workspaceId})`,
+        {
+          cachedVersion,
+          cachedData,
+        },
+      );
       throw new TwentyORMException(
-        `${cachedEntityName} not found after recompute for workspace ${workspaceId}`,
+        `${cachedEntityName} not found after recompute for workspace ${workspaceId} (missingData: ${!isDefined(cachedData)}, missingVersion: ${expectCacheVersion && !isDefined(cachedVersion)})`,
         exceptionCode,
       );
     }

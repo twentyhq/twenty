@@ -52,13 +52,21 @@ export class WorkspacePermissionsCacheService {
     ignoreLock?: boolean;
     roleIds?: string[];
   }): Promise<void> {
-    if (!ignoreLock) {
-      const isAlreadyCaching =
-        await this.workspacePermissionsCacheStorageService.getRolesPermissionsOngoingCachingLock(
-          workspaceId,
+    const isAlreadyCaching =
+      await this.workspacePermissionsCacheStorageService.getRolesPermissionsOngoingCachingLock(
+        workspaceId,
+      );
+
+    if (isAlreadyCaching) {
+      if (ignoreLock) {
+        this.logger.warn(
+          `RolesPermissions data is already being cached (workspace ${workspaceId}), ignoring lock`,
+        );
+      } else {
+        this.logger.warn(
+          `RolesPermissions data is already being cached (workspace ${workspaceId}), respecting lock and returning no data`,
         );
 
-      if (isAlreadyCaching) {
         return;
       }
     }
@@ -113,13 +121,21 @@ export class WorkspacePermissionsCacheService {
     ignoreLock?: boolean;
   }): Promise<void> {
     try {
-      if (!ignoreLock) {
-        const isAlreadyCaching =
-          await this.workspacePermissionsCacheStorageService.getUserWorkspaceRoleMapOngoingCachingLock(
-            workspaceId,
+      const isAlreadyCaching =
+        await this.workspacePermissionsCacheStorageService.getUserWorkspaceRoleMapOngoingCachingLock(
+          workspaceId,
+        );
+
+      if (isAlreadyCaching) {
+        if (ignoreLock) {
+          this.logger.warn(
+            `UserWorkspaceRoleMap data is already being cached (workspace ${workspaceId}), ignoring lock`,
+          );
+        } else {
+          this.logger.warn(
+            `UserWorkspaceRoleMap data is already being cached (workspace ${workspaceId}), respecting lock and returning no data`,
           );
 
-        if (isAlreadyCaching) {
           return;
         }
       }
@@ -169,6 +185,7 @@ export class WorkspacePermissionsCacheService {
       recomputeCache: (params) => this.recomputeRolesPermissionsCache(params),
       cachedEntityName: ROLES_PERMISSIONS,
       exceptionCode: TwentyORMExceptionCode.ROLES_PERMISSIONS_VERSION_NOT_FOUND,
+      logger: this.logger,
     });
   }
 
@@ -188,6 +205,7 @@ export class WorkspacePermissionsCacheService {
       cachedEntityName: USER_WORKSPACE_ROLE_MAP,
       exceptionCode:
         TwentyORMExceptionCode.USER_WORKSPACE_ROLE_MAP_VERSION_NOT_FOUND,
+      logger: this.logger,
     });
   }
 

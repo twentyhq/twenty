@@ -233,6 +233,7 @@ export class WorkspaceDatasourceFactory {
         }),
       cachedEntityName: ROLES_PERMISSIONS,
       exceptionCode: TwentyORMExceptionCode.ROLES_PERMISSIONS_VERSION_NOT_FOUND,
+      logger: this.logger,
     });
   }
 
