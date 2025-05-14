@@ -34,7 +34,8 @@ export const useRelationSettingsFormInitialValues = ({
     return (
       relationObjectMetadataItemFromFieldMetadata ??
       objectMetadataItem ??
-      availableItems[0]
+      availableItems[0] ??
+      activeObjectMetadataItems[0]
     );
   }, [
     objectMetadataItem,
