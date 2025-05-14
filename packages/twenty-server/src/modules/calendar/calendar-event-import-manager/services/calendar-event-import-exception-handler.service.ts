@@ -85,10 +85,13 @@ export class CalendarEventImportErrorHandlerService {
         workspaceId,
       );
 
+      const calendarEventImportException = new CalendarEventImportException(
+        `Temporary error occurred ${CALENDAR_THROTTLE_MAX_ATTEMPTS} times while importing calendar events for calendar channel ${calendarChannel.id.slice(0, 5)}... in workspace ${workspaceId} with throttleFailureCount${calendarChannel.throttleFailureCount}`,
+        CalendarEventImportExceptionCode.UNKNOWN,
+      );
+
       this.exceptionHandlerService.captureExceptions(
-        [
-          `Temporary error occurred ${CALENDAR_THROTTLE_MAX_ATTEMPTS} times while importing calendar events for calendar channel ${calendarChannel.id.slice(0, 5)}... in workspace ${workspaceId} with throttleFailureCount${calendarChannel.throttleFailureCount}`,
-        ],
+        [calendarEventImportException],
         {
           calendarChannel: calendarChannel.id,
           workspace: {
@@ -97,10 +100,7 @@ export class CalendarEventImportErrorHandlerService {
         },
       );
 
-      throw new CalendarEventImportException(
-        `Temporary error occurred ${CALENDAR_THROTTLE_MAX_ATTEMPTS} times while importing calendar events for calendar channel ${calendarChannel.id} in workspace ${workspaceId} with throttleFailureCount${calendarChannel.throttleFailureCount}`,
-        CalendarEventImportExceptionCode.UNKNOWN,
-      );
+      throw calendarEventImportException;
     }
 
     const calendarChannelRepository =
@@ -160,17 +160,22 @@ export class CalendarEventImportErrorHandlerService {
       workspaceId,
     );
 
-    this.exceptionHandlerService.captureExceptions([exception], {
-      calendarChannel: calendarChannel.id,
-      workspace: {
-        id: workspaceId,
-      },
-    });
-
-    throw new CalendarEventImportException(
-      `Unknown error importing calendar events for calendar channel ${calendarChannel.id} in workspace ${workspaceId}: ${exception.message}`,
+    const calendarEventImportException = new CalendarEventImportException(
+      `Unknown error importing calendar events for calendar channel ${calendarChannel.id.slice(0, 5)}... in workspace ${workspaceId}: ${exception.message}`,
       CalendarEventImportExceptionCode.UNKNOWN,
     );
+
+    this.exceptionHandlerService.captureExceptions(
+      [calendarEventImportException],
+      {
+        calendarChannel: calendarChannel.id,
+        workspace: {
+          id: workspaceId,
+        },
+      },
+    );
+
+    throw calendarEventImportException;
   }
 
   private async handleNotFoundException(

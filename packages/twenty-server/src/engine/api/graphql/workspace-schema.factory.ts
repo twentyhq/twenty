@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import chalk from 'chalk';
 import { GraphQLSchema, printSchema } from 'graphql';
 import { gql } from 'graphql-tag';
 import { isDefined } from 'twenty-shared/utils';
-
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import {
   GraphqlQueryRunnerException,
@@ -17,13 +14,16 @@ import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/work
 import { WorkspaceResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver.factory';
 import { WorkspaceGraphQLSchemaFactory } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import {
+  WorkspaceMetadataVersionException,
+  WorkspaceMetadataVersionExceptionCode,
+} from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class WorkspaceSchemaFactory {
@@ -41,21 +41,6 @@ export class WorkspaceSchemaFactory {
   async createGraphQLSchema(authContext: AuthContext): Promise<GraphQLSchema> {
     if (!authContext.workspace?.id) {
       return new GraphQLSchema({});
-    }
-
-    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsNewRelationEnabled,
-      authContext.workspace.id,
-    );
-
-    if (
-      isNewRelationEnabled &&
-      this.twentyConfigService.get('NODE_ENV') !== NodeEnvironment.test
-    ) {
-      // eslint-disable-next-line no-console
-      console.log(
-        chalk.yellow('🚧 New relation schema generation is enabled 🚧'),
-      );
     }
 
     const dataSourcesMetadata =
@@ -108,9 +93,9 @@ export class WorkspaceSchemaFactory {
     }
 
     if (!currentCacheVersion) {
-      throw new GraphqlQueryRunnerException(
+      throw new WorkspaceMetadataVersionException(
         'Metadata cache version not found',
-        GraphqlQueryRunnerExceptionCode.METADATA_CACHE_VERSION_NOT_FOUND,
+        WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
       );
     }
 
@@ -140,7 +125,6 @@ export class WorkspaceSchemaFactory {
           objectMetadataCollection,
           workspaceResolverBuilderMethodNames,
           {},
-          isNewRelationEnabled,
         );
 
       usedScalarNames =

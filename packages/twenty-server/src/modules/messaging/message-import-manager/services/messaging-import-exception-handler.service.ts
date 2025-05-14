@@ -174,20 +174,17 @@ export class MessageImportExceptionHandlerService {
       MessageChannelSyncStatus.FAILED_UNKNOWN,
     );
 
-    this.exceptionHandlerService.captureExceptions(
-      [
-        `Unknown error importing messages for message channel ${messageChannel.id.slice(0, 5)}... in workspace ${workspaceId}: ${exception.message}`,
-      ],
-      {
-        messageChannel: messageChannel.id,
-        workspace: { id: workspaceId },
-      },
-    );
-
-    throw new MessageImportException(
+    const messageImportException = new MessageImportException(
       exception.message,
       MessageImportExceptionCode.UNKNOWN,
     );
+
+    this.exceptionHandlerService.captureExceptions([messageImportException], {
+      messageChannel: messageChannel.id,
+      workspace: { id: workspaceId },
+    });
+
+    throw messageImportException;
   }
 
   private async handlePermanentException(

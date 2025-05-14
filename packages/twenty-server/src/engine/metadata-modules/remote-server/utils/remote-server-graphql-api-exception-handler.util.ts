@@ -1,7 +1,6 @@
 import {
   ConflictError,
   ForbiddenError,
-  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -21,8 +20,13 @@ export const remoteServerGraphqlApiExceptionHandler = (error: any) => {
         throw new ForbiddenError(error.message);
       case RemoteServerExceptionCode.REMOTE_SERVER_ALREADY_EXISTS:
         throw new ConflictError(error.message);
-      default:
-        throw new InternalServerError(error.message);
+      case RemoteServerExceptionCode.REMOTE_SERVER_CONNECTION_ERROR:
+        throw error;
+      default: {
+        const _exhaustiveCheck: never = error.code;
+
+        throw error;
+      }
     }
   }
 

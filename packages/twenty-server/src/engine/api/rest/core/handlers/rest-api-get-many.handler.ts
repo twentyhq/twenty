@@ -11,27 +11,33 @@ export class RestApiGetManyHandler extends RestApiBaseHandler {
       objectMetadataNameSingular,
       objectMetadataNamePlural,
       repository,
-      dataSource,
       objectMetadata,
       objectMetadataItemWithFieldsMaps,
     } = await this.getRepositoryAndMetadataOrFail(request);
 
-    const { records, isForwardPagination, hasMoreRecords, totalCount } =
-      await this.findRecords({
-        request,
-        repository,
-        dataSource,
-        objectMetadata,
-        objectMetadataNameSingular,
-        objectMetadataItemWithFieldsMaps,
-      });
-
-    return this.formatPaginatedResult(
+    const {
       records,
+      isForwardPagination,
+      hasMoreRecords,
+      totalCount,
+      startCursor,
+      endCursor,
+    } = await this.findRecords({
+      request,
+      repository,
+      objectMetadata,
+      objectMetadataNameSingular,
+      objectMetadataItemWithFieldsMaps,
+    });
+
+    return this.formatPaginatedResult({
+      finalRecords: records,
       objectMetadataNamePlural,
       isForwardPagination,
       hasMoreRecords,
       totalCount,
-    );
+      startCursor,
+      endCursor,
+    });
   }
 }

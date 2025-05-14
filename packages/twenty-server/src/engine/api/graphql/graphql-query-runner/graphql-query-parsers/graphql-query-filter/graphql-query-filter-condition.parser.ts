@@ -6,7 +6,6 @@ import {
 } from 'typeorm';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
@@ -20,14 +19,12 @@ export class GraphqlQueryFilterConditionParser {
   constructor(
     fieldMetadataMapByName: FieldMetadataMap,
     fieldMetadataMapByJoinColumnName: FieldMetadataMap,
-    featureFlagsMap: FeatureFlagMap,
   ) {
     this.fieldMetadataMapByName = fieldMetadataMapByName;
     this.fieldMetadataMapByJoinColumnName = fieldMetadataMapByJoinColumnName;
     this.queryFilterFieldParser = new GraphqlQueryFilterFieldParser(
       this.fieldMetadataMapByName,
       this.fieldMetadataMapByJoinColumnName,
-      featureFlagsMap,
     );
   }
 

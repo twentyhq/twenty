@@ -49,7 +49,7 @@ export class UpgradeSearchVectorOnPersonEntityCommand extends ActiveOrSuspendedW
         select: ['id'],
         where: {
           workspaceId,
-          nameSingular: STANDARD_OBJECT_IDS.person,
+          standardId: STANDARD_OBJECT_IDS.person,
         },
       });
 

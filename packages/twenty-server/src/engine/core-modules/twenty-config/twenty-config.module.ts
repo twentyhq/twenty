@@ -16,7 +16,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 export class TwentyConfigModule extends ConfigurableModuleClass {
   static forRoot(): DynamicModule {
     const isConfigVariablesInDbEnabled =
-      process.env.IS_CONFIG_VARIABLES_IN_DB_ENABLED === 'true';
+      process.env.IS_CONFIG_VARIABLES_IN_DB_ENABLED !== 'false';
 
     const imports = [
       ConfigModule.forRoot({

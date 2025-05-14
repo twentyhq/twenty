@@ -1,3 +1,5 @@
+import { HttpException } from '@nestjs/common';
+
 import {
   BaseGraphQLError,
   ErrorCode,
@@ -12,13 +14,20 @@ export const graphQLErrorCodesToFilterOut = [
   ErrorCode.TIMEOUT,
   ErrorCode.CONFLICT,
   ErrorCode.BAD_USER_INPUT,
-  ErrorCode.EMAIL_NOT_VERIFIED,
 ];
 
 export const shouldCaptureException = (exception: Error): boolean => {
   if (
     exception instanceof BaseGraphQLError &&
     graphQLErrorCodesToFilterOut.includes(exception?.extensions?.code)
+  ) {
+    return false;
+  }
+
+  if (
+    exception instanceof HttpException &&
+    exception.getStatus() >= 400 &&
+    exception.getStatus() < 500
   ) {
     return false;
   }

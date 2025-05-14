@@ -1,37 +1,37 @@
 import { BadRequestException, Inject } from '@nestjs/common';
 
 import { Request } from 'express';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { In, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   ObjectRecord,
-  OrderByDirection,
+  ObjectRecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/get-variables.factory';
+import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
+import { QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
 import {
   Depth,
   DepthInputFactory,
   MAX_DEPTH,
 } from 'src/engine/api/rest/input-factories/depth-input.factory';
-import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
-import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
+import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { computeCursorArgFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-cursor-arg-filter';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -228,12 +228,19 @@ export abstract class RestApiBaseHandler {
   }: FormatResultParams<T>) {
     let prefix: string;
 
+    if (isDefined(objectNameSingular) && isDefined(objectNamePlural)) {
+      throw new Error(
+        'Cannot define both objectNameSingular and objectNamePlural',
+      );
+    }
+
     if (operation === 'findOne') {
       prefix = objectNameSingular || '';
     } else if (operation === 'findMany') {
       prefix = objectNamePlural || '';
     } else {
-      prefix = operation + capitalize(objectNameSingular || '');
+      prefix =
+        operation + capitalize(objectNameSingular || objectNamePlural || '');
     }
 
     return {
@@ -245,13 +252,23 @@ export abstract class RestApiBaseHandler {
     };
   }
 
-  formatPaginatedResult(
-    finalRecords: any[],
-    objectMetadataNamePlural: string,
-    isForwardPagination: boolean,
-    hasMoreRecords: boolean,
-    totalCount: number,
-  ) {
+  formatPaginatedResult({
+    finalRecords,
+    objectMetadataNamePlural,
+    isForwardPagination,
+    hasMoreRecords,
+    totalCount,
+    startCursor,
+    endCursor,
+  }: {
+    finalRecords: any[];
+    objectMetadataNamePlural: string;
+    isForwardPagination: boolean;
+    hasMoreRecords: boolean;
+    totalCount: number;
+    startCursor: string | null;
+    endCursor: string | null;
+  }) {
     const hasPreviousPage = !isForwardPagination && hasMoreRecords;
 
     return this.formatResult({
@@ -261,20 +278,8 @@ export abstract class RestApiBaseHandler {
       pageInfo: {
         hasNextPage: isForwardPagination && hasMoreRecords,
         ...(hasPreviousPage ? { hasPreviousPage } : {}),
-        startCursor:
-          finalRecords.length > 0
-            ? Buffer.from(JSON.stringify({ id: finalRecords[0].id })).toString(
-                'base64',
-              )
-            : null,
-        endCursor:
-          finalRecords.length > 0
-            ? Buffer.from(
-                JSON.stringify({
-                  id: finalRecords[finalRecords.length - 1].id,
-                }),
-              ).toString('base64')
-            : null,
+        startCursor,
+        endCursor,
       },
       totalCount,
     });
@@ -284,7 +289,6 @@ export abstract class RestApiBaseHandler {
     request,
     recordId,
     repository,
-    dataSource,
     objectMetadata,
     objectMetadataNameSingular,
     objectMetadataItemWithFieldsMaps,
@@ -292,8 +296,10 @@ export abstract class RestApiBaseHandler {
     request: Request;
     recordId?: string;
     repository: WorkspaceRepository<ObjectLiteral>;
-    dataSource: WorkspaceDataSource;
-    objectMetadata: any;
+    objectMetadata: {
+      objectMetadataMaps: ObjectMetadataMaps;
+      objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    };
     objectMetadataNameSingular: string;
     objectMetadataItemWithFieldsMaps:
       | ObjectMetadataItemWithFieldMaps
@@ -309,17 +315,23 @@ export abstract class RestApiBaseHandler {
 
     const fieldMetadataMapByName =
       objectMetadataItemWithFieldsMaps?.fieldsByName || {};
+
     const fieldMetadataMapByJoinColumnName =
       objectMetadataItemWithFieldsMaps?.fieldsByJoinColumnName || {};
+
+    const isForwardPagination = !inputs.endingBefore;
 
     const graphqlQueryParser = new GraphqlQueryParser(
       fieldMetadataMapByName,
       fieldMetadataMapByJoinColumnName,
       objectMetadata.objectMetadataMaps,
-      dataSource.featureFlagMap,
     );
 
-    const filters = this.computeFilters(inputs);
+    const filters = this.computeFilters({
+      inputs,
+      objectMetadata,
+      isForwardPagination,
+    });
 
     let selectQueryBuilder = isDefined(filters)
       ? graphqlQueryParser.applyFilterToBuilder(
@@ -331,11 +343,9 @@ export abstract class RestApiBaseHandler {
 
     const totalCount = await this.getTotalCount(selectQueryBuilder);
 
-    const isForwardPagination = !inputs.endingBefore;
-
     selectQueryBuilder = graphqlQueryParser.applyOrderToBuilder(
       selectQueryBuilder,
-      [...(inputs.orderBy || []), { id: OrderByDirection.AscNullsFirst }],
+      inputs.orderBy || [],
       objectMetadataNameSingular,
       isForwardPagination,
     );
@@ -361,16 +371,29 @@ export abstract class RestApiBaseHandler {
 
     const hasMoreRecords = records.length < totalCount;
 
+    const finalRecords = formatGetManyData<ObjectRecord[]>(
+      records,
+      objectMetadataItemWithFieldsMaps,
+      objectMetadata.objectMetadataMaps,
+    );
+
+    const startCursor =
+      finalRecords.length > 0
+        ? encodeCursor(finalRecords[0], inputs.orderBy)
+        : null;
+
+    const endCursor =
+      finalRecords.length > 0
+        ? encodeCursor(finalRecords[finalRecords.length - 1], inputs.orderBy)
+        : null;
+
     return {
-      records: formatGetManyData<ObjectLiteral[]>(
-        records,
-        objectMetadataItemWithFieldsMaps as any,
-        objectMetadata.objectMetadataMaps,
-        dataSource.featureFlagMap[FeatureFlagKey.IsNewRelationEnabled],
-      ),
+      records: finalRecords,
       totalCount,
       hasMoreRecords,
       isForwardPagination,
+      startCursor,
+      endCursor,
     };
   }
 
@@ -382,25 +405,35 @@ export abstract class RestApiBaseHandler {
     return await countQuery.getCount();
   }
 
-  computeFilters(inputs: QueryVariables) {
+  computeFilters({
+    inputs,
+    objectMetadata,
+    isForwardPagination,
+  }: {
+    inputs: QueryVariables;
+    objectMetadata: {
+      objectMetadataMaps: ObjectMetadataMaps;
+      objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    };
+    isForwardPagination: boolean;
+  }) {
     let appliedFilters = inputs.filter;
 
-    if (inputs.startingAfter) {
-      appliedFilters = {
-        and: [
-          appliedFilters || {},
-          { id: { gt: this.parseCursor(inputs.startingAfter).id } },
-        ],
-      };
-    }
+    const cursor = inputs.startingAfter || inputs.endingBefore;
 
-    if (inputs.endingBefore) {
-      appliedFilters = {
-        and: [
-          appliedFilters || {},
-          { id: { lt: this.parseCursor(inputs.endingBefore).id } },
-        ],
-      };
+    if (cursor) {
+      const cursorArgFilter = computeCursorArgFilter(
+        this.parseCursor(cursor),
+        inputs.orderBy || [],
+        objectMetadata.objectMetadataMapItem.fieldsByName,
+        isForwardPagination,
+      );
+
+      appliedFilters = (inputs.filter
+        ? {
+            and: [inputs.filter, { or: cursorArgFilter }],
+          }
+        : { or: cursorArgFilter }) as unknown as ObjectRecordFilter;
     }
 
     return appliedFilters;

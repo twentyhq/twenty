@@ -81,6 +81,11 @@ export const ObjectFilterDropdownDateInput = () => {
   const isRelativeOperand =
     selectedOperandInDropdown === ViewFilterOperand.IsRelative;
 
+  const handleClear = () => {
+    isRelativeOperand
+      ? handleRelativeDateChange(null)
+      : handleAbsoluteDateChange(null);
+  };
   const resolvedValue = objectFilterDropdownCurrentRecordFilter
     ? resolveDateViewFilterValue(objectFilterDropdownCurrentRecordFilter)
     : null;
@@ -99,6 +104,7 @@ export const ObjectFilterDropdownDateInput = () => {
       onChange={handleAbsoluteDateChange}
       onRelativeDateChange={handleRelativeDateChange}
       isDateTimeInput={isDateTimeInput}
+      onClear={handleClear}
     />
   );
 };

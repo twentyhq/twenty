@@ -25,7 +25,7 @@ export class OrderByInputFactory {
     const orderByQuery = request.query.order_by;
 
     if (typeof orderByQuery !== 'string') {
-      return [{}];
+      return this.addDefaultOrderById([{}]);
     }
 
     //orderByQuery = field_1[AscNullsFirst],field_2[DescNullsLast],field_3
@@ -82,6 +82,14 @@ export class OrderByInputFactory {
 
     checkArrayFields(objectMetadata.objectMetadataMapItem, result);
 
-    return result;
+    return this.addDefaultOrderById(result);
+  }
+
+  addDefaultOrderById(orderBy: ObjectRecordOrderBy) {
+    const hasIdOrder = orderBy.some((o) => Object.keys(o).includes('id'));
+
+    return hasIdOrder
+      ? orderBy
+      : [...orderBy, { id: OrderByDirection.AscNullsFirst }];
   }
 }

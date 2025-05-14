@@ -10,7 +10,6 @@ import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 export enum WorkspaceCacheKeys {
@@ -172,22 +171,6 @@ export class WorkspaceCacheStorageService {
     );
   }
 
-  // TODO: remove this after the feature flag is droped
-  setIsNewRelationEnabled(workspaceId: string, isNewRelationEnabled: boolean) {
-    return this.cacheStorageService.set<boolean>(
-      `${WorkspaceCacheKeys.GraphQLFeatureFlag}:${workspaceId}:${FeatureFlagKey.IsNewRelationEnabled}`,
-      isNewRelationEnabled,
-      TTL_INFINITE,
-    );
-  }
-
-  // TODO: remove this after the feature flag is droped
-  getIsNewRelationEnabled(workspaceId: string): Promise<boolean | undefined> {
-    return this.cacheStorageService.get<boolean>(
-      `${WorkspaceCacheKeys.GraphQLFeatureFlag}:${workspaceId}:${FeatureFlagKey.IsNewRelationEnabled}`,
-    );
-  }
-
   getFeatureFlagsMapVersionFromCache(
     workspaceId: string,
   ): Promise<string | undefined> {
@@ -320,11 +303,6 @@ export class WorkspaceCacheStorageService {
 
     await this.cacheStorageService.del(
       `${WorkspaceCacheKeys.FeatureFlagMapOngoingCachingLock}:${workspaceId}`,
-    );
-
-    // TODO: remove this after the feature flag is droped
-    await this.cacheStorageService.del(
-      `${FeatureFlagKey.IsNewRelationEnabled}:${workspaceId}`,
     );
   }
 }

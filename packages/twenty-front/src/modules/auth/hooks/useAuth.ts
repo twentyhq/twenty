@@ -194,7 +194,7 @@ export const useAuth = () => {
         // TODO: Get intellisense for graphql error extensions code (codegen?)
         if (
           error instanceof ApolloError &&
-          error.graphQLErrors[0]?.extensions?.code === 'EMAIL_NOT_VERIFIED'
+          error.graphQLErrors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
         ) {
           setSearchParams({ email });
           setSignInUpStep(SignInUpStep.EmailVerification);
