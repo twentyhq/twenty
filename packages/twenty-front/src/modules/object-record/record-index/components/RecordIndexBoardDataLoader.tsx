@@ -38,16 +38,16 @@ export const RecordIndexBoardDataLoader = ({
 
   return (
     <>
-      {recordGroupIds.map((recordGroupId, index) => (
+      {recordGroupIds.map((recordGroupId) => (
         <RecordIndexBoardColumnLoaderEffect
           objectNameSingular={objectNameSingular}
           kanbanFieldMetadataItem={recordIndexKanbanFieldMetadataItem}
           recordBoardId={recordBoardId}
           columnId={recordGroupId}
-          key={index}
+          key={recordGroupId}
         />
       ))}
-      {recordIndexKanbanFieldMetadataItem?.isNullable === true && (
+      {recordIndexKanbanFieldMetadataItem.isNullable === true && (
         <RecordIndexBoardColumnLoaderEffect
           objectNameSingular={objectNameSingular}
           kanbanFieldMetadataItem={recordIndexKanbanFieldMetadataItem}
