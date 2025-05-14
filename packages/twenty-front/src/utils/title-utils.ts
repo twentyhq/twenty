@@ -73,6 +73,6 @@ export const getPageTitleFromPath = (pathname: string): string => {
     case SettingsPathPrefixes.General:
       return SettingsPageTitles.General;
     default:
-      return 'Twenty';
+      return 'InsurOS';
   }
 };

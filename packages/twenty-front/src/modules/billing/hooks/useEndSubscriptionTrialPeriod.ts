@@ -54,7 +54,7 @@ export const useEndSubscriptionTrialPeriod = () => {
       });
     } catch {
       enqueueSnackBar(
-        t`Error while ending trial period. Please contact Twenty team.`,
+        t`Error while ending trial period. Please contact InsurOS team.`,
         {
           variant: SnackBarVariant.Error,
         },

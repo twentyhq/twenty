@@ -26,7 +26,7 @@ import { ApolloManager } from '../types/apolloManager.interface';
 import { getTokenPair } from '../utils/getTokenPair';
 import { loggerLink } from '../utils/loggerLink';
 
-const logger = loggerLink(() => 'Twenty');
+const logger = loggerLink(() => 'InsurOS');
 
 export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   onError?: (err: readonly GraphQLFormattedError[] | undefined) => void;
