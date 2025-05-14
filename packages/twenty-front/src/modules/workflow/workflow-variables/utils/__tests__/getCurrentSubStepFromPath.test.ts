@@ -18,7 +18,7 @@ const mockStep = {
           isLeaf: true,
         },
         fields: {
-          name: { label: 'Name', value: 'Twenty', isLeaf: true },
+          name: { label: 'Name', value: 'InsurOS', isLeaf: true },
         },
         _outputSchemaType: 'RECORD',
       },
@@ -29,7 +29,7 @@ const mockStep = {
 describe('getCurrentSubStepFromPath', () => {
   it('should return the current sub step from the path', () => {
     const path = ['company', 'name'];
-    expect(getCurrentSubStepFromPath(mockStep, path)).toBe('Twenty');
+    expect(getCurrentSubStepFromPath(mockStep, path)).toBe('InsurOS');
   });
 
   it('should return undefined when the path is not valid', () => {
