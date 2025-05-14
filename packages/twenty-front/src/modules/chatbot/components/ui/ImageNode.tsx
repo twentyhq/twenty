@@ -65,7 +65,7 @@ function ImageNode({
     if (sourceConnections.length > 0) {
       const connection = sourceConnections[0];
       const sourceHandle = connection.sourceHandle;
-      const nodeId = connection.source;
+      const nodeId = connection.target;
 
       updateNodeData(id, {
         ...data,
