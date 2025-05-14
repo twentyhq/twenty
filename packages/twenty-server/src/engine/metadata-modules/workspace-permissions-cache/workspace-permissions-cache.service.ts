@@ -112,33 +112,40 @@ export class WorkspacePermissionsCacheService {
     workspaceId: string;
     ignoreLock?: boolean;
   }): Promise<void> {
-    if (!ignoreLock) {
-      const isAlreadyCaching =
-        await this.workspacePermissionsCacheStorageService.getUserWorkspaceRoleMapOngoingCachingLock(
+    try {
+      if (!ignoreLock) {
+        const isAlreadyCaching =
+          await this.workspacePermissionsCacheStorageService.getUserWorkspaceRoleMapOngoingCachingLock(
+            workspaceId,
+          );
+
+        if (isAlreadyCaching) {
+          return;
+        }
+      }
+
+      await this.workspacePermissionsCacheStorageService.addUserWorkspaceRoleMapOngoingCachingLock(
+        workspaceId,
+      );
+
+      try {
+        const freshUserWorkspaceRoleMap =
+          await this.getUserWorkspaceRoleMapFromDatabase({
+            workspaceId,
+          });
+
+        await this.workspacePermissionsCacheStorageService.setUserWorkspaceRoleMap(
+          workspaceId,
+          freshUserWorkspaceRoleMap,
+        );
+      } finally {
+        await this.workspacePermissionsCacheStorageService.removeUserWorkspaceRoleMapOngoingCachingLock(
           workspaceId,
         );
-
-      if (isAlreadyCaching) {
-        return;
       }
-    }
-
-    await this.workspacePermissionsCacheStorageService.addUserWorkspaceRoleMapOngoingCachingLock(
-      workspaceId,
-    );
-
-    try {
-      const freshUserWorkspaceRoleMap =
-        await this.getUserWorkspaceRoleMapFromDatabase({
-          workspaceId,
-        });
-
-      await this.workspacePermissionsCacheStorageService.setUserWorkspaceRoleMap(
-        workspaceId,
-        freshUserWorkspaceRoleMap,
-      );
-    } finally {
-      await this.workspacePermissionsCacheStorageService.removeUserWorkspaceRoleMapOngoingCachingLock(
+    } catch (error) {
+      // Flush stale userWorkspaceRoleMap
+      await this.workspacePermissionsCacheStorageService.removeUserWorkspaceRoleMap(
         workspaceId,
       );
     }
@@ -169,15 +176,11 @@ export class WorkspacePermissionsCacheService {
     workspaceId,
   }: {
     workspaceId: string;
-  }): Promise<CacheResult<string, UserWorkspaceRoleMap>> {
-    return getFromCacheWithRecompute<string, UserWorkspaceRoleMap>({
+  }): Promise<CacheResult<undefined, UserWorkspaceRoleMap>> {
+    return getFromCacheWithRecompute<undefined, UserWorkspaceRoleMap>({
       workspaceId,
       getCacheData: () =>
         this.workspacePermissionsCacheStorageService.getUserWorkspaceRoleMap(
-          workspaceId,
-        ),
-      getCacheVersion: () =>
-        this.workspacePermissionsCacheStorageService.getUserWorkspaceRoleMapVersion(
           workspaceId,
         ),
       recomputeCache: (params) =>
