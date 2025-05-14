@@ -41,7 +41,13 @@ export interface PageInfo {
 }
 
 interface FormatResultParams<T> {
-  operation: 'delete' | 'create' | 'update' | 'findOne' | 'findMany';
+  operation:
+    | 'delete'
+    | 'create'
+    | 'update'
+    | 'findOne'
+    | 'findMany'
+    | 'findDuplicates';
   objectNameSingular?: string;
   objectNamePlural?: string;
   data: T;
@@ -50,7 +56,7 @@ interface FormatResultParams<T> {
 }
 
 export interface FormatResult {
-  data: {
+  data?: {
     [operation: string]: object;
   };
   pageInfo?: PageInfo;
@@ -73,7 +79,9 @@ export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly apiEventEmitterService: ApiEventEmitterService;
 
-  protected abstract handle(request: Request): Promise<FormatResult>;
+  protected abstract handle(
+    request: Request,
+  ): Promise<FormatResult | { data: FormatResult[] }>;
 
   public async getRepositoryAndMetadataOrFail(request: Request) {
     const { workspace, apiKey, userWorkspaceId } = request;
@@ -106,6 +114,12 @@ export abstract class RestApiBaseHandler {
         objectMetadata.objectMetadataMaps,
         objectMetadataNameSingular,
       );
+
+    if (!isDefined(objectMetadataItemWithFieldsMaps)) {
+      throw new BadRequestException(
+        `Object metadata item with name singular ${objectMetadataNameSingular} not found`,
+      );
+    }
 
     const shouldBypassPermissionChecks = !!apiKey;
 
@@ -238,15 +252,23 @@ export abstract class RestApiBaseHandler {
       prefix = objectNameSingular || '';
     } else if (operation === 'findMany') {
       prefix = objectNamePlural || '';
+    } else if (operation === 'findDuplicates') {
+      prefix = `${objectNameSingular}Duplicates`;
     } else {
       prefix =
         operation + capitalize(objectNameSingular || objectNamePlural || '');
     }
 
     return {
-      data: {
-        [prefix]: data,
-      },
+      ...(operation === 'findDuplicates'
+        ? {
+            [prefix]: data,
+          }
+        : {
+            data: {
+              [prefix]: data,
+            },
+          }),
       ...(isDefined(pageInfo) ? { pageInfo } : {}),
       ...(isDefined(totalCount) ? { totalCount } : {}),
     };
@@ -285,6 +307,39 @@ export abstract class RestApiBaseHandler {
     });
   }
 
+  formatPaginatedDuplicatesResult({
+    finalRecords,
+    objectMetadataNameSingular,
+    isForwardPagination,
+    hasMoreRecords,
+    totalCount,
+    startCursor,
+    endCursor,
+  }: {
+    finalRecords: any[];
+    objectMetadataNameSingular: string;
+    isForwardPagination: boolean;
+    hasMoreRecords: boolean;
+    totalCount: number;
+    startCursor: string | null;
+    endCursor: string | null;
+  }) {
+    const hasPreviousPage = !isForwardPagination && hasMoreRecords;
+
+    return this.formatResult({
+      operation: 'findDuplicates',
+      objectNameSingular: objectMetadataNameSingular,
+      data: isForwardPagination ? finalRecords : finalRecords.reverse(),
+      pageInfo: {
+        hasNextPage: isForwardPagination && hasMoreRecords,
+        ...(hasPreviousPage ? { hasPreviousPage } : {}),
+        startCursor,
+        endCursor,
+      },
+      totalCount,
+    });
+  }
+
   async findRecords({
     request,
     recordId,
@@ -292,6 +347,7 @@ export abstract class RestApiBaseHandler {
     objectMetadata,
     objectMetadataNameSingular,
     objectMetadataItemWithFieldsMaps,
+    extraFilters,
   }: {
     request: Request;
     recordId?: string;
@@ -304,6 +360,7 @@ export abstract class RestApiBaseHandler {
     objectMetadataItemWithFieldsMaps:
       | ObjectMetadataItemWithFieldMaps
       | undefined;
+    extraFilters?: Partial<ObjectRecordFilter>;
   }) {
     const qb = repository.createQueryBuilder(objectMetadataNameSingular);
 
@@ -331,6 +388,7 @@ export abstract class RestApiBaseHandler {
       inputs,
       objectMetadata,
       isForwardPagination,
+      extraFilters,
     });
 
     let selectQueryBuilder = isDefined(filters)
@@ -409,6 +467,7 @@ export abstract class RestApiBaseHandler {
     inputs,
     objectMetadata,
     isForwardPagination,
+    extraFilters,
   }: {
     inputs: QueryVariables;
     objectMetadata: {
@@ -416,8 +475,15 @@ export abstract class RestApiBaseHandler {
       objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     };
     isForwardPagination: boolean;
+    extraFilters?: Partial<ObjectRecordFilter>;
   }) {
     let appliedFilters = inputs.filter;
+
+    if (extraFilters) {
+      appliedFilters = (appliedFilters
+        ? { and: [appliedFilters, extraFilters] }
+        : extraFilters) as unknown as ObjectRecordFilter;
+    }
 
     const cursor = inputs.startingAfter || inputs.endingBefore;
 
@@ -429,9 +495,9 @@ export abstract class RestApiBaseHandler {
         isForwardPagination,
       );
 
-      appliedFilters = (inputs.filter
+      appliedFilters = (appliedFilters
         ? {
-            and: [inputs.filter, { or: cursorArgFilter }],
+            and: [appliedFilters, { or: cursorArgFilter }],
           }
         : { or: cursorArgFilter }) as unknown as ObjectRecordFilter;
     }

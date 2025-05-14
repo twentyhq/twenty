@@ -16,7 +16,6 @@ import { Request, Response } from 'express';
 import { RestApiCoreServiceV2 } from 'src/engine/api/rest/core/rest-api-core-v2.service';
 import { RestApiCoreService } from 'src/engine/api/rest/core/rest-api-core.service';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
-import { cleanGraphQLResponse } from 'src/engine/api/rest/utils/clean-graphql-response.utils';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
@@ -36,11 +35,11 @@ export class RestApiCoreController {
     res.status(201).send(result);
   }
 
-  @Post('duplicates')
+  @Post('*/duplicates')
   async handleApiFindDuplicates(@Req() request: Request, @Res() res: Response) {
-    const result = await this.restApiCoreService.findDuplicates(request);
+    const result = await this.restApiCoreServiceV2.findDuplicates(request);
 
-    res.status(200).send(cleanGraphQLResponse(result.data.data));
+    res.status(200).send(result);
   }
 
   @Post('*')

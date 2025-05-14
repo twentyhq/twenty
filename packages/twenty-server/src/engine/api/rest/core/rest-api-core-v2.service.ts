@@ -10,6 +10,7 @@ import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-
 import { RestApiGetOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-get-one.handler';
 import { RestApiGetManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-get-many.handler';
 import { RestApiCreateManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-create-many.handler';
+import { RestApiFindDuplicatesHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-duplicates.handler';
 
 @Injectable()
 export class RestApiCoreServiceV2 {
@@ -20,6 +21,7 @@ export class RestApiCoreServiceV2 {
     private readonly restApiUpdateOneHandler: RestApiUpdateOneHandler,
     private readonly restApiGetOneHandler: RestApiGetOneHandler,
     private readonly restApiGetManyHandler: RestApiGetManyHandler,
+    private readonly restApiFindDuplicatesHandler: RestApiFindDuplicatesHandler,
   ) {}
 
   async delete(request: Request) {
@@ -32,6 +34,10 @@ export class RestApiCoreServiceV2 {
 
   async createMany(request: Request) {
     return await this.restApiCreateManyHandler.handle(request);
+  }
+
+  async findDuplicates(request: Request) {
+    return await this.restApiFindDuplicatesHandler.handle(request);
   }
 
   async update(request: Request) {
