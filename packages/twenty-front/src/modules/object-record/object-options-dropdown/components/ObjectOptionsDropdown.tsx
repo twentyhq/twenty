@@ -32,12 +32,10 @@ export const ObjectOptionsDropdown = ({
   const {
     handleRecordGroupOrderChangeWithModal,
     handleRecordGroupReorderConfirmClick,
-    pendingDragEndHandlerParams,
   } = useRecordGroupReorderConfirmationModal({
     recordIndexId,
     viewType,
   });
-  console.log('pendingDragEndHandlerParams',pendingDragEndHandlerParams);
   
   return (
     <>

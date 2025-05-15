@@ -41,7 +41,8 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     currentContentId,
     recordIndexId,
     onContentChange,
-    resetContent,handleRecordGroupOrderChangeWithModal
+    resetContent,
+    handleRecordGroupOrderChangeWithModal
     } = useOptionsDropdown();
   const { currentView } = useGetCurrentViewOnly();
 
