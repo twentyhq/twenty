@@ -66,6 +66,20 @@ describe('Core REST API Find One endpoint', () => {
       });
   });
 
+  it('should return 400 error when trying to retrieve with malformed uuid', async () => {
+    await makeRestAPIRequest({
+      method: 'get',
+      path: `/people/malformed-uuid`,
+    })
+      .expect(400)
+      .expect((res) => {
+        expect(res.body.messages[0]).toContain(
+          "'malformed-uuid' is not a valid UUID",
+        );
+        expect(res.body.error).toBe('BadRequestException');
+      });
+  });
+
   it('should support depth 0 parameter', async () => {
     await makeRestAPIRequest({
       method: 'get',
