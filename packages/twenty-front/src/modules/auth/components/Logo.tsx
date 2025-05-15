@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { getImageAbsoluteURI } from 'twenty-shared/utils';
+import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
+import { Avatar } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useRedirectToDefaultDomain } from '~/modules/domain-manager/hooks/useRedirectToDefaultDomain';
@@ -9,6 +10,7 @@ import { AppPath } from '~/modules/types/AppPath';
 type LogoProps = {
   primaryLogo?: string | null;
   secondaryLogo?: string | null;
+  placeholder?: string | null;
 };
 
 const StyledContainer = styled.div`
@@ -77,10 +79,16 @@ export const Logo = (props: LogoProps) => {
       ) : (
         <StyledPrimaryLogo src={primaryLogoUrl ?? ''} />
       )}
-      {secondaryLogoUrl && (
+      {secondaryLogoUrl ? (
         <StyledSecondaryLogoContainer>
           <StyledSecondaryLogo src={secondaryLogoUrl} />
         </StyledSecondaryLogoContainer>
+      ) : (
+        isDefined(props.placeholder) && (
+          <StyledSecondaryLogoContainer>
+            <Avatar size="lg" placeholder={props.placeholder} type="squared" />
+          </StyledSecondaryLogoContainer>
+        )
       )}
     </StyledContainer>
   );
