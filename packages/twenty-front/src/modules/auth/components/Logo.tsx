@@ -86,7 +86,12 @@ export const Logo = (props: LogoProps) => {
       ) : (
         isDefined(props.placeholder) && (
           <StyledSecondaryLogoContainer>
-            <Avatar size="lg" placeholder={props.placeholder} type="squared" />
+            <Avatar
+              size="lg"
+              placeholder={props.placeholder}
+              type="squared"
+              placeholderColorSeed={props.placeholder}
+            />
           </StyledSecondaryLogoContainer>
         )
       )}
