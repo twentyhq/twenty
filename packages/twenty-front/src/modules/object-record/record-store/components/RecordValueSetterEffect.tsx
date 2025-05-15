@@ -6,7 +6,6 @@ import {
   useSetRecordValue,
 } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 // TODO: should be optimized and put higher up
 export const RecordValueSetterEffect = ({ recordId }: { recordId: string }) => {
@@ -19,7 +18,10 @@ export const RecordValueSetterEffect = ({ recordId }: { recordId: string }) => {
   );
 
   useEffect(() => {
-    if (!isDeeplyEqual(recordValueFromContextSelector, recordValueFromRecoil)) {
+    if (
+      JSON.stringify(recordValueFromContextSelector) !==
+      JSON.stringify(recordValueFromRecoil)
+    ) {
       setRecordValueInContextSelector(recordId, recordValueFromRecoil);
     }
   }, [
