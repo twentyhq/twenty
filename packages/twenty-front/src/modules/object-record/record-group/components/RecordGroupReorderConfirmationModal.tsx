@@ -1,4 +1,4 @@
-import { RecordGroupReorderConfirmationModalId } from '@/object-record/record-group/constants/RecordGroupReorderConfirmationModalId';
+import { RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID } from '@/object-record/record-group/constants/RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -17,7 +17,7 @@ export const RecordGroupReorderConfirmationModal = ({
 
   return createPortal(
     <ConfirmationModal
-      modalId={RecordGroupReorderConfirmationModalId}
+      modalId={RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID}
       title="Group sorting"
       subtitle={`Would you like to remove ${recordGroupSort} group sorting?`}
       onConfirmClick={onConfirmClick}
