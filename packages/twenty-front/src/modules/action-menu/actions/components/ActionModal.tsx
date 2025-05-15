@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -37,17 +38,19 @@ export const ActionModal = ({
   };
 
   const actionConfig = useContext(ActionConfigContext);
+  const { actionMenuType } = useContext(ActionMenuContext);
 
   const isModalOpened = useRecoilComponentValueV2(
     isModalOpenedComponentState,
-    `${actionConfig?.key}-action-modal`,
+    `${actionConfig?.key}-action-modal-${actionMenuType}`,
   );
 
   if (!actionConfig) {
     return null;
   }
 
-  const handleClick = () => openModal(`${actionConfig.key}-action-modal`);
+  const handleClick = () =>
+    openModal(`${actionConfig.key}-action-modal-${actionMenuType}`);
 
   return (
     <>
@@ -55,7 +58,7 @@ export const ActionModal = ({
       {isModalOpened &&
         createPortal(
           <ConfirmationModal
-            modalId={`${actionConfig.key}-action-modal`}
+            modalId={`${actionConfig.key}-action-modal-${actionMenuType}`}
             title={title}
             subtitle={subtitle}
             onConfirmClick={handleConfirmClick}
