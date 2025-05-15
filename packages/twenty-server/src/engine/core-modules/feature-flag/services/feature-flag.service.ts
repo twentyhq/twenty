@@ -99,6 +99,7 @@ export class FeatureFlagService {
       ),
     );
 
+    // @ts-expect-error legacy noImplicitAny
     const featureFlagKey = FeatureFlagKey[featureFlag];
 
     if (shouldBePublic) {

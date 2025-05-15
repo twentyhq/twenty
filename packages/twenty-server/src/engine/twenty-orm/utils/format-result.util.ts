@@ -63,17 +63,20 @@ export function formatResult<T>(
 
     if (!compositePropertyArgs && !isRelation) {
       if (isPlainObject(value)) {
+        // @ts-expect-error legacy noImplicitAny
         newData[key] = formatResult(
           value,
           objectMetadataItemWithFieldMaps,
           objectMetadataMaps,
         );
       } else if (objectMetadaItemFieldsByName[key]) {
+        // @ts-expect-error legacy noImplicitAny
         newData[key] = formatFieldMetadataValue(
           value,
           objectMetadaItemFieldsByName[key],
         );
       } else {
+        // @ts-expect-error legacy noImplicitAny
         newData[key] = value;
       }
 
@@ -96,6 +99,7 @@ export function formatResult<T>(
         );
       }
 
+      // @ts-expect-error legacy noImplicitAny
       newData[key] = formatResult(
         value,
         targetObjectMetadata,
@@ -109,10 +113,13 @@ export function formatResult<T>(
 
     const { parentField, ...compositeProperty } = compositePropertyArgs;
 
+    // @ts-expect-error legacy noImplicitAny
     if (!newData[parentField]) {
+      // @ts-expect-error legacy noImplicitAny
       newData[parentField] = {};
     }
 
+    // @ts-expect-error legacy noImplicitAny
     newData[parentField][compositeProperty.name] = value;
   }
 
@@ -135,6 +142,7 @@ export function formatResult<T>(
     new Date().getTimezoneOffset() * 60 * 1000;
 
   for (const dateFieldMetadata of dateFieldMetadataCollection) {
+    // @ts-expect-error legacy noImplicitAny
     const rawUpdatedDate = newData[dateFieldMetadata.name] as
       | string
       | null
@@ -152,9 +160,11 @@ export function formatResult<T>(
             serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift,
         );
 
+        // @ts-expect-error legacy noImplicitAny
         newData[dateFieldMetadata.name] = shiftedDate;
       }
     } else if (isNonEmptyString(rawUpdatedDate)) {
+      // @ts-expect-error legacy noImplicitAny
       const currentDate = new Date(newData[dateFieldMetadata.name]);
 
       const shiftedDate = new Date(
@@ -162,6 +172,7 @@ export function formatResult<T>(
           serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift,
       );
 
+      // @ts-expect-error legacy noImplicitAny
       newData[dateFieldMetadata.name] = shiftedDate;
     }
   }

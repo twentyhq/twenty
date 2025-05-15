@@ -209,6 +209,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
         .filter(Boolean);
 
       if (fieldValues.length > 0) {
+        // @ts-expect-error legacy noImplicitAny
         whereConditions[field.column] = In(fieldValues);
       }
     }

@@ -303,7 +303,8 @@ export class DatabaseStructureService {
         normalizer(
           compositeProperty.type,
           typeof initialDefaultValue === 'object'
-            ? initialDefaultValue?.[compositeProperty.name]
+            ? // @ts-expect-error legacy noImplicitAny
+              initialDefaultValue?.[compositeProperty.name]
             : null,
         ),
       );

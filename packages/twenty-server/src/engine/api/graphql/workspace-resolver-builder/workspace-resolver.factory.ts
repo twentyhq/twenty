@@ -97,6 +97,7 @@ export class WorkspaceResolverFactory {
             methodName,
           )
         ) {
+          // @ts-expect-error legacy noImplicitAny
           resolvers.Query[resolverName] = resolverFactory.create({
             authContext,
             objectMetadataMaps,
@@ -120,6 +121,7 @@ export class WorkspaceResolverFactory {
           throw new Error(`Unknown mutation resolver type: ${methodName}`);
         }
 
+        // @ts-expect-error legacy noImplicitAny
         resolvers.Mutation[resolverName] = resolverFactory.create({
           authContext,
           objectMetadataMaps,

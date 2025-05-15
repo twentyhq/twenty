@@ -44,6 +44,7 @@ const findFieldNode = (
   return field;
 };
 
+// @ts-expect-error legacy noImplicitAny
 const parseValueNode = (
   valueNode: ValueNode,
   variables: GraphQLResolveInfo['variableValues'],
@@ -62,6 +63,7 @@ const parseValueNode = (
       return valueNode.values.map((value) => parseValueNode(value, variables));
     case Kind.OBJECT:
       return valueNode.fields.reduce((obj, field) => {
+        // @ts-expect-error legacy noImplicitAny
         obj[field.name.value] = parseValueNode(field.value, variables);
 
         return obj;

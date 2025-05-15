@@ -112,6 +112,7 @@ export class SeederService {
 
               const subFieldNameAsSQLColumnName = `${field.name}${capitalize(subFieldName)}`;
 
+              // @ts-expect-error legacy noImplicitAny
               objectRecordSeedsAsSQLFlattenedSeeds[
                 subFieldNameAsSQLColumnName
               ] = subFieldValueAsSQLValue;
@@ -124,6 +125,7 @@ export class SeederService {
               fieldValue,
             );
 
+            // @ts-expect-error legacy noImplicitAny
             objectRecordSeedsAsSQLFlattenedSeeds[field.name] =
               fieldValueAsSQLValue;
           }

@@ -201,14 +201,18 @@ export class AdminPanelService {
       );
 
       const versions = response.data.results
+        // @ts-expect-error legacy noImplicitAny
         .filter((tag) => tag && tag.name !== 'latest')
+        // @ts-expect-error legacy noImplicitAny
         .map((tag) => semver.coerce(tag.name)?.version)
+        // @ts-expect-error legacy noImplicitAny
         .filter((version) => version !== undefined);
 
       if (versions.length === 0) {
         return { currentVersion, latestVersion: 'latest' };
       }
 
+      // @ts-expect-error legacy noImplicitAny
       versions.sort((a, b) => semver.compare(b, a));
       const latestVersion = versions[0];
 

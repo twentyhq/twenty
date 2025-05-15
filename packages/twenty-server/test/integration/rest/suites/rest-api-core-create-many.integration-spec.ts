@@ -128,9 +128,11 @@ describe('Core REST API Create Many endpoint', () => {
         expect(createdPerson2.company.people).toBeDefined();
 
         const depth2Person1 = createdPerson1.company.people.find(
+          // @ts-expect-error legacy noImplicitAny
           (p) => p.id === createdPerson1.id,
         );
         const depth2Person2 = createdPerson2.company.people.find(
+          // @ts-expect-error legacy noImplicitAny
           (p) => p.id === createdPerson2.id,
         );
 

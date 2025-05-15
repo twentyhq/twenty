@@ -699,6 +699,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     const translationValue =
+      // @ts-expect-error legacy noImplicitAny
       fieldMetadata.standardOverrides?.translations?.[locale]?.[labelKey];
 
     if (isDefined(translationValue)) {

@@ -300,11 +300,13 @@ export const objectMetadataMapItemMock = {
   namePlural: 'objectsName',
   fields,
   fieldsById: fields.reduce((acc, field) => {
+    // @ts-expect-error legacy noImplicitAny
     acc[field.id] = field;
 
     return acc;
   }, {}),
   fieldsByName: fields.reduce((acc, field) => {
+    // @ts-expect-error legacy noImplicitAny
     acc[field.name] = field;
 
     return acc;

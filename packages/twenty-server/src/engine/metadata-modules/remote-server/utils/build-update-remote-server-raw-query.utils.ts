@@ -44,10 +44,12 @@ export const buildUpdateRemoteServerRawQuery = (
   }
 
   if (remoteServerToUpdate.schema) {
+    // @ts-expect-error legacy noImplicitAny
     options.push(`"schema" = $${parametersPositions['schema']}`);
   }
 
   if (remoteServerToUpdate.label) {
+    // @ts-expect-error legacy noImplicitAny
     options.push(`"label" = $${parametersPositions['label']}`);
   }
 
@@ -78,6 +80,7 @@ const buildParametersAndPositions = (
     Object.entries(remoteServerToUpdate.userMappingOptions).forEach(
       ([key, value]) => {
         parameters.push(value);
+        // @ts-expect-error legacy noImplicitAny
         parametersPositions[key] = parameters.length;
       },
     );
@@ -87,6 +90,7 @@ const buildParametersAndPositions = (
     Object.entries(remoteServerToUpdate.foreignDataWrapperOptions).forEach(
       ([key, value]) => {
         parameters.push(value);
+        // @ts-expect-error legacy noImplicitAny
         parametersPositions[key] = parameters.length;
       },
     );
@@ -94,11 +98,13 @@ const buildParametersAndPositions = (
 
   if (remoteServerToUpdate.schema) {
     parameters.push(remoteServerToUpdate.schema);
+    // @ts-expect-error legacy noImplicitAny
     parametersPositions['schema'] = parameters.length;
   }
 
   if (remoteServerToUpdate.label) {
     parameters.push(remoteServerToUpdate.label);
+    // @ts-expect-error legacy noImplicitAny
     parametersPositions['label'] = parameters.length;
   }
 
@@ -119,9 +125,11 @@ const buildJsonRawQuery = (
   ): string => {
     const [[firstKey, _], ...followingOptions] = Object.entries(opts);
 
+    // @ts-expect-error legacy noImplicitAny
     let query = `jsonb_set("${objectName}", '{${firstKey}}', to_jsonb($${parametersPositions[firstKey]}::text))`;
 
     followingOptions.forEach(([key, _]) => {
+      // @ts-expect-error legacy noImplicitAny
       query = `jsonb_set(${query}, '{${key}}', to_jsonb($${parametersPositions[key]}::text))`;
     });
 

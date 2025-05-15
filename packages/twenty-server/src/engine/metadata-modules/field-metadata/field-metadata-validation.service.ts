@@ -124,6 +124,7 @@ export class FieldMetadataValidationService<
       if (
         enumOptions &&
         (enumOptions.includes(formattedDefaultValue) ||
+          // @ts-expect-error legacy noImplicitAny
           enumOptions.some((option) => option.to === formattedDefaultValue))
       ) {
         return;

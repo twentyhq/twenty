@@ -1,12 +1,12 @@
+import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
 import {
   NOT_EXISTING_TEST_PERSON_ID,
   TEST_PERSON_1_ID,
 } from 'test/integration/constants/test-person-ids.constants';
-import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
-import { generateRecordName } from 'test/integration/utils/generate-record-name';
-import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
+import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
 describe('Core REST API Find One endpoint', () => {
   let personCity: string;
@@ -110,6 +110,7 @@ describe('Core REST API Find One endpoint', () => {
         expect(person.company.people).toBeDefined();
 
         const depth2Person = person.company.people.find(
+          // @ts-expect-error legacy noImplicitAny
           (p) => p.id === person.id,
         );
 

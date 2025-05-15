@@ -8,6 +8,7 @@ interface CommandLoggerOptions {
 export const isCommandLogger = (
   logger: Logger | CommandLogger,
 ): logger is CommandLogger => {
+  // @ts-expect-error legacy noImplicitAny
   return typeof logger['setVerbose'] === 'function';
 };
 
