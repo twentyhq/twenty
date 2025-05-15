@@ -27,6 +27,7 @@ export class SeederService {
     dataSourceId: string,
     workspaceId: string,
     objectMetadataSeed: ObjectMetadataSeed,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     objectRecordSeeds: Record<string, any>[],
   ): Promise<void> {
     const createdObjectMetadata = await this.objectMetadataService.createOne({
@@ -184,6 +185,7 @@ export class SeederService {
   private turnCompositeSubFieldValueAsSQLValue(
     fieldType: FieldMetadataType,
     subFieldName: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     subFieldValue: any,
   ) {
     if (!isCompositeFieldMetadataType(fieldType)) {
@@ -211,6 +213,7 @@ export class SeederService {
 
   private turnFieldValueAsSQLValue(
     fieldType: FieldMetadataType,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fieldValue: any,
   ) {
     if (fieldType === FieldMetadataType.RAW_JSON) {

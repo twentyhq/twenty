@@ -16,6 +16,7 @@ export type DeepPartial<T> = {
 export const buildUpdateRemoteServerRawQuery = (
   remoteServerToUpdate: DeepPartial<RemoteServerEntity<RemoteServerType>> &
     Pick<RemoteServerEntity<RemoteServerType>, 'workspaceId' | 'id'>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): [any[], string] => {
   const options: string[] = [];
 
@@ -67,7 +68,9 @@ export const buildUpdateRemoteServerRawQuery = (
 const buildParametersAndPositions = (
   remoteServerToUpdate: DeepPartial<RemoteServerEntity<RemoteServerType>> &
     Pick<RemoteServerEntity<RemoteServerType>, 'workspaceId' | 'id'>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): [any[], object] => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const parameters: any[] = [remoteServerToUpdate.id];
   const parametersPositions = {};
 

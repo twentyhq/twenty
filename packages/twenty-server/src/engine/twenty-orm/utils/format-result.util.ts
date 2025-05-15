@@ -16,6 +16,7 @@ import { isDate } from 'src/utils/date/isDate';
 import { isValidDate } from 'src/utils/date/isValidDate';
 
 export function formatResult<T>(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any,
   objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps | undefined,
   objectMetadataMaps: ObjectMetadataMaps,
@@ -194,6 +195,7 @@ export function getCompositeFieldMetadataMap(
 }
 
 function formatFieldMetadataValue(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
   fieldMetadata: FieldMetadataInterface,
 ) {

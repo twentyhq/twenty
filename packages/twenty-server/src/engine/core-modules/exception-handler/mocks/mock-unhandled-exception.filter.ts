@@ -6,6 +6,7 @@ export class MockedUnhandledExceptionFilter
   extends BaseExceptionFilter
   implements ExceptionFilter
 {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   catch(exception: any, _host: ArgumentsHost) {
     throw exception;
   }

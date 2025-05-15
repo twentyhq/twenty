@@ -199,6 +199,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       fullPath: string;
       column: string;
     }[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Record<string, any> {
     const whereConditions = {};
 

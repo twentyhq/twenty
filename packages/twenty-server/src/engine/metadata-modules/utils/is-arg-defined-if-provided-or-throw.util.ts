@@ -6,6 +6,7 @@ export const isArgDefinedIfProvidedOrThrow = ({
 }: {
   input: object;
   key: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
 }) => {
   if (key in input && !isDefined(value)) {

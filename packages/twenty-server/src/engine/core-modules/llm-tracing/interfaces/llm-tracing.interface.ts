@@ -21,6 +21,7 @@ export type LLMTracingModuleOptions =
   | ConsoleDriverFactoryOptions;
 
 export type LLMTracingModuleAsyncOptions = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   useFactory: (...args: any[]) => LLMTracingModuleOptions;
 } & Pick<ModuleMetadata, 'imports'> &
   Pick<FactoryProvider, 'inject'>;

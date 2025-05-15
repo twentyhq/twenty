@@ -100,9 +100,11 @@ export class WorkspaceDataSourceService {
 
   public async executeRawQuery(
     query: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parameters: any[] = [],
     workspaceId: string,
     transactionManager?: EntityManager,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     try {
       if (transactionManager) {

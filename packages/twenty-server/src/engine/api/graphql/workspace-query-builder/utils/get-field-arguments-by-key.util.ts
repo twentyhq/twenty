@@ -74,6 +74,7 @@ const parseValueNode = (
 export const getFieldArgumentsByKey = (
   info: GraphQLResolveInfo,
   fieldKey: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any> => {
   // Start from the first top-level field node and search recursively
   const targetField = findFieldNode(info.fieldNodes[0].selectionSet, fieldKey);
@@ -84,6 +85,7 @@ export const getFieldArgumentsByKey = (
   }
 
   // Extract the arguments from the field we've found
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const args: Record<string, any> = {};
 
   if (targetField.arguments && targetField.arguments.length) {

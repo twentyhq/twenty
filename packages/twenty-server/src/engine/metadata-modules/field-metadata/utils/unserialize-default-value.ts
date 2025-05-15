@@ -2,6 +2,7 @@ import { FieldMetadataDefaultSerializableValue } from 'src/engine/metadata-modul
 
 export const unserializeDefaultValue = (
   serializedDefaultValue: FieldMetadataDefaultSerializableValue,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any => {
   if (serializedDefaultValue === null) {
     return null;
