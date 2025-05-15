@@ -27,6 +27,7 @@ import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core.middleware'
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { ModulesModule } from 'src/modules/modules.module';
+import { InsurosModule } from './insuros/insuros.module';
 
 import { ClickHouseModule } from './database/clickHouse/clickHouse.module';
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
@@ -70,6 +71,8 @@ const MIGRATED_REST_METHODS = [
     WorkspaceMetadataCacheModule,
     // I18n module for translations
     I18nModule,
+    // Insuros module
+    InsurosModule,
     // Conditional modules
     ...AppModule.getConditionalModules(),
   ],
