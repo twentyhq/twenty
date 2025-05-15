@@ -34,7 +34,7 @@ export const RecordShowEffect = ({
     withSoftDeleted: true,
   });
 
-  const updater = useRecoilCallback(
+  const setRecordStore = useRecoilCallback(
     ({ snapshot, set }) =>
       async (newRecord: ObjectRecord | null | undefined) => {
         const previousRecordValue = snapshot
@@ -51,8 +51,8 @@ export const RecordShowEffect = ({
   );
 
   useEffect(() => {
-    updater(record);
-  }, [record, updater]);
+    setRecordStore(record);
+  }, [record, setRecordStore]);
 
   return <></>;
 };
