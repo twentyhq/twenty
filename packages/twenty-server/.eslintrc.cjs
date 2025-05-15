@@ -100,7 +100,13 @@ module.exports = {
       },
     },
     {
-      files: ['**/*.spec.ts', '**/*.integration-spec.ts'],
+      files: [
+        '**/*.spec.ts',
+        '**/*.integration-spec.ts',
+        '**/__tests__/**',
+        '**/test/integration/**',
+        '**/test/utils/**',
+      ],
       rules: {
         '@typescript-eslint/no-explicit-any': 'off',
       },

@@ -13,12 +13,14 @@ const totalErrors = Object.values(report).reduce(
   (acc, occurrences) => acc + occurrences.length,
   0,
 );
+
 console.log(`Found ${totalErrors} eslint errors to fix`);
 
 // Process each file
 let processedErrors = 0;
 let modifiedFiles = 0;
 let counter = 1;
+
 for (const [filePath, occurrences] of Object.entries(report)) {
   try {
     // Skip if file doesn't exist
@@ -40,6 +42,7 @@ for (const [filePath, occurrences] of Object.entries(report)) {
       if (aLine === bLine) {
         return bCol - aCol;
       }
+
       return bLine - aLine;
     });
 
@@ -73,7 +76,7 @@ for (const [filePath, occurrences] of Object.entries(report)) {
       lines.splice(
         lineIndex,
         0,
-        `// eslint-disable-next-line @typescript-eslint/no-explicit-any automatically added during QRQC_2 ${counter}/434`,
+        `// eslint-disable-next-line @typescript-eslint/no-explicit-any`,
       );
       counter++;
       // Since we added a line, all subsequent line numbers in this file need to be adjusted

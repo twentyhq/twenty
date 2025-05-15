@@ -856,24 +856,29 @@ const tmp = `
 const buffer = tmp.split('\n');
 
 type Occurence = { position: string; rule: string };
+
 type ReportRecord = Record<string, Occurence[]>;
 
 const reportRecord: ReportRecord = {};
 
 let latestFilename: string;
+
 buffer.forEach((line) => {
   if (line.startsWith('/Users/')) {
     latestFilename = line;
     reportRecord[line] = [];
+
     return;
   }
 
   if (line.includes('@typescript-eslint/no-explicit-any')) {
     const [position, ...rest] = line.trim().split(' ');
+
     reportRecord[latestFilename].push({
       position,
       rule: '@typescript-eslint/no-explicit-any',
     });
+
     return;
   }
 });
@@ -883,4 +888,5 @@ console.log(reportRecord);
 const total = Object.entries(reportRecord).reduce((acc, [_, occurrences]) => {
   return acc + occurrences.length;
 }, 0);
+
 console.log(total);
