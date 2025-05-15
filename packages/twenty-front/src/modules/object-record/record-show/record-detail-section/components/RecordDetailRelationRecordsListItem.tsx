@@ -101,7 +101,7 @@ export const RecordDetailRelationRecordsListItem = ({
 }: RecordDetailRelationRecordsListItemProps) => {
   const { fieldDefinition } = useContext(FieldContext);
 
-  const { openModal, closeModal } = useModal();
+  const { openModal } = useModal();
 
   const {
     relationFieldMetadataId,
