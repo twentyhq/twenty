@@ -9,16 +9,17 @@ async function dropSchemasSequentially() {
     await rawDataSource.initialize();
 
     // Fetch all schemas excluding the ones we want to keep
-    const schemas = await performQuery(
-      `
+    const schemas =
+      (await performQuery<{schema_name: string}[]>(
+        `
       SELECT n.nspname AS "schema_name"
       FROM pg_catalog.pg_namespace n 
       WHERE n.nspname !~ '^pg_' 
         AND n.nspname <> 'information_schema'
         AND n.nspname NOT IN ('metric_helpers', 'user_management', 'public')
     `,
-      'Fetching schemas...',
-    );
+        'Fetching schemas...',
+      )) ?? [];
 
     const batchSize = 10;
 

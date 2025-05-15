@@ -74,6 +74,7 @@ export const validateDefaultValueForType = (
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // @ts-expect-error legacy noImplicitAny
   const validators = defaultValueValidatorsMap[type] as any[];
 
   if (!validators) {
