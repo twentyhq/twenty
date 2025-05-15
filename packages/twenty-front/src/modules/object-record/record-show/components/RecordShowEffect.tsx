@@ -54,6 +54,5 @@ export const RecordShowEffect = ({
     updater(record);
   }, [record, updater]);
 
-
   return <></>;
 };
