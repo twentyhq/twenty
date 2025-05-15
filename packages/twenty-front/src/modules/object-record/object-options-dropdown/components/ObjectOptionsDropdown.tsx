@@ -5,6 +5,8 @@ import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dro
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
+import { RecordGroupReorderConfirmationModal } from '@/object-record/record-group/components/RecordGroupReorderConfirmationModal';
+import { useRecordGroupReorderConfirmationModal } from '@/object-record/record-group/hooks/useRecordGroupReorderConfirmationModal';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
@@ -27,33 +29,49 @@ export const ObjectOptionsDropdown = ({
     useCurrentContentId<ObjectOptionsContentId>();
 
   const { isDropdownOpen } = useDropdown(OBJECT_OPTIONS_DROPDOWN_ID);
-
+  const {
+    handleRecordGroupOrderChangeWithModal,
+    handleRecordGroupReorderConfirmClick,
+    pendingDragEndHandlerParams,
+  } = useRecordGroupReorderConfirmationModal({
+    recordIndexId,
+    viewType,
+  });
+  console.log('pendingDragEndHandlerParams',pendingDragEndHandlerParams);
+  
   return (
-    <Dropdown
-      dropdownId={OBJECT_OPTIONS_DROPDOWN_ID}
-      dropdownHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
-      dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
-      clickableComponent={
-        <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
-          <Trans>Options</Trans>
-        </StyledHeaderDropdownButton>
-      }
-      onClose={handleResetContent}
-      dropdownComponents={
-        <ObjectOptionsDropdownContext.Provider
-          value={{
-            viewType,
-            objectMetadataItem,
-            recordIndexId,
-            currentContentId,
-            onContentChange: handleContentChange,
-            resetContent: handleResetContent,
-            dropdownId: OBJECT_OPTIONS_DROPDOWN_ID,
-          }}
-        >
-          <ObjectOptionsDropdownContent />
-        </ObjectOptionsDropdownContext.Provider>
-      }
-    />
+    <>
+      <Dropdown
+        dropdownId={OBJECT_OPTIONS_DROPDOWN_ID}
+        dropdownHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
+        dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
+        clickableComponent={
+          <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
+            <Trans>Options</Trans>
+          </StyledHeaderDropdownButton>
+        }
+        onClose={handleResetContent}
+        dropdownComponents={
+          <ObjectOptionsDropdownContext.Provider
+            value={{
+              viewType,
+              objectMetadataItem,
+              recordIndexId,
+              currentContentId,
+              onContentChange: handleContentChange,
+              resetContent: handleResetContent,
+              dropdownId: OBJECT_OPTIONS_DROPDOWN_ID,
+              handleRecordGroupOrderChangeWithModal
+            }}
+          >
+            <ObjectOptionsDropdownContent />
+          </ObjectOptionsDropdownContext.Provider>
+        }
+      />
+
+      <RecordGroupReorderConfirmationModal
+        onConfirmClick={handleRecordGroupReorderConfirmClick}
+      />
+    </>
   );
 };
