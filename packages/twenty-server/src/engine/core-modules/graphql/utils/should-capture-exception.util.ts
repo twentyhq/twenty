@@ -16,7 +16,10 @@ export const graphQLErrorCodesToFilterOut = [
   ErrorCode.BAD_USER_INPUT,
 ];
 
-export const shouldCaptureException = (exception: Error): boolean => {
+export const shouldCaptureException = (
+  exception: Error,
+  statusCode?: number,
+): boolean => {
   if (
     exception instanceof BaseGraphQLError &&
     graphQLErrorCodesToFilterOut.includes(exception?.extensions?.code)
@@ -29,6 +32,10 @@ export const shouldCaptureException = (exception: Error): boolean => {
     exception.getStatus() >= 400 &&
     exception.getStatus() < 500
   ) {
+    return false;
+  }
+
+  if (statusCode && statusCode >= 400 && statusCode < 500) {
     return false;
   }
 
