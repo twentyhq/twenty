@@ -9,6 +9,8 @@ import { H2Title, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
 
+const DELETE_WORKSPACE_MODAL_ID = 'delete-workspace-modal';
+
 export const DeleteWorkspace = () => {
   const [deleteCurrentWorkspace] = useDeleteCurrentWorkspaceMutation();
   const currentUser = useRecoilValue(currentUserState);
@@ -34,11 +36,11 @@ export const DeleteWorkspace = () => {
         variant="secondary"
         title={t`Delete workspace`}
         Icon={IconTrash}
-        onClick={() => openModal('delete-workspace-modal')}
+        onClick={() => openModal(DELETE_WORKSPACE_MODAL_ID)}
       />
 
       <ConfirmationModal
-        modalId={'delete-workspace-modal'}
+        modalId={DELETE_WORKSPACE_MODAL_ID}
         confirmationPlaceholder={userEmail}
         confirmationValue={userEmail}
         title={t`Workspace Deletion`}

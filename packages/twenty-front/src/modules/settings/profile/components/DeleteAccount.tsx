@@ -8,6 +8,8 @@ import { useLingui } from '@lingui/react/macro';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useDeleteUserAccountMutation } from '~/generated/graphql';
+
+const DELETE_ACCOUNT_MODAL_ID = 'delete-account-modal';
 export const DeleteAccount = () => {
   const { t } = useLingui();
   const { openModal } = useModal();
@@ -31,7 +33,7 @@ export const DeleteAccount = () => {
 
       <Button
         accent="danger"
-        onClick={() => openModal('delete-account-modal')}
+        onClick={() => openModal(DELETE_ACCOUNT_MODAL_ID)}
         variant="secondary"
         title={t`Delete account`}
       />
@@ -39,7 +41,7 @@ export const DeleteAccount = () => {
       <ConfirmationModal
         confirmationValue={userEmail}
         confirmationPlaceholder={userEmail ?? ''}
-        modalId={'delete-account-modal'}
+        modalId={DELETE_ACCOUNT_MODAL_ID}
         title={t`Account Deletion`}
         subtitle={
           <>

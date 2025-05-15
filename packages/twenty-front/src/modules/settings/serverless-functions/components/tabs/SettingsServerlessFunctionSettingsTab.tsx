@@ -13,6 +13,9 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+
+const DELETE_FUNCTION_MODAL_ID = 'delete-function-modal';
+
 export const SettingsServerlessFunctionSettingsTab = ({
   formValues,
   serverlessFunctionId,
@@ -66,7 +69,7 @@ export const SettingsServerlessFunctionSettingsTab = ({
         <H2Title title="Danger zone" description="Delete this function" />
         <Button
           accent="danger"
-          onClick={() => openModal(`delete-function-modal`)}
+          onClick={() => openModal(DELETE_FUNCTION_MODAL_ID)}
           variant="secondary"
           size="small"
           title="Delete function"
@@ -75,7 +78,7 @@ export const SettingsServerlessFunctionSettingsTab = ({
       <ConfirmationModal
         confirmationValue={formValues.name}
         confirmationPlaceholder={formValues.name}
-        modalId="delete-function-modal"
+        modalId={DELETE_FUNCTION_MODAL_ID}
         title="Function Deletion"
         subtitle={
           <>

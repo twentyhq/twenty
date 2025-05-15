@@ -24,6 +24,8 @@ type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
 };
 
+const DELETE_ACCOUNT_MODAL_ID = 'delete-account-modal';
+
 export const SettingsAccountsRowDropdownMenu = ({
   account,
 }: SettingsAccountsRowDropdownMenuProps) => {
@@ -87,14 +89,14 @@ export const SettingsAccountsRowDropdownMenu = ({
               text={t`Remove account`}
               onClick={() => {
                 closeDropdown();
-                openModal('delete-account-modal');
+                openModal(DELETE_ACCOUNT_MODAL_ID);
               }}
             />
           </DropdownMenuItemsContainer>
         }
       />
       <ConfirmationModal
-        modalId={'delete-account-modal'}
+        modalId={DELETE_ACCOUNT_MODAL_ID}
         title={t`Data deletion`}
         subtitle={
           <Trans>

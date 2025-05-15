@@ -141,8 +141,8 @@ export const AttachmentList = ({
   };
 
   const handleClosePreview = () => {
-    setPreviewedAttachment(null);
     closeModal('preview-modal');
+    setPreviewedAttachment(null);
   };
 
   const handleDownload = () => {

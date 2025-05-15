@@ -19,7 +19,7 @@ import { RecordBoardComponentInstanceContext } from '@/object-record/record-boar
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
-import { RecordIndexRemoveSortingModalId } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
+import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -129,7 +129,7 @@ export const RecordBoard = () => {
         if (!result.destination) return;
 
         if (currentRecordSorts.length > 0) {
-          openModal(RecordIndexRemoveSortingModalId);
+          openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
           return;
         }
 

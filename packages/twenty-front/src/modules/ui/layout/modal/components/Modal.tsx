@@ -227,8 +227,8 @@ export const Modal = ({
           }}
         >
           <ModalHotkeysAndClickOutsideEffect
-            modalRef={modalRef}
             modalId={modalId}
+            modalRef={modalRef}
             hotkeyScope={hotkeyScope}
             onEnter={onEnter}
             isClosable={isClosable}

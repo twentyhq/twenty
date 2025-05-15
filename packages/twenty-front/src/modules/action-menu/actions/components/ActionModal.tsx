@@ -47,11 +47,11 @@ export const ActionModal = ({
     return null;
   }
 
+  const handleClick = () => openModal(`${actionConfig.key}-action-modal`);
+
   return (
     <>
-      <ActionDisplay
-        onClick={() => openModal(`${actionConfig.key}-action-modal`)}
-      />
+      <ActionDisplay onClick={handleClick} />
       {isModalOpened &&
         createPortal(
           <ConfirmationModal

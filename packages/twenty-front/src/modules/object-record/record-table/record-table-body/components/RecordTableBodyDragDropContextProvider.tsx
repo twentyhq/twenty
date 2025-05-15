@@ -4,7 +4,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
-import { RecordIndexRemoveSortingModalId } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
+import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -40,7 +40,7 @@ export const RecordTableBodyDragDropContextProvider = ({
     ({ snapshot }) =>
       (result: DropResult) => {
         if (currentRecordSorts.length > 0) {
-          openModal(RecordIndexRemoveSortingModalId);
+          openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
           return;
         }
 

@@ -1,3 +1,4 @@
+import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -22,7 +23,7 @@ export const RecordIndexRemoveSortingModal = () => {
 
   return (
     <ConfirmationModal
-      modalId={'remove-sorting-modal'}
+      modalId={RECORD_INDEX_REMOVE_SORTING_MODAL_ID}
       title={'Remove sorting?'}
       subtitle={'This is required to enable manual row reordering.'}
       onConfirmClick={handleRemoveClick}
