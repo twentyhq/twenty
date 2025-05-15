@@ -3,7 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { computeCursorArgFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-cursor-arg-filter';
+import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 
 describe('computeCursorArgFilter', () => {
   const mockFieldMetadataMap = {

@@ -27,6 +27,14 @@ describe('parseCorePath', () => {
     );
   });
 
+  it('should throw for wrong request', () => {
+    const request: any = { path: '/rest' };
+
+    expect(() => parseCorePath(request)).toThrow(
+      "Query path '/rest' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies",
+    );
+  });
+
   it('should parse object from batch request', () => {
     const request: any = { path: '/rest/batch/companies' };
 
@@ -42,5 +50,14 @@ describe('parseCorePath', () => {
     expect(() => parseCorePath(request)).toThrow(
       "Query path '/rest/batch/companies/uuid' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies",
     );
+  });
+
+  it('should parse object from duplicates request', () => {
+    const request: any = { path: '/rest/companies/duplicates' };
+
+    expect(parseCorePath(request)).toEqual({
+      object: 'companies',
+      id: undefined,
+    });
   });
 });
