@@ -9,6 +9,7 @@ export interface ExceptionHandlerOptions {
     name: string;
   };
   document?: string;
+  additionalData?: Record<string, any>;
   user?: ExceptionHandlerUser | null;
   workspace?: ExceptionHandlerWorkspace | null;
 }

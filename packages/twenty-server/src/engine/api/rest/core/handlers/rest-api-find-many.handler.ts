@@ -5,7 +5,7 @@ import { Request } from 'express';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 @Injectable()
-export class RestApiGetManyHandler extends RestApiBaseHandler {
+export class RestApiFindManyHandler extends RestApiBaseHandler {
   async handle(request: Request) {
     const {
       objectMetadataNameSingular,
@@ -38,6 +38,39 @@ export class RestApiGetManyHandler extends RestApiBaseHandler {
       totalCount,
       startCursor,
       endCursor,
+    });
+  }
+
+  formatPaginatedResult({
+    finalRecords,
+    objectMetadataNamePlural,
+    isForwardPagination,
+    hasMoreRecords,
+    totalCount,
+    startCursor,
+    endCursor,
+  }: {
+    finalRecords: any[];
+    objectMetadataNamePlural: string;
+    isForwardPagination: boolean;
+    hasMoreRecords: boolean;
+    totalCount: number;
+    startCursor: string | null;
+    endCursor: string | null;
+  }) {
+    const hasPreviousPage = !isForwardPagination && hasMoreRecords;
+
+    return this.formatResult({
+      operation: 'findMany',
+      objectNamePlural: objectMetadataNamePlural,
+      data: isForwardPagination ? finalRecords : finalRecords.reverse(),
+      pageInfo: {
+        hasNextPage: isForwardPagination && hasMoreRecords,
+        ...(hasPreviousPage ? { hasPreviousPage } : {}),
+        startCursor,
+        endCursor,
+      },
+      totalCount,
     });
   }
 }
