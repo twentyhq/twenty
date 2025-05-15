@@ -104,8 +104,10 @@ const convertHttpExceptionToGraphql = (exception: HttpException) => {
   let error: BaseGraphQLError;
 
   if (status in graphQLPredefinedExceptions) {
+    // @ts-expect-error legacy noImplicitAny
     const message = exception.getResponse()['message'] ?? exception.message;
 
+    // @ts-expect-error legacy noImplicitAny
     error = new graphQLPredefinedExceptions[exception.getStatus()](message);
   } else {
     error = new BaseGraphQLError(

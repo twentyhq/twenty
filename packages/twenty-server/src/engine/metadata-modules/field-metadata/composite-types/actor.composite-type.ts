@@ -31,6 +31,7 @@ export const actorCompositeType: CompositeType = {
         (key, index) =>
           ({
             id: v4(),
+            // @ts-expect-error legacy noImplicitAny
             label: `${FieldActorSource[key].toLowerCase()}`,
             value: key,
             position: index,

@@ -51,6 +51,7 @@ export class ServerlessFunctionService {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
+  // @ts-expect-error legacy noImplicitAny
   async findManyServerlessFunctions(where) {
     return this.serverlessFunctionRepository.findBy(where);
   }
@@ -276,6 +277,7 @@ export class ServerlessFunctionService {
 
     for (const key of Object.keys(serverlessFunctionInput.code)) {
       await this.fileStorageService.write({
+        // @ts-expect-error legacy noImplicitAny
         file: serverlessFunctionInput.code[key],
         name: basename(key),
         mimeType: undefined,
@@ -306,6 +308,7 @@ export class ServerlessFunctionService {
       const packageName = match[1].split('@', 1)[0];
       const version = match[2];
 
+      // @ts-expect-error legacy noImplicitAny
       if (packageJson.dependencies[packageName]) {
         versions[packageName] = version;
       }

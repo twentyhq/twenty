@@ -21,6 +21,7 @@ describe('Email Alias Manager Service', () => {
 
   beforeEach(async () => {
     connectedAccountRepository = {
+      // @ts-expect-error legacy noImplicitAny
       update: jest.fn().mockResolvedValue((arg) => arg),
     };
 

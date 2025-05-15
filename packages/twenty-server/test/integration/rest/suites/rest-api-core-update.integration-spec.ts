@@ -115,6 +115,7 @@ describe('Core REST API Update One endpoint', () => {
         expect(updatedPerson.company.people).toBeDefined();
 
         const depth2Person = updatedPerson.company.people.find(
+          // @ts-expect-error legacy noImplicitAny
           (p) => p.id === updatedPerson.id,
         );
 

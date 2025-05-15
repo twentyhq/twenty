@@ -10,7 +10,6 @@ import { RecordShowContainer } from '@/object-record/record-show/components/Reco
 import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
-import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
@@ -74,7 +73,6 @@ export const CommandMenuRecordPage = () => {
             >
               <StyledRightDrawerRecord isMobile={isMobile}>
                 <RecordFieldValueSelectorContextProvider>
-                  <RecordValueSetterEffect recordId={objectRecordId} />
                   <TimelineActivityContext.Provider
                     value={{
                       recordId: objectRecordId,

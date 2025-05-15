@@ -11,7 +11,6 @@ import { RecordShowContainer } from '@/object-record/record-show/components/Reco
 import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
-import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
@@ -47,7 +46,6 @@ export const RecordShowPage = () => {
               <ActionMenuComponentInstanceContext.Provider
                 value={{ instanceId: `record-show-${objectRecordId}` }}
               >
-                <RecordValueSetterEffect recordId={objectRecordId} />
                 <PageContainer>
                   <RecordShowPageTitle
                     objectNameSingular={objectNameSingular}

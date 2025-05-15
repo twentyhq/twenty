@@ -9,6 +9,7 @@ export class ExceptionHandlerSentryDriver
   implements ExceptionHandlerDriverInterface
 {
   captureExceptions(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     exceptions: ReadonlyArray<any>,
     options?: ExceptionHandlerOptions,
   ) {
@@ -25,6 +26,10 @@ export class ExceptionHandlerSentryDriver
 
       if (options?.workspace) {
         scope.setExtra('workspace', options.workspace);
+      }
+
+      if (options?.additionalData) {
+        scope.setExtra('additionalData', options.additionalData);
       }
 
       if (options?.user) {

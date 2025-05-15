@@ -17,6 +17,7 @@ export class GraphqlQuerySelectedFieldsRelationParser {
   parseRelationField(
     fieldMetadata: FieldMetadataInterface,
     fieldKey: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fieldValue: any,
     accumulator: GraphqlQuerySelectedFieldsResult,
   ): void {

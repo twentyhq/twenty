@@ -52,6 +52,7 @@ export class ApiEventEmitterService {
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
       action: DatabaseEventAction.UPDATED,
       events: records.map((record) => {
+        // @ts-expect-error legacy noImplicitAny
         const before = mappedExistingRecords[record.id];
         const after = record;
         const diff = objectRecordChangedValues(

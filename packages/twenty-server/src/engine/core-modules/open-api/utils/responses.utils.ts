@@ -302,7 +302,7 @@ export const getFindDuplicatesResponse200 = (
                       },
                     },
                   },
-                  companyDuplicates: {
+                  [`${item.nameSingular}Duplicates`]: {
                     type: 'array',
                     items: {
                       $ref: schemaRef,

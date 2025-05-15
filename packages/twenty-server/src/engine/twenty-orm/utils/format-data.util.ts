@@ -1,5 +1,5 @@
-import { capitalize } from 'twenty-shared/utils';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
@@ -23,6 +23,7 @@ export function formatData<T>(
     ) as T;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const newData: Record<string, any> = {};
   const fieldMetadataByJoinColumnName =
     objectMetadataItemWithFieldMaps.fields.reduce((acc, fieldMetadata) => {
@@ -69,8 +70,10 @@ export function formatData<T>(
 }
 
 function formatCompositeField(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
   fieldMetadata: FieldMetadataInterface,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any> {
   const compositeType = compositeTypeDefinitions.get(
     fieldMetadata.type as CompositeFieldMetadataType,
@@ -82,6 +85,7 @@ function formatCompositeField(
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formattedCompositeField: Record<string, any> = {};
 
   for (const property of compositeType.properties) {
@@ -100,6 +104,7 @@ function formatCompositeField(
 }
 
 function formatFieldMetadataValue(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
   fieldMetadata: FieldMetadataInterface,
 ) {
