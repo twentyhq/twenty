@@ -14,7 +14,9 @@ import { useEffect } from 'react';
 import { SettingsIntegrationFocusNfeToggleStatusButton } from '@/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeDatabaseToggleStatusButton';
 import { useGetAllFocusNfeIntegrationsByWorkspace } from '@/settings/integrations/focus-nfe/hooks/useGetAllFocusNfeIntegrationByWorkspace';
 import { useToggleFocusNfeIntegrationStatus } from '@/settings/integrations/focus-nfe/hooks/useToggleFocusNfeStatus';
+import { SettingsPath } from '@/types/SettingsPath';
 import { IconPencil, IconPlus } from '@tabler/icons-react';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsIntegrationInterDatabaseConectionsListCardProps = {
   integration: SettingsIntegration;
@@ -102,7 +104,11 @@ export const SettingsIntegrationFocusNfeConectionsListCard = ({
   };
 
   const handleEditIntegration = (integrationId: string) => {
-    navigate(`/settings/integrations/focus-nfe/${integrationId}/edit`);
+    const path = getSettingsPath(
+      SettingsPath.IntegrationFocusNfeEditDatabaseConnection,
+    ).replace(':connectionId', integrationId);
+
+    navigate(path);
   };
 
   return (

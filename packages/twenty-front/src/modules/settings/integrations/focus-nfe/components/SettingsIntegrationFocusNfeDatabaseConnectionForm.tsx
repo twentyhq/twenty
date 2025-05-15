@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { useState } from 'react';
 import { SettingsIntegrationFocusNfeConnectionFormValues } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewConnection';
 
 const StyledFormContainer = styled.div`
@@ -34,8 +35,9 @@ type SettingsIntegrationFocusNfeDatabaseConnectionFormProps = {
 export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
   disabled,
 }: SettingsIntegrationFocusNfeDatabaseConnectionFormProps) => {
-  const { control, watch, setValue } =
+  const { control } =
     useFormContext<SettingsIntegrationFocusNfeConnectionFormValues>();
+  const [showingMasked, setShowingMasked] = useState(true);
 
   return (
     <StyledFormContainer>
@@ -67,8 +69,18 @@ export const SettingsIntegrationFocusNfeDatabaseConnectionForm = ({
             render={({ field: { onChange, value } }) => (
               <TextInputV2
                 label="Token"
-                value={value as string}
+                value={showingMasked && value ? '********' : value}
                 onChange={onChange}
+                onFocus={() => {
+                  if (showingMasked) {
+                    setShowingMasked(false);
+                  }
+                }}
+                onBlur={() => {
+                  if (!showingMasked) {
+                    setShowingMasked(true);
+                  }
+                }}
                 fullWidth
                 type="text"
                 disabled={disabled}

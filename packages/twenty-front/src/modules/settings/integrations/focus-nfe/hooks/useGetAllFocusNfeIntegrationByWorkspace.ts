@@ -3,12 +3,12 @@ import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { GET_FOCUS_NFE_INTEGRATIONS_BY_WORKSPACE } from '@/settings/integrations/focus-nfe/graphql/query/getFocusNfeIntegrationsByWorkspace';
-import { FindInterIntegration } from '@/settings/integrations/inter/types/FindInterIntegrationInput';
+import { FindFocusNfeIntegration } from '@/settings/integrations/focus-nfe/types/FindFocusNfeIntegrationInput';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 type GetAllFocusNfeIntegrationsByWorkspace = {
-  focusNfeIntegrations: FindInterIntegration[];
+  focusNfeIntegrations: FindFocusNfeIntegration[];
   refetchFocusNfe: () => void;
   loading: boolean;
 };
