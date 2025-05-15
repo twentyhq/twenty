@@ -1,98 +1,58 @@
-import request from 'supertest';
+import { MESSAGE_GQL_FIELDS } from 'test/integration/constants/message-gql-fields.constants';
+import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
+import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 import { DEV_SEED_MESSAGE_IDS } from 'src/database/typeorm-seeds/workspace/messages';
 
-const client = request(`http://localhost:${APP_PORT}`);
-
 describe('messagesResolver (e2e)', () => {
   it('should find many messages', async () => {
-    const queryData = {
-      query: `
-        query messages {
-          messages {
-            edges {
-              node {
-                id
-                subject
-                text
-                createdAt
-                updatedAt
-                deletedAt
-              }
-            }
-          }
-        }
-      `,
-    };
+    const graphqlOperation = findManyOperationFactory({
+      objectMetadataSingularName: 'message',
+      objectMetadataPluralName: 'messages',
+      gqlFields: MESSAGE_GQL_FIELDS,
+    });
 
-    return await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
-      .send(queryData)
-      .expect((res) => {
-        expect(res.body.data).toBeDefined();
-        expect(res.body.errors).toBeUndefined();
-      })
-      .expect((res) => {
-        const data = res.body.data.messages;
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
 
-        expect(data).toBeDefined();
-        expect(Array.isArray(data.edges)).toBe(true);
+    const data = response.body.data.messages;
 
-        const edges = data.edges;
+    expect(data).toBeDefined();
+    expect(Array.isArray(data.edges)).toBe(true);
 
-        if (edges.length > 0) {
-          const message = edges[0].node;
+    const edges = data.edges;
 
-          expect(message).toHaveProperty('id');
-          expect(message).toHaveProperty('subject');
-          expect(message).toHaveProperty('text');
-          expect(message).toHaveProperty('createdAt');
-          expect(message).toHaveProperty('updatedAt');
-          expect(message).toHaveProperty('deletedAt');
-        }
+    if (edges.length > 0) {
+      const message = edges[0].node;
+
+      expect(message).toMatchSnapshot({
+        id: expect.any(String),
+        subject: expect.any(String),
+        text: expect.any(String),
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
       });
+    }
   });
 
   it('should find one message', async () => {
-    const queryData = {
-      query: `
-        query message($id: ID!) {
-          message(filter: { id: { eq: $id } }) {
-                id
-                subject
-                text
-                createdAt
-                updatedAt
-                deletedAt
-            }
-        }
-      `,
-      variables: {
-        id: DEV_SEED_MESSAGE_IDS.MESSAGE_1,
-      },
-    };
+    const graphqlOperation = findOneOperationFactory({
+      objectMetadataSingularName: 'message',
+      filter: { id: { eq: DEV_SEED_MESSAGE_IDS.MESSAGE_1 } },
+      gqlFields: MESSAGE_GQL_FIELDS,
+    });
 
-    return await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
-      .send(queryData)
-      .expect((res) => {
-        expect(res.body.data).toBeDefined();
-        expect(res.body.errors).toBeUndefined();
-      })
-      .expect((res) => {
-        const message = res.body.data.message;
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
 
-        expect(message).toBeDefined();
+    const data = response.body.data.message;
 
-        expect(message).toHaveProperty('id');
-        expect(message.id).toBe(DEV_SEED_MESSAGE_IDS.MESSAGE_1);
-        expect(message).toHaveProperty('subject');
-        expect(message).toHaveProperty('text');
-        expect(message).toHaveProperty('createdAt');
-        expect(message).toHaveProperty('updatedAt');
-        expect(message).toHaveProperty('deletedAt');
-      });
+    expect(data).toBeDefined();
+    expect(data).toMatchSnapshot({
+      id: DEV_SEED_MESSAGE_IDS.MESSAGE_1,
+      subject: expect.any(String),
+      text: expect.any(String),
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
+    });
   });
 });

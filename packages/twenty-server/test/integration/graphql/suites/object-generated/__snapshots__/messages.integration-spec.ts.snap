@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`messagesResolver (e2e) should find many messages 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "subject": Any<String>,
+  "text": Any<String>,
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`messagesResolver (e2e) should find one message 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": "20202020-2b8a-405d-8f42-e820ca921421",
+  "subject": Any<String>,
+  "text": Any<String>,
+  "updatedAt": Any<String>,
+}
+`;

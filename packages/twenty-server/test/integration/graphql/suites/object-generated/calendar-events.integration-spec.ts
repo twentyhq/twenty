@@ -1,108 +1,62 @@
-import request from 'supertest';
+import { CALENDAR_EVENT_GQL_FIELDS } from 'test/integration/constants/calendar-event-gql-fields.constants';
+import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
+import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 import { DEV_SEED_CALENDAR_EVENT_IDS } from 'src/database/typeorm-seeds/workspace/calendar-events';
 
-const client = request(`http://localhost:${APP_PORT}`);
-
 describe('calendarEventsResolver (e2e)', () => {
   it('should find many calendarEvents', async () => {
-    const queryData = {
-      query: `
-        query calendarEvents {
-          calendarEvents {
-            edges {
-              node {
-                id
-                title
-                description
-                endsAt
-                startsAt
-                createdAt
-                updatedAt
-                deletedAt
-              }
-            }
-          }
-        }
-      `,
-    };
+    const graphqlOperation = findManyOperationFactory({
+      objectMetadataSingularName: 'calendarEvent',
+      objectMetadataPluralName: 'calendarEvents',
+      gqlFields: CALENDAR_EVENT_GQL_FIELDS,
+    });
 
-    return await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
-      .send(queryData)
-      .expect((res) => {
-        expect(res.body.data).toBeDefined();
-        expect(res.body.errors).toBeUndefined();
-      })
-      .expect((res) => {
-        const data = res.body.data.calendarEvents;
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
 
-        expect(data).toBeDefined();
-        expect(Array.isArray(data.edges)).toBe(true);
+    const data = response.body.data.calendarEvents;
 
-        const edges = data.edges;
+    expect(data).toBeDefined();
+    expect(Array.isArray(data.edges)).toBe(true);
 
-        if (edges.length > 0) {
-          const calendarEvent = edges[0].node;
+    const edges = data.edges;
 
-          expect(calendarEvent).toHaveProperty('id');
-          expect(calendarEvent).toHaveProperty('title');
-          expect(calendarEvent).toHaveProperty('description');
-          expect(calendarEvent).toHaveProperty('endsAt');
-          expect(calendarEvent).toHaveProperty('startsAt');
-          expect(calendarEvent).toHaveProperty('createdAt');
-          expect(calendarEvent).toHaveProperty('updatedAt');
-          expect(calendarEvent).toHaveProperty('deletedAt');
-        }
+    if (edges.length > 0) {
+      const calendarEvent = edges[0].node;
+
+      expect(calendarEvent).toMatchSnapshot({
+        id: DEV_SEED_CALENDAR_EVENT_IDS.CALENDAR_EVENT_1,
+        title: expect.any(String),
+        description: expect.any(String),
+        endsAt: expect.any(String),
+        startsAt: expect.any(String),
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
       });
+    }
   });
 
   it('should find one calendarEvent', async () => {
-    const queryData = {
-      query: `
-        query calendarEvent($id: ID!) {
-          calendarEvent(filter: { id: { eq: $id } }) {
-                id
-                title
-                description
-                endsAt
-                startsAt
-                createdAt
-                updatedAt
-                deletedAt
-            }
-        }
-      `,
-      variables: {
-        id: DEV_SEED_CALENDAR_EVENT_IDS.CALENDAR_EVENT_1,
-      },
-    };
+    const graphqlOperation = findOneOperationFactory({
+      objectMetadataSingularName: 'calendarEvent',
+      filter: { id: { eq: DEV_SEED_CALENDAR_EVENT_IDS.CALENDAR_EVENT_1 } },
+      gqlFields: CALENDAR_EVENT_GQL_FIELDS,
+    });
 
-    return await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
-      .send(queryData)
-      .expect((res) => {
-        expect(res.body.data).toBeDefined();
-        expect(res.body.errors).toBeUndefined();
-      })
-      .expect((res) => {
-        const calendarEvent = res.body.data.calendarEvent;
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
 
-        expect(calendarEvent).toBeDefined();
+    const data = response.body.data.calendarEvent;
 
-        expect(calendarEvent).toHaveProperty('id');
-        expect(calendarEvent.id).toBe(
-          DEV_SEED_CALENDAR_EVENT_IDS.CALENDAR_EVENT_1,
-        );
-        expect(calendarEvent).toHaveProperty('title');
-        expect(calendarEvent).toHaveProperty('description');
-        expect(calendarEvent).toHaveProperty('endsAt');
-        expect(calendarEvent).toHaveProperty('startsAt');
-        expect(calendarEvent).toHaveProperty('createdAt');
-        expect(calendarEvent).toHaveProperty('updatedAt');
-        expect(calendarEvent).toHaveProperty('deletedAt');
-      });
+    expect(data).toBeDefined();
+    expect(data).toMatchSnapshot({
+      id: DEV_SEED_CALENDAR_EVENT_IDS.CALENDAR_EVENT_1,
+      title: expect.any(String),
+      description: expect.any(String),
+      endsAt: expect.any(String),
+      startsAt: expect.any(String),
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
+    });
   });
 });
