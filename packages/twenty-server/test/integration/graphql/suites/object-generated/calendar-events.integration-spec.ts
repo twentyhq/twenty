@@ -44,16 +44,16 @@ describe('calendarEventsResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const calendarEvents = edges[0].node;
+          const calendarEvent = edges[0].node;
 
-          expect(calendarEvents).toHaveProperty('id');
-          expect(calendarEvents).toHaveProperty('title');
-          expect(calendarEvents).toHaveProperty('description');
-          expect(calendarEvents).toHaveProperty('endsAt');
-          expect(calendarEvents).toHaveProperty('startsAt');
-          expect(calendarEvents).toHaveProperty('createdAt');
-          expect(calendarEvents).toHaveProperty('updatedAt');
-          expect(calendarEvents).toHaveProperty('deletedAt');
+          expect(calendarEvent).toHaveProperty('id');
+          expect(calendarEvent).toHaveProperty('title');
+          expect(calendarEvent).toHaveProperty('description');
+          expect(calendarEvent).toHaveProperty('endsAt');
+          expect(calendarEvent).toHaveProperty('startsAt');
+          expect(calendarEvent).toHaveProperty('createdAt');
+          expect(calendarEvent).toHaveProperty('updatedAt');
+          expect(calendarEvent).toHaveProperty('deletedAt');
         }
       });
   });
@@ -88,19 +88,21 @@ describe('calendarEventsResolver (e2e)', () => {
         expect(res.body.errors).toBeUndefined();
       })
       .expect((res) => {
-        const data = res.body.data.calendarEvent;
+        const calendarEvent = res.body.data.calendarEvent;
 
-        expect(data).toBeDefined();
+        expect(calendarEvent).toBeDefined();
 
-        expect(data).toHaveProperty('id');
-        expect(data.id).toBe(DEV_SEED_CALENDAR_EVENT_IDS.CALENDAR_EVENT_1);
-        expect(data).toHaveProperty('title');
-        expect(data).toHaveProperty('description');
-        expect(data).toHaveProperty('endsAt');
-        expect(data).toHaveProperty('startsAt');
-        expect(data).toHaveProperty('createdAt');
-        expect(data).toHaveProperty('updatedAt');
-        expect(data).toHaveProperty('deletedAt');
+        expect(calendarEvent).toHaveProperty('id');
+        expect(calendarEvent.id).toBe(
+          DEV_SEED_CALENDAR_EVENT_IDS.CALENDAR_EVENT_1,
+        );
+        expect(calendarEvent).toHaveProperty('title');
+        expect(calendarEvent).toHaveProperty('description');
+        expect(calendarEvent).toHaveProperty('endsAt');
+        expect(calendarEvent).toHaveProperty('startsAt');
+        expect(calendarEvent).toHaveProperty('createdAt');
+        expect(calendarEvent).toHaveProperty('updatedAt');
+        expect(calendarEvent).toHaveProperty('deletedAt');
       });
   });
 });

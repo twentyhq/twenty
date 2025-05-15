@@ -42,14 +42,14 @@ describe('messagesResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const messages = edges[0].node;
+          const message = edges[0].node;
 
-          expect(messages).toHaveProperty('id');
-          expect(messages).toHaveProperty('subject');
-          expect(messages).toHaveProperty('text');
-          expect(messages).toHaveProperty('createdAt');
-          expect(messages).toHaveProperty('updatedAt');
-          expect(messages).toHaveProperty('deletedAt');
+          expect(message).toHaveProperty('id');
+          expect(message).toHaveProperty('subject');
+          expect(message).toHaveProperty('text');
+          expect(message).toHaveProperty('createdAt');
+          expect(message).toHaveProperty('updatedAt');
+          expect(message).toHaveProperty('deletedAt');
         }
       });
   });
@@ -82,17 +82,17 @@ describe('messagesResolver (e2e)', () => {
         expect(res.body.errors).toBeUndefined();
       })
       .expect((res) => {
-        const data = res.body.data.message;
+        const message = res.body.data.message;
 
-        expect(data).toBeDefined();
+        expect(message).toBeDefined();
 
-        expect(data).toHaveProperty('id');
-        expect(data.id).toBe(DEV_SEED_MESSAGE_IDS.MESSAGE_1);
-        expect(data).toHaveProperty('subject');
-        expect(data).toHaveProperty('text');
-        expect(data).toHaveProperty('createdAt');
-        expect(data).toHaveProperty('updatedAt');
-        expect(data).toHaveProperty('deletedAt');
+        expect(message).toHaveProperty('id');
+        expect(message.id).toBe(DEV_SEED_MESSAGE_IDS.MESSAGE_1);
+        expect(message).toHaveProperty('subject');
+        expect(message).toHaveProperty('text');
+        expect(message).toHaveProperty('createdAt');
+        expect(message).toHaveProperty('updatedAt');
+        expect(message).toHaveProperty('deletedAt');
       });
   });
 });
