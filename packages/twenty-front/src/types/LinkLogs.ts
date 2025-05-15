@@ -1,31 +1,11 @@
-interface LinkLogNode {
-  __typename: string;
-  id: string;
-  product: string;
-  linkId: string;
-  utmSource: string;
-  utmMedium: string;
-  utmCampaign: string;
-  userIp: string;
-  userAgent: string;
-  createdAt: string;
-  updatedAt: string;
-  position: number;
-  linkName: string;
-  uv: number;
-}
+export type LinkglogsGroupedData = Record<
+  string,
+  Record<string, string | number>
+>;
 
-interface LinkLogEdge {
-  node: LinkLogNode;
-}
+export type LinklogsData = Record<string, string | number>[];
 
-interface LinkLogsData {
-  linklogs: {
-    edges: LinkLogEdge[];
-  };
-}
-
-interface ChartDataItem {
-  linkName: string;
-  uv: number;
-}
+export type LinklogsChartData = {
+  data: LinklogsData;
+  sourceKeyColors: Record<string, string>;
+};

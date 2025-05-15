@@ -1,5 +1,5 @@
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { DEMO_SEED_WORKSPACE_MEMBER_IDS } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-workspace-member-with-demo-data';
-import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 const tableName = 'opportunity';
@@ -33,7 +33,7 @@ const generateOpportunities = (companies) => {
 };
 
 export const seedOpportunityWithDemoData = async (
-  entityManager: EntityManager,
+  entityManager: WorkspaceEntityManager,
   schemaName: string,
 ) => {
   const companiesWithPeople = await entityManager?.query(
@@ -46,7 +46,9 @@ export const seedOpportunityWithDemoData = async (
   const opportunities = generateOpportunities(companiesWithPeople);
 
   await entityManager
-    .createQueryBuilder()
+    .createQueryBuilder(undefined, undefined, undefined, {
+      shouldBypassPermissionChecks: true,
+    })
     .insert()
     .into(`${schemaName}.${tableName}`, [
       'id',

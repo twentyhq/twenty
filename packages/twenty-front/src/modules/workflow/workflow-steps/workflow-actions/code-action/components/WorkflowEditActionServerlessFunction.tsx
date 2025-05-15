@@ -3,7 +3,7 @@ import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-func
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
@@ -36,11 +36,11 @@ import { Monaco } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useEffect, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { useDebouncedCallback } from 'use-debounce';
+import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { CodeEditor } from 'twenty-ui/input';
 import { IconCode, IconPlayerPlay, useIcons } from 'twenty-ui/display';
+import { CodeEditor } from 'twenty-ui/input';
+import { useDebouncedCallback } from 'use-debounce';
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;
@@ -82,8 +82,10 @@ export const WorkflowEditActionServerlessFunction = ({
     useUpdateOneServerlessFunction(serverlessFunctionId);
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
 
-  const workflowId = useRecoilValue(workflowIdState);
-  const workflow = useWorkflowWithCurrentVersion(workflowId);
+  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
+  const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
   const { availablePackages } = useGetAvailablePackages({
     id: serverlessFunctionId,
   });

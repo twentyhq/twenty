@@ -78,6 +78,11 @@ export type Analytics = {
   success: Scalars['Boolean']['output'];
 };
 
+export enum AnalyticsType {
+  PAGEVIEW = 'PAGEVIEW',
+  TRACK = 'TRACK'
+}
+
 export type ApiConfig = {
   __typename?: 'ApiConfig';
   mutationMaximumAffectedRecords: Scalars['Float']['output'];
@@ -192,6 +197,13 @@ export type BillingPlanOutput = {
   meteredProducts: Array<BillingProduct>;
   otherLicensedProducts: Array<BillingProduct>;
   planKey: BillingPlanKey;
+};
+
+export type BillingPlans = {
+  __typename?: 'BillingPlans';
+  id: Scalars['UUID']['output'];
+  planId: Scalars['String']['output'];
+  workspace: Workspace;
 };
 
 export type BillingPriceLicensedDto = {
@@ -356,6 +368,7 @@ export type ClientConfig = {
   defaultSubdomain?: Maybe<Scalars['String']['output']>;
   frontDomain: Scalars['String']['output'];
   isAttachmentPreviewEnabled: Scalars['Boolean']['output'];
+  isConfigVariablesInDbEnabled: Scalars['Boolean']['output'];
   isEmailVerificationRequired: Scalars['Boolean']['output'];
   isGoogleCalendarEnabled: Scalars['Boolean']['output'];
   isGoogleMessagingEnabled: Scalars['Boolean']['output'];
@@ -380,13 +393,31 @@ export type ComputeStepOutputSchemaInput = {
   step: Scalars['JSON']['input'];
 };
 
+export enum ConfigSource {
+  DATABASE = 'DATABASE',
+  DEFAULT = 'DEFAULT',
+  ENVIRONMENT = 'ENVIRONMENT'
+}
+
 export type ConfigVariable = {
   __typename?: 'ConfigVariable';
   description: Scalars['String']['output'];
+  isEnvOnly: Scalars['Boolean']['output'];
   isSensitive: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
-  value: Scalars['String']['output'];
+  options?: Maybe<Scalars['JSON']['output']>;
+  source: ConfigSource;
+  type: ConfigVariableType;
+  value?: Maybe<Scalars['JSON']['output']>;
 };
+
+export enum ConfigVariableType {
+  ARRAY = 'ARRAY',
+  BOOLEAN = 'BOOLEAN',
+  ENUM = 'ENUM',
+  NUMBER = 'NUMBER',
+  STRING = 'STRING'
+}
 
 export enum ConfigVariablesGroup {
   AnalyticsConfig = 'AnalyticsConfig',
@@ -438,6 +469,12 @@ export type CreateAppTokenInput = {
 export type CreateApprovedAccessDomainInput = {
   domain: Scalars['String']['input'];
   email: Scalars['String']['input'];
+};
+
+export type CreateBillingPlansInput = {
+  planId: Scalars['String']['input'];
+  planPrice: Scalars['Float']['input'];
+  workspaceId: Scalars['ID']['input'];
 };
 
 export type CreateDraftFromWorkflowVersionInput = {
@@ -613,6 +650,10 @@ export type CreateWhatsappIntegrationInput = {
 };
 
 export type CreateWorkflowVersionStepInput = {
+  /** Next step ID */
+  nextStepId?: InputMaybe<Scalars['String']['input']>;
+  /** Parent step ID */
+  parentStepId?: InputMaybe<Scalars['String']['input']>;
   /** New step type */
   stepType: Scalars['String']['input'];
   /** Workflow version ID */
@@ -645,6 +686,15 @@ export type CustomDomainValidRecords = {
   id: Scalars['String']['output'];
   records: Array<CustomDomainRecord>;
 };
+
+/** Database Event Action */
+export enum DatabaseEventAction {
+  CREATED = 'CREATED',
+  DELETED = 'DELETED',
+  DESTROYED = 'DESTROYED',
+  RESTORED = 'RESTORED',
+  UPDATED = 'UPDATED'
+}
 
 export type DateFilter = {
   eq?: InputMaybe<Scalars['Date']['input']>;
@@ -752,11 +802,8 @@ export type FeatureFlagDto = {
 
 export enum FeatureFlagKey {
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
-  IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
-  IsApprovedAccessDomainsEnabled = 'IsApprovedAccessDomainsEnabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
   IsCustomDomainEnabled = 'IsCustomDomainEnabled',
-  IsEventObjectEnabled = 'IsEventObjectEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsMeteredProductBillingEnabled = 'IsMeteredProductBillingEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
@@ -1078,7 +1125,6 @@ export type LinkLogsWorkspaceEntity = {
   utmCampaign: Scalars['String']['output'];
   utmMedium: Scalars['String']['output'];
   utmSource: Scalars['String']['output'];
-  uv?: Maybe<Scalars['String']['output']>;
 };
 
 export type LinkMetadata = {
@@ -1125,9 +1171,12 @@ export type Mutation = {
   computeStepOutputSchema: Scalars['JSON']['output'];
   createAgent: Agent;
   createApprovedAccessDomain: ApprovedAccessDomain;
+  createBillingPlans: BillingPlans;
+  createDatabaseConfigVariable: Scalars['Boolean']['output'];
   createDraftFromWorkflowVersion: WorkflowVersion;
   createInterIntegration: InterIntegration;
   createOIDCIdentityProvider: SetupSsoOutput;
+  createObjectEvent: Analytics;
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
@@ -1145,6 +1194,7 @@ export type Mutation = {
   deleteAgent: Agent;
   deleteApprovedAccessDomain: Scalars['Boolean']['output'];
   deleteCurrentWorkspace: Workspace;
+  deleteDatabaseConfigVariable: Scalars['Boolean']['output'];
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRelation: RelationMetadata;
@@ -1171,11 +1221,13 @@ export type Mutation = {
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
+  removeBillingPlan: Scalars['Boolean']['output'];
   removeStripeIntegration: Scalars['Boolean']['output'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
+  saveBillingPlanId: BillingPlans;
   saveStripeAccountId: StripeIntegration;
   sendEventMessage: Scalars['Boolean']['output'];
   sendInvitations: SendInvitationsOutput;
@@ -1192,7 +1244,7 @@ export type Mutation = {
   toggleAgentStatus: Scalars['Boolean']['output'];
   toggleInterIntegrationStatus: Scalars['String']['output'];
   toggleWhatsappIntegrationStatus: Scalars['Boolean']['output'];
-  track: Analytics;
+  trackAnalytics: Analytics;
   unsyncRemoteTable: RemoteTable;
   updateAgent: Agent;
   updateChatbotFlow: Scalars['Boolean']['output'];
@@ -1219,7 +1271,7 @@ export type Mutation = {
   uploadImage: Scalars['String']['output'];
   uploadProfilePicture: Scalars['String']['output'];
   uploadWorkspaceLogo: Scalars['String']['output'];
-  upsertOneObjectPermission: ObjectPermission;
+  upsertObjectPermissions: Array<ObjectPermission>;
   upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
@@ -1835,6 +1887,14 @@ export type ObjectPermission = {
   roleId: Scalars['String']['output'];
 };
 
+export type ObjectPermissionInput = {
+  canDestroyObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  objectMetadataId: Scalars['String']['input'];
+};
+
 export type ObjectRecordFilterInput = {
   and?: InputMaybe<Array<ObjectRecordFilterInput>>;
   createdAt?: InputMaybe<DateFilter>;
@@ -1854,11 +1914,28 @@ export type ObjectStandardOverrides = {
   translations?: Maybe<Scalars['JSON']['output']>;
 };
 
+export type OnDbEventDto = {
+  __typename?: 'OnDbEventDTO';
+  action: DatabaseEventAction;
+  eventDate: Scalars['DateTime']['output'];
+  objectNameSingular: Scalars['String']['output'];
+  record: Scalars['JSON']['output'];
+  updatedFields?: Maybe<Array<Scalars['String']['output']>>;
+};
+
+export type OnDbEventInput = {
+  action?: InputMaybe<DatabaseEventAction>;
+  objectNameSingular?: InputMaybe<Scalars['String']['input']>;
+  recordId?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** Onboarding status */
 export enum OnboardingStatus {
   COMPLETED = 'COMPLETED',
   INVITE_TEAM = 'INVITE_TEAM',
+  PAYMENT_REQUIRED = 'PAYMENT_REQUIRED',
   PLAN_REQUIRED = 'PLAN_REQUIRED',
+  PAYMENT_REQUIRED = 'PAYMENT_REQUIRED',
   PROFILE_CREATION = 'PROFILE_CREATION',
   SYNC_EMAIL = 'SYNC_EMAIL',
   WORKSPACE_ACTIVATION = 'WORKSPACE_ACTIVATION'
@@ -1952,6 +2029,7 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  getAllBillingPlans: Array<BillingPlans>;
   getAllExtensions?: Maybe<Array<TelephonyExtension>>;
   getAllStripeIntegrations: Array<StripeIntegration>;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
@@ -1960,6 +2038,7 @@ export type Query = {
   getChatbots: Array<ChatbotWorkspaceEntity>;
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getDashboardLinklogs: Array<LinkLogsWorkspaceEntity>;
+  getDatabaseConfigVariable: ConfigVariable;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getInterAccountInfo: Scalars['String']['output'];
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -2376,6 +2455,7 @@ export type Role = {
   id: Scalars['String']['output'];
   isEditable: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
+  objectPermissions?: Maybe<Array<ObjectPermission>>;
   settingPermissions?: Maybe<Array<SettingPermission>>;
   workspaceMembers: Array<WorkspaceMember>;
 };
@@ -2595,6 +2675,16 @@ export type SubmitFormStepInput = {
   stepId: Scalars['String']['input'];
   /** Workflow run ID */
   workflowRunId: Scalars['String']['input'];
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  onDbEvent: OnDbEventDto;
+};
+
+
+export type SubscriptionOnDbEventArgs = {
+  input: OnDbEventInput;
 };
 
 export enum SubscriptionInterval {
@@ -3032,12 +3122,8 @@ export type UpdateWorkspaceInput = {
   subdomain?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type UpsertObjectPermissionInput = {
-  canDestroyObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canReadObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  objectMetadataId: Scalars['String']['input'];
+export type UpsertObjectPermissionsInput = {
+  objectPermissions: Array<ObjectPermissionInput>;
   roleId: Scalars['String']['input'];
 };
 
@@ -3189,6 +3275,7 @@ export type WorkflowAction = {
   __typename?: 'WorkflowAction';
   id: Scalars['UUID']['output'];
   name: Scalars['String']['output'];
+  nextStepIds?: Maybe<Array<Scalars['UUID']['output']>>;
   settings: Scalars['JSON']['output'];
   type: Scalars['String']['output'];
   valid: Scalars['Boolean']['output'];

@@ -10,8 +10,6 @@ import { RecordLayoutTab } from '@/ui/layout/tab/types/RecordLayoutTab';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { FeatureFlagKey } from '~/generated/graphql';
 import {
   IconCalendarEvent,
   IconHome,
@@ -19,6 +17,8 @@ import {
   IconNotes,
   IconSettings,
 } from 'twenty-ui/display';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRecordShowContainerTabs = (
   loading: boolean,
@@ -145,7 +145,7 @@ export const useRecordShowContainerTabs = (
         tabs: {
           workflow: {
             title: 'Flow',
-            position: 0,
+            position: 101,
             Icon: IconSettings,
             cards: [{ type: CardType.WorkflowCard }],
             hide: {
@@ -168,7 +168,7 @@ export const useRecordShowContainerTabs = (
         tabs: {
           workflowVersion: {
             title: 'Flow',
-            position: 0,
+            position: 101,
             Icon: IconSettings,
             cards: [{ type: CardType.WorkflowVersionCard }],
             hide: {
@@ -190,7 +190,7 @@ export const useRecordShowContainerTabs = (
         tabs: {
           workflowRun: {
             title: 'Flow',
-            position: 0,
+            position: 101,
             Icon: IconSettings,
             cards: [{ type: CardType.WorkflowRunCard }],
             hide: {
@@ -227,6 +227,29 @@ export const useRecordShowContainerTabs = (
           },
           timeline: null,
           fields: null,
+        },
+      },
+      [CoreObjectNameSingular.Traceable]: {
+        hideSummaryAndFields: false,
+        tabs: {
+          fields: {
+            title: 'Traceable',
+            position: 101,
+            Icon: IconSettings,
+            cards: [{ type: CardType.TraceableFieldsCard }],
+            hide: {
+              ifMobile: false,
+              ifDesktop: false,
+              ifInRightDrawer: false,
+              ifFeaturesDisabled: [],
+              ifRequiredObjectsInactive: [],
+              ifRelationsMissing: [],
+            },
+          },
+          timeline: null,
+          tasks: null,
+          notes: null,
+          files: null,
         },
       },
     }),

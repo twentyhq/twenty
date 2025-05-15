@@ -42,11 +42,18 @@ export class CreateRecordWorkflowAction implements WorkflowExecutor {
   ) {}
 
   async execute({
-    currentStepIndex,
+    currentStepId,
     steps,
     context,
   }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
-    const step = steps[currentStepIndex];
+    const step = steps.find((step) => step.id === currentStepId);
+
+    if (!step) {
+      throw new WorkflowStepExecutorException(
+        'Step not found',
+        WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
+      );
+    }
 
     if (!isWorkflowCreateRecordAction(step)) {
       throw new WorkflowStepExecutorException(

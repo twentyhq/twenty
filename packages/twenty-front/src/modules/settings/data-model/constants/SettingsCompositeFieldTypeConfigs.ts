@@ -10,7 +10,6 @@ import {
 } from '@/object-record/record-field/types/FieldMetadata';
 import { SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import {
   IllustrationIconCurrency,
@@ -21,6 +20,7 @@ import {
   IllustrationIconSetting,
   IllustrationIconUser,
 } from 'twenty-ui/display';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export type SettingsCompositeFieldTypeConfig<T> = SettingsFieldTypeConfig<T> & {
   subFields: (keyof T)[];
@@ -38,8 +38,8 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.CURRENCY]: {
     label: 'Currency',
     Icon: IllustrationIconCurrency,
-    subFields: ['amountMicros'],
-    filterableSubFields: ['amountMicros'],
+    subFields: ['amountMicros', 'currencyCode'],
+    filterableSubFields: ['amountMicros', 'currencyCode'],
     labelBySubField: {
       amountMicros: 'Amount',
       currencyCode: 'Currency',

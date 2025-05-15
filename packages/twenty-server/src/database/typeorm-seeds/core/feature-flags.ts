@@ -26,11 +26,6 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
-        key: FeatureFlagKey.IsEventObjectEnabled,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
         key: FeatureFlagKey.IsStripeIntegrationEnabled,
         workspaceId: workspaceId,
         value: true,
@@ -41,19 +36,9 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IsAnalyticsV2Enabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IsCustomDomainEnabled,
         workspaceId: workspaceId,
         value: false,
-      },
-      {
-        key: FeatureFlagKey.IsApprovedAccessDomainsEnabled,
-        workspaceId: workspaceId,
-        value: true,
       },
       {
         key: FeatureFlagKey.IsUniqueIndexesEnabled,
@@ -63,7 +48,7 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IsNewRelationEnabled,
         workspaceId: workspaceId,
-        value: false,
+        value: true,
       },
     ])
     .execute();

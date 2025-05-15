@@ -19,7 +19,7 @@ export const WorkspaceFavorites = () => {
       (item: any) =>
         item.namePlural !== 'traceables' &&
         item.namePlural !== 'linklogs' &&
-        item.namePlural !== 'chatbots'
+        item.namePlural !== 'chatbots',
     );
 
   return (

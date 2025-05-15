@@ -1,119 +1,84 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { getIsInputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsInputTabDisabled';
-import { getIsOutputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsOutputTabDisabled';
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
-import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
-import {
-  WorkflowDiagramNode,
-  WorkflowDiagramRunStatus,
-  WorkflowRunDiagramStepNodeData,
-} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { workflowDiagramStatusComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusComponentState';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
+import { WorkflowRunDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
-import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
-import { WorkflowRunTabId } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
-import { isNull } from '@sniptt/guards';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
-import { useCallback } from 'react';
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
 export const WorkflowRunDiagramCanvasEffect = () => {
   const { getIcon } = useIcons();
-  const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
+
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
 
-  const workflowId = useRecoilValue(workflowIdState);
+  const workflowRunId = useWorkflowRunIdOrThrow();
 
-  const resetWorkflowRunRightDrawerTabIfNeeded = useRecoilCallback(
+  const workflowVisualizerWorkflowIdState = useRecoilComponentCallbackStateV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
+  const workflowDiagramStatusState = useRecoilComponentCallbackStateV2(
+    workflowDiagramStatusComponentState,
+  );
+  const workflowSelectedNodeState = useRecoilComponentCallbackStateV2(
+    workflowSelectedNodeComponentState,
+  );
+
+  const handleSelectionChange = useRecoilCallback(
     ({ snapshot, set }) =>
-      ({
-        workflowSelectedNode,
-        stepExecutionStatus,
-      }: {
-        workflowSelectedNode: string;
-        stepExecutionStatus: WorkflowDiagramRunStatus;
-      }) => {
-        const activeWorkflowRunRightDrawerTab = getSnapshotValue(
+      ({ nodes }: OnSelectionChangeParams) => {
+        const workflowId = getSnapshotValue(
           snapshot,
-          activeTabIdComponentState.atomFamily({
-            instanceId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
-          }),
-        ) as WorkflowRunTabId | null;
+          workflowVisualizerWorkflowIdState,
+        );
 
-        const isInputTabDisabled = getIsInputTabDisabled({
-          stepExecutionStatus,
-          workflowSelectedNode,
-        });
-        const isOutputTabDisabled = getIsOutputTabDisabled({
-          stepExecutionStatus,
-        });
+        if (!isDefined(workflowId)) {
+          throw new Error('Expected the workflowId to be defined.');
+        }
 
-        if (isNull(activeWorkflowRunRightDrawerTab)) {
-          const defaultTabId = isOutputTabDisabled
-            ? WorkflowRunTabId.NODE
-            : WorkflowRunTabId.OUTPUT;
+        const workflowDiagramStatus = getSnapshotValue(
+          snapshot,
+          workflowDiagramStatusState,
+        );
 
-          set(
-            activeTabIdComponentState.atomFamily({
-              instanceId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
-            }),
-            defaultTabId,
-          );
-
+        // The `handleSelectionChange` function is called when the diagram initializes and
+        // a node is selected. In this case, we don't want to execute the rest of this function.
+        // We open the Side Panel® synchronously after ReactFlow is initialized and a node is selected,
+        // animations perform better that way.
+        if (workflowDiagramStatus !== 'done') {
           return;
         }
 
-        if (
-          (isInputTabDisabled &&
-            activeWorkflowRunRightDrawerTab === WorkflowRunTabId.INPUT) ||
-          (isOutputTabDisabled &&
-            activeWorkflowRunRightDrawerTab === WorkflowRunTabId.OUTPUT)
-        ) {
-          set(
-            activeTabIdComponentState.atomFamily({
-              instanceId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
-            }),
-            WorkflowRunTabId.NODE,
-          );
+        const selectedNode = nodes[0] as WorkflowRunDiagramNode | undefined;
+
+        if (!isDefined(selectedNode)) {
+          return;
         }
-      },
-    [],
-  );
 
-  const handleSelectionChange = useCallback(
-    ({ nodes }: OnSelectionChangeParams) => {
-      const selectedNode = nodes[0] as WorkflowDiagramNode | undefined;
+        set(workflowSelectedNodeState, selectedNode.id);
 
-      if (!isDefined(selectedNode)) {
-        return;
-      }
+        const selectedNodeData = selectedNode.data;
 
-      setWorkflowSelectedNode(selectedNode.id);
-
-      const selectedNodeData =
-        selectedNode.data as WorkflowRunDiagramStepNodeData;
-
-      if (isDefined(workflowId)) {
-        openWorkflowRunViewStepInCommandMenu(
+        openWorkflowRunViewStepInCommandMenu({
           workflowId,
-          selectedNodeData.name,
-          getIcon(getWorkflowNodeIconKey(selectedNodeData)),
-        );
-
-        resetWorkflowRunRightDrawerTabIfNeeded({
+          workflowRunId,
+          title: selectedNodeData.name,
+          icon: getIcon(getWorkflowNodeIconKey(selectedNodeData)),
           workflowSelectedNode: selectedNode.id,
           stepExecutionStatus: selectedNodeData.runStatus,
         });
-      }
-    },
+      },
     [
-      setWorkflowSelectedNode,
-      resetWorkflowRunRightDrawerTabIfNeeded,
-      workflowId,
+      workflowVisualizerWorkflowIdState,
+      workflowDiagramStatusState,
+      workflowSelectedNodeState,
       openWorkflowRunViewStepInCommandMenu,
+      workflowRunId,
       getIcon,
     ],
   );

@@ -3,6 +3,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   IconCirclePlus,
   IconEditCircle,
+  IconRestore,
   IconTrash,
   useIcons,
 } from 'twenty-ui/display';
@@ -25,6 +26,9 @@ export const EventIconDynamicComponent = ({
   }
   if (eventAction === 'deleted') {
     return <IconTrash />;
+  }
+  if (eventAction === 'restored') {
+    return <IconRestore />;
   }
 
   const IconComponent = getIcon(linkedObjectMetadataItem?.icon);

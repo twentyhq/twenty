@@ -1,6 +1,5 @@
 {
   "name": "twenty-server",
-  "version": "0.52.0-canary",
   "description": "",
   "author": "",
   "private": true,
@@ -12,9 +11,11 @@
     "worker:prod": "node dist/src/queue-worker/queue-worker",
     "database:init:prod": "npx ts-node ./scripts/setup-db.ts && yarn database:migrate:prod",
     "database:migrate:prod": "npx -y typeorm migration:run -d dist/src/database/typeorm/metadata/metadata.datasource && npx -y typeorm migration:run -d dist/src/database/typeorm/core/core.datasource",
+    "clickhouse:migrate:prod": "node dist/src/database/clickHouse/migrations/run-migrations.js",
     "typeorm": "../../node_modules/typeorm/.bin/typeorm"
   },
   "dependencies": {
+    "@clickhouse/client": "^1.11.0",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch",
     "@langchain/mistralai": "^0.0.24",
@@ -24,6 +25,7 @@
     "@nestjs/cache-manager": "^2.2.1",
     "@nestjs/devtools-integration": "^0.1.6",
     "@nestjs/graphql": "patch:@nestjs/graphql@12.1.1#./patches/@nestjs+graphql+12.1.1.patch",
+    "@nestjs/schedule": "^3.0.0",
     "@node-saml/passport-saml": "^5.0.0",
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/exporter-metrics-otlp-http": "^0.200.0",

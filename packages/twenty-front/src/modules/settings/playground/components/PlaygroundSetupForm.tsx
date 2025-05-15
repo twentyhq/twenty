@@ -1,3 +1,4 @@
+import { SETTINGS_PLAYGROUND_FORM_SCHEMA_SELECT_OPTIONS } from '@/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions';
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { PlaygroundTypes } from '@/settings/playground/types/PlaygroundTypes';
@@ -9,12 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
-import {
-  IconApi,
-  IconBracketsAngle,
-  IconBrandGraphql,
-  IconFolderRoot,
-} from 'twenty-ui/display';
+import { IconApi, IconBrandGraphql } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { z } from 'zod';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -63,7 +59,7 @@ export const PlaygroundSetupForm = () => {
     try {
       // Validate by fetching the schema (but not storing it)
       const response = await fetch(
-        `${REACT_APP_SERVER_BASE_URL}/open-api/${values.schema}`,
+        `${REACT_APP_SERVER_BASE_URL}/rest/open-api/${values.schema}`,
         {
           headers: { Authorization: `Bearer ${values.apiKeyForPlayground}` },
         },
@@ -137,18 +133,12 @@ export const PlaygroundSetupForm = () => {
           <Select
             dropdownId="schema"
             label={t`Schema`}
-            options={[
-              {
-                value: PlaygroundSchemas.CORE,
-                label: t`Core`,
-                Icon: IconFolderRoot,
-              },
-              {
-                value: PlaygroundSchemas.METADATA,
-                label: t`Metadata`,
-                Icon: IconBracketsAngle,
-              },
-            ]}
+            options={SETTINGS_PLAYGROUND_FORM_SCHEMA_SELECT_OPTIONS.map(
+              (option) => ({
+                ...option,
+                label: t(option.label),
+              }),
+            )}
             value={value}
             onChange={onChange}
           />

@@ -36,8 +36,9 @@ export const STANDARD_OBJECT_ICONS = {
   webhook: 'IconRobot',
   workflow: 'IconSettingsAutomation',
   workflowEventListener: 'IconSettingsAutomation',
-  workflowRun: 'IconSettingsAutomation',
-  workflowVersion: 'IconSettingsAutomation',
-  chatbot: 'IconSettingsAutomation',
+  workflowRun: 'IconHistoryToggle',
+  workflowVersion: 'IconVersions',
+  workflowAutomatedTrigger: 'IconSettingsAutomation',
   workspaceMember: 'IconUserCircle',
+  chatbot: 'IconSettingsAutomation',
 };

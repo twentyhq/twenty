@@ -63,7 +63,7 @@ export class ClientConfigResolver {
       },
       sentry: {
         environment: this.twentyConfigService.get('SENTRY_ENVIRONMENT'),
-        release: this.twentyConfigService.get('SENTRY_RELEASE'),
+        release: this.twentyConfigService.get('APP_VERSION'),
         dsn: this.twentyConfigService.get('SENTRY_FRONT_DSN'),
       },
       captcha: {
@@ -96,6 +96,9 @@ export class ClientConfigResolver {
       ),
       isGoogleCalendarEnabled: this.twentyConfigService.get(
         'CALENDAR_PROVIDER_GOOGLE_ENABLED',
+      ),
+      isConfigVariablesInDbEnabled: this.twentyConfigService.get(
+        'IS_CONFIG_VARIABLES_IN_DB_ENABLED',
       ),
     };
 

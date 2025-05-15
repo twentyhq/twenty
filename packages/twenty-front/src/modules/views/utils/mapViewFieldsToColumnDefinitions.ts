@@ -4,8 +4,8 @@ import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-import { ViewField } from '../types/ViewField';
 import { isDefined } from 'twenty-shared/utils';
+import { ViewField } from '../types/ViewField';
 
 export const mapViewFieldsToColumnDefinitions = ({
   columnDefinitions,

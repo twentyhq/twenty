@@ -19,6 +19,7 @@ import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/
 import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
 import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/object-metadata/interceptors/object-metadata-graphql-api-exception.interceptor';
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
+import { ObjectMetadataFieldRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service';
 import { ObjectMetadataMigrationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-migration.service';
 import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-related-records.service';
 import { ObjectMetadataRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-relation.service';
@@ -30,6 +31,7 @@ import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-s
 import { SearchVectorModule } from 'src/engine/metadata-modules/search-vector/search-vector.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
+import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
@@ -58,11 +60,13 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
         IndexMetadataModule,
         FeatureFlagModule,
         PermissionsModule,
+        WorkspacePermissionsCacheModule,
       ],
       services: [
         ObjectMetadataService,
         ObjectMetadataMigrationService,
         ObjectMetadataRelationService,
+        ObjectMetadataFieldRelationService,
         ObjectMetadataRelatedRecordsService,
       ],
       resolvers: [

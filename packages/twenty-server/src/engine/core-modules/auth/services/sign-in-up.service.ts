@@ -267,6 +267,12 @@ export class SignInUpService {
   }
 
   private async activateOnboardingForUser(user: User, workspace: Workspace) {
+    await this.onboardingService.setOnboardingPlanPaymentPending({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: true,
+    });
+
     await this.onboardingService.setOnboardingConnectAccountPending({
       userId: user.id,
       workspaceId: workspace.id,
@@ -352,11 +358,14 @@ export class SignInUpService {
       }
     };
 
+    const isWorkEmailFound = isWorkEmail(email);
     const logo =
-      isWorkEmail(email) && (await isLogoUrlValid()) ? logoUrl : undefined;
+      isWorkEmailFound && (await isLogoUrlValid()) ? logoUrl : undefined;
 
     const workspaceToCreate = this.workspaceRepository.create({
-      subdomain: await this.domainManagerService.generateSubdomain(),
+      subdomain: await this.domainManagerService.generateSubdomain(
+        isWorkEmailFound ? { email } : {},
+      ),
       displayName: '',
       inviteHash: v4(),
       activationStatus: WorkspaceActivationStatus.PENDING_CREATION,

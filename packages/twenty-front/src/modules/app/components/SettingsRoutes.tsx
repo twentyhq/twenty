@@ -299,11 +299,11 @@ const SettingsAdminIndicatorHealthStatus = lazy(() =>
   })),
 );
 
-const SettingsAdminSecondaryEnvVariables = lazy(() =>
+const SettingsAdminConfigVariableDetails = lazy(() =>
   import(
-    '~/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables'
+    '~/pages/settings/admin-panel/SettingsAdminConfigVariableDetails'
   ).then((module) => ({
-    default: module.SettingsAdminSecondaryEnvVariables,
+    default: module.SettingsAdminConfigVariableDetails,
   })),
 );
 
@@ -328,6 +328,12 @@ const SettingsRoleCreate = lazy(() =>
 const SettingsRoleEdit = lazy(() =>
   import('~/pages/settings/roles/SettingsRoleEdit').then((module) => ({
     default: module.SettingsRoleEdit,
+  })),
+);
+
+const SettingsRoleObjectLevel = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoleObjectLevel').then((module) => ({
+    default: module.SettingsRoleObjectLevel,
   })),
 );
 
@@ -480,6 +486,10 @@ export const SettingsRoutes = ({
           path={SettingsPath.RoleCreate}
           element={<SettingsRoleCreate />}
         />
+        <Route
+          path={SettingsPath.RoleObjectLevel}
+          element={<SettingsRoleObjectLevel />}
+        />
       </Route>
       <Route
         element={
@@ -629,9 +639,10 @@ export const SettingsRoutes = ({
             path={SettingsPath.AdminPanelIndicatorHealthStatus}
             element={<SettingsAdminIndicatorHealthStatus />}
           />
+
           <Route
-            path={SettingsPath.AdminPanelOtherEnvVariables}
-            element={<SettingsAdminSecondaryEnvVariables />}
+            path={SettingsPath.AdminPanelConfigVariableDetails}
+            element={<SettingsAdminConfigVariableDetails />}
           />
         </>
       )}

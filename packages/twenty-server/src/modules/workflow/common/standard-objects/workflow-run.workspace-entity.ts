@@ -1,16 +1,15 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
-} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -56,6 +55,7 @@ export type WorkflowRunOutput = {
   labelIdentifierStandardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.name,
   icon: STANDARD_OBJECT_ICONS.workflowRun,
 })
+@WorkspaceIsNotAuditLogged()
 export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.name,
@@ -165,12 +165,13 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   // Relations
   @WorkspaceRelation({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.workflowVersion,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Workflow version`,
     description: msg`Workflow version linked to the run.`,
     icon: 'IconVersions',
     inverseSideTarget: () => WorkflowVersionWorkspaceEntity,
     inverseSideFieldKey: 'runs',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   workflowVersion: Relation<WorkflowVersionWorkspaceEntity>;
 
@@ -179,12 +180,13 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.workflow,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Workflow`,
     description: msg`Workflow linked to the run.`,
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'runs',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   workflow: Relation<WorkflowWorkspaceEntity>;
 
@@ -193,7 +195,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.favorites,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
     description: msg`Favorites linked to the workflow run`,
     icon: 'IconHeart',
@@ -205,7 +207,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.timelineActivities,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Timeline Activities`,
     description: msg`Timeline activities linked to the run`,
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,

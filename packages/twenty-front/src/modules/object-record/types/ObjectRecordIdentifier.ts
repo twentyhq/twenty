@@ -5,4 +5,5 @@ export type ObjectRecordIdentifier = {
   avatarUrl?: string;
   avatarType?: AvatarType | null;
   linkToShowPage?: string;
+  status?: string | null;
 };

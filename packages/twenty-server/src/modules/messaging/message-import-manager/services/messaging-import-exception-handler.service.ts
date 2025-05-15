@@ -3,7 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageChannelSyncStatus,
+  MessageChannelWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_THROTTLE_MAX_ATTEMPTS } from 'src/modules/messaging/message-import-manager/constants/messaging-throttle-max-attempts';
 import {
   MessageImportDriverException,
@@ -90,9 +93,10 @@ export class MessageImportExceptionHandlerService {
     if (
       messageChannel.throttleFailureCount >= MESSAGING_THROTTLE_MAX_ATTEMPTS
     ) {
-      await this.messageChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+      await this.messageChannelSyncStatusService.markAsFailedAndFlushMessagesToImport(
         [messageChannel.id],
         workspaceId,
+        MessageChannelSyncStatus.FAILED_UNKNOWN,
       );
       throw new MessageImportException(
         `Unknown temporary error occurred multiple times while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}`,
@@ -139,9 +143,10 @@ export class MessageImportExceptionHandlerService {
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
-    await this.messageChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
+    await this.messageChannelSyncStatusService.markAsFailedAndFlushMessagesToImport(
       [messageChannel.id],
       workspaceId,
+      MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
     );
   }
 
@@ -150,17 +155,18 @@ export class MessageImportExceptionHandlerService {
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
-    await this.messageChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+    await this.messageChannelSyncStatusService.markAsFailedAndFlushMessagesToImport(
       [messageChannel.id],
       workspaceId,
+      MessageChannelSyncStatus.FAILED_UNKNOWN,
     );
 
     this.exceptionHandlerService.captureExceptions([
-      `Unknown error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
+      `Unknown error importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
     ]);
 
     throw new MessageImportException(
-      `Unknown error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
+      exception.message,
       MessageImportExceptionCode.UNKNOWN,
     );
   }
@@ -170,9 +176,10 @@ export class MessageImportExceptionHandlerService {
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
-    await this.messageChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+    await this.messageChannelSyncStatusService.markAsFailedAndFlushMessagesToImport(
       [messageChannel.id],
       workspaceId,
+      MessageChannelSyncStatus.FAILED_UNKNOWN,
     );
 
     throw new MessageImportException(

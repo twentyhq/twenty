@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import Stripe from 'stripe';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
@@ -15,10 +15,10 @@ import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billin
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
+import { getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent } from 'src/engine/core-modules/billing/webhooks/utils/get-deleted-stripe-subscription-item-ids-from-stripe-subscription-event.util';
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-customer.util';
 import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
 import { transformStripeSubscriptionEventToDatabaseSubscription } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -101,15 +101,9 @@ export class BillingWebhookSubscriptionService {
       throw new Error('Billing subscription not found');
     }
 
-    await this.billingSubscriptionItemRepository.upsert(
-      transformStripeSubscriptionEventToDatabaseSubscriptionItem(
-        updatedBillingSubscription.id,
-        data,
-      ),
-      {
-        conflictPaths: ['billingSubscriptionId', 'stripeProductId'],
-        skipUpdateIfNoValuesChanged: true,
-      },
+    await this.updateBillingSubscriptionItems(
+      updatedBillingSubscription.id,
+      event,
     );
 
     if (
@@ -140,19 +134,7 @@ export class BillingWebhookSubscriptionService {
       workspaceId,
     );
 
-    const isMeteredProductBillingEnabled =
-      await this.featureFlagRepository.findOne({
-        where: {
-          key: FeatureFlagKey.IsMeteredProductBillingEnabled,
-          workspaceId: workspaceId,
-          value: true,
-        },
-      });
-
-    if (
-      event.type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED &&
-      isDefined(isMeteredProductBillingEnabled)
-    ) {
+    if (event.type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED) {
       await this.billingSubscriptionService.setBillingThresholdsAndTrialPeriodWorkflowCredits(
         updatedBillingSubscription.id,
       );
@@ -186,5 +168,34 @@ export class BillingWebhookSubscriptionService {
     }
 
     return false;
+  }
+
+  async updateBillingSubscriptionItems(
+    subscriptionId: string,
+    event:
+      | Stripe.CustomerSubscriptionUpdatedEvent
+      | Stripe.CustomerSubscriptionCreatedEvent
+      | Stripe.CustomerSubscriptionDeletedEvent,
+  ) {
+    const deletedSubscriptionItemIds =
+      getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent(event);
+
+    if (deletedSubscriptionItemIds.length > 0) {
+      await this.billingSubscriptionItemRepository.delete({
+        billingSubscriptionId: subscriptionId,
+        stripeSubscriptionItemId: In(deletedSubscriptionItemIds),
+      });
+    }
+
+    await this.billingSubscriptionItemRepository.upsert(
+      transformStripeSubscriptionEventToDatabaseSubscriptionItem(
+        subscriptionId,
+        event.data,
+      ),
+      {
+        conflictPaths: ['stripeSubscriptionItemId'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
   }
 }

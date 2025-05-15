@@ -1,7 +1,8 @@
+import { Field, ObjectType } from '@nestjs/graphql';
+
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { Field, ObjectType } from '@nestjs/graphql';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -34,6 +35,7 @@ export const SEARCH_FIELDS_FOR_LINKLOGS: FieldTypeAndNameMetadata[] = [
   labelIdentifierStandardId: LINKLOGS_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsNotAuditLogged()
+@WorkspaceIsSystem()
 @ObjectType()
 export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -50,24 +52,13 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: LINKLOGS_STANDARD_FIELD_IDS.linkName,
     type: FieldMetadataType.TEXT,
-    label: msg`Link Name`,
+    label: msg`Linklog link Name`,
     description: msg`Link Name`,
     icon: 'IconLink',
   })
   @WorkspaceIsNullable()
   @Field(() => String, { nullable: true })
   linkName: string;
-
-  @WorkspaceField({
-    standardId: LINKLOGS_STANDARD_FIELD_IDS.uv,
-    type: FieldMetadataType.NUMBER,
-    label: msg`UV`,
-    description: msg`UV`,
-    icon: 'IconLink',
-  })
-  @WorkspaceIsNullable()
-  @Field(() => String, { nullable: true })
-  uv: number;
 
   @WorkspaceField({
     standardId: LINKLOGS_STANDARD_FIELD_IDS.linkId,

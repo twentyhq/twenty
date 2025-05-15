@@ -3,7 +3,6 @@ import { useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
-import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
@@ -19,6 +18,7 @@ import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritin
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
 
+import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { ActivityRichTextEditorChangeOnActivityIdEffect } from '@/activities/components/ActivityRichTextEditorChangeOnActivityIdEffect';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
@@ -251,41 +251,15 @@ export const ActivityRichTextEditor = ({
       keyboardEvent.stopPropagation();
       keyboardEvent.stopImmediatePropagation();
 
-      const blockIdentifier = editor.getTextCursorPosition().block;
-      const currentBlockContent = blockIdentifier?.content;
-
-      if (
-        isDefined(currentBlockContent) &&
-        isArray(currentBlockContent) &&
-        currentBlockContent.length === 0
-      ) {
-        // Empty block case
-        editor.updateBlock(blockIdentifier, {
-          content: keyboardEvent.key,
-        });
-        return;
-      }
-
-      if (
-        isDefined(currentBlockContent) &&
-        isArray(currentBlockContent) &&
-        isDefined(currentBlockContent[0]) &&
-        currentBlockContent[0].type === 'text'
-      ) {
-        // Text block case
-        editor.updateBlock(blockIdentifier, {
-          content: currentBlockContent[0].text + keyboardEvent.key,
-        });
-        return;
-      }
-
       const newBlockId = v4();
       const newBlock = {
         id: newBlockId,
         type: 'paragraph' as const,
         content: keyboardEvent.key,
       };
-      editor.insertBlocks([newBlock], blockIdentifier, 'after');
+
+      const lastBlock = editor.document[editor.document.length - 1];
+      editor.insertBlocks([newBlock], lastBlock);
 
       editor.setTextCursorPosition(newBlockId, 'end');
       editor.focus();

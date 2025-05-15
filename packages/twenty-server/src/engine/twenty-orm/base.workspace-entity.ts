@@ -3,6 +3,8 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { DateDisplayFormat } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsPrimaryField } from 'src/engine/twenty-orm/decorators/workspace-is-primary-field.decorator';
@@ -32,7 +34,7 @@ export abstract class BaseWorkspaceEntity {
     icon: 'IconCalendar',
     defaultValue: 'now',
     settings: {
-      displayAsRelativeDate: true,
+      displayFormat: DateDisplayFormat.RELATIVE,
     },
   })
   createdAt: string;
@@ -45,7 +47,7 @@ export abstract class BaseWorkspaceEntity {
     icon: 'IconCalendarClock',
     defaultValue: 'now',
     settings: {
-      displayAsRelativeDate: true,
+      displayFormat: DateDisplayFormat.RELATIVE,
     },
   })
   updatedAt: string;
@@ -57,7 +59,7 @@ export abstract class BaseWorkspaceEntity {
     description: msg`Date when the record was deleted`,
     icon: 'IconCalendarMinus',
     settings: {
-      displayAsRelativeDate: true,
+      displayFormat: DateDisplayFormat.RELATIVE,
     },
   })
   @WorkspaceIsNullable()

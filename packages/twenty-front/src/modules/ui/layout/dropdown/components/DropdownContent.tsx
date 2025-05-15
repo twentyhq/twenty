@@ -82,6 +82,7 @@ export const DropdownContent = ({
   useListenClickOutside({
     refs: [floatingUiRefs.floating, floatingUiRefs.domReference],
     listenerId: dropdownId,
+    excludeClassNames: ['confirmation-modal'],
     callback: (event) => {
       if (activeDropdownFocusId !== dropdownId) return;
 

@@ -10,18 +10,10 @@ const StyledContent = styled.div`
 
 type AuthModalProps = {
   children: React.ReactNode;
-  isOpenAnimated?: boolean;
 };
 
-export const AuthModal = ({
-  children,
-  isOpenAnimated = true,
-}: AuthModalProps) => (
-  <Modal
-    padding={'none'}
-    modalVariant="primary"
-    isOpenAnimated={isOpenAnimated}
-  >
+export const AuthModal = ({ children }: AuthModalProps) => (
+  <Modal padding={'none'} modalVariant="primary">
     <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
       <StyledContent>{children}</StyledContent>
     </ScrollWrapper>

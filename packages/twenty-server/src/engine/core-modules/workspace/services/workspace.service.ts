@@ -8,6 +8,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
+import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -69,6 +72,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly domainManagerService: DomainManagerService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly permissionsService: PermissionsService,
+    private readonly auditService: AuditService,
     private readonly customDomainService: CustomDomainService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
@@ -426,6 +430,17 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     if (workspace.isCustomDomainEnabled !== isCustomDomainWorking) {
       workspace.isCustomDomainEnabled = isCustomDomainWorking;
       await this.workspaceRepository.save(workspace);
+
+      const analytics = this.auditService.createContext({
+        workspaceId: workspace.id,
+      });
+
+      analytics.insertWorkspaceEvent(
+        workspace.isCustomDomainEnabled
+          ? CUSTOM_DOMAIN_ACTIVATED_EVENT
+          : CUSTOM_DOMAIN_DEACTIVATED_EVENT,
+        {},
+      );
     }
 
     return customDomainDetails;

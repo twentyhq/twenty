@@ -1,12 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+
+import { isDefined } from 'class-validator';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
-import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
-import { LinkLogsWorkspaceEntity } from 'src/modules/linklogs/standard-objects/linklog.workspace-entity';
 import { TraceableWorkspaceEntity } from 'src/modules/traceable/standard-objects/traceable.workspace-entity';
 
 @Injectable()
@@ -15,6 +16,7 @@ export class TraceableEventListener {
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @OnDatabaseBatchEvent('traceable', DatabaseEventAction.UPDATED)
@@ -39,12 +41,6 @@ export class TraceableEventListener {
         'traceable',
       );
 
-    const linklogsRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<LinkLogsWorkspaceEntity>(
-        workspaceId,
-        'linkLogs',
-      );
-
     const traceableEntities = await Promise.all(
       events.map((event) =>
         traceableRepository.findOneByOrFail({
@@ -53,65 +49,101 @@ export class TraceableEventListener {
       ),
     );
 
-    const updateBatches = await Promise.all(
+    await Promise.all(
       traceableEntities.map(async (traceable) => {
-        const generatedUrl = this.generateTraceableUrl(traceable);
+        if (isDefined(traceable?.websiteUrl)) {
+          const { generatedUrl, url } = this.generateTraceableUrl(
+            traceable,
+            workspaceId,
+          );
 
-        traceable.generatedUrl = generatedUrl;
+          traceable.generatedUrl = generatedUrl;
+          traceable.url = url;
 
-        await traceableRepository.save(traceable);
-
-        const existingLog = await linklogsRepository.findOneBy({
-          linkId: traceable.id,
-        });
-
-        if (existingLog) {
-          existingLog.userAgent = `${traceable.id}`;
-          existingLog.utmSource = traceable.campaignSource || '';
-          existingLog.utmMedium = 'cpc';
-          existingLog.utmCampaign = traceable.campaignName || '';
-          existingLog.linkName = traceable.product || '';
-          existingLog.uv = 10;
-          await linklogsRepository.save(existingLog);
-        } else {
-          const traceableAccessLog = linklogsRepository.create({
-            userAgent: `${traceable.id}`,
-            linkId: traceable.id,
-            utmSource: traceable.campaignSource || '',
-            utmMedium: 'cpc',
-            utmCampaign: traceable.campaignName || '',
-            userIp: null,
-            linkName: traceable.product || '',
-            uv: 10,
-          });
-
-          await linklogsRepository.save(traceableAccessLog);
+          return traceableRepository.save(traceable);
         }
-
-        return traceable;
       }),
     );
-
-    const updatedTraceable = await traceableRepository.find();
 
     return;
   }
 
   private generateTraceableUrl(
     traceable: TraceableWorkspaceEntity,
-  ): LinksMetadata {
-    const linkName = traceable.linkName?.primaryLinkUrl || '';
-    const campaignSource = traceable.campaignSource || '';
+    workspaceId: string,
+  ): {
+    generatedUrl: TraceableWorkspaceEntity['generatedUrl'];
+    url: TraceableWorkspaceEntity['generatedUrl'];
+  } {
+    const websiteUrl = this.normalizeUrl(
+      traceable.websiteUrl?.primaryLinkUrl as string,
+    ) as string;
     const campaignName = traceable.campaignName || '';
+    const campaignSource = traceable.campaignSource || '';
+    const meansOfCommunication = traceable.meansOfCommunication || '';
+    const keyworkd = traceable.keyword || '';
+    const campaignContent = traceable.campaignContent || '';
 
-    const url = `${linkName}/?utm_source=${encodeURIComponent(
+    const generatedUrl = `${websiteUrl}/?utm_campaign=${encodeURIComponent(campaignName)}&utm_source=${encodeURIComponent(
       campaignSource,
-    )}&utm_medium=cpc&utm_campaign=${encodeURIComponent(campaignName)}`;
+    )}&utm_medium=${encodeURIComponent(
+      meansOfCommunication,
+    )}&utm_term=${encodeURIComponent(keyworkd)}&utm_content=${encodeURIComponent(campaignContent)}`;
+
+    const baseUrl = this.twentyConfigService.get('SERVER_URL');
+
+    const redirectUrl = `${baseUrl}/traceable/r/${workspaceId}/${traceable.id}`;
 
     return {
-      primaryLinkLabel: 'Generated URL',
-      primaryLinkUrl: url,
-      secondaryLinks: null,
+      generatedUrl: {
+        primaryLinkLabel: generatedUrl,
+        primaryLinkUrl: generatedUrl,
+        secondaryLinks: null,
+      },
+      url: {
+        primaryLinkLabel: redirectUrl,
+        primaryLinkUrl: redirectUrl,
+        secondaryLinks: null,
+      },
     };
+  }
+
+  normalizeUrl(url: string): string {
+    if (!url) throw new BadRequestException('URL is required');
+
+    try {
+      // Add https:// if no protocol exists
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = `https://${url}`;
+      }
+
+      const parsedUrl = new URL(url);
+
+      // Remove trailing slash from pathname
+      parsedUrl.pathname = parsedUrl.pathname.replace(/\/+$/, '');
+
+      // Sort query parameters alphabetically
+      if (parsedUrl.search) {
+        const params = Array.from(parsedUrl.searchParams.entries());
+
+        params.sort((a, b) => a[0].localeCompare(b[0]));
+        parsedUrl.search = '';
+        params.forEach(([key, value]) => {
+          parsedUrl.searchParams.append(key, value);
+        });
+      }
+
+      // Remove default ports (e.g., :443 for HTTPS)
+      if (parsedUrl.port === '443' && parsedUrl.protocol === 'https:') {
+        parsedUrl.port = '';
+      } else if (parsedUrl.port === '80' && parsedUrl.protocol === 'http:') {
+        parsedUrl.port = '';
+      }
+
+      // Return normalized URL without trailing slash
+      return parsedUrl.toString().replace(/\/$/, '');
+    } catch (error) {
+      throw new BadRequestException('Invalid URL provided');
+    }
   }
 }

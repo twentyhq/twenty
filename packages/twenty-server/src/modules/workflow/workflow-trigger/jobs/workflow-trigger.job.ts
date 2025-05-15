@@ -1,5 +1,8 @@
 import { Scope } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
+import isEmpty from 'lodash.isempty';
+
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -24,6 +27,8 @@ export type WorkflowTriggerJobData = {
   payload: object;
 };
 
+const DEFAULT_WORKFLOW_NAME = 'Workflow';
+
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class WorkflowTriggerJob {
   constructor(
@@ -41,9 +46,16 @@ export class WorkflowTriggerJob {
           'workflow',
         );
 
-      const workflow = await workflowRepository.findOneByOrFail({
+      const workflow = await workflowRepository.findOneBy({
         id: data.workflowId,
       });
+
+      if (!workflow) {
+        throw new WorkflowTriggerException(
+          'Workflow not found',
+          WorkflowTriggerExceptionCode.NOT_FOUND,
+        );
+      }
 
       if (!workflow.lastPublishedVersionId) {
         throw new WorkflowTriggerException(
@@ -57,10 +69,16 @@ export class WorkflowTriggerJob {
           'workflowVersion',
         );
 
-      const workflowVersion = await workflowVersionRepository.findOneByOrFail({
+      const workflowVersion = await workflowVersionRepository.findOneBy({
         id: workflow.lastPublishedVersionId,
       });
 
+      if (!workflowVersion) {
+        throw new WorkflowTriggerException(
+          'Workflow version not found',
+          WorkflowTriggerExceptionCode.NOT_FOUND,
+        );
+      }
       if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
         throw new WorkflowTriggerException(
           'Workflow version is not active',
@@ -68,17 +86,20 @@ export class WorkflowTriggerJob {
         );
       }
 
-      await this.workflowRunnerWorkspaceService.run(
-        data.workspaceId,
-        workflow.lastPublishedVersionId,
-        data.payload,
-        {
+      await this.workflowRunnerWorkspaceService.run({
+        workspaceId: data.workspaceId,
+        workflowVersionId: workflow.lastPublishedVersionId,
+        payload: data.payload,
+        source: {
           source: FieldActorSource.WORKFLOW,
-          name: workflow.name,
+          name:
+            isDefined(workflow.name) && !isEmpty(workflow.name)
+              ? workflow.name
+              : DEFAULT_WORKFLOW_NAME,
           context: {},
           workspaceMemberId: null,
         },
-      );
+      });
     } catch (e) {
       // We remove cron if it exists when no valid workflowVersion exists
       await this.messageQueueService.removeCron({

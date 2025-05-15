@@ -55,7 +55,7 @@ export const WorkflowVariablesDropdownWorkflowStepItems = ({
             <MenuItemSelect
               key={`step-${item.id}`}
               selected={false}
-              hovered={false}
+              focused={false}
               onClick={() => onSelect(item.id)}
               text={item.name}
               LeftIcon={item.icon ? getIcon(item.icon) : undefined}

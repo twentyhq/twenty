@@ -2,7 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import Cloudflare from 'cloudflare';
 import { CustomHostnameCreateResponse } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
+import { AuditContextMock } from 'test/utils/audit-context.mock';
 
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { DomainManagerException } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
@@ -23,6 +25,12 @@ describe('CustomDomainService', () => {
           provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
+          },
+        },
+        {
+          provide: AuditService,
+          useValue: {
+            createContext: AuditContextMock,
           },
         },
         {

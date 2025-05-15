@@ -1,6 +1,5 @@
 import { StyledTable } from '@/object-record/record-table/components/RecordTableStyles';
 import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
-import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsBody';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 
 export interface RecordTableEmptyProps {
@@ -8,18 +7,11 @@ export interface RecordTableEmptyProps {
   hasRecordGroups: boolean;
 }
 
-export const RecordTableEmpty = ({
-  tableBodyRef,
-  hasRecordGroups,
-}: RecordTableEmptyProps) => (
+export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => (
   <>
     <StyledTable ref={tableBodyRef}>
       <RecordTableHeader />
     </StyledTable>
-    {hasRecordGroups ? (
-      <RecordTableRecordGroupsBody />
-    ) : (
-      <RecordTableEmptyState />
-    )}
+    <RecordTableEmptyState />
   </>
 );

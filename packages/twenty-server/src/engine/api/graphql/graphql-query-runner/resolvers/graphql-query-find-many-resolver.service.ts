@@ -130,6 +130,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       nonFormattedObjectRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     const { hasNextPage, hasPreviousPage } = getPaginationInfo(
@@ -159,6 +160,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
         roleId,
+        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
 

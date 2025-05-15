@@ -1,15 +1,15 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -38,7 +38,6 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   description: msg`A favorite that can be accessed from the left menu`,
   icon: STANDARD_OBJECT_ICONS.favorite,
 })
-@WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
 export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -55,12 +54,13 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   // Relations
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.forWorkspaceMember,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Workspace Member`,
     description: msg`Favorite workspace member`,
     icon: 'IconCircleUser',
     inverseSideFieldKey: 'favorites',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   forWorkspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
@@ -70,12 +70,13 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.person,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Person`,
     description: msg`Favorite person`,
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
@@ -85,12 +86,13 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.company,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Company`,
     description: msg`Favorite company`,
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   company: Relation<CompanyWorkspaceEntity> | null;
@@ -100,12 +102,13 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.favoriteFolder,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Favorite Folder`,
     description: msg`The folder this favorite belongs to`,
     icon: 'IconFolder',
     inverseSideTarget: () => FavoriteFolderWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   favoriteFolder: Relation<FavoriteFolderWorkspaceEntity> | null;
@@ -115,12 +118,13 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.opportunity,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Opportunity`,
     description: msg`Favorite opportunity`,
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   opportunity: Relation<OpportunityWorkspaceEntity> | null;
@@ -130,12 +134,13 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.workflow,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Workflow`,
     description: msg`Favorite workflow`,
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   workflow: Relation<WorkflowWorkspaceEntity> | null;
@@ -145,12 +150,13 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.workflowVersion,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Workflow`,
     description: msg`Favorite workflow version`,
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowVersionWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   workflowVersion: Relation<WorkflowVersionWorkspaceEntity> | null;
@@ -160,12 +166,13 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.workflowRun,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Workflow`,
     description: msg`Favorite workflow run`,
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowRunWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   workflowRun: Relation<WorkflowRunWorkspaceEntity> | null;
@@ -190,12 +197,13 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.task,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Task`,
     description: msg`Favorite task`,
     icon: 'IconCheckbox',
     inverseSideTarget: () => TaskWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   task: Relation<TaskWorkspaceEntity> | null;
@@ -205,12 +213,13 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.note,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Note`,
     description: msg`Favorite note`,
     icon: 'IconNotes',
     inverseSideTarget: () => NoteWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   note: Relation<NoteWorkspaceEntity> | null;
@@ -220,12 +229,13 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.view,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`View`,
     description: msg`Favorite view`,
     icon: 'IconLayoutCollage',
     inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   view: Relation<ViewWorkspaceEntity> | null;
@@ -234,7 +244,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   viewId: string;
 
   @WorkspaceDynamicRelation({
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     argsFactory: (oppositeObjectMetadata) => ({
       standardId: FAVORITE_STANDARD_FIELD_IDS.custom,
       name: oppositeObjectMetadata.nameSingular,
@@ -245,6 +255,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     }),
     inverseSideTarget: () => CustomWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   custom: Relation<CustomWorkspaceEntity>;
 }

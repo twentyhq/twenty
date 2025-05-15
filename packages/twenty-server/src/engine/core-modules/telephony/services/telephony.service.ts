@@ -12,6 +12,7 @@ import { GetAllTelephonyHandler } from 'src/engine/core-modules/telephony/types/
 import { UpdateTelephonyHandler } from 'src/engine/core-modules/telephony/types/Update';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class TelephonyService extends TypeOrmQueryService<Telephony> {
@@ -24,6 +25,7 @@ export class TelephonyService extends TypeOrmQueryService<Telephony> {
 
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(telephonyRepository);
   }
@@ -111,7 +113,9 @@ export class TelephonyService extends TypeOrmQueryService<Telephony> {
       );
 
     const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
 
     await workspaceDataSource?.query(
       `UPDATE ${dataSourceMetadata.schema}."workspaceMember" SET "extensionNumber"='${extensionNumber}' WHERE "id"='${memberId}'`,
@@ -134,7 +138,9 @@ export class TelephonyService extends TypeOrmQueryService<Telephony> {
       );
 
     const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
 
     await workspaceDataSource?.query(
       `UPDATE ${dataSourceMetadata.schema}."workspaceMember" SET "extensionNumber"='' WHERE "id"='${memberId}'`,

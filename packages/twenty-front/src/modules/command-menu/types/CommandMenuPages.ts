@@ -1,3 +1,5 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+
 export enum CommandMenuPages {
   Root = 'root',
   ViewRecord = 'view-record',
@@ -13,4 +15,5 @@ export enum CommandMenuPages {
   SearchRecords = 'search-records',
   ChatbotFlow = 'chatbot-flow',
   ChatbotFlowStepEdit = 'chatbot-flow-step-edit',
+  Traceable = CoreObjectNameSingular.Traceable,
 }

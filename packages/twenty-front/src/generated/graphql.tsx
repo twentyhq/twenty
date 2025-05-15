@@ -69,6 +69,11 @@ export type Analytics = {
   success: Scalars['Boolean'];
 };
 
+export enum AnalyticsType {
+  PAGEVIEW = 'PAGEVIEW',
+  TRACK = 'TRACK'
+}
+
 export type ApiConfig = {
   __typename?: 'ApiConfig';
   mutationMaximumAffectedRecords: Scalars['Float'];
@@ -183,6 +188,13 @@ export type BillingPlanOutput = {
   meteredProducts: Array<BillingProduct>;
   otherLicensedProducts: Array<BillingProduct>;
   planKey: BillingPlanKey;
+};
+
+export type BillingPlans = {
+  __typename?: 'BillingPlans';
+  id: Scalars['UUID'];
+  planId: Scalars['String'];
+  workspace: Workspace;
 };
 
 export type BillingPriceLicensedDto = {
@@ -347,6 +359,7 @@ export type ClientConfig = {
   defaultSubdomain?: Maybe<Scalars['String']>;
   frontDomain: Scalars['String'];
   isAttachmentPreviewEnabled: Scalars['Boolean'];
+  isConfigVariablesInDbEnabled: Scalars['Boolean'];
   isEmailVerificationRequired: Scalars['Boolean'];
   isGoogleCalendarEnabled: Scalars['Boolean'];
   isGoogleMessagingEnabled: Scalars['Boolean'];
@@ -371,13 +384,31 @@ export type ComputeStepOutputSchemaInput = {
   step: Scalars['JSON'];
 };
 
+export enum ConfigSource {
+  DATABASE = 'DATABASE',
+  DEFAULT = 'DEFAULT',
+  ENVIRONMENT = 'ENVIRONMENT'
+}
+
 export type ConfigVariable = {
   __typename?: 'ConfigVariable';
   description: Scalars['String'];
+  isEnvOnly: Scalars['Boolean'];
   isSensitive: Scalars['Boolean'];
   name: Scalars['String'];
-  value: Scalars['String'];
+  options?: Maybe<Scalars['JSON']>;
+  source: ConfigSource;
+  type: ConfigVariableType;
+  value?: Maybe<Scalars['JSON']>;
 };
+
+export enum ConfigVariableType {
+  ARRAY = 'ARRAY',
+  BOOLEAN = 'BOOLEAN',
+  ENUM = 'ENUM',
+  NUMBER = 'NUMBER',
+  STRING = 'STRING'
+}
 
 export enum ConfigVariablesGroup {
   AnalyticsConfig = 'AnalyticsConfig',
@@ -425,6 +456,12 @@ export type CreateAgentInput = {
 export type CreateApprovedAccessDomainInput = {
   domain: Scalars['String'];
   email: Scalars['String'];
+};
+
+export type CreateBillingPlansInput = {
+  planId: Scalars['String'];
+  planPrice: Scalars['Float'];
+  workspaceId: Scalars['ID'];
 };
 
 export type CreateDraftFromWorkflowVersionInput = {
@@ -548,6 +585,10 @@ export type CreateWhatsappIntegrationInput = {
 };
 
 export type CreateWorkflowVersionStepInput = {
+  /** Next step ID */
+  nextStepId?: InputMaybe<Scalars['String']>;
+  /** Parent step ID */
+  parentStepId?: InputMaybe<Scalars['String']>;
   /** New step type */
   stepType: Scalars['String'];
   /** Workflow version ID */
@@ -580,6 +621,15 @@ export type CustomDomainValidRecords = {
   id: Scalars['String'];
   records: Array<CustomDomainRecord>;
 };
+
+/** Database Event Action */
+export enum DatabaseEventAction {
+  CREATED = 'CREATED',
+  DELETED = 'DELETED',
+  DESTROYED = 'DESTROYED',
+  RESTORED = 'RESTORED',
+  UPDATED = 'UPDATED'
+}
 
 export type DateFilter = {
   eq?: InputMaybe<Scalars['Date']>;
@@ -682,11 +732,8 @@ export type FeatureFlagDto = {
 
 export enum FeatureFlagKey {
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
-  IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
-  IsApprovedAccessDomainsEnabled = 'IsApprovedAccessDomainsEnabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
   IsCustomDomainEnabled = 'IsCustomDomainEnabled',
-  IsEventObjectEnabled = 'IsEventObjectEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsMeteredProductBillingEnabled = 'IsMeteredProductBillingEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
@@ -1001,7 +1048,6 @@ export type LinkLogsWorkspaceEntity = {
   utmCampaign: Scalars['String'];
   utmMedium: Scalars['String'];
   utmSource: Scalars['String'];
-  uv?: Maybe<Scalars['String']>;
 };
 
 export type LinkMetadata = {
@@ -1048,9 +1094,12 @@ export type Mutation = {
   computeStepOutputSchema: Scalars['JSON'];
   createAgent: Agent;
   createApprovedAccessDomain: ApprovedAccessDomain;
+  createBillingPlans: BillingPlans;
+  createDatabaseConfigVariable: Scalars['Boolean'];
   createDraftFromWorkflowVersion: WorkflowVersion;
   createInterIntegration: InterIntegration;
   createOIDCIdentityProvider: SetupSsoOutput;
+  createObjectEvent: Analytics;
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
@@ -1066,6 +1115,7 @@ export type Mutation = {
   deleteAgent: Agent;
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
+  deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
@@ -1090,11 +1140,13 @@ export type Mutation = {
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
+  removeBillingPlan: Scalars['Boolean'];
   removeStripeIntegration: Scalars['Boolean'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
+  saveBillingPlanId: BillingPlans;
   saveStripeAccountId: StripeIntegration;
   sendEventMessage: Scalars['Boolean'];
   sendInvitations: SendInvitationsOutput;
@@ -1109,7 +1161,7 @@ export type Mutation = {
   toggleAgentStatus: Scalars['Boolean'];
   toggleInterIntegrationStatus: Scalars['String'];
   toggleWhatsappIntegrationStatus: Scalars['Boolean'];
-  track: Analytics;
+  trackAnalytics: Analytics;
   updateAgent: Agent;
   updateChatbotFlow: Scalars['Boolean'];
   updateInterIntegration: InterIntegration;
@@ -1134,7 +1186,7 @@ export type Mutation = {
   uploadImage: Scalars['String'];
   uploadProfilePicture: Scalars['String'];
   uploadWorkspaceLogo: Scalars['String'];
-  upsertOneObjectPermission: ObjectPermission;
+  upsertObjectPermissions: Array<ObjectPermission>;
   upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
@@ -1700,6 +1752,14 @@ export type ObjectPermission = {
   roleId: Scalars['String'];
 };
 
+export type ObjectPermissionInput = {
+  canDestroyObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canReadObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  objectMetadataId: Scalars['String'];
+};
+
 export type ObjectRecordFilterInput = {
   and?: InputMaybe<Array<ObjectRecordFilterInput>>;
   createdAt?: InputMaybe<DateFilter>;
@@ -1719,11 +1779,28 @@ export type ObjectStandardOverrides = {
   translations?: Maybe<Scalars['JSON']>;
 };
 
+export type OnDbEventDto = {
+  __typename?: 'OnDbEventDTO';
+  action: DatabaseEventAction;
+  eventDate: Scalars['DateTime'];
+  objectNameSingular: Scalars['String'];
+  record: Scalars['JSON'];
+  updatedFields?: Maybe<Array<Scalars['String']>>;
+};
+
+export type OnDbEventInput = {
+  action?: InputMaybe<DatabaseEventAction>;
+  objectNameSingular?: InputMaybe<Scalars['String']>;
+  recordId?: InputMaybe<Scalars['String']>;
+};
+
 /** Onboarding status */
 export enum OnboardingStatus {
   COMPLETED = 'COMPLETED',
   INVITE_TEAM = 'INVITE_TEAM',
+  PAYMENT_REQUIRED = 'PAYMENT_REQUIRED',
   PLAN_REQUIRED = 'PLAN_REQUIRED',
+  PAYMENT_REQUIRED = "PAYMENT_REQUIRED",
   PROFILE_CREATION = 'PROFILE_CREATION',
   SYNC_EMAIL = 'SYNC_EMAIL',
   WORKSPACE_ACTIVATION = 'WORKSPACE_ACTIVATION'
@@ -1814,6 +1891,7 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  getAllBillingPlans: Array<BillingPlans>;
   getAllExtensions?: Maybe<Array<TelephonyExtension>>;
   getAllStripeIntegrations: Array<StripeIntegration>;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
@@ -1822,6 +1900,7 @@ export type Query = {
   getChatbots: Array<ChatbotWorkspaceEntity>;
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getDashboardLinklogs: Array<LinkLogsWorkspaceEntity>;
+  getDatabaseConfigVariable: ConfigVariable;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getInterAccountInfo: Scalars['String'];
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -2170,6 +2249,7 @@ export type Role = {
   id: Scalars['String'];
   isEditable: Scalars['Boolean'];
   label: Scalars['String'];
+  objectPermissions?: Maybe<Array<ObjectPermission>>;
   settingPermissions?: Maybe<Array<SettingPermission>>;
   workspaceMembers: Array<WorkspaceMember>;
 };
@@ -2389,6 +2469,16 @@ export type SubmitFormStepInput = {
   stepId: Scalars['String'];
   /** Workflow run ID */
   workflowRunId: Scalars['String'];
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  onDbEvent: OnDbEventDto;
+};
+
+
+export type SubscriptionOnDbEventArgs = {
+  input: OnDbEventInput;
 };
 
 export enum SubscriptionInterval {
@@ -2818,12 +2908,8 @@ export type UpdateWorkspaceInput = {
   subdomain?: InputMaybe<Scalars['String']>;
 };
 
-export type UpsertObjectPermissionInput = {
-  canDestroyObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canReadObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  objectMetadataId: Scalars['String'];
+export type UpsertObjectPermissionsInput = {
+  objectPermissions: Array<ObjectPermissionInput>;
   roleId: Scalars['String'];
 };
 
@@ -2965,6 +3051,7 @@ export type WorkflowAction = {
   __typename?: 'WorkflowAction';
   id: Scalars['UUID'];
   name: Scalars['String'];
+  nextStepIds?: Maybe<Array<Scalars['UUID']>>;
   settings: Scalars['JSON'];
   type: Scalars['String'];
   valid: Scalars['Boolean'];
@@ -3150,9 +3237,13 @@ export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
 
 export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
-export type TrackMutationVariables = Exact<{
-  action: Scalars['String'];
-  payload: Scalars['JSON'];
+export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+
+export type TrackAnalyticsMutationVariables = Exact<{
+  type: AnalyticsType;
+  event?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  properties?: InputMaybe<Scalars['JSON']>;
 }>;
 
 
@@ -4350,20 +4441,22 @@ export const TrackDocument = gql`
 export type TrackMutationFn = Apollo.MutationFunction<TrackMutation, TrackMutationVariables>;
 
 /**
- * __useTrackMutation__
+ * __useTrackAnalyticsMutation__
  *
- * To run a mutation, you first call `useTrackMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useTrackMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useTrackAnalyticsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTrackAnalyticsMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [trackMutation, { data, loading, error }] = useTrackMutation({
+ * const [trackAnalyticsMutation, { data, loading, error }] = useTrackAnalyticsMutation({
  *   variables: {
- *      action: // value for 'action'
- *      payload: // value for 'payload'
+ *      type: // value for 'type'
+ *      event: // value for 'event'
+ *      name: // value for 'name'
+ *      properties: // value for 'properties'
  *   },
  * });
  */
@@ -5571,6 +5664,57 @@ export const ValidateChatbotFlowDocument = gql`
       id
       displayName
     }
+    authProviders {
+      google
+      password
+      microsoft
+      sso {
+        id
+        name
+        type
+        status
+        issuer
+      }
+    }
+    signInPrefilled
+    isMultiWorkspaceEnabled
+    isEmailVerificationRequired
+    defaultSubdomain
+    frontDomain
+    debugMode
+    analyticsEnabled
+    isAttachmentPreviewEnabled
+    support {
+      supportDriver
+      supportFrontChatId
+    }
+    sentry {
+      dsn
+      environment
+      release
+    }
+    captcha {
+      provider
+      siteKey
+    }
+    api {
+      mutationMaximumAffectedRecords
+    }
+    chromeExtensionId
+    canManageFeatureFlags
+    publicFeatureFlags {
+      key
+      metadata {
+        label
+        description
+        imagePath
+      }
+    }
+    isMicrosoftMessagingEnabled
+    isMicrosoftCalendarEnabled
+    isGoogleMessagingEnabled
+    isGoogleCalendarEnabled
+    isConfigVariablesInDbEnabled
   }
 }
     `;

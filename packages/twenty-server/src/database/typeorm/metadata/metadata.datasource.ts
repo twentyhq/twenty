@@ -17,7 +17,7 @@ export const typeORMMetadataModuleOptions: TypeOrmModuleOptions = {
   entities: [
     `${isJest ? '' : 'dist/'}src/engine/metadata-modules/**/*.entity{.ts,.js}`,
   ],
-  synchronize: false,
+  synchronize: true,
   migrationsRun: false,
   migrationsTableName: '_typeorm_migrations',
   migrations: [

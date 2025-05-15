@@ -34,17 +34,35 @@ const StyledIconContainer = styled.div`
 
 const StyledLabelAndIconContainer = styled.div`
   align-items: center;
+  align-self: flex-start;
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  height: 18px;
+  height: 24px;
 `;
 
-const StyledValueContainer = styled.div`
+const StyledValueContainer = styled.div<{ readonly: boolean }>`
+  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
   display: flex;
-  flex-grow: 1;
   min-width: 0;
   position: relative;
+
+  &:hover {
+    ${({ readonly, theme }) =>
+      readonly &&
+      `
+      outline: 1px solid ${theme.border.color.medium};
+      border-radius: ${theme.border.radius.sm};
+      
+      ${StyledIconContainer}, ${StyledLabelContainer} {
+        color: ${theme.font.color.secondary};
+      }
+      
+      img {
+        opacity: 0.64;
+      }
+    `}
+  }
 `;
 
 const StyledLabelContainer = styled.div<{ width?: number }>`
@@ -61,7 +79,6 @@ const StyledInlineCellBaseContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   align-items: center;
-  justify-content: center;
 `;
 
 export const StyledSkeletonDiv = styled.div`
@@ -129,7 +146,7 @@ export const RecordInlineCellContainer = () => {
           )}
         </StyledLabelAndIconContainer>
       )}
-      <StyledValueContainer>
+      <StyledValueContainer readonly={readonly ?? false}>
         <RecordInlineCellValue />
       </StyledValueContainer>
     </StyledInlineCellBaseContainer>

@@ -1,14 +1,12 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
-} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -23,6 +21,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 
 export enum WorkflowStatus {
   DRAFT = 'DRAFT',
@@ -106,7 +105,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   // Relations
   @WorkspaceRelation({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.versions,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Versions`,
     description: msg`Workflow versions linked to the workflow.`,
     icon: 'IconVersions',
@@ -117,7 +116,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.runs,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Runs`,
     description: msg`Workflow runs linked to the workflow.`,
     icon: 'IconRun',
@@ -128,7 +127,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.eventListeners,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Event Listeners`,
     description: msg`Workflow event listeners linked to the workflow.`,
     inverseSideTarget: () => WorkflowEventListenerWorkspaceEntity,
@@ -138,8 +137,19 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   eventListeners: Relation<WorkflowEventListenerWorkspaceEntity[]>;
 
   @WorkspaceRelation({
+    standardId: WORKFLOW_STANDARD_FIELD_IDS.automatedTriggers,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Automated Triggers`,
+    description: msg`Workflow automated triggers linked to the workflow.`,
+    inverseSideTarget: () => WorkflowAutomatedTriggerWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsSystem()
+  automatedTriggers: Relation<WorkflowAutomatedTriggerWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.favorites,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
     description: msg`Favorites linked to the workflow`,
     icon: 'IconHeart',
@@ -151,7 +161,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.timelineActivities,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Timeline Activities`,
     description: msg`Timeline activities linked to the workflow`,
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,

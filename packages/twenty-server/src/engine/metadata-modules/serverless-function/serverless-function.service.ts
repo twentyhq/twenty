@@ -10,7 +10,8 @@ import { IsNull, Not, Repository } from 'typeorm';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
-import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/serverless-function/serverless-function-executed';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -45,7 +46,7 @@ export class ServerlessFunctionService {
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly analyticsService: AnalyticsService,
+    private readonly auditService: AuditService,
     @InjectMessageQueue(MessageQueue.serverlessFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -143,9 +144,11 @@ export class ServerlessFunctionService {
       version,
     );
 
-    const eventInput = {
-      action: 'serverlessFunction.executed',
-      payload: {
+    this.auditService
+      .createContext({
+        workspaceId,
+      })
+      .insertWorkspaceEvent(SERVERLESS_FUNCTION_EXECUTED_EVENT, {
         duration: resultServerlessFunction.duration,
         status: resultServerlessFunction.status,
         ...(resultServerlessFunction.error && {
@@ -153,14 +156,7 @@ export class ServerlessFunctionService {
         }),
         functionId: functionToExecute.id,
         functionName: functionToExecute.name,
-      },
-    };
-
-    this.analyticsService.create(
-      eventInput,
-      'serverless-function',
-      workspaceId,
-    );
+      });
 
     return resultServerlessFunction;
   }

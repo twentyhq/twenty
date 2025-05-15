@@ -20,7 +20,6 @@ import { In, Repository } from 'typeorm';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -75,7 +74,6 @@ export class UserResolver {
     private readonly onboardingService: OnboardingService,
     private readonly userVarService: UserVarsService,
     private readonly fileService: FileService,
-    private readonly analyticsService: AnalyticsService,
     private readonly domainManagerService: DomainManagerService,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
@@ -181,7 +179,7 @@ export class UserResolver {
     );
 
     if (workspaceMember && workspaceMember.avatarUrl) {
-      const avatarUrlToken = await this.fileService.encodeFileToken({
+      const avatarUrlToken = this.fileService.encodeFileToken({
         workspaceMemberId: workspaceMember.id,
         workspaceId: workspace.id,
       });
@@ -233,7 +231,7 @@ export class UserResolver {
 
     for (const workspaceMemberEntity of workspaceMemberEntities) {
       if (workspaceMemberEntity.avatarUrl) {
-        const avatarUrlToken = await this.fileService.encodeFileToken({
+        const avatarUrlToken = this.fileService.encodeFileToken({
           workspaceMemberId: workspaceMemberEntity.id,
           workspaceId: workspace.id,
         });
@@ -318,7 +316,7 @@ export class UserResolver {
       workspaceId,
     });
 
-    const fileToken = await this.fileService.encodeFileToken({
+    const fileToken = this.fileService.encodeFileToken({
       workspaceId: workspaceId,
     });
 

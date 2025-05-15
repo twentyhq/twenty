@@ -6,6 +6,8 @@ export enum PageHotkeyScope {
   InviteTeam = 'invite-team',
   SyncEmail = 'sync-email',
   PlanRequired = 'plan-required',
+  PaymentRequired = 'payment-required',
+  PaymentRequiredSuccess = '/payment-required/payment-success',
   ShowPage = 'show-page',
   PersonShowPage = 'person-show-page',
   CompanyShowPage = 'company-show-page',

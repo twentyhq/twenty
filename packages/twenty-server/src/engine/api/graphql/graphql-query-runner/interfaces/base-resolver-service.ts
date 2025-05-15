@@ -45,6 +45,7 @@ export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   repository: WorkspaceRepository<ObjectLiteral>;
   graphqlQueryParser: GraphqlQueryParser;
   graphqlQuerySelectedFieldsResult: GraphqlQuerySelectedFieldsResult;
+  isExecutedByApiKey: boolean;
   roleId?: string;
 };
 
@@ -84,12 +85,13 @@ export abstract class GraphqlQueryBaseResolverService<
 
       await this.validate(args, options);
 
-      const dataSource =
-        await this.twentyORMGlobalManager.getDataSourceForWorkspace(
-          authContext.workspace.id,
-        );
+      const workspaceDataSource =
+        await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+          workspaceId: authContext.workspace.id,
+          shouldFailIfMetadataNotFound: false,
+        });
 
-      const featureFlagsMap = dataSource.featureFlagMap;
+      const featureFlagsMap = workspaceDataSource.featureFlagMap;
 
       const isPermissionsV2Enabled =
         featureFlagsMap[FeatureFlagKey.IsPermissionsV2Enabled];
@@ -123,13 +125,18 @@ export abstract class GraphqlQueryBaseResolverService<
         workspaceId: authContext.workspace.id,
       });
 
-      const repository = dataSource.getRepository(
+      const executedByApiKey = isDefined(authContext.apiKey);
+      const shouldBypassPermissionChecks = executedByApiKey;
+
+      const repository = workspaceDataSource.getRepository(
         objectMetadataItemWithFieldMaps.nameSingular,
+        shouldBypassPermissionChecks,
         roleId,
       );
 
       const graphqlQueryParser = new GraphqlQueryParser(
         objectMetadataItemWithFieldMaps.fieldsByName,
+        objectMetadataItemWithFieldMaps.fieldsByJoinColumnName,
         options.objectMetadataMaps,
         featureFlagsMap,
       );
@@ -145,10 +152,11 @@ export abstract class GraphqlQueryBaseResolverService<
       const graphqlQueryResolverExecutionArgs = {
         args: computedArgs,
         options,
-        dataSource,
+        dataSource: workspaceDataSource,
         repository,
         graphqlQueryParser,
         graphqlQuerySelectedFieldsResult,
+        isExecutedByApiKey: executedByApiKey,
         roleId,
       };
 
@@ -176,7 +184,9 @@ export abstract class GraphqlQueryBaseResolverService<
         resultWithGettersArray,
       );
 
-      return resultWithGetters;
+      return Array.isArray(resultWithGetters)
+        ? resultWithGettersArray
+        : resultWithGettersArray[0];
     } catch (error) {
       workspaceQueryRunnerGraphqlApiExceptionHandler(error, options);
     }

@@ -338,7 +338,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -361,7 +361,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -384,7 +384,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -677,7 +677,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -700,7 +700,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -723,7 +723,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -910,7 +910,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -933,7 +933,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -956,7 +956,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -1560,7 +1560,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -1940,7 +1940,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -1963,7 +1963,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -2451,7 +2451,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -2474,7 +2474,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -2497,7 +2497,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -2865,7 +2865,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -2888,7 +2888,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -2911,7 +2911,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -3360,7 +3360,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -3383,7 +3383,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -3406,7 +3406,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -4214,7 +4214,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -4237,7 +4237,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -4260,7 +4260,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -4724,7 +4724,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -4747,7 +4747,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -4770,7 +4770,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -5315,7 +5315,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -5338,7 +5338,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -5361,7 +5361,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -5943,7 +5943,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -5966,7 +5966,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -5989,7 +5989,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -6193,7 +6193,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -6216,7 +6216,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -6239,7 +6239,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -6593,7 +6593,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -6616,7 +6616,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -6639,7 +6639,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -6889,7 +6889,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -6912,7 +6912,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -6935,7 +6935,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -7835,7 +7835,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -7858,7 +7858,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -7881,7 +7881,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -8091,7 +8091,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -8114,7 +8114,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -8137,7 +8137,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -8461,7 +8461,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -8484,7 +8484,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -8507,7 +8507,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -8736,7 +8736,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -8759,7 +8759,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -8782,7 +8782,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -9113,7 +9113,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -9136,7 +9136,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -9159,7 +9159,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -9299,7 +9299,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -9322,7 +9322,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -9345,7 +9345,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -10772,7 +10772,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -10795,7 +10795,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -10818,7 +10818,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -11026,7 +11026,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -11049,7 +11049,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -11072,7 +11072,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -11247,7 +11247,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -11270,7 +11270,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -11293,7 +11293,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -12040,7 +12040,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -12063,7 +12063,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -12086,7 +12086,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -12694,7 +12694,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -12717,7 +12717,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -12740,7 +12740,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -13365,7 +13365,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -13388,7 +13388,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -13411,7 +13411,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -13823,7 +13823,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -13846,7 +13846,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -13869,7 +13869,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -14751,7 +14751,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -14774,7 +14774,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -14797,7 +14797,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -15630,7 +15630,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -15653,7 +15653,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -15676,7 +15676,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -16915,7 +16915,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -16938,7 +16938,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -16961,7 +16961,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -18034,7 +18034,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -18057,7 +18057,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -18080,7 +18080,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -18332,7 +18332,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -18355,7 +18355,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -18378,7 +18378,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -18743,7 +18743,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -18766,7 +18766,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -18789,7 +18789,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -19326,7 +19326,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -19349,7 +19349,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -19372,7 +19372,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -19881,7 +19881,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -19904,7 +19904,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -19927,7 +19927,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -20336,7 +20336,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -20359,7 +20359,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -20382,7 +20382,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -21613,7 +21613,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -21636,7 +21636,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: 'now',
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,
@@ -21659,7 +21659,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 defaultValue: null,
                 options: null,
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
                 isLabelSyncedWithName: false,
                 relationDefinition: null,

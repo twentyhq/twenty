@@ -233,6 +233,8 @@ export const useRecordShowPagePagination = (
     navigateToIndexView,
     canNavigateToNextRecord,
     canNavigateToPreviousRecord,
+    rankInView,
+    totalCount,
     objectMetadataItem,
   };
 };
