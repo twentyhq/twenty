@@ -886,138 +886,80 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       }
     }
     case 'ACTOR': {
-      if (isSubFieldFilter) {
-        switch (subFieldName) {
-          case 'source': {
-            switch (recordFilter.operand) {
-              case RecordFilterOperand.Is: {
-                if (recordFilter.value === '[]') {
-                  return;
-                }
-
-                const parsedSources = JSON.parse(
-                  recordFilter.value,
-                ) as string[];
-
-                return {
-                  [correspondingFieldMetadataItem.name]: {
-                    source: {
-                      in: parsedSources,
-                    } satisfies RelationFilter,
-                  },
-                };
-              }
-              case RecordFilterOperand.IsNot: {
-                if (recordFilter.value === '[]') {
-                  return;
-                }
-
-                const parsedSources = JSON.parse(
-                  recordFilter.value,
-                ) as string[];
-
-                if (parsedSources.length === 0) return;
-
-                return {
-                  not: {
-                    [correspondingFieldMetadataItem.name]: {
-                      source: {
-                        in: parsedSources,
-                      } satisfies RelationFilter,
-                    },
-                  },
-                };
-              }
-              default:
-                throw new Error(
-                  `Unknown operand ${recordFilter.operand} for ${recordFilter.label} filter`,
-                );
-            }
-          }
-          case 'name': {
-            switch (recordFilter.operand) {
-              case RecordFilterOperand.Contains:
-                return {
-                  or: [
-                    {
-                      [correspondingFieldMetadataItem.name]: {
-                        name: {
-                          ilike: `%${recordFilter.value}%`,
-                        },
-                      } satisfies ActorFilter,
-                    },
-                  ],
-                };
-              case RecordFilterOperand.DoesNotContain:
-                return {
-                  and: [
-                    {
-                      not: {
-                        [correspondingFieldMetadataItem.name]: {
-                          name: {
-                            ilike: `%${recordFilter.value}%`,
-                          },
-                        } satisfies ActorFilter,
-                      },
-                    },
-                  ],
-                };
-              default:
-                throw new Error(
-                  `Unknown operand ${recordFilter.operand} for ${recordFilter.label} filter`,
-                );
-            }
-          }
-        }
-        break;
-      } else {
-        if (recordFilter.value === '[]') {
-          return;
-        }
-
-        const parsedSources = JSON.parse(recordFilter.value) as string[];
-
-        if (parsedSources.length === 0) return;
-
+      if (subFieldName === 'source') {
         switch (recordFilter.operand) {
-          case RecordFilterOperand.Is:
+          case RecordFilterOperand.Is: {
+            if (recordFilter.value === '[]') {
+              return;
+            }
+
+            const parsedSources = JSON.parse(recordFilter.value) as string[];
+
             return {
               [correspondingFieldMetadataItem.name]: {
                 source: {
                   in: parsedSources,
-                },
-              } satisfies ActorFilter,
+                } satisfies RelationFilter,
+              },
             };
-          case RecordFilterOperand.IsNot:
+          }
+          case RecordFilterOperand.IsNot: {
+            if (recordFilter.value === '[]') {
+              return;
+            }
+
+            const parsedSources = JSON.parse(recordFilter.value) as string[];
+
+            if (parsedSources.length === 0) return;
+
             return {
-              and: [
-                {
-                  or: [
-                    {
-                      not: {
-                        [correspondingFieldMetadataItem.name]: {
-                          source: {
-                            in: parsedSources,
-                          },
-                        } satisfies ActorFilter,
-                      },
-                    },
-                    {
-                      [correspondingFieldMetadataItem.name]: {
-                        source: {
-                          is: 'NULL',
-                        },
-                      } satisfies ActorFilter,
-                    },
-                  ],
+              not: {
+                [correspondingFieldMetadataItem.name]: {
+                  source: {
+                    in: parsedSources,
+                  } satisfies RelationFilter,
                 },
-              ],
+              },
             };
+          }
           default:
             throw new Error(
               `Unknown operand ${recordFilter.operand} for ${recordFilter.label} filter`,
             );
         }
+      }
+
+      switch (recordFilter.operand) {
+        case RecordFilterOperand.Contains:
+          return {
+            or: [
+              {
+                [correspondingFieldMetadataItem.name]: {
+                  name: {
+                    ilike: `%${recordFilter.value}%`,
+                  },
+                } satisfies ActorFilter,
+              },
+            ],
+          };
+        case RecordFilterOperand.DoesNotContain:
+          return {
+            and: [
+              {
+                not: {
+                  [correspondingFieldMetadataItem.name]: {
+                    name: {
+                      ilike: `%${recordFilter.value}%`,
+                    },
+                  } satisfies ActorFilter,
+                },
+              },
+            ],
+          };
+        default:
+          throw new Error(
+            `Unknown operand ${recordFilter.operand} for ${recordFilter.label} filter`,
+          );
       }
     }
     case 'EMAILS': {
