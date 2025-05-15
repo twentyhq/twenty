@@ -70,7 +70,7 @@ export const SettingsCustomDomainRecords = ({
         <TableHeader>Value</TableHeader>
       </TableRow>
       <TableBody>
-        {records.map((record) => (
+        {records.filter((record) => record.status !== 'success').map((record) => (
           <TableRow gridAutoColumns="30% 16% auto" key={record.key}>
             <StyledTableCell>
               <StyledButton
