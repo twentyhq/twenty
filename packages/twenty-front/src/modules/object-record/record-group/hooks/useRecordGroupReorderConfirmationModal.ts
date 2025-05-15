@@ -1,4 +1,4 @@
-import { RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID } from '@/object-record/record-group/constants/RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID';
+import { RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID } from '@/object-record/record-group/constants/RecordGroupReorderConfirmationModalId';
 import { useReorderRecordGroups } from '@/object-record/record-group/hooks/useReorderRecordGroups';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
