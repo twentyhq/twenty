@@ -182,7 +182,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.chatbot,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Chatbot`,
     description: msg`Favorite chatbot`,
     icon: 'IconSettingsAutomation',

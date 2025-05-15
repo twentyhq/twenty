@@ -9,7 +9,6 @@ import { IntegrationType } from 'src/engine/core-modules/inbox/inbox.entity';
 import { InboxService } from 'src/engine/core-modules/inbox/inbox.service';
 import { CreateWhatsappIntegrationInput } from 'src/engine/core-modules/meta/whatsapp/integration/dtos/create-whatsapp-integration.input';
 import { UpdateWhatsappIntegrationInput } from 'src/engine/core-modules/meta/whatsapp/integration/dtos/update-whatsapp-integration.input';
-import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -17,8 +16,6 @@ import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standa
 
 export class WhatsappIntegrationService {
   constructor(
-    @InjectRepository(WhatsappIntegration, 'core')
-    private whatsappIntegrationRepository: Repository<WhatsappIntegration>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly environmentService: TwentyConfigService,

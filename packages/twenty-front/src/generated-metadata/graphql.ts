@@ -1247,7 +1247,9 @@ export type Mutation = {
   trackAnalytics: Analytics;
   unsyncRemoteTable: RemoteTable;
   updateAgent: Agent;
+  updateBillingPlans: BillingPlans;
   updateChatbotFlow: Scalars['Boolean']['output'];
+  updateDatabaseConfigVariable: Scalars['Boolean']['output'];
   updateInterIntegration: InterIntegration;
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneField: Field;
@@ -1319,6 +1321,17 @@ export type MutationCreateApprovedAccessDomainArgs = {
 };
 
 
+export type MutationCreateBillingPlansArgs = {
+  createBillingPlansInput: CreateBillingPlansInput;
+};
+
+
+export type MutationCreateDatabaseConfigVariableArgs = {
+  key: Scalars['String']['input'];
+  value: Scalars['JSON']['input'];
+};
+
+
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
 };
@@ -1331,6 +1344,14 @@ export type MutationCreateInterIntegrationArgs = {
 
 export type MutationCreateOidcIdentityProviderArgs = {
   input: SetupOidcSsoInput;
+};
+
+
+export type MutationCreateObjectEventArgs = {
+  event: Scalars['String']['input'];
+  objectMetadataId: Scalars['String']['input'];
+  properties?: InputMaybe<Scalars['JSON']['input']>;
+  recordId: Scalars['String']['input'];
 };
 
 
@@ -1411,6 +1432,11 @@ export type MutationDeleteAgentArgs = {
 
 export type MutationDeleteApprovedAccessDomainArgs = {
   input: DeleteApprovedAccessDomainInput;
+};
+
+
+export type MutationDeleteDatabaseConfigVariableArgs = {
+  key: Scalars['String']['input'];
 };
 
 
@@ -1525,6 +1551,11 @@ export type MutationPublishServerlessFunctionArgs = {
 };
 
 
+export type MutationRemoveBillingPlanArgs = {
+  planId: Scalars['String']['input'];
+};
+
+
 export type MutationRemoveStripeIntegrationArgs = {
   accountId: Scalars['String']['input'];
 };
@@ -1547,6 +1578,12 @@ export type MutationResendWorkspaceInvitationArgs = {
 
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
+};
+
+
+export type MutationSaveBillingPlanIdArgs = {
+  planId: Scalars['String']['input'];
+  workspaceId: Scalars['String']['input'];
 };
 
 
@@ -1622,9 +1659,11 @@ export type MutationToggleWhatsappIntegrationStatusArgs = {
 };
 
 
-export type MutationTrackArgs = {
-  action: Scalars['String']['input'];
-  payload: Scalars['JSON']['input'];
+export type MutationTrackAnalyticsArgs = {
+  event?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  properties?: InputMaybe<Scalars['JSON']['input']>;
+  type: AnalyticsType;
 };
 
 
@@ -1638,8 +1677,19 @@ export type MutationUpdateAgentArgs = {
 };
 
 
+export type MutationUpdateBillingPlansArgs = {
+  updateBillingPlansInput: UpdateBillingPlansInput;
+};
+
+
 export type MutationUpdateChatbotFlowArgs = {
   updateChatbotInput: UpdateChatbotFlowInput;
+};
+
+
+export type MutationUpdateDatabaseConfigVariableArgs = {
+  key: Scalars['String']['input'];
+  value: Scalars['JSON']['input'];
 };
 
 
@@ -1769,8 +1819,8 @@ export type MutationUploadWorkspaceLogoArgs = {
 };
 
 
-export type MutationUpsertOneObjectPermissionArgs = {
-  upsertObjectPermissionInput: UpsertObjectPermissionInput;
+export type MutationUpsertObjectPermissionsArgs = {
+  upsertObjectPermissionsInput: UpsertObjectPermissionsInput;
 };
 
 
@@ -1935,7 +1985,6 @@ export enum OnboardingStatus {
   INVITE_TEAM = 'INVITE_TEAM',
   PAYMENT_REQUIRED = 'PAYMENT_REQUIRED',
   PLAN_REQUIRED = 'PLAN_REQUIRED',
-  PAYMENT_REQUIRED = 'PAYMENT_REQUIRED',
   PROFILE_CREATION = 'PROFILE_CREATION',
   SYNC_EMAIL = 'SYNC_EMAIL',
   WORKSPACE_ACTIVATION = 'WORKSPACE_ACTIVATION'
@@ -2034,6 +2083,7 @@ export type Query = {
   getAllStripeIntegrations: Array<StripeIntegration>;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
+  getBillingPlansById: BillingPlans;
   getChatbotFlowById: ChatbotFlow;
   getChatbots: Array<ChatbotWorkspaceEntity>;
   getConfigVariablesGrouped: ConfigVariablesOutput;
@@ -2146,6 +2196,11 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 };
 
 
+export type QueryGetAllBillingPlansArgs = {
+  workspaceId: Scalars['String']['input'];
+};
+
+
 export type QueryGetAllStripeIntegrationsArgs = {
   workspaceId: Scalars['String']['input'];
 };
@@ -2156,8 +2211,18 @@ export type QueryGetAvailablePackagesArgs = {
 };
 
 
+export type QueryGetBillingPlansByIdArgs = {
+  id: Scalars['String']['input'];
+};
+
+
 export type QueryGetChatbotFlowByIdArgs = {
   chatbotId: Scalars['String']['input'];
+};
+
+
+export type QueryGetDatabaseConfigVariableArgs = {
+  key: Scalars['String']['input'];
 };
 
 
@@ -2535,6 +2600,7 @@ export type SendInvitationsOutput = {
 
 export type SendMessageInput = {
   fileId?: InputMaybe<Scalars['String']['input']>;
+  from: Scalars['String']['input'];
   integrationId: Scalars['String']['input'];
   message?: InputMaybe<Scalars['String']['input']>;
   to: Scalars['String']['input'];
@@ -2935,6 +3001,12 @@ export type UpdateAgentInput = {
   sectorIds: Array<Scalars['String']['input']>;
 };
 
+export type UpdateBillingPlansInput = {
+  id: Scalars['String']['input'];
+  planId?: InputMaybe<Scalars['String']['input']>;
+  planPrice?: InputMaybe<Scalars['Float']['input']>;
+};
+
 export type UpdateChatbotFlowInput = {
   chatbotId: Scalars['String']['input'];
   edges: Scalars['JSON']['input'];
@@ -3251,6 +3323,7 @@ export type WhatsappWorkspaceEntity = {
   appId: Scalars['String']['output'];
   appKey: Scalars['String']['output'];
   businessAccountId: Scalars['String']['output'];
+  chatbot?: Maybe<ChatbotWorkspaceEntity>;
   disabled: Scalars['Boolean']['output'];
   id: Scalars['String']['output'];
   name?: Maybe<Scalars['String']['output']>;
