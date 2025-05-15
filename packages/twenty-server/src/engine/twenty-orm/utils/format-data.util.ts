@@ -12,7 +12,6 @@ import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metada
 export function formatData<T>(
   data: T,
   objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-  shouldNotEraseCreatedByField = false,
 ): T {
   if (!data) {
     return data;
@@ -52,15 +51,6 @@ export function formatData<T>(
       throw new Error(
         `Field metadata for field "${key}" is missing in object metadata`,
       );
-    }
-
-    if (
-      fieldMetadata.name === 'createdBy' &&
-      fieldMetadata.isCustom === false
-    ) {
-      if (shouldNotEraseCreatedByField) {
-        continue;
-      }
     }
 
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {
