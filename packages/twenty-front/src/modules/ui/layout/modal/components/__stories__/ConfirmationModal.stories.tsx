@@ -1,19 +1,49 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { RecoilRoot } from 'recoil';
+import { expect, fn, userEvent, within } from '@storybook/test';
 
+import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
+import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
+import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { isModalOpenedComponentState } from '../../states/isModalOpenedComponentState';
 import { ConfirmationModal } from '../ConfirmationModal';
+
+const initializeState = ({ set }: { set: (atom: any, value: any) => void }) => {
+  set(
+    isModalOpenedComponentState.atomFamily({
+      instanceId: 'confirmation-modal',
+    }),
+    true,
+  );
+
+  set(currentHotkeyScopeState, {
+    scope: ModalHotkeyScope.ModalFocus,
+    customScopes: {
+      commandMenu: true,
+      goto: false,
+      keyboardShortcutMenu: false,
+    },
+  });
+
+  set(internalHotkeysEnabledScopesState, [ModalHotkeyScope.ModalFocus]);
+};
 
 const meta: Meta<typeof ConfirmationModal> = {
   title: 'UI/Layout/Modal/ConfirmationModal',
   component: ConfirmationModal,
-  decorators: [ComponentDecorator, I18nFrontDecorator],
+  decorators: [RootDecorator, ComponentDecorator, I18nFrontDecorator],
+  parameters: {
+    initializeState,
+    disableHotkeyInitialization: true,
+  },
 };
 export default meta;
 
 type Story = StoryObj<typeof ConfirmationModal>;
+
+const closeMock = fn();
 
 export const Default: Story = {
   args: {
@@ -22,23 +52,6 @@ export const Default: Story = {
     subtitle: 'Velit dolore aliquip laborum occaecat fugiat.',
     confirmButtonText: 'Delete',
   },
-  decorators: [
-    (Story, context) => (
-      <RecoilRoot
-        initializeState={({ set }) => {
-          set(
-            isModalOpenedComponentState.atomFamily({
-              instanceId: context.args.modalId,
-            }),
-            true,
-          );
-        }}
-      >
-        <Story />
-      </RecoilRoot>
-    ),
-    ComponentDecorator,
-  ],
 };
 
 export const InputConfirmation: Story = {
@@ -47,5 +60,47 @@ export const InputConfirmation: Story = {
     confirmationPlaceholder: 'email@test.dev',
     ...Default.args,
   },
-  decorators: Default.decorators,
+};
+
+export const CloseOnEscape: Story = {
+  args: {
+    modalId: 'confirmation-modal',
+    title: 'Escape Key Test',
+    subtitle: 'This modal should close when pressing the Escape key.',
+    confirmButtonText: 'Confirm',
+    onClose: closeMock,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Escape Key Test');
+
+    closeMock.mockClear();
+
+    await userEvent.keyboard('{Escape}');
+
+    expect(closeMock).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const CloseOnClickOutside: Story = {
+  args: {
+    modalId: 'confirmation-modal',
+    title: 'Click Outside Test',
+    subtitle: 'This modal should close when clicking outside of it.',
+    confirmButtonText: 'Confirm',
+    onClose: closeMock,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Click Outside Test');
+
+    closeMock.mockClear();
+
+    const backdrop = document.querySelector('.modal-backdrop') as HTMLElement;
+    await userEvent.click(backdrop);
+
+    expect(closeMock).toHaveBeenCalledTimes(1);
+  },
 };

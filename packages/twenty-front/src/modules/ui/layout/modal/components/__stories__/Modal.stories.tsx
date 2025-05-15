@@ -8,9 +8,35 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { isModalOpenedComponentState } from '../../states/isModalOpenedComponentState';
 import { Modal } from '../Modal';
+
+const initializeState = ({ set }: { set: (atom: any, value: any) => void }) => {
+  set(
+    isModalOpenedComponentState.atomFamily({
+      instanceId: 'confirmation-modal',
+    }),
+    true,
+  );
+
+  set(currentHotkeyScopeState, {
+    scope: ModalHotkeyScope.ModalFocus,
+    customScopes: {
+      commandMenu: true,
+      goto: false,
+      keyboardShortcutMenu: false,
+    },
+  });
+
+  set(internalHotkeysEnabledScopesState, [ModalHotkeyScope.ModalFocus]);
+};
+
 const meta: Meta<typeof Modal> = {
   title: 'UI/Layout/Modal/Modal',
   component: Modal,
+  decorators: [RootDecorator, ComponentDecorator],
+  parameters: {
+    initializeState,
+    disableHotkeyInitialization: true,
+  },
 };
 
 export default meta;
@@ -37,17 +63,6 @@ export const Default: Story = {
       </>
     ),
   },
-  decorators: [RootDecorator, ComponentDecorator],
-  parameters: {
-    initializeState: ({ set }: { set: (atom: any, value: any) => void }) => {
-      set(
-        isModalOpenedComponentState.atomFamily({
-          instanceId: 'modal-id',
-        }),
-        true,
-      );
-    },
-  },
 };
 
 export const CloseClosableModalOnClickOutside: Story = {
@@ -65,17 +80,6 @@ export const CloseClosableModalOnClickOutside: Story = {
         </Modal.Content>
       </>
     ),
-  },
-  decorators: [RootDecorator, ComponentDecorator],
-  parameters: {
-    initializeState: ({ set }: { set: (atom: any, value: any) => void }) => {
-      set(
-        isModalOpenedComponentState.atomFamily({
-          instanceId: 'click-outside-modal',
-        }),
-        true,
-      );
-    },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -106,27 +110,6 @@ export const CloseClosableModalOnEscape: Story = {
         </Modal.Content>
       </>
     ),
-  },
-  decorators: [RootDecorator, ComponentDecorator],
-  parameters: {
-    initializeState: ({ set }: { set: (atom: any, value: any) => void }) => {
-      set(
-        isModalOpenedComponentState.atomFamily({
-          instanceId: 'escape-key-modal',
-        }),
-        true,
-      );
-      set(currentHotkeyScopeState, {
-        scope: ModalHotkeyScope.ModalFocus,
-        customScopes: {
-          commandMenu: true,
-          goto: false,
-          keyboardShortcutMenu: false,
-        },
-      });
-      set(internalHotkeysEnabledScopesState, [ModalHotkeyScope.ModalFocus]);
-    },
-    disableHotkeyInitialization: true,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
