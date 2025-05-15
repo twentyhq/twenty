@@ -5,6 +5,7 @@ import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMe
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { SettingsDataModelFieldPreviewCardProps } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { isDefined } from 'twenty-shared/utils';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 export const useRelationSettingsFormInitialValues = ({
@@ -34,11 +35,10 @@ export const useRelationSettingsFormInitialValues = ({
     const initialObjectCandidate =
       relationObjectMetadataItemFromFieldMetadata ??
       objectMetadataItem ??
-      availableItems[0] ??
-      activeObjectMetadataItems[0];
-    if (!initialObjectCandidate) {
+      availableItems[0];
+    if (!isDefined(initialObjectCandidate)) {
       throw new Error(
-        'Relation Form initialization error: no valid objects to relate to. Please create a custom object in your workspace.',
+        'Relation Form initialization error: invariant violated – no valid object available for relation (this should never happen).',
       );
     }
     return initialObjectCandidate;
