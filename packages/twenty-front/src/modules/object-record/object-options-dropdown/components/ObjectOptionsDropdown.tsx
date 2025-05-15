@@ -36,36 +36,38 @@ export const ObjectOptionsDropdown = ({
     recordIndexId,
     viewType,
   });
-  return <>
-    <Dropdown
-      dropdownId={OBJECT_OPTIONS_DROPDOWN_ID}
-      dropdownHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
-      dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
-      clickableComponent={
-        <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
-          <Trans>Options</Trans>
-        </StyledHeaderDropdownButton>
-      }
-      onClose={handleResetContent}
-      dropdownComponents={
-        <ObjectOptionsDropdownContext.Provider
-        value={{
-          viewType,
-          objectMetadataItem,
-          recordIndexId,
-          currentContentId,
-          onContentChange: handleContentChange,
-          resetContent: handleResetContent,
-          dropdownId: OBJECT_OPTIONS_DROPDOWN_ID,
-          handleRecordGroupOrderChangeWithModal
-        }}
-        >
-          <ObjectOptionsDropdownContent />
-        </ObjectOptionsDropdownContext.Provider>
-      }
+  return (
+    <>
+      <Dropdown
+        dropdownId={OBJECT_OPTIONS_DROPDOWN_ID}
+        dropdownHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
+        dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
+        clickableComponent={
+          <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
+            <Trans>Options</Trans>
+          </StyledHeaderDropdownButton>
+        }
+        onClose={handleResetContent}
+        dropdownComponents={
+          <ObjectOptionsDropdownContext.Provider
+            value={{
+              viewType,
+              objectMetadataItem,
+              recordIndexId,
+              currentContentId,
+              onContentChange: handleContentChange,
+              resetContent: handleResetContent,
+              dropdownId: OBJECT_OPTIONS_DROPDOWN_ID,
+              handleRecordGroupOrderChangeWithModal,
+            }}
+          >
+            <ObjectOptionsDropdownContent />
+          </ObjectOptionsDropdownContext.Provider>
+        }
       />
       <RecordGroupReorderConfirmationModal
-              onConfirmClick={handleRecordGroupReorderConfirmClick}
-            />
-      </>
+        onConfirmClick={handleRecordGroupReorderConfirmClick}
+      />
+    </>
+  );
 };

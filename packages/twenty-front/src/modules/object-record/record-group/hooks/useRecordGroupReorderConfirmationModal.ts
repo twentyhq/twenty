@@ -56,11 +56,11 @@ export const useRecordGroupReorderConfirmationModal = ({
   const setRecordGroupSort = useSetRecoilComponentStateV2(
     recordIndexRecordGroupSortComponentState,
   );
-    const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
+  const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
 
   const handleDragEndWithModal: OnDragEndResponder = (result, provided) => {
     if (!isDragableSortRecordGroup) {
-      closeAnyOpenDropdown()
+      closeAnyOpenDropdown();
       setIsRecordGroupReorderConfirmationModalVisible(true);
       setActiveDropdownFocusIdAndMemorizePrevious(null);
       setPendingDragEndHandlerParams([result, provided]);
