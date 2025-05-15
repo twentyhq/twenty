@@ -10,7 +10,7 @@ async function dropSchemasSequentially() {
 
     // Fetch all schemas excluding the ones we want to keep
     const schemas =
-      (await performQuery<{schema_name: string}[]>(
+      (await performQuery<{ schema_name: string }[]>(
         `
       SELECT n.nspname AS "schema_name"
       FROM pg_catalog.pg_namespace n 

@@ -73,8 +73,8 @@ export const validateDefaultValueForType = (
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   // @ts-expect-error legacy noImplicitAny
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const validators = defaultValueValidatorsMap[type] as any[];
 
   if (!validators) {
