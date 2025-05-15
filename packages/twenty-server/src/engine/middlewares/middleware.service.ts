@@ -163,8 +163,6 @@ export class MiddlewareService {
       switch (error.code) {
         case AuthExceptionCode.UNAUTHENTICATED:
           return 401;
-        default:
-          return 500;
       }
     }
 
