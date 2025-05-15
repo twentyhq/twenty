@@ -8,13 +8,13 @@ import { useNavigate } from 'react-router-dom';
 import { IconButton } from 'twenty-ui/input';
 import { Card, CardFooter } from 'twenty-ui/layout';
 
-import { useFindAllInterIntegrations } from '@/settings/integrations/inter/hooks/useFindAllInterIntegrations';
-import { useToggleInterIntegration } from '@/settings/integrations/inter/hooks/useToggleInterIntegrationDisable';
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { useEffect } from 'react';
 // eslint-disable-next-line no-restricted-imports
-import { SettingsSelectStatusPill } from '@/settings/integrations/meta/components/SettingsSelectStatusPill';
-import { IconPencil, IconPlus, IconPointFilled } from '@tabler/icons-react';
+import { SettingsIntegrationFocusNfeToggleStatusButton } from '@/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeDatabaseToggleStatusButton';
+import { useGetAllFocusNfeIntegrationsByWorkspace } from '@/settings/integrations/focus-nfe/hooks/useGetAllFocusNfeIntegrationByWorkspace';
+import { useToggleFocusNfeIntegrationStatus } from '@/settings/integrations/focus-nfe/hooks/useToggleFocusNfeStatus';
+import { IconPencil, IconPlus } from '@tabler/icons-react';
 
 type SettingsIntegrationInterDatabaseConectionsListCardProps = {
   integration: SettingsIntegration;
@@ -22,7 +22,7 @@ type SettingsIntegrationInterDatabaseConectionsListCardProps = {
 
 const StyledDatabaseLogo = styled.img`
   height: 100%;
-  width: 16px;
+  width: 28px;
 `;
 
 const StyledIntegrationsSection = styled.div`
@@ -77,24 +77,28 @@ const StyledButton = styled.button`
   }
 `;
 
-export const SettingsIntegrationInterDatabaseConectionsListCard = ({
+export const SettingsIntegrationFocusNfeConectionsListCard = ({
   integration,
 }: SettingsIntegrationInterDatabaseConectionsListCardProps) => {
   // const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const { interIntegrations = [], refetchInter } =
-    useFindAllInterIntegrations();
-  const { toggleInterIntegrationDisable } = useToggleInterIntegration();
+  const {
+    focusNfeIntegrations = [],
+    refetchFocusNfe,
+    loading,
+  } = useGetAllFocusNfeIntegrationsByWorkspace();
+  const { toggleFocusNfeIntegrationStatus } =
+    useToggleFocusNfeIntegrationStatus();
 
   useEffect(() => {
-    refetchInter();
-  }, [refetchInter]);
+    refetchFocusNfe();
+  }, [refetchFocusNfe]);
 
-  const handleConfirmChange = (id: string) => {
-    toggleInterIntegrationDisable(id);
-    refetchInter();
+  const handleToggleStatus = async (id: string) => {
+    await toggleFocusNfeIntegrationStatus(id);
+    refetchFocusNfe();
   };
 
   const handleEditIntegration = (integrationId: string) => {
@@ -104,36 +108,28 @@ export const SettingsIntegrationInterDatabaseConectionsListCard = ({
   return (
     <>
       <StyledIntegrationsSection>
-        {interIntegrations.length > 0 && (
+        {focusNfeIntegrations.length > 0 && (
           <>
-            {interIntegrations.map((interIntegrations) => (
-              <StyledCard key={interIntegrations.id}>
+            {focusNfeIntegrations.map((focusNfeIntegrations) => (
+              <StyledCard key={focusNfeIntegrations.id}>
                 <StyledDiv>
                   <StyledDatabaseLogo
-                    alt={interIntegrations.integrationName}
+                    alt={focusNfeIntegrations.integrationName}
                     src={integration.from.image}
                   />
-                  {interIntegrations.integrationName}
+                  {focusNfeIntegrations.integrationName}
                 </StyledDiv>
                 <StyledDiv>
-                  <SettingsSelectStatusPill
-                    dropdownId={`integration-${interIntegrations.id}`}
-                    options={[
-                      {
-                        Icon: IconPointFilled,
-                        label: interIntegrations?.status
-                          ? interIntegrations?.status
-                          : 'Active',
-                        value:
-                          interIntegrations.status === 'Active' ? false : true,
-                      },
-                    ]}
-                    onChange={() => {
-                      handleConfirmChange(interIntegrations.id);
-                    }}
+                  <SettingsIntegrationFocusNfeToggleStatusButton
+                    key={focusNfeIntegrations.id}
+                    actualStatus={focusNfeIntegrations.status ?? 'inactive'}
+                    onClick={() => handleToggleStatus(focusNfeIntegrations.id)}
+                    disabled={loading}
                   />
                   <IconButton
-                    onClick={() => handleEditIntegration(interIntegrations.id)}
+                    onClick={() =>
+                      handleEditIntegration(focusNfeIntegrations.id)
+                    }
                     variant="tertiary"
                     size="medium"
                     Icon={IconPencil}

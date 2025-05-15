@@ -1,7 +1,7 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationPreview } from '@/settings/integrations/components/SettingsIntegrationPreview';
+import { SettingsIntegrationFocusNfeConectionsListCard } from '@/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeDatabaseConectionsListCard';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
-import { SettingsIntegrationInterDatabaseConectionsListCard } from '@/settings/integrations/inter/components/SettingsIntegrationInterDatabaseConectionsListCard';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -15,7 +15,6 @@ export const SettingsIntegrationFocusNfeDatabase = () => {
   const integration = integrationCategoryAll.integrations.find(
     ({ from: { key } }) => key.includes('focus'),
   );
-
   const isIntegrationAvailable = !!integration;
 
   useEffect(() => {
@@ -45,7 +44,7 @@ export const SettingsIntegrationFocusNfeDatabase = () => {
         <SettingsIntegrationPreview
           integrationLogoUrl={integration.from.image}
         />
-        <SettingsIntegrationInterDatabaseConectionsListCard
+        <SettingsIntegrationFocusNfeConectionsListCard
           integration={integration}
         />
       </SettingsPageContainer>

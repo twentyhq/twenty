@@ -100,7 +100,7 @@ export const SettingsIntegrationFocusNfeNewDatabaseConnection = () => {
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}
-          onCancel={() => navigate(SettingsPath.IntegrationInterDatabase)}
+          onCancel={() => navigate(SettingsPath.IntegrationFocusNfe)}
           onSave={handleSave}
         />
       }
