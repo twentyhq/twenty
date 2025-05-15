@@ -1,7 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { RecoilRoot } from 'recoil';
 
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { isModalOpenedComponentState } from '../../states/isModalOpenedComponentState';
 import { ConfirmationModal } from '../ConfirmationModal';
 
 const meta: Meta<typeof ConfirmationModal> = {
@@ -20,7 +22,23 @@ export const Default: Story = {
     subtitle: 'Velit dolore aliquip laborum occaecat fugiat.',
     confirmButtonText: 'Delete',
   },
-  decorators: [ComponentDecorator],
+  decorators: [
+    (Story, context) => (
+      <RecoilRoot
+        initializeState={({ set }) => {
+          set(
+            isModalOpenedComponentState.atomFamily({
+              instanceId: context.args.modalId,
+            }),
+            true,
+          );
+        }}
+      >
+        <Story />
+      </RecoilRoot>
+    ),
+    ComponentDecorator,
+  ],
 };
 
 export const InputConfirmation: Story = {
