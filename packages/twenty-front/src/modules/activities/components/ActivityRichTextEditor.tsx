@@ -70,6 +70,7 @@ export const ActivityRichTextEditor = ({
   const isReadOnly = isFieldValueReadOnly({
     objectNameSingular: activityObjectNameSingular,
     isRecordReadOnly,
+    isCustom: objectMetadataItemActivity.isCustom,
   });
 
   const { deleteManyRecords: deleteAttachments } = useDeleteManyRecords({
