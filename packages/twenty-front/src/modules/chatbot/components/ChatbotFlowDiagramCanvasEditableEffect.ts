@@ -36,14 +36,13 @@ export const ChatbotFlowDiagramCanvasEditableEffect = () => {
 
   const handleSelectionChange = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
-      const selectedNode = nodes[0] as Node | undefined;
-
       if (!isInRightDrawer) {
         setCommandMenuNavigationStack([]);
       }
 
       if (!chatbotFlowId) return;
 
+      const selectedNode = nodes[0] as Node | undefined;
       const nodeType = selectedNode?.type;
 
       if (
@@ -60,10 +59,7 @@ export const ChatbotFlowDiagramCanvasEditableEffect = () => {
           getIcon(getChatbotNodeIcon(nodeType)),
         );
         return;
-      }
-
-      // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-      if (chatbotFlowId) {
+      } else {
         openChatbotFlowCommandMenu(chatbotFlowId);
         return;
       }

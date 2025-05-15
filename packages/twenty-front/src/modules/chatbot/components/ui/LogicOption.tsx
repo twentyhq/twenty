@@ -48,12 +48,21 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
 
   if (!sectors) return;
 
-  const sectorsOptions =
-    sectors?.map((sector) => ({
+  const defaultOption = { label: 'Choose a sector', value: '' };
+
+  const sectorsOptions = [
+    defaultOption,
+    ...sectors.map((sector) => ({
       Icon: getIcon(sector.icon),
       label: sector.name,
       value: sector.id,
-    })) ?? [];
+    })),
+  ];
+
+  const handleSectorChange = (val: string) => {
+    if (val === '') return;
+    onUpdate({ ...condition, sectorId: val });
+  };
 
   return (
     <>
@@ -75,7 +84,7 @@ export const LogicOption: React.FC<LogicOptionProps> = ({
           dropdownId={`select-sector-condition-${condition.option}`}
           options={sectorsOptions}
           value={condition.sectorId}
-          onChange={(val) => onUpdate({ ...condition, sectorId: val })}
+          onChange={handleSectorChange}
         />
       </StyledLogicNodeWrapper>
     </>
