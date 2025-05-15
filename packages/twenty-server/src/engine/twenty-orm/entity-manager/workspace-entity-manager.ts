@@ -26,6 +26,7 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 
 export class WorkspaceEntityManager extends EntityManager {
   private readonly internalContext: WorkspaceInternalContext;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly repositories: Map<string, Repository<any>>;
   declare connection: WorkspaceDataSource;
 
@@ -190,6 +191,7 @@ export class WorkspaceEntityManager extends EntityManager {
     roleId,
     shouldBypassPermissionChecks,
   }: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     target: EntityTarget<any>;
     dataSource: WorkspaceDataSource;
     shouldBypassPermissionChecks: boolean;
@@ -240,6 +242,7 @@ export class WorkspaceEntityManager extends EntityManager {
   }
 
   private extractTargetNameSingularFromEntityTarget(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     target: EntityTarget<any>,
   ): string {
     return this.connection.getMetadata(target).name;

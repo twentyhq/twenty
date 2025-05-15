@@ -29,9 +29,11 @@ export class GraphqlQueryFilterConditionParser {
   }
 
   public parse(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     queryBuilder: SelectQueryBuilder<any>,
     objectNameSingular: string,
     filter: Partial<ObjectRecordFilter>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): SelectQueryBuilder<any> {
     if (!filter || Object.keys(filter).length === 0) {
       return queryBuilder;
@@ -50,6 +52,7 @@ export class GraphqlQueryFilterConditionParser {
     queryBuilder: WhereExpressionBuilder,
     objectNameSingular: string,
     key: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
     isFirst = false,
   ): void {

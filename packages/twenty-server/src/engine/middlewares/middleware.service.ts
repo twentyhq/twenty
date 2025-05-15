@@ -51,6 +51,7 @@ export class MiddlewareService {
     return isUserUnauthenticated && isExcludedOperation;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public writeRestResponseOnExceptionCaught(res: Response, error: any) {
     // capture and handle custom exceptions
     handleException(error as CustomException, this.exceptionHandlerService);
@@ -69,6 +70,7 @@ export class MiddlewareService {
     res.end();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public writeGraphqlResponseOnExceptionCaught(res: Response, error: any) {
     const errors = [
       handleExceptionAndConvertToGraphQLError(
@@ -150,6 +152,7 @@ export class MiddlewareService {
     request.userWorkspaceId = data.userWorkspaceId;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private getStatus(error: any): number {
     if (this.hasErrorStatus(error)) {
       return error.status;

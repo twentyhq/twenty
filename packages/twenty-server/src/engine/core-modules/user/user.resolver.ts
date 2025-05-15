@@ -150,6 +150,7 @@ export class UserResolver {
   async userVars(
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<Record<string, any>> {
     const userVars = await this.userVarService.getAll({
       userId: user.id,

@@ -51,6 +51,7 @@ const pgGraphQLErrorMapping: PgGraphQLErrorMapping = {
 export const computePgGraphQLError = (
   command: string,
   objectName: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   errors: any[],
   pgGraphqlConfig: PgGraphQLConfig,
 ) => {

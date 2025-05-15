@@ -21,6 +21,7 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
       throw new BadRequestException('Input must not be empty');
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const overriddenRecordsToCreate: Record<string, any>[] = [];
 
     for (const recordToCreate of body) {

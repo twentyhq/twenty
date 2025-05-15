@@ -50,6 +50,7 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
     startCursor,
     endCursor,
   }: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     finalRecords: any[];
     objectMetadataNamePlural: string;
     isForwardPagination: boolean;

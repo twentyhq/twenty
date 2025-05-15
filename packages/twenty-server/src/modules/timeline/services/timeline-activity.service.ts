@@ -13,6 +13,7 @@ type TimelineActivity = Omit<ObjectRecordNonDestructiveEvent, 'properties'> & {
   linkedRecordCachedName?: string;
   linkedRecordId?: string;
   linkedObjectMetadataId?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   properties: Record<string, any>; // more relaxed conditions than for internal events
 };
 

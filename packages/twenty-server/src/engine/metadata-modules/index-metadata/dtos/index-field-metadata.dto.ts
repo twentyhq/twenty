@@ -16,6 +16,7 @@ import { IndexMetadataDTO } from './index-metadata.dto';
 
 @ObjectType('IndexField')
 @Authorize({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.workspace?.id },
   }),

@@ -1,11 +1,14 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const cleanGraphQLResponse = (input: any) => {
   if (!input) return null;
   const output = { data: {} }; // Initialize the output with a data key at the top level
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const isObject = (obj: any) => {
     return obj !== null && typeof obj === 'object' && !Array.isArray(obj);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanObject = (obj: any) => {
     const cleanedObj = {};
 

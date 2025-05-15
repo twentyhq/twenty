@@ -9,6 +9,7 @@ import {
   RemoteServerExceptionCode,
 } from 'src/engine/metadata-modules/remote-server/remote-server.exception';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const remoteServerGraphqlApiExceptionHandler = (error: any) => {
   if (error instanceof RemoteServerException) {
     switch (error.code) {

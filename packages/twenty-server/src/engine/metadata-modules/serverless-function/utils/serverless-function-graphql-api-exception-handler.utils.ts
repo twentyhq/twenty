@@ -8,6 +8,7 @@ import {
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const serverlessFunctionGraphQLApiExceptionHandler = (error: any) => {
   if (error instanceof ServerlessFunctionException) {
     switch (error.code) {
