@@ -97,6 +97,11 @@ export const ConfirmationModal = ({
     closeModal(modalId);
   };
 
+  const handleCancelClick = () => {
+    closeModal(modalId);
+    onClose?.();
+  };
+
   const handleEnter = () => {
     if (isValidValue) {
       handleConfirmClick();
@@ -141,12 +146,11 @@ export const ConfirmationModal = ({
             </Section>
           )}
           <StyledCenteredButton
-            onClick={() => {
-              closeModal(modalId);
-            }}
+            onClick={handleCancelClick}
             variant="secondary"
             title={t`Cancel`}
             fullWidth
+            dataTestId="confirmation-modal-cancel-button"
           />
 
           {AdditionalButtons}

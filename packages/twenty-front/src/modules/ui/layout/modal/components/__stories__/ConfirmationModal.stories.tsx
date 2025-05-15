@@ -126,3 +126,51 @@ export const ConfirmWithEnterKey: Story = {
     expect(confirmMock).toHaveBeenCalledTimes(1);
   },
 };
+
+export const CancelButtonClick: Story = {
+  args: {
+    modalId: 'confirmation-modal',
+    title: 'Cancel Button Test',
+    subtitle: 'Clicking the cancel button should close the modal',
+    confirmButtonText: 'Confirm',
+    onClose: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Cancel Button Test');
+
+    const closeMock = args.onClose as ReturnType<typeof fn>;
+    closeMock.mockClear();
+
+    const cancelButton = canvas.getByTestId('confirmation-modal-cancel-button');
+    await userEvent.click(cancelButton);
+
+    expect(closeMock).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const ConfirmButtonClick: Story = {
+  args: {
+    modalId: 'confirmation-modal',
+    title: 'Confirm Button Test',
+    subtitle: 'Clicking the confirm button should trigger the confirm action',
+    confirmButtonText: 'Confirm',
+    onConfirmClick: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Confirm Button Test');
+
+    const confirmMock = args.onConfirmClick as ReturnType<typeof fn>;
+    confirmMock.mockClear();
+
+    const confirmButton = canvas.getByTestId(
+      'confirmation-modal-confirm-button',
+    );
+    await userEvent.click(confirmButton);
+
+    expect(confirmMock).toHaveBeenCalledTimes(1);
+  },
+};
