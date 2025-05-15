@@ -1,7 +1,7 @@
 import { FavoriteFolderNavigationDrawerItemDropdown } from '@/favorites/components/FavoriteFolderNavigationDrawerItemDropdown';
 import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
 import { FavoritesDroppable } from '@/favorites/components/FavoritesDroppable';
-import { FavoriteFolderDeleteModalId } from '@/favorites/constants/FavoriteFolderDeleteModalId';
+import { FAVORITE_FOLDER_DELETE_MODAL_ID } from '@/favorites/constants/FavoriteFolderDeleteModalId';
 import { FavoritesDragContext } from '@/favorites/contexts/FavoritesDragContext';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useDeleteFavoriteFolder } from '@/favorites/hooks/useDeleteFavoriteFolder';
@@ -105,7 +105,7 @@ export const CurrentWorkspaceMemberFavorites = ({
 
   const handleFavoriteFolderDelete = async () => {
     if (folder.favorites.length > 0) {
-      openModal(FavoriteFolderDeleteModalId);
+      openModal(FAVORITE_FOLDER_DELETE_MODAL_ID);
       closeFavoriteFolderEditDropdown();
     } else {
       await deleteFavoriteFolder(folder.folderId);
@@ -115,7 +115,7 @@ export const CurrentWorkspaceMemberFavorites = ({
 
   const handleConfirmDelete = async () => {
     await deleteFavoriteFolder(folder.folderId);
-    closeModal(FavoriteFolderDeleteModalId);
+    closeModal(FAVORITE_FOLDER_DELETE_MODAL_ID);
   };
 
   const rightOptions = (
@@ -210,7 +210,7 @@ export const CurrentWorkspaceMemberFavorites = ({
 
       {createPortal(
         <ConfirmationModal
-          modalId={FavoriteFolderDeleteModalId}
+          modalId={FAVORITE_FOLDER_DELETE_MODAL_ID}
           title={`Remove ${folder.favorites.length} ${folder.favorites.length > 1 ? 'favorites' : 'favorite'}?`}
           subtitle={`This action will delete this favorite folder ${folder.favorites.length > 1 ? `and all ${folder.favorites.length} favorites` : 'and the favorite'} inside. Do you want to continue?`}
           onConfirmClick={handleConfirmDelete}

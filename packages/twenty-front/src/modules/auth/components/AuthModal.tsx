@@ -1,5 +1,5 @@
 import { AuthModalMountEffect } from '@/auth/components/AuthModalMountEffect';
-import { AUTH_MODAL_ID } from '@/auth/constants/authModalIds';
+import { AUTH_MODAL_ID } from '@/auth/constants/AuthModalId';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';

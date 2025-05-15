@@ -1,7 +1,7 @@
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useEffect } from 'react';
 
-import { AUTH_MODAL_ID } from '../constants/authModalIds';
+import { AUTH_MODAL_ID } from '../constants/AuthModalId';
 
 export const AuthModalMountEffect = () => {
   const { openModal } = useModal();

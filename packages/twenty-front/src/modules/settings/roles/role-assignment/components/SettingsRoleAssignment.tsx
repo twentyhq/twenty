@@ -20,21 +20,21 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
-  AppTooltip,
-  H2Title,
-  IconPlus,
-  IconSearch,
-  TooltipDelay,
+    AppTooltip,
+    H2Title,
+    IconPlus,
+    IconSearch,
+    TooltipDelay,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
-  Role,
-  SearchRecord,
-  WorkspaceMember,
+    Role,
+    SearchRecord,
+    WorkspaceMember,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { RoleAssignmentConfirmationModalId } from '../constants/RoleAssignmentConfirmationModalId';
+import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '../constants/RoleAssignmentConfirmationModalId';
 import { SettingsRoleAssignmentTableRow } from './SettingsRoleAssignmentTableRow';
 
 const StyledAssignToMemberContainer = styled.div`
@@ -154,13 +154,13 @@ export const SettingsRoleAssignment = ({
       role: existingRole,
       avatarUrl: workspaceMemberSearchRecord.imageUrl,
     });
-    openModal(RoleAssignmentConfirmationModalId);
+    openModal(ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID);
     closeDropdown();
   };
 
   const isModalOpened = useRecoilComponentValueV2(
     isModalOpenedComponentState,
-    RoleAssignmentConfirmationModalId,
+    ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID,
   );
 
   const handleConfirm = async () => {
@@ -195,7 +195,7 @@ export const SettingsRoleAssignment = ({
   const handleRoleClick = (roleId: string) => {
     navigateSettings(SettingsPath.RoleDetail, { roleId });
     handleModalClose();
-    closeModal(RoleAssignmentConfirmationModalId);
+    closeModal(ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID);
   };
 
   const handleSearchChange = (text: string) => {
