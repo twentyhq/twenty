@@ -39,10 +39,9 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const {
     viewType,
     currentContentId,
-    recordIndexId,
     onContentChange,
     resetContent,
-    handleRecordGroupOrderChangeWithModal
+    handleRecordGroupOrderChangeWithModal,
   } = useOptionsDropdown();
 
   const { currentView } = useGetCurrentViewOnly();
@@ -75,8 +74,6 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   } = useRecordGroupVisibility({
     viewType,
   });
-
-
   useEffect(() => {
     if (
       currentContentId === 'hiddenRecordGroups' &&
@@ -195,7 +192,6 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           </DropdownMenuItemsContainer>
         </>
       )}
-      
     </>
   );
 };
