@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { modalHotkeyScopeComponentState } from '@/ui/layout/modal/states/modalHotkeyScopeComponenState';
+import { modalHotkeyScopeComponentState } from '@/ui/layout/modal/states/modalHotkeyScopeComponentState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { isDefined } from 'twenty-shared/utils';
