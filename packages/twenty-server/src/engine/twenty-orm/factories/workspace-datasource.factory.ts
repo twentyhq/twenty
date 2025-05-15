@@ -234,10 +234,10 @@ export class WorkspaceDatasourceFactory {
       recomputeCache: () =>
         this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
           workspaceId,
-          ignoreLock: true,
         }),
       cachedEntityName: ROLES_PERMISSIONS,
       exceptionCode: TwentyORMExceptionCode.ROLES_PERMISSIONS_VERSION_NOT_FOUND,
+      logger: this.logger,
     });
   }
 

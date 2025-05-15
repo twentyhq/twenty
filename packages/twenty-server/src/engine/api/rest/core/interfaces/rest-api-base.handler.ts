@@ -31,7 +31,7 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { computeCursorArgFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-cursor-arg-filter';
+import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -41,7 +41,13 @@ export interface PageInfo {
 }
 
 interface FormatResultParams<T> {
-  operation: 'delete' | 'create' | 'update' | 'findOne' | 'findMany';
+  operation:
+    | 'delete'
+    | 'create'
+    | 'update'
+    | 'findOne'
+    | 'findMany'
+    | 'findDuplicates';
   objectNameSingular?: string;
   objectNamePlural?: string;
   data: T;
@@ -50,7 +56,7 @@ interface FormatResultParams<T> {
 }
 
 export interface FormatResult {
-  data: {
+  data?: {
     [operation: string]: object;
   };
   pageInfo?: PageInfo;
@@ -73,7 +79,9 @@ export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly apiEventEmitterService: ApiEventEmitterService;
 
-  protected abstract handle(request: Request): Promise<FormatResult>;
+  protected abstract handle(
+    request: Request,
+  ): Promise<FormatResult | { data: FormatResult[] }>;
 
   public async getRepositoryAndMetadataOrFail(request: Request) {
     const { workspace, apiKey, userWorkspaceId } = request;
@@ -106,6 +114,12 @@ export abstract class RestApiBaseHandler {
         objectMetadata.objectMetadataMaps,
         objectMetadataNameSingular,
       );
+
+    if (!isDefined(objectMetadataItemWithFieldsMaps)) {
+      throw new BadRequestException(
+        `Object metadata item with name singular ${objectMetadataNameSingular} not found`,
+      );
+    }
 
     const shouldBypassPermissionChecks = !!apiKey;
 
@@ -228,54 +242,36 @@ export abstract class RestApiBaseHandler {
   }: FormatResultParams<T>) {
     let prefix: string;
 
+    if (isDefined(objectNameSingular) && isDefined(objectNamePlural)) {
+      throw new Error(
+        'Cannot define both objectNameSingular and objectNamePlural',
+      );
+    }
+
     if (operation === 'findOne') {
       prefix = objectNameSingular || '';
     } else if (operation === 'findMany') {
       prefix = objectNamePlural || '';
+    } else if (operation === 'findDuplicates') {
+      prefix = `${objectNameSingular}Duplicates`;
     } else {
-      prefix = operation + capitalize(objectNameSingular || '');
+      prefix =
+        operation + capitalize(objectNameSingular || objectNamePlural || '');
     }
 
     return {
-      data: {
-        [prefix]: data,
-      },
+      ...(operation === 'findDuplicates'
+        ? {
+            [prefix]: data,
+          }
+        : {
+            data: {
+              [prefix]: data,
+            },
+          }),
       ...(isDefined(pageInfo) ? { pageInfo } : {}),
       ...(isDefined(totalCount) ? { totalCount } : {}),
     };
-  }
-
-  formatPaginatedResult({
-    finalRecords,
-    objectMetadataNamePlural,
-    isForwardPagination,
-    hasMoreRecords,
-    totalCount,
-    startCursor,
-    endCursor,
-  }: {
-    finalRecords: any[];
-    objectMetadataNamePlural: string;
-    isForwardPagination: boolean;
-    hasMoreRecords: boolean;
-    totalCount: number;
-    startCursor: string | null;
-    endCursor: string | null;
-  }) {
-    const hasPreviousPage = !isForwardPagination && hasMoreRecords;
-
-    return this.formatResult({
-      operation: 'findMany',
-      objectNamePlural: objectMetadataNamePlural,
-      data: isForwardPagination ? finalRecords : finalRecords.reverse(),
-      pageInfo: {
-        hasNextPage: isForwardPagination && hasMoreRecords,
-        ...(hasPreviousPage ? { hasPreviousPage } : {}),
-        startCursor,
-        endCursor,
-      },
-      totalCount,
-    });
   }
 
   async findRecords({
@@ -285,6 +281,7 @@ export abstract class RestApiBaseHandler {
     objectMetadata,
     objectMetadataNameSingular,
     objectMetadataItemWithFieldsMaps,
+    extraFilters,
   }: {
     request: Request;
     recordId?: string;
@@ -297,6 +294,7 @@ export abstract class RestApiBaseHandler {
     objectMetadataItemWithFieldsMaps:
       | ObjectMetadataItemWithFieldMaps
       | undefined;
+    extraFilters?: Partial<ObjectRecordFilter>;
   }) {
     const qb = repository.createQueryBuilder(objectMetadataNameSingular);
 
@@ -324,6 +322,7 @@ export abstract class RestApiBaseHandler {
       inputs,
       objectMetadata,
       isForwardPagination,
+      extraFilters,
     });
 
     let selectQueryBuilder = isDefined(filters)
@@ -402,6 +401,7 @@ export abstract class RestApiBaseHandler {
     inputs,
     objectMetadata,
     isForwardPagination,
+    extraFilters,
   }: {
     inputs: QueryVariables;
     objectMetadata: {
@@ -409,8 +409,15 @@ export abstract class RestApiBaseHandler {
       objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     };
     isForwardPagination: boolean;
+    extraFilters?: Partial<ObjectRecordFilter>;
   }) {
     let appliedFilters = inputs.filter;
+
+    if (extraFilters) {
+      appliedFilters = (appliedFilters
+        ? { and: [appliedFilters, extraFilters] }
+        : extraFilters) as unknown as ObjectRecordFilter;
+    }
 
     const cursor = inputs.startingAfter || inputs.endingBefore;
 
@@ -422,9 +429,9 @@ export abstract class RestApiBaseHandler {
         isForwardPagination,
       );
 
-      appliedFilters = (inputs.filter
+      appliedFilters = (appliedFilters
         ? {
-            and: [inputs.filter, { or: cursorArgFilter }],
+            and: [appliedFilters, { or: cursorArgFilter }],
           }
         : { or: cursorArgFilter }) as unknown as ObjectRecordFilter;
     }
