@@ -177,8 +177,13 @@ export class WorkspaceDatasourceFactory {
                 : undefined,
               extra: {
                 query_timeout: 10000,
+                // https://node-postgres.com/apis/pool
+                // TypeORM doesn't allow sharing connection pools bet
+                // So for now we keep a small pool open for longer
+                // for each workspace.
                 idleTimeoutMillis: ONE_HOUR_IN_MS,
                 max: 4,
+                allowExitOnIdle: true,
               },
             },
             cachedFeatureFlagMapVersion,
