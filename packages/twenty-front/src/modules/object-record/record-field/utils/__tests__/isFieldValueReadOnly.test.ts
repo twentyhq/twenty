@@ -45,6 +45,26 @@ describe('isFieldValueReadOnly', () => {
     expect(result).toBe(false);
   });
 
+  it('should return false if object is a workflow object and field is custom', () => {
+    const result = isFieldValueReadOnly({
+      objectNameSingular: CoreObjectNameSingular.Workflow,
+      fieldName: 'test',
+      isCustom: true,
+    });
+
+    expect(result).toBe(false);
+  });
+
+  it('should return false if object is a workflow sub object and field is custom', () => {
+    const result = isFieldValueReadOnly({
+      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+      fieldName: 'test',
+      isCustom: true,
+    });
+
+    expect(result).toBe(false);
+  });
+
   describe('when checking field types', () => {
     it('should return true if fieldType is RICH_TEXT', () => {
       const result = isFieldValueReadOnly({

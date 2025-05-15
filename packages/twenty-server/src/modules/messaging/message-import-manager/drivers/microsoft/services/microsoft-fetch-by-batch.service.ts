@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MicrosoftImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception';
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 import { MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
+import { isMicrosoftClientTemporaryError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-temporary-error.utils';
 
 @Injectable()
 export class MicrosoftFetchByBatchService {
@@ -42,16 +44,45 @@ export class MicrosoftFetchByBatchService {
         },
       }));
 
-      const batchResponse = await client
-        .api('/$batch')
-        .post({ requests: batchRequests });
+      try {
+        const batchResponse = await client
+          .api('/$batch')
+          .post({ requests: batchRequests });
 
-      batchResponses.push(batchResponse);
+        batchResponses.push(batchResponse);
+      } catch (error) {
+        if (
+          error.body &&
+          typeof error.body === 'string' &&
+          isMicrosoftClientTemporaryError(error.body)
+        ) {
+          throw new MicrosoftImportDriverException(error.body, error.code, 429);
+        } else {
+          throw error;
+        }
+      }
     }
 
     return {
       messageIdsByBatch,
       batchResponses,
     };
+  }
+
+  /**
+   * Microsoft client.api.post sometimes throws (hard to catch) temporary errors like this one:
+   *
+   * {
+   *   statusCode: 200,
+   *   code: "SyntaxError",
+   *   requestId: null,
+   *   date: "2025-05-14T11:43:02.024Z",
+   *   body: "SyntaxError: Unexpected token < in JSON at position 19341",
+   *   headers: {
+   *   },
+   * }
+   */
+  private isTemporaryError(error: any): boolean {
+    return error?.body?.includes('Unexpected token < in JSON at position');
   }
 }

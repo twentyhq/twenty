@@ -10,7 +10,6 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect';
 import { ObjectFilterDropdownCurrencySelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect';
-import { ObjectFilterDropdownSourceSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSourceSelect';
 import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
@@ -97,7 +96,7 @@ export const ObjectFilterDropdownFilterInput = ({
           )}
           {filterType === 'ACTOR' && (
             <>
-              <ObjectFilterDropdownSourceSelect />
+              <ObjectFilterDropdownTextInput />
             </>
           )}
           {filterType === 'ADDRESS' &&

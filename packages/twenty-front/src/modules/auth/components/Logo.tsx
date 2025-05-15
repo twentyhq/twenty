@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { getImageAbsoluteURI } from 'twenty-shared/utils';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useRedirectToDefaultDomain } from '~/modules/domain-manager/hooks/useRedirectToDefaultDomain';
 import { AppPath } from '~/modules/types/AppPath';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { getImageAbsoluteURI } from 'twenty-shared/utils';
 
 type LogoProps = {
   primaryLogo?: string | null;
@@ -49,7 +49,7 @@ const StyledPrimaryLogo = styled.div<{ src: string }>`
 
 export const Logo = (props: LogoProps) => {
   const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
-  const defaultPrimaryLogoUrl = `${window.location.origin}/icons/android/android-launchericon-192-192.png`;
+  const defaultPrimaryLogoUrl = `${window.location.origin}/images/icons/android/android-launchericon-192-192.png`;
 
   const primaryLogoUrl = getImageAbsoluteURI({
     imageUrl: props.primaryLogo ?? defaultPrimaryLogoUrl,

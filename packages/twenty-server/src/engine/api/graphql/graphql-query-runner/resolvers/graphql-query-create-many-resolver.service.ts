@@ -266,15 +266,20 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     for (const record of recordsToUpdate) {
       const recordId = record.id as string;
 
-      // TODO: we should align update and insert
-      // For insert, formating is done in the server
-      // While for update, formatting is done at the resolver level
-
-      const formattedRecord = formatData(
+      // we should not update an existing record's createdBy value
+      const recordWithoutCreatedByUpdate = this.getRecordWithoutCreatedBy(
         record,
         objectMetadataItemWithFieldMaps,
       );
 
+      const formattedRecord = formatData(
+        recordWithoutCreatedByUpdate,
+        objectMetadataItemWithFieldMaps,
+      );
+
+      // TODO: we should align update and insert
+      // For insert, formating is done in the server
+      // While for update, formatting is done at the resolver level
       await repository.update(recordId, formattedRecord);
       result.identifiers.push({ id: recordId });
       result.generatedMaps.push({ id: recordId });
@@ -360,6 +365,25 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
         totalCount: 1,
       }),
     );
+  }
+
+  private getRecordWithoutCreatedBy(
+    record: Partial<ObjectRecord>,
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  ) {
+    let recordWithoutCreatedByUpdate = record;
+
+    if (
+      'createdBy' in record &&
+      objectMetadataItemWithFieldMaps.fieldsByName['createdBy']?.isCustom ===
+        false
+    ) {
+      const { createdBy: _createdBy, ...recordWithoutCreatedBy } = record;
+
+      recordWithoutCreatedByUpdate = recordWithoutCreatedBy;
+    }
+
+    return recordWithoutCreatedByUpdate;
   }
 
   async validate<T extends ObjectRecord>(
