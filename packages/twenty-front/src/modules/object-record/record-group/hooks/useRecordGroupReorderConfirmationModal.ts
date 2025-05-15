@@ -3,6 +3,7 @@ import { isRecordGroupReorderConfirmationModalVisibleState } from '@/object-reco
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { recordIndexRecordGroupIsDraggableSortComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexRecordGroupIsDraggableSortComponentSelector';
+import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -55,9 +56,11 @@ export const useRecordGroupReorderConfirmationModal = ({
   const setRecordGroupSort = useSetRecoilComponentStateV2(
     recordIndexRecordGroupSortComponentState,
   );
+    const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
 
   const handleDragEndWithModal: OnDragEndResponder = (result, provided) => {
     if (!isDragableSortRecordGroup) {
+      closeAnyOpenDropdown()
       setIsRecordGroupReorderConfirmationModalVisible(true);
       setActiveDropdownFocusIdAndMemorizePrevious(null);
       setPendingDragEndHandlerParams([result, provided]);
