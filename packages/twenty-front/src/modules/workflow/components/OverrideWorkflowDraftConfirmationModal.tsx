@@ -9,6 +9,9 @@ import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDra
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 
+const OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID =
+  'override-workflow-draft-confirmation-modal';
+
 export const OverrideWorkflowDraftConfirmationModal = ({
   workflowId,
   workflowVersionIdToCopy,
@@ -38,7 +41,7 @@ export const OverrideWorkflowDraftConfirmationModal = ({
   return (
     <>
       <ConfirmationModal
-        modalId={`override-workflow-draft-confirmation-modal`}
+        modalId={OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID}
         title="A draft already exists"
         subtitle="A draft already exists for this workflow. Are you sure you want to erase it?"
         onConfirmClick={handleOverrideDraft}
@@ -50,7 +53,7 @@ export const OverrideWorkflowDraftConfirmationModal = ({
               objectRecordId: workflowId,
             })}
             onClick={() => {
-              closeModal(`override-workflow-draft-confirmation-modal`);
+              closeModal(OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID);
             }}
             variant="secondary"
             title="Go to Draft"

@@ -30,6 +30,7 @@ import { Section } from 'twenty-ui/layout';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.sm};
@@ -43,6 +44,9 @@ const StyledInputContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
+
+const DELETE_API_KEY_MODAL_ID = 'delete-api-key-modal';
+const REGENERATE_API_KEY_MODAL_ID = 'regenerate-api-key-modal';
 
 export const SettingsDevelopersApiKeyDetail = () => {
   const { t } = useLingui();
@@ -192,7 +196,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                     <Button
                       title={t`Regenerate Key`}
                       Icon={IconRepeat}
-                      onClick={() => openModal(`regenerate-key-modal`)}
+                      onClick={() => openModal(REGENERATE_API_KEY_MODAL_ID)}
                     />
                     <StyledInfo>
                       {formatExpiration(
@@ -240,7 +244,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 variant="secondary"
                 title={t`Delete`}
                 Icon={IconTrash}
-                onClick={() => openModal(`delete-api-key-modal`)}
+                onClick={() => openModal(DELETE_API_KEY_MODAL_ID)}
               />
             </Section>
           </SettingsPageContainer>
@@ -249,7 +253,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalId={`delete-api-key-modal`}
+        modalId={DELETE_API_KEY_MODAL_ID}
         title={t`Delete API key`}
         subtitle={
           <Trans>
@@ -265,7 +269,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalId={`regenerate-key-modal`}
+        modalId={REGENERATE_API_KEY_MODAL_ID}
         title={t`Regenerate an API key`}
         subtitle={
           <Trans>

@@ -48,6 +48,8 @@ const StyledButtonContainer = styled.div`
   }
 `;
 
+const RESET_VARIABLE_MODAL_ID = 'reset-variable-modal';
+
 export const SettingsAdminConfigVariableDetails = () => {
   const { variableName } = useParams();
   const { t } = useLingui();
@@ -101,7 +103,7 @@ export const SettingsAdminConfigVariableDetails = () => {
     }
 
     if (isFromDatabase && !hasValueChanged) {
-      openModal(`reset-variable-modal`);
+      openModal(RESET_VARIABLE_MODAL_ID);
       return;
     }
 
@@ -193,7 +195,7 @@ export const SettingsAdminConfigVariableDetails = () => {
       </SubMenuTopBarContainer>
 
       <ConfirmationModal
-        modalId={`reset-variable-modal`}
+        modalId={RESET_VARIABLE_MODAL_ID}
         title={t`Reset variable`}
         subtitle={t`This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings.`}
         onConfirmClick={handleConfirmReset}

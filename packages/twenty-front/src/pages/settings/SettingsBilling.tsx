@@ -28,6 +28,9 @@ import {
   useSwitchSubscriptionToYearlyIntervalMutation,
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+
+const SWITCH_BILLING_INTERVAL_MODAL_ID = 'switch-billing-interval-modal';
+
 export const SettingsBilling = () => {
   const { t } = useLingui();
 
@@ -149,7 +152,7 @@ export const SettingsBilling = () => {
         </Section>
       </SettingsPageContainer>
       <ConfirmationModal
-        modalId={`switch-billing-interval-modal`}
+        modalId={SWITCH_BILLING_INTERVAL_MODAL_ID}
         title={t`Switch billing to yearly`}
         subtitle={t`Are you sure that you want to change your billing interval? You will be charged immediately for the full year.`}
         onConfirmClick={switchInterval}

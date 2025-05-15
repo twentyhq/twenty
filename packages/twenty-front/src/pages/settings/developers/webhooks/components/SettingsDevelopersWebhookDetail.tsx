@@ -48,6 +48,8 @@ const StyledPlaceholder = styled.div`
   width: ${({ theme }) => theme.spacing(8)};
 `;
 
+const DELETE_WEBHOOK_MODAL_ID = 'delete-webhook-modal';
+
 export const SettingsDevelopersWebhooksDetail = () => {
   const { t } = useLingui();
 
@@ -218,12 +220,12 @@ export const SettingsDevelopersWebhooksDetail = () => {
             variant="secondary"
             title={t`Delete`}
             Icon={IconTrash}
-            onClick={() => openModal(`delete-webhook-modal`)}
+            onClick={() => openModal(DELETE_WEBHOOK_MODAL_ID)}
           />
           <ConfirmationModal
             confirmationPlaceholder={confirmationText}
             confirmationValue={confirmationText}
-            modalId={`delete-webhook-modal`}
+            modalId={DELETE_WEBHOOK_MODAL_ID}
             title={t`Delete webhook`}
             subtitle={
               <Trans>
