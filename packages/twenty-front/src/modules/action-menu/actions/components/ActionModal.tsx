@@ -6,6 +6,8 @@ import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext'
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ButtonAccent } from 'twenty-ui/input';
 
 export type ActionModalProps = {
@@ -36,6 +38,11 @@ export const ActionModal = ({
 
   const actionConfig = useContext(ActionConfigContext);
 
+  const isModalOpened = useRecoilComponentValueV2(
+    isModalOpenedComponentState,
+    `${actionConfig?.key}-action-modal`,
+  );
+
   if (!actionConfig) {
     return null;
   }
@@ -45,18 +52,19 @@ export const ActionModal = ({
       <ActionDisplay
         onClick={() => openModal(`${actionConfig.key}-action-modal`)}
       />
-      {createPortal(
-        <ConfirmationModal
-          modalId={`${actionConfig.key}-action-modal`}
-          title={title}
-          subtitle={subtitle}
-          onConfirmClick={handleConfirmClick}
-          confirmButtonText={confirmButtonText}
-          confirmButtonAccent={confirmButtonAccent}
-          loading={isLoading}
-        />,
-        document.body,
-      )}
+      {isModalOpened &&
+        createPortal(
+          <ConfirmationModal
+            modalId={`${actionConfig.key}-action-modal`}
+            title={title}
+            subtitle={subtitle}
+            onConfirmClick={handleConfirmClick}
+            confirmButtonText={confirmButtonText}
+            confirmButtonAccent={confirmButtonAccent}
+            loading={isLoading}
+          />,
+          document.body,
+        )}
     </>
   );
 };
