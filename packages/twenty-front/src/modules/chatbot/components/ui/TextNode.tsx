@@ -32,21 +32,6 @@ const StyledTextContainer = styled.div`
   width: 100%;
 `;
 
-const StyledTextContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.quaternary};
-  border: none;
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-sizing: border-box;
-  color: ${({ theme }) => theme.font.color.primary};
-  display: flex;
-  flex-direction: column;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  outline: none;
-  padding: ${({ theme }) => theme.spacing(2)};
-  white-space: pre-wrap;
-  width: 100%;
-`;
-
 function TextNode({
   id,
   data,
