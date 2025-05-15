@@ -42,7 +42,6 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { isSelectFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import {
@@ -73,6 +72,7 @@ import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'sr
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
 
+import { isSelectFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata.util';
 import { generateDefaultValue } from './utils/generate-default-value';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
 
@@ -255,12 +255,20 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       if (
         updatedFieldMetadata.isActive &&
-        isSelectFieldMetadataType(updatedFieldMetadata.type)
+        isSelectFieldMetadata(updatedFieldMetadata) &&
+        isSelectFieldMetadata(existingFieldMetadata)
       ) {
+        // TODO REFACTOR MERGE BOTH FUNCTION
         await this.fieldMetadataRelatedRecordsService.updateRelatedViewGroups(
           existingFieldMetadata,
           updatedFieldMetadata,
         );
+
+        await this.fieldMetadataRelatedRecordsService.updateRelatedViewFilters(
+          existingFieldMetadata,
+          updatedFieldMetadata,
+        );
+        /// END TODO
       }
 
       if (

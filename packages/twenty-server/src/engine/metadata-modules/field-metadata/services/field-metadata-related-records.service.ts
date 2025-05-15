@@ -22,7 +22,7 @@ type Differences<T> = {
   deleted: T[];
 };
 
-type SelectFieldMetadataEntity = FieldMetadataEntity<FieldMetadataType.SELECT>;
+export type SelectFieldMetadataEntity = FieldMetadataEntity<FieldMetadataType.SELECT>;
 
 @Injectable()
 export class FieldMetadataRelatedRecordsService {
