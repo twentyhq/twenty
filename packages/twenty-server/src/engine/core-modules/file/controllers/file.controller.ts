@@ -42,6 +42,7 @@ export class FileController {
     const folderPath = checkFilePath(params[0]);
     const filename = checkFilename(params['filename']);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const workspaceId = (req as any)?.workspaceId;
 
     if (!workspaceId) {

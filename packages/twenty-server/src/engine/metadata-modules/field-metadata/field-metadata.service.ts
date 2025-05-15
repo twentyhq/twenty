@@ -530,9 +530,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     };
 
     if ('standardOverrides' in fieldMetadataInput) {
-      updatableStandardFieldInput.standardOverrides = (
-        fieldMetadataInput as any
-      ).standardOverrides;
+      updatableStandardFieldInput.standardOverrides =
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (fieldMetadataInput as any).standardOverrides;
     }
 
     if (

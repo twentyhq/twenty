@@ -24,8 +24,10 @@ type TypeFactory<T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind> =
       options: WorkspaceBuildSchemaOptions,
       additionalOptions: {
         nullable?: boolean;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         defaultValue?: any;
         isArray: boolean;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         settings: any;
         isIdField: boolean;
       },
@@ -43,7 +45,9 @@ export const generateFields = <
   typeFactory: TypeFactory<T>,
 ): T extends InputTypeDefinitionKind
   ? GraphQLInputFieldConfigMap
-  : GraphQLFieldConfigMap<any, any> => {
+  : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    GraphQLFieldConfigMap<any, any> => {
   const fields = {};
 
   for (const fieldMetadata of objectMetadata.fields) {

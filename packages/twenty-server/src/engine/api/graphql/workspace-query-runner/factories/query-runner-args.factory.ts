@@ -174,8 +174,10 @@ export class QueryRunnerArgsFactory {
     const workspaceId = options.authContext.workspace.id;
     let isFieldPositionPresent = false;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const createArgByArgKeyPromises: Promise<[string, any]>[] = Object.entries(
       data,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ).map(async ([key, value]): Promise<[string, any]> => {
       const fieldMetadata = fieldMetadataMapByNameByName[key];
 
@@ -280,6 +282,7 @@ export class QueryRunnerArgsFactory {
 
   private transformFilterValueByType(
     key: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
     fieldMetadataMapByName: FieldMetadataMap,
   ) {
@@ -310,6 +313,7 @@ export class QueryRunnerArgsFactory {
 
   private async overrideValueByFieldMetadata(
     key: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
     fieldMetadataMapByName: FieldMetadataMap,
   ) {

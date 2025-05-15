@@ -9,6 +9,7 @@ export interface ExceptionHandlerOptions {
     name: string;
   };
   document?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   additionalData?: Record<string, any>;
   user?: ExceptionHandlerUser | null;
   workspace?: ExceptionHandlerWorkspace | null;

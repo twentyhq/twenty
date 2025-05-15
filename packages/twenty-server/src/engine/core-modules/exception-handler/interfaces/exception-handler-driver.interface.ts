@@ -2,6 +2,7 @@ import { ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handl
 
 export interface ExceptionHandlerDriverInterface {
   captureExceptions(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     exceptions: ReadonlyArray<any>,
     options?: ExceptionHandlerOptions,
   ): string[];

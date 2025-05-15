@@ -69,6 +69,8 @@ export class FieldMetadataValidationService<
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async validateSettings(validator: any, settings: any) {
     try {
       const settingsInstance = plainToInstance(validator, settings);
@@ -77,6 +79,7 @@ export class FieldMetadataValidationService<
     } catch (error) {
       const errorMessages = Array.isArray(error)
         ? error
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .map((err: any) => Object.values(err.constraints))
             .flat()
             .join(', ')

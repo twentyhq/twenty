@@ -22,6 +22,7 @@ export const handleException = (
 
 interface RequestAndParams {
   request: Request | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params: any;
 }
 
@@ -35,10 +36,14 @@ export class HttpExceptionHandlerService {
 
   handleError = (
     exception: CustomException,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     response: Response<any, Record<string, any>>,
     errorCode?: number,
     user?: ExceptionHandlerUser,
     workspace?: ExceptionHandlerWorkspace,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Response<any, Record<string, any>> | undefined => {
     const params = this.request?.params;
 

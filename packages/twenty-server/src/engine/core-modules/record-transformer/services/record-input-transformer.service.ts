@@ -21,8 +21,10 @@ export class RecordInputTransformerService {
     recordInput,
     objectMetadataMapItem,
   }: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recordInput: Record<string, any>;
     objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }): Promise<Record<string, any>> {
     if (!recordInput) {
       return recordInput;
@@ -63,7 +65,9 @@ export class RecordInputTransformerService {
 
   async transformFieldValue(
     fieldType: FieldMetadataType,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     if (!isDefined(value)) {
       return value;
@@ -90,6 +94,7 @@ export class RecordInputTransformerService {
   }
 
   private async transformRichTextV2Value(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     richTextValue: any,
   ): Promise<RichTextV2Metadata> {
     const parsedValue = richTextV2ValueSchema.parse(richTextValue);
@@ -124,6 +129,8 @@ export class RecordInputTransformerService {
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private transformLinksValue(value: any): any {
     if (!value) {
       return value;
@@ -157,6 +164,8 @@ export class RecordInputTransformerService {
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private transformEmailsValue(value: any): any {
     if (!value) {
       return value;
@@ -185,6 +194,7 @@ export class RecordInputTransformerService {
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private stringifySubFields(fieldMetadataType: FieldMetadataType, value: any) {
     const compositeType = compositeTypeDefinitions.get(fieldMetadataType);
 
@@ -213,6 +223,7 @@ export class RecordInputTransformerService {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private parseSubFields(fieldMetadataType: FieldMetadataType, value: any) {
     const compositeType = compositeTypeDefinitions.get(fieldMetadataType);
 
@@ -221,6 +232,7 @@ export class RecordInputTransformerService {
     }
 
     return Object.entries(value).reduce(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (acc, [subFieldName, subFieldValue]: [string, any]) => {
         const subFieldType = compositeType.properties.find(
           (property) => property.name === subFieldName,

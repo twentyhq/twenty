@@ -9,6 +9,8 @@ export class MicrosoftAPIsOauthRequestCodeStrategy extends MicrosoftAPIsOauthCom
     super(twentyConfigService);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   authenticate(req: any, options: any) {
     options = {
       ...options,
