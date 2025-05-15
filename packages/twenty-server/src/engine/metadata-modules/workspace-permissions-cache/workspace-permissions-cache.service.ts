@@ -224,6 +224,7 @@ export class WorkspacePermissionsCacheService {
       workspaceId,
     });
 
+    // @ts-expect-error legacy noImplicitAny
     return userWorkspaceRoleMap[userWorkspaceId];
   }
 

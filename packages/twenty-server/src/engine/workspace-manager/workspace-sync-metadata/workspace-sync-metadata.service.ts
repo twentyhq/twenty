@@ -212,7 +212,9 @@ export class WorkspaceSyncMetadataService {
     } catch (error) {
       this.logger.error('Sync of standard objects failed with:', error);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (error instanceof QueryFailedError && (error as any).detail) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.logger.error((error as any).detail);
       }
       await queryRunner.rollbackTransaction();
@@ -239,6 +241,7 @@ export class WorkspaceSyncMetadataService {
     objectMigrations: Partial<WorkspaceMigrationEntity>[];
     fieldMigrations: Partial<WorkspaceMigrationEntity>[];
   } {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const createMigrationsByTable = new Map<string, any>();
 
     for (const objectMigration of objectMigrations) {

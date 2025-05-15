@@ -179,6 +179,7 @@ export class UserService extends TypeOrmQueryService<User> {
             userId,
             workspaceId: userWorkspace.workspaceId,
           });
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           if (
             error instanceof PermissionsException &&

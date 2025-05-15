@@ -14,11 +14,13 @@ export interface MessageQueueDriver {
     data: T,
     options?: QueueJobOptions,
   ): Promise<void>;
+  // @ts-expect-error legacy noImplicitAny
   work<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     handler: ({ data, id }: { data: T; id: string }) => Promise<void> | void,
     options?: MessageQueueWorkerOptions,
   );
+  // @ts-expect-error legacy noImplicitAny
   addCron<T extends MessageQueueJobData | undefined>({
     queueName,
     jobName,
@@ -32,6 +34,7 @@ export interface MessageQueueDriver {
     options: QueueCronJobOptions;
     jobId?: string;
   });
+  // @ts-expect-error legacy noImplicitAny
   removeCron({
     queueName,
     jobName,

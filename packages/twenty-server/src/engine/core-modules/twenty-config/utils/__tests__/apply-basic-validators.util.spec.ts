@@ -64,12 +64,14 @@ describe('applyBasicValidators', () => {
       const mockTransformParams = { value: 'true' };
 
       (configTransformers.boolean as jest.Mock).mockReturnValueOnce(true);
+      // @ts-expect-error legacy noImplicitAny
       const result1 = transformFn(mockTransformParams);
 
       expect(configTransformers.boolean).toHaveBeenCalledWith('true');
       expect(result1).toBe(true);
 
       (configTransformers.boolean as jest.Mock).mockReturnValueOnce(undefined);
+      // @ts-expect-error legacy noImplicitAny
       const result2 = transformFn(mockTransformParams);
 
       expect(result2).toBe('true');
@@ -99,12 +101,14 @@ describe('applyBasicValidators', () => {
       const mockTransformParams = { value: '42' };
 
       (configTransformers.number as jest.Mock).mockReturnValueOnce(42);
+      // @ts-expect-error legacy noImplicitAny
       const result1 = transformFn(mockTransformParams);
 
       expect(configTransformers.number).toHaveBeenCalledWith('42');
       expect(result1).toBe(42);
 
       (configTransformers.number as jest.Mock).mockReturnValueOnce(undefined);
+      // @ts-expect-error legacy noImplicitAny
       const result2 = transformFn(mockTransformParams);
 
       expect(result2).toBe('42');

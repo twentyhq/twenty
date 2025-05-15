@@ -47,6 +47,7 @@ export class ProcessNestedRelationsV2Helper {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
     parentObjectRecords: T[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parentObjectRecordsAggregatedValues?: Record<string, any>;
     relations: Record<string, FindOptionsRelations<ObjectLiteral>>;
     aggregate?: Record<string, AggregationField>;
@@ -94,6 +95,7 @@ export class ProcessNestedRelationsV2Helper {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
     parentObjectRecords: T[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parentObjectRecordsAggregatedValues: Record<string, any>;
     sourceFieldName: string;
     nestedRelations: FindOptionsRelations<ObjectLiteral>;
@@ -251,6 +253,7 @@ export class ProcessNestedRelationsV2Helper {
   }: {
     records: ObjectRecord[];
     idField: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }): any[] {
     return [...new Set(records.map((item) => item[idField]))];
   }
@@ -265,20 +268,26 @@ export class ProcessNestedRelationsV2Helper {
     aggregate,
     sourceFieldName,
   }: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     referenceQueryBuilder: SelectQueryBuilder<any>;
     column: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ids: any[];
     limit: number;
     objectMetadataMaps: ObjectMetadataMaps;
     targetObjectMetadata: ObjectMetadataItemWithFieldMaps;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     aggregate: Record<string, any>;
     sourceFieldName: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }): Promise<{ relationResults: any[]; relationAggregatedFieldsResult: any }> {
     if (ids.length === 0) {
       return { relationResults: [], relationAggregatedFieldsResult: {} };
     }
 
     const aggregateForRelation = aggregate[sourceFieldName];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let relationAggregatedFieldsResult: Record<string, any> = {};
 
     if (aggregateForRelation) {
@@ -339,8 +348,11 @@ export class ProcessNestedRelationsV2Helper {
     relationType,
   }: {
     parentRecords: ObjectRecord[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parentObjectRecordsAggregatedValues: Record<string, any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     relationResults: any[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     relationAggregatedFieldsResult: Record<string, any>;
     sourceFieldName: string;
     joinField: string;

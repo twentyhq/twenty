@@ -16,15 +16,20 @@ export class ScopedWorkspaceContextFactory {
     isExecutedByApiKey: boolean;
   } {
     const workspaceId: string | undefined =
+      // @ts-expect-error legacy noImplicitAny
       this.request?.['req']?.['workspaceId'] ||
+      // @ts-expect-error legacy noImplicitAny
       this.request?.['params']?.['workspaceId'];
     const workspaceMetadataVersion: number | undefined =
+      // @ts-expect-error legacy noImplicitAny
       this.request?.['req']?.['workspaceMetadataVersion'];
 
     return {
       workspaceId: workspaceId ?? null,
       workspaceMetadataVersion: workspaceMetadataVersion ?? null,
+      // @ts-expect-error legacy noImplicitAny
       userWorkspaceId: this.request?.['req']?.['userWorkspaceId'] ?? null,
+      // @ts-expect-error legacy noImplicitAny
       isExecutedByApiKey: !!this.request?.['req']?.['apiKey'],
     };
   }

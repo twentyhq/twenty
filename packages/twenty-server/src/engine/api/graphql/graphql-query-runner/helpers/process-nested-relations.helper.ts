@@ -35,6 +35,7 @@ export class ProcessNestedRelationsHelper {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
     parentObjectRecords: T[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parentObjectRecordsAggregatedValues?: Record<string, any>;
     relations: Record<string, FindOptionsRelations<ObjectLiteral>>;
     aggregate?: Record<string, AggregationField>;

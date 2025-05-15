@@ -117,6 +117,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const computedArgs = (await this.queryRunnerArgsFactory.create(
         hookedArgs,
         options,
+        // @ts-expect-error legacy noImplicitAny
         ResolverArgsType[capitalize(operationName)],
       )) as Input;
 
@@ -195,6 +196,7 @@ export abstract class GraphqlQueryBaseResolverService<
       )
     ) {
       const permissionRequired: SettingPermissionType =
+        // @ts-expect-error legacy noImplicitAny
         SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS[
           objectMetadataItemWithFieldMaps.nameSingular
         ];

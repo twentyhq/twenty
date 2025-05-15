@@ -121,6 +121,7 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
     startCursor,
     endCursor,
   }: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     finalRecords: any[];
     objectMetadataNameSingular: string;
     isForwardPagination: boolean;

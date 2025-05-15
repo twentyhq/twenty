@@ -37,6 +37,7 @@ export class ExceptionHandlerModule extends ConfigurableModuleClass {
   static forRootAsync(options: typeof ASYNC_OPTIONS_TYPE): DynamicModule {
     const provider = {
       provide: EXCEPTION_HANDLER_DRIVER,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       useFactory: async (...args: any[]) => {
         const config = await options?.useFactory?.(...args);
 

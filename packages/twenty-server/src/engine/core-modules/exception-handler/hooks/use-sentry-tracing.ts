@@ -15,6 +15,7 @@ export const useSentryTracing = <
     onExecute({ args }) {
       const transactionName = args.operationName || 'Anonymous Operation';
       const rootOperation = args.document.definitions.find(
+        // @ts-expect-error legacy noImplicitAny
         (o) => o.kind === Kind.OPERATION_DEFINITION,
       ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;

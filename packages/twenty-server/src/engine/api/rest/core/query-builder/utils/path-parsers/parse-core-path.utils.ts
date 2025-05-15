@@ -1,6 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 
 import { Request } from 'express';
+import { isValidUuid } from 'twenty-shared/utils';
 
 export const parseCorePath = (
   request: Request,
@@ -35,5 +36,11 @@ export const parseCorePath = (
     return { object: queryAction[0] };
   }
 
-  return { object: queryAction[0], id: queryAction[1] };
+  const recordId = queryAction[1];
+
+  if (!isValidUuid(recordId)) {
+    throw new BadRequestException(`'${recordId}' is not a valid UUID`);
+  }
+
+  return { object: queryAction[0], id: recordId };
 };

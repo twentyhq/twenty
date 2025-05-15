@@ -110,11 +110,13 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
         contextId,
       );
 
+      // @ts-expect-error legacy noImplicitAny
       return contextInstance[methodName].call(
         contextInstance,
         ...executeParams,
       );
     } else {
+      // @ts-expect-error legacy noImplicitAny
       return instance[methodName].call(instance, ...executeParams);
     }
   }
@@ -173,6 +175,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
         contextId,
       );
 
+      // @ts-expect-error legacy noImplicitAny
       return contextInstance[methodName].call(
         contextInstance,
         executeParams[0],
@@ -180,6 +183,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
         transformedPayload,
       );
     } else {
+      // @ts-expect-error legacy noImplicitAny
       return instance[methodName].call(
         instance,
         executeParams[0],

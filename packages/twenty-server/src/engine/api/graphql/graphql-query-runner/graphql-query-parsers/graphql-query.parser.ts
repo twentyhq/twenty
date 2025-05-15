@@ -50,9 +50,11 @@ export class GraphqlQueryParser {
   }
 
   public applyFilterToBuilder(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     queryBuilder: SelectQueryBuilder<any>,
     objectNameSingular: string,
     recordFilter: Partial<ObjectRecordFilter>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): SelectQueryBuilder<any> {
     return this.filterConditionParser.parse(
       queryBuilder,
@@ -62,8 +64,10 @@ export class GraphqlQueryParser {
   }
 
   public applyDeletedAtToBuilder(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     queryBuilder: SelectQueryBuilder<any>,
     recordFilter: Partial<ObjectRecordFilter>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): SelectQueryBuilder<any> {
     if (this.checkForDeletedAtFilter(recordFilter)) {
       queryBuilder.withDeleted();
@@ -99,10 +103,12 @@ export class GraphqlQueryParser {
   };
 
   public applyOrderToBuilder(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     queryBuilder: SelectQueryBuilder<any>,
     orderBy: ObjectRecordOrderBy,
     objectNameSingular: string,
     isForwardPagination = true,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): SelectQueryBuilder<any> {
     const parsedOrderBys = this.orderFieldParser.parse(
       orderBy,
@@ -115,6 +121,7 @@ export class GraphqlQueryParser {
 
   public parseSelectedFields(
     parentObjectMetadata: ObjectMetadataItemWithFieldMaps,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
   ): GraphqlQuerySelectedFieldsResult {
     const parentFields = getObjectMetadataMapItemByNameSingular(

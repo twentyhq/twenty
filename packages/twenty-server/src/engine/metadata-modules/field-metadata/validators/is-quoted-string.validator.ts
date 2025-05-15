@@ -12,6 +12,7 @@ export function IsQuotedString(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       validator: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         validate(value: any) {
           return typeof value === 'string' && /^'{1}.*'{1}$/.test(value);
         },

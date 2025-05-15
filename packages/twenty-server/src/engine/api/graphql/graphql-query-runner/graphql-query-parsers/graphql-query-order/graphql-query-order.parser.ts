@@ -65,6 +65,7 @@ export class GraphqlQueryOrderFieldParser {
 
   private parseCompositeFieldForOrder(
     fieldMetadata: FieldMetadataInterface,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
     objectNameSingular: string,
     isForwardPagination = true,
