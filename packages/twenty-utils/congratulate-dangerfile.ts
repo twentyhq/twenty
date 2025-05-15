@@ -27,31 +27,8 @@ const runCongratulate = async () => {
   const pullRequest = danger.github.pr;
   const userName = pullRequest.user.login;
   const teamMembers = [
-    'ady-beraud',
-    'AMoreaux',
-    'Bonapara',
-    'bosiraphael',
-    'charlesBochet',
-    'cyborch',
-    'dependabot',
-    'Devessier',
-    'emilienchvt',
-    'etiennejouan',
-    'FelixMalfait',
-    'Freebios',
-    'gitstart-app',
-    'gitstart-twenty',
-    'guillim',
-    'ijreilly',
-    'lucasbordeau',
-    'magrinj',
-    'martmull',
-    'nimraahmed',
-    'prastoin',
-    'Samox',
-    'thaisguigon',
-    'thomtrp',
-    'Weiko',
+    'jordan-chalupka',
+    'lavaboy1738',
   ];
 
   if (teamMembers.includes(userName)) {
