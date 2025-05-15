@@ -12,7 +12,7 @@ export type ObjectOptionsDropdownContextValue = {
   onContentChange: (key: ObjectOptionsContentId) => void;
   resetContent: () => void;
   dropdownId: string;
-  handleRecordGroupOrderChangeWithModal: OnDragEndResponder;
+  handleRecordGroupOrderChangeWithModal?: OnDragEndResponder;
 };
 
 export const ObjectOptionsDropdownContext =
