@@ -49,4 +49,12 @@ export class FocusNfeResolver {
   ): Promise<boolean> {
     return await this.focusNfeService.delete(focusNfeIntegrationId);
   }
+
+  @Mutation(() => String)
+  async toggleFocusNfeIntegrationStatus(
+    @Args('focusNfeIntegrationId') focusNfeIntegrationId: string,
+  ): Promise<string> {
+    await this.focusNfeService.toggleStatus(focusNfeIntegrationId);
+    return 'Focus NFE integration status updated successfully';
+  }
 }

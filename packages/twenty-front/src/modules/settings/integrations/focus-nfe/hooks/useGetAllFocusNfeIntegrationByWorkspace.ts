@@ -30,7 +30,6 @@ export const useGetAllFocusNfeIntegrationsByWorkspace =
         });
       },
     });
-    console.log('data', data);
     return {
       focusNfeIntegrations: data?.getFocusNfeIntegrationsByWorkspace,
       refetchFocusNfe,

@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { CreateFocusNfeIntegrationInput } from 'src/engine/core-modules/focus-nfe/dtos/create-focus-nfe-integration.input';
 import { UpdateFocusNfeIntegrationInput } from 'src/engine/core-modules/focus-nfe/dtos/update-focus-nfe-integration.input';
 import { FocusNfeIntegration } from 'src/engine/core-modules/focus-nfe/focus-nfe-integration.entity';
@@ -100,5 +100,21 @@ export class FocusNfeService {
     throw new BadRequestException(undefined, {
       description: 'Focus NFe integration not found',
     });
+  }
+
+  async toggleStatus(id: string): Promise<void> {
+    const integration = await this.findById(id);
+
+    if (!integration) {
+      throw new NotFoundException('Integration not found');
+    }
+
+    if (integration.status === 'active') {
+      integration.status = 'inactive';
+    } else {
+      integration.status = 'active';
+    }
+
+    await this.focusNfeRepository.save(integration);
   }
 }
