@@ -100,6 +100,7 @@ export class ClientConfigResolver {
       isConfigVariablesInDbEnabled: this.twentyConfigService.get(
         'IS_CONFIG_VARIABLES_IN_DB_ENABLED',
       ),
+      isChatbotEnabled: this.twentyConfigService.get('IS_CHATBOT_ENABLED'),
     };
 
     return Promise.resolve(clientConfig);

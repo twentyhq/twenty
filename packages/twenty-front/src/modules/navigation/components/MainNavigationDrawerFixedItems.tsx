@@ -1,3 +1,4 @@
+import { isChatbotEnabledState } from '@/client-config/states/isChatbotEnabledState';
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
 import { ChatNavigationNavItem } from '@/navigation/components/ChatNavigationNavItem';
@@ -40,6 +41,8 @@ export const MainNavigationDrawerFixedItems = () => {
   const lastVisitedViewPerObjectMetadataItem =
     useRecoilValue(lastVisitedViewPerObjectMetadataItemState) ?? {};
 
+  const isChatbotEnabled = useRecoilValue(isChatbotEnabledState);
+
   const getNavigationPath = (objectName: string) => {
     const objectMetadata = workspaceFavoritesObjectMetadataItems?.find(
       (item: any) => item.nameSingular === objectName,
@@ -80,14 +83,16 @@ export const MainNavigationDrawerFixedItems = () => {
           Icon={IconSettings}
         />
         <ChatNavigationNavItem />
-        <NavigationDrawerItem
-          label="Chatbot"
-          to={chatbotPath}
-          onClick={() => {
-            setNavigationMemorizedUrl(location.pathname + location.search);
-          }}
-          Icon={IconRobot}
-        />
+        {isChatbotEnabled && (
+          <NavigationDrawerItem
+            label="Chatbot"
+            to={chatbotPath}
+            onClick={() => {
+              setNavigationMemorizedUrl(location.pathname + location.search);
+            }}
+            Icon={IconRobot}
+          />
+        )}
         <NavigationDrawerItem
           label="Dashboard links"
           to={'/dashboard-links'}

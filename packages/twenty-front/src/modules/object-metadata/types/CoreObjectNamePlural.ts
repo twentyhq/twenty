@@ -38,4 +38,5 @@ export enum CoreObjectNamePlural {
   Traceable = 'traceable',
   TraceableAccessLog = 'traceableAccessLog',
   Integration = 'integrations',
+  Chatbot = 'chatbots',
 }
