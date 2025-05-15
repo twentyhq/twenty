@@ -10,7 +10,7 @@ export const useModal = () => {
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope();
+  } = usePreviousHotkeyScope('modal');
 
   const closeModal = useRecoilCallback(
     ({ set, snapshot }) =>

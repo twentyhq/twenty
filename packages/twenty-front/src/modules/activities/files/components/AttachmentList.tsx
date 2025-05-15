@@ -11,6 +11,7 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useRecoilValue } from 'recoil';
 
 import { ActivityList } from '@/activities/components/ActivityList';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { IconDownload, IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
@@ -122,9 +123,12 @@ export const AttachmentList = ({
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const [previewedAttachment, setPreviewedAttachment] =
     useState<Attachment | null>(null);
+
   const isAttachmentPreviewEnabled = useRecoilValue(
     isAttachmentPreviewEnabledState,
   );
+
+  const { openModal, closeModal } = useModal();
 
   const onUploadFile = async (file: File) => {
     await uploadAttachmentFile(file, targetableObject);
@@ -133,10 +137,12 @@ export const AttachmentList = ({
   const handlePreview = (attachment: Attachment) => {
     if (!isAttachmentPreviewEnabled) return;
     setPreviewedAttachment(attachment);
+    openModal('preview-modal');
   };
 
   const handleClosePreview = () => {
     setPreviewedAttachment(null);
+    closeModal('preview-modal');
   };
 
   const handleDownload = () => {
@@ -178,7 +184,7 @@ export const AttachmentList = ({
       )}
       {previewedAttachment && isAttachmentPreviewEnabled && (
         <StyledModal
-          modalId={`preview-modal-${previewedAttachment.id}`}
+          modalId={'preview-modal'}
           size="large"
           isClosable
           onClose={handleClosePreview}
