@@ -164,7 +164,7 @@ export class MiddlewareService {
         case AuthExceptionCode.UNAUTHENTICATED:
           return 401;
         default:
-          return 400;
+          return 500;
       }
     }
 
