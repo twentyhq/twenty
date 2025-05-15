@@ -31,12 +31,17 @@ export const useRelationSettingsFormInitialValues = ({
     const availableItems = activeObjectMetadataItems.filter(
       isObjectMetadataAvailableForRelation,
     );
-    return (
+    const initialObjectCandidate =
       relationObjectMetadataItemFromFieldMetadata ??
       objectMetadataItem ??
       availableItems[0] ??
-      activeObjectMetadataItems[0]
-    );
+      activeObjectMetadataItems[0];
+    if (!initialObjectCandidate) {
+      throw new Error(
+        'Relation Form initialization error: no valid objects to relate to. Please create a custom object in your workspace.',
+      );
+    }
+    return initialObjectCandidate;
   }, [
     objectMetadataItem,
     activeObjectMetadataItems,
