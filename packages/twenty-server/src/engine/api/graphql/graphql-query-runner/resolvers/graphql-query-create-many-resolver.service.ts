@@ -14,7 +14,6 @@ import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolve
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -30,7 +29,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
 > {
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
-    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<ObjectRecord[]> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
@@ -44,7 +42,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       objectRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      featureFlagsMap,
     );
 
     this.apiEventEmitterService.emitCreateEvents(
@@ -60,7 +57,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       upsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      featureFlagsMap,
       shouldBypassPermissionChecks,
       roleId,
     );
@@ -69,7 +65,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       upsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      featureFlagsMap,
     );
   }
 
@@ -305,7 +300,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     objectRecords: InsertResult,
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
     objectMetadataMaps: ObjectMetadataMaps,
-    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<ObjectRecord[]> {
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
@@ -322,7 +316,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       nonFormattedUpsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
   }
 
@@ -331,7 +324,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     upsertedRecords: ObjectRecord[],
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
     objectMetadataMaps: ObjectMetadataMaps,
-    featureFlagsMap: Record<FeatureFlagKey, boolean>,
     shouldBypassPermissionChecks: boolean,
     roleId?: string,
   ): Promise<void> {
@@ -347,8 +339,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       limit: QUERY_MAX_RECORDS,
       authContext: executionArgs.options.authContext,
       dataSource: executionArgs.dataSource,
-      isNewRelationEnabled:
-        featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
       roleId,
       shouldBypassPermissionChecks,
     });
@@ -358,13 +348,9 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     upsertedRecords: ObjectRecord[],
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
     objectMetadataMaps: ObjectMetadataMaps,
-    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): ObjectRecord[] {
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(
-        objectMetadataMaps,
-        featureFlagsMap,
-      );
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     return upsertedRecords.map((record: ObjectRecord) =>
       typeORMObjectRecordsParser.processRecord({

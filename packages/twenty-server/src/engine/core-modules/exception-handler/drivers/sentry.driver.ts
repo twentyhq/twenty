@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/node';
 import { ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
 
 import { ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
+import { CustomException } from 'src/utils/custom-exception';
 
 export class ExceptionHandlerSentryDriver
   implements ExceptionHandlerDriverInterface
@@ -15,8 +16,7 @@ export class ExceptionHandlerSentryDriver
 
     Sentry.withScope((scope) => {
       if (options?.operation) {
-        scope.setTag('operation', options.operation.name);
-        scope.setTag('operationName', options.operation.name);
+        scope.setExtra('operation', options.operation.name);
       }
 
       if (options?.document) {
@@ -25,6 +25,10 @@ export class ExceptionHandlerSentryDriver
 
       if (options?.workspace) {
         scope.setExtra('workspace', options.workspace);
+      }
+
+      if (options?.additionalData) {
+        scope.setExtra('additionalData', options.additionalData);
       }
 
       if (options?.user) {
@@ -47,6 +51,11 @@ export class ExceptionHandlerSentryDriver
             message: errorPath,
             level: 'debug',
           });
+        }
+
+        if (exception instanceof CustomException) {
+          scope.setTag('customExceptionCode', exception.code);
+          scope.setFingerprint([exception.code]);
         }
 
         const eventId = Sentry.captureException(exception, {

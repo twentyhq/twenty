@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
+import { isDefined } from 'twenty-shared/utils';
 import {
   QueryRunner,
   Table,
@@ -658,16 +658,32 @@ export class WorkspaceMigrationRunnerService {
     tableName: string,
     migrationColumn: WorkspaceMigrationColumnCreateRelation,
   ) {
-    await queryRunner.createForeignKey(
-      `${schemaName}.${tableName}`,
-      new TableForeignKey({
-        columnNames: [migrationColumn.columnName],
-        referencedColumnNames: [migrationColumn.referencedTableColumnName],
-        referencedTableName: migrationColumn.referencedTableName,
-        referencedSchema: schemaName,
-        onDelete: convertOnDeleteActionToOnDelete(migrationColumn.onDelete),
-      }),
-    );
+    try {
+      await queryRunner.createForeignKey(
+        `${schemaName}.${tableName}`,
+        new TableForeignKey({
+          columnNames: [migrationColumn.columnName],
+          referencedColumnNames: [migrationColumn.referencedTableColumnName],
+          referencedTableName: migrationColumn.referencedTableName,
+          referencedSchema: schemaName,
+          onDelete: convertOnDeleteActionToOnDelete(migrationColumn.onDelete),
+        }),
+      );
+      // TODO remove me after 0.53 release @prastoin @charlesBochet Swallowing blocking false positive constraint
+    } catch (error) {
+      if (
+        [error.driverError.message, error.message]
+          .filter(isDefined)
+          .some((el: string) => el.includes('FK_e078063f0cbce9767a0f8ca431d'))
+      ) {
+        this.logger.warn(
+          'Encountered a FK_e078063f0cbce9767a0f8ca431d exception, swallowing',
+        );
+      } else {
+        throw error;
+      }
+    }
+    /// End remove me
 
     // Create unique constraint if for one to one relation
     if (migrationColumn.isUnique) {

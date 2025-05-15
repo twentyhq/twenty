@@ -1,6 +1,5 @@
 import {
   ConflictError,
-  InternalServerError,
   NotFoundError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
@@ -8,6 +7,7 @@ import {
   WorkspaceException,
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
+import { CustomException } from 'src/utils/custom-exception';
 
 describe('workspaceGraphqlApiExceptionHandler', () => {
   it('should throw NotFoundError when WorkspaceExceptionCode is SUBDOMAIN_NOT_FOUND', () => {
@@ -48,7 +48,7 @@ describe('workspaceGraphqlApiExceptionHandler', () => {
     const error = new WorkspaceException('Unknown error', 'UNKNOWN_CODE');
 
     expect(() => workspaceGraphqlApiExceptionHandler(error)).toThrow(
-      InternalServerError,
+      CustomException,
     );
   });
 

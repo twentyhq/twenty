@@ -11,6 +11,10 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import {
+  WorkspaceMetadataVersionException,
+  WorkspaceMetadataVersionExceptionCode,
+} from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
 import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
 import {
   ROLES_PERMISSIONS,
@@ -230,10 +234,10 @@ export class WorkspaceDatasourceFactory {
       recomputeCache: () =>
         this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
           workspaceId,
-          ignoreLock: true,
         }),
       cachedEntityName: ROLES_PERMISSIONS,
       exceptionCode: TwentyORMExceptionCode.ROLES_PERMISSIONS_VERSION_NOT_FOUND,
+      logger: this.logger,
     });
   }
 
@@ -312,9 +316,9 @@ export class WorkspaceDatasourceFactory {
 
     if (!isDefined(latestWorkspaceMetadataVersion)) {
       if (shouldFailIfMetadataNotFound) {
-        throw new TwentyORMException(
+        throw new WorkspaceMetadataVersionException(
           `Metadata version not found for workspace ${workspaceId}`,
-          TwentyORMExceptionCode.METADATA_VERSION_NOT_FOUND,
+          WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
         );
       } else {
         await this.workspaceMetadataCacheService.recomputeMetadataCache({
@@ -330,7 +334,7 @@ export class WorkspaceDatasourceFactory {
 
     if (!isDefined(latestWorkspaceMetadataVersion)) {
       throw new TwentyORMException(
-        `Metadata version not found after recompute for workspace ${workspaceId}`,
+        `Metadata version not found after recompute`,
         TwentyORMExceptionCode.METADATA_VERSION_NOT_FOUND,
       );
     }

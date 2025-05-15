@@ -9,9 +9,11 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 @Command({
   name: 'upgrade:0-53:remove-relation-foreign-key-field-metadata',
@@ -21,6 +23,7 @@ export class RemoveRelationForeignKeyFieldMetadataCommand extends ActiveOrSuspen
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
+    protected readonly featureFlagService: FeatureFlagService,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -63,6 +66,10 @@ export class RemoveRelationForeignKeyFieldMetadataCommand extends ActiveOrSuspen
         ),
       );
     } else {
+      await this.featureFlagService.enableFeatureFlags(
+        ['IS_NEW_RELATION_ENABLED' as FeatureFlagKey],
+        workspaceId,
+      );
       await this.fieldMetadataRepository.delete({
         id: In(
           fieldMetadataCollection.map((fieldMetadata) => fieldMetadata.id),

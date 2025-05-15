@@ -90,9 +90,9 @@ export const AdvancedFilterSubFieldSelectMenu = ({
     return null;
   }
 
-  const subFieldNames = SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[
-    objectFilterDropdownSubMenuFieldType
-  ].filterableSubFields.sort((a, b) => a.localeCompare(b));
+  const subFieldNames =
+    SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[objectFilterDropdownSubMenuFieldType]
+      .filterableSubFields;
 
   const subFieldsAreFilterable =
     isDefined(fieldMetadataItemUsedInDropdown) &&

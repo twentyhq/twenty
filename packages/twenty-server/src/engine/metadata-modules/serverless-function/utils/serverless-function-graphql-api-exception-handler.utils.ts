@@ -1,7 +1,6 @@
 import {
   ConflictError,
   ForbiddenError,
-  InternalServerError,
   NotFoundError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
@@ -20,9 +19,15 @@ export const serverlessFunctionGraphQLApiExceptionHandler = (error: any) => {
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_READY:
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_BUILDING:
       case ServerlessFunctionExceptionCode.FEATURE_FLAG_INVALID:
+      case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_EXECUTION_LIMIT_REACHED:
         throw new ForbiddenError(error.message);
-      default:
-        throw new InternalServerError(error.message);
+      case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED:
+        throw error;
+      default: {
+        const _exhaustiveCheck: never = error.code;
+
+        throw error;
+      }
     }
   }
   throw error;

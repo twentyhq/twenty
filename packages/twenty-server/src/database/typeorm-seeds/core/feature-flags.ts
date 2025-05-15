@@ -45,11 +45,6 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: false,
       },
-      {
-        key: FeatureFlagKey.IsNewRelationEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
     ])
     .execute();
 };
