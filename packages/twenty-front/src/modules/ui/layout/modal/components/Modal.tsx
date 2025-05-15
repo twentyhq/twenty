@@ -191,7 +191,6 @@ export const Modal = ({
   size = 'medium',
   padding = 'medium',
   className,
-  hotkeyScope = ModalHotkeyScope.ModalFocus,
   onEnter,
   isClosable = false,
   onClose,
@@ -229,7 +228,6 @@ export const Modal = ({
           <ModalHotkeysAndClickOutsideEffect
             modalId={modalId}
             modalRef={modalRef}
-            hotkeyScope={hotkeyScope}
             onEnter={onEnter}
             isClosable={isClosable}
             onClose={handleClose}

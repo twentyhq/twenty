@@ -8,7 +8,6 @@ import { Key } from 'ts-key-enum';
 
 type ModalHotkeysAndClickOutsideEffectProps = {
   modalRef: React.RefObject<HTMLDivElement>;
-  hotkeyScope: ModalHotkeyScope;
   onEnter?: () => void;
   isClosable?: boolean;
   onClose?: () => void;
@@ -17,7 +16,6 @@ type ModalHotkeysAndClickOutsideEffectProps = {
 
 export const ModalHotkeysAndClickOutsideEffect = ({
   modalRef,
-  hotkeyScope = ModalHotkeyScope.ModalFocus,
   onEnter,
   isClosable = false,
   onClose,
@@ -28,7 +26,7 @@ export const ModalHotkeysAndClickOutsideEffect = ({
     () => {
       onEnter?.();
     },
-    hotkeyScope,
+    ModalHotkeyScope.ModalFocus,
   );
 
   useScopedHotkeys(
@@ -38,7 +36,7 @@ export const ModalHotkeysAndClickOutsideEffect = ({
         onClose();
       }
     },
-    hotkeyScope,
+    ModalHotkeyScope.ModalFocus,
   );
 
   useListenClickOutside({

@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
+import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { modalHotkeyScopeComponentState } from '@/ui/layout/modal/states/modalHotkeyScopeComponentState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { isDefined } from 'twenty-shared/utils';
@@ -33,14 +33,8 @@ export const useModal = () => {
   );
 
   const openModal = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ set }) =>
       (modalId: string, customHotkeyScope?: HotkeyScope) => {
-        const modalHotkeyScope = snapshot
-          .getLoadable(
-            modalHotkeyScopeComponentState.atomFamily({ instanceId: modalId }),
-          )
-          .getValue();
-
         set(
           isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
           true,
@@ -51,11 +45,8 @@ export const useModal = () => {
             customHotkeyScope.scope,
             customHotkeyScope.customScopes,
           );
-        } else if (isDefined(modalHotkeyScope)) {
-          setHotkeyScopeAndMemorizePreviousScope(
-            modalHotkeyScope.scope,
-            modalHotkeyScope.customScopes,
-          );
+        } else {
+          setHotkeyScopeAndMemorizePreviousScope(ModalHotkeyScope.ModalFocus);
         }
       },
     [setHotkeyScopeAndMemorizePreviousScope],
