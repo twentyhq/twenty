@@ -65,7 +65,7 @@ export const Logo = (props: LogoProps) => {
       })
     : null;
 
-  const isUsingDefaultLogo = !props.primaryLogo;
+  const isUsingDefaultLogo = !isDefined(props.primaryLogo);
 
   return (
     <StyledContainer>
@@ -74,12 +74,12 @@ export const Logo = (props: LogoProps) => {
           to={AppPath.SignInUp}
           onClick={redirectToDefaultDomain}
         >
-          <StyledPrimaryLogo src={primaryLogoUrl ?? ''} />
+          <StyledPrimaryLogo src={primaryLogoUrl} />
         </UndecoratedLink>
       ) : (
-        <StyledPrimaryLogo src={primaryLogoUrl ?? ''} />
+        <StyledPrimaryLogo src={primaryLogoUrl} />
       )}
-      {secondaryLogoUrl ? (
+      {isDefined(secondaryLogoUrl) ? (
         <StyledSecondaryLogoContainer>
           <StyledSecondaryLogo src={secondaryLogoUrl} />
         </StyledSecondaryLogoContainer>
