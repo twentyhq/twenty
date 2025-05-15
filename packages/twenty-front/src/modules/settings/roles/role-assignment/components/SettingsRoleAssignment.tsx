@@ -20,18 +20,18 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
-    AppTooltip,
-    H2Title,
-    IconPlus,
-    IconSearch,
-    TooltipDelay,
+  AppTooltip,
+  H2Title,
+  IconPlus,
+  IconSearch,
+  TooltipDelay,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
-    Role,
-    SearchRecord,
-    WorkspaceMember,
+  Role,
+  SearchRecord,
+  WorkspaceMember,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '../constants/RoleAssignmentConfirmationModalId';
