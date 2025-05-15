@@ -1,18 +1,4 @@
 {
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/database/clickHouse/clickHouse.service.spec.ts": [
-    { "position": "60:17", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "87:29", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "105:19", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "134:12", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "147:19", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "180:19", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "199:19", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "220:19", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "231:19", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "236:26", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "255:19", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "256:19", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/database/clickHouse/clickHouse.service.ts": [
     { "position": "136:48", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "167:29", "rule": "@typescript-eslint/no-explicit-any" }
@@ -233,77 +219,10 @@
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/core/interfaces/rest-api-base.handler.ts": [
     { "position": "264:19", "rule": "@typescript-eslint/no-explicit-any" }
   ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/core/query-builder/utils/__tests__/compute-depth.utils.spec.ts": [
-    { "position": "6:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "15:20", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "20:20", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/core/query-builder/utils/__tests__/map-field-metadata-to-graphql-query.utils.spec.ts": [
-    { "position": "115:16", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/core/query-builder/utils/path-parsers/__tests__/parse-core-batch-path.utils.spec.ts": [
-    { "position": "5:20", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/core/query-builder/utils/path-parsers/__tests__/parse-core-path.utils.spec.ts": [
-    { "position": "5:20", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "14:20", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "23:20", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "31:20", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "40:20", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/input-factories/__tests__/ending-before-input.factory.spec.ts": [
-    { "position": "22:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "28:22", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/input-factories/__tests__/filter-input.factory.spec.ts": [
-    { "position": "94:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "100:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "112:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "124:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "136:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "148:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "160:22", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/input-factories/__tests__/limit-input.factory.spec.ts": [
-    { "position": "22:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "28:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "34:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "42:22", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/input-factories/__tests__/order-by-input.factory.spec.ts": [
-    { "position": "38:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "47:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "61:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "74:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "87:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "100:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "115:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "127:22", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/input-factories/__tests__/starting-before-input.factory.spec.ts": [
-    { "position": "22:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "28:22", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/metadata/query-builder/utils/__tests__/parse-metadata-path.utils.spec.ts": [
-    { "position": "5:20", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "15:20", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "25:20", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "33:20", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/utils/clean-graphql-response.utils.ts": [
     { "position": "1:45", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "5:26", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "9:29", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/admin-panel/__tests__/admin-panel-health.service.spec.ts": [
-    { "position": "36:50", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "37:47", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "38:76", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "39:58", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "40:45", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "43:10", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "44:49", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "650:71", "rule": "@typescript-eslint/no-explicit-any" }
   ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/admin-panel/admin-panel-health.service.ts": [
     { "position": "49:44", "rule": "@typescript-eslint/no-explicit-any" }
@@ -315,14 +234,6 @@
   ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/app-token/hooks/before-create-one-app-token.hook.ts": [
     { "position": "14:14", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/approved-access-domain/services/approved-access-domain.spec.ts": [
-    { "position": "313:27", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "364:27", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/audit/audit.resolver.spec.ts": [
-    { "position": "21:10", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "148:47", "rule": "@typescript-eslint/no-explicit-any" }
   ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/audit/dtos/create-object-event.input.ts": [
     { "position": "28:31", "rule": "@typescript-eslint/no-explicit-any" }
@@ -338,19 +249,6 @@
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/auth/guards/oidc-auth.guard.ts": [
     { "position": "29:38", "rule": "@typescript-eslint/no-explicit-any" }
   ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/auth/guards/oidc-auth.spec.ts": [
-    { "position": "14:52", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/auth/services/auth-sso.spec.ts": [
-    { "position": "117:47", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/auth/services/reset-password.service.spec.ts": [
-    { "position": "193:17", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "238:72", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/auth/services/sign-in-up.service.spec.ts": [
-    { "position": "359:72", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/auth/strategies/google-apis-oauth-exchange-code-for-token.auth.strategy.ts": [
     { "position": "23:14", "rule": "@typescript-eslint/no-explicit-any" }
   ],
@@ -361,16 +259,6 @@
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/auth/strategies/google.auth.strategy.ts": [
     { "position": "39:39", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "57:14", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts": [
-    { "position": "14:28", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "15:32", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "16:23", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "17:31", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "35:28", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "60:13", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "92:13", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "124:13", "rule": "@typescript-eslint/no-explicit-any" }
   ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/auth/strategies/microsoft-apis-oauth-exchange-code-for-token.auth.strategy.ts": [
     { "position": "23:14", "rule": "@typescript-eslint/no-explicit-any" }
@@ -386,40 +274,6 @@
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/auth/strategies/oidc.auth.strategy.ts": [
     { "position": "48:45", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "87:17", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/auth/token/services/access-token.service.spec.ts": [
-    { "position": "138:14", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "191:46", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "194:45", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/auth/token/services/renew-token.service.spec.ts": [
-    { "position": "81:72", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/billing/webhooks/utils/__tests__/transform-stripe-price-event-to-database-price.util.spec.ts": [
-    { "position": "39:73", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "77:75", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "91:75", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "105:75", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "121:75", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "135:75", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "153:75", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "171:73", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "193:73", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "212:73", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/billing/webhooks/utils/__tests__/transform-stripe-subscription-event-to-database-customer.util.spec.ts": [
-    { "position": "44:19", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "60:21", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "77:21", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/billing/webhooks/utils/__tests__/transform-stripe-subscription-event-to-database-subscription.util.spec.ts": [
-    { "position": "46:19", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "90:21", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "108:19", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "131:19", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "154:19", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "178:21", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "192:19", "rule": "@typescript-eslint/no-explicit-any" }
   ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/cache-storage/cache-storage.module.ts": [
     { "position": "37:37", "rule": "@typescript-eslint/no-explicit-any" },
@@ -440,21 +294,6 @@
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/cron/sentry-cron-monitor.decorator.ts": [
     { "position": "5:13", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "11:49", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/domain-manager/services/custom-domain.service.spec.ts": [
-    { "position": "50:29", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "65:73", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "78:38", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "101:31", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "123:31", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "153:31", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "190:31", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "211:31", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "226:52", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "252:55", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "261:31", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "292:12", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "302:12", "rule": "@typescript-eslint/no-explicit-any" }
   ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/email/email.module.ts": [
     { "position": "19:29", "rule": "@typescript-eslint/no-explicit-any" }
@@ -519,25 +358,6 @@
     { "position": "109:60", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "117:60", "rule": "@typescript-eslint/no-explicit-any" }
   ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/health/indicators/__tests__/app.health.spec.ts": [
-    { "position": "20:10", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "25:10", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "36:10", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/health/indicators/__tests__/connected-account.health.spec.ts": [
-    { "position": "20:10", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "38:10", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/health/indicators/__tests__/database.health.spec.ts": [
-    { "position": "18:10", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "29:10", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/health/indicators/__tests__/redis.health.spec.ts": [
-    { "position": "42:10", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/health/indicators/__tests__/worker.health.spec.ts": [
-    { "position": "49:10", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/health/utils/health-state-manager.util.ts": [
     { "position": "4:29", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "7:39", "rule": "@typescript-eslint/no-explicit-any" }
@@ -553,10 +373,6 @@
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/key-value-pair/key-value-pair.service.ts": [
     { "position": "11:43", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "11:65", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/lab/utils/is-public-feature-flag.util.spec.ts": [
-    { "position": "45:45", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "46:40", "rule": "@typescript-eslint/no-explicit-any" }
   ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/llm-chat-model/interfaces/llm-chat-model.interface.ts": [
     { "position": "12:25", "rule": "@typescript-eslint/no-explicit-any" }
@@ -635,34 +451,8 @@
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/sso/dtos/validators/x509.validator.ts": [
     { "position": "16:19", "rule": "@typescript-eslint/no-explicit-any" }
   ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/sso/services/sso.service.spec.ts": [
-    { "position": "78:27", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "82:49", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "137:75", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "138:66", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "177:52", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "179:27", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/twenty-config/conversion/__tests__/config-value-converter.service.spec.ts": [
-    { "position": "443:16", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "467:29", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "490:30", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "513:29", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "536:17", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "560:29", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "584:28", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "612:28", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "619:24", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "650:46", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/twenty-config/conversion/config-value-converter.service.ts": [
     { "position": "81:48", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/twenty-config/decorators/__tests__/cast-to-log-level-array.decorator.spec.ts": [
-    { "position": "7:15", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/twenty-config/decorators/__tests__/cast-to-positive-number.decorator.spec.ts": [
-    { "position": "7:20", "rule": "@typescript-eslint/no-explicit-any" }
   ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/twenty-config/decorators/assert-or-warn.decorator.ts": [
     { "position": "8:23", "rule": "@typescript-eslint/no-explicit-any" },
@@ -685,39 +475,12 @@
     { "position": "60:12", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "63:14", "rule": "@typescript-eslint/no-explicit-any" }
   ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/twenty-config/twenty-config.service.spec.ts": [
-    { "position": "513:27", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "531:27", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/twenty-config/twenty-config.service.ts": [
     { "position": "240:12", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "241:6", "rule": "@typescript-eslint/no-explicit-any" }
   ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/twenty-config/utils/__tests__/apply-basic-validators.util.spec.ts": [
-    { "position": "207:47", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/twenty-config/utils/__tests__/config-transformers.util.spec.ts": [
-    { "position": "93:23", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/twenty-config/utils/__tests__/config-variable-mask-sensitive-data.util.spec.ts": [
-    { "position": "80:17", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "89:22", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "98:16", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/twenty-config/utils/__tests__/type-transformers.registry.spec.ts": [
-    { "position": "31:50", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "62:48", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "93:46", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "140:56", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "184:44", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/twenty-config/utils/type-transformers.registry.ts": [
     { "position": "30:19", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/user-workspace/user-workspace.service.spec.ts": [
-    { "position": "215:57", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "647:57", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "674:57", "rule": "@typescript-eslint/no-explicit-any" }
   ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/user/services/user.service.ts": [
     { "position": "182:25", "rule": "@typescript-eslint/no-explicit-any" }
@@ -739,12 +502,6 @@
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/user/user.resolver.ts": [
     { "position": "153:29", "rule": "@typescript-eslint/no-explicit-any" }
   ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.spec.ts": [
-    { "position": "115:12", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "135:12", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "161:64", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "164:34", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/workspace/workspace.auto-resolver-opts.ts": [
     { "position": "13:3", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "14:3", "rule": "@typescript-eslint/no-explicit-any" },
@@ -756,14 +513,6 @@
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/decorators/observability/log-execution-time.decorator.ts": [
     { "position": "12:13", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "19:49", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/guards/__tests__/admin-panel-guard.spec.ts": [
-    { "position": "22:39", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "44:39", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/guards/impersonate-guard.spec.ts": [
-    { "position": "22:39", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "44:39", "rule": "@typescript-eslint/no-explicit-any" }
   ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto.ts": [
     { "position": "50:24", "rule": "@typescript-eslint/no-explicit-any" }
@@ -955,23 +704,6 @@
     { "position": "77:25", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "105:25", "rule": "@typescript-eslint/no-explicit-any" }
   ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/comparators/__tests__/workspace-field.comparator.spec.ts": [
-    { "position": "13:44", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "29:40", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "37:10", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "58:10", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "66:10", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "88:10", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "89:40", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "106:10", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "109:10", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/comparators/__tests__/workspace-object.comparator.spec.ts": [
-    { "position": "13:45", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/comparators/__tests__/workspace-relation.comparator.spec.ts": [
-    { "position": "12:47", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/order-object-properties.util.ts": [
     { "position": "5:55", "rule": "@typescript-eslint/no-explicit-any" }
   ],
@@ -1016,12 +748,6 @@
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service.ts": [
     { "position": "11:50", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "22:12", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/utils/__tests__/parse-gaxios-error.spec.ts": [
-    { "position": "55:48", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-message-list.service.dev.spec.ts": [
-    { "position": "233:49", "rule": "@typescript-eslint/no-explicit-any" }
   ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface.ts": [
     { "position": "16:20", "rule": "@typescript-eslint/no-explicit-any" }
@@ -1091,9 +817,6 @@
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service.ts": [
     { "position": "118:29", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "208:29", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/modules/workflow/workflow-trigger/utils/__tests__/compute-cron-pattern-from-schedule.spec.ts": [
-    { "position": "89:33", "rule": "@typescript-eslint/no-explicit-any" }
   ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts": [
     { "position": "76:13", "rule": "@typescript-eslint/no-explicit-any" },
