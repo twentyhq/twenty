@@ -91,14 +91,17 @@ export class MicrosoftGetMessagesService {
           'from',
         ),
         ...formatAddressObjectAsParticipants(
+          // @ts-expect-error legacy noImplicitAny
           response?.toRecipients?.map((recipient) => recipient.emailAddress),
           'to',
         ),
         ...formatAddressObjectAsParticipants(
+          // @ts-expect-error legacy noImplicitAny
           response?.ccRecipients?.map((recipient) => recipient.emailAddress),
           'cc',
         ),
         ...formatAddressObjectAsParticipants(
+          // @ts-expect-error legacy noImplicitAny
           response?.bccRecipients?.map((recipient) => recipient.emailAddress),
           'bcc',
         ),

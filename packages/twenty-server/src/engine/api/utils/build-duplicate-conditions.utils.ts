@@ -47,11 +47,14 @@ export const buildDuplicateConditions = (
           compositeFieldMetadataMap.get(columnName);
 
         if (compositeFieldMetadata) {
+          // @ts-expect-error legacy noImplicitAny
           condition[compositeFieldMetadata.parentField] = {
+            // @ts-expect-error legacy noImplicitAny
             ...condition[compositeFieldMetadata.parentField],
             [compositeFieldMetadata.name]: { eq: record[columnName] },
           };
         } else {
+          // @ts-expect-error legacy noImplicitAny
           condition[columnName] = { eq: record[columnName] };
         }
       });

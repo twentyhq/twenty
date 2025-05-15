@@ -21,8 +21,10 @@ export class CloudflareSecretMatchGuard implements CanActivate {
       if (
         !cloudflareWebhookSecret ||
         (cloudflareWebhookSecret &&
+          // @ts-expect-error legacy noImplicitAny
           (typeof request.headers['cf-webhook-auth'] === 'string' ||
             timingSafeEqual(
+              // @ts-expect-error legacy noImplicitAny
               Buffer.from(request.headers['cf-webhook-auth']),
               Buffer.from(cloudflareWebhookSecret),
             )))

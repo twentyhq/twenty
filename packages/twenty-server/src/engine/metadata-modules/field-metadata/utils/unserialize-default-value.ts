@@ -29,6 +29,7 @@ export const unserializeDefaultValue = (
   if (typeof serializedDefaultValue === 'object') {
     return Object.entries(serializedDefaultValue).reduce(
       (acc, [key, value]) => {
+        // @ts-expect-error legacy noImplicitAny
         acc[key] = unserializeDefaultValue(value);
 
         return acc;

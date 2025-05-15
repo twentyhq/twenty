@@ -266,6 +266,7 @@ export class RoleService {
         isArgDefinedIfProvidedOrThrow({
           input,
           key,
+          // @ts-expect-error legacy noImplicitAny
           value: input[key],
         });
       } catch (error) {

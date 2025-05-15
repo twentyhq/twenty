@@ -16,7 +16,9 @@ const generateRandomAmountMicros = () => {
   return firstDigit * 10000000000;
 };
 
+// @ts-expect-error legacy noImplicitAny
 const generateOpportunities = (companies) => {
+  // @ts-expect-error legacy noImplicitAny
   return companies.map((company) => ({
     id: v4(),
     name: company.name,
@@ -66,6 +68,7 @@ export const seedOpportunityWithDemoData = async (
     ])
     .orIgnore()
     .values(
+      // @ts-expect-error legacy noImplicitAny
       opportunities.map((opportunity, index) => ({
         ...opportunity,
         position: index,

@@ -35,6 +35,7 @@ const pgGraphQLErrorMapping: PgGraphQLErrorMapping = {
   'duplicate key value violates unique constraint': (command, objectName, _) =>
     new WorkspaceQueryRunnerException(
       `Cannot ${
+        // @ts-expect-error legacy noImplicitAny
         pgGraphQLCommandMapping[command] ?? command
       } ${objectName} because it violates a uniqueness constraint.`,
       WorkspaceQueryRunnerExceptionCode.QUERY_VIOLATES_UNIQUE_CONSTRAINT,
@@ -42,6 +43,7 @@ const pgGraphQLErrorMapping: PgGraphQLErrorMapping = {
   'violates foreign key constraint': (command, objectName, _) =>
     new WorkspaceQueryRunnerException(
       `Cannot ${
+        // @ts-expect-error legacy noImplicitAny
         pgGraphQLCommandMapping[command] ?? command
       } ${objectName} because it violates a foreign key constraint.`,
       WorkspaceQueryRunnerExceptionCode.QUERY_VIOLATES_FOREIGN_KEY_CONSTRAINT,

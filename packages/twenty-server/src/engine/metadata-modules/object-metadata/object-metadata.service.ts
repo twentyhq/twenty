@@ -474,6 +474,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         acc[object.standardId ?? ''] = {
           id: object.id,
           fields: object.fields.reduce((acc, field) => {
+            // @ts-expect-error legacy noImplicitAny
             acc[field.standardId ?? ''] = field.id;
 
             return acc;
@@ -608,6 +609,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }
 
     const translationValue =
+      // @ts-expect-error legacy noImplicitAny
       objectMetadata.standardOverrides?.translations?.[locale]?.[labelKey];
 
     if (isDefined(translationValue)) {

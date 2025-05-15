@@ -268,9 +268,11 @@ describe('Core REST API Find Duplicates endpoint', () => {
     expect(personDuplicated2.company.people).toBeDefined();
 
     const depth2Person1 = personDuplicated1.company.people.find(
+      // @ts-expect-error legacy noImplicitAny
       (p) => p.id === personDuplicated1.id,
     );
     const depth2Person2 = personDuplicated2.company.people.find(
+      // @ts-expect-error legacy noImplicitAny
       (p) => p.id === personDuplicated2.id,
     );
 

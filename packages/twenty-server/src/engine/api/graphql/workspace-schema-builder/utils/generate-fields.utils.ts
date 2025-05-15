@@ -104,12 +104,14 @@ export const generateFields = <
         throw new Error('Join column name is not defined');
       }
 
+      // @ts-expect-error legacy noImplicitAny
       fields[joinColumnName] = {
         type,
         description: fieldMetadata.description,
       };
     }
 
+    // @ts-expect-error legacy noImplicitAny
     fields[fieldMetadata.name] = {
       type,
       description: fieldMetadata.description,

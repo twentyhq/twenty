@@ -1,9 +1,9 @@
+import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
 import { TEST_PERSON_1_ID } from 'test/integration/constants/test-person-ids.constants';
+import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
-import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
-import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 
 describe('Core REST API Create One endpoint', () => {
   beforeEach(async () => {
@@ -108,6 +108,7 @@ describe('Core REST API Create One endpoint', () => {
 
         expect(createdPerson.company.people).toBeDefined();
         const depth2Person = createdPerson.company.people.find(
+          // @ts-expect-error legacy noImplicitAny
           (p) => p.id === createdPerson.id,
         );
 

@@ -572,7 +572,9 @@ export class WorkflowVersionStepWorkspaceService {
 
     const enrichedResponses = await Promise.all(
       responseKeys.map(async (key) => {
+        // @ts-expect-error legacy noImplicitAny
         if (!isDefined(response[key])) {
+          // @ts-expect-error legacy noImplicitAny
           return { key, value: response[key] };
         }
 
@@ -581,7 +583,9 @@ export class WorkflowVersionStepWorkspaceService {
         if (
           field?.type === 'RECORD' &&
           field?.settings?.objectName &&
+          // @ts-expect-error legacy noImplicitAny
           isDefined(response[key].id) &&
+          // @ts-expect-error legacy noImplicitAny
           isValidUuid(response[key].id)
         ) {
           const repository = await this.twentyORMManager.getRepository(
@@ -589,17 +593,20 @@ export class WorkflowVersionStepWorkspaceService {
           );
 
           const record = await repository.findOne({
+            // @ts-expect-error legacy noImplicitAny
             where: { id: response[key].id },
           });
 
           return { key, value: record };
         } else {
+          // @ts-expect-error legacy noImplicitAny
           return { key, value: response[key] };
         }
       }),
     );
 
     return enrichedResponses.reduce((acc, { key, value }) => {
+      // @ts-expect-error legacy noImplicitAny
       acc[key] = value;
 
       return acc;
