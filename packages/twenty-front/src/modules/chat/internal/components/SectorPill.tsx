@@ -7,7 +7,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
-import { MenuItem, useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type SectorPillDropdownProps = {
   label: string;

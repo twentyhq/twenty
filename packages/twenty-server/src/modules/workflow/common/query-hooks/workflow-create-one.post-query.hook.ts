@@ -8,6 +8,7 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -29,6 +30,7 @@ export class WorkflowCreateOnePostQueryHook
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly recordPositionService: RecordPositionService,
   ) {}
 
   async execute(
@@ -43,10 +45,20 @@ export class WorkflowCreateOnePostQueryHook
         'workflowVersion',
       );
 
+    const position = await this.recordPositionService.buildRecordPosition({
+      value: 'first',
+      objectMetadata: {
+        isCustom: false,
+        nameSingular: 'workflowVersion',
+      },
+      workspaceId: authContext.workspace.id,
+    });
+
     const workflowVersionToCreate = await workflowVersionRepository.create({
       workflowId: workflow.id,
       status: WorkflowVersionStatus.DRAFT,
       name: 'v1',
+      position,
     });
 
     await workflowVersionRepository.save(workflowVersionToCreate);

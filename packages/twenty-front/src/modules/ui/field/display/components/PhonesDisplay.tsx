@@ -1,14 +1,15 @@
-import styled from '@emotion/styled';
 import React, { useMemo } from 'react';
-import { RoundedLink, THEME_COMMON } from 'twenty-ui';
 
 import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 
 import { DEFAULT_PHONE_CALLING_CODE } from '@/object-record/record-field/meta-types/input/components/PhonesFieldInput';
+import { styled } from '@linaria/react';
 import { parsePhoneNumber } from 'libphonenumber-js';
-import { logError } from '~/utils/logError';
 import { isDefined } from 'twenty-shared/utils';
+import { RoundedLink } from 'twenty-ui/navigation';
+import { THEME_COMMON } from 'twenty-ui/theme';
+import { logError } from '~/utils/logError';
 
 type PhonesDisplayProps = {
   value?: FieldPhonesValue;

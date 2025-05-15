@@ -3,7 +3,7 @@ import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThro
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { WorkflowRunStepJsonContainer } from '@/workflow/workflow-steps/components/WorkflowRunStepJsonContainer';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { getWorkflowPreviousStepId } from '@/workflow/workflow-steps/utils/getWorkflowPreviousStep';
+import { getWorkflowPreviousStepId } from '@/workflow/workflow-steps/utils/getWorkflowPreviousStepId';
 import { getWorkflowRunStepContext } from '@/workflow/workflow-steps/utils/getWorkflowRunStepContext';
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import { getActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow';
@@ -11,19 +11,21 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { IconBrackets, useIcons } from 'twenty-ui/display';
 import {
-  IconBrackets,
+  GetJsonNodeHighlighting,
   JsonNestedNode,
   JsonTreeContextProvider,
   ShouldExpandNodeInitiallyProps,
-  useIcons,
-} from 'twenty-ui';
-import { isDefined } from 'twenty-shared/utils';
+} from 'twenty-ui/json-visualizer';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   const { t, i18n } = useLingui();
   const { getIcon } = useIcons();
   const theme = useTheme();
+  const { copyToClipboard } = useCopyToClipboard();
 
   const workflowRunId = useWorkflowRunIdOrThrow();
   const workflowRun = useWorkflowRun({ workflowRunId });
@@ -71,6 +73,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   const variablesUsedInStep = getWorkflowVariablesUsedInStep({
     step,
   });
+  const allVariablesUsedInStep = Array.from(variablesUsedInStep);
 
   const stepContext = getWorkflowRunStepContext({
     context: workflowRun.context,
@@ -80,6 +83,21 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   if (stepContext.length === 0) {
     throw new Error('The input tab must be rendered with a non-empty context.');
   }
+
+  const getNodeHighlighting: GetJsonNodeHighlighting = (keyPath: string) => {
+    if (variablesUsedInStep.has(keyPath)) {
+      return 'blue';
+    }
+
+    const isUsedVariableParent = allVariablesUsedInStep.some((variable) =>
+      variable.startsWith(keyPath),
+    );
+    if (isUsedVariableParent) {
+      return 'partial-blue';
+    }
+
+    return undefined;
+  };
 
   const isFirstNodeDepthOfPreviousStep = ({
     keyPath,
@@ -105,8 +123,9 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
             emptyStringLabel: t`[empty string]`,
             arrowButtonCollapsedLabel: t`Expand`,
             arrowButtonExpandedLabel: t`Collapse`,
-            shouldHighlightNode: (keyPath) => variablesUsedInStep.has(keyPath),
+            getNodeHighlighting,
             shouldExpandNodeInitially: isFirstNodeDepthOfPreviousStep,
+            onNodeValueClick: copyToClipboard,
           }}
         >
           <JsonNestedNode

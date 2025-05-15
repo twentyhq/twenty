@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { z } from 'zod';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
+import { OAuth2ClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/oauth2-client.provider';
+import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
 
 interface SendMessageInput {
   body: string;
@@ -18,6 +20,7 @@ interface SendMessageInput {
 export class MessagingSendMessageService {
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
+    private readonly oAuth2ClientProvider: OAuth2ClientProvider,
     private readonly microsoftClientProvider: MicrosoftClientProvider,
   ) {}
 
@@ -30,14 +33,31 @@ export class MessagingSendMessageService {
         const gmailClient =
           await this.gmailClientProvider.getGmailClient(connectedAccount);
 
-        const message = [
+        const oAuth2Client =
+          await this.oAuth2ClientProvider.getOAuth2Client(connectedAccount);
+
+        const { data } = await oAuth2Client.userinfo.get();
+
+        const fromEmail = data.email;
+
+        const fromName = data.name;
+
+        const headers: string[] = [];
+
+        if (isDefined(fromName)) {
+          headers.push(`From: "${mimeEncode(fromName)}" <${fromEmail}>`);
+        }
+
+        headers.push(
           `To: ${sendMessageInput.to}`,
-          `Subject: ${sendMessageInput.subject}`,
+          `Subject: ${mimeEncode(sendMessageInput.subject)}`,
           'MIME-Version: 1.0',
           'Content-Type: text/plain; charset="UTF-8"',
           '',
           sendMessageInput.body,
-        ].join('\n');
+        );
+
+        const message = headers.join('\n');
 
         const encodedMessage = Buffer.from(message).toString('base64');
 

@@ -1,8 +1,10 @@
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator, IconBell, MenuItemDraggable } from 'twenty-ui';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
+import { ComponentDecorator } from 'twenty-ui/testing';
+import { IconBell } from 'twenty-ui/display';
+import { MenuItemDraggable } from 'twenty-ui/navigation';
 
 const meta: Meta<typeof DraggableItem> = {
   title: 'UI/Layout/DraggableList/DraggableItem',

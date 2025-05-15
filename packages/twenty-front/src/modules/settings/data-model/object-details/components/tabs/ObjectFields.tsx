@@ -3,7 +3,10 @@ import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsOb
 
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { Button, H2Title, IconPlus, Section, UndecoratedLink } from 'twenty-ui';
+import { Button } from 'twenty-ui/input';
+import { H2Title, IconPlus } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 
 const StyledDiv = styled.div`
   display: flex;

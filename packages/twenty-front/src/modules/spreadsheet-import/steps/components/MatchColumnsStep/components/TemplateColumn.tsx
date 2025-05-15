@@ -1,12 +1,13 @@
 import styled from '@emotion/styled';
-import { IconForbid } from 'twenty-ui';
 
-import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
+import { MatchColumnToFieldSelect } from '@/spreadsheet-import/components/MatchColumnToFieldSelect';
+import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
+import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { IconForbid } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -54,7 +55,7 @@ export const TemplateColumn = <T extends string>({
   const selectOptions = [
     {
       Icon: IconForbid,
-      value: 'do-not-import',
+      value: DO_NOT_IMPORT_OPTION_KEY,
       label: t`Do not import`,
     },
     ...fieldOptions,
@@ -65,17 +66,17 @@ export const TemplateColumn = <T extends string>({
   );
 
   const ignoreValue = selectOptions.find(
-    ({ value }) => value === 'do-not-import',
+    ({ value }) => value === DO_NOT_IMPORT_OPTION_KEY,
   );
 
   return (
     <StyledContainer>
-      <MatchColumnSelect
+      <MatchColumnToFieldSelect
         placeholder={t`Select column...`}
         value={isIgnored ? ignoreValue : selectValue}
         onChange={(value) => onChange(value?.value as T, column.index)}
         options={selectOptions}
-        name={column.header}
+        columnIndex={column.index.toString()}
       />
     </StyledContainer>
   );

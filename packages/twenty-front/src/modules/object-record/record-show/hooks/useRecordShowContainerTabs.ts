@@ -15,9 +15,8 @@ import {
   IconHome,
   IconMail,
   IconNotes,
-  IconPrinter,
   IconSettings,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { FeatureFlagKey } from '~/generated/graphql';
 
@@ -146,7 +145,7 @@ export const useRecordShowContainerTabs = (
         tabs: {
           workflow: {
             title: 'Flow',
-            position: 0,
+            position: 101,
             Icon: IconSettings,
             cards: [{ type: CardType.WorkflowCard }],
             hide: {
@@ -160,13 +159,16 @@ export const useRecordShowContainerTabs = (
           },
           timeline: null,
           fields: null,
+          tasks: null,
+          notes: null,
+          files: null,
         },
       },
       [CoreObjectNameSingular.WorkflowVersion]: {
         tabs: {
           workflowVersion: {
             title: 'Flow',
-            position: 0,
+            position: 101,
             Icon: IconSettings,
             cards: [{ type: CardType.WorkflowVersionCard }],
             hide: {
@@ -179,27 +181,16 @@ export const useRecordShowContainerTabs = (
             },
           },
           timeline: null,
+          tasks: null,
+          notes: null,
+          files: null,
         },
       },
       [CoreObjectNameSingular.WorkflowRun]: {
         tabs: {
-          workflowRunOutput: {
-            title: 'Output',
-            position: 0,
-            Icon: IconPrinter,
-            cards: [{ type: CardType.WorkflowRunOutputCard }],
-            hide: {
-              ifMobile: false,
-              ifDesktop: false,
-              ifInRightDrawer: false,
-              ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
-              ifRequiredObjectsInactive: [],
-              ifRelationsMissing: [],
-            },
-          },
-          workflowRunFlow: {
+          workflowRun: {
             title: 'Flow',
-            position: 0,
+            position: 101,
             Icon: IconSettings,
             cards: [{ type: CardType.WorkflowRunCard }],
             hide: {
@@ -212,6 +203,32 @@ export const useRecordShowContainerTabs = (
             },
           },
           timeline: null,
+          tasks: null,
+          notes: null,
+          files: null,
+        },
+      },
+      [CoreObjectNameSingular.Traceable]: {
+        hideSummaryAndFields: false,
+        tabs: {
+          fields: {
+            title: 'Traceable',
+            position: 101,
+            Icon: IconSettings,
+            cards: [{ type: CardType.TraceableFieldsCard }],
+            hide: {
+              ifMobile: false,
+              ifDesktop: false,
+              ifInRightDrawer: false,
+              ifFeaturesDisabled: [],
+              ifRequiredObjectsInactive: [],
+              ifRelationsMissing: [],
+            },
+          },
+          timeline: null,
+          tasks: null,
+          notes: null,
+          files: null,
         },
       },
     }),

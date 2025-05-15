@@ -25,6 +25,14 @@
       {
         "include": "**/serverless/drivers/constants/executor/index.mjs",
         "outDir": "dist/assets"
+      },
+      {
+        "include": "**/modules/charges/certs/*.{crt,key}",
+        "outDir": "dist/src/modules/charges/certs"
+      },
+      {
+        "include": "**/database/clickHouse/migrations/*.sql",
+        "outDir": "dist/src"
       }
     ],
     "watchAssets": true

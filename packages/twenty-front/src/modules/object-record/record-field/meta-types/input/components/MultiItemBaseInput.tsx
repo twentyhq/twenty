@@ -1,10 +1,10 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { forwardRef, InputHTMLAttributes, ReactNode, useRef } from 'react';
-import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
+import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 
 const StyledInput = styled.input<{
   withRightComponent?: boolean;
@@ -66,7 +66,7 @@ const StyledErrorDiv = styled.div`
 
 type HTMLInputProps = InputHTMLAttributes<HTMLInputElement>;
 
-export type MultiItemBaseInputProps = HTMLInputProps & {
+export type MultiItemBaseInputProps = Omit<HTMLInputProps, 'onChange'> & {
   hotkeyScope?: string;
   onClickOutside?: () => void;
   onEnter?: () => void;
@@ -76,13 +76,14 @@ export type MultiItemBaseInputProps = HTMLInputProps & {
   rightComponent?: ReactNode;
   renderInput?: (props: {
     value: HTMLInputProps['value'];
-    onChange: HTMLInputProps['onChange'];
+    onChange: (value: string) => void;
     autoFocus: HTMLInputProps['autoFocus'];
     placeholder: HTMLInputProps['placeholder'];
   }) => React.ReactNode;
   error?: string | null;
   hasError?: boolean;
   hasItem: boolean;
+  onChange: (value: string) => void;
 };
 
 export const MultiItemBaseInput = forwardRef<
@@ -140,7 +141,7 @@ export const MultiItemBaseInput = forwardRef<
               autoFocus={autoFocus}
               value={value}
               placeholder={placeholder}
-              onChange={onChange}
+              onChange={(event) => onChange(event.target.value)}
               ref={combinedRef}
               withRightComponent={!!rightComponent}
               hasItem={hasItem}

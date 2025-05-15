@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useContext } from 'react';
+import { Avatar } from 'twenty-ui/display';
 import { ChatContext } from '../context/chatContext';
 import { ChatContextType } from '../types/chat';
-import { Avatar } from 'twenty-ui';
 
 const StyledMainContainer = styled.div`
   display: flex;

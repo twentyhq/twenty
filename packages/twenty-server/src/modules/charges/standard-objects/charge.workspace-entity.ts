@@ -1,14 +1,12 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
-} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
@@ -28,9 +26,10 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
-const NAME_FIELD_NAME = 'product';
+const NAME_FIELD_NAME = 'name';
 
 export const SEARCH_FIELDS_FOR_CHARGE: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
@@ -43,19 +42,19 @@ export const SEARCH_FIELDS_FOR_CHARGE: FieldTypeAndNameMetadata[] = [
   labelPlural: msg`Charges`,
   description: msg`A charge`,
   icon: 'IconSettings',
-  labelIdentifierStandardId: CHARGE_STANDARD_FIELD_IDS.product,
+  labelIdentifierStandardId: CHARGE_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsNotAuditLogged()
 export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
-    standardId: CHARGE_STANDARD_FIELD_IDS.product,
+    standardId: CHARGE_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: msg`Product`,
+    label: msg`Name`,
     description: msg`Charge product`,
     icon: 'IconSettings',
   })
   @WorkspaceIsNullable()
-  product: string;
+  name: string;
 
   @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.price,
@@ -88,6 +87,16 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   discount: number;
 
   @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.requestCode,
+    type: FieldMetadataType.TEXT,
+    label: msg`Request Code`,
+    description: msg`Charge request code`,
+    icon: 'IconSettings',
+  })
+  @WorkspaceIsNullable()
+  requestCode: string;
+
+  @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.recurrence,
     type: FieldMetadataType.SELECT,
     label: msg`Recurrence`,
@@ -108,6 +117,30 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   recurrence: string;
 
   @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.taxId,
+    type: FieldMetadataType.TEXT,
+    label: msg`Tax ID`,
+    description: msg`CPF or CNPJ identifier for the charge`,
+    icon: 'IconId',
+  })
+  @WorkspaceIsNullable()
+  taxId: string;
+
+  @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.entityType,
+    type: FieldMetadataType.SELECT,
+    label: msg`Entity Type`,
+    description: msg`Indicates if the entity is an individual or a company`,
+    icon: 'IconUserCheck',
+    options: [
+      { value: 'individual', label: 'Individual', position: 0, color: 'blue' },
+      { value: 'company', label: 'Company', position: 1, color: 'green' },
+    ],
+  })
+  @WorkspaceIsNullable()
+  entityType: string;
+
+  @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
@@ -120,7 +153,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.integration,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Payment Gateway`,
     description: msg`Integration linked to the charge`,
     icon: 'IconBuildingSkyscraper',
@@ -133,10 +166,41 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('integration')
   integrationId: string | null;
 
+  @WorkspaceRelation({
+    standardId: CHARGE_STANDARD_FIELD_IDS.product,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Product`,
+    description: msg`Product linked to this charge`,
+    icon: 'IconClipboardList',
+    inverseSideTarget: () => ProductWorkspaceEntity,
+    inverseSideFieldKey: 'charges',
+  })
+  @WorkspaceIsNullable()
+  product: Relation<ProductWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('product')
+  productId: string | null;
+
+  @WorkspaceField({
+    standardId: CHARGE_STANDARD_FIELD_IDS.chargeAction,
+    type: FieldMetadataType.SELECT,
+    label: msg`Charge Action`,
+    description: msg`Product charge action(issue products can be used in charges)`,
+    icon: 'IconProgress',
+    options: [
+      { value: 'none', label: 'None', position: 0, color: 'gray' },
+      { value: 'issue', label: 'Issue', position: 1, color: 'green' },
+      { value: 'cancel', label: 'Cancel', position: 2, color: 'red' },
+    ],
+    defaultValue: "'none'",
+  })
+  @WorkspaceFieldIndex()
+  chargeAction: string;
+
   //Relations
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.company,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Customer`,
     description: msg`Customer linked to the charge`,
     icon: 'IconBuildingSkyscraper',
@@ -151,7 +215,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.person,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Contact`,
     description: msg`Person linked to the charge`,
     icon: 'IconUser',
@@ -166,7 +230,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.timelineActivities,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Events`,
     description: msg`Events linked to the charge`,
     icon: 'IconTimelineEvent',
@@ -179,7 +243,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.attachments,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Attachments`,
     description: msg`Attachments linked to the charge`,
     icon: 'IconFileImport',

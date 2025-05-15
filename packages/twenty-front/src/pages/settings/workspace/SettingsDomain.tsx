@@ -8,11 +8,13 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -70,6 +72,11 @@ export const SettingsDomain = () => {
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
+
+  const [
+    isSubdomainChangeConfirmationModalOpen,
+    setIsSubdomainChangeConfirmationModalOpen,
+  ] = useState(false);
 
   const form = useForm<{
     subdomain: string;
@@ -151,7 +158,7 @@ export const SettingsDomain = () => {
           variant: SnackBarVariant.Error,
         });
       },
-      onCompleted: () => {
+      onCompleted: async () => {
         const currentUrl = new URL(window.location.href);
 
         currentUrl.hostname = new URL(
@@ -167,7 +174,7 @@ export const SettingsDomain = () => {
           variant: SnackBarVariant.Success,
         });
 
-        redirectToWorkspaceDomain(currentUrl.toString());
+        await redirectToWorkspaceDomain(currentUrl.toString());
       },
     });
   };
@@ -194,7 +201,8 @@ export const SettingsDomain = () => {
       isDefined(values.subdomain) &&
       values.subdomain !== currentWorkspace.subdomain
     ) {
-      return updateSubdomain(values.subdomain, currentWorkspace);
+      setIsSubdomainChangeConfirmationModalOpen(true);
+      return;
     }
 
     if (values.customDomain !== currentWorkspace.customDomain) {
@@ -231,6 +239,17 @@ export const SettingsDomain = () => {
             {isCustomDomainEnabled && <SettingsCustomDomain />}
           </SettingsPageContainer>
         </SubMenuTopBarContainer>
+        <ConfirmationModal
+          isOpen={isSubdomainChangeConfirmationModalOpen}
+          title={t`Change subdomain?`}
+          subtitle={t`You're about to change your workspace subdomain. This action will log out all users.`}
+          setIsOpen={setIsSubdomainChangeConfirmationModalOpen}
+          onConfirmClick={() => {
+            const values = form.getValues();
+            currentWorkspace &&
+              updateSubdomain(values.subdomain, currentWorkspace);
+          }}
+        />
       </FormProvider>
     </form>
   );

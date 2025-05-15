@@ -1,12 +1,4 @@
 import styled from '@emotion/styled';
-import {
-  Button,
-  ButtonGroup,
-  IconButton,
-  IconChevronDown,
-  IconPlus,
-  MenuItem,
-} from 'twenty-ui';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -26,6 +18,9 @@ import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPicke
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { t } from '@lingui/core/macro';
+import { Button, ButtonGroup, IconButton } from 'twenty-ui/input';
+import { IconChevronDown, IconPlus } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};

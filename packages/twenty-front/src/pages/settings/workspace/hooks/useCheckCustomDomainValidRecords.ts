@@ -16,12 +16,13 @@ export const useCheckCustomDomainValidRecords = () => {
     }));
     checkCustomDomainValidRecords({
       onCompleted: (data) => {
-        if (isDefined(data.checkCustomDomainValidRecords)) {
-          setCustomDomainRecords({
-            isLoading: false,
-            customDomainRecords: data.checkCustomDomainValidRecords,
-          });
-        }
+        setCustomDomainRecords((currentState) => ({
+          ...currentState,
+          isLoading: false,
+          ...(isDefined(data.checkCustomDomainValidRecords)
+            ? { customDomainRecords: data.checkCustomDomainValidRecords }
+            : {}),
+        }));
       },
     });
   };

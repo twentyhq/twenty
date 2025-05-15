@@ -7,7 +7,9 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSelectTag, SelectOption, TagColor } from 'twenty-ui';
+import { TagColor } from 'twenty-ui/components';
+import { SelectOption } from 'twenty-ui/input';
+import { MenuItemSelectTag } from 'twenty-ui/navigation';
 
 interface SelectInputProps {
   onOptionSelected: (selectedOption: SelectOption) => void;
@@ -105,7 +107,6 @@ export const SelectInput = ({
         {onClear && clearLabel && (
           <MenuItemSelectTag
             key={`No ${clearLabel}`}
-            selected={false}
             text={`No ${clearLabel}`}
             color="transparent"
             variant={'outline'}
@@ -119,7 +120,7 @@ export const SelectInput = ({
           return (
             <MenuItemSelectTag
               key={option.value}
-              selected={selectedOption?.value === option.value}
+              focused={selectedOption?.value === option.value}
               text={option.label}
               color={(option.color as TagColor) ?? 'transparent'}
               onClick={() => handleOptionChange(option)}

@@ -1,19 +1,20 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { currentUserState } from '@/auth/states/currentUserState';
-import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
-import { AppPath } from '@/types/AppPath';
-import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useSetRecoilState } from 'recoil';
-import { AnimatedEaseIn, IconCheck, MainButton, RGBA } from 'twenty-ui';
-import {
-  OnboardingStatus,
-  useGetCurrentUserLazyQuery,
-} from '~/generated/graphql';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
+import { useRecoilState } from 'recoil';
+import { IconCheck } from 'twenty-ui/display';
+import { MainButton } from 'twenty-ui/input';
+import { RGBA } from 'twenty-ui/theme';
+import { AnimatedEaseIn } from 'twenty-ui/utilities';
+import { useSaveBillingPlan } from '~/pages/onboarding/hooks/useSaveBillingPlan';
+import { selectedPlanState } from '~/pages/onboarding/Plans';
 
 const StyledCheckContainer = styled.div`
   align-items: center;
@@ -33,44 +34,41 @@ const StyledButtonContainer = styled.div`
 `;
 
 export const PaymentSuccess = () => {
+  const { t } = useLingui();
+  const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const theme = useTheme();
-  const navigate = useNavigateApp();
-  const subscriptionStatus = useSubscriptionStatus();
-  const onboardingStatus = useOnboardingStatus();
-  const [getCurrentUser] = useGetCurrentUserLazyQuery();
-  const setCurrentUser = useSetRecoilState(currentUserState);
   const color =
     theme.name === 'light' ? theme.grayScale.gray90 : theme.grayScale.gray10;
 
-  const navigateWithSubscriptionCheck = async () => {
-    if (isDefined(subscriptionStatus)) {
-      navigate(AppPath.CreateWorkspace);
-      return;
+  const { enqueueSnackBar } = useSnackBar();
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
+    currentWorkspaceMemberState,
+  );
+  const { savePlan } = useSaveBillingPlan();
+
+  // eslint-disable-next-line @nx/workspace-matching-state-variable
+  const [selectedPlanId] = useRecoilState(selectedPlanState);
+
+  const onSubmit = async () => {
+    try {
+      if (!currentWorkspaceMember?.id) {
+        throw new Error('User is not logged in');
+      }
+
+      const onboardingId = selectedPlanId.id;
+
+      await savePlan(onboardingId);
+
+      setNextOnboardingStatus();
+    } catch (error: any) {
+      enqueueSnackBar(error?.message, {
+        variant: SnackBarVariant.Error,
+      });
     }
-
-    const result = await getCurrentUser({ fetchPolicy: 'network-only' });
-    const currentUser = result.data?.currentUser;
-    const refreshedSubscriptionStatus =
-      currentUser?.currentWorkspace?.currentBillingSubscription?.status;
-
-    if (isDefined(currentUser) && isDefined(refreshedSubscriptionStatus)) {
-      setCurrentUser(currentUser);
-      navigate(AppPath.CreateWorkspace);
-      return;
-    }
-
-    throw new Error(
-      "We're waiting for a confirmation from our payment provider (Stripe).\n" +
-        'Please try again in a few seconds, sorry.',
-    );
   };
 
-  if (onboardingStatus === OnboardingStatus.COMPLETED) {
-    return <></>;
-  }
-
   return (
-    <>
+    <Modal.Content isVerticalCentered isHorizontalCentered>
       <AnimatedEaseIn>
         <StyledCheckContainer color={color}>
           <IconCheck color={color} size={24} stroke={3} />
@@ -80,11 +78,12 @@ export const PaymentSuccess = () => {
       <SubTitle>Your account has been activated.</SubTitle>
       <StyledButtonContainer>
         <MainButton
-          title="Start"
-          width={200}
-          onClick={navigateWithSubscriptionCheck}
+          title={t`Continue`}
+          variant="primary"
+          onClick={() => onSubmit()}
+          fullWidth
         />
       </StyledButtonContainer>
-    </>
+    </Modal.Content>
   );
 };

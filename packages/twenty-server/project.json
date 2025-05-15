@@ -244,6 +244,20 @@
       },
       "defaultConfiguration": "seed"
     },
+    "clickhouse:migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "nx ts-node-no-deps -- src/database/clickHouse/migrations/run-migrations.ts"
+      }
+    },
+    "clickhouse:seed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "nx ts-node-no-deps -- src/database/clickHouse/seeds/run-seeds.ts"
+      }
+    },
     "lingui:extract": {
       "executor": "nx:run-commands",
       "options": {

@@ -5,8 +5,8 @@ import {
   CurrentWorkspace,
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
-import { OnboardingStatus } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { OnboardingStatus } from '~/generated/graphql';
 
 const getNextOnboardingStatus = (
   currentUser: CurrentUser | null,
@@ -17,6 +17,14 @@ const getNextOnboardingStatus = (
   }
 
   if (currentUser?.onboardingStatus === OnboardingStatus.PROFILE_CREATION) {
+    return OnboardingStatus.PLAN_REQUIRED;
+  }
+
+  if (currentUser?.onboardingStatus === OnboardingStatus.PLAN_REQUIRED) {
+    return OnboardingStatus.PAYMENT_REQUIRED;
+  }
+
+  if (currentUser?.onboardingStatus === OnboardingStatus.PAYMENT_REQUIRED) {
     return OnboardingStatus.SYNC_EMAIL;
   }
   if (

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { ServerBlockNoteEditor } from '@blocknote/server-util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
@@ -21,14 +20,9 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
-import {
-  RichTextV2Metadata,
-  richTextV2ValueSchema,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
+import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
-
-import { RecordPositionFactory } from './record-position.factory';
+import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 
 type ArgPositionBackfillInput = {
   argIndex?: number;
@@ -37,7 +31,10 @@ type ArgPositionBackfillInput = {
 
 @Injectable()
 export class QueryRunnerArgsFactory {
-  constructor(private readonly recordPositionFactory: RecordPositionFactory) {}
+  constructor(
+    private readonly recordPositionService: RecordPositionService,
+    private readonly recordInputTransformerService: RecordInputTransformerService,
+  ) {}
 
   async create(
     args: ResolverArgs,
@@ -102,7 +99,7 @@ export class QueryRunnerArgsFactory {
       case ResolverArgsType.UpdateMany:
         return {
           ...args,
-          filter: await this.overrideFilterByFieldMetadata(
+          filter: this.overrideFilterByFieldMetadata(
             (args as UpdateManyResolverArgs).filter,
             fieldMetadataMapByNameByName,
           ),
@@ -119,7 +116,7 @@ export class QueryRunnerArgsFactory {
       case ResolverArgsType.FindOne:
         return {
           ...args,
-          filter: await this.overrideFilterByFieldMetadata(
+          filter: this.overrideFilterByFieldMetadata(
             (args as FindOneResolverArgs).filter,
             fieldMetadataMapByNameByName,
           ),
@@ -127,7 +124,7 @@ export class QueryRunnerArgsFactory {
       case ResolverArgsType.FindMany:
         return {
           ...args,
-          filter: await this.overrideFilterByFieldMetadata(
+          filter: this.overrideFilterByFieldMetadata(
             (args as FindManyResolverArgs).filter,
             fieldMetadataMapByNameByName,
           ),
@@ -190,107 +187,33 @@ export class QueryRunnerArgsFactory {
         case FieldMetadataType.POSITION: {
           isFieldPositionPresent = true;
 
-          const newValue = await this.recordPositionFactory.create({
-            value,
-            workspaceId,
-            objectMetadata: {
-              isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
-              nameSingular:
-                options.objectMetadataItemWithFieldMaps.nameSingular,
+          const newValue = await this.recordPositionService.buildRecordPosition(
+            {
+              value,
+              workspaceId,
+              objectMetadata: {
+                isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
+                nameSingular:
+                  options.objectMetadataItemWithFieldMaps.nameSingular,
+              },
+              index: argPositionBackfillInput.argIndex,
             },
-            index: argPositionBackfillInput.argIndex,
-          });
+          );
 
           return [key, newValue];
         }
         case FieldMetadataType.NUMBER:
-          return [key, value === null ? null : Number(value)];
         case FieldMetadataType.RICH_TEXT:
-          throw new Error(
-            'Rich text is not supported, please use RICH_TEXT_V2 instead',
-          );
-        case FieldMetadataType.RICH_TEXT_V2: {
-          const richTextV2Value = richTextV2ValueSchema.parse(value);
-
-          const serverBlockNoteEditor = ServerBlockNoteEditor.create();
-
-          const convertedMarkdown = richTextV2Value.blocknote
-            ? await serverBlockNoteEditor.blocksToMarkdownLossy(
-                JSON.parse(richTextV2Value.blocknote),
-              )
-            : null;
-
-          const convertedBlocknote = richTextV2Value.markdown
-            ? JSON.stringify(
-                await serverBlockNoteEditor.tryParseMarkdownToBlocks(
-                  richTextV2Value.markdown,
-                ),
-              )
-            : null;
-
-          const valueInBothFormats: RichTextV2Metadata = {
-            markdown: richTextV2Value.markdown || convertedMarkdown,
-            blocknote: richTextV2Value.blocknote || convertedBlocknote,
-          };
-
-          return [key, valueInBothFormats];
-        }
-        case FieldMetadataType.LINKS: {
-          const newPrimaryLinkUrl = lowercaseDomain(value?.primaryLinkUrl);
-
-          let secondaryLinks = value?.secondaryLinks;
-
-          if (secondaryLinks) {
-            try {
-              const secondaryLinksArray = JSON.parse(secondaryLinks);
-
-              secondaryLinks = JSON.stringify(
-                secondaryLinksArray.map((link) => {
-                  return {
-                    ...link,
-                    url: lowercaseDomain(link.url),
-                  };
-                }),
-              );
-            } catch {
-              /* empty */
-            }
-          }
-
-          return [
-            key,
-            {
-              ...value,
-              primaryLinkUrl: newPrimaryLinkUrl,
-              secondaryLinks,
-            },
-          ];
-        }
+        case FieldMetadataType.RICH_TEXT_V2:
+        case FieldMetadataType.LINKS:
         case FieldMetadataType.EMAILS: {
-          let additionalEmails = value?.additionalEmails;
-          const primaryEmail = value?.primaryEmail
-            ? value.primaryEmail.toLowerCase()
-            : '';
+          const transformedValue =
+            await this.recordInputTransformerService.transformFieldValue(
+              fieldMetadata.type,
+              value,
+            );
 
-          if (additionalEmails) {
-            try {
-              const emailArray = JSON.parse(additionalEmails) as string[];
-
-              additionalEmails = JSON.stringify(
-                emailArray.map((email) => email.toLowerCase()),
-              );
-            } catch {
-              /* empty */
-            }
-          }
-
-          return [
-            key,
-            {
-              primaryEmail,
-              additionalEmails,
-            },
-          ];
+          return [key, transformedValue];
         }
         default:
           return [key, value];
@@ -307,7 +230,7 @@ export class QueryRunnerArgsFactory {
         ...newArgEntries,
         [
           'position',
-          await this.recordPositionFactory.create({
+          await this.recordPositionService.buildRecordPosition({
             value: 'first',
             workspaceId,
             objectMetadata: {
@@ -341,7 +264,7 @@ export class QueryRunnerArgsFactory {
         } else if (key === 'not') {
           acc[key] = overrideFilter(value);
         } else {
-          acc[key] = this.transformValueByType(
+          acc[key] = this.transformFilterValueByType(
             key,
             value,
             fieldMetadataMapByName,
@@ -355,7 +278,7 @@ export class QueryRunnerArgsFactory {
     return overrideFilter(filter);
   }
 
-  private transformValueByType(
+  private transformFilterValueByType(
     key: string,
     value: any,
     fieldMetadataMapByName: FieldMetadataMap,
@@ -366,8 +289,9 @@ export class QueryRunnerArgsFactory {
       return value;
     }
 
+    // Special handling for filter values, which have a specific structure
     switch (fieldMetadata.type) {
-      case 'NUMBER': {
+      case FieldMetadataType.NUMBER: {
         if (value?.is === 'NULL') {
           return value;
         } else {
@@ -395,11 +319,9 @@ export class QueryRunnerArgsFactory {
       return value;
     }
 
-    switch (fieldMetadata.type) {
-      case FieldMetadataType.NUMBER:
-        return Number(value);
-      default:
-        return value;
-    }
+    return this.recordInputTransformerService.transformFieldValue(
+      fieldMetadata.type,
+      value,
+    );
   }
 }

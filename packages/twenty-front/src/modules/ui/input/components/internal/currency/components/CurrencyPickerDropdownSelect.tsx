@@ -5,15 +5,14 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
-import { MenuItem, MenuItemSelectAvatar } from 'twenty-ui';
-import { Currency } from './CurrencyPickerDropdownButton';
+import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
+import { Currency } from '@/ui/input/components/internal/types/Currency';
+import { MenuItem, MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
 export const CurrencyPickerDropdownSelect = ({
-  currencies,
   selectedCurrency,
   onChange,
 }: {
-  currencies: Currency[];
   selectedCurrency?: Currency;
   onChange: (currency: Currency) => void;
 }) => {
@@ -21,14 +20,14 @@ export const CurrencyPickerDropdownSelect = ({
 
   const filteredCurrencies = useMemo(
     () =>
-      currencies.filter(
+      CURRENCIES.filter(
         ({ value, label }) =>
           value
             .toLocaleLowerCase()
             .includes(searchFilter.toLocaleLowerCase()) ||
           label.toLocaleLowerCase().includes(searchFilter.toLocaleLowerCase()),
       ),
-    [currencies, searchFilter],
+    [searchFilter],
   );
 
   return (
@@ -50,7 +49,7 @@ export const CurrencyPickerDropdownSelect = ({
                 key={selectedCurrency.value}
                 selected={true}
                 onClick={() => onChange(selectedCurrency)}
-                text={`${selectedCurrency.label} (${selectedCurrency.value})`}
+                text={selectedCurrency.label}
               />
             )}
             {filteredCurrencies.map((item) =>

@@ -4,12 +4,11 @@ import { z } from 'zod';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { currencyFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/currencyFieldDefaultValueSchema';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
-import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
+import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { Select } from '@/ui/input/components/Select';
-import { IconCurrencyDollar } from 'twenty-ui';
-import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { useLingui } from '@lingui/react/macro';
+import { IconCurrencyDollar } from 'twenty-ui/display';
 
 export const settingsDataModelFieldCurrencyFormSchema = z.object({
   defaultValue: currencyFieldDefaultValueSchema,
@@ -23,14 +22,6 @@ type SettingsDataModelFieldCurrencyFormProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<FieldMetadataItem, 'defaultValue'>;
 };
-
-const OPTIONS = Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(
-  ([value, { label, Icon }]) => ({
-    label,
-    value: applySimpleQuotesToString(value),
-    Icon,
-  }),
-);
 
 export const SettingsDataModelFieldCurrencyForm = ({
   disabled,
@@ -67,7 +58,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
               onChange={onChange}
               disabled={disabled}
               dropdownId="object-field-default-value-select-currency"
-              options={OPTIONS}
+              options={CURRENCIES}
               selectSizeVariant="small"
               withSearchInput={true}
             />

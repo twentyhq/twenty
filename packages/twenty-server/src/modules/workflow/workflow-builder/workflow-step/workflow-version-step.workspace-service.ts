@@ -2,11 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
+import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
@@ -18,10 +19,13 @@ import {
 import { StepOutput } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
+import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/insert-step';
+import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/remove-step';
 import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
   WorkflowAction,
   WorkflowActionType,
+  WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
@@ -54,13 +58,13 @@ export class WorkflowVersionStepWorkspaceService {
 
   async createWorkflowVersionStep({
     workspaceId,
-    workflowVersionId,
-    stepType,
+    input,
   }: {
     workspaceId: string;
-    workflowVersionId: string;
-    stepType: WorkflowActionType;
+    input: CreateWorkflowVersionStepInput;
   }): Promise<WorkflowActionDTO> {
+    const { workflowVersionId, stepType, parentStepId, nextStepId } = input;
+
     const newStep = await this.getStepDefaultDefinition({
       type: stepType,
       workspaceId,
@@ -87,8 +91,16 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
+    const existingSteps = workflowVersion.steps || [];
+    const updatedSteps = insertStep({
+      existingSteps,
+      insertedStep: enrichedNewStep,
+      parentStepId,
+      nextStepId,
+    });
+
     await workflowVersionRepository.update(workflowVersion.id, {
-      steps: [...(workflowVersion.steps || []), enrichedNewStep],
+      steps: updatedSteps,
     });
 
     return enrichedNewStep;
@@ -151,11 +163,11 @@ export class WorkflowVersionStepWorkspaceService {
   async deleteWorkflowVersionStep({
     workspaceId,
     workflowVersionId,
-    stepId,
+    stepIdToDelete,
   }: {
     workspaceId: string;
     workflowVersionId: string;
-    stepId: string;
+    stepIdToDelete: string;
   }): Promise<WorkflowActionDTO> {
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -182,9 +194,9 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
-    const stepToDelete = workflowVersion.steps.filter(
-      (step) => step.id === stepId,
-    )?.[0];
+    const stepToDelete = workflowVersion.steps.find(
+      (step) => step.id === stepIdToDelete,
+    );
 
     if (!isDefined(stepToDelete)) {
       throw new WorkflowVersionStepException(
@@ -194,9 +206,15 @@ export class WorkflowVersionStepWorkspaceService {
     }
 
     const workflowVersionUpdates =
-      stepId === TRIGGER_STEP_ID
+      stepIdToDelete === TRIGGER_STEP_ID
         ? { trigger: null }
-        : { steps: workflowVersion.steps.filter((step) => step.id !== stepId) };
+        : {
+            steps: removeStep({
+              existingSteps: workflowVersion.steps,
+              stepIdToDelete,
+              stepToDeleteChildrenIds: stepToDelete.nextStepIds,
+            }),
+          };
 
     await workflowVersionRepository.update(
       workflowVersion.id,
@@ -270,16 +288,28 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
+    if (step.type !== WorkflowActionType.FORM) {
+      throw new WorkflowVersionStepException(
+        'Step is not a form',
+        WorkflowVersionStepExceptionCode.INVALID,
+      );
+    }
+
+    const enrichedResponse = await this.enrichFormStepResponse({
+      step,
+      response,
+    });
+
     const newStepOutput: StepOutput = {
       id: stepId,
       output: {
-        result: response,
+        result: enrichedResponse,
       },
     };
 
     const updatedContext = {
       ...workflowRun.context,
-      [stepId]: response,
+      [stepId]: enrichedResponse,
     };
 
     await this.workflowRunWorkspaceService.saveWorkflowRunState({
@@ -529,5 +559,50 @@ export class WorkflowVersionStepWorkspaceService {
           WorkflowVersionStepExceptionCode.UNKNOWN,
         );
     }
+  }
+
+  private async enrichFormStepResponse({
+    step,
+    response,
+  }: {
+    step: WorkflowFormAction;
+    response: object;
+  }) {
+    const responseKeys = Object.keys(response);
+
+    const enrichedResponses = await Promise.all(
+      responseKeys.map(async (key) => {
+        if (!isDefined(response[key])) {
+          return { key, value: response[key] };
+        }
+
+        const field = step.settings.input.find((field) => field.name === key);
+
+        if (
+          field?.type === 'RECORD' &&
+          field?.settings?.objectName &&
+          isDefined(response[key].id) &&
+          isValidUuid(response[key].id)
+        ) {
+          const repository = await this.twentyORMManager.getRepository(
+            field.settings.objectName,
+          );
+
+          const record = await repository.findOne({
+            where: { id: response[key].id },
+          });
+
+          return { key, value: record };
+        } else {
+          return { key, value: response[key] };
+        }
+      }),
+    );
+
+    return enrichedResponses.reduce((acc, { key, value }) => {
+      acc[key] = value;
+
+      return acc;
+    }, {});
   }
 }

@@ -1,18 +1,13 @@
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { useState } from 'react';
-import {
-  IconX,
-  MenuItem,
-  MenuItemSelect,
-  OverflowingTextWithTooltip,
-  useIcons,
-} from 'twenty-ui';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { IconX, OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 
 type WorkflowVariablesDropdownWorkflowStepItemsProps = {
   dropdownId: string;
@@ -54,13 +49,13 @@ export const WorkflowVariablesDropdownWorkflowStepItems = ({
         onChange={(event) => setSearchInputValue(event.target.value)}
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer hasMaxHeight>
         {availableSteps.length > 0 ? (
           availableSteps.map((item, _index) => (
             <MenuItemSelect
               key={`step-${item.id}`}
               selected={false}
-              hovered={false}
+              focused={false}
               onClick={() => onSelect(item.id)}
               text={item.name}
               LeftIcon={item.icon ? getIcon(item.icon) : undefined}

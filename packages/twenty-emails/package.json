@@ -1,6 +1,5 @@
 {
   "name": "twenty-emails",
-  "version": "0.50.0-canary",
   "description": "",
   "author": "",
   "private": true,
@@ -14,10 +13,17 @@
     "@lingui/react": "^5.1.2",
     "twenty-shared": "workspace:*"
   },
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
+  },
   "devDependencies": {
     "@lingui/cli": "^5.1.2",
     "@lingui/swc-plugin": "^5.1.0",
-    "@lingui/vite-plugin": "^5.1.2"
+    "@lingui/vite-plugin": "^5.1.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "react-email": "4.0.3"
   },
   "exports": {
     ".": {

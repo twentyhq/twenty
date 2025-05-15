@@ -15,10 +15,10 @@ import {
   Avatar,
   H1Title,
   H1TitleFontColor,
-  IconButton,
   IconX,
   useIcons,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 
 const StyledPaneHeaderContainer = styled.div`
   display: flex;

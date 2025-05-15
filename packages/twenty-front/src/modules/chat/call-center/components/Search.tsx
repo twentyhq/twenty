@@ -6,7 +6,7 @@ import {
 } from '@/chat/call-center/types/SearchType';
 import styled from '@emotion/styled';
 import { useContext, useEffect, useState } from 'react';
-import { Avatar } from 'twenty-ui';
+import { Avatar } from 'twenty-ui/display';
 
 const StyledMainContainer = styled.div`
   display: flex;

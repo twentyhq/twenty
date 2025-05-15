@@ -9,8 +9,8 @@ import { promisify } from 'util';
 import { Bucket, Storage } from '@google-cloud/storage';
 import { Repository } from 'typeorm';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { folderName } from 'src/engine/core-modules/google-cloud/types/FolderNames';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const execAsync = promisify(exec);
@@ -19,15 +19,15 @@ const execAsync = promisify(exec);
 export class GoogleStorageService {
   private readonly storage: Storage;
 
-  bucketProjectId = this.environmentService.get('BUCKET_PROJECT_ID');
+  bucketProjectId = this.twentyConfigService.get('BUCKET_PROJECT_ID');
   bucketKeyFilename =
-    process.cwd() + this.environmentService.get('BUCKET_KEYFILENAME');
-  bucketName = this.environmentService.get('BUCKET_NAME');
+    process.cwd() + this.twentyConfigService.get('BUCKET_KEYFILENAME');
+  bucketName = this.twentyConfigService.get('BUCKET_NAME');
 
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {
     this.storage = new Storage({
       projectId: this.bucketProjectId,

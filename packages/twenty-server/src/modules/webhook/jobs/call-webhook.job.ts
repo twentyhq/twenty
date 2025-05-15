@@ -3,7 +3,8 @@ import { Logger } from '@nestjs/common';
 
 import crypto from 'crypto';
 
-import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { WEBHOOK_RESPONSE_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/webhook/webhook-response';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -25,7 +26,7 @@ export class CallWebhookJob {
   private readonly logger = new Logger(CallWebhookJob.name);
   constructor(
     private readonly httpService: HttpService,
-    private readonly analyticsService: AnalyticsService,
+    private readonly auditService: AuditService,
   ) {}
 
   private generateSignature(
@@ -46,6 +47,9 @@ export class CallWebhookJob {
       webhookId: data.webhookId,
       eventName: data.eventName,
     };
+    const analytics = this.auditService.createContext({
+      workspaceId: data.workspaceId,
+    });
 
     try {
       const headers: Record<string, string> = {
@@ -73,27 +77,18 @@ export class CallWebhookJob {
       );
 
       const success = response.status >= 200 && response.status < 300;
-      const eventInput = {
-        action: 'webhook.response',
-        payload: {
-          status: response.status,
-          success,
-          ...commonPayload,
-        },
-      };
 
-      this.analyticsService.create(eventInput, 'webhook', data.workspaceId);
+      analytics.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
+        status: response.status,
+        success,
+        ...commonPayload,
+      });
     } catch (err) {
-      const eventInput = {
-        action: 'webhook.response',
-        payload: {
-          success: false,
-          ...commonPayload,
-          ...(err.response && { status: err.response.status }),
-        },
-      };
-
-      this.analyticsService.create(eventInput, 'webhook', data.workspaceId);
+      analytics.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
+        success: false,
+        ...commonPayload,
+        ...(err.response && { status: err.response.status }),
+      });
       this.logger.error(
         `Error calling webhook on targetUrl '${data.targetUrl}': ${err}`,
       );

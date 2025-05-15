@@ -7,9 +7,10 @@ import { Separator } from '@/settings/components/Separator';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { Select } from '@/ui/input/components/Select';
-import { IconDecimal, IconEye, IconNumber9, IconPercentage } from 'twenty-ui';
+import { useLingui } from '@lingui/react/macro';
+import { IconDecimal, IconEye } from 'twenty-ui/display';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
-import { t } from '@lingui/core/macro';
+import { NUMBER_DATA_MODEL_SELECT_OPTIONS } from '@/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions';
 
 export const settingsDataModelFieldNumberFormSchema = z.object({
   settings: numberFieldDefaultValueSchema,
@@ -31,6 +32,7 @@ export const SettingsDataModelFieldNumberForm = ({
   disabled,
   fieldMetadataItem,
 }: SettingsDataModelFieldNumberFormProps) => {
+  const { t } = useLingui();
   const { control } = useFormContext<SettingsDataModelFieldNumberFormValues>();
 
   return (
@@ -61,18 +63,10 @@ export const SettingsDataModelFieldNumberForm = ({
                 onChange={(value) => onChange({ type: value, decimals: count })}
                 disabled={disabled}
                 needIconCheck={false}
-                options={[
-                  {
-                    Icon: IconNumber9,
-                    label: t`Number`,
-                    value: 'number',
-                  },
-                  {
-                    Icon: IconPercentage,
-                    label: t`Percentage`,
-                    value: 'percentage',
-                  },
-                ]}
+                options={NUMBER_DATA_MODEL_SELECT_OPTIONS.map((option) => ({
+                  ...option,
+                  label: t(option.label),
+                }))}
               />
             </SettingsOptionCardContentSelect>
             <Separator />

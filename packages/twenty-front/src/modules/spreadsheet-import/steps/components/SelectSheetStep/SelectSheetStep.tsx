@@ -8,11 +8,11 @@ import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/Spreadsh
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { exceedsMaxRecords } from '@/spreadsheet-import/utils/exceedsMaxRecords';
 import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
-import { Radio, RadioGroup } from 'twenty-ui';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
 import { WorkBook } from 'xlsx-ugnis';
+import { Radio, RadioGroup } from 'twenty-ui/input';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;

@@ -44,6 +44,11 @@ export enum SettingsPath {
   IntegrationWhatsappDatabase = 'integrations/whatsapp',
   IntegrationWhatsappNewDatabaseConnection = 'integrations/whatsapp/new',
   IntegrationWhatsappEditDatabaseConnection = 'integrations/whatsapp/:connectionId/edit',
+
+  IntegrationInterDatabase = 'integrations/inter',
+  IntegrationInterNewDatabaseConnection = 'integrations/inter/new',
+  IntegrationInterEditDatabaseConnection = 'integrations/inter/:connectionId/edit',
+
   Security = 'security',
   NewSSOIdentityProvider = 'security/sso/new',
   NewApprovedAccessDomain = 'security/approved-access-domain/new',
@@ -54,8 +59,10 @@ export enum SettingsPath {
   AdminPanel = 'admin-panel',
   AdminPanelHealthStatus = 'admin-panel#health-status',
   AdminPanelIndicatorHealthStatus = 'admin-panel/health-status/:indicatorId',
-  AdminPanelOtherEnvVariables = 'admin-panel/other-env-variables',
+  AdminPanelConfigVariableDetails = 'admin-panel/config-variables/:variableName',
   Lab = 'lab',
   Roles = 'roles',
+  RoleCreate = 'roles/create',
   RoleDetail = 'roles/:roleId',
+  RoleObjectLevel = 'roles/:roleId/object/:objectMetadataId',
 }

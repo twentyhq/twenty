@@ -1,7 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react';
 import {
   expect,
+  fn,
   userEvent,
+  waitFor,
   waitForElementToBeRemoved,
   within,
 } from '@storybook/test';
@@ -30,11 +32,45 @@ export const String: Story = {
   args: {
     value: 'Hello',
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const node = await canvas.findByText('Hello');
+
+    expect(node).toBeVisible();
+  },
+};
+
+export const StringWithSpecialCharacters: Story = {
+  args: {
+    value: 'Merry \n Christmas \t 🎄',
+    onNodeValueClick: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const node = await canvas.findByText('Merry Christmas 🎄');
+
+    await userEvent.click(node);
+
+    await waitFor(() => {
+      expect(args.onNodeValueClick).toHaveBeenCalledWith(
+        'Merry \n Christmas \t 🎄',
+      );
+    });
+  },
 };
 
 export const Number: Story = {
   args: {
     value: 42,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const node = await canvas.findByText('42');
+
+    expect(node).toBeVisible();
   },
 };
 
@@ -42,17 +78,38 @@ export const Boolean: Story = {
   args: {
     value: true,
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const node = await canvas.findByText('true');
+
+    expect(node).toBeVisible();
+  },
 };
 
 export const Null: Story = {
   args: {
     value: null,
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const node = await canvas.findByText('null');
+
+    expect(node).toBeVisible();
+  },
 };
 
 export const ArraySimple: Story = {
   args: {
     value: [1, 2, 3],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const node = await canvas.findByText('[3]');
+
+    expect(node).toBeVisible();
   },
 };
 
@@ -128,6 +185,15 @@ export const ObjectSimple: Story = {
       age: 30,
     },
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const name = await canvas.findByText('John Doe');
+    expect(name).toBeVisible();
+
+    const age = await canvas.findByText('30');
+    expect(age).toBeVisible();
+  },
 };
 
 export const ObjectEmpty: Story = {
@@ -196,6 +262,15 @@ export const ObjectWithArray: Story = {
         notifications: true,
       },
     },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const nestedArrayCount = await canvas.findByText('[2]');
+    expect(nestedArrayCount).toBeVisible();
+
+    const nestedObjectCounts = await canvas.findAllByText('{2}');
+    expect(nestedObjectCounts).toHaveLength(3);
   },
 };
 
@@ -420,6 +495,15 @@ export const ReallyDeepNestedObject: Story = {
       },
     },
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const finalNodes = await canvas.findAllByText('end');
+
+    expect(finalNodes).toHaveLength(2);
+    expect(finalNodes[0]).toBeVisible();
+    expect(finalNodes[1]).toBeVisible();
+  },
 };
 
 export const LongText: Story = {
@@ -428,5 +512,101 @@ export const LongText: Story = {
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum iaculis est tincidunt, sagittis neque vitae, sodales purus.':
         'Ut lobortis ultricies purus, sit amet porta eros. Suspendisse efficitur quam vitae diam imperdiet feugiat. Etiam vel bibendum elit.',
     },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const label = await canvas.findByText(
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum iaculis est tincidunt, sagittis neque vitae, sodales purus.',
+    );
+
+    expect(label).toBeVisible();
+
+    const value = await canvas.findByText(
+      'Ut lobortis ultricies purus, sit amet porta eros. Suspendisse efficitur quam vitae diam imperdiet feugiat. Etiam vel bibendum elit.',
+    );
+
+    expect(value).toBeVisible();
+  },
+};
+
+export const BlueHighlighting: Story = {
+  args: {
+    value: {
+      name: 'John Doe',
+      age: 30,
+    },
+    getNodeHighlighting: () => 'blue',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const ageElement = await canvas.findByText('age');
+    expect(ageElement).toBeVisible();
+  },
+};
+
+export const PartialBlueHighlighting: Story = {
+  args: {
+    value: {
+      name: 'John Doe',
+      age: 30,
+      address: {
+        city: 'Paris',
+      },
+    },
+    getNodeHighlighting: (keyPath: string) =>
+      keyPath === 'address' ? 'partial-blue' : undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const ageElement = await canvas.findByText('age');
+    expect(ageElement).toBeVisible();
+  },
+};
+
+export const RedHighlighting: Story = {
+  args: {
+    value: {
+      name: 'John Doe',
+      age: 30,
+    },
+    getNodeHighlighting: () => 'red',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const ageElement = await canvas.findByText('age');
+    expect(ageElement).toBeVisible();
+  },
+};
+
+export const CopyJsonNodeValue: Story = {
+  args: {
+    value: {
+      name: 'John Doe',
+      age: 30,
+    },
+    onNodeValueClick: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const nameValue = await canvas.findByText('John Doe');
+
+    await userEvent.click(nameValue);
+
+    await waitFor(() => {
+      expect(args.onNodeValueClick).toHaveBeenCalledWith('John Doe');
+    });
+
+    const ageValue = await canvas.findByText('30');
+
+    await userEvent.click(ageValue);
+
+    await waitFor(() => {
+      expect(args.onNodeValueClick).toHaveBeenCalledWith('30');
+    });
   },
 };

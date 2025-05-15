@@ -31,9 +31,6 @@ export class SettingPermissionEntity {
   @Column({ nullable: false, type: 'varchar' })
   setting: SettingPermissionType;
 
-  @Column({ nullable: true, type: 'boolean' })
-  canUpdateSetting?: boolean;
-
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 

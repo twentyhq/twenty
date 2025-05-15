@@ -1,5 +1,5 @@
-import { WhereExpressionBuilder } from 'typeorm';
 import { capitalize } from 'twenty-shared/utils';
+import { WhereExpressionBuilder } from 'typeorm';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
@@ -18,13 +18,16 @@ const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
 
 export class GraphqlQueryFilterFieldParser {
   private fieldMetadataMapByName: FieldMetadataMap;
+  private fieldMetadataMapByJoinColumnName: FieldMetadataMap;
   private featureFlagsMap: FeatureFlagMap;
 
   constructor(
     fieldMetadataMapByName: FieldMetadataMap,
+    fieldMetadataMapByJoinColumnName: FieldMetadataMap,
     featureFlagsMap: FeatureFlagMap,
   ) {
     this.fieldMetadataMapByName = fieldMetadataMapByName;
+    this.fieldMetadataMapByJoinColumnName = fieldMetadataMapByJoinColumnName;
     this.featureFlagsMap = featureFlagsMap;
   }
 
@@ -35,7 +38,9 @@ export class GraphqlQueryFilterFieldParser {
     filterValue: any,
     isFirst = false,
   ): void {
-    const fieldMetadata = this.fieldMetadataMapByName[`${key}`];
+    const fieldMetadata =
+      this.fieldMetadataMapByName[`${key}`] ||
+      this.fieldMetadataMapByJoinColumnName[`${key}`];
 
     if (!fieldMetadata) {
       throw new Error(`Field metadata not found for field: ${key}`);

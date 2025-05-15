@@ -1,7 +1,7 @@
 import { AppRouterProviders } from '@/app/components/AppRouterProviders';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
+import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect';
 
-import { VerifyEffect } from '@/auth/components/VerifyEffect';
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import { CallCenterProvider } from '@/chat/call-center/context/CallCenterContext';
 import ChatProvider from '@/chat/internal/context/chatContext';
@@ -9,6 +9,7 @@ import indexAppPath from '@/navigation/utils/indexAppPath';
 import { AppPath } from '@/types/AppPath';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
+
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -24,12 +25,13 @@ import { DashboardLinks } from '~/pages/dashboard-links/DashboarLinks';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
-import { ChooseYourPlan } from '~/pages/onboarding/ChooseYourPlan';
 import { CreateProfile } from '~/pages/onboarding/CreateProfile';
 import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
 import { InviteTeam } from '~/pages/onboarding/InviteTeam';
 import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
+import { Plans } from '~/pages/onboarding/Plans';
+import { PaymentOptions } from '~/pages/onboarding/PaymentOptions';
 
 export const useCreateAppRouter = (
   isFunctionSettingsEnabled?: boolean,
@@ -44,7 +46,7 @@ export const useCreateAppRouter = (
         loader={async () => Promise.resolve(null)}
       >
         <Route element={<DefaultLayout />}>
-          <Route path={AppPath.Verify} element={<VerifyEffect />} />
+          <Route path={AppPath.Verify} element={<VerifyLoginTokenEffect />} />
           <Route path={AppPath.VerifyEmail} element={<VerifyEmailEffect />} />
           <Route path={AppPath.SignInUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<SignInUp />} />
@@ -53,9 +55,10 @@ export const useCreateAppRouter = (
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
           <Route path={AppPath.SyncEmails} element={<SyncEmails />} />
           <Route path={AppPath.InviteTeam} element={<InviteTeam />} />
-          <Route path={AppPath.PlanRequired} element={<ChooseYourPlan />} />
+          <Route path={AppPath.PlanRequired} element={<Plans />} />
+          <Route path={AppPath.PaymentRequired} element={<PaymentOptions />} />
           <Route
-            path={AppPath.PlanRequiredSuccess}
+            path={AppPath.PaymentRequiredSuccess}
             element={<PaymentSuccess />}
           />
           <Route path={indexAppPath.getIndexAppPath()} element={<></>} />

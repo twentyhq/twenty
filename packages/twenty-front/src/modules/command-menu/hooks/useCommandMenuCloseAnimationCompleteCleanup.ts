@@ -18,19 +18,12 @@ import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRi
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
-import { WorkflowRunTabId } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
 import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowServerlessFunctionTabListComponentId';
 import { WorkflowServerlessFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowServerlessFunctionTabId';
 import { useRecoilCallback } from 'recoil';
 
 export const useCommandMenuCloseAnimationCompleteCleanup = () => {
   const { resetSelectedItem } = useSelectableList('command-menu-list');
-
-  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope(
-    COMMAND_MENU_COMPONENT_INSTANCE_ID,
-  );
 
   const { resetContextStoreStates } = useResetContextStoreStates();
 
@@ -58,16 +51,9 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
         set(commandMenuNavigationStackState, []);
         resetSelectedItem();
         set(hasUserSelectedCommandState, false);
-        goBackToPreviousHotkeyScope();
 
         emitRightDrawerCloseEvent();
         set(isCommandMenuClosingState, false);
-        set(
-          activeTabIdComponentState.atomFamily({
-            instanceId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
-          }),
-          WorkflowRunTabId.NODE,
-        );
         set(
           activeTabIdComponentState.atomFamily({
             instanceId: WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
@@ -89,12 +75,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
           );
         }
       },
-    [
-      closeDropdown,
-      goBackToPreviousHotkeyScope,
-      resetContextStoreStates,
-      resetSelectedItem,
-    ],
+    [closeDropdown, resetContextStoreStates, resetSelectedItem],
   );
 
   return {

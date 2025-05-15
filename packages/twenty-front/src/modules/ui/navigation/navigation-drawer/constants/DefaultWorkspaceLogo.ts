@@ -1,2 +1,2 @@
 export const DEFAULT_WORKSPACE_LOGO =
-  'https://twentyhq.github.io/placeholder-images/workspaces/twenty-logo.png';
+  'images/icons/windows11/Woulz-logoprincipal.png';

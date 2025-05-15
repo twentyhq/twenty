@@ -1,10 +1,13 @@
 import { useGetFieldMetadataItemById } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
+import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { isValidSubFieldName } from '@/settings/data-model/utils/isValidSubFieldName';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
 
 type AdvancedFilterFieldSelectDropdownButtonClickableSelectProps = {
   recordFilterId: string;
@@ -33,12 +36,25 @@ export const AdvancedFilterFieldSelectDropdownButtonClickableSelect = ({
     ? getIcon(fieldMetadataItem?.icon)
     : undefined;
 
-  const selectedFieldLabel = recordFilter?.label ?? '';
+  const subFieldLabel =
+    isDefined(fieldMetadataItem) &&
+    isCompositeFieldType(fieldMetadataItem.type) &&
+    isNonEmptyString(recordFilter?.subFieldName) &&
+    isValidSubFieldName(recordFilter.subFieldName)
+      ? getCompositeSubFieldLabel(
+          fieldMetadataItem.type,
+          recordFilter.subFieldName,
+        )
+      : '';
+
+  const fieldNameLabel = isNonEmptyString(subFieldLabel)
+    ? `${recordFilter?.label} / ${subFieldLabel}`
+    : (recordFilter?.label ?? '');
 
   return (
     <SelectControl
       selectedOption={{
-        label: selectedFieldLabel,
+        label: fieldNameLabel,
         value: null,
         Icon: fieldIcon,
       }}

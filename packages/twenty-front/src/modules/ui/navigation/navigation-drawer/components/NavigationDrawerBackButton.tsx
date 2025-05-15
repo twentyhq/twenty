@@ -1,13 +1,14 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { IconX, UndecoratedLink } from 'twenty-ui';
 
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { IconX } from 'twenty-ui/display';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 
 type NavigationDrawerBackButtonProps = {
   title: string;
@@ -38,6 +39,7 @@ const StyledContainer = styled.div`
   flex-direction: row;
   height: ${({ theme }) => theme.spacing(8)};
   justify-content: space-between;
+  padding-left: ${({ theme }) => theme.spacing(5)};
 `;
 
 export const NavigationDrawerBackButton = ({

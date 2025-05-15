@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -20,14 +20,12 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 
 describe('UserWorkspaceService', () => {
   let service: UserWorkspaceService;
   let userWorkspaceRepository: Repository<UserWorkspace>;
   let userRepository: Repository<User>;
   let objectMetadataRepository: Repository<ObjectMetadataEntity>;
-  let dataSourceService: DataSourceService;
   let typeORMService: TypeORMService;
   let workspaceInvitationService: WorkspaceInvitationService;
   let workspaceEventEmitter: WorkspaceEventEmitter;
@@ -71,7 +69,7 @@ describe('UserWorkspaceService', () => {
         {
           provide: TypeORMService,
           useValue: {
-            connectToDataSource: jest.fn(),
+            getMainDataSource: jest.fn(),
           },
         },
         {
@@ -116,7 +114,6 @@ describe('UserWorkspaceService', () => {
     objectMetadataRepository = module.get(
       getRepositoryToken(ObjectMetadataEntity, 'metadata'),
     );
-    dataSourceService = module.get<DataSourceService>(DataSourceService);
     typeORMService = module.get<TypeORMService>(TypeORMService);
     workspaceInvitationService = module.get<WorkspaceInvitationService>(
       WorkspaceInvitationService,
@@ -179,12 +176,9 @@ describe('UserWorkspaceService', () => {
         defaultAvatarUrl: 'avatar-url',
         locale: 'en',
       } as User;
-      const dataSourceMetadata = {
-        schema: 'public',
-      } as DataSourceEntity;
-      const workspaceDataSource = {
+      const mainDataSource = {
         query: jest.fn(),
-      };
+      } as unknown as DataSource;
       const workspaceMember = [
         {
           id: 'workspace-member-id',
@@ -197,17 +191,16 @@ describe('UserWorkspaceService', () => {
       const objectMetadata = {
         nameSingular: 'workspaceMember',
       } as ObjectMetadataEntity;
+      const workspaceMemberRepository = {
+        insert: jest.fn(),
+        find: jest.fn().mockResolvedValue(workspaceMember),
+      };
 
       jest
-        .spyOn(
-          dataSourceService,
-          'getLastDataSourceMetadataFromWorkspaceIdOrFail',
-        )
-        .mockResolvedValue(dataSourceMetadata);
+        .spyOn(typeORMService, 'getMainDataSource')
+        .mockReturnValue(mainDataSource);
       jest
-        .spyOn(typeORMService, 'connectToDataSource')
-        .mockResolvedValue(workspaceDataSource as any);
-      workspaceDataSource.query
+        .spyOn(mainDataSource, 'query')
         .mockResolvedValueOnce(undefined)
         .mockResolvedValueOnce(workspaceMember);
       jest
@@ -217,15 +210,23 @@ describe('UserWorkspaceService', () => {
         .spyOn(workspaceEventEmitter, 'emitDatabaseBatchEvent')
         .mockImplementation();
 
+      jest
+        .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
+        .mockResolvedValue(workspaceMemberRepository as any);
+
       await service.createWorkspaceMember(workspaceId, user);
 
-      expect(
-        dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail,
-      ).toHaveBeenCalledWith(workspaceId);
-      expect(typeORMService.connectToDataSource).toHaveBeenCalledWith(
-        dataSourceMetadata,
-      );
-      expect(workspaceDataSource.query).toHaveBeenCalledTimes(2);
+      expect(workspaceMemberRepository.insert).toHaveBeenCalledWith({
+        name: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
+        colorScheme: 'System',
+        userId: user.id,
+        userEmail: user.email,
+        locale: 'en',
+        avatarUrl: 'avatar-url',
+      });
       expect(objectMetadataRepository.findOneOrFail).toHaveBeenCalledWith({
         where: {
           nameSingular: 'workspaceMember',

@@ -15,7 +15,7 @@ import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -26,9 +26,9 @@ import { useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui';
+import { IconPlus } from 'twenty-ui/display';
 
-export const StyledSelectableItem = styled(SelectableItem)`
+export const StyledSelectableItem = styled(SelectableListItem)`
   height: 100%;
   width: 100%;
 `;

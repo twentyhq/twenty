@@ -8,14 +8,14 @@ import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepH
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { useState } from 'react';
 import {
   IconChevronLeft,
-  MenuItemSelect,
   OverflowingTextWithTooltip,
   useIcons,
-} from 'twenty-ui';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+} from 'twenty-ui/display';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 
 type WorkflowVariablesDropdownObjectItemsProps = {
   step: StepOutputSchema;
@@ -117,11 +117,11 @@ export const WorkflowVariablesDropdownObjectItems = ({
         onChange={(event) => setSearchInputValue(event.target.value)}
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer hasMaxHeight>
         {shouldDisplaySubStepObject && displayedSubStepObject?.label && (
           <MenuItemSelect
             selected={false}
-            hovered={false}
+            focused={false}
             onClick={handleSelectObject}
             text={displayedSubStepObject.label}
             hasSubMenu={false}
@@ -136,7 +136,7 @@ export const WorkflowVariablesDropdownObjectItems = ({
           <MenuItemSelect
             key={key}
             selected={false}
-            hovered={false}
+            focused={false}
             onClick={() => handleSelectField(key)}
             text={value.label || key}
             hasSubMenu={!value.isLeaf}

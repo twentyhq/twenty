@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { Brackets, ObjectLiteral } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
+import { Brackets, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { RESULTS_LIMIT_BY_OBJECT_WITHOUT_SEARCH_TERMS } from 'src/engine/core-modules/search/constants/results-limit-by-object-without-search-terms';
 import { STANDARD_OBJECTS_BY_PRIORITY_RANK } from 'src/engine/core-modules/search/constants/standard-objects-by-priority-rank';
 import { ObjectRecordFilterInput } from 'src/engine/core-modules/search/dtos/object-record-filter-input';
@@ -24,6 +25,8 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 
 @Injectable()
 export class SearchService {
+  constructor(private readonly fileService: FileService) {}
+
   filterObjectMetadataItems({
     objectMetadataItemWithFieldMaps,
     includedObjectNameSingulars,
@@ -71,6 +74,7 @@ export class SearchService {
 
     const queryParser = new GraphqlQueryParser(
       objectMetadataItem.fieldsByName,
+      objectMetadataItem.fieldsByJoinColumnName,
       generateObjectMetadataMaps([objectMetadataItem]),
       featureFlagMap,
     );
@@ -194,9 +198,18 @@ export class SearchService {
     ].name;
   }
 
+  private getImageUrlWithToken(avatarUrl: string, workspaceId: string): string {
+    const avatarUrlToken = this.fileService.encodeFileToken({
+      workspaceId,
+    });
+
+    return `${avatarUrl}?token=${avatarUrlToken}`;
+  }
+
   getImageIdentifierValue(
     record: ObjectRecord,
     objectMetadataItem: ObjectMetadataItemWithFieldMaps,
+    workspaceId: string,
   ): string {
     const imageIdentifierField =
       this.getImageIdentifierColumn(objectMetadataItem);
@@ -205,12 +218,15 @@ export class SearchService {
       return getLogoUrlFromDomainName(record.domainNamePrimaryLinkUrl) || '';
     }
 
-    return imageIdentifierField ? record[imageIdentifierField] : '';
+    return imageIdentifierField
+      ? this.getImageUrlWithToken(record[imageIdentifierField], workspaceId)
+      : '';
   }
 
   computeSearchObjectResults(
     recordsWithObjectMetadataItems: RecordsWithObjectMetadataItem[],
     limit: number,
+    workspaceId: string,
   ) {
     const searchRecords = recordsWithObjectMetadataItems.flatMap(
       ({ objectMetadataItem, records }) => {
@@ -219,7 +235,11 @@ export class SearchService {
             recordId: record.id,
             objectNameSingular: objectMetadataItem.nameSingular,
             label: this.getLabelIdentifierValue(record, objectMetadataItem),
-            imageUrl: this.getImageIdentifierValue(record, objectMetadataItem),
+            imageUrl: this.getImageIdentifierValue(
+              record,
+              objectMetadataItem,
+              workspaceId,
+            ),
             tsRankCD: record.tsRankCD,
             tsRank: record.tsRank,
           };

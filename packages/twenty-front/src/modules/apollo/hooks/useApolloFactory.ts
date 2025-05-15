@@ -16,8 +16,8 @@ import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { AppPath } from '@/types/AppPath';
-import { ApolloFactory, Options } from '../services/apollo.factory';
 import { isDefined } from 'twenty-shared/utils';
+import { ApolloFactory, Options } from '../services/apollo.factory';
 
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   // eslint-disable-next-line @nx/workspace-no-state-useref
@@ -26,7 +26,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
 
   const navigate = useNavigate();
   const { isMatchingLocation } = useIsMatchingLocation();
-  const [tokenPair, setTokenPair] = useRecoilState(tokenPairState);
+  const setTokenPair = useSetRecoilState(tokenPairState);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
@@ -57,13 +57,11 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         }),
       },
       defaultOptions: {
-        query: {
-          fetchPolicy: 'cache-first',
+        watchQuery: {
+          fetchPolicy: 'cache-and-network',
         },
       },
       connectToDevTools: isDebugMode,
-      // We don't want to re-create the client on token change or it will cause infinite loop
-      initialTokenPair: tokenPair,
       currentWorkspaceMember: currentWorkspaceMember,
       onTokenPairChange: (tokenPair) => {
         setTokenPair(tokenPair);
@@ -103,12 +101,6 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
     currentWorkspace?.metadataVersion,
     setPreviousUrl,
   ]);
-
-  useUpdateEffect(() => {
-    if (isDefined(apolloRef.current)) {
-      apolloRef.current.updateTokenPair(tokenPair);
-    }
-  }, [tokenPair]);
 
   useUpdateEffect(() => {
     if (isDefined(apolloRef.current)) {

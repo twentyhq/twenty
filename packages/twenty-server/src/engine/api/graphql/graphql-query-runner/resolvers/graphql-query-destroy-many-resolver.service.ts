@@ -26,6 +26,8 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
 
+    const { roleId } = executionArgs;
+
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
@@ -50,6 +52,7 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
       nonFormattedDeletedObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     this.apiEventEmitterService.emitDestroyEvents(
@@ -69,6 +72,8 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
         dataSource: executionArgs.dataSource,
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
+        roleId,
+        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
 

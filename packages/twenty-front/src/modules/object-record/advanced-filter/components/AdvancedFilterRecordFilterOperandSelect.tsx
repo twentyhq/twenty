@@ -11,11 +11,14 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledContainer = styled.div`
   width: 100px;
@@ -85,6 +88,11 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
       })
     : [];
 
+  const selectedItemId = useRecoilComponentValueV2(
+    selectedItemIdComponentState,
+    dropdownId,
+  );
+
   if (isDisabled === true) {
     return (
       <SelectControl
@@ -115,15 +123,31 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
         }
         dropdownComponents={
           <DropdownMenuItemsContainer>
-            {operandsForFilterType.map((filterOperand, index) => (
-              <MenuItem
-                key={`select-filter-operand-${index}`}
-                onClick={() => {
-                  handleOperandChange(filterOperand);
-                }}
-                text={getOperandLabel(filterOperand)}
-              />
-            ))}
+            <SelectableList
+              hotkeyScope={dropdownId}
+              selectableItemIdArray={operandsForFilterType.map(
+                (operand) => operand,
+              )}
+              selectableListInstanceId={dropdownId}
+            >
+              {operandsForFilterType.map((filterOperand, index) => (
+                <SelectableListItem
+                  itemId={filterOperand}
+                  key={`select-filter-operand-${index}`}
+                  onEnter={() => {
+                    handleOperandChange(filterOperand);
+                  }}
+                >
+                  <MenuItem
+                    focused={selectedItemId === filterOperand}
+                    onClick={() => {
+                      handleOperandChange(filterOperand);
+                    }}
+                    text={getOperandLabel(filterOperand)}
+                  />
+                </SelectableListItem>
+              ))}
+            </SelectableList>
           </DropdownMenuItemsContainer>
         }
         dropdownHotkeyScope={{ scope: dropdownId }}

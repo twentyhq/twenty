@@ -1,18 +1,22 @@
-import { Controller, Get, Param, UseFilters } from '@nestjs/common';
+import { Controller, Get, Param, Post, Req, UseFilters } from '@nestjs/common';
 
+import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkflowTriggerRestApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-rest-api-exception.filter';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import {
+  WorkflowVersionStatus,
+  WorkflowVersionWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 
 @Controller('webhooks')
 @UseFilters(WorkflowTriggerRestApiExceptionFilter)
@@ -22,11 +26,26 @@ export class WorkflowTriggerController {
     private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
   ) {}
 
-  @Get('workflows/:workspaceId/:workflowId')
-  async runWorkflow(
-    @Param('workspaceId') workspaceId: string,
+  @Post('workflows/:workspaceId/:workflowId')
+  async runWorkflowByPostRequest(
     @Param('workflowId') workflowId: string,
+    @Req() request: Request,
   ) {
+    return await this.runWorkflow({ workflowId, payload: request.body || {} });
+  }
+
+  @Get('workflows/:workspaceId/:workflowId')
+  async runWorkflowByGetRequest(@Param('workflowId') workflowId: string) {
+    return await this.runWorkflow({ workflowId });
+  }
+
+  private async runWorkflow({
+    workflowId,
+    payload,
+  }: {
+    workflowId: string;
+    payload?: object;
+  }) {
     const workflowRepository =
       await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
         'workflow',
@@ -48,7 +67,7 @@ export class WorkflowTriggerController {
       workflow.lastPublishedVersionId === ''
     ) {
       throw new WorkflowTriggerException(
-        'Workflow not activated',
+        'Workflow has not been activated',
         WorkflowTriggerExceptionCode.INVALID_WORKFLOW_STATUS,
       );
     }
@@ -75,10 +94,17 @@ export class WorkflowTriggerController {
       );
     }
 
+    if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
+      throw new WorkflowTriggerException(
+        'Workflow version is not active',
+        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_STATUS,
+      );
+    }
+
     const { workflowRunId } =
       await this.workflowTriggerWorkspaceService.runWorkflowVersion({
         workflowVersionId: workflow.lastPublishedVersionId,
-        payload: {},
+        payload: payload || {},
         createdBy: {
           source: FieldActorSource.WEBHOOK,
           workspaceMemberId: null,

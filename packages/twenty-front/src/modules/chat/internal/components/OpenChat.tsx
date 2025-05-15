@@ -15,7 +15,8 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { Avatar, IconButton, useIcons } from 'twenty-ui';
+import { Avatar, useIcons } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 import { AnexModal } from './AnexModal';
 

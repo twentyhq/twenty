@@ -12,16 +12,16 @@ import GraphQLJSON from 'graphql-type-json';
 import { GraphQLSchemaWithContext, YogaInitialContext } from 'graphql-yoga';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
-import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useSentryTracing } from 'src/engine/core-modules/exception-handler/hooks/use-sentry-tracing';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
@@ -38,17 +38,17 @@ export class GraphQLConfigService
 {
   constructor(
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly moduleRef: ModuleRef,
   ) {}
 
   createGqlOptions(): YogaDriverConfig {
     const isDebugMode =
-      this.environmentService.get('NODE_ENV') === NodeEnvironment.development;
+      this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.development;
     const plugins = [
       useThrottler({
-        ttl: this.environmentService.get('API_RATE_LIMITING_TTL'),
-        limit: this.environmentService.get('API_RATE_LIMITING_LIMIT'),
+        ttl: this.twentyConfigService.get('API_RATE_LIMITING_TTL'),
+        limit: this.twentyConfigService.get('API_RATE_LIMITING_LIMIT'),
         identifyFn: (context) => {
           return context.req.user?.id ?? context.req.ip ?? 'anonymous';
         },

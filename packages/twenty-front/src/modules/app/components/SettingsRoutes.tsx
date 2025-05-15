@@ -5,6 +5,9 @@ import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsPro
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingPermissionType } from '~/generated/graphql';
+import { SettingsIntegrationInterDatabase } from '~/pages/settings/integrations/inter/SettingsIntegrationInterDatabase';
+import { SettingsIntegrationInterEditDatabaseConnection } from '~/pages/settings/integrations/inter/SettingsIntegrationInterEditDatabaseConnection';
+import { SettingsIntegrationInterNewDatabaseConnection } from '~/pages/settings/integrations/inter/SettingsIntegrationInterNewDatabaseConnection';
 import { SettingsIntegrationWhatsappDatabase } from '~/pages/settings/integrations/SettingsIntegrationWhatsappDatabase';
 import { SettingsIntegrationWhatsappEditDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationWhatsappEditDatabaseConnection';
 import { SettingsIntegrationWhatsappNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationWhatsappNewDatabaseConnection';
@@ -296,11 +299,11 @@ const SettingsAdminIndicatorHealthStatus = lazy(() =>
   })),
 );
 
-const SettingsAdminSecondaryEnvVariables = lazy(() =>
+const SettingsAdminConfigVariableDetails = lazy(() =>
   import(
-    '~/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables'
+    '~/pages/settings/admin-panel/SettingsAdminConfigVariableDetails'
   ).then((module) => ({
-    default: module.SettingsAdminSecondaryEnvVariables,
+    default: module.SettingsAdminConfigVariableDetails,
   })),
 );
 
@@ -316,9 +319,21 @@ const SettingsRoles = lazy(() =>
   })),
 );
 
+const SettingsRoleCreate = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoleCreate').then((module) => ({
+    default: module.SettingsRoleCreate,
+  })),
+);
+
 const SettingsRoleEdit = lazy(() =>
   import('~/pages/settings/roles/SettingsRoleEdit').then((module) => ({
     default: module.SettingsRoleEdit,
+  })),
+);
+
+const SettingsRoleObjectLevel = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoleObjectLevel').then((module) => ({
+    default: module.SettingsRoleObjectLevel,
   })),
 );
 
@@ -467,6 +482,14 @@ export const SettingsRoutes = ({
       >
         <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
         <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
+        <Route
+          path={SettingsPath.RoleCreate}
+          element={<SettingsRoleCreate />}
+        />
+        <Route
+          path={SettingsPath.RoleObjectLevel}
+          element={<SettingsRoleObjectLevel />}
+        />
       </Route>
       <Route
         element={
@@ -563,6 +586,18 @@ export const SettingsRoutes = ({
         element={<SettingsIntegrationWhatsappNewDatabaseConnection />}
       />
       <Route
+        path={SettingsPath.IntegrationInterDatabase}
+        element={<SettingsIntegrationInterDatabase />}
+      />
+      <Route
+        path={SettingsPath.IntegrationInterNewDatabaseConnection}
+        element={<SettingsIntegrationInterNewDatabaseConnection />}
+      />
+      <Route
+        path={SettingsPath.IntegrationInterEditDatabaseConnection}
+        element={<SettingsIntegrationInterEditDatabaseConnection />}
+      />
+      <Route
         path={SettingsPath.IntegrationWhatsappEditDatabaseConnection}
         element={<SettingsIntegrationWhatsappEditDatabaseConnection />}
       />
@@ -604,9 +639,10 @@ export const SettingsRoutes = ({
             path={SettingsPath.AdminPanelIndicatorHealthStatus}
             element={<SettingsAdminIndicatorHealthStatus />}
           />
+
           <Route
-            path={SettingsPath.AdminPanelOtherEnvVariables}
-            element={<SettingsAdminSecondaryEnvVariables />}
+            path={SettingsPath.AdminPanelConfigVariableDetails}
+            element={<SettingsAdminConfigVariableDetails />}
           />
         </>
       )}

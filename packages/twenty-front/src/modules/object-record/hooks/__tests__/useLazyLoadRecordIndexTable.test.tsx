@@ -9,7 +9,7 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { MockedResponse } from '@apollo/client/testing';
 import gql from 'graphql-tag';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
+import { peopleQueryResult } from '~/testing/mock-data/people';
 
 const recordTableId = 'people';
 const objectNameSingular = 'person';
@@ -39,8 +39,28 @@ const mocks: MockedResponse[] = [
               node {
                 __typename
                 avatarUrl
+                city
+                companyId
+                createdAt
+                createdBy {
+                  source
+                  workspaceMemberId
+                  name
+                  context
+                }
                 deletedAt
+                emails {
+                  primaryEmail
+                  additionalEmails
+                }
                 id
+                intro
+                jobTitle
+                linkedinLink {
+                  primaryLinkUrl
+                  primaryLinkLabel
+                  secondaryLinks
+                }
                 name {
                   firstName
                   lastName
@@ -82,6 +102,7 @@ const mocks: MockedResponse[] = [
                         employees
                         id
                         idealCustomerProfile
+                        internalCompetitions
                         introVideo {
                           primaryLinkUrl
                           primaryLinkLabel
@@ -203,6 +224,67 @@ const mocks: MockedResponse[] = [
                       personId
                       pet {
                         __typename
+                        age
+                        averageCostOfKibblePerMonth {
+                          amountMicros
+                          currencyCode
+                        }
+                        bio
+                        birthday
+                        comments
+                        createdAt
+                        createdBy {
+                          source
+                          workspaceMemberId
+                          name
+                          context
+                        }
+                        deletedAt
+                        extraData
+                        id
+                        interestingFacts
+                        isGoodWithKids
+                        location {
+                          addressStreet1
+                          addressStreet2
+                          addressCity
+                          addressState
+                          addressCountry
+                          addressPostcode
+                          addressLat
+                          addressLng
+                        }
+                        makesOwnerThinkOf {
+                          firstName
+                          lastName
+                        }
+                        name
+                        pictures {
+                          primaryLinkUrl
+                          primaryLinkLabel
+                          secondaryLinks
+                        }
+                        position
+                        soundSwag
+                        species
+                        traits
+                        updatedAt
+                        vetEmail {
+                          primaryEmail
+                          additionalEmails
+                        }
+                        vetPhone {
+                          primaryPhoneNumber
+                          primaryPhoneCountryCode
+                          primaryPhoneCallingCode
+                          additionalPhones
+                        }
+                      }
+                      petId
+                      surveyResult {
+                        __typename
+                        averageEstimatedNumberOfAtomsInTheUniverse
+                        comments
                         createdAt
                         createdBy {
                           source
@@ -213,14 +295,24 @@ const mocks: MockedResponse[] = [
                         deletedAt
                         id
                         name
+                        participants
+                        percentageOfCompletion
                         position
+                        score
+                        shortNotes
                         updatedAt
                       }
-                      petId
                       surveyResultId
                       updatedAt
                     }
                   }
+                }
+                performanceRating
+                phones {
+                  primaryPhoneNumber
+                  primaryPhoneCountryCode
+                  primaryPhoneCallingCode
+                  additionalPhones
                 }
                 position
                 taskTargets {
@@ -260,6 +352,7 @@ const mocks: MockedResponse[] = [
                         employees
                         id
                         idealCustomerProfile
+                        internalCompetitions
                         introVideo {
                           primaryLinkUrl
                           primaryLinkLabel
@@ -364,6 +457,67 @@ const mocks: MockedResponse[] = [
                       personId
                       pet {
                         __typename
+                        age
+                        averageCostOfKibblePerMonth {
+                          amountMicros
+                          currencyCode
+                        }
+                        bio
+                        birthday
+                        comments
+                        createdAt
+                        createdBy {
+                          source
+                          workspaceMemberId
+                          name
+                          context
+                        }
+                        deletedAt
+                        extraData
+                        id
+                        interestingFacts
+                        isGoodWithKids
+                        location {
+                          addressStreet1
+                          addressStreet2
+                          addressCity
+                          addressState
+                          addressCountry
+                          addressPostcode
+                          addressLat
+                          addressLng
+                        }
+                        makesOwnerThinkOf {
+                          firstName
+                          lastName
+                        }
+                        name
+                        pictures {
+                          primaryLinkUrl
+                          primaryLinkLabel
+                          secondaryLinks
+                        }
+                        position
+                        soundSwag
+                        species
+                        traits
+                        updatedAt
+                        vetEmail {
+                          primaryEmail
+                          additionalEmails
+                        }
+                        vetPhone {
+                          primaryPhoneNumber
+                          primaryPhoneCountryCode
+                          primaryPhoneCallingCode
+                          additionalPhones
+                        }
+                      }
+                      petId
+                      surveyResult {
+                        __typename
+                        averageEstimatedNumberOfAtomsInTheUniverse
+                        comments
                         createdAt
                         createdBy {
                           source
@@ -374,10 +528,13 @@ const mocks: MockedResponse[] = [
                         deletedAt
                         id
                         name
+                        participants
+                        percentageOfCompletion
                         position
+                        score
+                        shortNotes
                         updatedAt
                       }
-                      petId
                       surveyResultId
                       task {
                         __typename
@@ -403,6 +560,19 @@ const mocks: MockedResponse[] = [
                     }
                   }
                 }
+                updatedAt
+                whatsapp {
+                  primaryPhoneNumber
+                  primaryPhoneCountryCode
+                  primaryPhoneCallingCode
+                  additionalPhones
+                }
+                workPreference
+                xLink {
+                  primaryLinkUrl
+                  primaryLinkLabel
+                  secondaryLinks
+                }
               }
               cursor
             }
@@ -423,7 +593,14 @@ const mocks: MockedResponse[] = [
     },
     result: jest.fn(() => ({
       data: {
-        people: getPeopleRecordConnectionMock(),
+        people: peopleQueryResult.people,
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: null,
+          endCursor: null,
+        },
+        totalCount: 16,
       },
     })),
   },
@@ -432,6 +609,17 @@ const mocks: MockedResponse[] = [
 const HookMockWrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: jest.fn().mockReturnValue({
+    pathname: '/',
+    search: '',
+    hash: '',
+    state: null,
+    key: 'default',
+  }),
+}));
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
   return (
@@ -473,11 +661,10 @@ describe('useLazyLoadRecordIndexTable', () => {
 
     expect(result.current.loading).toBe(false);
 
-    act(() => {
-      result.current.findManyRecords();
+    await act(async () => {
+      await result.current.findManyRecords();
     });
 
-    expect(Array.isArray(result.current.records)).toBe(true);
-    expect(result.current.records.length).toBe(13);
+    expect(result.current.records).toHaveLength(16);
   });
 });

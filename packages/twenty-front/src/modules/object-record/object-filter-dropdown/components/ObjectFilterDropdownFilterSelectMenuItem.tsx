@@ -1,4 +1,3 @@
-import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 
@@ -8,20 +7,24 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
-import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
+import { FILTER_FIELD_LIST_ID } from '@/object-record/object-filter-dropdown/constants/FilterFieldListId';
+import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useRecoilValue } from 'recoil';
-import { MenuItemSelect, useIcons } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export type ObjectFilterDropdownFilterSelectMenuItemProps = {
   fieldMetadataItemToSelect: FieldMetadataItem;
@@ -47,12 +50,11 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     objectFilterDropdownFilterIsSelectedComponentState,
   );
 
-  const { isSelectedItemIdSelector, resetSelectedItem } = useSelectableList(
-    OBJECT_FILTER_DROPDOWN_ID,
-  );
+  const { resetSelectedItem } = useSelectableList(FILTER_FIELD_LIST_ID);
 
-  const isSelectedItem = useRecoilValue(
-    isSelectedItemIdSelector(fieldMetadataItemToSelect.id),
+  const isSelectedItem = useRecoilComponentFamilyValueV2(
+    isSelectedItemIdComponentFamilySelector,
+    fieldMetadataItemToSelect.id,
   );
 
   const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
@@ -65,9 +67,10 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     currentRecordFiltersComponentState,
   );
 
-  const setSelectedFilter = useSetRecoilComponentStateV2(
-    selectedFilterComponentState,
-  );
+  const setObjectFilterDropdownCurrentRecordFilter =
+    useSetRecoilComponentStateV2(
+      objectFilterDropdownCurrentRecordFilterComponentState,
+    );
 
   const handleSelectFilter = (fieldMetadataItem: FieldMetadataItem) => {
     setFieldMetadataItemIdUsedInDropdown(fieldMetadataItem.id);
@@ -95,9 +98,9 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     );
 
     if (filterIsAlreadyInCurrentRecordFilters) {
-      setSelectedFilter({
-        ...duplicateFilterInCurrentRecordFilters,
-      });
+      setObjectFilterDropdownCurrentRecordFilter(
+        duplicateFilterInCurrentRecordFilters,
+      );
 
       setSelectedOperandInDropdown(
         duplicateFilterInCurrentRecordFilters.operand,
@@ -111,7 +114,9 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
 
   const Icon = getIcon(fieldMetadataItemToSelect.icon);
 
-  const shouldShowSubMenu = isCompositeField(fieldMetadataItemToSelect.type);
+  const shouldShowSubMenu = isCompositeFieldType(
+    fieldMetadataItemToSelect.type,
+  );
 
   const handleClick = () => {
     resetSelectedItem();
@@ -120,7 +125,7 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
       fieldMetadataItemToSelect.type,
     );
 
-    if (isCompositeField(filterType)) {
+    if (isCompositeFieldType(filterType)) {
       setObjectFilterDropdownSubMenuFieldType(filterType);
 
       setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemToSelect.id);
@@ -131,13 +136,17 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
   };
 
   return (
-    <MenuItemSelect
-      selected={false}
-      hovered={isSelectedItem}
-      onClick={handleClick}
-      LeftIcon={Icon}
-      text={fieldMetadataItemToSelect.label}
-      hasSubMenu={shouldShowSubMenu}
-    />
+    <SelectableListItem
+      itemId={fieldMetadataItemToSelect.id}
+      onEnter={handleClick}
+    >
+      <MenuItem
+        focused={isSelectedItem}
+        onClick={handleClick}
+        LeftIcon={Icon}
+        text={fieldMetadataItemToSelect.label}
+        hasSubMenu={shouldShowSubMenu}
+      />
+    </SelectableListItem>
   );
 };

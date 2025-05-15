@@ -222,7 +222,7 @@ export class TimelineMessagingService {
 
     const visibilityValues = Object.values(MessageChannelVisibility);
 
-    const threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotInParticipants:
+    const threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotOwner:
       | {
           [key: string]: MessageChannelVisibility;
         }
@@ -247,10 +247,10 @@ export class TimelineMessagingService {
     const threadVisibilityByThreadId: {
       [key: string]: MessageChannelVisibility;
     } = messageThreadIds.reduce((threadVisibilityAcc, messageThreadId) => {
-      // If the workspace member is not in the participants of the thread, use the visibility value from the query
+      // If the workspace member is not the owner of the thread, use the visibility value from the query
       threadVisibilityAcc[messageThreadId] =
         threadIdsWithoutWorkspaceMember.includes(messageThreadId)
-          ? (threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotInParticipants?.[
+          ? (threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotOwner?.[
               messageThreadId
             ] ?? MessageChannelVisibility.METADATA)
           : MessageChannelVisibility.SHARE_EVERYTHING;

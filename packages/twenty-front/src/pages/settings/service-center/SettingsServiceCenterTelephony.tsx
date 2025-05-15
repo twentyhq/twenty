@@ -1,10 +1,12 @@
-import { Button, H2Title, IconPlus, Section, UndecoratedLink } from 'twenty-ui';
-
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { H2Title, IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { ShowServiceCenterTelephonyTabs } from '~/pages/settings/service-center/SettingsServiceCenterShowTabs';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 

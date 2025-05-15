@@ -6,7 +6,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { Section } from 'twenty-ui';
+import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledShowServiceCenterTabs = styled.div<{ isMobile: boolean }>`

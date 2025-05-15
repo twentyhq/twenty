@@ -12,6 +12,8 @@ export class ScopedWorkspaceContextFactory {
   public create(): {
     workspaceId: string | null;
     workspaceMetadataVersion: number | null;
+    userWorkspaceId: string | null;
+    isExecutedByApiKey: boolean;
   } {
     const workspaceId: string | undefined =
       this.request?.['req']?.['workspaceId'] ||
@@ -22,6 +24,8 @@ export class ScopedWorkspaceContextFactory {
     return {
       workspaceId: workspaceId ?? null,
       workspaceMetadataVersion: workspaceMetadataVersion ?? null,
+      userWorkspaceId: this.request?.['req']?.['userWorkspaceId'] ?? null,
+      isExecutedByApiKey: !!this.request?.['req']?.['apiKey'],
     };
   }
 }

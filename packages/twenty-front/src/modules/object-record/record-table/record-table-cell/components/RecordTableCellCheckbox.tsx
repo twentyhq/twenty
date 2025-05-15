@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
-import { Checkbox } from 'twenty-ui';
+import { Checkbox } from 'twenty-ui/input';
 
 export const TABLE_CELL_CHECKBOX_MIN_WIDTH = '24px';
 
@@ -17,6 +17,10 @@ const StyledContainer = styled.div`
   min-width: ${TABLE_CELL_CHECKBOX_MIN_WIDTH};
 `;
 
+const StyledRecordTableTd = styled(RecordTableTd)`
+  border-left: 1px solid transparent;
+`;
+
 export const RecordTableCellCheckbox = () => {
   const { isSelected } = useRecordTableRowContextOrThrow();
 
@@ -27,10 +31,10 @@ export const RecordTableCellCheckbox = () => {
   }, [isSelected, setCurrentRowSelected]);
 
   return (
-    <RecordTableTd isSelected={isSelected} hasRightBorder={false}>
+    <StyledRecordTableTd isSelected={isSelected} hasRightBorder={false}>
       <StyledContainer onClick={handleClick}>
         <Checkbox hoverable checked={isSelected} />
       </StyledContainer>
-    </RecordTableTd>
+    </StyledRecordTableTd>
   );
 };

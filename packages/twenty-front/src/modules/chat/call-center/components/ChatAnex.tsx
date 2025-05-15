@@ -8,7 +8,7 @@ import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Dispatch, SetStateAction, useContext } from 'react';
-import { useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
 
 interface ChatAnexProps {
   setIsAnexOpen: Dispatch<SetStateAction<boolean>>;

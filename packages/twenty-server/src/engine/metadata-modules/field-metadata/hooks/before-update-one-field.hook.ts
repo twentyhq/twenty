@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { i18n } from '@lingui/core';
 import {
@@ -12,6 +8,10 @@ import {
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  ForbiddenError,
+  ValidationError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -39,7 +39,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     },
   ): Promise<UpdateOneInputType<T>> {
     if (!workspaceId) {
-      throw new UnauthorizedException();
+      throw new ForbiddenError('Could not retrieve workspace ID');
     }
 
     const fieldMetadata = await this.getFieldMetadata(instance, workspaceId);
@@ -63,7 +63,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
       });
 
     if (!fieldMetadata) {
-      throw new BadRequestException('Field does not exist');
+      throw new ValidationError('Field does not exist');
     }
 
     return fieldMetadata;
@@ -80,6 +80,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
       'isLabelSyncedWithName',
       'options',
       'settings',
+      'defaultValue',
     ];
     const overridableFields = ['label', 'icon', 'description'];
 
@@ -95,14 +96,14 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
       instance.update.label !== fieldMetadata.label;
 
     if (isUpdatingLabelWhenSynced) {
-      throw new BadRequestException(
+      throw new ValidationError(
         'Cannot update label when it is synced with name',
       );
     }
 
     if (nonUpdatableFields.length > 0) {
-      throw new BadRequestException(
-        `Only isActive, isLabelSyncedWithName, label, icon and description fields can be updated for standard fields. Invalid fields: ${nonUpdatableFields.join(', ')}`,
+      throw new ValidationError(
+        `Only isActive, isLabelSyncedWithName, label, icon, description and defaultValue fields can be updated for standard fields. Invalid fields: ${nonUpdatableFields.join(', ')}`,
       );
     }
 
@@ -116,11 +117,23 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     this.handleStandardOverrides(instance, fieldMetadata, update, locale);
     this.handleOptionsField(instance, update);
     this.handleSettingsField(instance, update);
+    this.handleDefaultValueField(instance, update);
 
     return {
       id: instance.id,
       update: update as T,
     };
+  }
+
+  private handleDefaultValueField(
+    instance: UpdateOneInputType<T>,
+    update: StandardFieldUpdate,
+  ): void {
+    if (!isDefined(instance.update.defaultValue)) {
+      return;
+    }
+
+    update.defaultValue = instance.update.defaultValue;
   }
 
   private handleOptionsField(

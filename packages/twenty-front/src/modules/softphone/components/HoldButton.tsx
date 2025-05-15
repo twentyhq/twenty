@@ -5,7 +5,7 @@ import { useTheme } from '@emotion/react';
 import React from 'react';
 import { Session, SessionState } from 'sip.js';
 import { SessionDescriptionHandler } from 'sip.js/lib/platform/web';
-import { useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
 import { CallState } from '../types/callState';
 
 interface HoldButtonProps {

@@ -6,12 +6,12 @@ import {
 } from '@/settings/components/SettingsOptions/SettingsOptionCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui';
+import { IconComponent } from 'twenty-ui/display';
 
 type SettingsOptionCardContentSelectProps = {
   Icon?: IconComponent;
   title: React.ReactNode;
-  description?: string;
+  description?: string | React.ReactNode;
   disabled?: boolean;
   children?: React.ReactNode;
 };

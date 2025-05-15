@@ -3,10 +3,11 @@ import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import React from 'react';
-import { Button, IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import React, { useState } from 'react';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
+import { IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -112,6 +113,7 @@ export const ImageInput = ({
   const onUploadButtonClick = () => {
     hiddenFileInput.current?.click();
   };
+  const [isPictureURLError, setIsPictureURLError] = useState(false);
 
   const pictureURI = isNonEmptyString(picture)
     ? getImageAbsoluteURI({
@@ -127,10 +129,13 @@ export const ImageInput = ({
         disabled={disabled}
         onClick={onUploadButtonClick}
       >
-        {pictureURI ? (
+        {pictureURI && !isPictureURLError ? (
           <img
-            src={pictureURI || '/images/default-profile-picture.png'}
+            src={pictureURI}
             alt="profile"
+            onError={() => {
+              setIsPictureURLError(true);
+            }}
           />
         ) : (
           <IconPhotoUp size={theme.icon.size.lg} />

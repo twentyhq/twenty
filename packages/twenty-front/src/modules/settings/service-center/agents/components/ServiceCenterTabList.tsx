@@ -6,7 +6,7 @@ import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useTheme } from '@emotion/react';
-import { useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
 
 type TabItemProps = {
   id: string;

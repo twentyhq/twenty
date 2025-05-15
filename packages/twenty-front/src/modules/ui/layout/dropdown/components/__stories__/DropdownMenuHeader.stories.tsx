@@ -1,19 +1,18 @@
 import { Meta, StoryObj } from '@storybook/react';
-import {
-  AVATAR_URL_MOCK,
-  Avatar,
-  ComponentDecorator,
-  IconChevronLeft,
-  IconChevronRight,
-  IconPlus,
-  MenuItem,
-} from 'twenty-ui';
 
 import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { AVATAR_URL_MOCK, ComponentDecorator } from 'twenty-ui/testing';
+import {
+  Avatar,
+  IconChevronLeft,
+  IconChevronRight,
+  IconPlus,
+} from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const meta: Meta<typeof DropdownMenuHeader> = {
   title: 'UI/Layout/Dropdown/DropdownMenuHeader',

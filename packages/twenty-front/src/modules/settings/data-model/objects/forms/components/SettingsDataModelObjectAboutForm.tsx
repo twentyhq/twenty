@@ -11,14 +11,14 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
 import { Controller, useFormContext } from 'react-hook-form';
-import { isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
-  Card,
   IconInfoCircle,
   IconRefresh,
   TooltipDelay,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
+import { Card } from 'twenty-ui/layout';
 import { StringKeyOf } from 'type-fest';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
@@ -100,7 +100,9 @@ export const SettingsDataModelObjectAboutForm = ({
     setValue('labelPlural', labelPluralFromSingularLabel, {
       shouldDirty: true,
     });
-    fillNamePluralFromLabelPlural(labelPluralFromSingularLabel);
+    if (isLabelSyncedWithName) {
+      fillNamePluralFromLabelPlural(labelPluralFromSingularLabel);
+    }
   };
 
   const fillNameSingularFromLabelSingular = (
@@ -155,8 +157,8 @@ export const SettingsDataModelObjectAboutForm = ({
               placeholder={'Listing'}
               value={value}
               onChange={(value) => {
-                onChange(value);
-                fillLabelPlural(value);
+                onChange(capitalize(value));
+                fillLabelPlural(capitalize(value));
                 if (isLabelSyncedWithName === true) {
                   fillNameSingularFromLabelSingular(value);
                 }
@@ -186,7 +188,7 @@ export const SettingsDataModelObjectAboutForm = ({
               placeholder={t`Listings`}
               value={value}
               onChange={(value) => {
-                onChange(value);
+                onChange(capitalize(value));
                 if (isLabelSyncedWithName === true) {
                   fillNamePluralFromLabelPlural(value);
                 }
@@ -318,17 +320,19 @@ export const SettingsDataModelObjectAboutForm = ({
                         advancedMode
                         onChange={(value) => {
                           onChange(value);
-                          onNewDirtyField?.();
-
+                          const isCustomObject =
+                            isDefined(objectMetadataItem) &&
+                            objectMetadataItem.isCustom;
+                          const isbeingCreatedObject =
+                            !isDefined(objectMetadataItem);
                           if (
                             value === true &&
-                            ((isDefined(objectMetadataItem) &&
-                              objectMetadataItem.isCustom) ||
-                              !isDefined(objectMetadataItem))
+                            (isCustomObject || isbeingCreatedObject)
                           ) {
                             fillNamePluralFromLabelPlural(labelPlural);
                             fillNameSingularFromLabelSingular(labelSingular);
                           }
+                          onNewDirtyField?.();
                         }}
                       />
                     </Card>

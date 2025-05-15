@@ -3,7 +3,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Telephony } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import styled from '@emotion/styled';
-import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui';
+import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};

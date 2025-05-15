@@ -8,6 +8,18 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
+
+const mockGoBackToPreviousHotkeyScope = jest.fn();
+const mockSetHotkeyScopeAndMemorizePreviousScope = jest.fn();
+
+jest.mock('@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope', () => ({
+  usePreviousHotkeyScope: () => ({
+    goBackToPreviousHotkeyScope: mockGoBackToPreviousHotkeyScope,
+    setHotkeyScopeAndMemorizePreviousScope:
+      mockSetHotkeyScopeAndMemorizePreviousScope,
+  }),
+}));
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
@@ -47,6 +59,10 @@ const renderHooks = () => {
 };
 
 describe('useCommandMenu', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should open and close the command menu', () => {
     const { result } = renderHooks();
 
@@ -55,6 +71,12 @@ describe('useCommandMenu', () => {
     });
 
     expect(result.current.isCommandMenuOpened).toBe(true);
+    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith(
+      CommandMenuHotkeyScope.CommandMenuFocused,
+      {
+        commandMenuOpen: true,
+      },
+    );
 
     act(() => {
       result.current.commandMenu.closeCommandMenu();
@@ -73,11 +95,34 @@ describe('useCommandMenu', () => {
     });
 
     expect(result.current.isCommandMenuOpened).toBe(true);
+    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith(
+      CommandMenuHotkeyScope.CommandMenuFocused,
+      {
+        commandMenuOpen: true,
+      },
+    );
 
     act(() => {
       result.current.commandMenu.toggleCommandMenu();
     });
 
     expect(result.current.isCommandMenuOpened).toBe(false);
+  });
+
+  it('should call goBackToPreviousHotkeyScope when closing the command menu', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.commandMenu.openCommandMenu();
+    });
+
+    expect(result.current.isCommandMenuOpened).toBe(true);
+    expect(mockGoBackToPreviousHotkeyScope).not.toHaveBeenCalled();
+
+    act(() => {
+      result.current.commandMenu.closeCommandMenu();
+    });
+
+    expect(mockGoBackToPreviousHotkeyScope).toHaveBeenCalledTimes(1);
   });
 });

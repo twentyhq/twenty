@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { FormMultiSelectFieldInputHotKeyScope } from '@/object-record/record-field/form-types/constants/FormMultiSelectFieldInputHotKeyScope';
@@ -17,7 +17,9 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import { useTheme } from '@emotion/react';
 import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, SelectOption, VisibilityHidden } from 'twenty-ui';
+import { VisibilityHidden } from 'twenty-ui/accessibility';
+import { IconChevronDown } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;
@@ -183,7 +185,7 @@ export const FormMultiSelectFieldInput = ({
       {label ? <InputLabel>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>
-        <FormFieldInputInputContainer
+        <FormFieldInputInnerContainer
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
@@ -229,7 +231,7 @@ export const FormMultiSelectFieldInput = ({
               onRemove={readonly ? undefined : handleUnlinkVariable}
             />
           )}
-        </FormFieldInputInputContainer>
+        </FormFieldInputInnerContainer>
         <StyledSelectInputContainer>
           {draftValue.type === 'static' &&
             draftValue.editingMode === 'edit' && (

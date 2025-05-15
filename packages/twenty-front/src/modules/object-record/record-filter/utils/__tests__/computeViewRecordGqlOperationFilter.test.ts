@@ -1,3 +1,4 @@
+import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
@@ -929,6 +930,331 @@ describe('should work as expected for the different field types', () => {
               is: 'NULL',
             },
           },
+        },
+      ],
+    });
+  });
+
+  it('currency amount micros sub field type', () => {
+    const companyMockARRFieldMetadataId =
+      companyMockObjectMetadataItem.fields.find(
+        (field) => field.name === 'annualRecurringRevenue',
+      );
+
+    const ARRFilterIsGreaterThan: RecordFilter = {
+      id: 'company-ARR-filter-is-greater-than',
+      value: '1000',
+      fieldMetadataId: companyMockARRFieldMetadataId?.id,
+      displayValue: '1000',
+      operand: RecordFilterOperand.GreaterThan,
+      subFieldName: 'amountMicros' satisfies Extract<
+        keyof FieldCurrencyValue,
+        'amountMicros'
+      >,
+      label: 'Amount',
+      type: FieldMetadataType.CURRENCY,
+    };
+
+    const ARRFilterIsLessThan: RecordFilter = {
+      id: 'company-ARR-filter-is-less-than',
+      value: '1000',
+      fieldMetadataId: companyMockARRFieldMetadataId?.id,
+      displayValue: '1000',
+      operand: RecordFilterOperand.LessThan,
+      subFieldName: 'amountMicros' satisfies Extract<
+        keyof FieldCurrencyValue,
+        'amountMicros'
+      >,
+      label: 'Amount',
+      type: FieldMetadataType.CURRENCY,
+    };
+
+    const ARRFilterIs: RecordFilter = {
+      id: 'company-ARR-filter-is',
+      value: '1000',
+      fieldMetadataId: companyMockARRFieldMetadataId?.id,
+      displayValue: '1000',
+      operand: RecordFilterOperand.Is,
+      subFieldName: 'amountMicros' satisfies Extract<
+        keyof FieldCurrencyValue,
+        'amountMicros'
+      >,
+      label: 'Amount',
+      type: FieldMetadataType.CURRENCY,
+    };
+
+    const ARRFilterIsNot: RecordFilter = {
+      id: 'company-ARR-filter-is-not',
+      value: '1000',
+      fieldMetadataId: companyMockARRFieldMetadataId?.id,
+      displayValue: '1000',
+      operand: RecordFilterOperand.IsNot,
+      subFieldName: 'amountMicros' satisfies Extract<
+        keyof FieldCurrencyValue,
+        'amountMicros'
+      >,
+      label: 'Amount',
+      type: FieldMetadataType.CURRENCY,
+    };
+
+    const result = computeRecordGqlOperationFilter({
+      filterValueDependencies: mockFilterValueDependencies,
+      recordFilters: [
+        ARRFilterIsGreaterThan,
+        ARRFilterIsLessThan,
+        ARRFilterIs,
+        ARRFilterIsNot,
+      ],
+      recordFilterGroups: [],
+      fields: companyMockObjectMetadataItem.fields,
+    });
+
+    expect(result).toEqual({
+      and: [
+        {
+          annualRecurringRevenue: {
+            amountMicros: {
+              gte: 1000 * 1000000,
+            },
+          },
+        },
+        {
+          annualRecurringRevenue: {
+            amountMicros: {
+              lte: 1000 * 1000000,
+            },
+          },
+        },
+        {
+          annualRecurringRevenue: {
+            amountMicros: {
+              eq: 1000 * 1000000,
+            },
+          },
+        },
+        {
+          not: {
+            annualRecurringRevenue: {
+              amountMicros: {
+                eq: 1000 * 1000000,
+              },
+            },
+          },
+        },
+      ],
+    });
+  });
+
+  it('currency currency code sub field type', () => {
+    const companyMockARRFieldMetadataId =
+      companyMockObjectMetadataItem.fields.find(
+        (field) => field.name === 'annualRecurringRevenue',
+      );
+
+    const ARRFilterIn: RecordFilter = {
+      id: 'company-ARR-filter-in',
+      value: '["USD"]',
+      fieldMetadataId: companyMockARRFieldMetadataId?.id,
+      displayValue: 'USD',
+      operand: RecordFilterOperand.Is,
+      subFieldName: 'currencyCode' satisfies Extract<
+        keyof FieldCurrencyValue,
+        'currencyCode'
+      >,
+      label: 'Currency',
+      type: FieldMetadataType.CURRENCY,
+    };
+
+    const ARRFilterNotIn: RecordFilter = {
+      id: 'company-ARR-filter-not-in',
+      value: '["USD"]',
+      fieldMetadataId: companyMockARRFieldMetadataId?.id,
+      displayValue: 'Not USD',
+      operand: RecordFilterOperand.IsNot,
+      subFieldName: 'currencyCode' satisfies Extract<
+        keyof FieldCurrencyValue,
+        'currencyCode'
+      >,
+      label: 'Currency',
+      type: FieldMetadataType.CURRENCY,
+    };
+
+    const result = computeRecordGqlOperationFilter({
+      filterValueDependencies: mockFilterValueDependencies,
+      recordFilters: [ARRFilterIn, ARRFilterNotIn],
+      recordFilterGroups: [],
+      fields: companyMockObjectMetadataItem.fields,
+    });
+
+    expect(result).toEqual({
+      and: [
+        {
+          annualRecurringRevenue: {
+            currencyCode: {
+              in: ['USD'],
+            },
+          },
+        },
+        {
+          not: {
+            annualRecurringRevenue: {
+              currencyCode: {
+                in: ['USD'],
+              },
+            },
+          },
+        },
+      ],
+    });
+  });
+
+  it('select field type with empty options', () => {
+    const selectFieldMetadata = companyMockObjectMetadataItem.fields.find(
+      (field) => field.type === FieldMetadataType.SELECT,
+    );
+
+    if (!selectFieldMetadata) {
+      throw new Error(
+        `Select field metadata not found ${companyMockObjectMetadataItem.fields.map((field) => [field.name, field.type])}`,
+      );
+    }
+
+    const selectFilterIs: RecordFilter = {
+      id: 'company-select-filter-is',
+      value: '["option1",""]',
+      fieldMetadataId: selectFieldMetadata?.id,
+      displayValue: '["option1",""]',
+      operand: ViewFilterOperand.Is,
+      label: 'Select',
+      type: FieldMetadataType.SELECT,
+    };
+
+    const selectFilterIsNot: RecordFilter = {
+      id: 'company-select-filter-is-not',
+      value: '["option1",""]',
+      fieldMetadataId: selectFieldMetadata.id,
+      displayValue: '["option1",""]',
+      operand: ViewFilterOperand.IsNot,
+      label: 'Select',
+      type: FieldMetadataType.SELECT,
+    };
+
+    const result = computeRecordGqlOperationFilter({
+      filterValueDependencies: mockFilterValueDependencies,
+      recordFilters: [selectFilterIs, selectFilterIsNot],
+      recordFilterGroups: [],
+      fields: companyMockObjectMetadataItem.fields,
+    });
+
+    expect(result).toEqual({
+      and: [
+        {
+          or: [
+            {
+              [selectFieldMetadata.name]: {
+                in: ['option1'],
+              },
+            },
+            {
+              [selectFieldMetadata.name]: {
+                is: 'NULL',
+              },
+            },
+          ],
+        },
+        {
+          and: [
+            {
+              not: {
+                [selectFieldMetadata.name]: {
+                  in: ['option1'],
+                },
+              },
+            },
+            {
+              not: {
+                [selectFieldMetadata.name]: {
+                  is: 'NULL',
+                },
+              },
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('multi-select field type with empty options', () => {
+    const multiSelectFieldMetadata = companyMockObjectMetadataItem.fields.find(
+      (field) => field.type === FieldMetadataType.MULTI_SELECT,
+    )!;
+
+    const multiSelectFilterContains: RecordFilter = {
+      id: 'company-multi-select-filter-contains',
+      value: '["option1",""]',
+      fieldMetadataId: multiSelectFieldMetadata.id,
+      displayValue: '["option1",""]',
+      operand: ViewFilterOperand.Contains,
+      label: 'MultiSelect',
+      type: FieldMetadataType.MULTI_SELECT,
+    };
+
+    const multiSelectFilterDoesNotContain: RecordFilter = {
+      id: 'company-multi-select-filter-does-not-contain',
+      value: '["option1",""]',
+      fieldMetadataId: multiSelectFieldMetadata.id,
+      displayValue: '["option1",""]',
+      operand: ViewFilterOperand.DoesNotContain,
+      label: 'MultiSelect',
+      type: FieldMetadataType.MULTI_SELECT,
+    };
+
+    const result = computeRecordGqlOperationFilter({
+      filterValueDependencies: mockFilterValueDependencies,
+      recordFilters: [
+        multiSelectFilterContains,
+        multiSelectFilterDoesNotContain,
+      ],
+      recordFilterGroups: [],
+      fields: companyMockObjectMetadataItem.fields,
+    });
+
+    expect(result).toEqual({
+      and: [
+        {
+          or: [
+            {
+              [multiSelectFieldMetadata.name]: {
+                containsAny: ['option1'],
+              },
+            },
+            {
+              [multiSelectFieldMetadata.name]: {
+                isEmptyArray: true,
+              },
+            },
+          ],
+        },
+        {
+          or: [
+            {
+              not: {
+                [multiSelectFieldMetadata.name]: {
+                  containsAny: ['option1'],
+                },
+              },
+            },
+            {
+              [multiSelectFieldMetadata.name]: {
+                isEmptyArray: true,
+              },
+            },
+            {
+              [multiSelectFieldMetadata.name]: {
+                is: 'NULL',
+              },
+            },
+          ],
         },
       ],
     });

@@ -64,6 +64,7 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
 
     const graphqlQueryParser = new GraphqlQueryParser(
       objectMetadataItemWithFieldsMaps?.fieldsByName,
+      objectMetadataItemWithFieldsMaps?.fieldsByJoinColumnName,
       objectMetadataMaps,
       featureFlagsMap,
     );
@@ -85,6 +86,7 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
         nonFormattedObjectRecords,
         objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
+        featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
       );
     } else if (executionArgs.args.data && !isEmpty(executionArgs.args.data)) {
       objectRecords = formatData(
@@ -131,6 +133,7 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
           nonFormattedDuplicates,
           objectMetadataItemWithFieldMaps,
           objectMetadataMaps,
+          featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
         );
 
         return typeORMObjectRecordsParser.createConnection({

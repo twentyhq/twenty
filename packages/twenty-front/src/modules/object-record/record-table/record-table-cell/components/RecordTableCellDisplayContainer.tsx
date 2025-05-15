@@ -2,9 +2,7 @@ import { Theme, withTheme } from '@emotion/react';
 import { styled } from '@linaria/react';
 import { Ref } from 'react';
 
-const StyledOuterContainer = styled.div<{
-  hasSoftFocus?: boolean;
-}>`
+const StyledOuterContainer = styled.div`
   align-items: center;
   display: flex;
   height: 100%;
@@ -28,7 +26,7 @@ const StyledEmptyPlaceholderField = withTheme(styled.div<{ theme: Theme }>`
 `);
 
 export type EditableCellDisplayContainerProps = {
-  softFocus?: boolean;
+  focus?: boolean;
   onClick?: () => void;
   scrollRef?: Ref<HTMLDivElement>;
   isHovered?: boolean;
@@ -38,7 +36,7 @@ export type EditableCellDisplayContainerProps = {
 
 export const RecordTableCellDisplayContainer = ({
   children,
-  softFocus,
+  focus,
   onClick,
   scrollRef,
   onContextMenu,
@@ -46,11 +44,10 @@ export const RecordTableCellDisplayContainer = ({
 }: React.PropsWithChildren<EditableCellDisplayContainerProps>) => (
   <StyledOuterContainer
     data-testid={
-      softFocus ? 'editable-cell-soft-focus-mode' : 'editable-cell-display-mode'
+      focus ? 'editable-cell-focus-mode' : 'editable-cell-display-mode'
     }
     onClick={onClick}
     ref={scrollRef}
-    hasSoftFocus={softFocus}
     onContextMenu={onContextMenu}
   >
     {placeholderForEmptyCell ? (

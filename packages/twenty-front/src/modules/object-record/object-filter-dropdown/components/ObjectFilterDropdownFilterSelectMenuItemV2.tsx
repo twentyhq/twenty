@@ -1,10 +1,11 @@
-import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
-
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
+import { FILTER_FIELD_LIST_ID } from '@/object-record/object-filter-dropdown/constants/FilterFieldListId';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { useRecoilValue } from 'recoil';
-import { MenuItemSelect, useIcons } from 'twenty-ui';
+import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useIcons } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export type ObjectFilterDropdownFilterSelectMenuItemV2Props = {
   fieldMetadataItemToSelect: FieldMetadataItem;
@@ -15,19 +16,20 @@ export const ObjectFilterDropdownFilterSelectMenuItemV2 = ({
   fieldMetadataItemToSelect,
   onClick,
 }: ObjectFilterDropdownFilterSelectMenuItemV2Props) => {
-  const { isSelectedItemIdSelector, resetSelectedItem } = useSelectableList(
-    OBJECT_FILTER_DROPDOWN_ID,
-  );
+  const { resetSelectedItem } = useSelectableList(FILTER_FIELD_LIST_ID);
 
-  const isSelectedItem = useRecoilValue(
-    isSelectedItemIdSelector(fieldMetadataItemToSelect.id),
+  const isSelectedItem = useRecoilComponentFamilyValueV2(
+    isSelectedItemIdComponentFamilySelector,
+    fieldMetadataItemToSelect.id,
   );
 
   const { getIcon } = useIcons();
 
   const Icon = getIcon(fieldMetadataItemToSelect.icon);
 
-  const shouldShowSubMenu = isCompositeField(fieldMetadataItemToSelect.type);
+  const shouldShowSubMenu = isCompositeFieldType(
+    fieldMetadataItemToSelect.type,
+  );
 
   const handleClick = () => {
     resetSelectedItem();
@@ -36,9 +38,8 @@ export const ObjectFilterDropdownFilterSelectMenuItemV2 = ({
   };
 
   return (
-    <MenuItemSelect
-      selected={false}
-      hovered={isSelectedItem}
+    <MenuItem
+      focused={isSelectedItem}
       onClick={handleClick}
       LeftIcon={Icon}
       text={fieldMetadataItemToSelect.label}

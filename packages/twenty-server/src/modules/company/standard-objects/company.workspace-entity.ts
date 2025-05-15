@@ -1,6 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
@@ -9,10 +11,6 @@ import { AddressMetadata } from 'src/engine/metadata-modules/field-metadata/comp
 import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
 import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
-} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/workspace-duplicate-criteria.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -165,7 +163,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   // Relations
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.people,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`People`,
     description: msg`People linked to the company.`,
     icon: 'IconUsers',
@@ -177,7 +175,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.charge,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Charge`,
     description: msg`Company linked to the charge`,
     icon: 'IconPhone',
@@ -189,7 +187,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.accountOwner,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Account Owner`,
     description: msg`Your team member responsible for managing the company account`,
     icon: 'IconUserCircle',
@@ -205,7 +203,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.taskTargets,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Tasks`,
     description: msg`Tasks tied to the company`,
     icon: 'IconCheckbox',
@@ -216,7 +214,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.noteTargets,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Notes`,
     description: msg`Notes tied to the company`,
     icon: 'IconNotes',
@@ -227,7 +225,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.opportunities,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Opportunities`,
     description: msg`Opportunities linked to the company.`,
     icon: 'IconTargetArrow',
@@ -239,7 +237,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.favorites,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
     description: msg`Favorites linked to the company`,
     icon: 'IconHeart',
@@ -252,7 +250,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.attachments,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Attachments`,
     description: msg`Attachments linked to the company`,
     icon: 'IconFileImport',
@@ -264,7 +262,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.timelineActivities,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Timeline Activities`,
     description: msg`Timeline Activities linked to the company`,
     icon: 'IconIconTimelineEvent',

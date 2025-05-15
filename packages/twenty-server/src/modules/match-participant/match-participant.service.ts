@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { Any, EntityManager, Equal } from 'typeorm';
+import { Any, Equal } from 'typeorm';
 
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -39,7 +40,7 @@ export class MatchParticipantService<
   public async matchParticipants(
     participants: ParticipantWorkspaceEntity[],
     objectMetadataName: 'messageParticipant' | 'calendarEventParticipant',
-    transactionManager?: EntityManager,
+    transactionManager?: WorkspaceEntityManager,
   ) {
     const participantRepository =
       await this.getParticipantRepository(objectMetadataName);

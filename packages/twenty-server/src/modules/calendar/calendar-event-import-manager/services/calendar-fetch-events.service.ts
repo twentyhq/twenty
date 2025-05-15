@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -23,6 +23,7 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 
 @Injectable()
 export class CalendarFetchEventsService {
+  private readonly logger = new Logger(CalendarFetchEventsService.name);
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleCalendar)
     private readonly cacheStorage: CacheStorageService,
@@ -118,6 +119,10 @@ export class CalendarFetchEventsService {
         );
       }
     } catch (error) {
+      this.logger.log(
+        `Calendar event fetch error for workspace ${workspaceId} and calendar channel ${calendarChannel.id}`,
+      );
+      this.logger.error(error);
       await this.calendarEventImportErrorHandlerService.handleDriverException(
         error,
         syncStep,

@@ -1,9 +1,11 @@
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { seedWorkspaceFavorites } from 'src/database/typeorm-seeds/workspace/favorites';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { seedCompanyWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-company-with-demo-data';
+import { seedIntegrationWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-integration-with-demo-data';
 import { seedOpportunityWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-opportunity-with-demo-data';
 import { seedPersonWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-person-with-demo-data';
 import { seedWorkspaceMemberWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-workspace-member-with-demo-data';
@@ -28,10 +30,11 @@ export const seedWorkspaceWithDemoData = async (
   }, {});
 
   await workspaceDataSource.transaction(
-    async (entityManager: EntityManager) => {
+    async (entityManager: WorkspaceEntityManager) => {
       await seedCompanyWithDemoData(entityManager, schemaName);
       await seedPersonWithDemoData(entityManager, schemaName);
       await seedOpportunityWithDemoData(entityManager, schemaName);
+      await seedIntegrationWithDemoData(entityManager, schemaName);
 
       const viewDefinitionsWithId = await seedViewWithDemoData(
         entityManager,
@@ -41,7 +44,14 @@ export const seedWorkspaceWithDemoData = async (
 
       await seedWorkspaceFavorites(
         viewDefinitionsWithId
-          .filter((view) => view.key === 'INDEX' && shouldSeedWorkspaceFavorite(view.objectMetadataId, objectMetadataMap))
+          .filter(
+            (view) =>
+              view.key === 'INDEX' &&
+              shouldSeedWorkspaceFavorite(
+                view.objectMetadataId,
+                objectMetadataMap,
+              ),
+          )
           .map((view) => view.id),
         entityManager,
         schemaName,

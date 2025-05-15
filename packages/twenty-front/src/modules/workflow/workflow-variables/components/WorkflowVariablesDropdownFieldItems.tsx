@@ -13,20 +13,19 @@ import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isReco
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/workflow-diagram/states/workflowDiagramTriggerNodeSelectionState';
-import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { workflowDiagramTriggerNodeSelectionComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramTriggerNodeSelectionComponentState';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOutputSchema';
 import { useState } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronLeft,
-  MenuItemSelect,
   OverflowingTextWithTooltip,
   useIcons,
-} from 'twenty-ui';
-import { isDefined } from 'twenty-shared/utils';
+} from 'twenty-ui/display';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 
 type WorkflowVariablesDropdownFieldItemsProps = {
   step: StepOutputSchema;
@@ -42,13 +41,15 @@ export const WorkflowVariablesDropdownFieldItems = ({
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [searchInputValue, setSearchInputValue] = useState('');
   const { getIcon } = useIcons();
-  const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
+  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
+    workflowSelectedNodeComponentState,
+  );
   const setActiveTabId = useSetRecoilComponentStateV2(
     activeTabIdComponentState,
     'workflow-serverless-function-tab-list-component-id',
   );
-  const setWorkflowDiagramTriggerNodeSelection = useSetRecoilState(
-    workflowDiagramTriggerNodeSelectionState,
+  const setWorkflowDiagramTriggerNodeSelection = useSetRecoilComponentStateV2(
+    workflowDiagramTriggerNodeSelectionComponentState,
   );
 
   const getDisplayedSubStepFields = () => {
@@ -136,12 +137,12 @@ export const WorkflowVariablesDropdownFieldItems = ({
         onChange={(event) => setSearchInputValue(event.target.value)}
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer hasMaxHeight>
         {filteredOptions.map(([key, subStep]) => (
           <MenuItemSelect
             key={key}
             selected={false}
-            hovered={false}
+            focused={false}
             onClick={() => handleSelectField(key)}
             text={subStep.label || key}
             hasSubMenu={!subStep.isLeaf}

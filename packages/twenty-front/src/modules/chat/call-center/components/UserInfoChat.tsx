@@ -1,8 +1,8 @@
 import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 
-import { Avatar } from 'twenty-ui';
-import styled from '@emotion/styled';
 import { IMessage, WhatsappDocument } from '@/chat/types/WhatsappDocument';
+import styled from '@emotion/styled';
+import { Avatar } from 'twenty-ui/display';
 
 interface WhatsappProps {
   message: IMessage;

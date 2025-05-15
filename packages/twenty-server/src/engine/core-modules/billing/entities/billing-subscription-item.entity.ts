@@ -5,6 +5,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
@@ -12,7 +13,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionItemMetadata } from 'src/engine/core-modules/billing/types/billing-subscription-item-metadata.type';
 @Entity({ name: 'billingSubscriptionItem', schema: 'core' })
 @Unique('IndexOnBillingSubscriptionIdAndStripeProductIdUnique', [
   'billingSubscriptionId',
@@ -38,7 +41,7 @@ export class BillingSubscriptionItem {
   stripeSubscriptionId: string;
 
   @Column({ nullable: false, type: 'jsonb', default: {} })
-  metadata: Stripe.Metadata;
+  metadata: BillingSubscriptionItemMetadata;
 
   @Column({ nullable: true, type: 'jsonb' })
   billingThresholds: Stripe.SubscriptionItem.BillingThresholds;
@@ -52,6 +55,13 @@ export class BillingSubscriptionItem {
   )
   billingSubscription: Relation<BillingSubscription>;
 
+  @ManyToOne(() => BillingProduct)
+  @JoinColumn({
+    name: 'stripeProductId',
+    referencedColumnName: 'stripeProductId',
+  })
+  billingProduct: Relation<BillingProduct>;
+
   @Column({ nullable: false })
   stripeProductId: string;
 
@@ -63,4 +73,7 @@ export class BillingSubscriptionItem {
 
   @Column({ nullable: true, type: 'numeric' })
   quantity: number | null;
+
+  @Column({ type: 'boolean', default: false })
+  hasReachedCurrentPeriodCap: boolean;
 }

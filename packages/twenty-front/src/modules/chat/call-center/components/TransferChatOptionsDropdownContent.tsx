@@ -1,5 +1,4 @@
 import { useContext, useState } from 'react';
-import { IconChevronLeft, IconIdBadge2, IconUsers, MenuItem } from 'twenty-ui';
 
 import { TRANSFER_CHAT_OPTIONS_DROPDOWN_ID } from '@/chat/call-center/components/TransferChatOptionsDropdown';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
@@ -10,6 +9,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 // eslint-disable-next-line no-restricted-imports
 import { TransferChatOption } from '@/chat/call-center/components/TransferChatOption';
+import { IconChevronLeft, IconIdBadge2, IconUsers } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type TransferChatOptionsMenu = 'agents' | 'sectors';
 

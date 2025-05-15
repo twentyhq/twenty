@@ -1,7 +1,10 @@
 import { Injectable, Type } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { EntityManager, ObjectLiteral } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { EntityManager, ObjectLiteral, Repository } from 'typeorm';
 
+import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -10,6 +13,8 @@ import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manag
 @Injectable()
 export class TwentyORMManager {
   constructor(
+    @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
+    private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
     private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
@@ -25,8 +30,12 @@ export class TwentyORMManager {
   async getRepository<T extends ObjectLiteral>(
     workspaceEntityOrobjectMetadataName: Type<T> | string,
   ): Promise<WorkspaceRepository<T>> {
-    const { workspaceId, workspaceMetadataVersion } =
-      this.scopedWorkspaceContextFactory.create();
+    const {
+      workspaceId,
+      workspaceMetadataVersion,
+      userWorkspaceId,
+      isExecutedByApiKey,
+    } = this.scopedWorkspaceContextFactory.create();
 
     let objectMetadataName: string;
 
@@ -47,7 +56,26 @@ export class TwentyORMManager {
       workspaceMetadataVersion,
     );
 
-    return workspaceDataSource.getRepository<T>(objectMetadataName);
+    let roleId: string | undefined;
+
+    if (isDefined(userWorkspaceId)) {
+      const userWorkspaceRole = await this.userWorkspaceRoleRepository.findOne({
+        where: {
+          userWorkspaceId,
+          workspaceId: workspaceId,
+        },
+      });
+
+      roleId = userWorkspaceRole?.roleId;
+    }
+
+    const shouldBypassPermissionChecks = !!isExecutedByApiKey;
+
+    return workspaceDataSource.getRepository<T>(
+      objectMetadataName,
+      shouldBypassPermissionChecks,
+      roleId,
+    );
   }
 
   async getDatasource() {

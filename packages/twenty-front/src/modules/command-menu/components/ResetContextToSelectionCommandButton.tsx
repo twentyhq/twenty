@@ -6,11 +6,12 @@ import { useResetPreviousCommandMenuContext } from '@/command-menu/hooks/useRese
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
-import { IconArrowBackUp } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { IconArrowBackUp } from 'twenty-ui/display';
 
 export const ResetContextToSelectionCommandButton = () => {
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
@@ -42,17 +43,22 @@ export const ResetContextToSelectionCommandButton = () => {
   }
 
   return (
-    <CommandMenuItem
-      id={RESET_CONTEXT_TO_SELECTION}
-      Icon={IconArrowBackUp}
-      label={t`Reset to`}
-      RightComponent={
-        <CommandMenuContextRecordsChip
-          objectMetadataItemId={objectMetadataItem.id}
-          instanceId={COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID}
-        />
-      }
-      onClick={resetPreviousCommandMenuContext}
-    />
+    <SelectableListItem
+      itemId={RESET_CONTEXT_TO_SELECTION}
+      onEnter={resetPreviousCommandMenuContext}
+    >
+      <CommandMenuItem
+        id={RESET_CONTEXT_TO_SELECTION}
+        Icon={IconArrowBackUp}
+        label={t`Reset to`}
+        RightComponent={
+          <CommandMenuContextRecordsChip
+            objectMetadataItemId={objectMetadataItem.id}
+            instanceId={COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID}
+          />
+        }
+        onClick={resetPreviousCommandMenuContext}
+      />
+    </SelectableListItem>
   );
 };

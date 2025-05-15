@@ -2,14 +2,14 @@ import {
   CaptchaDriverOptions,
   CaptchaModuleOptions,
 } from 'src/engine/core-modules/captcha/interfaces';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export const captchaModuleFactory = (
-  environmentService: EnvironmentService,
+  twentyConfigService: TwentyConfigService,
 ): CaptchaModuleOptions | undefined => {
-  const driver = environmentService.get('CAPTCHA_DRIVER');
-  const siteKey = environmentService.get('CAPTCHA_SITE_KEY');
-  const secretKey = environmentService.get('CAPTCHA_SECRET_KEY');
+  const driver = twentyConfigService.get('CAPTCHA_DRIVER');
+  const siteKey = twentyConfigService.get('CAPTCHA_SITE_KEY');
+  const secretKey = twentyConfigService.get('CAPTCHA_SECRET_KEY');
 
   if (!driver) {
     return;

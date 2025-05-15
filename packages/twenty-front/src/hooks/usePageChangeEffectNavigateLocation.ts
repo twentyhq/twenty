@@ -7,10 +7,10 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { OnboardingStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { isDefined } from 'twenty-shared/utils';
 
 export const usePageChangeEffectNavigateLocation = () => {
   const { isMatchingLocation } = useIsMatchingLocation();
@@ -21,24 +21,23 @@ export const usePageChangeEffectNavigateLocation = () => {
   );
   const { defaultHomePagePath } = useDefaultHomePagePath();
 
-  const isMatchingOpenRoute =
-    isMatchingLocation(AppPath.Invite) ||
-    isMatchingLocation(AppPath.ResetPassword) ||
-    isMatchingLocation(AppPath.VerifyEmail);
+  const someMatchingLocationOf = (appPaths: AppPath[]): boolean =>
+    appPaths.some((appPath) => isMatchingLocation(appPath));
+  const onGoingUserCreationPaths = [
+    AppPath.Invite,
+    AppPath.SignInUp,
+    AppPath.VerifyEmail,
+    AppPath.Verify,
+  ];
 
-  const isMatchingOngoingUserCreationRoute =
-    isMatchingOpenRoute ||
-    isMatchingLocation(AppPath.SignInUp) ||
-    isMatchingLocation(AppPath.Verify);
-
-  const isMatchingOnboardingRoute =
-    isMatchingOngoingUserCreationRoute ||
-    isMatchingLocation(AppPath.CreateWorkspace) ||
-    isMatchingLocation(AppPath.CreateProfile) ||
-    isMatchingLocation(AppPath.SyncEmails) ||
-    isMatchingLocation(AppPath.InviteTeam) ||
-    isMatchingLocation(AppPath.PlanRequired) ||
-    isMatchingLocation(AppPath.PlanRequiredSuccess);
+  const onboardingPaths = [
+    AppPath.CreateWorkspace,
+    AppPath.CreateProfile,
+    AppPath.SyncEmails,
+    AppPath.InviteTeam,
+    AppPath.PlanRequired,
+    AppPath.PaymentRequiredSuccess,
+  ];
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
@@ -46,18 +45,22 @@ export const usePageChangeEffectNavigateLocation = () => {
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
 
-  if (isMatchingOpenRoute) {
-    return;
-  }
-
-  if (!isLoggedIn && !isMatchingOngoingUserCreationRoute) {
+  if (
+    !isLoggedIn &&
+    !someMatchingLocationOf([
+      ...onGoingUserCreationPaths,
+      AppPath.ResetPassword,
+    ])
+  ) {
     return AppPath.SignInUp;
   }
 
   if (
     onboardingStatus === OnboardingStatus.PLAN_REQUIRED &&
-    !isMatchingLocation(AppPath.PlanRequired) &&
-    !isMatchingLocation(AppPath.PlanRequiredSuccess)
+    !someMatchingLocationOf([
+      AppPath.PlanRequired,
+      AppPath.PaymentRequiredSuccess,
+    ])
   ) {
     return AppPath.PlanRequired;
   }
@@ -70,8 +73,10 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION &&
-    !isMatchingLocation(AppPath.CreateWorkspace) &&
-    !isMatchingLocation(AppPath.PlanRequiredSuccess)
+    !someMatchingLocationOf([
+      AppPath.CreateWorkspace,
+      AppPath.PaymentRequiredSuccess,
+    ])
   ) {
     return AppPath.CreateWorkspace;
   }
@@ -81,6 +86,25 @@ export const usePageChangeEffectNavigateLocation = () => {
     !isMatchingLocation(AppPath.CreateProfile)
   ) {
     return AppPath.CreateProfile;
+  }
+
+  if (
+    onboardingStatus === OnboardingStatus.PLAN_REQUIRED &&
+    !isMatchingLocation(AppPath.PlanRequired)
+  ) {
+    return AppPath.PlanRequired;
+  }
+
+  const allowedPaths = [
+    AppPath.PaymentRequired,
+    AppPath.PaymentRequiredSuccess,
+  ];
+
+  if (
+    onboardingStatus === OnboardingStatus.PAYMENT_REQUIRED &&
+    !allowedPaths.some((path) => isMatchingLocation(path))
+  ) {
+    return AppPath.PaymentRequired;
   }
 
   if (
@@ -99,7 +123,8 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.COMPLETED &&
-    isMatchingOnboardingRoute &&
+    someMatchingLocationOf([...onboardingPaths, ...onGoingUserCreationPaths]) &&
+    !isMatchingLocation(AppPath.ResetPassword) &&
     isLoggedIn
   ) {
     return defaultHomePagePath;

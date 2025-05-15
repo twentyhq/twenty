@@ -147,7 +147,7 @@ export const COMPANY_STANDARD_FIELD_IDS = {
 };
 
 export const CHARGE_STANDARD_FIELD_IDS = {
-  name: '20202020-0b7b-4d0d-8b5d-4b7c3d2b8u2r',
+  name: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c66',
   company: '20202020-0b7b-4d0d-8b5d-4b7c3d2b0f9f',
   contact: '20202020-0b7b-4d0d-8b5d-4b7c3d2bm9pe',
   product: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3a',
@@ -156,8 +156,12 @@ export const CHARGE_STANDARD_FIELD_IDS = {
   quantity: '20202020-0b7b-4d0d-867a-4b7c3d2b6f3d',
   discount: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3e',
   recurrence: '20202020-0b7b-4d0d-8b5d-4b7c3d2b623a',
+  entityType: '20202020-a1b2-4c3d-8e4f-5f6a7b8c9d01',
+  taxId: '20202020-b2c3-5d4e-9f5a-6a7b8c9d0e12',
   paymentGateway: '20202020-0b7b-4d0d-8b5d-4b7c3d2b234f',
   activityTargets: '20202020-0b7b-4d0d-8b5d-4b7c3d2b259c',
+  chargeAction: '20202020-7a4c-5d2e-9f1b-3e8c7d6a2f4d',
+  requestCode: '20202020-4a2d-4f1c-9e3b-5d8c6b2a1f7e',
   position: '20202020-fcd5-4231-aff5-fff583eaa0a1',
   attachments: 'bdc8497f-9ecb-451d-aa35-17dbade48b71',
   person: '20202020-3213-4ddf-9494-6422bcff8d7c',
@@ -166,17 +170,31 @@ export const CHARGE_STANDARD_FIELD_IDS = {
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2a56b',
 };
 
+export const PRODUCT_STANDARD_FIELD_IDS = {
+  name: '02020202-6b3b-4b3b-8b3b-7f8d6a1d7c63',
+  salePrice: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5b',
+  cost: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5c',
+  createdAt: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5d',
+  updatedAt: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5e',
+  unitOfMeasure: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5f',
+  status: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c60',
+  position: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c61',
+  searchVector: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c62',
+  charges: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c68',
+};
+
 export const TRACEABLE_STANDARD_FIELD_IDS = {
-  linkName: '20202020-1234-5678-9abc-def123456789',
+  name: '20202020-0707-4245-9105-6b568abfab9f',
   websiteUrl: '20202020-9876-5432-1abc-def654321fed',
   campaignName: '20202020-abcd-ef12-3456-7890abcdef12',
   campaignSource: '20202020-5678-90ab-cdef-1234567890ab',
   meansOfCommunication: '20202020-4321-8765-cba9-fed123456789',
-  name: '20202020-6c5b-4a3a-2b1c-0d9e8f7a6b5c',
   keyword: '20202020-8e7d-6c5b-4a3a-2b1c0d9e8f7a',
+  campaignContent: '20202020-e52a-4e7c-9445-c9390d78bcb3',
+  generatedUrl: '20202020-e611-4874-ba80-3d45cf541b2a',
+  url: '20202020-44fb-4853-90b4-7162977abc80',
   position: '20202020-1a2b-3c4d-5e6f-7a8b9c0d1e2f',
-  generatedUrl: '20202020-4d3c-2b1a-0f9e-8d7c6b5a4b3c',
-  createdAt: '20202020-9f8e-7d6c-5b4a-3a2b1c0d9e8f',
+  timelineActivities: '20202020-b751-43e3-a9f0-186288344f21',
   searchVector: '20202020-8c9d-7e6f-5a4b-3c2d1e0f9a8b',
 };
 
@@ -266,6 +284,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   linkedObjectMetadataId: '20202020-c595-449d-9f89-562758c9ee69',
   charge: '20202020-e674-48e5-a542-72570eee7215',
   integration: '20000000-4b3a-4b3b-8b3b-7f8d6a1d7d5b',
+  traceable: '20202020-1e7e-42bc-82fe-24fd43cfbb2a',
 };
 
 export const FAVORITE_STANDARD_FIELD_IDS = {
@@ -473,6 +492,7 @@ export const VIEW_FILTER_STANDARD_FIELD_IDS = {
   view: '20202020-4f5b-487e-829c-3d881c163611',
   viewFilterGroupId: '20202020-2580-420a-8328-cab1635c0296',
   positionInViewFilterGroup: '20202020-3bb0-4f66-a537-a46fe0dc468f',
+  subFieldName: '20202020-3bb0-4f66-a537-a46fe0dc469a',
 };
 
 export const VIEW_FILTER_GROUP_STANDARD_FIELD_IDS = {
@@ -522,6 +542,12 @@ export const WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS = {
   workflow: '20202020-4082-4641-8569-dc08d5365002',
 };
 
+export const WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS = {
+  type: '20202020-3319-4234-a34c-3f92c1ab56e7',
+  settings: '20202020-3319-4234-a34c-bac8f903de12',
+  workflow: '20202020-3319-4234-a34c-8e1a4d2f7c03',
+};
+
 export const WORKFLOW_STANDARD_FIELD_IDS = {
   name: '20202020-b3d3-478f-acc0-5d901e725b20',
   lastPublishedVersionId: '20202020-326a-4fba-8639-3456c0a169e8',
@@ -530,6 +556,7 @@ export const WORKFLOW_STANDARD_FIELD_IDS = {
   versions: '20202020-9432-416e-8f3c-27ee3153d099',
   runs: '20202020-759b-4340-b58b-e73595c4df4f',
   eventListeners: '20202020-0229-4c66-832e-035c67579a38',
+  automatedTriggers: '20202020-3319-4234-a34c-117ecad2b8a9',
   favorites: '20202020-c554-4c41-be7a-cf9cd4b0d512',
   timelineActivities: '20202020-906e-486a-a798-131a5f081faf',
   createdBy: '20202020-6007-401a-8aa5-e6f48581a6f3',

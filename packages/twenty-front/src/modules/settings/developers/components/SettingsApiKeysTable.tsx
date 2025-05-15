@@ -11,8 +11,8 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledTableBody = styled(TableBody)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};

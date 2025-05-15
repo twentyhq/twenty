@@ -21,7 +21,9 @@ import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { Button, IconBrowserMaximize, getOsControlSymbol } from 'twenty-ui';
+import { IconBrowserMaximize } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 const StyledLink = styled(Link)`
   text-decoration: none;

@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { ColumnType, EntitySchemaColumnOptions } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { ColumnType, EntitySchemaColumnOptions } from 'typeorm';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -12,7 +14,11 @@ import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metad
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import {
+  TwentyORMException,
+  TwentyORMExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type EntitySchemaColumnMap = {
   [key: string]: EntitySchemaColumnOptions;
@@ -20,7 +26,10 @@ type EntitySchemaColumnMap = {
 
 @Injectable()
 export class EntitySchemaColumnFactory {
-  create(fieldMetadataMapByName: FieldMetadataMap): EntitySchemaColumnMap {
+  create(
+    fieldMetadataMapByName: FieldMetadataMap,
+    isNewRelationEnabled: boolean,
+  ): EntitySchemaColumnMap {
     let entitySchemaColumnMap: EntitySchemaColumnMap = {};
 
     const fieldMetadataCollection = Object.values(fieldMetadataMapByName);
@@ -28,33 +37,63 @@ export class EntitySchemaColumnFactory {
     for (const fieldMetadata of fieldMetadataCollection) {
       const key = fieldMetadata.name;
 
-      if (isRelationFieldMetadataType(fieldMetadata.type)) {
-        const relationMetadata =
-          fieldMetadata.fromRelationMetadata ??
-          fieldMetadata.toRelationMetadata;
-
-        if (!relationMetadata) {
-          throw new Error(
-            `Relation metadata is missing for field ${fieldMetadata.name}`,
-          );
-        }
-
-        const joinColumnKey = fieldMetadata.name + 'Id';
-        const joinColumn = fieldMetadataCollection.find(
-          (field) => field.name === joinColumnKey,
+      if (
+        isFieldMetadataInterfaceOfType(
+          fieldMetadata,
+          FieldMetadataType.RELATION,
         )
-          ? joinColumnKey
-          : null;
+      ) {
+        if (!isNewRelationEnabled) {
+          const relationMetadata =
+            fieldMetadata.fromRelationMetadata ??
+            fieldMetadata.toRelationMetadata;
 
-        if (joinColumn) {
-          entitySchemaColumnMap[joinColumn] = {
-            name: joinColumn,
+          if (!relationMetadata) {
+            throw new Error(
+              `Relation metadata is missing for field ${fieldMetadata.name}`,
+            );
+          }
+
+          const joinColumnKey = fieldMetadata.name + 'Id';
+          const joinColumn = fieldMetadataCollection.find(
+            (field) => field.name === joinColumnKey,
+          )
+            ? joinColumnKey
+            : null;
+
+          if (joinColumn) {
+            entitySchemaColumnMap[joinColumn] = {
+              name: joinColumn,
+              type: 'uuid',
+              nullable: fieldMetadata.isNullable,
+            };
+          }
+
+          continue;
+        } else {
+          const isManyToOneRelation =
+            fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE;
+          const joinColumnName = fieldMetadata.settings?.joinColumnName;
+
+          if (!isManyToOneRelation) {
+            continue;
+          }
+
+          if (!isDefined(joinColumnName)) {
+            throw new TwentyORMException(
+              `Field ${fieldMetadata.id} of type ${fieldMetadata.type}  is a many to one relation but does not have a join column name`,
+              TwentyORMExceptionCode.MALFORMED_METADATA,
+            );
+          }
+
+          entitySchemaColumnMap[joinColumnName] = {
+            name: joinColumnName,
             type: 'uuid',
             nullable: fieldMetadata.isNullable,
           };
-        }
 
-        continue;
+          continue;
+        }
       }
 
       if (isCompositeFieldMetadataType(fieldMetadata.type)) {

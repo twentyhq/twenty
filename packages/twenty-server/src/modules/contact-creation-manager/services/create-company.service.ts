@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import axios, { AxiosInstance } from 'axios';
 import uniqBy from 'lodash.uniqby';
-import { DeepPartial, EntityManager, ILike } from 'typeorm';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared/constants';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { DeepPartial, ILike } from 'typeorm';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -37,7 +37,6 @@ export class CreateCompanyService {
   async createCompanies(
     companies: CompanyToCreate[],
     workspaceId: string,
-    transactionManager?: EntityManager,
   ): Promise<{
     [domainName: string]: string;
   }> {
@@ -49,6 +48,9 @@ export class CreateCompanyService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         CompanyWorkspaceEntity,
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
     // Avoid creating duplicate companies
@@ -60,12 +62,9 @@ export class CreateCompanyService {
     }));
 
     // Find existing companies
-    const existingCompanies = await companyRepository.find(
-      {
-        where: conditions,
-      },
-      transactionManager,
-    );
+    const existingCompanies = await companyRepository.find({
+      where: conditions,
+    });
     const existingCompanyIdsMap = this.createCompanyMap(existingCompanies);
 
     // Filter out companies that already exist
@@ -84,10 +83,8 @@ export class CreateCompanyService {
     }
 
     // Retrieve the last company position
-    let lastCompanyPosition = await this.getLastCompanyPosition(
-      companyRepository,
-      transactionManager,
-    );
+    let lastCompanyPosition =
+      await this.getLastCompanyPosition(companyRepository);
     const newCompaniesData = await Promise.all(
       newCompaniesToCreate.map((company) =>
         this.prepareCompanyData(company, ++lastCompanyPosition),
@@ -153,12 +150,10 @@ export class CreateCompanyService {
 
   private async getLastCompanyPosition(
     companyRepository: WorkspaceRepository<CompanyWorkspaceEntity>,
-    transactionManager?: EntityManager,
   ): Promise<number> {
     const lastCompanyPosition = await companyRepository.maximum(
       'position',
       undefined,
-      transactionManager,
     );
 
     return lastCompanyPosition ?? 0;

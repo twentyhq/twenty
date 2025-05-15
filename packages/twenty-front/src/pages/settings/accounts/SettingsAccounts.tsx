@@ -1,5 +1,4 @@
 import { useRecoilValue } from 'recoil';
-import { H2Title, Section } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -15,6 +14,8 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsAccounts = () => {

@@ -1,13 +1,7 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
 import { Controller, useFormContext } from 'react-hook-form';
-import {
-  CardContent,
-  CardFooter,
-  getNextThemeColor,
-  IconPlus,
-  LightButton,
-} from 'twenty-ui';
+
 import { z } from 'zod';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
@@ -18,6 +12,10 @@ import { SettingsServiceCenterSectorFieldSelectFormOptionRow } from '@/settings/
 import { useSelectSettingsFormInitialValues } from '@/settings/service-center/sectors/hooks/useSelectSettingsFormInitialValues';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { IconPlus } from 'twenty-ui/display';
+import { LightButton } from 'twenty-ui/input';
+import { CardContent, CardFooter } from 'twenty-ui/layout';
+import { getNextThemeColor } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';

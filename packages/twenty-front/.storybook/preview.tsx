@@ -3,12 +3,13 @@ import { Preview } from '@storybook/react';
 import { initialize, mswDecorator } from 'msw-storybook-addon';
 import { useEffect } from 'react';
 import { useDarkMode } from 'storybook-dark-mode';
-import { THEME_DARK, THEME_LIGHT, ThemeContextProvider } from 'twenty-ui';
 
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 import { mockedUserJWT } from '../src/testing/mock-data/jwt';
 
 import 'react-loading-skeleton/dist/skeleton.css';
+import 'twenty-ui/style.css';
+import { THEME_DARK, THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
 
 initialize({
   onUnhandledRequest: async (request: Request) => {
@@ -61,6 +62,7 @@ const preview: Preview = {
         date: /Date$/,
       },
     },
+    mockingDate: new Date('2024-03-12T09:30:00.000Z'),
     options: {
       storySort: {
         order: ['UI', 'Modules', 'Pages'],

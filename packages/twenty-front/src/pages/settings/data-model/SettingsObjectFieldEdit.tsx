@@ -4,13 +4,6 @@ import pick from 'lodash.pick';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import {
-  Button,
-  H2Title,
-  IconArchive,
-  IconArchiveOff,
-  Section,
-} from 'twenty-ui';
 import { z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -35,6 +28,9 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { H2Title, IconArchive, IconArchiveOff } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -212,7 +208,8 @@ export const SettingsObjectFieldEdit = () => {
                 fieldMetadataItem={fieldMetadataItem}
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
                 canToggleSyncLabelWithName={
-                  fieldMetadataItem.type !== FieldMetadataType.RELATION
+                  fieldMetadataItem.type !== FieldMetadataType.RELATION &&
+                  fieldMetadataItem.isCustom === true
                 }
               />
             </Section>

@@ -153,6 +153,7 @@ services:
     container_name: kvoipv2-redis
     image: redis
     restart: always
+    command: ["--maxmemory-policy", "noeviction"]
 
 volumes:
   docker-data:

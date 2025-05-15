@@ -1,0 +1,141 @@
+name: KVOIP Deploy to TEST VPS
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    name: Deploy application
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: SSH - Connect to VPS
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            echo "Successfully connected to VPS"
+            echo "PROJECT_ROOT: ${{ vars.PROJECT_ROOT }}"
+
+      - name: SSH - Pull latest code
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            echo "Changing to project directory and pulling changes"
+            cd ${{ vars.PROJECT_ROOT }}
+            git checkout dev
+            git pull origin dev
+            echo "Code updated successfully"
+
+      - name: SSH - Build canary Docker image
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          timeout: 1200s
+          script: |
+            echo "Building canary image"
+            cd ${{vars.PROJECT_ROOT}}/${{ vars.DOCKER_DIR }}
+            make kvoip-prod-build
+            echo "Canary image built successfully"
+
+      - name: SSH - Deploy with docker-compose
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            echo "Starting containers"
+            cd ${{vars.PROJECT_ROOT}}/${{ vars.DOCKER_DIR }}
+            docker compose up -d --build
+            echo "Containers started"
+
+      - name: SSH - Verify container health
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            echo "Checking health of required containers: ${{ vars.REQUIRED_CONTAINERS }}"
+
+            # Check each required container
+            all_ok=true
+            for container in ${{ vars.REQUIRED_CONTAINERS }}; do
+              if ! docker inspect --format '{{.State.Health.Status}}' "$container" | grep -q 'healthy'; then
+                echo "::error::Container $container is not healthy"
+                docker logs "$container"
+                docker inspect "$container" | jq '.[].State'
+                all_ok=false
+              else
+                echo "✓ $container is healthy"
+              fi
+            done
+
+            if docker exec kvoipv2-redis redis-cli ping | grep -qv "PONG"; then
+              echo "::error::Redis is not responding to PING"
+              all_ok=false
+            fi
+
+            if ! docker inspect --format '{{.State.Status}}' "kvoipv2-worker" | grep -q 'running'; then
+              echo "::error::Container kvoipv2-worker is not running"
+              docker logs kvoipv2-worker
+              all_ok=false
+            fi
+
+            if [ "$all_ok" != "true" ]; then
+              echo "::error::Not all required containers are healthy"
+              echo "Current container status:"
+              docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+              exit 1
+            fi
+
+            echo "All required containers are healthy and running"
+
+      - name: Detect migration file changes
+        id: changed-files
+        uses: tj-actions/changed-files@v42
+        with:
+          files: |
+            packages/twenty-server/src/database/typeorm/core/migrations/**
+            packages/twenty-server/src/database/typeorm/metadata/migrations/**
+
+      - name: SSH - Run migrations
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            echo "Migration files changed - running migrations"
+            cd ${{vars.PROJECT_ROOT}}/${{ vars.DOCKER_DIR }}
+            make prod-migrate-kvoipv2-db
+            echo "Migrations completed successfully"
+
+      - name: Final status
+        run: |
+          echo "Deployment completed successfully"
+          echo "Migrations were ${{ steps.changed-files.outputs.any_changed == 'true' && 'executed' || 'not needed' }}"
+          echo "All required containers (${{ vars.REQUIRED_CONTAINERS }}) are healthy"

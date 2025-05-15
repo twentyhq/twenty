@@ -3,9 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
-import { Any, EntityManager, Repository } from 'typeorm';
+import { Any, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
@@ -36,6 +37,7 @@ export class CreateCompanyAndContactService {
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   private async createCompaniesAndPeople(
@@ -43,7 +45,6 @@ export class CreateCompanyAndContactService {
     contactsToCreate: Contact[],
     workspaceId: string,
     source: FieldActorSource,
-    transactionManager?: EntityManager,
   ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
     if (!contactsToCreate || contactsToCreate.length === 0) {
       return [];
@@ -53,13 +54,13 @@ export class CreateCompanyAndContactService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         PersonWorkspaceEntity,
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
     const workspaceMembers =
-      await this.workspaceMemberRepository.getAllByWorkspaceId(
-        workspaceId,
-        transactionManager,
-      );
+      await this.workspaceMemberRepository.getAllByWorkspaceId(workspaceId);
 
     const contactsToCreateFromOtherCompanies =
       filterOutSelfAndContactsFromCompanyOrWorkspace(
@@ -132,7 +133,6 @@ export class CreateCompanyAndContactService {
     const companiesObject = await this.createCompaniesService.createCompanies(
       workDomainNamesToCreateFormatted,
       workspaceId,
-      transactionManager,
     );
 
     const formattedContactsToCreate =
@@ -153,7 +153,6 @@ export class CreateCompanyAndContactService {
     return this.createContactService.createPeople(
       formattedContactsToCreate,
       workspaceId,
-      transactionManager,
     );
   }
 
@@ -205,26 +204,34 @@ export class CreateCompanyAndContactService {
     }
 
     for (const contactsBatch of contactsBatches) {
-      const createdPeople = await this.createCompaniesAndPeople(
-        connectedAccount,
-        contactsBatch,
-        workspaceId,
-        source,
-      );
+      try {
+        const createdPeople = await this.createCompaniesAndPeople(
+          connectedAccount,
+          contactsBatch,
+          workspaceId,
+          source,
+        );
 
-      this.workspaceEventEmitter.emitDatabaseBatchEvent({
-        objectMetadataNameSingular: 'person',
-        action: DatabaseEventAction.CREATED,
-        events: createdPeople.map((createdPerson) => ({
-          // Fix ' as string': TypeORM typing issue... id is always returned when using save
-          recordId: createdPerson.id as string,
-          objectMetadata,
-          properties: {
-            after: createdPerson,
+        this.workspaceEventEmitter.emitDatabaseBatchEvent({
+          objectMetadataNameSingular: 'person',
+          action: DatabaseEventAction.CREATED,
+          events: createdPeople.map((createdPerson) => ({
+            // Fix ' as string': TypeORM typing issue... id is always returned when using save
+            recordId: createdPerson.id as string,
+            objectMetadata,
+            properties: {
+              after: createdPerson,
+            },
+          })),
+          workspaceId,
+        });
+      } catch (error) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: {
+            id: workspaceId,
           },
-        })),
-        workspaceId,
-      });
+        });
+      }
     }
   }
 }

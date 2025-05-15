@@ -18,7 +18,7 @@ import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
-import { useScreenSize } from 'twenty-ui';
+import { useScreenSize } from 'twenty-ui/utilities';
 import WebSoftphone from '../../../../softphone/components/WebSoftphone';
 
 const StyledLayout = styled.div`
@@ -27,21 +27,11 @@ const StyledLayout = styled.div`
   flex-direction: column;
   height: 100dvh;
   position: relative;
-  scrollbar-color: ${({ theme }) => theme.border.color.medium};
+  scrollbar-color: ${({ theme }) => theme.border.color.medium} transparent;
   scrollbar-width: 4px;
   width: 100%;
 
-  *::-webkit-scrollbar {
-    height: 4px;
-    width: 4px;
-  }
-
-  *::-webkit-scrollbar-corner {
-    background-color: transparent;
-  }
-
   *::-webkit-scrollbar-thumb {
-    background-color: transparent;
     border-radius: ${({ theme }) => theme.border.radius.sm};
   }
 `;
@@ -100,11 +90,13 @@ export const DefaultLayout = () => {
                   ? (windowsWidth -
                       (OBJECT_SETTINGS_WIDTH +
                         NAV_DRAWER_WIDTHS.menu.desktop.expanded +
-                        64)) /
+                        76)) /
                     2
                   : 0,
             }}
-            transition={{ duration: theme.animation.duration.normal }}
+            transition={{
+              duration: theme.animation.duration.normal,
+            }}
           >
             {!showAuthModal && (
               <>
@@ -119,7 +111,9 @@ export const DefaultLayout = () => {
             )}
             {showAuthModal ? (
               <>
-                <SignInBackgroundMockPage />
+                <StyledMainContainer>
+                  <SignInBackgroundMockPage />
+                </StyledMainContainer>
                 <AnimatePresence mode="wait">
                   <LayoutGroup>
                     <AuthModal>
@@ -136,7 +130,7 @@ export const DefaultLayout = () => {
               </StyledMainContainer>
             )}
           </StyledPageContainer>
-          {isMobile && <MobileNavigationBar />}
+          {isMobile && !showAuthModal && <MobileNavigationBar />}
         </AppErrorBoundary>
       </StyledLayout>
       <StyledWebSoftphoneContainer>

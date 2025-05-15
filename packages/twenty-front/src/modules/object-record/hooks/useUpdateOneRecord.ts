@@ -18,8 +18,8 @@ import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/g
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { isNull } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
-import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 import { isDefined } from 'twenty-shared/utils';
+import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
 type useUpdateOneRecordProps = {
   objectNameSingular: string;
@@ -91,6 +91,7 @@ export const useUpdateOneRecord = <
       id: idToUpdate,
       __typename: getObjectTypename(objectMetadataItem.nameSingular),
     };
+
     const optimisticRecordWithConnection =
       getRecordNodeFromRecord<ObjectRecord>({
         record: computedOptimisticRecord,
@@ -110,6 +111,7 @@ export const useUpdateOneRecord = <
         objectMetadataItem,
         record: optimisticRecordInput,
       });
+
       updateRecordFromCache({
         objectMetadataItems,
         objectMetadataItem,

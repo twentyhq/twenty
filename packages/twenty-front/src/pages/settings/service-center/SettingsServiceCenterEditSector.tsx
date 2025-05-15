@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ThemeColor } from 'twenty-ui';
+import { ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';

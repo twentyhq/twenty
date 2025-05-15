@@ -2,18 +2,18 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  IconComponent,
-  IconX,
-  LightIconButton,
-  MOBILE_VIEWPORT,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui';
 
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import {
+  IconComponent,
+  IconX,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
@@ -54,10 +54,10 @@ const StyledTitleContainer = styled.div`
   display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-left: ${({ theme }) => theme.spacing(0.5)};
   margin-right: ${({ theme }) => theme.spacing(1)};
   width: 100%;
   overflow: hidden;
+  align-items: center;
 `;
 
 const StyledTopBarIconStyledTitleContainer = styled.div`
@@ -72,7 +72,7 @@ const StyledTopBarIconStyledTitleContainer = styled.div`
 const StyledPageActionContainer = styled.div`
   display: inline-flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  flex: 1 0 1;
+  flex: 1 0 auto;
 `;
 
 const StyledTopBarButtonContainer = styled.div`
@@ -92,6 +92,7 @@ type PageHeaderProps = {
   onClosePage?: () => void;
   Icon?: IconComponent;
   children?: ReactNode;
+  className?: string;
 };
 
 export const PageHeader = ({
@@ -100,6 +101,7 @@ export const PageHeader = ({
   onClosePage,
   Icon,
   children,
+  className,
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
   const theme = useTheme();
@@ -108,7 +110,7 @@ export const PageHeader = ({
   );
 
   return (
-    <StyledTopBarContainer>
+    <StyledTopBarContainer className={className}>
       <StyledLeftContainer>
         {!isMobile && !isNavigationDrawerExpanded && (
           <StyledTopBarButtonContainer>

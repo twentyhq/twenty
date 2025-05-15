@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { ArrayContains } from 'typeorm';
 
 import { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
@@ -61,9 +62,10 @@ export class CallWebhookJobsJob {
       };
       const workspaceId = workspaceEventBatch.workspaceId;
       const record =
-        'after' in eventData.properties
+        'after' in eventData.properties && isDefined(eventData.properties.after)
           ? eventData.properties.after
-          : 'before' in eventData.properties
+          : 'before' in eventData.properties &&
+              isDefined(eventData.properties.before)
             ? eventData.properties.before
             : {};
       const updatedFields =
@@ -96,11 +98,6 @@ export class CallWebhookJobsJob {
           { retryLimit: 3 },
         );
       });
-
-      webhooks.length > 0 &&
-        this.logger.log(
-          `CallWebhookJobsJob on eventName '${workspaceEventBatch.name}' triggered webhooks with ids [\n"${webhooks.map((webhook) => webhook.id).join('",\n"')}"\n]`,
-        );
     }
   }
 }

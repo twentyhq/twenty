@@ -7,6 +7,7 @@ import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/r
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
 
+import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { RecordBoardCardBody } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBody';
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
@@ -16,7 +17,7 @@ import { RecordValueSetterEffect } from '@/object-record/record-store/components
 import { AppPath } from '@/types/AppPath';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
@@ -25,7 +26,7 @@ import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { AnimatedEaseInOut } from 'twenty-ui';
+import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -34,7 +35,7 @@ const StyledBoardCard = styled.div<{ selected: boolean }>`
     selected ? theme.accent.quaternary : theme.background.secondary};
   border: 1px solid
     ${({ theme, selected }) =>
-      selected ? theme.accent.secondary : theme.border.color.medium};
+      selected ? theme.adaptiveColors.blue3 : theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   color: ${({ theme }) => theme.font.color.primary};
@@ -43,7 +44,7 @@ const StyledBoardCard = styled.div<{ selected: boolean }>`
       selected && theme.accent.tertiary};
     border: 1px solid
       ${({ theme, selected }) =>
-        selected ? theme.accent.primary : theme.border.color.medium};
+        selected ? theme.adaptiveColors.blue3 : theme.border.color.strong};
   }
   cursor: pointer;
 
@@ -121,7 +122,9 @@ export const RecordBoardCard = () => {
       x: event.clientX,
       y: event.clientY,
     });
-    openDropdown(actionMenuDropdownId);
+    openDropdown(actionMenuDropdownId, {
+      scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
+    });
   };
 
   const handleCardClick = () => {
@@ -144,10 +147,10 @@ export const RecordBoardCard = () => {
     }
   }, 800);
 
-  const scrollWrapperRef = useContext(RecordBoardScrollWrapperContext);
+  const { scrollWrapperHTMLElement } = useScrollWrapperElement();
 
   const { ref: cardRef } = useInView({
-    root: scrollWrapperRef?.ref.current,
+    root: scrollWrapperHTMLElement,
     rootMargin: '1000px',
   });
 

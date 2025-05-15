@@ -36,6 +36,8 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
 
+    const { roleId } = executionArgs;
+
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
@@ -57,6 +59,7 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
       nonFormattedObjectRecord,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     if (!objectRecord) {
@@ -79,6 +82,8 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
         dataSource: executionArgs.dataSource,
         isNewRelationEnabled:
           featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
+        roleId,
+        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
 

@@ -103,6 +103,11 @@ msgstr "מטרת הערה"
 msgid "A person"
 msgstr "אדם"
 
+#. js-lingui-id: 5OWXGy
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "A product that can be sold"
+msgstr ""
+
 #. js-lingui-id: mkFXEH
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "A task"
@@ -127,6 +132,11 @@ msgstr "Webhook"
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "A workflow"
 msgstr "Workflow"
+
+#. js-lingui-id: YwBCp8
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "A workflow automated trigger"
+msgstr ""
 
 #. js-lingui-id: juBVjt
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
@@ -233,13 +243,13 @@ msgstr "קובץ מצורף"
 
 #. js-lingui-id: +bL++X
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "An audit log of actions performed in the system"
-msgstr "יומן רישום של פעולות שבוצעו במערכת"
+#~ msgid "An audit log of actions performed in the system"
+#~ msgstr "יומן רישום של פעולות שבוצעו במערכת"
 
 #. js-lingui-id: muVHgL
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "An event related to user behavior"
-msgstr "אירוע שקשור להתנהגות משתמש"
+#~ msgid "An event related to user behavior"
+#~ msgstr "אירוע שקשור להתנהגות משתמש"
 
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -426,19 +436,19 @@ msgstr "קבצים מצורפים אשר קשורים ל{label}"
 
 #. js-lingui-id: ilRCh1
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Audit Log"
-msgstr "יומן ביקורת"
+#~ msgid "Audit Log"
+#~ msgstr "יומן ביקורת"
 
 #. js-lingui-id: EPEFrH
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Audit Logs"
-msgstr "יומני ביקורת"
+#~ msgid "Audit Logs"
+#~ msgstr "יומני ביקורת"
 
 #. js-lingui-id: RqCC/0
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Audit Logs linked to the workspace member"
-msgstr "יומני ביקורת המקושרים לחבר מרחב העבודה"
+#~ msgid "Audit Logs linked to the workspace member"
+#~ msgstr "יומני ביקורת המקושרים לחבר מרחב העבודה"
 
 #. js-lingui-id: cNBqH+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -455,6 +465,16 @@ msgstr "מחבר"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Authored attachments"
 msgstr "קבצים מצורפים שנכתבו"
+
+#. js-lingui-id: cvSznK
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "Automated Trigger Type"
+msgstr ""
+
+#. js-lingui-id: 2mtBXs
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+msgid "Automated Triggers"
+msgstr ""
 
 #. js-lingui-id: RpExX0
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -478,13 +498,13 @@ msgstr "כתובת אתר של אווטאר"
 
 #. js-lingui-id: 20B9kW
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Behavioral Event"
-msgstr "אירוע התנהגותי"
+#~ msgid "Behavioral Event"
+#~ msgstr "אירוע התנהגותי"
 
 #. js-lingui-id: Jeh/Q/
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Behavioral Events"
-msgstr "אירועים התנהגותיים"
+#~ msgid "Behavioral Events"
+#~ msgstr "אירועים התנהגותיים"
 
 #. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -583,6 +603,11 @@ msgstr "\\"
 msgid "Campaign associated with the traffic"
 msgstr ""
 
+#. js-lingui-id: pZ8hvx
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Campaign Content"
+msgstr ""
+
 #. js-lingui-id: QieS3l
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 msgid "Campaign Name"
@@ -646,8 +671,14 @@ msgid "Charge recurrence"
 msgstr ""
 
 #. js-lingui-id: Kb+0BT
+#: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Charges"
+msgstr ""
+
+#. js-lingui-id: hlvAAR
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Charges using this product"
 msgstr ""
 
 #. js-lingui-id: 3wV73y
@@ -790,6 +821,11 @@ msgstr "\\"
 msgid "Context"
 msgstr "הקשר"
 
+#. js-lingui-id: I99Miw
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Cost"
+msgstr ""
+
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -920,13 +956,11 @@ msgstr "חברה באירוע"
 #. js-lingui-id: FJ7QI4
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Event context"
-msgstr "הקשר אירוע"
+#~ msgid "Event context"
+#~ msgstr "הקשר אירוע"
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event details"
 msgstr "פרטי אירוע"
 
@@ -957,17 +991,14 @@ msgstr "מאזיני אירועים"
 #. js-lingui-id: PYs3rP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event name"
 msgstr "שם אירוע"
 
 #. js-lingui-id: evIGwh
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Event name/type"
-msgstr "שם/סוג אירוע"
+#~ msgid "Event name/type"
+#~ msgstr "שם/סוג אירוע"
 
 #. js-lingui-id: vv99Wu
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -995,6 +1026,11 @@ msgstr "אדם באירוע"
 msgid "Event task"
 msgstr "משימה באירוע"
 
+#. js-lingui-id: wFwltV
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event traceable"
+msgstr ""
+
 #. js-lingui-id: dCV1dS
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event workflow"
@@ -1012,12 +1048,12 @@ msgstr "גרסת תהליך עבודה של אירוע"
 
 #. js-lingui-id: LxOGsB
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event workspace member"
 msgstr "חבר חלל עבודה באירוע"
 
 #. js-lingui-id: tst44n
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
@@ -1038,6 +1074,11 @@ msgstr ""
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Events linked to the person"
 msgstr "אירועים הקשורים לאדם"
+
+#. js-lingui-id: iag/Jq
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Events linked to the tracable link"
+msgstr ""
 
 #. js-lingui-id: 3/O8MM
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1337,8 +1378,8 @@ msgstr "פרופיל לקוח אידיאלי: מציין האם החברה הי�
 
 #. js-lingui-id: NrA0WZ
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "If the event is related to a particular object"
-msgstr "אם האירוע קשור לאובייקט מסוים"
+#~ msgid "If the event is related to a particular object"
+#~ msgstr "אם האירוע קשור לאובייקט מסוים"
 
 #. js-lingui-id: AHWM9N
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1420,8 +1461,8 @@ msgstr "הצטרף לצוות שלך ב-Twenty"
 #. js-lingui-id: shbh25
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Json object to provide context (user, device, workspace, etc.)"
-msgstr "אובייקט Json לספק הקשר (משתמש, מכשיר, סביבת עבודה וכו')"
+#~ msgid "Json object to provide context (user, device, workspace, etc.)"
+#~ msgstr "אובייקט Json לספק הקשר (משתמש, מכשיר, סביבת עבודה וכו')"
 
 #. js-lingui-id: HgJ9jQ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -1440,8 +1481,6 @@ msgstr "עצם Json לספק טריגר"
 
 #. js-lingui-id: TVc0/Q
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json value for event details"
 msgstr "ערך Json לפרטי אירוע"
 
@@ -1506,8 +1545,6 @@ msgid "Link ID"
 msgstr ""
 
 #. js-lingui-id: yg5UPw
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 msgid "Link Name"
 msgstr ""
@@ -1543,6 +1580,11 @@ msgstr "לינקדין"
 #. js-lingui-id: H3nIla
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 msgid "Linklog"
+msgstr ""
+
+#. js-lingui-id: fkZGo6
+#: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
+msgid "Linklog link Name"
 msgstr ""
 
 #. js-lingui-id: XmF8WY
@@ -1746,7 +1788,6 @@ msgstr "\\"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1754,6 +1795,7 @@ msgstr "\\"
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -1877,14 +1919,14 @@ msgstr "מספר העובדים בחברה"
 
 #. js-lingui-id: hhe7Ce
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-msgid "Object id"
-msgstr "מזהה האובייקט"
+#~ msgid "Object id"
+#~ msgstr "מזהה האובייקט"
 
 #. js-lingui-id: dnPgTI
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Object metadata id"
-msgstr "מזהה מטא-נתונים של אובייקט"
+#~ msgid "Object metadata id"
+#~ msgstr "מזהה מטא-נתונים של אובייקט"
 
 #. js-lingui-id: T/nPf5
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1895,8 +1937,8 @@ msgstr "מזהה מטא-נתונים של אובייקט"
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Object name"
-msgstr "שם האובייקט"
+#~ msgid "Object name"
+#~ msgstr "שם האובייקט"
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2066,6 +2108,7 @@ msgstr "איש קשר"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -2107,6 +2150,7 @@ msgid "Preferred language"
 msgstr "שפה מועדפת"
 
 #. js-lingui-id: a7u1N9
+#: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Price"
 msgstr ""
@@ -2117,8 +2161,54 @@ msgid "Probability"
 msgstr "סבירות"
 
 #. js-lingui-id: K47k8R
+#: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Product"
+msgstr ""
+
+#. js-lingui-id: bodmtG
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Product cost"
+msgstr ""
+
+#. js-lingui-id: vpqv+B
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Product linked to this charge"
+msgstr ""
+
+#. js-lingui-id: mZW+k8
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Product name"
+msgstr ""
+
+#. js-lingui-id: Q033BY
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Product Name"
+msgstr ""
+
+#. js-lingui-id: jGuXaa
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Product record position"
+msgstr ""
+
+#. js-lingui-id: rjawDw
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Product sale price"
+msgstr ""
+
+#. js-lingui-id: RTFwCi
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Product status (active products can be used in charges)"
+msgstr ""
+
+#. js-lingui-id: C74sUy
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Product unit of measure (e.g., kg, unit, liter)"
+msgstr ""
+
+#. js-lingui-id: N0qXpE
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Products"
 msgstr ""
 
 #. js-lingui-id: CrfRPa
@@ -2139,8 +2229,8 @@ msgstr "תאריך קבלה"
 #. js-lingui-id: 4Tvtbu
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-msgid "Record id"
-msgstr "מזהה רישום"
+#~ msgid "Record id"
+#~ msgstr "מזהה רישום"
 
 #. js-lingui-id: QBQXiF
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
@@ -2208,6 +2298,11 @@ msgstr "וקטור חיפוש"
 msgid "Secret"
 msgstr "סוד"
 
+#. js-lingui-id: Tz0i8g
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "Settings"
+msgstr ""
+
 #. js-lingui-id: Cj2Gtd
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Size"
@@ -2231,6 +2326,7 @@ msgstr "תאריך התחלה"
 
 #. js-lingui-id: uAQUqI
 #: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/product/standard-objects/product.workspace-entity.ts
 msgid "Status"
 msgstr "מצב"
 
@@ -2238,6 +2334,12 @@ msgstr "מצב"
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Statuses"
 msgstr "מצבים"
+
+#. js-lingui-id: g4jxXh
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
+msgid "Sub field name"
+msgstr ""
 
 #. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -2436,6 +2538,11 @@ msgstr "חשבון ה-Twitter/X של החברה"
 msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "כתובת האתר של החברה. אנחנו משתמשים בכתובת זו כדי לאחזר את סמל החברה"
 
+#. js-lingui-id: YxUHjE
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "The content of the traceable link (e.g., bannerSale)"
+msgstr ""
+
 #. js-lingui-id: zGBDEH
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -2505,6 +2612,26 @@ msgstr ""
 #. js-lingui-id: ftaTVP
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 msgid "The URL of the website to redirect to"
+msgstr ""
+
+#. js-lingui-id: 30jEZc
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "The URL used to track final url metadata."
+msgstr ""
+
+#. js-lingui-id: h74Dhq
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+#~ msgid "The used to track final url metadata."
+#~ msgstr ""
+
+#. js-lingui-id: 5N6QtE
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "The workflow automated trigger settings"
+msgstr ""
+
+#. js-lingui-id: SpKbfT
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "The workflow automated trigger type"
 msgstr ""
 
 #. js-lingui-id: 7mPrpl
@@ -2628,17 +2755,28 @@ msgstr "כותרת"
 
 #. js-lingui-id: 2jNX/d
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Traceable"
+msgstr ""
+
+#. js-lingui-id: S+jeA7
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Traceable Link Name"
 msgstr ""
 
 #. js-lingui-id: kLFXFH
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
-msgid "Traceable name"
-msgstr ""
+#~ msgid "Traceable name"
+#~ msgstr ""
 
 #. js-lingui-id: ABScWw
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 msgid "Traceable record position"
+msgstr ""
+
+#. js-lingui-id: awZm5I
+#: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+msgid "Traceable URL"
 msgstr ""
 
 #. js-lingui-id: PdZf5t
@@ -2652,6 +2790,11 @@ msgstr ""
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Type"
 msgstr "סוג"
+
+#. js-lingui-id: aSwfbR
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Unit"
+msgstr ""
 
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2727,8 +2870,8 @@ msgstr ""
 #. js-lingui-id: cNWodE
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
-msgid "UV"
-msgstr ""
+#~ msgid "UV"
+#~ msgstr ""
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -3008,12 +3151,18 @@ msgstr "ברוך הבא ל-Twenty: נא לאשר את האימייל שלך"
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Workflow"
 msgstr "Workflows"
+
+#. js-lingui-id: hdtWQn
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+msgid "Workflow automated triggers linked to the workflow."
+msgstr ""
 
 #. js-lingui-id: E03XpH
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -3104,6 +3253,21 @@ msgstr "גרסאות זרימת עבודה"
 msgid "Workflow versions linked to the workflow."
 msgstr "גרסאות זרימת עבודה מקושרות לזרימת העבודה."
 
+#. js-lingui-id: s7p+TL
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "WorkflowAutomatedTrigger"
+msgstr ""
+
+#. js-lingui-id: 96bCgZ
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "WorkflowAutomatedTrigger workflow"
+msgstr ""
+
+#. js-lingui-id: 5z92T9
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+msgid "WorkflowAutomatedTriggers"
+msgstr ""
+
 #. js-lingui-id: ENOy6I
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "WorkflowEventListener"
@@ -3142,7 +3306,6 @@ msgstr "חבר סביבת עבודה"
 #. js-lingui-id: qc38qR
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts

@@ -1,13 +1,14 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
-import { Avatar, MenuItemSelectAvatar } from 'twenty-ui';
 
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { Avatar } from 'twenty-ui/display';
+import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
 type SingleRecordPickerMenuItemProps = {
   record: SingleRecordPickerRecord;
@@ -15,7 +16,7 @@ type SingleRecordPickerMenuItemProps = {
   selectedRecord?: SingleRecordPickerRecord;
 };
 
-const StyledSelectableItem = styled(SelectableItem)`
+const StyledSelectableItem = styled(SelectableListItem)`
   width: 100%;
 `;
 
@@ -32,21 +33,26 @@ export const SingleRecordPickerMenuItem = ({
   const selectableListComponentInstanceId =
     getSingleRecordPickerSelectableListId(recordPickerComponentInstanceId);
 
-  const { isSelectedItemIdSelector } = useSelectableList(
+  const isSelectedItemId = useRecoilComponentFamilyValueV2(
+    isSelectedItemIdComponentFamilySelector,
+    record.id,
     selectableListComponentInstanceId,
   );
 
-  const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector(record.id));
-
   return (
-    <StyledSelectableItem itemId={record.id} key={record.id}>
+    <StyledSelectableItem
+      itemId={record.id}
+      key={record.id}
+      onEnter={() => {
+        onRecordSelected(record);
+      }}
+    >
       <MenuItemSelectAvatar
-        key={record.id}
         testId="menu-item"
         onClick={() => onRecordSelected(record)}
         text={record.name}
         selected={selectedRecord?.id === record.id}
-        hovered={isSelectedItemId}
+        focused={isSelectedItemId}
         avatar={
           <Avatar
             avatarUrl={record.avatarUrl}
