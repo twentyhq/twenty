@@ -4,13 +4,13 @@ import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkey
 import { ModalComponentInstanceContext } from '@/ui/layout/modal/contexts/ModalComponentInstanceContext';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import React, { useRef } from 'react';
-
 const StyledModalDiv = styled(motion.div)<{
   size?: ModalSize;
   padding?: ModalPadding;
@@ -211,6 +211,13 @@ export const Modal = ({
     modalId,
   );
 
+  const { closeModal } = useModal();
+
+  const handleClose = () => {
+    onClose?.();
+    closeModal(modalId);
+  };
+
   return (
     <>
       {isModalOpened && (
@@ -225,7 +232,7 @@ export const Modal = ({
             hotkeyScope={hotkeyScope}
             onEnter={onEnter}
             isClosable={isClosable}
-            onClose={onClose}
+            onClose={handleClose}
           />
           <StyledBackDrop
             className="modal-backdrop"

@@ -1,10 +1,13 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { RecoilRoot } from 'recoil';
+import { expect, fn, userEvent, within } from '@storybook/test';
 
+import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
+import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
+import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { isModalOpenedComponentState } from '../../states/isModalOpenedComponentState';
 import { Modal } from '../Modal';
-
 const meta: Meta<typeof Modal> = {
   title: 'UI/Layout/Modal/Modal',
   component: Modal,
@@ -12,6 +15,8 @@ const meta: Meta<typeof Modal> = {
 
 export default meta;
 type Story = StoryObj<typeof Modal>;
+
+const closeMock = fn();
 
 export const Default: Story = {
   args: {
@@ -32,24 +37,106 @@ export const Default: Story = {
       </>
     ),
   },
-  decorators: [
-    (Story, context) => (
-      <RecoilRoot
-        initializeState={({ set }) => {
-          set(
-            isModalOpenedComponentState.atomFamily({
-              instanceId: context.args.modalId,
-            }),
-            true,
-          );
-        }}
-      >
-        <Story />
-      </RecoilRoot>
+  decorators: [RootDecorator, ComponentDecorator],
+  parameters: {
+    initializeState: ({ set }: { set: (atom: any, value: any) => void }) => {
+      set(
+        isModalOpenedComponentState.atomFamily({
+          instanceId: 'modal-id',
+        }),
+        true,
+      );
+    },
+  },
+};
+
+export const CloseClosableModalOnClickOutside: Story = {
+  args: {
+    modalId: 'click-outside-modal',
+    size: 'medium',
+    padding: 'medium',
+    isClosable: true,
+    onClose: closeMock,
+    children: (
+      <>
+        <Modal.Header>Click Outside Test</Modal.Header>
+        <Modal.Content>
+          This modal should close when clicking outside of it.
+        </Modal.Content>
+      </>
     ),
-    ComponentDecorator,
-  ],
-  argTypes: {
-    children: { control: false },
+  },
+  decorators: [RootDecorator, ComponentDecorator],
+  parameters: {
+    initializeState: ({ set }: { set: (atom: any, value: any) => void }) => {
+      set(
+        isModalOpenedComponentState.atomFamily({
+          instanceId: 'click-outside-modal',
+        }),
+        true,
+      );
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Click Outside Test');
+
+    closeMock.mockClear();
+
+    const backdrop = document.querySelector('.modal-backdrop') as HTMLElement;
+    await userEvent.click(backdrop);
+
+    expect(closeMock).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const CloseClosableModalOnEscape: Story = {
+  args: {
+    modalId: 'escape-key-modal',
+    size: 'medium',
+    padding: 'medium',
+    isClosable: true,
+    onClose: closeMock,
+    children: (
+      <>
+        <Modal.Header>Escape Key Test</Modal.Header>
+        <Modal.Content>
+          This modal should close when pressing the Escape key.
+        </Modal.Content>
+      </>
+    ),
+  },
+  decorators: [RootDecorator, ComponentDecorator],
+  parameters: {
+    initializeState: ({ set }: { set: (atom: any, value: any) => void }) => {
+      set(
+        isModalOpenedComponentState.atomFamily({
+          instanceId: 'escape-key-modal',
+        }),
+        true,
+      );
+      set(currentHotkeyScopeState, {
+        scope: ModalHotkeyScope.ModalFocus,
+        customScopes: {
+          commandMenu: true,
+          goto: false,
+          keyboardShortcutMenu: false,
+        },
+      });
+      set(internalHotkeysEnabledScopesState, [ModalHotkeyScope.ModalFocus]);
+    },
+    disableHotkeyInitialization: true,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Escape Key Test');
+
+    closeMock.mockClear();
+
+    await userEvent.keyboard('{Escape}');
+
+    expect(closeMock).toHaveBeenCalledTimes(1);
   },
 };
