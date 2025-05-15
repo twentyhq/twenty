@@ -91,15 +91,6 @@ const tmp = `
 /Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
   202:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/graphql/graphql-query-runner/utils/compute-cursor-arg-filter.ts
-   36:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-   54:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  102:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  107:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  141:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  146:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  157:32  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
 /Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts.ts
   17:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
@@ -216,13 +207,25 @@ const tmp = `
 /Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/core/handlers/rest-api-create-many.handler.ts
   24:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/core/interfaces/rest-api-base.handler.ts
-  264:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/core/handlers/rest-api-find-duplicates.handler.ts
+  124:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/core/handlers/rest-api-find-many.handler.ts
+  53:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 /Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/utils/clean-graphql-response.utils.ts
   1:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   5:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   9:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/utils/compute-cursor-arg-filter.utils.ts
+   36:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   54:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  102:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  107:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  141:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  146:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  157:32  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 /Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/admin-panel/admin-panel-health.service.ts
   49:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
@@ -332,6 +335,9 @@ const tmp = `
 
 /Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/exception-handler/interfaces/exception-handler-driver.interface.ts
   5:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface.ts
+  12:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 /Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/exception-handler/mocks/exception-handler-mock.service.ts
   12:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
@@ -749,6 +755,9 @@ const tmp = `
   11:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   22:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
+/Users/paulrastoin/ws/twenty/packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-fetch-by-batch.service.ts
+  85:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
 /Users/paulrastoin/ws/twenty/packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface.ts
   16:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
@@ -851,7 +860,7 @@ const tmp = `
 /Users/paulrastoin/ws/twenty/packages/twenty-server/src/utils/stream-to-buffer.ts
   4:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-✖ 434 problems (434 errors, 0 warnings)`;
+✖ 437 problems (437 errors, 0 warnings)`;
 
 const buffer = tmp.split('\n');
 

@@ -91,15 +91,6 @@
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts": [
     { "position": "202:21", "rule": "@typescript-eslint/no-explicit-any" }
   ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/graphql/graphql-query-runner/utils/compute-cursor-arg-filter.ts": [
-    { "position": "36:19", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "54:26", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "102:10", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "107:19", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "141:10", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "146:19", "rule": "@typescript-eslint/no-explicit-any" },
-    { "position": "157:32", "rule": "@typescript-eslint/no-explicit-any" }
-  ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts.ts": [
     { "position": "17:10", "rule": "@typescript-eslint/no-explicit-any" }
   ],
@@ -216,13 +207,25 @@
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/core/handlers/rest-api-create-many.handler.ts": [
     { "position": "24:53", "rule": "@typescript-eslint/no-explicit-any" }
   ],
-  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/core/interfaces/rest-api-base.handler.ts": [
-    { "position": "264:19", "rule": "@typescript-eslint/no-explicit-any" }
+  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/core/handlers/rest-api-find-duplicates.handler.ts": [
+    { "position": "124:19", "rule": "@typescript-eslint/no-explicit-any" }
+  ],
+  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/core/handlers/rest-api-find-many.handler.ts": [
+    { "position": "53:19", "rule": "@typescript-eslint/no-explicit-any" }
   ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/rest/utils/clean-graphql-response.utils.ts": [
     { "position": "1:45", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "5:26", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "9:29", "rule": "@typescript-eslint/no-explicit-any" }
+  ],
+  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/api/utils/compute-cursor-arg-filter.utils.ts": [
+    { "position": "36:19", "rule": "@typescript-eslint/no-explicit-any" },
+    { "position": "54:26", "rule": "@typescript-eslint/no-explicit-any" },
+    { "position": "102:10", "rule": "@typescript-eslint/no-explicit-any" },
+    { "position": "107:19", "rule": "@typescript-eslint/no-explicit-any" },
+    { "position": "141:10", "rule": "@typescript-eslint/no-explicit-any" },
+    { "position": "146:19", "rule": "@typescript-eslint/no-explicit-any" },
+    { "position": "157:32", "rule": "@typescript-eslint/no-explicit-any" }
   ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/admin-panel/admin-panel-health.service.ts": [
     { "position": "49:44", "rule": "@typescript-eslint/no-explicit-any" }
@@ -332,6 +335,9 @@
   ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/exception-handler/interfaces/exception-handler-driver.interface.ts": [
     { "position": "5:31", "rule": "@typescript-eslint/no-explicit-any" }
+  ],
+  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface.ts": [
+    { "position": "12:35", "rule": "@typescript-eslint/no-explicit-any" }
   ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/engine/core-modules/exception-handler/mocks/exception-handler-mock.service.ts": [
     { "position": "12:26", "rule": "@typescript-eslint/no-explicit-any" }
@@ -748,6 +754,9 @@
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service.ts": [
     { "position": "11:50", "rule": "@typescript-eslint/no-explicit-any" },
     { "position": "22:12", "rule": "@typescript-eslint/no-explicit-any" }
+  ],
+  "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-fetch-by-batch.service.ts": [
+    { "position": "85:35", "rule": "@typescript-eslint/no-explicit-any" }
   ],
   "/Users/paulrastoin/ws/twenty/packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface.ts": [
     { "position": "16:20", "rule": "@typescript-eslint/no-explicit-any" }
