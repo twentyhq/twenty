@@ -14,6 +14,7 @@ module.exports = {
         project: ['packages/twenty-server/tsconfig.json'],
       },
       rules: {
+        '@typescript-eslint/no-explicit-any': 'error',
         'no-restricted-imports': [
           'error',
           {
