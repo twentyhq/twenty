@@ -52,10 +52,14 @@ export class MiddlewareService {
   }
 
   public writeRestResponseOnExceptionCaught(res: Response, error: any) {
-    // capture and handle custom exceptions
-    handleException(error as CustomException, this.exceptionHandlerService);
-
     const statusCode = this.getStatus(error);
+
+    // capture and handle custom exceptions
+    handleException({
+      exception: error as CustomException,
+      exceptionHandlerService: this.exceptionHandlerService,
+      statusCode,
+    });
 
     res.writeHead(statusCode, { 'Content-Type': 'application/json' });
     res.write(

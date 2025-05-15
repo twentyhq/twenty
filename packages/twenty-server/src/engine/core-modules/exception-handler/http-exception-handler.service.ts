@@ -7,22 +7,8 @@ import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/
 import { ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { shouldCaptureException } from 'src/engine/core-modules/graphql/utils/should-capture-exception.util';
+import { handleException } from 'src/engine/utils/global-exception-handler.util';
 import { CustomException } from 'src/utils/custom-exception';
-
-export const handleException = (
-  exception: CustomException,
-  exceptionHandlerService: ExceptionHandlerService,
-  user?: ExceptionHandlerUser,
-  workspace?: ExceptionHandlerWorkspace,
-  statusCode?: number,
-): CustomException => {
-  if (shouldCaptureException(exception, statusCode)) {
-    exceptionHandlerService.captureExceptions([exception], { user, workspace });
-  }
-
-  return exception;
-};
 
 interface RequestAndParams {
   request: Request | null;
@@ -52,13 +38,13 @@ export class HttpExceptionHandlerService {
 
     const statusCode = errorCode || 500;
 
-    handleException(
+    handleException({
       exception,
-      this.exceptionHandlerService,
+      exceptionHandlerService: this.exceptionHandlerService,
       user,
       workspace,
       statusCode,
-    );
+    });
 
     return response.status(statusCode).send({
       statusCode,
