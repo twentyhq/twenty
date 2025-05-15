@@ -327,9 +327,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     };
 
     const ipData = {
-      ip: '186.209.119.150',
+      ip: '186.209.119.150', // 186.209.119.150 / 192.168.1.88
       pospago: true,
-      compartilhado: true,
+      compartilhado: 1,
       tech_prefix: techPrefix,
       monitora_ping: false,
       tabela_roteamento_id: 22,

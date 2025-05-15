@@ -15,17 +15,15 @@ import {
 import { InsereEmpresa } from 'src/engine/core-modules/telephony/types/Create/InsereEmpresa.type';
 import { InsereTronco } from 'src/engine/core-modules/telephony/types/Create/InsereTronco.type';
 import { ExtetionBody } from 'src/engine/core-modules/telephony/types/Extention.type';
-import { ListExtentionsArgs } from 'src/engine/core-modules/telephony/types/pabx.type';
+import {
+  ListCommonArgs,
+  ListExtentionsArgs,
+} from 'src/engine/core-modules/telephony/types/pabx.type';
 
 @Injectable()
 export class PabxService implements PabxServiceInterface {
   private pabxAxiosInstance: AxiosInstance;
   private readonly logger = new Logger(PabxService.name);
-
-  public readonly LIST_BODY = {
-    pos_registro_inicial: 0,
-    cliente_id: 3,
-  };
 
   constructor(private readonly environmentService: EnvironmentService) {
     const PABX_ENV = this.environmentService.get('PABX_ENV');
@@ -83,53 +81,58 @@ export class PabxService implements PabxServiceInterface {
       const listExtentionsResponse = await this.pabxAxiosInstance.get(
         '/listar_ramais',
         {
-          data: { ...this.LIST_BODY, ...(args ?? undefined) },
+          data: { ...(args ?? undefined) },
         },
       );
 
       return listExtentionsResponse;
     };
 
-  listDialingPlans: () => Promise<AxiosResponse> = async () => {
+  listDialingPlans: (args: ListCommonArgs) => Promise<AxiosResponse> = async (
+    args,
+  ) => {
     const dialingPlansResponse = await this.pabxAxiosInstance.get(
       '/listar_planos_discagem',
       {
-        data: this.LIST_BODY,
+        data: args,
       },
     );
 
     return dialingPlansResponse;
   };
 
-  listDids: () => Promise<AxiosResponse> = async () => {
+  listDids: (args: ListCommonArgs) => Promise<AxiosResponse> = async (args) => {
     const listDidsResponse = await this.pabxAxiosInstance.get('/listar_dids', {
-      data: this.LIST_BODY,
+      data: args,
     });
 
     return listDidsResponse;
   };
 
-  listCampaigns: () => Promise<AxiosResponse> = async () => {
+  listCampaigns: (args: ListCommonArgs) => Promise<AxiosResponse> = async (
+    args,
+  ) => {
     const listCampaignsResponse = await this.pabxAxiosInstance.get(
       '/listar_campanhas',
       {
-        data: this.LIST_BODY,
+        data: args,
       },
     );
 
     return listCampaignsResponse;
   };
 
-  listIntegrationFlows: () => Promise<AxiosResponse> = async () => {
-    const integrationFlowsResponse = await this.pabxAxiosInstance.get(
-      '/listar_fluxos_integracao',
-      {
-        data: this.LIST_BODY,
-      },
-    );
+  listIntegrationFlows: (args: ListCommonArgs) => Promise<AxiosResponse> =
+    async (args) => {
+      const integrationFlowsResponse = await this.pabxAxiosInstance.get(
+        '/listar_fluxos_integracao',
+        {
+          data: args,
+        },
+      );
 
-    return integrationFlowsResponse;
-  };
+      return integrationFlowsResponse;
+    };
 
   createCompany: (data: InsereEmpresa) => Promise<AxiosResponse> = async (
     data,

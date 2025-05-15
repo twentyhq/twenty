@@ -43,7 +43,20 @@ export class TelephonyResolver {
     private readonly workspaceService: WorkspaceService,
   ) {}
 
-  getRamalBody(input: CreateTelephonyInput | UpdateTelephonyInput) {
+  async getRamalBody(
+    input: CreateTelephonyInput | UpdateTelephonyInput,
+    workspaceId: string,
+  ) {
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+      throw new Error('PABX company not found');
+    }
+
     return {
       dados: {
         tipo: input.type ? parseInt(input.type) : 1,
@@ -51,7 +64,7 @@ export class TelephonyResolver {
         numero: input.numberExtension,
         senha_sip: input.SIPPassword,
         caller_id_externo: input.callerExternalID,
-        cliente_id: this.pabxService.LIST_BODY.cliente_id,
+        cliente_id: workspace.pabxCompanyId,
         grupo_ramais: '1',
         centro_custo: '1',
         dupla_autenticacao_ip_permitido: '1',
@@ -162,7 +175,12 @@ export class TelephonyResolver {
       throw new Error('Workspace id not found');
     }
 
-    const ramalBody = this.getRamalBody(createTelephonyInput);
+    const ramalBody = await this.getRamalBody(
+      createTelephonyInput,
+      createTelephonyInput.workspaceId,
+    );
+
+    console.log('ramalBody', ramalBody);
 
     try {
       const createdRamal = await this.pabxService.createExtention(ramalBody);
@@ -219,7 +237,12 @@ export class TelephonyResolver {
     try {
       const ramalBody = {
         dados: {
-          ...this.getRamalBody(updateTelephonyInput).dados,
+          ...(
+            await this.getRamalBody(
+              updateTelephonyInput,
+              telephony.workspace.id,
+            )
+          ).dados,
           ramal_id: telephony.ramal_id,
         },
       };
@@ -248,29 +271,104 @@ export class TelephonyResolver {
   }
 
   @Query(() => [TelephonyExtension], { nullable: true })
-  async getAllExtensions(): Promise<TelephonyExtension[]> {
-    const extensions = await this.pabxService.listExtentions();
+  async getAllExtensions(
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+  ): Promise<TelephonyExtension[]> {
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+      throw new Error('PABX company not found');
+    }
+
+    const extensions = await this.pabxService.listExtentions({
+      cliente_id: workspace.pabxCompanyId,
+    });
 
     return extensions.data.dados;
   }
 
+  @Query(() => TelephonyExtension, { nullable: true })
+  async getUserSoftfone(
+    @Args('extNum', { type: () => String }) extNum: string,
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+  ): Promise<TelephonyExtension> {
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    const extensions = await this.pabxService.listExtentions({
+      numero: extNum,
+      cliente_id: workspace.pabxCompanyId,
+    });
+
+    return extensions.data.dados[0];
+  }
+
   @Query(() => [TelephonyDialingPlan], { nullable: true })
-  async getTelephonyPlans(): Promise<TelephonyDialingPlan[]> {
-    const extensions = await this.pabxService.listDialingPlans();
+  async getTelephonyPlans(
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+  ): Promise<TelephonyDialingPlan[]> {
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+      throw new Error('PABX company not found');
+    }
+
+    const extensions = await this.pabxService.listDialingPlans({
+      cliente_id: workspace.pabxCompanyId,
+    });
 
     return extensions.data.dados;
   }
 
   @Query(() => [TelephonyDids], { nullable: true })
-  async getTelephonyDids(): Promise<TelephonyDids[]> {
-    const extensions = await this.pabxService.listDids();
+  async getTelephonyDids(
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+  ): Promise<TelephonyDids[]> {
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+      throw new Error('PABX company not found');
+    }
+
+    const extensions = await this.pabxService.listDids({
+      cliente_id: workspace.pabxCompanyId,
+    });
 
     return extensions.data.dados;
   }
 
   @Query(() => [Campaign], { nullable: true })
-  async getTelephonyURAs(): Promise<Campaign[]> {
-    const uras = await this.pabxService.listCampaigns();
+  async getTelephonyURAs(
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+  ): Promise<Campaign[]> {
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+      throw new Error('PABX company not found');
+    }
+
+    const uras = await this.pabxService.listCampaigns({
+      cliente_id: workspace.pabxCompanyId,
+    });
 
     const data = uras.data.dados.map((ura: Campaign) => {
       const { campanha_id, cliente_id, nome } = ura;
@@ -282,8 +380,22 @@ export class TelephonyResolver {
   }
 
   @Query(() => [TelephonyCallFlow], { nullable: true })
-  async getTelephonyCallFlows(): Promise<TelephonyCallFlow[]> {
-    const callFlows = await this.pabxService.listIntegrationFlows();
+  async getTelephonyCallFlows(
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+  ): Promise<TelephonyCallFlow[]> {
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+      throw new Error('PABX company not found');
+    }
+
+    const callFlows = await this.pabxService.listIntegrationFlows({
+      cliente_id: workspace.pabxCompanyId,
+    });
 
     const data = callFlows.data.dados.map((ura: TelephonyCallFlow) => {
       const { fluxo_chamada_id, fluxo_chamada_nome } = ura;
@@ -292,17 +404,6 @@ export class TelephonyResolver {
     });
 
     return data;
-  }
-
-  @Query(() => TelephonyExtension, { nullable: true })
-  async getUserSoftfone(
-    @Args('extNum', { type: () => String }) extNum: string,
-  ): Promise<TelephonyExtension> {
-    const extensions = await this.pabxService.listExtentions({
-      numero: extNum,
-    });
-
-    return extensions.data.dados[0];
   }
 
   @Mutation(() => Boolean)

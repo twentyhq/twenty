@@ -2,7 +2,7 @@ export interface IpDeOrigemEstrutura {
   cliente_id: number;
   ip: string;
   pospago: boolean;
-  compartilhado: boolean;
+  compartilhado: boolean | number;
   tech_prefix?: string;
   monitora_ping: boolean;
   tabela_roteamento_id: number;
