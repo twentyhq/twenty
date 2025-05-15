@@ -100,6 +100,12 @@ module.exports = {
       },
     },
     {
+      files: ['**/*.spec.ts', '**/*.integration-spec.ts'],
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
+    },
+    {
       files: ['scripts/**/*.ts'],
       parserOptions: {
         project: ['packages/twenty-server/tsconfig.scripts.json'],
