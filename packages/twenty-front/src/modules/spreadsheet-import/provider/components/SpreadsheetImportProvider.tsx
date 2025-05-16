@@ -31,7 +31,6 @@ export const SpreadsheetImportProvider = (
       {props.children}
       {spreadsheetImportDialog.isOpen && spreadsheetImportDialog.options && (
         <SpreadsheetImport
-          isOpen={true}
           onClose={handleClose}
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...spreadsheetImportDialog.options}

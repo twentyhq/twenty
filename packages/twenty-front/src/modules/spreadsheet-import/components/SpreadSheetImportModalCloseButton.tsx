@@ -19,11 +19,13 @@ const StyledCloseButtonContainer = styled.div`
   top: 0;
 `;
 
-type ModalCloseButtonProps = {
+type SpreadSheetImportModalCloseButtonProps = {
   onClose: () => void;
 };
 
-export const ModalCloseButton = ({ onClose }: ModalCloseButtonProps) => {
+export const SpreadSheetImportModalCloseButton = ({
+  onClose,
+}: SpreadSheetImportModalCloseButtonProps) => {
   const { initialStepState } = useSpreadsheetImportInternal();
 
   const { initialStep } = useSpreadsheetImportInitialStep(
