@@ -119,6 +119,7 @@ export class GoogleAPIsService {
         if (!existingAccountId) {
           await this.createConnectedAccountService.createConnectedAccount(
             workspaceId,
+            newOrExistingConnectedAccountId,
             handle,
             ConnectedAccountProvider.GOOGLE,
             input.accessToken,

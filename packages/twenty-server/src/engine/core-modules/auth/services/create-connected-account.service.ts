@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -23,6 +22,7 @@ export class CreateConnectedAccountService {
 
   async createConnectedAccount(
     workspaceId: string,
+    connectedAccountId: string,
     handle: string,
     provider: ConnectedAccountProvider,
     accessToken: string,
@@ -30,14 +30,12 @@ export class CreateConnectedAccountService {
     accountOwnerId: string,
     scopes: string[],
     manager: WorkspaceEntityManager,
-  ): Promise<string> {
+  ): Promise<void> {
     const connectedAccountRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
         workspaceId,
         'connectedAccount',
       );
-
-    const connectedAccountId = v4();
 
     const newConnectedAccount = await connectedAccountRepository.save(
       {
@@ -72,7 +70,5 @@ export class CreateConnectedAccountService {
       ],
       workspaceId,
     });
-
-    return connectedAccountId;
   }
 }

@@ -117,6 +117,7 @@ export class MicrosoftAPIsService {
         if (!existingAccountId) {
           await this.createConnectedAccountService.createConnectedAccount(
             workspaceId,
+            newOrExistingConnectedAccountId,
             handle,
             ConnectedAccountProvider.MICROSOFT,
             input.accessToken,
