@@ -63,3 +63,19 @@ export const multipleRecordPickerIsLoadingMoreSelector =
         return paginationState.isLoadingMore;
       },
   });
+
+export const multipleRecordPickerIsLoadingInitialSelector =
+  createComponentSelectorV2({
+    key: 'multipleRecordPickerIsLoadingInitialSelector',
+    componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
+    get:
+      ({ instanceId }) =>
+      ({ get }) => {
+        const paginationState = get(
+          multipleRecordPickerPaginationState.atomFamily({
+            instanceId,
+          }),
+        );
+        return paginationState.isLoadingInitial;
+      },
+  });

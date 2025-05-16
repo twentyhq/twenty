@@ -6,6 +6,7 @@ export type MultipleRecordPickerPaginationState = {
   hasMore: boolean;
   pageSize: number;
   isLoadingMore: boolean;
+  isLoadingInitial: boolean;
 };
 
 export const multipleRecordPickerPaginationState =
@@ -16,6 +17,7 @@ export const multipleRecordPickerPaginationState =
       hasMore: true,
       pageSize: 20,
       isLoadingMore: false,
+      isLoadingInitial: false,
     },
     componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
   });

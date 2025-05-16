@@ -52,6 +52,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
             currentOffset: loadMore ? paginationState.currentOffset : 0,
             hasMore: loadMore ? paginationState.hasMore : true,
             isLoadingMore: loadMore,
+            isLoadingInitial: !loadMore && !!forceSearchFilter,
           },
         );
 
@@ -348,6 +349,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
             currentOffset: newOffset,
             hasMore,
             isLoadingMore: false,
+            isLoadingInitial: false,
           },
         );
       },

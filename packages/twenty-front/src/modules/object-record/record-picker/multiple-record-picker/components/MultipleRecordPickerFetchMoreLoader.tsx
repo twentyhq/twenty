@@ -3,6 +3,7 @@ import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/re
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import {
   multipleRecordPickerHasMoreSelector,
+  multipleRecordPickerIsLoadingInitialSelector,
   multipleRecordPickerIsLoadingMoreSelector,
 } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPaginationSelectors';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -35,6 +36,11 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
 
   const isLoadingMore = useRecoilComponentValueV2(
     multipleRecordPickerIsLoadingMoreSelector,
+    componentInstanceId,
+  );
+
+  const isLoadingInitial = useRecoilComponentValueV2(
+    multipleRecordPickerIsLoadingInitialSelector,
     componentInstanceId,
   );
 
@@ -73,7 +79,7 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     rootMargin: '200px',
   });
 
-  if (!hasMore) {
+  if (!hasMore || isLoadingInitial) {
     return null;
   }
 
