@@ -79,12 +79,22 @@ const StyledResetReactflowStyles = styled.div`
 
 const StyledStatusTagContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
   left: 0;
-  padding: ${({ theme }) => theme.spacing(2)};
-  position: absolute;
   top: 0;
+  position: absolute;
+  padding: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledButtonContainer = styled.div`
+  display: flex;
+  right: 0;
+  top: 0;
+  position: absolute;
+  padding: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledButton = styled(Button)`
+  height: 24px;
 `;
 
 export const BotDiagramBase = ({
@@ -232,8 +242,10 @@ export const BotDiagramBase = ({
 
       <StyledStatusTagContainer data-testid={'tagContainerBotDiagram'}>
         <Tag color={tagColor} text={tagText} />
-        <Button accent="blue" title="Save" onClick={onSave} />
       </StyledStatusTagContainer>
+      <StyledButtonContainer>
+        <StyledButton accent="blue" title="Save" onClick={onSave} />
+      </StyledButtonContainer>
     </StyledResetReactflowStyles>
   );
 };
