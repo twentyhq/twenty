@@ -98,7 +98,10 @@ export const useGraphQLErrorHandlerHook = <
               }
 
               // Convert to BaseGraphQLError if it's a GraphQLError
-              if (originalError instanceof GraphQLError) {
+              if (
+                originalError instanceof GraphQLError &&
+                !(originalError instanceof BaseGraphQLError)
+              ) {
                 return convertGraphQLErrorToBaseGraphQLError(originalError);
               }
 
