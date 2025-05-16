@@ -3,14 +3,14 @@ import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perf
 
 export type CreateOneViewFactoryInput = {
   icon?: string;
-  id?: string;
+  id: string;
   isCompact?: boolean;
   kanbanFieldMetadataId?: string;
   key?: string;
   name?: string;
   objectMetadataId: string;
   position?: number;
-  type?: string;
+  type: string;
 };
 
 export const createOneViewQueryFactory = ({
