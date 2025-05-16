@@ -2,13 +2,13 @@ import { useMemo } from 'react';
 
 import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { checkUrlType } from '~/utils/checkUrlType';
 import {
   getAbsoluteUrlOrThrow,
   getUrlHostnameOrThrow,
   isDefined,
 } from 'twenty-shared/utils';
 import { LinkType, RoundedLink, SocialLink } from 'twenty-ui/navigation';
+import { checkUrlType } from '~/utils/checkUrlType';
 
 type LinksDisplayProps = {
   value?: FieldLinksValue;
@@ -18,7 +18,7 @@ export const LinksDisplay = ({ value }: LinksDisplayProps) => {
   const links = useMemo(
     () =>
       [
-        value?.primaryLinkUrl
+        isDefined(value?.primaryLinkUrl)
           ? {
               url: value.primaryLinkUrl,
               label: value.primaryLinkLabel,
@@ -28,6 +28,10 @@ export const LinksDisplay = ({ value }: LinksDisplayProps) => {
       ]
         .filter(isDefined)
         .map(({ url, label }) => {
+          if (!isDefined(url)) {
+            return undefined;
+          }
+
           let absoluteUrl = '';
           let hostname = '';
           try {
@@ -42,7 +46,8 @@ export const LinksDisplay = ({ value }: LinksDisplayProps) => {
             label: label || hostname,
             type: checkUrlType(absoluteUrl),
           };
-        }),
+        })
+        .filter(isDefined),
     [value?.primaryLinkLabel, value?.primaryLinkUrl, value?.secondaryLinks],
   );
 
