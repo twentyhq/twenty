@@ -24,7 +24,7 @@ export const CmdEnterActionButton = ({
     <Button
       title={title}
       variant={disabled ? 'secondary' : 'primary'}
-      accent="blue"
+      accent="green"
       size="medium"
       onClick={onClick}
       disabled={disabled}

@@ -105,7 +105,7 @@ export const UpdateViewButtonGroup = ({
   return (
     <StyledContainer>
       {currentView?.key !== 'INDEX' ? (
-        <ButtonGroup size="small" accent="blue">
+        <ButtonGroup size="small" accent="green">
           <Button title="Update view" onClick={handleUpdateViewClick} />
           <Dropdown
             dropdownId={UPDATE_VIEW_BUTTON_DROPDOWN_ID}
@@ -113,7 +113,7 @@ export const UpdateViewButtonGroup = ({
             clickableComponent={
               <IconButton
                 size="small"
-                accent="blue"
+                accent="green"
                 Icon={IconChevronDown}
                 position="right"
               />
@@ -135,7 +135,7 @@ export const UpdateViewButtonGroup = ({
         <Button
           title={t`Save as new view`}
           onClick={handleSaveAsNewViewClick}
-          accent="blue"
+          accent="green"
           size="small"
           variant="secondary"
         />

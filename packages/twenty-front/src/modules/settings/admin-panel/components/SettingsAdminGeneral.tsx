@@ -167,7 +167,7 @@ export const SettingsAdminGeneral = () => {
             <Button
               Icon={IconSearch}
               variant="primary"
-              accent="blue"
+              accent="green"
               title={t`Search`}
               onClick={handleSearch}
               disabled={!userIdentifier.trim() || isUserLookupLoading}
