@@ -16,10 +16,7 @@ export const WorkspaceFavorites = () => {
 
   const filteredWorkspaceFavoritesObjectMetadataItems =
     workspaceFavoritesObjectMetadataItems.filter(
-      (item: any) =>
-        item.namePlural !== 'traceables' &&
-        item.namePlural !== 'linklogs' &&
-        item.namePlural !== 'chatbots',
+      (item: any) => !['traceables', 'chatbots'].includes(item.namePlural),
     );
 
   return (
