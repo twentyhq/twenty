@@ -40,12 +40,20 @@ export class SearchResolver {
     {
       searchInput,
       limit,
+      limitPerObject,
       filter,
       includedObjectNameSingulars,
       excludedObjectNameSingulars,
       offset,
     }: SearchArgs,
   ) {
+    if (!limit && !limitPerObject) {
+      throw new SearchException(
+        'Either limit or limitPerObject must be provided',
+        SearchExceptionCode.INVALID_SEARCH_PARAMETERS,
+      );
+    }
+
     const currentCacheVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspace.id);
 
@@ -106,7 +114,7 @@ export class SearchResolver {
               featureFlagMap,
               searchTerms: formatSearchTerms(searchInput, 'and'),
               searchTermsOr: formatSearchTerms(searchInput, 'or'),
-              limit,
+              limit: (limitPerObject ?? limit) as number,
               offset,
               filter: filter ?? ({} as ObjectRecordFilter),
             }),
@@ -119,8 +127,8 @@ export class SearchResolver {
 
     return this.searchService.computeSearchObjectResults(
       allRecordsWithObjectMetadataItems,
-      limit,
       workspace.id,
+      limit,
     );
   }
 }

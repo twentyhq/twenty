@@ -1632,7 +1632,8 @@ export type QuerySearchArgs = {
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
   filter?: InputMaybe<ObjectRecordFilterInput>;
   includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
-  limit: Scalars['Int'];
+  limit?: InputMaybe<Scalars['Int']>;
+  limitPerObject?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   searchInput: Scalars['String'];
 };
@@ -2706,7 +2707,8 @@ export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typ
 
 export type SearchQueryVariables = Exact<{
   searchInput: Scalars['String'];
-  limit: Scalars['Int'];
+  limit?: InputMaybe<Scalars['Int']>;
+  limitPerObject?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
   includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -4576,10 +4578,11 @@ export type GetClientConfigQueryHookResult = ReturnType<typeof useGetClientConfi
 export type GetClientConfigLazyQueryHookResult = ReturnType<typeof useGetClientConfigLazyQuery>;
 export type GetClientConfigQueryResult = Apollo.QueryResult<GetClientConfigQuery, GetClientConfigQueryVariables>;
 export const SearchDocument = gql`
-    query Search($searchInput: String!, $limit: Int!, $offset: Int, $excludedObjectNameSingulars: [String!], $includedObjectNameSingulars: [String!], $filter: ObjectRecordFilterInput) {
+    query Search($searchInput: String!, $limit: Int, $limitPerObject: Int, $offset: Int, $excludedObjectNameSingulars: [String!], $includedObjectNameSingulars: [String!], $filter: ObjectRecordFilterInput) {
   search(
     searchInput: $searchInput
     limit: $limit
+    limitPerObject: $limitPerObject
     offset: $offset
     excludedObjectNameSingulars: $excludedObjectNameSingulars
     includedObjectNameSingulars: $includedObjectNameSingulars
@@ -4609,6 +4612,7 @@ export const SearchDocument = gql`
  *   variables: {
  *      searchInput: // value for 'searchInput'
  *      limit: // value for 'limit'
+ *      limitPerObject: // value for 'limitPerObject'
  *      offset: // value for 'offset'
  *      excludedObjectNameSingulars: // value for 'excludedObjectNameSingulars'
  *      includedObjectNameSingulars: // value for 'includedObjectNameSingulars'

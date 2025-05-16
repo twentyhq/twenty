@@ -230,8 +230,8 @@ export class SearchService {
 
   computeSearchObjectResults(
     recordsWithObjectMetadataItems: RecordsWithObjectMetadataItem[],
-    limit: number,
     workspaceId: string,
+    limit?: number,
   ) {
     const searchRecords = recordsWithObjectMetadataItems.flatMap(
       ({ objectMetadataItem, records }) => {
@@ -252,7 +252,13 @@ export class SearchService {
       },
     );
 
-    return this.sortSearchObjectResults(searchRecords).slice(0, limit);
+    const sortedResults = this.sortSearchObjectResults(searchRecords);
+
+    if (limit !== undefined) {
+      return sortedResults.slice(0, limit);
+    }
+
+    return sortedResults;
   }
 
   sortSearchObjectResults(searchObjectResultsWithRank: SearchRecordDTO[]) {
