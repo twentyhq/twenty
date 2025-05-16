@@ -1,9 +1,9 @@
-import { MultipleRecordPickerMenuItems } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems';
+import { MultipleRecordPickerItemsDisplay } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerItemsDisplay';
 import { MultipleRecordPickerOnClickOutsideEffect } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerOnClickOutsideEffect';
 import { MultipleRecordPickerSearchInput } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerSearchInput';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
-import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
+import { multipleRecordPickerIsLoadingInitialSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPaginationSelectors';
 import { multipleRecordPickerPickableMorphItemsLengthComponentSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPickableMorphItemsLengthComponentSelector';
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
@@ -11,10 +11,8 @@ import { RecordPickerLayoutDirection } from '@/object-record/record-picker/types
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
-import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
@@ -59,13 +57,13 @@ export const MultipleRecordPicker = ({
     selectableListComponentInstanceId,
   );
 
-  const multipleRecordPickerIsLoading = useRecoilComponentValueV2(
-    multipleRecordPickerIsLoadingComponentState,
+  const itemsLength = useRecoilComponentValueV2(
+    multipleRecordPickerPickableMorphItemsLengthComponentSelector,
     componentInstanceId,
   );
 
-  const itemsLength = useRecoilComponentValueV2(
-    multipleRecordPickerPickableMorphItemsLengthComponentSelector,
+  const isLoadingInitial = useRecoilComponentValueV2(
+    multipleRecordPickerIsLoadingInitialSelector,
     componentInstanceId,
   );
 
@@ -106,13 +104,18 @@ export const MultipleRecordPicker = ({
     [multipleRecordPickerSearchFilterState, onCreate],
   );
 
-  const createNewButton = isDefined(onCreate) && (
-    <CreateNewButton
-      onClick={handleCreateNewButtonClick}
-      LeftIcon={IconPlus}
-      text="Add New"
-    />
-  );
+  const createNewButtonSection = isDefined(onCreate) &&
+    !hasObjectReadOnlyPermission && (
+      <DropdownMenuItemsContainer scrollable={false}>
+        <CreateNewButton
+          onClick={handleCreateNewButtonClick}
+          LeftIcon={IconPlus}
+          text="Add New"
+        />
+      </DropdownMenuItemsContainer>
+    );
+
+  const showLoader = isLoadingInitial && itemsLength === 0;
 
   return (
     <MultipleRecordPickerComponentInstanceContext.Provider
@@ -125,43 +128,21 @@ export const MultipleRecordPicker = ({
       <DropdownMenu ref={containerRef} data-select-disable width={200}>
         {layoutDirection === 'search-bar-on-bottom' && (
           <>
-            {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
-              <DropdownMenuItemsContainer scrollable={false}>
-                {createNewButton}
-              </DropdownMenuItemsContainer>
-            )}
-            <DropdownMenuSeparator />
-            {itemsLength > 0 && (
-              <MultipleRecordPickerMenuItems onChange={onChange} />
-            )}
-            {multipleRecordPickerIsLoading && (
-              <>
-                <DropdownMenuSkeletonItem />
-                <DropdownMenuSeparator />
-              </>
-            )}
-            {itemsLength > 0 && <DropdownMenuSeparator />}
+            {createNewButtonSection}
+            <MultipleRecordPickerItemsDisplay
+              showLoader={showLoader}
+              onChange={onChange}
+            />
           </>
         )}
         <MultipleRecordPickerSearchInput />
         {layoutDirection === 'search-bar-on-top' && (
           <>
-            <DropdownMenuSeparator />
-            {multipleRecordPickerIsLoading && (
-              <>
-                <DropdownMenuSkeletonItem />
-                <DropdownMenuSeparator />
-              </>
-            )}
-            {itemsLength > 0 && (
-              <MultipleRecordPickerMenuItems onChange={onChange} />
-            )}
-            {itemsLength > 0 && <DropdownMenuSeparator />}
-            {isDefined(onCreate) && (
-              <DropdownMenuItemsContainer scrollable={false}>
-                {createNewButton}
-              </DropdownMenuItemsContainer>
-            )}
+            <MultipleRecordPickerItemsDisplay
+              showLoader={showLoader}
+              onChange={onChange}
+            />
+            {createNewButtonSection}
           </>
         )}
       </DropdownMenu>

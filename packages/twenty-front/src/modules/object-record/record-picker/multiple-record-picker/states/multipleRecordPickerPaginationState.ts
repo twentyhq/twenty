@@ -17,7 +17,7 @@ export const multipleRecordPickerPaginationState =
       hasMore: true,
       pageSize: 20,
       isLoadingMore: false,
-      isLoadingInitial: false,
+      isLoadingInitial: true,
     },
     componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
   });
