@@ -1,5 +1,7 @@
 import { HttpException } from '@nestjs/common';
 
+import { GraphQLError } from 'graphql';
+
 import {
   BaseGraphQLError,
   ErrorCode,
@@ -28,6 +30,16 @@ export const shouldCaptureException = (exception: Error): boolean => {
     exception instanceof HttpException &&
     exception.getStatus() >= 400 &&
     exception.getStatus() < 500
+  ) {
+    return false;
+  }
+
+  if (
+    exception instanceof GraphQLError &&
+    exception.extensions?.http?.status &&
+    typeof exception.extensions.http.status === 'number' &&
+    exception.extensions.http.status >= 400 &&
+    exception.extensions.http.status < 500
   ) {
     return false;
   }

@@ -83,7 +83,18 @@ export const useGraphQLErrorHandlerHook = <
 
             // Step 1: Flatten errors - extract original errors when available
             const originalErrors = result.errors.map((error) => {
-              return error.originalError || error;
+              if (error.originalError) {
+                if (error.extensions) {
+                  error.originalError.extensions = {
+                    ...error.extensions,
+                    ...(error.originalError.extensions || {}),
+                  };
+                }
+
+                return error.originalError;
+              }
+
+              return error;
             });
 
             // Step 2: Send errors to monitoring service (with stack traces)
