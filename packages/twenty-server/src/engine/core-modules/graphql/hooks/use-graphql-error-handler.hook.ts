@@ -10,7 +10,10 @@ import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { generateGraphQLErrorFromError } from 'src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util';
-import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  BaseGraphQLError,
+  convertGraphQLErrorToBaseGraphQLError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { shouldCaptureException } from 'src/engine/core-modules/graphql/utils/should-capture-exception.util';
 
 const DEFAULT_EVENT_ID_KEY = 'exceptionEventId';
@@ -81,24 +84,29 @@ export const useGraphQLErrorHandlerHook = <
               return;
             }
 
-            // Step 1: Flatten errors - extract original errors when available
-            const originalErrors = result.errors.map((error) => {
-              if (error.originalError) {
-                if (error.extensions) {
-                  error.originalError.extensions = {
-                    ...error.extensions,
-                    ...(error.originalError.extensions || {}),
-                  };
-                }
+            // Step 1: Process errors - extract original errors and convert to BaseGraphQLError
+            const processedErrors = result.errors.map((error) => {
+              // Get the original error if available
+              const originalError = error.originalError || error;
 
-                return error.originalError;
+              // Merge extensions from both error and originalError
+              if (error.extensions && originalError !== error) {
+                originalError.extensions = {
+                  ...error.extensions,
+                  ...(originalError.extensions || {}),
+                };
               }
 
-              return error;
+              // Convert to BaseGraphQLError if it's a GraphQLError
+              if (originalError instanceof GraphQLError) {
+                return convertGraphQLErrorToBaseGraphQLError(originalError);
+              }
+
+              return originalError;
             });
 
             // Step 2: Send errors to monitoring service (with stack traces)
-            const errorsToCapture = originalErrors.filter(
+            const errorsToCapture = processedErrors.filter(
               shouldCaptureException,
             );
 
@@ -116,17 +124,15 @@ export const useGraphQLErrorHandlerHook = <
                 },
               );
 
-              errorsToCapture.forEach((_, i) => {
+              errorsToCapture.forEach((error, i) => {
                 if (eventIds?.[i] && eventIdKey !== null) {
-                  originalErrors[
-                    originalErrors.indexOf(errorsToCapture[i])
-                  ].eventId = eventIds[i];
+                  error.eventId = eventIds[i];
                 }
               });
             }
 
             // Step 3: Transform errors for GraphQL response (clean GraphQL errors)
-            const transformedErrors = originalErrors.map((error) => {
+            const transformedErrors = processedErrors.map((error) => {
               const graphqlError =
                 error instanceof BaseGraphQLError
                   ? error
