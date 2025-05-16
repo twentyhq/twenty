@@ -11,7 +11,7 @@ import { CreateMessageChannelService } from 'src/engine/core-modules/auth/servic
 import { CreateMessageFolderService } from 'src/engine/core-modules/auth/services/create-message-folder.service';
 import { ResetCalendarChannelService } from 'src/engine/core-modules/auth/services/reset-calendar-channel.service';
 import { ResetMessageChannelService } from 'src/engine/core-modules/auth/services/reset-message-channel.service';
-import { UpdateConnectedAccountService } from 'src/engine/core-modules/auth/services/update-connected-account.service';
+import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
 import { getMicrosoftApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -56,7 +56,7 @@ export class MicrosoftAPIsService {
     private readonly createCalendarChannelService: CreateCalendarChannelService,
     private readonly createMessageFolderService: CreateMessageFolderService,
     private readonly createConnectedAccountService: CreateConnectedAccountService,
-    private readonly updateConnectedAccountService: UpdateConnectedAccountService,
+    private readonly updateConnectedAccountOnReconnectService: UpdateConnectedAccountOnReconnectService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
@@ -154,7 +154,7 @@ export class MicrosoftAPIsService {
             );
           }
         } else {
-          await this.updateConnectedAccountService.updateConnectedAccount(
+          await this.updateConnectedAccountOnReconnectService.updateConnectedAccountOnReconnect(
             workspaceId,
             newOrExistingConnectedAccountId,
             input.accessToken,

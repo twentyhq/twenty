@@ -11,7 +11,7 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
-export class UpdateConnectedAccountService {
+export class UpdateConnectedAccountOnReconnectService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
@@ -19,7 +19,7 @@ export class UpdateConnectedAccountService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
-  async updateConnectedAccount(
+  async updateConnectedAccountOnReconnect(
     workspaceId: string,
     connectedAccountId: string,
     accessToken: string,

@@ -23,7 +23,7 @@ import { ResetCalendarChannelService } from 'src/engine/core-modules/auth/servic
 import { ResetMessageChannelService } from 'src/engine/core-modules/auth/services/reset-message-channel.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
-import { UpdateConnectedAccountService } from 'src/engine/core-modules/auth/services/update-connected-account.service';
+import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
 import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
@@ -126,7 +126,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     CreateCalendarChannelService,
     CreateMessageFolderService,
     CreateConnectedAccountService,
-    UpdateConnectedAccountService,
+    UpdateConnectedAccountOnReconnectService,
     TransientTokenService,
     ApiKeyService,
     AuthSsoService,
