@@ -144,43 +144,43 @@ export class FieldMetadataRelatedRecordsService {
       for (const viewFilter of filter.viewFilters) {
         try {
           const viewFilterValue: string[] = JSON.parse(viewFilter.value);
-          const relatedDeletedValues = deletedFieldMetadata
-            .filter((deleted) => viewFilterValue.includes(deleted.value))
-            .map(({ value }) => value);
+          const relatedDeletedLabels = deletedFieldMetadata
+            .filter((deleted) => viewFilterValue.includes(deleted.label))
+            .map(({ label }) => label);
 
-          if (relatedDeletedValues.length === viewFilterValue.length) {
+          if (relatedDeletedLabels.length === viewFilterValue.length) {
             await viewFilterRepository.delete({ id: viewFilter.id });
             continue;
           }
 
-          const remainingFilterValues = viewFilterValue.filter(
-            (findBetterName) => !relatedDeletedValues.includes(findBetterName),
+          const remainingFilterLabels = viewFilterValue.filter(
+            (viewFilterLabel) => !relatedDeletedLabels.includes(viewFilterLabel),
           );
-          const relatedUpdateValues = updatedFieldMetadata
+          const relatedUpdatedLabels = updatedFieldMetadata
             .filter((updated) =>
-              remainingFilterValues.includes(updated.old.value),
+              remainingFilterLabels.includes(updated.old.label),
             )
             .map((data) => ({
-              newValue: data.new.value,
-              oldValue: data.old.value,
+              newLabel: data.new.label,
+              oldLabel: data.old.label,
             }));
 
-          const updatedFilterValues = remainingFilterValues.flatMap((value) => {
-            const containsUpdatedFilter = relatedUpdateValues.find(
-              ({ oldValue }) => value === oldValue,
+          const updatedFilterLabels = remainingFilterLabels.flatMap((label) => {
+            const containsUpdatedFilter = relatedUpdatedLabels.find(
+              ({ oldLabel }) => label === oldLabel,
             );
             if (!isDefined(containsUpdatedFilter)) {
-              return value;
+              return label;
             }
 
-            return containsUpdatedFilter.newValue;
+            return containsUpdatedFilter.newLabel;
           });
 
           await viewFilterRepository.update(
             { id: viewFilter.id },
             {
-              value: JSON.stringify(updatedFilterValues),
-              displayValue: updatedFilterValues.join(','),
+              value: JSON.stringify(updatedFilterLabels),
+              displayValue: updatedFilterLabels.join(','),
             },
           );
 
@@ -264,7 +264,7 @@ export class FieldMetadataRelatedRecordsService {
 
     return viewRepository.find({
       where: {
-        viewGroups: {
+        [entity]: {
           fieldMetadataId: fieldMetadata.id,
         },
       },

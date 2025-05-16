@@ -25,8 +25,8 @@ describe('updateOne', () => {
     });
 
     it('should throw an error if the default value is not in the options', async () => {
-      const singular = faker.word.words();
-      const plural = singular + faker.word.sample(3);
+      const singular = faker.lorem.words();
+      const plural = singular + faker.lorem.word();
       const {
         data: { createOneObject },
       } = await createOneObjectMetadata({
@@ -110,19 +110,22 @@ describe('updateOne', () => {
 
       const updatedOptions = createOneField.options.map(
         (
-          { label, ...rest }: FieldMetadataComplexOption,
+          option: FieldMetadataComplexOption,
           index: number,
         ): FieldMetadataComplexOption => {
-          return {
-            ...rest,
-            label: index % 2 === 0 ? `${label}_UPDATED` : label,
-          };
+          if (index % 2 === 0) {
+            const { value, label, ...rest } = option;
+            return {
+              ...rest,
+              value: `${value}_UPDATED`,
+              label: `${label} updated`,
+            };
+          }
+          return option;
         },
       );
 
-      const {
-        data: { updateOneField },
-      } = await updateOneFieldMetadata({
+      await updateOneFieldMetadata({
         input: {
           idToUpdate: createOneField.id,
           updatePayload: {
@@ -136,7 +139,9 @@ describe('updateOne', () => {
       });
 
       const {
-        data: { findResponse: findOneViewFilter },
+        data: {
+          findResponse: { id, ...findOneViewFilter },
+        },
       } = await findOneOperation({
         gqlFields: `
         id
@@ -151,9 +156,8 @@ describe('updateOne', () => {
 
       expect(findOneViewFilter).toMatchInlineSnapshot(`
 {
-  "displayValue": "10 options",
-  "id": "aabb843a-1ba1-49d2-ba58-237534286101",
-  "value": "["Option 0","Option 1","Option 2","Option 3","Option 4","Option 5","Option 6","Option 7","Option 8","Option 9"]",
+  "displayValue": "Option 0 updated,Option 1,Option 2 updated,Option 3,Option 4 updated,Option 5,Option 6 updated,Option 7,Option 8 updated,Option 9",
+  "value": "["Option 0 updated","Option 1","Option 2 updated","Option 3","Option 4 updated","Option 5","Option 6 updated","Option 7","Option 8 updated","Option 9"]",
 }
 `);
     });
