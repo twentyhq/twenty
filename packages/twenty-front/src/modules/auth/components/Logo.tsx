@@ -49,23 +49,27 @@ const StyledPrimaryLogo = styled.div<{ src: string }>`
   width: 100%;
 `;
 
-export const Logo = (props: LogoProps) => {
+export const Logo = ({
+  primaryLogo,
+  secondaryLogo,
+  placeholder,
+}: LogoProps) => {
   const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
   const defaultPrimaryLogoUrl = `${window.location.origin}/images/icons/android/android-launchericon-192-192.png`;
 
   const primaryLogoUrl = getImageAbsoluteURI({
-    imageUrl: props.primaryLogo ?? defaultPrimaryLogoUrl,
+    imageUrl: primaryLogo ?? defaultPrimaryLogoUrl,
     baseUrl: REACT_APP_SERVER_BASE_URL,
   });
 
-  const secondaryLogoUrl = isNonEmptyString(props.secondaryLogo)
+  const secondaryLogoUrl = isNonEmptyString(secondaryLogo)
     ? getImageAbsoluteURI({
-        imageUrl: props.secondaryLogo,
+        imageUrl: secondaryLogo,
         baseUrl: REACT_APP_SERVER_BASE_URL,
       })
     : null;
 
-  const isUsingDefaultLogo = !isDefined(props.primaryLogo);
+  const isUsingDefaultLogo = !isDefined(primaryLogo);
 
   return (
     <StyledContainer>
@@ -84,13 +88,13 @@ export const Logo = (props: LogoProps) => {
           <StyledSecondaryLogo src={secondaryLogoUrl} />
         </StyledSecondaryLogoContainer>
       ) : (
-        isDefined(props.placeholder) && (
+        isDefined(placeholder) && (
           <StyledSecondaryLogoContainer>
             <Avatar
               size="lg"
-              placeholder={props.placeholder}
+              placeholder={placeholder}
               type="squared"
-              placeholderColorSeed={props.placeholder}
+              placeholderColorSeed={placeholder}
             />
           </StyledSecondaryLogoContainer>
         )

@@ -19,7 +19,7 @@ const RenderWithModal = (
 };
 
 const meta: Meta<typeof EmailVerificationSent> = {
-  title: 'Pages/Auth/EmailVerificationSent',
+  title: 'Modules/Auth/EmailVerificationSent',
   component: EmailVerificationSent,
   decorators: [ComponentDecorator, SnackBarDecorator],
   parameters: {
