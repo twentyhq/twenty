@@ -21,7 +21,6 @@ import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-p
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
 import {
   H2Title,
   IconId,
@@ -29,6 +28,7 @@ import {
   IconSearch,
   IconUser,
 } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
 const StyledContainer = styled.div`
@@ -167,7 +167,7 @@ export const SettingsAdminGeneral = () => {
             <Button
               Icon={IconSearch}
               variant="primary"
-              accent="blue"
+              accent="green"
               title={t`Search`}
               onClick={handleSearch}
               disabled={!userIdentifier.trim() || isUserLookupLoading}

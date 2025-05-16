@@ -1,11 +1,11 @@
 import { SettingsServerlessFunctionsTable } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsTable';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { Button } from 'twenty-ui/input';
 import { IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsServerlessFunctions = () => {
   return (
@@ -18,7 +18,7 @@ export const SettingsServerlessFunctions = () => {
           <Button
             Icon={IconPlus}
             title="New Function"
-            accent="blue"
+            accent="green"
             size="small"
           />
         </UndecoratedLink>

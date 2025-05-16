@@ -2,7 +2,7 @@
 import { GRAY_SCALE } from './GrayScale';
 
 export const MAIN_COLORS = {
-  green: '#55ef3c',
+  green: '#00A86B',
   turquoise: '#15de8f',
   sky: '#00e0ff',
   blue: '#1961ed',

@@ -3,9 +3,9 @@ import { useRecoilValue } from 'recoil';
 
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import {
-  IconDeviceFloppy,
-  IconPencil,
-  IconRefreshAlert,
+    IconDeviceFloppy,
+    IconPencil,
+    IconRefreshAlert,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { ConfigSource, ConfigVariable } from '~/generated/graphql';
@@ -50,7 +50,7 @@ export const ConfigVariableActionButtons = ({
           title={isFromDatabase ? t`Save` : t`Edit`}
           variant="primary"
           size="small"
-          accent="blue"
+          accent="green"
           disabled={isSubmitting || !isValueValid}
           onClick={onSave}
           type="submit"

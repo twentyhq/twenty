@@ -52,7 +52,7 @@ export const ViewPickerEditButton = () => {
         title="Go to Settings"
         onClick={navigateToSelectSettings}
         size="small"
-        accent="blue"
+        accent="green"
         fullWidth
         justify="center"
       />
@@ -67,7 +67,7 @@ export const ViewPickerEditButton = () => {
       <Button
         title="Create"
         onClick={createViewFromCurrentState}
-        accent="blue"
+        accent="green"
         fullWidth
         size="small"
         justify="center"

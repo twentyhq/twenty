@@ -21,6 +21,7 @@ export enum CheckboxSize {
 
 export enum CheckboxAccent {
   Blue = 'blue',
+  Green = 'green',
   Orange = 'orange',
 }
 
@@ -80,8 +81,8 @@ const StyledInputContainer = styled.div<InputProps>`
     return `&:hover{
       background-color: ${
         indeterminate || isChecked
-          ? accent === CheckboxAccent.Blue
-            ? theme.background.transparent.blue
+          ? accent === CheckboxAccent.Green
+            ? theme.background.transparent.green
             : theme.background.transparent.orange
           : theme.background.transparent.light
       };
@@ -112,11 +113,11 @@ const StyledInput = styled.input<InputProps>`
     background: ${({ theme, indeterminate, isChecked, disabled, accent }) => {
       if (!(indeterminate || isChecked)) return 'transparent';
       return disabled
-        ? accent === CheckboxAccent.Blue
-          ? theme.adaptiveColors.blue3
+        ? accent === CheckboxAccent.Green
+          ? theme.adaptiveColors.green3
           : theme.adaptiveColors.orange3
-        : accent === CheckboxAccent.Blue
-          ? theme.color.blue
+        : accent === CheckboxAccent.Green
+          ? theme.color.green
           : theme.color.orange;
     }};
     border-color: ${({
@@ -130,11 +131,11 @@ const StyledInput = styled.input<InputProps>`
       switch (true) {
         case indeterminate || isChecked:
           return disabled
-            ? accent === CheckboxAccent.Blue
-              ? theme.adaptiveColors.blue3
+            ? accent === CheckboxAccent.Green
+              ? theme.adaptiveColors.green3
               : theme.adaptiveColors.orange3
-            : accent === CheckboxAccent.Blue
-              ? theme.color.blue
+            : accent === CheckboxAccent.Green
+              ? theme.color.green
               : theme.color.orange;
         case disabled:
           return theme.border.color.strong;
@@ -187,7 +188,7 @@ export const Checkbox = ({
   hoverable = true,
   className,
   disabled = false,
-  accent = CheckboxAccent.Blue,
+  accent = CheckboxAccent.Green,
 }: CheckboxProps) => {
   const [isInternalChecked, setIsInternalChecked] =
     React.useState<boolean>(false);

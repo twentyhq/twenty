@@ -14,7 +14,7 @@ import { ButtonText } from './internal/ButtonText';
 export type ButtonSize = 'medium' | 'small';
 export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
-export type ButtonAccent = 'default' | 'blue' | 'danger';
+export type ButtonAccent = 'default' | 'blue' | 'danger' | 'green';
 
 export type ButtonProps = {
   className?: string;
@@ -129,6 +129,42 @@ const StyledButton = styled('button', {
                     &:active {
                       background: ${!inverted
                         ? theme.color.blue60
+                        : theme.background.tertiary};
+                    }
+                  `}
+            `;
+          case 'green':
+            return css`
+              background: ${!inverted
+                ? disabled
+                  ? theme.accent.accent4060
+                  : theme.color.green
+                : theme.background.primary};
+              border-color: ${!inverted
+                ? focus
+                  ? theme.color.green
+                  : theme.background.transparent.light
+                : theme.background.transparent.light};
+              border-width: 1px 1px 1px 1px !important;
+              box-shadow: ${!disabled && focus
+                ? `0 0 0 3px ${
+                    !inverted
+                      ? theme.accent.tertiary
+                      : theme.background.transparent.medium
+                  }`
+                : 'none'};
+              color: ${!inverted ? theme.grayScale.gray0 : theme.color.green};
+              ${disabled
+                ? ''
+                : css`
+                    &:hover {
+                      background: ${!inverted
+                        ? theme.color.green50
+                        : theme.background.secondary};
+                    }
+                    &:active {
+                      background: ${!inverted
+                        ? theme.color.green60
                         : theme.background.tertiary};
                     }
                   `}
@@ -264,6 +300,52 @@ const StyledButton = styled('button', {
                   : theme.background.transparent.medium};
               }
             `;
+          case 'green':
+            return css`
+              background: transparent;
+              border-color: ${!inverted
+                ? variant === 'secondary'
+                  ? focus
+                    ? theme.color.green
+                    : theme.accent.primary
+                  : focus
+                    ? theme.color.green
+                    : 'transparent'
+                : variant === 'secondary'
+                  ? focus || disabled
+                    ? theme.grayScale.gray0
+                    : theme.background.transparent.primary
+                  : focus
+                    ? theme.grayScale.gray0
+                    : 'transparent'};
+              border-width: 1px 1px 1px 1px !important;
+              box-shadow: ${!disabled && focus
+                ? `0 0 0 3px ${
+                    !inverted
+                      ? theme.accent.tertiary
+                      : theme.background.transparent.medium
+                  }`
+                : 'none'};
+              color: ${!inverted
+                ? !disabled
+                  ? theme.color.green
+                  : theme.accent.accent4060
+                : theme.font.color.inverted};
+              &:hover {
+                background: ${!inverted
+                  ? !disabled
+                    ? theme.accent.tertiary
+                    : 'transparent'
+                  : theme.background.transparent.light};
+              }
+              &:active {
+                background: ${!inverted
+                  ? !disabled
+                    ? theme.accent.secondary
+                    : 'transparent'
+                  : theme.background.transparent.medium};
+              }
+            `;
           case 'danger':
             return css`
               background: transparent;
@@ -379,6 +461,8 @@ const StyledButtonWrapper = styled.div<
                 : theme.font.color.secondary;
             case 'blue':
               return !inverted ? theme.grayScale.gray0 : theme.color.blue;
+            case 'green':
+              return !inverted ? theme.grayScale.gray0 : theme.color.green;
             case 'danger':
               return !inverted ? theme.background.primary : theme.color.red;
           }
@@ -396,6 +480,12 @@ const StyledButtonWrapper = styled.div<
               return !inverted
                 ? !disabled
                   ? theme.color.blue
+                  : theme.accent.accent4060
+                : theme.font.color.inverted;
+            case 'green':
+              return !inverted
+                ? !disabled
+                  ? theme.color.green
                   : theme.accent.accent4060
                 : theme.font.color.inverted;
             case 'danger':

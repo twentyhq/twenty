@@ -9,10 +9,10 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
 import { useLingui } from '@lingui/react/macro';
-import { useCreateWorkspaceInvitation } from '../../workspace-invitation/hooks/useCreateWorkspaceInvitation';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
 import { IconSend } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { useCreateWorkspaceInvitation } from '../../workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -139,7 +139,7 @@ export const WorkspaceInviteTeam = () => {
         <Button
           Icon={IconSend}
           variant="primary"
-          accent="blue"
+          accent="green"
           title={t`Invite`}
           type="submit"
           disabled={isEmailsEmpty || !!errors.emails}

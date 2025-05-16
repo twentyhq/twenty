@@ -15,8 +15,8 @@ export const IllustrationIconTag = (props: IllustrationIconTagProps) => {
       <IllustrationIconTagRaw
         height={size}
         width={size}
-        fill={fill.blue}
-        color={color.blue}
+        fill={fill.green}
+        color={color.green}
       />
     </IllustrationIconWrapper>
   );

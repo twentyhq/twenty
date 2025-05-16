@@ -36,8 +36,8 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)`
 `;
 
 export const StyledPill = styled(Pill)`
-  background: ${({ theme }) => theme.color.blueAccent10};
-  color: ${({ theme }) => theme.color.blue};
+  background: ${({ theme }) => theme.color.greenAccent10};
+  color: ${({ theme }) => theme.color.green};
 `;
 
 export const ViewBarFilterDropdownAdvancedFilterButton = () => {

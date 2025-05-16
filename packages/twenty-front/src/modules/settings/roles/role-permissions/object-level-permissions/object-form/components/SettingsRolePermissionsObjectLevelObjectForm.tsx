@@ -76,7 +76,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           title={t`Back`}
           variant="primary"
           size="small"
-          accent="blue"
+          accent="green"
           to={getSettingsPath(SettingsPath.RoleDetail, {
             roleId,
           })}

@@ -18,8 +18,8 @@ import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPicke
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { t } from '@lingui/core/macro';
-import { Button, ButtonGroup, IconButton } from 'twenty-ui/input';
 import { IconChevronDown, IconPlus } from 'twenty-ui/display';
+import { Button, ButtonGroup, IconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledContainer = styled.div`
@@ -104,7 +104,7 @@ export const UpdateViewButtonGroup = ({
   return (
     <StyledContainer>
       {currentView?.key !== 'INDEX' ? (
-        <ButtonGroup size="small" accent="blue">
+        <ButtonGroup size="small" accent="green">
           <Button title="Update view" onClick={handleUpdateViewClick} />
           <Dropdown
             dropdownId={UPDATE_VIEW_BUTTON_DROPDOWN_ID}
@@ -112,7 +112,7 @@ export const UpdateViewButtonGroup = ({
             clickableComponent={
               <IconButton
                 size="small"
-                accent="blue"
+                accent="green"
                 Icon={IconChevronDown}
                 position="right"
               />
@@ -132,7 +132,7 @@ export const UpdateViewButtonGroup = ({
         <Button
           title={t`Save as new view`}
           onClick={handleSaveAsNewViewClick}
-          accent="blue"
+          accent="green"
           size="small"
           variant="secondary"
         />

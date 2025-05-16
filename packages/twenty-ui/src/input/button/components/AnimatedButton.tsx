@@ -106,6 +106,40 @@ const StyledButton = styled.button<
                     }
                   `}
             `;
+          case 'green':
+            return css`
+              background: ${!inverted
+                ? theme.color.green
+                : theme.background.primary};
+              border-color: ${!inverted
+                ? focus
+                  ? theme.color.green
+                  : theme.background.transparent.light
+                : theme.background.transparent.light};
+              border-width: 1px 1px 1px 1px !important;
+              box-shadow: ${!disabled && focus
+                ? `0 0 0 3px ${
+                    !inverted
+                      ? theme.accent.tertiary
+                      : theme.background.transparent.medium
+                  }`
+                : 'none'};
+              color: ${!inverted ? theme.grayScale.gray0 : theme.color.green};
+              ${disabled
+                ? ''
+                : css`
+                    &:hover {
+                      background: ${!inverted
+                        ? theme.color.green50
+                        : theme.background.secondary};
+                    }
+                    &:active {
+                      background: ${!inverted
+                        ? theme.color.green60
+                        : theme.background.tertiary};
+                    }
+                  `}
+            `;
           case 'danger':
             return css`
               background: ${!inverted
@@ -237,6 +271,52 @@ const StyledButton = styled.button<
                   : theme.background.transparent.medium};
               }
             `;
+          case 'green':
+            return css`
+              background: transparent;
+              border-color: ${!inverted
+                ? variant === 'secondary'
+                  ? focus
+                    ? theme.color.green
+                    : theme.accent.primary
+                  : focus
+                    ? theme.color.green
+                    : 'transparent'
+                : variant === 'secondary'
+                  ? focus || disabled
+                    ? theme.grayScale.gray0
+                    : theme.background.transparent.primary
+                  : focus
+                    ? theme.grayScale.gray0
+                    : 'transparent'};
+              border-width: 1px 1px 1px 1px !important;
+              box-shadow: ${!disabled && focus
+                ? `0 0 0 3px ${
+                    !inverted
+                      ? theme.accent.tertiary
+                      : theme.background.transparent.medium
+                  }`
+                : 'none'};
+              color: ${!inverted
+                ? !disabled
+                  ? theme.color.green
+                  : theme.accent.accent4060
+                : theme.font.color.inverted};
+              &:hover {
+                background: ${!inverted
+                  ? !disabled
+                    ? theme.accent.tertiary
+                    : 'transparent'
+                  : theme.background.transparent.light};
+              }
+              &:active {
+                background: ${!inverted
+                  ? !disabled
+                    ? theme.accent.secondary
+                    : 'transparent'
+                  : theme.background.transparent.medium};
+              }
+            `;
           case 'danger':
             return css`
               background: transparent;
@@ -344,6 +424,8 @@ const StyledSeparator = styled.div<{
     switch (accent) {
       case 'blue':
         return theme.border.color.blue;
+      case 'green':
+        return theme.border.color.green;
       case 'danger':
         return theme.border.color.danger;
       default:
@@ -364,6 +446,8 @@ const StyledShortcutLabel = styled.div<{
     switch (accent) {
       case 'blue':
         return theme.border.color.blue;
+      case 'green':
+        return theme.border.color.green;
       case 'danger':
         return variant === 'primary'
           ? theme.border.color.danger

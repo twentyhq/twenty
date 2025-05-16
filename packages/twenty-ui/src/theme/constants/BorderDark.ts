@@ -11,6 +11,7 @@ export const BORDER_DARK = {
     inverted: GRAY_SCALE.gray20,
     danger: COLOR.red70,
     blue: COLOR.blue30,
+    green: COLOR.green30,
   },
   ...BORDER_COMMON,
 };
