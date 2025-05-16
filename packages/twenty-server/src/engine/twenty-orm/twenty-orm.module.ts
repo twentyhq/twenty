@@ -14,8 +14,9 @@ import { entitySchemaFactories } from 'src/engine/twenty-orm/factories';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { PgPoolSharedModule } from 'src/engine/twenty-orm/utils/pg-shared-pool.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+
+import { PgPoolSharedModule } from './pg-shared-pool/pg-shared-pool.module';
 
 @Global()
 @Module({

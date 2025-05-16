@@ -66,7 +66,7 @@ export class PgPoolSharedService {
    * Applies the pg.Pool patch to enable connection pool sharing.
    * Safe to call multiple times - will only apply the patch once.
    */
-  initialize(): void {
+  async initialize(): Promise<void> {
     if (this.initialized) {
       this.logger.debug('Pg pool sharing already initialized, skipping');
 
@@ -248,8 +248,7 @@ export class PgPoolSharedService {
 
     // Define a proper constructor function that can be used with "new"
     // Use a function declaration to be compatible with 'new' keyword
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function SharedPool(this: any, config?: PoolConfig): Pool {
+    function SharedPool(this: Pool, config?: PoolConfig): Pool {
       // When called as a function (without new), make sure to return a new instance
       if (!(this instanceof SharedPool)) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

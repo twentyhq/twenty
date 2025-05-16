@@ -23,14 +23,14 @@ export class PgPoolSharedModule implements OnModuleInit, OnApplicationShutdown {
   /**
    * Initialize the pool sharing service when the module is initialized
    */
-  onModuleInit() {
-    this.pgPoolSharedService.initialize();
+  async onModuleInit() {
+    await this.pgPoolSharedService.initialize();
   }
 
   /**
    * Clean up any resources when the application shuts down
    */
-  onApplicationShutdown() {
-    this.pgPoolSharedService.onApplicationShutdown();
+  async onApplicationShutdown() {
+    await this.pgPoolSharedService.onApplicationShutdown();
   }
 }
