@@ -18,6 +18,7 @@ import {
   applyEdgeChanges,
   applyNodeChanges,
   Background,
+  Connection,
   Edge,
   Node,
   NodeTypes,
@@ -184,8 +185,33 @@ export const BotDiagramBase = ({
   );
 
   const onConnect: OnConnect = useCallback(
-    (connection) => setEdges((eds) => addEdge(connection, eds)),
-    [setEdges],
+    (connection) => {
+      const targetAlreadyConnected = edges.some(
+        (edge) => edge.target === connection.target,
+      );
+
+      if (!targetAlreadyConnected) {
+        setEdges((eds) => addEdge(connection, eds));
+      }
+    },
+    [edges, setEdges],
+  );
+
+  const isValidConnection = useCallback(
+    (connection: Edge | Connection) => {
+      if (!connection.source || !connection.target) return false;
+
+      const sourceAlreadyConnected = edges.some(
+        (edge) => edge.source === connection.source,
+      );
+
+      const targetAlreadyConnected = edges.some(
+        (edge) => edge.target === connection.target,
+      );
+
+      return !sourceAlreadyConnected && !targetAlreadyConnected;
+    },
+    [edges],
   );
 
   const reactflow = useReactFlow();
@@ -234,8 +260,8 @@ export const BotDiagramBase = ({
         onConnect={onConnect}
         onInit={setRfInstance}
         fitViewOptions={{ padding: 2 }}
+        isValidConnection={isValidConnection}
         fitView
-        // nodesDraggable={false}
       >
         <Background color={theme.border.color.medium} size={2} />
       </ReactFlow>

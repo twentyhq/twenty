@@ -24,6 +24,8 @@ export const initialNodes: Node[] = [
             comparison: '==',
             sectorId: '',
             conditionValue: '||',
+            outgoingEdgeId: 'b-1',
+            outgoingNodeId: '3',
           },
         ],
       },
