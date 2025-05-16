@@ -22,7 +22,7 @@ const getFormFields = (): {
 }[] => {
   return [
     {
-      name: 'label',
+      name: 'name',
       label: 'Inbox name',
       placeholder: 'Integration name',
       type: 'text',

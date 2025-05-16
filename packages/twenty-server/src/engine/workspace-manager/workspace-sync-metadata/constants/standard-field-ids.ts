@@ -284,6 +284,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   linkedObjectMetadataId: '20202020-c595-449d-9f89-562758c9ee69',
   charge: '20202020-e674-48e5-a542-72570eee7215',
   integration: '20000000-4b3a-4b3b-8b3b-7f8d6a1d7d5b',
+  chatbot: '6f02d62b-3423-4e16-9312-830133ec9861',
   traceable: '20202020-1e7e-42bc-82fe-24fd43cfbb2a',
 };
 
@@ -301,6 +302,7 @@ export const FAVORITE_STANDARD_FIELD_IDS = {
   view: '20202020-5a93-4fa9-acce-e73481a0bbdf',
   custom: '20202020-855a-4bc8-9861-79deef37011f',
   favoriteFolder: '20202020-f658-4d12-8b4d-248356aa4bd9',
+  chatbot: '82cb4030-897c-45d5-9b0d-9cf2f72b8c92',
 };
 
 export const FAVORITE_FOLDER_STANDARD_FIELD_IDS = {
@@ -589,6 +591,31 @@ export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
   timelineActivities: '20202020-fcb0-4695-b17e-3b43a421c633',
 };
 
+export const CHATBOT_STANDARD_FIELD_IDS = {
+  name: '92a00578-f689-43c6-9d79-5171e9d9ab74',
+  statuses: '63b3a1b4-f5eb-45e1-92b4-2453ec7f1c2f',
+  position: '41f9c916-7914-44a9-9302-2ee9897d6db7',
+  favorites: '045ca203-42d5-4cd9-a320-624e0c76ba25',
+  timelineActivities: '337a9630-a180-4758-b234-e021241c69c5',
+  createdBy: '134d6f12-3c6b-47e5-afb0-337b19d98148',
+  whatsappIntegration: 'dcf3921a-d486-4f76-af86-dee90948a9ea',
+  searchVector: '5e759ff3-dbb9-4616-b392-ccd3d52b3a4b',
+};
+
+export const WHATSAPP_STANDARD_FIELD_IDS = {
+  name: 'f34bf730-b3e2-4513-a8dc-a85f8817105a',
+  phoneId: '29965765-b8d4-48d4-80f1-31008a42b02e',
+  businessAccountId: 'b94489e4-c4be-4f99-85e6-c15168364428',
+  appId: 'e5719886-ddf0-453e-8c0b-14e16cc81547',
+  appKey: 'b70b9165-779d-49a8-93af-8d7ab787e657',
+  accessToken: '23d0e5e9-d402-44ce-bf62-5091494ee6d1',
+  verifyToken: '9a0ea7b1-1e43-477f-881c-66e9771ad233',
+  sla: 'd1c22e84-8eea-4be1-906b-7e84eab40200',
+  chatbot: '28d5f4a0-9afc-4014-8556-2e872f14ed2c',
+  disabled: '20565891-e0ff-4642-89d8-4bfbdd4674d0',
+  searchVector: '3d8534c9-1f0d-4c3c-b2a4-99c0558b28dc',
+};
+
 export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   position: '20202020-1810-4591-a93c-d0df97dca843',
   name: '20202020-e914-43a6-9c26-3603c59065f4',
@@ -677,4 +704,5 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   workflowRun: WORKFLOW_RUN_STANDARD_FIELD_IDS,
   workflowVersion: WORKFLOW_VERSION_STANDARD_FIELD_IDS,
   workspaceMember: WORKSPACE_MEMBER_STANDARD_FIELD_IDS,
+  chatbot: CHATBOT_STANDARD_FIELD_IDS,
 };

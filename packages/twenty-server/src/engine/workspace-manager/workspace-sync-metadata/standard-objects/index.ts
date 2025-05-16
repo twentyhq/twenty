@@ -6,6 +6,7 @@ import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/stan
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
+import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
@@ -34,6 +35,7 @@ import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
+import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -66,6 +68,7 @@ export const standardObjectMetadataDefinitions = [
   WorkflowEventListenerWorkspaceEntity,
   WorkflowVersionWorkspaceEntity,
   WorkflowRunWorkspaceEntity,
+  ChatbotWorkspaceEntity,
   WorkflowAutomatedTriggerWorkspaceEntity,
   WorkspaceMemberWorkspaceEntity,
   MessageThreadWorkspaceEntity,
@@ -85,4 +88,5 @@ export const standardObjectMetadataDefinitions = [
   TraceableWorkspaceEntity,
   LinkLogsWorkspaceEntity,
   IntegrationWorkspaceEntity,
+  WhatsappWorkspaceEntity,
 ];

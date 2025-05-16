@@ -7,7 +7,7 @@ import {
   Inbox,
   IntegrationType,
 } from 'src/engine/core-modules/inbox/inbox.entity';
-import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class InboxService {
@@ -17,14 +17,15 @@ export class InboxService {
   ) {}
 
   async create(
-    createdIntegration: WhatsappIntegration,
+    createdIntegrationId: string,
     integrationType: IntegrationType,
+    workspace: Workspace,
   ): Promise<Inbox> {
     if (integrationType === IntegrationType.WHATSAPP) {
       const createdInbox = await this.inboxRepository.create({
         integrationType: IntegrationType.WHATSAPP,
-        whatsappIntegration: createdIntegration,
-        workspace: createdIntegration.workspace,
+        whatsappIntegrationId: createdIntegrationId,
+        workspace: workspace,
       });
 
       return await this.inboxRepository.save(createdInbox);
@@ -36,7 +37,7 @@ export class InboxService {
   async findAll(workspaceId: string): Promise<Inbox[]> {
     return await this.inboxRepository.find({
       where: { workspace: { id: workspaceId } },
-      relations: ['workspace', 'whatsappIntegration'],
+      relations: ['workspace'],
     });
   }
 }

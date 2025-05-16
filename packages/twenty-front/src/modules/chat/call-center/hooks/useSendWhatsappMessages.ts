@@ -31,3 +31,7 @@ export const useSendWhatsappMessages = (): SendMessageReturn => {
     sendWhatsappMessage,
   };
 };
+
+export type SendMessageType = ReturnType<
+  typeof useSendWhatsappMessages
+>['sendWhatsappMessage'];

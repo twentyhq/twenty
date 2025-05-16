@@ -9,6 +9,8 @@ import {
 import { WhatsappDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappTemplate';
 import { WhatsappService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 
 @Resolver('Whatsapp')
 export class WhatsappResolver {
@@ -82,14 +84,17 @@ export class WhatsappResolver {
   @Mutation(() => Boolean)
   async sendMessage(
     @Args('sendMessageInput') sendMessageInput: SendMessageInput,
+    @AuthWorkspace() workspace: Workspace,
   ) {
-    const sendMessageConfirmation =
-      await this.whatsappService.sendMessage(sendMessageInput);
+    const sendMessageConfirmation = await this.whatsappService.sendMessage(
+      sendMessageInput,
+      workspace.id,
+    );
 
     if (sendMessageConfirmation) {
       const lastMessage = {
         createdAt: new Date(),
-        from: 'system',
+        from: sendMessageInput.from,
         message: sendMessageInput.fileId
           ? sendMessageInput.fileId
           : sendMessageInput.message || '',
@@ -102,7 +107,7 @@ export class WhatsappResolver {
       > = {
         integrationId: sendMessageInput.integrationId,
         client: {
-          phone: sendMessageInput.to.slice(1),
+          phone: sendMessageInput.to,
         },
         messages: [
           {
@@ -174,7 +179,13 @@ export class WhatsappResolver {
   }
 
   @Query(() => WhatsappTemplatesResponse)
-  getWhatsappTemplates(@Args('integrationId') integrationId: string) {
-    return this.whatsappService.getWhatsappTemplates(integrationId);
+  getWhatsappTemplates(
+    @Args('integrationId') integrationId: string,
+    @AuthWorkspace() workspace: Workspace,
+  ) {
+    return this.whatsappService.getWhatsappTemplates(
+      integrationId,
+      workspace.id,
+    );
   }
 }

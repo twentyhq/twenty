@@ -352,12 +352,13 @@ export const PaneChat = () => {
     //   ? `+${selectedChat.client.phone}`
     //   : selectedChat.client.id;
 
-    const identifier = `+${selectedChat.client.phone}`;
+    const identifier = `${selectedChat.client.phone}`;
 
     const sendMessageInputBase = {
       integrationId: selectedChat.integrationId,
       to: `${identifier}`,
       type,
+      from: `${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
     };
 
     // if (type === MessageType.FB_RESPONSE) {
@@ -597,7 +598,12 @@ export const PaneChat = () => {
               onClick={() => setIsAnexOpen(!isAnexOpen)}
             />
           </StyledAnexDiv>
-          {isAnexOpen && <ChatAnex setIsAnexOpen={setIsAnexOpen} />}
+          {isAnexOpen && (
+            <ChatAnex
+              setIsAnexOpen={setIsAnexOpen}
+              from={`${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`}
+            />
+          )}
           <StyledInput
             disabled={selectedChat.lastMessage.type === 'template'}
             className="new-message-input"
@@ -668,8 +674,8 @@ export const PaneChat = () => {
       <StyledPaneChatContainer>
         <PaneChatHeader />
         <StyledChatContainer ref={chatContainerRef} onScroll={handleScroll}>
-          {selectedChat.messages.map((message, index: number) => {
-            const isSystemMessage = message.from === 'system';
+          {selectedChat.messages.map((message: any, index: number) => {
+            const isSystemMessage = message.from !== selectedChat.client.name;
 
             const validMessageType =
               message.type === MessageType.STARTED ||
@@ -787,11 +793,7 @@ export const PaneChat = () => {
                       <StyledNameAndTimeContainer
                         isSystemMessage={isSystemMessage}
                       >
-                        <UsernameComponent
-                          message={message}
-                          selectedChat={selectedChat}
-                          currentWorkspaceMember={currentWorkspaceMember}
-                        />
+                        <UsernameComponent message={message} />
                         <StyledDateContainer>
                           {formatDate(message.createdAt).date}
                           <span> - </span>

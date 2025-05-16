@@ -1,18 +1,19 @@
 import { gql } from '@apollo/client';
 
 export const GET_ALL_WHATSAPP_INTEGRATIONS = gql`
-  query WhatsappIntegrationsByWorkspace($workspaceId: String!) {
-    whatsappIntegrationsByWorkspace(workspaceId: $workspaceId) {
+  query WhatsappIntegrationsByWorkspace {
+    whatsappIntegrationsByWorkspace {
       id
-      label
+      name
       phoneId
       businessAccountId
       appId
       appKey
       disabled
       sla
-      workspace {
+      chatbot {
         id
+        name
       }
     }
   }

@@ -48,11 +48,13 @@ export const STANDARD_OBJECT_IDS = {
   workflowEventListener: '20202020-92aa-462f-965c-a785b00e9989',
   workflowRun: '20202020-4e28-4e95-a9d7-6c00874f843c',
   workflowVersion: '20202020-d65d-4ab9-9344-d77bfb376a3d',
+  chatbot: 'dd73286e-2c9f-4e29-bcec-c755b3de3df2',
   workspaceMember: '20202020-3319-4234-a34c-82d5c0e881a6',
   charge: '20202020-e674-48e5-a542-72570eee7216',
   traceable: '20202020-1234-5678-9abc-def123456789',
   linklogs: '20202020-1f2e-3d4c-5b6a-7a8b9c0d1e2f',
   integration: '20202020-4b4b-4b4b-4b4b-4b4b4b4b4b4b',
+  whatsappIntegration: 'a88de77d-7078-4591-a22b-f7df762c4e65',
   product: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c63',
   workflowAutomatedTrigger: '20202020-3319-4234-a34c-7f3b9d2e4d1f',
 };

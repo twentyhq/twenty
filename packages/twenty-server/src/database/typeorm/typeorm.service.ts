@@ -7,6 +7,7 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 import { Agent } from 'src/engine/core-modules/agent/agent.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
+import { BillingPlans } from 'src/engine/core-modules/billing-plans/billing-plans.entity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
@@ -14,12 +15,14 @@ import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-p
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FocusNfeIntegration } from 'src/engine/core-modules/focus-nfe/focus-nfe-integration.entity';
 import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
+import { OnboardingPlans } from 'src/engine/core-modules/onboarding-plans/onboarding-plans.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
@@ -29,8 +32,6 @@ import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-f
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { BillingPlans } from 'src/engine/core-modules/billing-plans/billing-plans.entity';
-import { OnboardingPlans } from 'src/engine/core-modules/onboarding-plans/onboarding-plans.entity';
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
   private mainDataSource: DataSource;
@@ -71,6 +72,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         Inbox,
         StripeIntegration,
         FocusNfeIntegration,
+        ChatbotFlow,
       ],
       metadataTableName: '_typeorm_generated_columns_and_materialized_views',
       ssl: twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')

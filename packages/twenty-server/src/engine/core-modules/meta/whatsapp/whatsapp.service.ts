@@ -18,7 +18,6 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { Agent } from 'src/engine/core-modules/agent/agent.entity';
-
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
@@ -32,6 +31,8 @@ import { WhatsappDocument } from 'src/engine/core-modules/meta/whatsapp/types/Wh
 import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappTemplate';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 
 export class WhatsappService {
   private META_API_URL = this.environmentService.get('META_API_URL');
@@ -47,6 +48,7 @@ export class WhatsappService {
     @InjectRepository(Agent, 'core')
     private agentRepository: Repository<Agent>,
     private readonly firebaseService: FirebaseService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     this.firestoreDb = this.firebaseService.getFirestoreDb();
   }
@@ -93,10 +95,16 @@ export class WhatsappService {
     }
   }
 
-  async sendMessage(sendMessageInput: SendMessageInput) {
+  async sendMessage(sendMessageInput: SendMessageInput, workspaceId: string) {
     const { integrationId, to, type, message, fileId } = sendMessageInput;
 
-    const integration = await this.whatsappIntegrationRepository.findOne({
+    const whatsappRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
+        workspaceId,
+        'whatsapp',
+      );
+
+    const integration = await whatsappRepository.findOne({
       where: { id: integrationId },
     });
 
@@ -162,6 +170,7 @@ export class WhatsappService {
 
   async getWhatsappTemplates(
     integrationId: string,
+    workspaceId: string,
   ): Promise<WhatsappTemplatesResponse> {
     if (!integrationId) {
       // eslint-disable-next-line no-console
@@ -170,7 +179,13 @@ export class WhatsappService {
       return { templates: [] };
     }
 
-    const integration = await this.whatsappIntegrationRepository.findOne({
+    const whatsappRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
+        workspaceId,
+        'whatsapp',
+      );
+
+    const integration = await whatsappRepository.findOne({
       where: { id: integrationId },
     });
 
@@ -390,10 +405,16 @@ export class WhatsappService {
     integrationId: string,
     phoneNumber: string,
     type: string,
+    workspaceId: string,
   ) {
-    const integration = await this.whatsappIntegrationRepository.findOne({
+    const whatsappRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
+        workspaceId,
+        'whatsapp',
+      );
+
+    const integration = await whatsappRepository.findOne({
       where: { id: integrationId },
-      relations: ['workspace'],
     });
 
     if (!integration) {
@@ -437,7 +458,7 @@ export class WhatsappService {
       };
 
       const fileUrl = await this.googleStorageService.uploadFileToBucket(
-        integration.workspace.id,
+        workspaceId,
         type,
         file,
         false,

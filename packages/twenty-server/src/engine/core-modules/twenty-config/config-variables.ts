@@ -1227,6 +1227,14 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
+    description: 'Enable or disable chatbot features',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_CHATBOT_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
     description: 'Focus NFe encryption key.',
     isSensitive: true,
     type: ConfigVariableType.STRING,

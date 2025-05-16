@@ -40,7 +40,7 @@ export const SettingsServiceCenterNewSector = () => {
     mode: 'onTouched',
     resolver: zodResolver(newSectorFormSchema),
     defaultValues: {
-      icon: '',
+      icon: 'Icon123',
       name: '',
       workspaceId: currentWorkspace?.id,
       topics: [DEFAULT_OPTION],

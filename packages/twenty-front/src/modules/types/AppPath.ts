@@ -36,7 +36,7 @@ export enum AppPath {
   InternalChat = '/chat/internal',
   ExternalChat = '/chat/call-center',
 
-  Chatbot = '/chatbot',
+  Chatbot = 'objects/chatbot',
   DashboardLinks = '/dashboard-links',
 
   Authorize = '/authorize',

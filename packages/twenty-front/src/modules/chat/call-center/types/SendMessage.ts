@@ -1,14 +1,14 @@
 import { MessageType } from '@/chat/types/MessageType';
 
-export interface SendMessageInput {
+export interface SendMessageInputBase {
   integrationId: string;
   to: string;
   message?: string;
   type: MessageType;
-  fieldId?: string;
+  fileId?: string;
 }
 
-export interface SendEventMessageInput extends SendMessageInput {
+export interface SendEventMessageInput extends SendMessageInputBase {
   eventStatus: MessageType;
   status: string;
   from: string;
@@ -20,4 +20,8 @@ export interface SendEventMessageInput extends SendMessageInput {
     name?: string;
     id?: string;
   };
+}
+
+export interface SendMessageInput extends SendMessageInputBase {
+  from: string;
 }

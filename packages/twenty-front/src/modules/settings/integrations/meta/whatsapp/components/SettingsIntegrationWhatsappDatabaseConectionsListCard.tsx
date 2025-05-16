@@ -145,10 +145,10 @@ export const SettingsIntegrationWhatsappDatabaseConectionsListCard = ({
               <StyledCard key={whatsappIntegration.id}>
                 <StyledDiv>
                   <StyledDatabaseLogo
-                    alt={whatsappIntegration.label}
+                    alt={whatsappIntegration.name}
                     src={integration.from.image}
                   />
-                  {whatsappIntegration.label}
+                  {whatsappIntegration.name}
                 </StyledDiv>
                 <StyledDiv>
                   <SettingsSelectStatusPill

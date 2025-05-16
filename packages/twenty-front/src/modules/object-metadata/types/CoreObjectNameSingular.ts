@@ -39,4 +39,5 @@ export enum CoreObjectNameSingular {
   Traceable = 'traceable',
   TraceableAccessLog = 'TraceableAccessLog',
   Integration = 'integration',
+  Chatbot = 'chatbot',
 }
