@@ -10,6 +10,10 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
+import {
+  WorkspaceMetadataCacheException,
+  WorkspaceMetadataCacheExceptionCode,
+} from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import {
   WorkspaceMetadataVersionException,
@@ -35,6 +39,8 @@ type CacheResult<T, U> = {
   version: T;
   data: U;
 };
+
+const ONE_HOUR_IN_MS = 3600_000;
 
 @Injectable()
 export class WorkspaceDatasourceFactory {
@@ -118,9 +124,9 @@ export class WorkspaceDatasourceFactory {
             );
 
           if (!cachedObjectMetadataMaps) {
-            throw new TwentyORMException(
+            throw new WorkspaceMetadataCacheException(
               `Object metadata collection not found for workspace ${workspaceId}`,
-              TwentyORMExceptionCode.METADATA_COLLECTION_NOT_FOUND,
+              WorkspaceMetadataCacheExceptionCode.OBJECT_METADATA_COLLECTION_NOT_FOUND,
             );
           }
 
@@ -173,6 +179,16 @@ export class WorkspaceDatasourceFactory {
                     rejectUnauthorized: false,
                   }
                 : undefined,
+              extra: {
+                query_timeout: 10000,
+                // https://node-postgres.com/apis/pool
+                // TypeORM doesn't allow sharing connection pools bet
+                // So for now we keep a small pool open for longer
+                // for each workspace.
+                idleTimeoutMillis: ONE_HOUR_IN_MS,
+                max: 4,
+                allowExitOnIdle: true,
+              },
             },
             cachedFeatureFlagMapVersion,
             cachedFeatureFlagMap,
@@ -317,7 +333,7 @@ export class WorkspaceDatasourceFactory {
     if (!isDefined(latestWorkspaceMetadataVersion)) {
       if (shouldFailIfMetadataNotFound) {
         throw new WorkspaceMetadataVersionException(
-          `Metadata version not found for workspace ${workspaceId}`,
+          `Metadata version not found while fetching datasource for workspace ${workspaceId}`,
           WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
         );
       } else {
@@ -333,9 +349,9 @@ export class WorkspaceDatasourceFactory {
     }
 
     if (!isDefined(latestWorkspaceMetadataVersion)) {
-      throw new TwentyORMException(
+      throw new WorkspaceMetadataVersionException(
         `Metadata version not found after recompute`,
-        TwentyORMExceptionCode.METADATA_VERSION_NOT_FOUND,
+        WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
       );
     }
 
