@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
@@ -90,7 +90,9 @@ export const CloseClosableModalOnClickOutside: Story = {
     const backdrop = document.querySelector('.modal-backdrop') as HTMLElement;
     await userEvent.click(backdrop);
 
-    expect(closeMock).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(closeMock).toHaveBeenCalledTimes(1);
+    });
   },
 };
 
@@ -117,6 +119,8 @@ export const CloseClosableModalOnEscape: Story = {
 
     await userEvent.keyboard('{Escape}');
 
-    expect(closeMock).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(closeMock).toHaveBeenCalledTimes(1);
+    });
   },
 };

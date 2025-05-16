@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
@@ -80,7 +80,9 @@ export const CloseOnEscape: Story = {
 
     await userEvent.keyboard('{Escape}');
 
-    expect(closeMock).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(closeMock).toHaveBeenCalledTimes(1);
+    });
   },
 };
 
@@ -100,7 +102,9 @@ export const CloseOnClickOutside: Story = {
     const backdrop = document.querySelector('.modal-backdrop') as HTMLElement;
     await userEvent.click(backdrop);
 
-    expect(closeMock).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(closeMock).toHaveBeenCalledTimes(1);
+    });
   },
 };
 
@@ -119,7 +123,9 @@ export const ConfirmWithEnterKey: Story = {
 
     await userEvent.keyboard('{Enter}');
 
-    expect(confirmMock).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(confirmMock).toHaveBeenCalledTimes(1);
+    });
   },
 };
 
@@ -141,7 +147,9 @@ export const CancelButtonClick: Story = {
     );
     await userEvent.click(cancelButton);
 
-    expect(closeMock).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(closeMock).toHaveBeenCalledTimes(1);
+    });
   },
 };
 
@@ -163,6 +171,8 @@ export const ConfirmButtonClick: Story = {
     );
     await userEvent.click(confirmButton);
 
-    expect(confirmMock).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(confirmMock).toHaveBeenCalledTimes(1);
+    });
   },
 };
