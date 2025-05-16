@@ -2,5 +2,5 @@ import { IWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/type
 
 export type UpdateWhatsappIntegrationInput = Omit<
   IWhatsappIntegration,
-  'disabled' | 'workspaceId' | 'workspace' | 'sla'
+  'disabled' | 'sla'
 >;

@@ -1,3 +1,4 @@
+import { isChatbotEnabledState } from '@/client-config/states/isChatbotEnabledState';
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
 import { ChatNavigationNavItem } from '@/navigation/components/ChatNavigationNavItem';
@@ -9,7 +10,6 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
@@ -26,10 +26,10 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 export const MainNavigationDrawerFixedItems = () => {
   const isMobile = useIsMobile();
   const location = useLocation();
+
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
   );
-
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
   const setNavigationDrawerExpandedMemorized = useSetRecoilState(
@@ -37,30 +37,32 @@ export const MainNavigationDrawerFixedItems = () => {
   );
 
   const { t } = useLingui();
-
   const { workspaceFavoritesObjectMetadataItems } = useWorkspaceFavorites();
+  const lastVisitedViewPerObjectMetadataItem =
+    useRecoilValue(lastVisitedViewPerObjectMetadataItemState) ?? {};
 
-  const traceableObject = useMemo(() => {
-    return workspaceFavoritesObjectMetadataItems?.find(
-      (item) => item.nameSingular === 'traceable',
+  const isChatbotEnabled = useRecoilValue(isChatbotEnabledState);
+
+  const getNavigationPath = (objectName: string) => {
+    const objectMetadata = workspaceFavoritesObjectMetadataItems?.find(
+      (item: any) => item.nameSingular === objectName,
     );
-  }, [workspaceFavoritesObjectMetadataItems]);
 
-  const viewId = traceableObject?.id;
+    const viewId = objectMetadata?.id;
+    const lastVisitedViewId = lastVisitedViewPerObjectMetadataItem?.[viewId];
 
-  const lastVisitedViewPerObjectMetadataItem = useRecoilValue(
-    lastVisitedViewPerObjectMetadataItemState,
-  );
+    return getAppPath(
+      AppPath.RecordIndexPage,
+      { objectNamePlural: objectMetadata?.namePlural ?? '' },
+      lastVisitedViewId ? { viewId: lastVisitedViewId } : undefined,
+    );
+  };
 
-  const lastVisitedViewId = lastVisitedViewPerObjectMetadataItem?.[viewId];
-
-  const navigationPath = getAppPath(
-    AppPath.RecordIndexPage,
-    { objectNamePlural: traceableObject?.namePlural ?? '' },
-    lastVisitedViewId ? { viewId: lastVisitedViewId } : undefined,
-  );
+  const traceablePath = getNavigationPath('traceable');
+  const chatbotPath = getNavigationPath('chatbot');
 
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
+
   return (
     !isMobile && (
       <>
@@ -81,14 +83,16 @@ export const MainNavigationDrawerFixedItems = () => {
           Icon={IconSettings}
         />
         <ChatNavigationNavItem />
-        <NavigationDrawerItem
-          label="Bot"
-          to={'/chatbot'}
-          onClick={() => {
-            setNavigationMemorizedUrl(location.pathname + location.search);
-          }}
-          Icon={IconRobot}
-        />
+        {isChatbotEnabled && (
+          <NavigationDrawerItem
+            label="Chatbot"
+            to={chatbotPath}
+            onClick={() => {
+              setNavigationMemorizedUrl(location.pathname + location.search);
+            }}
+            Icon={IconRobot}
+          />
+        )}
         <NavigationDrawerItem
           label="Dashboard links"
           to={'/dashboard-links'}
@@ -96,7 +100,7 @@ export const MainNavigationDrawerFixedItems = () => {
         />
         <NavigationDrawerItem
           label="Traceable link"
-          to={navigationPath}
+          to={traceablePath}
           onClick={() => {
             setNavigationMemorizedUrl(location.pathname + location.search);
           }}

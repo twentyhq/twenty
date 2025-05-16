@@ -62,6 +62,7 @@ export const GET_CLIENT_CONFIG = gql`
       isGoogleMessagingEnabled
       isGoogleCalendarEnabled
       isConfigVariablesInDbEnabled
+      isChatbotEnabled
     }
   }
 `;

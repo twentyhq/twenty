@@ -9,7 +9,7 @@ export const UPDATE_SERVICE_LEVEL = gql`
       integrationId: $integrationId
       sla: $sla
     ) {
-      label
+      name
       sla
     }
   }

@@ -325,6 +325,36 @@ export enum CaptchaDriverType {
   Turnstile = 'Turnstile'
 }
 
+export type ChatbotFlow = {
+  __typename?: 'ChatbotFlow';
+  chatbotId: Scalars['String']['output'];
+  edges?: Maybe<Array<Scalars['JSON']['output']>>;
+  id: Scalars['UUID']['output'];
+  nodes?: Maybe<Array<Scalars['JSON']['output']>>;
+  viewport?: Maybe<Scalars['JSON']['output']>;
+  workspace: Workspace;
+};
+
+export type ChatbotFlowInput = {
+  chatbotId: Scalars['String']['input'];
+  edges: Scalars['JSON']['input'];
+  nodes: Scalars['JSON']['input'];
+};
+
+/** Chatbot status options */
+export enum ChatbotStatus {
+  ACTIVE = 'ACTIVE',
+  DEACTIVATED = 'DEACTIVATED',
+  DRAFT = 'DRAFT'
+}
+
+export type ChatbotWorkspaceEntity = {
+  __typename?: 'ChatbotWorkspaceEntity';
+  id: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  statuses?: Maybe<ChatbotStatus>;
+};
+
 export type ClientConfig = {
   __typename?: 'ClientConfig';
   analyticsEnabled: Scalars['Boolean']['output'];
@@ -615,9 +645,8 @@ export type CreateWhatsappIntegrationInput = {
   appId: Scalars['String']['input'];
   appKey: Scalars['String']['input'];
   businessAccountId: Scalars['String']['input'];
-  label: Scalars['String']['input'];
+  name: Scalars['String']['input'];
   phoneId: Scalars['String']['input'];
-  workspaceId: Scalars['ID']['input'];
 };
 
 export type CreateWorkflowVersionStepInput = {
@@ -961,7 +990,7 @@ export type Inbox = {
   agents: Array<Agent>;
   id: Scalars['UUID']['output'];
   integrationType: IntegrationType;
-  whatsappIntegration?: Maybe<WhatsappIntegration>;
+  whatsappIntegrationId: Scalars['String']['output'];
   workspace: Workspace;
 };
 
@@ -1087,6 +1116,7 @@ export type InvalidatePassword = {
 
 export type LinkLogsWorkspaceEntity = {
   __typename?: 'LinkLogsWorkspaceEntity';
+  id: Scalars['String']['output'];
   linkId?: Maybe<Scalars['String']['output']>;
   linkName?: Maybe<Scalars['String']['output']>;
   product: Scalars['String']['output'];
@@ -1158,7 +1188,7 @@ export type Mutation = {
   createSector: Sector;
   createStripeIntegration: StripeIntegration;
   createTelephony: Telephony;
-  createWhatsappIntegration: WhatsappIntegration;
+  createWhatsappIntegration: WhatsappWorkspaceEntity;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean']['output'];
   deleteAgent: Agent;
@@ -1218,6 +1248,7 @@ export type Mutation = {
   unsyncRemoteTable: RemoteTable;
   updateAgent: Agent;
   updateBillingPlans: BillingPlans;
+  updateChatbotFlow: Scalars['Boolean']['output'];
   updateDatabaseConfigVariable: Scalars['Boolean']['output'];
   updateInterIntegration: InterIntegration;
   updateLabPublicFeatureFlag: FeatureFlagDto;
@@ -1230,8 +1261,8 @@ export type Mutation = {
   updateSector: Sector;
   updateStripeIntegration: StripeIntegration;
   updateTelephony: Telephony;
-  updateWhatsappIntegration: WhatsappIntegration;
-  updateWhatsappIntegrationServiceLevel: WhatsappIntegration;
+  updateWhatsappIntegration: WhatsappWorkspaceEntity;
+  updateWhatsappIntegrationServiceLevel: WhatsappWorkspaceEntity;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionStep: WorkflowAction;
   updateWorkspace: Workspace;
@@ -1246,6 +1277,7 @@ export type Mutation = {
   upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
+  validateChatbotFlow: ChatbotFlow;
 };
 
 
@@ -1650,6 +1682,11 @@ export type MutationUpdateBillingPlansArgs = {
 };
 
 
+export type MutationUpdateChatbotFlowArgs = {
+  updateChatbotInput: UpdateChatbotFlowInput;
+};
+
+
 export type MutationUpdateDatabaseConfigVariableArgs = {
   key: Scalars['String']['input'];
   value: Scalars['JSON']['input'];
@@ -1801,6 +1838,11 @@ export type MutationValidateApprovedAccessDomainArgs = {
   input: ValidateApprovedAccessDomainInput;
 };
 
+
+export type MutationValidateChatbotFlowArgs = {
+  chatbotInput: ChatbotFlowInput;
+};
+
 export type Object = {
   __typename?: 'Object';
   createdAt: Scalars['DateTime']['output'];
@@ -1943,7 +1985,6 @@ export enum OnboardingStatus {
   INVITE_TEAM = 'INVITE_TEAM',
   PAYMENT_REQUIRED = 'PAYMENT_REQUIRED',
   PLAN_REQUIRED = 'PLAN_REQUIRED',
-  PAYMENT_REQUIRED = 'PAYMENT_REQUIRED',
   PROFILE_CREATION = 'PROFILE_CREATION',
   SYNC_EMAIL = 'SYNC_EMAIL',
   WORKSPACE_ACTIVATION = 'WORKSPACE_ACTIVATION'
@@ -2043,6 +2084,8 @@ export type Query = {
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
   getBillingPlansById: BillingPlans;
+  getChatbotFlowById: ChatbotFlow;
+  getChatbots: Array<ChatbotWorkspaceEntity>;
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getDashboardLinklogs: Array<LinkLogsWorkspaceEntity>;
   getDatabaseConfigVariable: ConfigVariable;
@@ -2081,8 +2124,8 @@ export type Query = {
   sectorsByWorkspace: Array<Sector>;
   validatePasswordResetToken: ValidatePasswordResetToken;
   versionInfo: VersionInfo;
-  whatsappIntegrationById: WhatsappIntegration;
-  whatsappIntegrationsByWorkspace: Array<WhatsappIntegration>;
+  whatsappIntegrationById: WhatsappWorkspaceEntity;
+  whatsappIntegrationsByWorkspace: Array<WhatsappWorkspaceEntity>;
 };
 
 
@@ -2170,6 +2213,11 @@ export type QueryGetAvailablePackagesArgs = {
 
 export type QueryGetBillingPlansByIdArgs = {
   id: Scalars['String']['input'];
+};
+
+
+export type QueryGetChatbotFlowByIdArgs = {
+  chatbotId: Scalars['String']['input'];
 };
 
 
@@ -2310,11 +2358,6 @@ export type QueryValidatePasswordResetTokenArgs = {
 
 export type QueryWhatsappIntegrationByIdArgs = {
   integrationId: Scalars['String']['input'];
-};
-
-
-export type QueryWhatsappIntegrationsByWorkspaceArgs = {
-  workspaceId: Scalars['String']['input'];
 };
 
 export type QueueMetricsData = {
@@ -2557,6 +2600,7 @@ export type SendInvitationsOutput = {
 
 export type SendMessageInput = {
   fileId?: InputMaybe<Scalars['String']['input']>;
+  from: Scalars['String']['input'];
   integrationId: Scalars['String']['input'];
   message?: InputMaybe<Scalars['String']['input']>;
   to: Scalars['String']['input'];
@@ -2963,6 +3007,13 @@ export type UpdateBillingPlansInput = {
   planPrice?: InputMaybe<Scalars['Float']['input']>;
 };
 
+export type UpdateChatbotFlowInput = {
+  chatbotId: Scalars['String']['input'];
+  edges: Scalars['JSON']['input'];
+  nodes: Scalars['JSON']['input'];
+  viewport?: InputMaybe<Scalars['JSON']['input']>;
+};
+
 export type UpdateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -3111,7 +3162,7 @@ export type UpdateWhatsappIntegrationInput = {
   appKey?: InputMaybe<Scalars['String']['input']>;
   businessAccountId?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
-  label?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
   phoneId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -3261,24 +3312,24 @@ export type VersionInfo = {
   latestVersion: Scalars['String']['output'];
 };
 
-export type WhatsappIntegration = {
-  __typename?: 'WhatsappIntegration';
+export type WhatsappTemplatesResponse = {
+  __typename?: 'WhatsappTemplatesResponse';
+  templates: Array<Template>;
+};
+
+export type WhatsappWorkspaceEntity = {
+  __typename?: 'WhatsappWorkspaceEntity';
   accessToken: Scalars['String']['output'];
   appId: Scalars['String']['output'];
   appKey: Scalars['String']['output'];
   businessAccountId: Scalars['String']['output'];
+  chatbot?: Maybe<ChatbotWorkspaceEntity>;
   disabled: Scalars['Boolean']['output'];
-  id: Scalars['UUID']['output'];
-  label: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
   phoneId: Scalars['String']['output'];
   sla: Scalars['Float']['output'];
   verifyToken: Scalars['String']['output'];
-  workspace: Workspace;
-};
-
-export type WhatsappTemplatesResponse = {
-  __typename?: 'WhatsappTemplatesResponse';
-  templates: Array<Template>;
 };
 
 export type WorkerQueueMetrics = {

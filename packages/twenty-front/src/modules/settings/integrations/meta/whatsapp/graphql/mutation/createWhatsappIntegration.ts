@@ -5,17 +5,12 @@ export const CREATE_WHATSAPP_INTEGRATION = gql`
     $createInput: CreateWhatsappIntegrationInput!
   ) {
     createWhatsappIntegration(createInput: $createInput) {
-      id
-      label
+      name
       phoneId
       businessAccountId
       accessToken
       appId
       appKey
-      disabled
-      workspace {
-        id
-      }
     }
   }
 `;

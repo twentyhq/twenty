@@ -95,6 +95,7 @@ type ImageInputProps = Omit<React.ComponentProps<'div'>, 'children'> & {
   errorMessage?: string | null;
   disabled?: boolean;
   className?: string;
+  maxSize?: string;
 };
 
 export const ImageInput = ({
@@ -106,6 +107,7 @@ export const ImageInput = ({
   errorMessage,
   disabled = false,
   className,
+  maxSize = '10',
 }: ImageInputProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -179,7 +181,9 @@ export const ImageInput = ({
           />
         </StyledButtonContainer>
         <StyledText>
-          <Trans>We support your square PNGs, JPEGs and GIFs under 10MB</Trans>
+          <Trans>
+            We support your square PNGs, JPEGs and GIFs under {maxSize}MB
+          </Trans>
         </StyledText>
         {errorMessage && <StyledErrorText>{errorMessage}</StyledErrorText>}
       </StyledContent>

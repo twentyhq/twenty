@@ -15,6 +15,7 @@ import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/ti
 import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
 import { captchaModuleFactory } from 'src/engine/core-modules/captcha/captcha.module-factory';
 import { DashboardLinklogsModule } from 'src/engine/core-modules/dadshboard-linklogs/dashboard-linlogs.module';
+import { ChatbotFlowModule } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.module';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { emailModuleFactory } from 'src/engine/core-modules/email/email.module-factory';
 import { ExceptionHandlerModule } from 'src/engine/core-modules/exception-handler/exception-handler.module';
@@ -106,6 +107,7 @@ import { StripeModule } from './stripe/stripe.module';
     GoogleStorageModule,
     TelephonyModule,
     DashboardLinklogsModule,
+    ChatbotFlowModule,
     WorkspaceQueryRunnerModule,
     SubscriptionsModule,
     FileStorageModule.forRootAsync({

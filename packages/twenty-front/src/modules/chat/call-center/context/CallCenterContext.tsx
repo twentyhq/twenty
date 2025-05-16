@@ -1,18 +1,22 @@
-/* eslint-disable project-structure/folder-structure */
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
+/* eslint-disable @nx/workspace-no-state-useref */
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { createContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { useFirestoreDb } from '@/chat/call-center/hooks/useFirestoreDb';
 import { useGetTabUnreadMessages } from '@/chat/call-center/hooks/useGetTabUnreadMessages';
 import { useRealTimeChats } from '@/chat/call-center/hooks/useRealTimeChats';
 import { useSendWhatsappEventMessage } from '@/chat/call-center/hooks/useSendWhatsappEventMessage';
+import { useSendWhatsappMessages } from '@/chat/call-center/hooks/useSendWhatsappMessages';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
 import {
   FilteredMessage,
   FilteredUser,
 } from '@/chat/call-center/types/SearchType';
+import { transferBotService } from '@/chat/call-center/utils/transferBotService';
 import { MessageEventType } from '@/chat/types/MessageEventType';
 import { MessageType, UnreadMessages } from '@/chat/types/MessageType';
 import {
@@ -22,13 +26,19 @@ import {
 } from '@/chat/types/WhatsappDocument';
 import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
 import { sort } from '@/chat/utils/sort';
+import { ExecuteFlow } from '@/chatbot/engine/executeFlow';
+import { GET_CHATBOT_FLOW_BY_ID } from '@/chatbot/graphql/query/getChatbotFlowById';
+import { GET_CHATBOTS } from '@/chatbot/graphql/query/getChatbots';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
 import { useFindAllAgents } from '@/settings/service-center/agents/hooks/useFindAllAgents';
+import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
 import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { useApolloClient } from '@apollo/client';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
 
 const ChatContext = createContext<CallCenterContextType | null>(null);
 
@@ -108,6 +118,14 @@ export const CallCenterProvider = ({
   const { sendWhatsappEventMessage } = useSendWhatsappEventMessage();
   // const { messengerEventMessage } = useMessengerEventMessage();
 
+  const executors = useRef<Record<string, ExecuteFlow>>({});
+  const processedMessageKeys = useRef<Set<string>>(new Set());
+
+  const { sectors } = useFindAllSectors();
+  const [waitingChats, setWaitingChats] = useState<WhatsappDocument[]>([]);
+  const { sendWhatsappMessage } = useSendWhatsappMessages();
+  const apolloClient = useApolloClient();
+
   useRealTimeChats({
     integrationIds: integrationWhatsappIds,
     status: (() => {
@@ -178,6 +196,108 @@ export const CallCenterProvider = ({
     //   setSelectedChat(messengerChat);
     // }
   }, [selectedChatId, whatsappChats]);
+
+  const { firestoreDb } = useFirestoreDb();
+
+  useEffect(() => {
+    if (!integrationWhatsappIds.length) return;
+
+    const q = query(
+      collection(firestoreDb, 'whatsapp'),
+      where('integrationId', 'in', integrationWhatsappIds),
+      where('status', '==', statusEnum.Waiting),
+    );
+
+    const unsubscribe = onSnapshot(q, (snap) => {
+      const filtered = snap.docs
+        .map((d) => d.data() as WhatsappDocument)
+        .filter((chat) => {
+          const hasAgent = chat.agent && chat.agent !== 'empty';
+          const hasSector = chat.sector && chat.sector !== 'empty';
+          return !hasAgent && !hasSector;
+        });
+
+      setWaitingChats(filtered);
+    });
+
+    return () => unsubscribe();
+  }, [firestoreDb, integrationWhatsappIds]);
+
+  useEffect(() => {
+    const process = async () => {
+      for (const chat of waitingChats) {
+        const msgs = chat.messages;
+        if (!msgs?.length) continue;
+
+        const last = msgs[msgs.length - 1];
+
+        const messageKey = `${chat.integrationId}_${chat.client.phone}_${last.createdAt}`;
+        if (processedMessageKeys.current.has(messageKey)) continue;
+
+        const chatKey = `${chat.integrationId}_${chat.client.phone}`;
+
+        let executor = executors.current[chatKey];
+
+        const integration = whatsappIntegrations.find(
+          (w) => w.id === chat.integrationId,
+        );
+
+        const chatbotId = integration?.chatbot?.id;
+        if (!chatbotId) continue;
+
+        const { data: chatbotData } = await apolloClient.query({
+          query: GET_CHATBOTS,
+          variables: { chatbotId },
+        });
+
+        const findChatbot = chatbotData?.getChatbots?.find(
+          (bot: any) => bot.id === chatbotId,
+        );
+
+        if (last.from === findChatbot.name) continue;
+
+        if (!executor) {
+          // Change the way the request is made to chatbot flow
+          const { data } = await apolloClient.query({
+            query: GET_CHATBOT_FLOW_BY_ID,
+            variables: { chatbotId },
+          });
+
+          const flow = data.getChatbotFlowById;
+
+          executor = new ExecuteFlow(
+            { chatbotId, nodes: flow.nodes, edges: flow.edges },
+            sendWhatsappMessage,
+            chat.integrationId,
+            chat.client.phone ?? '',
+            findChatbot.name,
+            sectors,
+            (_, sectorId) => {
+              if (sectorId) {
+                transferBotService(
+                  chat.integrationId,
+                  chat.client.phone ?? '',
+                  statusEnum.Waiting,
+                  sendWhatsappEventMessage,
+                  sectorId,
+                  sectors,
+                  findChatbot.name,
+                );
+              }
+            },
+          );
+
+          executors.current[chatKey] = executor;
+        }
+
+        executor.setIncomingMessage(last.message);
+        executor.runFlow();
+        processedMessageKeys.current.add(messageKey);
+      }
+    };
+
+    if (waitingChats.length) process();
+  }, [waitingChats, whatsappIntegrations]);
 
   const sortChats = () => {
     setWhatsappChats(sort(whatsappChats));

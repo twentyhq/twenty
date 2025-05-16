@@ -1224,6 +1224,14 @@ export class ConfigVariables {
   )
   @IsString()
   PABX_TOKEN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Enable or disable chatbot features',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_CHATBOT_ENABLED = false;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

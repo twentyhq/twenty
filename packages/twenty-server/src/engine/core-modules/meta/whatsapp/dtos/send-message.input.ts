@@ -28,6 +28,10 @@ export class SendMessageInput extends MessageInput {
   @IsString()
   @IsOptional()
   fileId?: string;
+
+  @Field()
+  @IsString()
+  from: string;
 }
 
 @InputType()
