@@ -58,6 +58,30 @@ export class WorkspaceDatasourceFactory {
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
   ) {}
 
+  private async safelyDestroyDataSource(
+    dataSource: WorkspaceDataSource,
+  ): Promise<void> {
+    try {
+      await dataSource.destroy();
+    } catch (error) {
+      // Ignore known race-condition errors to prevent noise during shutdown
+      if (
+        error.message === 'Called end on pool more than once' ||
+        error.message?.includes(
+          'pool is draining and cannot accommodate new clients',
+        )
+      ) {
+        this.logger.debug(
+          `Ignoring pool error during cleanup: ${error.message}`,
+        );
+
+        return;
+      }
+
+      throw error;
+    }
+  }
+
   public async create(
     workspaceId: string,
     workspaceMetadataVersion: number | null,
@@ -200,26 +224,7 @@ export class WorkspaceDatasourceFactory {
           return workspaceDataSource;
         },
         async (dataSource) => {
-          try {
-            await dataSource.destroy();
-          } catch (error) {
-            // Ignore known race-condition errors to prevent noise during shutdown
-            if (
-              error.message === 'Called end on pool more than once' ||
-              error.message?.includes(
-                'pool is draining and cannot accommodate new clients',
-              )
-            ) {
-              this.logger.debug(
-                `Ignoring pool error during cleanup: ${error.message}`,
-              );
-
-              return;
-            }
-
-            // Re-throw unexpected errors so they are handled by the outer catch
-            throw error;
-          }
+          await this.safelyDestroyDataSource(dataSource);
         },
       );
 
@@ -373,26 +378,7 @@ export class WorkspaceDatasourceFactory {
       await this.promiseMemoizer.clearKeys(
         `${workspaceId}-`,
         async (dataSource) => {
-          try {
-            await dataSource.destroy();
-          } catch (error) {
-            // Ignore known race-condition errors to prevent noise during shutdown
-            if (
-              error.message === 'Called end on pool more than once' ||
-              error.message?.includes(
-                'pool is draining and cannot accommodate new clients',
-              )
-            ) {
-              this.logger.debug(
-                `Ignoring pool error during cleanup: ${error.message}`,
-              );
-
-              return;
-            }
-
-            // Re-throw unexpected errors so they are handled by the outer catch
-            throw error;
-          }
+          await this.safelyDestroyDataSource(dataSource);
         },
       );
     } catch (error) {
