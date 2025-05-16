@@ -46,7 +46,12 @@ export const useModal = () => {
             customHotkeyScope.customScopes,
           );
         } else {
-          setHotkeyScopeAndMemorizePreviousScope(ModalHotkeyScope.ModalFocus);
+          setHotkeyScopeAndMemorizePreviousScope(ModalHotkeyScope.ModalFocus, {
+            goto: false,
+            commandMenu: false,
+            commandMenuOpen: false,
+            keyboardShortcutMenu: false,
+          });
         }
       },
     [setHotkeyScopeAndMemorizePreviousScope],
