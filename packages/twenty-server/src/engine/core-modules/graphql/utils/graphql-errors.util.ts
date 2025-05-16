@@ -208,7 +208,6 @@ export const convertGraphQLErrorToBaseGraphQLError = (
   let errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
 
   if (httpStatus && typeof httpStatus === 'number') {
-    // Map HTTP status codes to ErrorCodes
     switch (httpStatus) {
       case 400:
         errorCode = ErrorCode.BAD_USER_INPUT;
@@ -241,9 +240,6 @@ export const convertGraphQLErrorToBaseGraphQLError = (
           errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
         }
     }
-  } else if (error.extensions?.code) {
-    // If error already has a code in extensions, use that
-    errorCode = error.extensions.code as ErrorCode;
   }
 
   return new BaseGraphQLError(error.message, errorCode, error.extensions);
