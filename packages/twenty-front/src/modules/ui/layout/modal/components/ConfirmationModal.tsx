@@ -113,7 +113,6 @@ export const ConfirmationModal = ({
         <StyledConfirmationModal
           modalId={modalId}
           onClose={() => {
-            closeModal(modalId);
             onClose?.();
           }}
           onEnter={handleEnter}
