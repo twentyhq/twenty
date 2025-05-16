@@ -103,6 +103,6 @@ export class FileService {
       },
     });
 
-    return `${toFolderPath}/${toFilename}`;
+    return `${subFolder}/${toFilename}`;
   }
 }
