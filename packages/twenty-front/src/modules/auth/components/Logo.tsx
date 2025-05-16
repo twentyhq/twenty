@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { getImageAbsoluteURI } from 'twenty-shared/utils';
+import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
+import { Avatar } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useRedirectToDefaultDomain } from '~/modules/domain-manager/hooks/useRedirectToDefaultDomain';
@@ -9,6 +10,7 @@ import { AppPath } from '~/modules/types/AppPath';
 type LogoProps = {
   primaryLogo?: string | null;
   secondaryLogo?: string | null;
+  placeholder?: string | null;
 };
 
 const StyledContainer = styled.div`
@@ -47,23 +49,27 @@ const StyledPrimaryLogo = styled.div<{ src: string }>`
   width: 100%;
 `;
 
-export const Logo = (props: LogoProps) => {
+export const Logo = ({
+  primaryLogo,
+  secondaryLogo,
+  placeholder,
+}: LogoProps) => {
   const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
   const defaultPrimaryLogoUrl = `${window.location.origin}/images/icons/android/android-launchericon-192-192.png`;
 
   const primaryLogoUrl = getImageAbsoluteURI({
-    imageUrl: props.primaryLogo ?? defaultPrimaryLogoUrl,
+    imageUrl: primaryLogo ?? defaultPrimaryLogoUrl,
     baseUrl: REACT_APP_SERVER_BASE_URL,
   });
 
-  const secondaryLogoUrl = isNonEmptyString(props.secondaryLogo)
+  const secondaryLogoUrl = isNonEmptyString(secondaryLogo)
     ? getImageAbsoluteURI({
-        imageUrl: props.secondaryLogo,
+        imageUrl: secondaryLogo,
         baseUrl: REACT_APP_SERVER_BASE_URL,
       })
     : null;
 
-  const isUsingDefaultLogo = !props.primaryLogo;
+  const isUsingDefaultLogo = !isDefined(primaryLogo);
 
   return (
     <StyledContainer>
@@ -72,15 +78,26 @@ export const Logo = (props: LogoProps) => {
           to={AppPath.SignInUp}
           onClick={redirectToDefaultDomain}
         >
-          <StyledPrimaryLogo src={primaryLogoUrl ?? ''} />
+          <StyledPrimaryLogo src={primaryLogoUrl} />
         </UndecoratedLink>
       ) : (
-        <StyledPrimaryLogo src={primaryLogoUrl ?? ''} />
+        <StyledPrimaryLogo src={primaryLogoUrl} />
       )}
-      {secondaryLogoUrl && (
+      {isDefined(secondaryLogoUrl) ? (
         <StyledSecondaryLogoContainer>
           <StyledSecondaryLogo src={secondaryLogoUrl} />
         </StyledSecondaryLogoContainer>
+      ) : (
+        isDefined(placeholder) && (
+          <StyledSecondaryLogoContainer>
+            <Avatar
+              size="lg"
+              placeholder={placeholder}
+              type="squared"
+              placeholderColorSeed={placeholder}
+            />
+          </StyledSecondaryLogoContainer>
+        )
       )}
     </StyledContainer>
   );
