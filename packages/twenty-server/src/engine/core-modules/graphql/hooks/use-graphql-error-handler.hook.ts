@@ -86,10 +86,8 @@ export const useGraphQLErrorHandlerHook = <
 
             // Step 1: Process errors - extract original errors and convert to BaseGraphQLError
             const processedErrors = result.errors.map((error) => {
-              // Get the original error if available
               const originalError = error.originalError || error;
 
-              // Merge extensions from both error and originalError
               if (error.extensions && originalError !== error) {
                 originalError.extensions = {
                   ...error.extensions,
@@ -97,7 +95,6 @@ export const useGraphQLErrorHandlerHook = <
                 };
               }
 
-              // Convert to BaseGraphQLError if it's a GraphQLError
               if (
                 originalError instanceof GraphQLError &&
                 !(originalError instanceof BaseGraphQLError)
