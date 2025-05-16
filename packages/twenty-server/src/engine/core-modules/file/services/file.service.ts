@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import { basename, dirname } from 'path';
 import { Stream } from 'stream';
+
+import { v4 as uuidV4 } from 'uuid';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -73,5 +76,33 @@ export class FileService {
     return await this.fileStorageService.delete({
       folderPath: workspaceFolderPath,
     });
+  }
+
+  async copyFileToNewWorkspace(
+    fromWorkspaceId: string,
+    fromPath: string,
+    toWorkspaceId: string,
+  ) {
+    const subFolder = dirname(fromPath);
+    const fromFolderPath = `workspace-${fromWorkspaceId}/${subFolder}`;
+    const toFolderPath = `workspace-${toWorkspaceId}/${subFolder}`;
+    const fromFilename = basename(fromPath);
+
+    const ext = fromFilename.split('.')?.[1];
+    const id = uuidV4();
+    const toFilename = `${id}${ext ? `.${ext}` : ''}`;
+
+    await this.fileStorageService.copy({
+      from: {
+        folderPath: fromFolderPath,
+        filename: fromFilename,
+      },
+      to: {
+        folderPath: toFolderPath,
+        filename: toFilename,
+      },
+    });
+
+    return `${toFolderPath}/${toFilename}`;
   }
 }

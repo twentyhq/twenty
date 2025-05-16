@@ -4,9 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 import {
@@ -15,13 +16,14 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   PermissionsException,
@@ -42,21 +44,40 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly userRepository: Repository<User>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly dataSourceService: DataSourceService,
-    private readonly typeORMService: TypeORMService,
+
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly domainManagerService: DomainManagerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly userRoleService: UserRoleService,
+    private readonly fileUploadService: FileUploadService,
+    private readonly fileService: FileService,
   ) {
     super(userWorkspaceRepository);
   }
 
-  async create(userId: string, workspaceId: string): Promise<UserWorkspace> {
+  async create({
+    userId,
+    workspaceId,
+    isExistingUser,
+    pictureUrl,
+  }: {
+    userId: string;
+    workspaceId: string;
+    isExistingUser: boolean;
+    pictureUrl?: string;
+  }): Promise<UserWorkspace> {
+    const defaultAvatarUrl = await this.computeDefaultAvatarUrl(
+      userId,
+      workspaceId,
+      isExistingUser,
+      pictureUrl,
+    );
+
     const userWorkspace = this.userWorkspaceRepository.create({
       userId,
       workspaceId,
+      defaultAvatarUrl,
     });
 
     this.workspaceEventEmitter.emitCustomBatchEvent(
@@ -78,6 +99,13 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
         },
       );
 
+    const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
+      where: {
+        userId: user.id,
+        workspaceId,
+      },
+    });
+
     await workspaceMemberRepository.insert({
       name: {
         firstName: user.firstName,
@@ -86,7 +114,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       colorScheme: 'System',
       userId: user.id,
       userEmail: user.email,
-      avatarUrl: user.defaultAvatarUrl ?? '',
+      avatarUrl: userWorkspace.defaultAvatarUrl ?? '',
       locale: (user.locale ?? SOURCE_LOCALE) as keyof typeof APP_LOCALES,
     });
 
@@ -133,7 +161,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     );
 
     if (!userWorkspace) {
-      userWorkspace = await this.create(user.id, workspace.id);
+      userWorkspace = await this.create({
+        userId: user.id,
+        workspaceId: workspace.id,
+        isExistingUser: true,
+      });
 
       await this.createWorkspaceMember(workspace.id, user);
 
@@ -306,5 +338,42 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     }
 
     return workspaceMember;
+  }
+
+  private async computeDefaultAvatarUrl(
+    userId: string,
+    workspaceId: string,
+    isExistingUser: boolean,
+    pictureUrl?: string,
+  ) {
+    if (isExistingUser) {
+      const userWorkspace = await this.userWorkspaceRepository.findOne({
+        where: {
+          userId,
+          defaultAvatarUrl: Not(IsNull()),
+        },
+        order: {
+          createdAt: 'ASC',
+        },
+      });
+
+      if (!isDefined(userWorkspace?.defaultAvatarUrl)) return;
+
+      return await this.fileService.copyFileToNewWorkspace(
+        userWorkspace.workspaceId,
+        userWorkspace.defaultAvatarUrl,
+        workspaceId,
+      );
+    } else {
+      if (!isDefined(pictureUrl)) return;
+
+      const { paths } = await this.fileUploadService.uploadImageFromUrl({
+        imageUrl: pictureUrl,
+        fileFolder: FileFolder.ProfilePicture,
+        workspaceId,
+      });
+
+      return paths[0];
+    }
   }
 }
