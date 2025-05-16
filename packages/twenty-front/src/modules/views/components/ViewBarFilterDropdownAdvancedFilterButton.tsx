@@ -22,12 +22,26 @@ import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Pill } from 'twenty-ui/components';
 import { IconFilter } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem, StyledMenuItemBase } from 'twenty-ui/navigation';
 import { v4 } from 'uuid';
 
-const StyledPill = styled(Pill)`
-  background: ${({ theme }) => theme.color.blueAccent10};
-  color: ${({ theme }) => theme.color.blue};
+export const StyledContainer = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: ${({ theme }) => theme.spacing(1)};
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+`;
+
+export const StyledMenuItemSelect = styled(StyledMenuItemBase)`
+  &:hover {
+    background: ${({ theme }) => theme.background.transparent.light};
+  }
+`;
+
+export const StyledPill = styled(Pill)`
+  background: ${({ theme }) => theme.color.greenAccent10};
+  color: ${({ theme }) => theme.color.green};
 `;
 
 export const ViewBarFilterDropdownAdvancedFilterButton = () => {

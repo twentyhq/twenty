@@ -6,7 +6,7 @@ import React from 'react';
 export type IconButtonSize = 'medium' | 'small';
 export type IconButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
 export type IconButtonVariant = 'primary' | 'secondary' | 'tertiary';
-export type IconButtonAccent = 'default' | 'blue' | 'danger';
+export type IconButtonAccent = 'default' | 'blue' | 'danger' | 'green';
 
 export type IconButtonProps = {
   className?: string;
@@ -81,6 +81,32 @@ const StyledButton = styled.button<
                     }
                     &:active {
                       background: ${theme.color.blue60};
+                    }
+                  `}
+            `;
+          case 'green':
+            return css`
+              background: ${theme.color.green};
+              border-color: ${!disabled
+                ? focus
+                  ? theme.color.green
+                  : theme.background.transparent.light
+                : 'transparent'};
+              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+              box-shadow: ${!disabled && focus
+                ? `0 0 0 3px ${theme.accent.tertiary}`
+                : 'none'};
+              color: ${theme.grayScale.gray0};
+              opacity: ${disabled ? 0.24 : 1};
+
+              ${disabled
+                ? ''
+                : css`
+                    &:hover {
+                      background: ${theme.color.green50};
+                    }
+                    &:active {
+                      background: ${theme.color.green60};
                     }
                   `}
             `;
@@ -162,6 +188,34 @@ const StyledButton = styled.button<
                 ? `0 0 0 3px ${theme.accent.tertiary}`
                 : 'none'};
               color: ${!disabled ? theme.color.blue : theme.accent.accent4060};
+              &:hover {
+                background: ${!disabled
+                  ? theme.accent.tertiary
+                  : 'transparent'};
+              }
+              &:active {
+                background: ${!disabled
+                  ? theme.accent.secondary
+                  : 'transparent'};
+              }
+            `;
+          case 'green':
+            return css`
+              background: ${focus
+                ? theme.background.transparent.primary
+                : 'transparent'};
+              border-color: ${variant === 'secondary'
+                ? !disabled
+                  ? theme.color.green
+                  : theme.color.green20
+                : focus
+                  ? theme.color.green
+                  : 'transparent'};
+              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+              box-shadow: ${!disabled && focus
+                ? `0 0 0 3px ${theme.accent.tertiary}`
+                : 'none'};
+              color: ${!disabled ? theme.color.green : theme.accent.accent4060};
               &:hover {
                 background: ${!disabled
                   ? theme.accent.tertiary

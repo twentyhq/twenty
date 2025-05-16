@@ -12,26 +12,37 @@
     <link rel="apple-touch-icon" href="/images/icons/ios/192.png" />
     <link rel="manifest" href="/manifest.json" />
 
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="A modern open-source CRM" />
-    <meta
-      property="og:image"
-      content="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/social-card.png"
-    />
-    <meta property="og:description" content="A modern open-source CRM" />
-    <meta property="og:title" content="InsurOS" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:image"
-      content="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/social-card.png"
-    />
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://insuros.ca/" />
 
-    <meta name="twitter:description" content="A modern open-source CRM" />
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- SEO Meta Tags -->
+    <meta name="theme-color" content="#00A86B" />
+    <meta name="description" content="Modern Insurance Operating System" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://insuros.ca/" />
+    <meta property="og:title" content="InsurOS" />
+    <meta property="og:description" content="Modern Insurance Operating System" />
+    <meta property="og:image" content="https://raw.githubusercontent.com/insuros/twenty/main/docs/static/img/social-card.png" />
+    <meta property="og:site_name" content="InsurOS" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="InsurOS" />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
-    />
+    <meta name="twitter:description" content="Modern Insurance Operating System" />
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/insuros/twenty/main/docs/static/img/social-card.png" />
+    <!-- Optional: Add your Twitter handle -->
+    <!-- <meta name="twitter:site" content="@yourhandle" /> -->
+    <!-- <meta name="twitter:creator" content="@yourhandle" /> -->
+
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" />
 
     <title>InsurOS</title>
     <!-- BEGIN: InsurOS Config -->
@@ -46,7 +57,6 @@
     <script type="module">
       const disableInputAutoZoom = () => {
         const viewportMetadata = document.querySelector('meta[name=viewport]');
-
         if (viewportMetadata !== null) {
           viewportMetadata.setAttribute(
             'content',
@@ -54,7 +64,6 @@
           );
         }
       };
-
       const isIOS = /iPad|iPhone/.test(navigator.userAgent);
       if (isIOS) {
         disableInputAutoZoom();
