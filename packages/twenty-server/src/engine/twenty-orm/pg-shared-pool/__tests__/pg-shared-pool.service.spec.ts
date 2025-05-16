@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Pool } from 'pg';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { PgPoolSharedService } from 'src/engine/twenty-orm/services/pg-shared-pool.service';
+import { PgPoolSharedService } from 'src/engine/twenty-orm/pg-shared-pool/pg-shared-pool.service';
 
 // Define config keys to avoid 'any' type index errors
 type ConfigKey =
