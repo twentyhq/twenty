@@ -21,6 +21,7 @@ import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
 import { ResetCalendarChannelService } from 'src/engine/core-modules/auth/services/reset-calendar-channel.service';
 import { ResetMessageChannelService } from 'src/engine/core-modules/auth/services/reset-message-channel.service';
+import { ResetMessageFolderService } from 'src/engine/core-modules/auth/services/reset-message-folder.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
@@ -125,6 +126,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     // TODO: Move these calendar, message, and connected account services to the business modules once possible
     ResetMessageChannelService,
     ResetCalendarChannelService,
+    ResetMessageFolderService,
     CreateMessageChannelService,
     CreateCalendarChannelService,
     CreateMessageFolderService,
