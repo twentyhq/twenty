@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { isDefined } from 'class-validator';
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { findOneOperation } from 'test/integration/graphql/utils/find-one-operation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -7,24 +7,41 @@ import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
+import { EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 // faker.seed(42);
 
+type Option = {
+  label: string;
+  value: string;
+  color: string;
+  position: number;
+  id: string;
+};
+
+const generateOption = (index: number) => ({
+  label: `Option ${index}`,
+  value: `option${index}`,
+  color: 'green',
+  position: index,
+  id: faker.string.uuid()
+})
+const generateOptions = (length: number) => Array.from({ length }, (_value, index) => generateOption(index));
+const updateOption = ({ value, label, ...option }: Option) => ({
+  ...option,
+  value: `${value}_${faker.lorem.word().toLocaleUpperCase()}`,
+  label: `${label} ${faker.lorem.word()}`,
+});
+
+const ALL_OPTIONS = generateOptions(10);
+
+const isEven = (_value: unknown, index: number) => index % 2 === 0;
 describe('updateOne', () => {
   describe('FieldMetadataService Enum Default Value Validation', () => {
     let idToDelete: string;
 
-    afterEach(async () => {
-      if (isDefined(idToDelete)) {
-        await deleteOneObjectMetadata({
-          input: { idToDelete: idToDelete },
-        });
-      }
-    });
-
-    it('should throw an error if the default value is not in the options', async () => {
+    const createObjectSelectFieldAndView = async (options: Option[]) => {
       const singular = faker.lorem.words();
       const plural = singular + faker.lorem.word();
       const {
@@ -45,13 +62,6 @@ describe('updateOne', () => {
 
       idToDelete = createOneObject.id;
 
-      const allOptions = Array.from({ length: 10 }, (_value, index) => ({
-        label: `Option ${index}`,
-        value: `option${index}`,
-        color: 'green',
-        position: index + 1,
-      }));
-
       const {
         data: { createOneField },
       } = await createOneFieldMetadata({
@@ -61,7 +71,7 @@ describe('updateOne', () => {
           name: 'testName',
           label: 'Test name',
           isLabelSyncedWithName: true,
-          options: allOptions,
+          options,
         },
         gqlFields: `
         id
@@ -84,82 +94,109 @@ describe('updateOne', () => {
         },
       });
 
-      const viewFilterId = faker.string.uuid();
-      const {
-        data: { createOneResponse: createOneViewFilter },
-      } = await createOneOperation<{
-        id: string;
-        viewId: string;
-        fieldMetadataId: string;
-        operand: string;
-        value: string;
-        displayValue: string;
-      }>({
-        objectMetadataSingularName: 'viewFilter',
-        input: {
-          id: viewFilterId,
-          viewId: createOneView.id,
-          fieldMetadataId: createOneField.id,
-          operand: 'is',
-          value: JSON.stringify(allOptions.map(({ label }) => label)),
-          displayValue: `${allOptions.length} options`,
+      return { createOneObject, createOneField, createOneView };
+    };
+
+    afterEach(async () => {
+      if (isDefined(idToDelete)) {
+        await deleteOneObjectMetadata({
+          input: { idToDelete: idToDelete },
+        });
+      }
+    });
+
+    const testCases: EachTestingContext<{
+      initial: Option[];
+      updated: Option[];
+      expected?: null;
+    }>[] = [
+      // {
+      //   title:
+      //     'should delete related view filter if all select field options got deleted',
+      //   context: {
+      //     initial: ALL_OPTIONS,
+      //     updated: generateOptions(3),
+      //     expected: null,
+      //   },
+      // },
+      {
+        title: 'should update related view filter label',
+        context: {
+          initial: ALL_OPTIONS,
+          updated: ALL_OPTIONS.map((option, index) =>
+            isEven(option, index) ? updateOption(option) : option,
+          ),
         },
-      });
+      },
+    ];
 
-      console.log(createOneViewFilter);
+    test.each(testCases)(
+      '$title',
+      async ({ context: { expected, initial, updated } }) => {
+        const { createOneField, createOneView } =
+          await createObjectSelectFieldAndView(ALL_OPTIONS);
 
-      const updatedOptions = createOneField.options.map(
-        (
-          option: FieldMetadataComplexOption,
-          index: number,
-        ): FieldMetadataComplexOption => {
-          if (index % 2 === 0) {
-            const { value, label, ...rest } = option;
-            return {
-              ...rest,
-              value: `${value}_UPDATED`,
-              label: `${label} updated`,
-            };
-          }
-          return option;
-        },
-      );
-
-      await updateOneFieldMetadata({
-        input: {
-          idToUpdate: createOneField.id,
-          updatePayload: {
-            options: updatedOptions,
+        const {
+          data: { createOneResponse: createOneViewFilter },
+        } = await createOneOperation<{
+          id: string;
+          viewId: string;
+          fieldMetadataId: string;
+          operand: string;
+          value: string;
+          displayValue: string;
+        }>({
+          objectMetadataSingularName: 'viewFilter',
+          input: {
+            id: faker.string.uuid(),
+            viewId: createOneView.id,
+            fieldMetadataId: createOneField.id,
+            operand: 'is',
+            value: JSON.stringify(initial.map(({ label }) => label)),
+            displayValue: `${initial.length} options`,
           },
-        },
-        gqlFields: `
+        });
+
+        console.log({initial, updated})
+        await updateOneFieldMetadata({
+          input: {
+            idToUpdate: createOneField.id,
+            updatePayload: {
+              options: updated,
+            },
+          },
+          gqlFields: `
           id
           options
         `,
-      });
+        });
 
-      const {
-        data: {
-          findResponse: { id, ...findOneViewFilter },
-        },
-      } = await findOneOperation({
-        gqlFields: `
+        const {
+          data: { findResponse },
+          errors,
+        } = await findOneOperation({
+          gqlFields: `
         id
         displayValue
         value
         `,
-        objectMetadataSingularName: 'viewFilter',
-        filter: {
-          id: { eq: createOneViewFilter.id },
-        },
-      });
+          objectMetadataSingularName: 'viewFilter',
+          filter: {
+            id: { eq: createOneViewFilter.id },
+          },
+        });
 
-      expect(findOneViewFilter).toMatchInlineSnapshot(`
-{
-  "displayValue": "Option 0 updated,Option 1,Option 2 updated,Option 3,Option 4 updated,Option 5,Option 6 updated,Option 7,Option 8 updated,Option 9",
-  "value": "["Option 0 updated","Option 1","Option 2 updated","Option 3","Option 4 updated","Option 5","Option 6 updated","Option 7","Option 8 updated","Option 9"]",
-}
-`);
-    });
+        expect(errors).toMatchSnapshot();
+
+        if (expected !== undefined) {
+          expect(findResponse).toBe(expected);
+          return;
+        }
+
+        expect(findResponse).toMatchSnapshot({
+          id: createOneViewFilter.id,
+        });
+      },
+    );
   });
 });

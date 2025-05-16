@@ -259,11 +259,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         isSelectFieldMetadata(existingFieldMetadata)
       ) {
         // TODO REFACTOR MERGE BOTH FUNCTION
-        await this.fieldMetadataRelatedRecordsService.updateRelatedViewGroups(
-          existingFieldMetadata,
-          updatedFieldMetadata,
-        );
-
+        // await this.fieldMetadataRelatedRecordsService.updateRelatedViewGroups(
+        //   existingFieldMetadata,
+        //   updatedFieldMetadata,
+        // );
         await this.fieldMetadataRelatedRecordsService.updateRelatedViewFilters(
           existingFieldMetadata,
           updatedFieldMetadata,
