@@ -143,7 +143,7 @@ export const CancelButtonClick: Story = {
     await canvas.findByText('Cancel Button Test');
 
     const cancelButton = await canvas.findByRole('button', {
-      name: 'Cancel',
+      name: /Cancel/,
     });
     await userEvent.click(cancelButton);
 
@@ -167,7 +167,7 @@ export const ConfirmButtonClick: Story = {
     await canvas.findByText('Confirm Button Test');
 
     const confirmButton = await canvas.findByRole('button', {
-      name: 'Confirm',
+      name: /Confirm/,
     });
 
     await userEvent.click(confirmButton);
