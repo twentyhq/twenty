@@ -4,11 +4,11 @@ exports[`calendarEventsResolver (e2e) should find many calendarEvents 1`] = `
 {
   "createdAt": Any<String>,
   "deletedAt": null,
-  "description": Any<String>,
+  "description": "Discuss project progress",
   "endsAt": Any<String>,
   "id": "86083141-1c0e-494c-a1b6-85b1c6fefaa5",
   "startsAt": Any<String>,
-  "title": Any<String>,
+  "title": "Meeting with Christoph",
   "updatedAt": Any<String>,
 }
 `;
@@ -17,11 +17,11 @@ exports[`calendarEventsResolver (e2e) should find one calendarEvent 1`] = `
 {
   "createdAt": Any<String>,
   "deletedAt": null,
-  "description": Any<String>,
+  "description": "Discuss project progress",
   "endsAt": Any<String>,
   "id": "86083141-1c0e-494c-a1b6-85b1c6fefaa5",
   "startsAt": Any<String>,
-  "title": Any<String>,
+  "title": "Meeting with Christoph",
   "updatedAt": Any<String>,
 }
 `;

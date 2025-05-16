@@ -22,17 +22,18 @@ describe('messagesResolver (e2e)', () => {
 
     const edges = data.edges;
 
-    if (edges.length > 0) {
-      const message = edges[0].node;
+    expect(edges.length).toEqual(3);
 
-      expect(message).toMatchSnapshot({
-        id: expect.any(String),
-        subject: expect.any(String),
-        text: expect.any(String),
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
-      });
-    }
+    const message1 = edges[0].node;
+
+    expect(message1).toMatchSnapshot({
+      createdAt: expect.any(String),
+      deletedAt: null,
+      id: DEV_SEED_MESSAGE_IDS.MESSAGE_2,
+      text: 'Good Morning,\n I am writing to inquire about information. Could you please provide me with details regarding this topic? \n Your assistance in this matter would be greatly appreciated. Thank you in advance for your prompt response. \n Best regards,Tim',
+      subject: 'Inquiry Regarding Topic',
+      updatedAt: expect.any(String),
+    });
   });
 
   it('should find one message', async () => {
@@ -48,10 +49,11 @@ describe('messagesResolver (e2e)', () => {
 
     expect(data).toBeDefined();
     expect(data).toMatchSnapshot({
-      id: DEV_SEED_MESSAGE_IDS.MESSAGE_1,
-      subject: expect.any(String),
-      text: expect.any(String),
       createdAt: expect.any(String),
+      deletedAt: null,
+      id: DEV_SEED_MESSAGE_IDS.MESSAGE_1,
+      text: 'Hello, \n I hope this email finds you well. I am writing to request a meeting. I believe it would be beneficial for both parties to collaborate and explore potential opportunities. Would you be available for a meeting sometime next week? Please let me know your availability, and I will arrange a suitable time. \n Looking forward to your response.\n Best regards',
+      subject: 'Meeting Request',
       updatedAt: expect.any(String),
     });
   });

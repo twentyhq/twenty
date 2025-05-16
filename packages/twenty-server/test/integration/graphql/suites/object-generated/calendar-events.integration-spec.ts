@@ -22,19 +22,20 @@ describe('calendarEventsResolver (e2e)', () => {
 
     const edges = data.edges;
 
-    if (edges.length > 0) {
-      const calendarEvent = edges[0].node;
+    expect(edges.length).toEqual(1);
 
-      expect(calendarEvent).toMatchSnapshot({
-        id: DEV_SEED_CALENDAR_EVENT_IDS.CALENDAR_EVENT_1,
-        title: expect.any(String),
-        description: expect.any(String),
-        endsAt: expect.any(String),
-        startsAt: expect.any(String),
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
-      });
-    }
+    const calendarEvent = edges[0].node;
+
+    expect(calendarEvent).toMatchSnapshot({
+      id: DEV_SEED_CALENDAR_EVENT_IDS.CALENDAR_EVENT_1,
+      createdAt: expect.any(String),
+      deletedAt: null,
+      description: 'Discuss project progress',
+      endsAt: expect.any(String),
+      startsAt: expect.any(String),
+      title: 'Meeting with Christoph',
+      updatedAt: expect.any(String),
+    });
   });
 
   it('should find one calendarEvent', async () => {
@@ -50,12 +51,12 @@ describe('calendarEventsResolver (e2e)', () => {
 
     expect(data).toBeDefined();
     expect(data).toMatchSnapshot({
-      id: DEV_SEED_CALENDAR_EVENT_IDS.CALENDAR_EVENT_1,
-      title: expect.any(String),
-      description: expect.any(String),
+      createdAt: expect.any(String),
+      deletedAt: null,
+      description: 'Discuss project progress',
       endsAt: expect.any(String),
       startsAt: expect.any(String),
-      createdAt: expect.any(String),
+      title: 'Meeting with Christoph',
       updatedAt: expect.any(String),
     });
   });
