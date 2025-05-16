@@ -13,7 +13,7 @@ export const RootDecorator: Decorator = (Story, context) => {
   const disableHotkeyInitialization = parameters.disableHotkeyInitialization;
 
   return (
-    <RecoilRoot>
+    <RecoilRoot initializeState={parameters.initializeState}>
       <ApolloProvider client={mockedApolloClient}>
         <ApolloMetadataClientMockedProvider>
           {!disableHotkeyInitialization && (

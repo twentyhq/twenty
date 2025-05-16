@@ -41,7 +41,10 @@ const StandardContent = ({
   return (
     <Modal.Content isVerticalCentered isHorizontalCentered>
       <AnimatedEaseIn>
-        <Logo secondaryLogo={workspacePublicData?.logo} />
+        <Logo
+          secondaryLogo={workspacePublicData?.logo}
+          placeholder={workspacePublicData?.displayName}
+        />
       </AnimatedEaseIn>
       <Title animate>{title}</Title>
       {signInUpForm}
