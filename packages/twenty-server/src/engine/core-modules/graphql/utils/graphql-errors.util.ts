@@ -196,3 +196,51 @@ export class InternalServerError extends BaseGraphQLError {
     Object.defineProperty(this, 'name', { value: 'InternalServerError' });
   }
 }
+
+/**
+ * Converts a GraphQLError to a BaseGraphQLError with the appropriate ErrorCode
+ * based on HTTP status code if present in extensions.
+ */
+export const convertGraphQLErrorToBaseGraphQLError = (
+  error: GraphQLError,
+): BaseGraphQLError => {
+  const httpStatus = error.extensions?.http?.status;
+  let errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+
+  if (httpStatus && typeof httpStatus === 'number') {
+    switch (httpStatus) {
+      case 400:
+        errorCode = ErrorCode.BAD_USER_INPUT;
+        break;
+      case 401:
+        errorCode = ErrorCode.UNAUTHENTICATED;
+        break;
+      case 403:
+        errorCode = ErrorCode.FORBIDDEN;
+        break;
+      case 404:
+        errorCode = ErrorCode.NOT_FOUND;
+        break;
+      case 405:
+        errorCode = ErrorCode.METHOD_NOT_ALLOWED;
+        break;
+      case 408:
+      case 504:
+        errorCode = ErrorCode.TIMEOUT;
+        break;
+      case 409:
+        errorCode = ErrorCode.CONFLICT;
+        break;
+      default:
+        if (httpStatus >= 400 && httpStatus < 500) {
+          // Other 4xx errors
+          errorCode = ErrorCode.BAD_USER_INPUT;
+        } else {
+          // 5xx errors default to internal server error
+          errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+        }
+    }
+  }
+
+  return new BaseGraphQLError(error.message, errorCode, error.extensions);
+};
