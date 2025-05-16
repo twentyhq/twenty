@@ -142,9 +142,9 @@ export const CancelButtonClick: Story = {
 
     await canvas.findByText('Cancel Button Test');
 
-    const cancelButton = await canvas.findByTestId(
-      'confirmation-modal-cancel-button',
-    );
+    const cancelButton = await canvas.findByRole('button', {
+      name: 'Cancel',
+    });
     await userEvent.click(cancelButton);
 
     await waitFor(() => {
@@ -166,9 +166,10 @@ export const ConfirmButtonClick: Story = {
 
     await canvas.findByText('Confirm Button Test');
 
-    const confirmButton = await canvas.findByTestId(
-      'confirmation-modal-confirm-button',
-    );
+    const confirmButton = await canvas.findByRole('button', {
+      name: 'Confirm',
+    });
+
     await userEvent.click(confirmButton);
 
     await waitFor(() => {
