@@ -120,6 +120,9 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     RefreshTokenService,
     LoginTokenService,
     ResetPasswordService,
+    // So far, it's not possible to have controllers in business modules
+    // which forces us to have these services in the auth module
+    // TODO: Move these calendar, message, and connected account services to the business modules once possible
     ResetMessageChannelService,
     ResetCalendarChannelService,
     CreateMessageChannelService,
