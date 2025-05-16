@@ -143,7 +143,9 @@ export const CancelButtonClick: Story = {
     const closeMock = args.onClose as ReturnType<typeof fn>;
     closeMock.mockClear();
 
-    const cancelButton = canvas.getByTestId('confirmation-modal-cancel-button');
+    const cancelButton = await canvas.findByTestId(
+      'confirmation-modal-cancel-button',
+    );
     await userEvent.click(cancelButton);
 
     expect(closeMock).toHaveBeenCalledTimes(1);
@@ -166,7 +168,7 @@ export const ConfirmButtonClick: Story = {
     const confirmMock = args.onConfirmClick as ReturnType<typeof fn>;
     confirmMock.mockClear();
 
-    const confirmButton = canvas.getByTestId(
+    const confirmButton = await canvas.findByTestId(
       'confirmation-modal-confirm-button',
     );
     await userEvent.click(confirmButton);

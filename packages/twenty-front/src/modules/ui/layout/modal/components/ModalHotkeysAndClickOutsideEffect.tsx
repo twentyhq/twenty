@@ -47,7 +47,7 @@ export const ModalHotkeysAndClickOutsideEffect = ({
         onClose();
       }
     },
-    mode: ClickOutsideMode.comparePixels,
+    mode: ClickOutsideMode.compareHTMLRef,
   });
 
   return null;
