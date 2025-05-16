@@ -10,6 +10,7 @@ import { CreateMessageFolderService } from 'src/engine/core-modules/auth/service
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
 import { ResetCalendarChannelService } from 'src/engine/core-modules/auth/services/reset-calendar-channel.service';
 import { ResetMessageChannelService } from 'src/engine/core-modules/auth/services/reset-message-channel.service';
+import { ResetMessageFolderService } from 'src/engine/core-modules/auth/services/reset-message-folder.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
@@ -25,7 +26,6 @@ import { AccountsToReconnectService } from 'src/modules/connected-account/servic
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
-// Mock v4 uuid
 jest.mock('uuid', () => ({
   v4: jest.fn(() => 'mocked-uuid'),
 }));
@@ -35,7 +35,6 @@ describe('MicrosoftAPIsService', () => {
   let resetCalendarChannelService: ResetCalendarChannelService;
   let resetMessageChannelService: ResetMessageChannelService;
   let createMessageChannelService: CreateMessageChannelService;
-  let twentyORMGlobalManager: TwentyORMGlobalManager;
 
   const mockConnectedAccountRepository = {
     findOne: jest.fn(),
@@ -124,6 +123,12 @@ describe('MicrosoftAPIsService', () => {
           },
         },
         {
+          provide: ResetMessageFolderService,
+          useValue: {
+            resetMessageFolders: jest.fn(),
+          },
+        },
+        {
           provide: CreateConnectedAccountService,
           useValue: {
             createConnectedAccount: jest.fn(),
@@ -187,9 +192,6 @@ describe('MicrosoftAPIsService', () => {
     );
     createMessageChannelService = module.get<CreateMessageChannelService>(
       CreateMessageChannelService,
-    );
-    twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
-      TwentyORMGlobalManager,
     );
   });
 

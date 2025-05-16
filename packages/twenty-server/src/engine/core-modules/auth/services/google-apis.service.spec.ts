@@ -24,7 +24,6 @@ import { AccountsToReconnectService } from 'src/modules/connected-account/servic
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
-// Mock v4 uuid
 jest.mock('uuid', () => ({
   v4: jest.fn(() => 'mocked-uuid'),
 }));
@@ -34,7 +33,6 @@ describe('GoogleAPIsService', () => {
   let resetCalendarChannelService: ResetCalendarChannelService;
   let resetMessageChannelService: ResetMessageChannelService;
   let createMessageChannelService: CreateMessageChannelService;
-  let twentyORMGlobalManager: TwentyORMGlobalManager;
 
   const mockConnectedAccountRepository = {
     findOne: jest.fn(),
@@ -178,9 +176,6 @@ describe('GoogleAPIsService', () => {
     );
     createMessageChannelService = module.get<CreateMessageChannelService>(
       CreateMessageChannelService,
-    );
-    twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
-      TwentyORMGlobalManager,
     );
   });
 

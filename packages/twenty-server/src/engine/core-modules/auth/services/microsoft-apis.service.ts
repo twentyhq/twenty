@@ -11,6 +11,7 @@ import { CreateMessageChannelService } from 'src/engine/core-modules/auth/servic
 import { CreateMessageFolderService } from 'src/engine/core-modules/auth/services/create-message-folder.service';
 import { ResetCalendarChannelService } from 'src/engine/core-modules/auth/services/reset-calendar-channel.service';
 import { ResetMessageChannelService } from 'src/engine/core-modules/auth/services/reset-message-channel.service';
+import { ResetMessageFolderService } from 'src/engine/core-modules/auth/services/reset-message-folder.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
 import { getMicrosoftApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -51,6 +52,7 @@ export class MicrosoftAPIsService {
     private readonly calendarQueueService: MessageQueueService,
     private readonly accountsToReconnectService: AccountsToReconnectService,
     private readonly resetMessageChannelService: ResetMessageChannelService,
+    private readonly resetMessageFolderService: ResetMessageFolderService,
     private readonly resetCalendarChannelService: ResetCalendarChannelService,
     private readonly createMessageChannelService: CreateMessageChannelService,
     private readonly createCalendarChannelService: CreateCalendarChannelService,
@@ -187,6 +189,12 @@ export class MicrosoftAPIsService {
           );
 
           await this.resetMessageChannelService.resetMessageChannels({
+            workspaceId,
+            connectedAccountId: newOrExistingConnectedAccountId,
+            manager,
+          });
+
+          await this.resetMessageFolderService.resetMessageFolders({
             workspaceId,
             connectedAccountId: newOrExistingConnectedAccountId,
             manager,
