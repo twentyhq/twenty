@@ -1,26 +1,24 @@
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
-import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
-import { capitalize } from 'twenty-shared/utils';
 
-type CreateOneOperationArgs<T> = PerformMetadataQueryParams<T> & {
-  objectMetadataSingularName: string;
+type FindOneOperationArgs = Parameters<typeof findOneOperationFactory>[0] & {
+  expectToFail?: boolean;
 };
-export const createOneOperation = async <T = object>({
-  input,
+export const findOneOperation = async ({
   gqlFields = 'id',
   objectMetadataSingularName,
   expectToFail = false,
-}: CreateOneOperationArgs<T>): CommonResponseBody<{
-  createOneResponse: ObjectRecord;
+  filter,
+}: FindOneOperationArgs): CommonResponseBody<{
+  findResponse: ObjectRecord;
 }> => {
-  const graphqlOperation = createOneOperationFactory({
-    data: input as Object, // TODO default generic does not work
+  const graphqlOperation = findOneOperationFactory({
     objectMetadataSingularName,
     gqlFields,
+    filter,
   });
 
   const response = await makeGraphqlAPIRequest(graphqlOperation);
@@ -28,7 +26,7 @@ export const createOneOperation = async <T = object>({
   if (expectToFail) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage: 'Create one operation should have failed but did not',
+      errorMessage: 'Find one operation should have failed but did not',
     });
   }
 
@@ -36,10 +34,10 @@ export const createOneOperation = async <T = object>({
     console.log(response.body.errors);
   }
 
+  console.log(response.body.data);
   return {
     data: {
-      createOneResponse:
-        response.body.data[`create${capitalize(objectMetadataSingularName)}`],
+      findResponse: response.body.data[objectMetadataSingularName],
     },
     errors: response.body.errors,
   };
