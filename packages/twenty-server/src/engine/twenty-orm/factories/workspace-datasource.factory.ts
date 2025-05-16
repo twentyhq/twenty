@@ -58,6 +58,30 @@ export class WorkspaceDatasourceFactory {
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
   ) {}
 
+  private async safelyDestroyDataSource(
+    dataSource: WorkspaceDataSource,
+  ): Promise<void> {
+    try {
+      await dataSource.destroy();
+    } catch (error) {
+      // Ignore known race-condition errors to prevent noise during shutdown
+      if (
+        error.message === 'Called end on pool more than once' ||
+        error.message?.includes(
+          'pool is draining and cannot accommodate new clients',
+        )
+      ) {
+        this.logger.debug(
+          `Ignoring pool error during cleanup: ${error.message}`,
+        );
+
+        return;
+      }
+
+      throw error;
+    }
+  }
+
   public async create(
     workspaceId: string,
     workspaceMetadataVersion: number | null,
@@ -182,9 +206,8 @@ export class WorkspaceDatasourceFactory {
               extra: {
                 query_timeout: 10000,
                 // https://node-postgres.com/apis/pool
-                // TypeORM doesn't allow sharing connection pools bet
-                // So for now we keep a small pool open for longer
-                // for each workspace.
+                // TypeORM doesn't allow sharing connection pools between data sources
+                // So we keep a small pool open for longer if connection pooling patch isn't enabled
                 idleTimeoutMillis: ONE_HOUR_IN_MS,
                 max: 4,
                 allowExitOnIdle: true,
@@ -201,15 +224,7 @@ export class WorkspaceDatasourceFactory {
           return workspaceDataSource;
         },
         async (dataSource) => {
-          try {
-            await dataSource.destroy();
-          } catch (error) {
-            // Ignore error if pool has already been destroyed which is a common race condition case
-            if (error.message === 'Called end on pool more than once') {
-              return;
-            }
-            throw error;
-          }
+          await this.safelyDestroyDataSource(dataSource);
         },
       );
 
@@ -359,8 +374,18 @@ export class WorkspaceDatasourceFactory {
   }
 
   public async destroy(workspaceId: string) {
-    await this.promiseMemoizer.clearKeys(`${workspaceId}-`, (dataSource) => {
-      dataSource.destroy();
-    });
+    try {
+      await this.promiseMemoizer.clearKeys(
+        `${workspaceId}-`,
+        async (dataSource) => {
+          await this.safelyDestroyDataSource(dataSource);
+        },
+      );
+    } catch (error) {
+      // Log and swallow any errors during cleanup to prevent crashes
+      this.logger.warn(
+        `Error cleaning up datasources for workspace ${workspaceId}: ${error.message}`,
+      );
+    }
   }
 }
