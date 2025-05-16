@@ -260,12 +260,15 @@ export class QueryRunnerArgsFactory {
     const overrideFilter = (filterObject: ObjectRecordFilter) => {
       return Object.entries(filterObject).reduce((acc, [key, value]) => {
         if (key === 'and' || key === 'or') {
+          // @ts-expect-error legacy noImplicitAny
           acc[key] = value.map((nestedFilter: ObjectRecordFilter) =>
             overrideFilter(nestedFilter),
           );
         } else if (key === 'not') {
+          // @ts-expect-error legacy noImplicitAny
           acc[key] = overrideFilter(value);
         } else {
+          // @ts-expect-error legacy noImplicitAny
           acc[key] = this.transformFilterValueByType(
             key,
             value,

@@ -70,6 +70,7 @@ describe('Core REST API Find Many endpoint', () => {
 
     // Check that our test people are included in the results
     for (const personId of testPersonIds) {
+      // @ts-expect-error legacy noImplicitAny
       const person = people.find((p) => p.id === personId);
 
       expect(person).toBeDefined();
@@ -308,6 +309,7 @@ describe('Core REST API Find Many endpoint', () => {
 
     expect(person.company.people).toBeDefined();
 
+    // @ts-expect-error legacy noImplicitAny
     const depth2Person = person.company.people.find((p) => p.id === person.id);
 
     expect(depth2Person).toBeDefined();

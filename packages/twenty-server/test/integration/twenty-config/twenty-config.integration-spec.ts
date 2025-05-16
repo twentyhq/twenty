@@ -342,9 +342,11 @@ describe('TwentyConfig Integration', () => {
       );
 
       const allVariables = result.data.getConfigVariablesGrouped.groups.flatMap(
+        // @ts-expect-error legacy noImplicitAny
         (group) => group.variables,
       );
       const testVariable = allVariables.find(
+        // @ts-expect-error legacy noImplicitAny
         (variable) => variable.name === testKey,
       );
 

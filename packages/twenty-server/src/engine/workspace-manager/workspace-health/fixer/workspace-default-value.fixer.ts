@@ -134,6 +134,7 @@ export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<Workspace
             continue;
           }
 
+          // @ts-expect-error legacy noImplicitAny
           const value = currentDefaultValue[key];
 
           const newValue =

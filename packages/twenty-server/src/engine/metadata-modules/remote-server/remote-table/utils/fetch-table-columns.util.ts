@@ -16,6 +16,7 @@ export const fetchTableColumns = async (
     workspaceId,
   );
 
+  // @ts-expect-error legacy noImplicitAny
   return res.map((column) => ({
     columnName: column.column_name,
     dataType: column.data_type,

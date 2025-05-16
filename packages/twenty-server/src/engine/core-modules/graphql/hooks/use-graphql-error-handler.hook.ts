@@ -11,7 +11,7 @@ import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { generateGraphQLErrorFromError } from 'src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util';
 import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { shouldCaptureException } from 'src/engine/core-modules/graphql/utils/should-capture-exception.util';
+import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 
 const DEFAULT_EVENT_ID_KEY = 'exceptionEventId';
 const SCHEMA_VERSION_HEADER = 'x-schema-version';
@@ -54,6 +54,7 @@ export const useGraphQLErrorHandlerHook = <
     async onExecute({ args }) {
       const exceptionHandlerService = options.exceptionHandlerService;
       const rootOperation = args.document.definitions.find(
+        // @ts-expect-error legacy noImplicitAny
         (o) => o.kind === Kind.OPERATION_DEFINITION,
       ) as OperationDefinitionNode;
 

@@ -35,6 +35,7 @@ export class ViewService {
       );
 
     for (const viewId of viewsIds) {
+      // @ts-expect-error legacy noImplicitAny
       const position = positions?.[viewId];
       const newFieldInThisView = await viewFieldRepository.findBy({
         fieldMetadataId: fieldId,

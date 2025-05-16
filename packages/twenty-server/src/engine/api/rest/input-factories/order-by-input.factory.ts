@@ -69,11 +69,13 @@ export class OrderByInputFactory {
           if (Object.keys(fieldResult).length) {
             fieldResult = { [field]: fieldResult };
           } else {
+            // @ts-expect-error legacy noImplicitAny
             fieldResult[field] = itemDirection;
           }
         }, itemDirection);
 
       const resultFields = Object.keys(fieldResult).map((key) => ({
+        // @ts-expect-error legacy noImplicitAny
         [key]: fieldResult[key],
       }));
 
