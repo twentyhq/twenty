@@ -1,7 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { MemoryRouter } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
 
+import {
+  ComponentDecorator,
+  RecoilRootDecorator,
+  RouterDecorator,
+} from 'twenty-ui/testing';
 import { Logo } from '../Logo';
 
 const logoUrl = 'https://picsum.photos/192/192';
@@ -9,17 +12,7 @@ const logoUrl = 'https://picsum.photos/192/192';
 const meta: Meta<typeof Logo> = {
   title: 'Modules/Auth/Logo',
   component: Logo,
-  decorators: [
-    (Story) => (
-      <div style={{ padding: '24px' }}>
-        <RecoilRoot>
-          <MemoryRouter>
-            <Story />
-          </MemoryRouter>
-        </RecoilRoot>
-      </div>
-    ),
-  ],
+  decorators: [ComponentDecorator, RecoilRootDecorator, RouterDecorator],
 };
 
 export default meta;
