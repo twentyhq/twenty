@@ -13,7 +13,7 @@ import { Modal } from '../Modal';
 const initializeState = ({ set }: { set: (atom: any, value: any) => void }) => {
   set(
     isModalOpenedComponentState.atomFamily({
-      instanceId: 'confirmation-modal',
+      instanceId: 'modal-id',
     }),
     true,
   );
@@ -68,7 +68,7 @@ export const Default: Story = {
 
 export const CloseClosableModalOnClickOutside: Story = {
   args: {
-    modalId: 'click-outside-modal',
+    modalId: 'modal-id',
     size: 'medium',
     padding: 'medium',
     isClosable: true,
@@ -98,7 +98,7 @@ export const CloseClosableModalOnClickOutside: Story = {
 
 export const CloseClosableModalOnEscape: Story = {
   args: {
-    modalId: 'escape-key-modal',
+    modalId: 'modal-id',
     size: 'medium',
     padding: 'medium',
     isClosable: true,
