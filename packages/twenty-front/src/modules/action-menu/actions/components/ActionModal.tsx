@@ -40,17 +40,18 @@ export const ActionModal = ({
   const actionConfig = useContext(ActionConfigContext);
   const { actionMenuType } = useContext(ActionMenuContext);
 
+  const modalId = `${actionConfig?.key}-action-modal-${actionMenuType}`;
+
   const isModalOpened = useRecoilComponentValueV2(
     isModalOpenedComponentState,
-    `${actionConfig?.key}-action-modal-${actionMenuType}`,
+    modalId,
   );
 
   if (!actionConfig) {
     return null;
   }
 
-  const handleClick = () =>
-    openModal(`${actionConfig.key}-action-modal-${actionMenuType}`);
+  const handleClick = () => openModal(modalId);
 
   return (
     <>
@@ -58,7 +59,7 @@ export const ActionModal = ({
       {isModalOpened &&
         createPortal(
           <ConfirmationModal
-            modalId={`${actionConfig.key}-action-modal-${actionMenuType}`}
+            modalId={modalId}
             title={title}
             subtitle={subtitle}
             onConfirmClick={handleConfirmClick}

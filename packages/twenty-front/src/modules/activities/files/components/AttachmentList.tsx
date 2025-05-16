@@ -113,6 +113,8 @@ const StyledButtonContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
+export const PREVIEW_MODAL_ID = 'preview-modal';
+
 export const AttachmentList = ({
   targetableObject,
   title,
@@ -137,11 +139,11 @@ export const AttachmentList = ({
   const handlePreview = (attachment: Attachment) => {
     if (!isAttachmentPreviewEnabled) return;
     setPreviewedAttachment(attachment);
-    openModal('preview-modal');
+    openModal(PREVIEW_MODAL_ID);
   };
 
   const handleClosePreview = () => {
-    closeModal('preview-modal');
+    closeModal(PREVIEW_MODAL_ID);
     setPreviewedAttachment(null);
   };
 
@@ -184,7 +186,7 @@ export const AttachmentList = ({
       )}
       {previewedAttachment && isAttachmentPreviewEnabled && (
         <StyledModal
-          modalId={'preview-modal'}
+          modalId={PREVIEW_MODAL_ID}
           size="large"
           isClosable
           onClose={handleClosePreview}

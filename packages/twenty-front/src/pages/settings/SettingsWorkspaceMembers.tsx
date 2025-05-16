@@ -45,6 +45,10 @@ import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { useResendWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useResendWorkspaceInvitation';
 import { workspaceInvitationsState } from '../../modules/workspace-invitation/states/workspaceInvitationsStates';
+
+export const WORKSPACE_MEMBER_DELETION_MODAL_ID =
+  'workspace-member-deletion-modal';
+
 const StyledButtonContainer = styled.div`
   align-items: center;
   display: flex;
@@ -273,7 +277,7 @@ export const SettingsWorkspaceMembers = () => {
                         <StyledButtonContainer>
                           <IconButton
                             onClick={() => {
-                              openModal(`workspace-member-deletion-modal`);
+                              openModal(WORKSPACE_MEMBER_DELETION_MODAL_ID);
                               setWorkspaceMemberToDelete(workspaceMember.id);
                             }}
                             variant="tertiary"
@@ -371,7 +375,7 @@ export const SettingsWorkspaceMembers = () => {
         </Section>
       </SettingsPageContainer>
       <ConfirmationModal
-        modalId={`workspace-member-deletion-modal`}
+        modalId={WORKSPACE_MEMBER_DELETION_MODAL_ID}
         title={t`Account Deletion`}
         subtitle={
           <Trans>

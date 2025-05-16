@@ -28,6 +28,9 @@ import { SettingsCustomDomain } from '~/pages/settings/workspace/SettingsCustomD
 import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
+export const SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID =
+  'subdomain-change-confirmation-modal';
+
 export const SettingsDomain = () => {
   const navigate = useNavigateSettings();
   const { t } = useLingui();
@@ -198,7 +201,7 @@ export const SettingsDomain = () => {
       isDefined(values.subdomain) &&
       values.subdomain !== currentWorkspace.subdomain
     ) {
-      openModal(`subdomain-change-confirmation-modal`);
+      openModal(SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID);
       return;
     }
 
@@ -237,7 +240,7 @@ export const SettingsDomain = () => {
           </SettingsPageContainer>
         </SubMenuTopBarContainer>
         <ConfirmationModal
-          modalId={`subdomain-change-confirmation-modal`}
+          modalId={SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID}
           title={t`Change subdomain?`}
           subtitle={t`You're about to change your workspace subdomain. This action will log out all users.`}
           onConfirmClick={() => {

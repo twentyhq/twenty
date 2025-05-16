@@ -131,7 +131,7 @@ export const SettingsBilling = () => {
               Icon={IconCalendarEvent}
               title={t`Switch to yearly`}
               variant="secondary"
-              onClick={() => openModal(`switch-billing-interval-modal`)}
+              onClick={() => openModal(SWITCH_BILLING_INTERVAL_MODAL_ID)}
               disabled={!hasNotCanceledCurrentSubscription}
             />
           </Section>
