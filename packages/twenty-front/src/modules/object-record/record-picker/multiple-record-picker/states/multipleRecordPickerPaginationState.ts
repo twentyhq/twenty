@@ -4,7 +4,6 @@ import { createComponentStateV2 } from '@/ui/utilities/state/component-state/uti
 export type MultipleRecordPickerPaginationState = {
   currentOffset: number;
   hasMore: boolean;
-  pageSize: number;
   isLoadingMore: boolean;
   isLoadingInitial: boolean;
 };
@@ -15,7 +14,6 @@ export const multipleRecordPickerPaginationState =
     defaultValue: {
       currentOffset: 0,
       hasMore: true,
-      pageSize: 20,
       isLoadingMore: false,
       isLoadingInitial: true,
     },

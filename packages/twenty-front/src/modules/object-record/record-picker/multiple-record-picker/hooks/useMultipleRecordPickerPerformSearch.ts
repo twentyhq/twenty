@@ -1,4 +1,3 @@
-import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { search } from '@/command-menu/graphql/queries/search';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { usePerformCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/usePerformCombinedFindManyRecords';
@@ -13,6 +12,8 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { SearchRecord } from '~/generated-metadata/graphql';
+
+const MULTIPLE_RECORD_PICKER_PAGE_SIZE = 30;
 
 export const useMultipleRecordPickerPerformSearch = () => {
   const client = useApolloClient();
@@ -100,7 +101,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
             ({ recordId }) => recordId,
           ),
           offset: loadMore ? paginationState.currentOffset : 0,
-          limit: paginationState.pageSize,
+          limit: MULTIPLE_RECORD_PICKER_PAGE_SIZE,
         });
 
         const existingMorphItems = loadMore
@@ -335,10 +336,10 @@ export const useMultipleRecordPickerPerformSearch = () => {
 
         const hasMore =
           searchRecordsExcludingPickedRecords.length ===
-          paginationState.pageSize;
+          MULTIPLE_RECORD_PICKER_PAGE_SIZE;
         const newOffset = loadMore
-          ? paginationState.currentOffset + paginationState.pageSize
-          : paginationState.pageSize;
+          ? paginationState.currentOffset + MULTIPLE_RECORD_PICKER_PAGE_SIZE
+          : MULTIPLE_RECORD_PICKER_PAGE_SIZE;
 
         set(
           multipleRecordPickerPaginationState.atomFamily({
@@ -365,7 +366,7 @@ const performSearchQueries = async ({
   searchableObjectMetadataItems,
   pickedRecordIds,
   offset = 0,
-  limit = MAX_SEARCH_RESULTS,
+  limit = MULTIPLE_RECORD_PICKER_PAGE_SIZE,
 }: {
   client: ApolloClient<object>;
   searchFilter: string;

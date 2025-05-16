@@ -33,21 +33,6 @@ export const multipleRecordPickerHasMoreSelector = createComponentSelectorV2({
     },
 });
 
-export const multipleRecordPickerPageSizeSelector = createComponentSelectorV2({
-  key: 'multipleRecordPickerPageSizeSelector',
-  componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
-  get:
-    ({ instanceId }) =>
-    ({ get }) => {
-      const paginationState = get(
-        multipleRecordPickerPaginationState.atomFamily({
-          instanceId,
-        }),
-      );
-      return paginationState.pageSize;
-    },
-});
-
 export const multipleRecordPickerIsLoadingMoreSelector =
   createComponentSelectorV2({
     key: 'multipleRecordPickerIsLoadingMoreSelector',
