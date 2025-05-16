@@ -87,8 +87,6 @@ export const CloseClosableModalOnClickOutside: Story = {
 
     await canvas.findByText('Click Outside Test');
 
-    closeMock.mockClear();
-
     const backdrop = document.querySelector('.modal-backdrop') as HTMLElement;
     await userEvent.click(backdrop);
 
@@ -116,8 +114,6 @@ export const CloseClosableModalOnEscape: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Escape Key Test');
-
-    closeMock.mockClear();
 
     await userEvent.keyboard('{Escape}');
 

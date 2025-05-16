@@ -44,6 +44,7 @@ export default meta;
 type Story = StoryObj<typeof ConfirmationModal>;
 
 const closeMock = fn();
+const confirmMock = fn();
 
 export const Default: Story = {
   args: {
@@ -96,8 +97,6 @@ export const CloseOnClickOutside: Story = {
 
     await canvas.findByText('Click Outside Test');
 
-    closeMock.mockClear();
-
     const backdrop = document.querySelector('.modal-backdrop') as HTMLElement;
     await userEvent.click(backdrop);
 
@@ -111,15 +110,12 @@ export const ConfirmWithEnterKey: Story = {
     title: 'Enter Key Test',
     subtitle: 'This modal should confirm when pressing the Enter key.',
     confirmButtonText: 'Confirm',
-    onConfirmClick: fn(),
+    onConfirmClick: confirmMock,
   },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Enter Key Test');
-
-    const confirmMock = args.onConfirmClick as ReturnType<typeof fn>;
-    confirmMock.mockClear();
 
     await userEvent.keyboard('{Enter}');
 
@@ -133,15 +129,12 @@ export const CancelButtonClick: Story = {
     title: 'Cancel Button Test',
     subtitle: 'Clicking the cancel button should close the modal',
     confirmButtonText: 'Confirm',
-    onClose: fn(),
+    onClose: closeMock,
   },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Cancel Button Test');
-
-    const closeMock = args.onClose as ReturnType<typeof fn>;
-    closeMock.mockClear();
 
     const cancelButton = await canvas.findByTestId(
       'confirmation-modal-cancel-button',
@@ -158,15 +151,12 @@ export const ConfirmButtonClick: Story = {
     title: 'Confirm Button Test',
     subtitle: 'Clicking the confirm button should trigger the confirm action',
     confirmButtonText: 'Confirm',
-    onConfirmClick: fn(),
+    onConfirmClick: confirmMock,
   },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Confirm Button Test');
-
-    const confirmMock = args.onConfirmClick as ReturnType<typeof fn>;
-    confirmMock.mockClear();
 
     const confirmButton = await canvas.findByTestId(
       'confirmation-modal-confirm-button',
