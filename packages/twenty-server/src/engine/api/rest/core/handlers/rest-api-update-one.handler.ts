@@ -16,7 +16,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
       throw new BadRequestException('Record ID not found');
     }
 
-    const { objectMetadataNameSingular, objectMetadata, repository } =
+    const { objectMetadata, repository } =
       await this.getRepositoryAndMetadataOrFail(request);
 
     const recordToUpdate = await repository.findOneOrFail({
@@ -56,7 +56,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
 
     return this.formatResult({
       operation: 'update',
-      objectNameSingular: objectMetadataNameSingular,
+      objectNameSingular: objectMetadata.objectMetadataMapItem.nameSingular,
       data: record,
     });
   }

@@ -10,7 +10,7 @@ import {
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import {
   CreatedByFromAuthContextService,
-  RecordToCreateData,
+  CreateInput,
 } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
@@ -25,8 +25,8 @@ export class CreatedByCreateOnePreQueryHook
   async execute(
     authContext: AuthContext,
     objectName: string,
-    payload: CreateOneResolverArgs<RecordToCreateData>,
-  ): Promise<CreateOneResolverArgs<RecordToCreateData>> {
+    payload: CreateOneResolverArgs<CreateInput>,
+  ): Promise<CreateOneResolverArgs<CreateInput>> {
     if (!isDefined(payload.data)) {
       throw new GraphqlQueryRunnerException(
         'Payload data is required',
@@ -34,12 +34,16 @@ export class CreatedByCreateOnePreQueryHook
       );
     }
 
-    await this.createdByFromAuthContextService.injectCreatedBy(
-      payload.data,
-      objectName,
-      authContext,
-    );
+    const [recordToCreateData] =
+      await this.createdByFromAuthContextService.injectCreatedBy(
+        [payload.data],
+        objectName,
+        authContext,
+      );
 
-    return payload;
+    return {
+      ...payload,
+      data: recordToCreateData,
+    };
   }
 }

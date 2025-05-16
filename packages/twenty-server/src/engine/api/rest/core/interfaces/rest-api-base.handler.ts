@@ -139,8 +139,6 @@ export abstract class RestApiBaseHandler {
     );
 
     return {
-      objectMetadataNameSingular,
-      objectMetadataNamePlural: objectMetadata.objectMetadataMapItem.namePlural,
       objectMetadata,
       repository,
       dataSource,
@@ -282,7 +280,6 @@ export abstract class RestApiBaseHandler {
     recordId,
     repository,
     objectMetadata,
-    objectMetadataNameSingular,
     objectMetadataItemWithFieldsMaps,
     extraFilters,
   }: {
@@ -293,12 +290,14 @@ export abstract class RestApiBaseHandler {
       objectMetadataMaps: ObjectMetadataMaps;
       objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     };
-    objectMetadataNameSingular: string;
     objectMetadataItemWithFieldsMaps:
       | ObjectMetadataItemWithFieldMaps
       | undefined;
     extraFilters?: Partial<ObjectRecordFilter>;
   }) {
+    const objectMetadataNameSingular =
+      objectMetadata.objectMetadataMapItem.nameSingular;
+
     const qb = repository.createQueryBuilder(objectMetadataNameSingular);
 
     const inputs = this.getVariablesFactory.create(

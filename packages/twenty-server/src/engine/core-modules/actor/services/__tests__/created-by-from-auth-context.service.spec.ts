@@ -20,6 +20,9 @@ type TestingAuthContext = Omit<AuthContext, 'workspace' | 'apiKey' | 'user'> & {
   apiKey?: Partial<ApiKeyWorkspaceEntity>;
   user?: Partial<User>;
 };
+
+type ExpectedResult = { createdBy: ActorMetadata }[];
+
 // TODO create util
 const fromFullNameMetadataToName = ({
   firstName,
@@ -81,19 +84,21 @@ describe('CreatedByFromAuthContextService', () => {
       } as const satisfies TestingAuthContext;
 
       const result = await service.injectCreatedBy(
-        {},
+        [{}],
         'person',
         authContext as AuthContext,
       );
 
-      expect(result).toEqual<{ createdBy: ActorMetadata }>({
-        createdBy: {
-          context: {},
-          name: fromFullNameMetadataToName(authContext.user),
-          workspaceMemberId: authContext.workspaceMemberId,
-          source: FieldActorSource.MANUAL,
+      expect(result).toEqual<ExpectedResult>([
+        {
+          createdBy: {
+            context: {},
+            name: fromFullNameMetadataToName(authContext.user),
+            workspaceMemberId: authContext.workspaceMemberId,
+            source: FieldActorSource.MANUAL,
+          },
         },
-      });
+      ]);
     });
 
     it('should build metadata from user when workspaceMemberId is missing', async () => {
@@ -119,19 +124,21 @@ describe('CreatedByFromAuthContextService', () => {
       );
 
       const result = await service.injectCreatedBy(
-        {},
+        [{}],
         'person',
         authContext as AuthContext,
       );
 
-      expect(result).toEqual<{ createdBy: ActorMetadata }>({
-        createdBy: {
-          context: {},
-          name: fromFullNameMetadataToName(mockedWorkspaceMember.name),
-          workspaceMemberId: mockedWorkspaceMember.id,
-          source: FieldActorSource.MANUAL,
+      expect(result).toEqual<ExpectedResult>([
+        {
+          createdBy: {
+            context: {},
+            name: fromFullNameMetadataToName(mockedWorkspaceMember.name),
+            workspaceMemberId: mockedWorkspaceMember.id,
+            source: FieldActorSource.MANUAL,
+          },
         },
-      });
+      ]);
     });
 
     it('should build metadata from apiKey when only apiKey is present', async () => {
@@ -144,19 +151,21 @@ describe('CreatedByFromAuthContextService', () => {
       } as const satisfies TestingAuthContext;
 
       const result = await service.injectCreatedBy(
-        {},
+        [{}],
         'person',
         authContext as AuthContext,
       );
 
-      expect(result).toEqual<{ createdBy: ActorMetadata }>({
-        createdBy: {
-          source: FieldActorSource.API,
-          workspaceMemberId: null,
-          name: authContext.apiKey.name,
-          context: {},
+      expect(result).toEqual<ExpectedResult>([
+        {
+          createdBy: {
+            source: FieldActorSource.API,
+            workspaceMemberId: null,
+            name: authContext.apiKey.name,
+            context: {},
+          },
         },
-      });
+      ]);
     });
 
     it('should throw error when no valid actor information is found', async () => {
@@ -165,7 +174,7 @@ describe('CreatedByFromAuthContextService', () => {
       } as const satisfies TestingAuthContext;
 
       await expect(
-        service.injectCreatedBy({}, 'person', authContext as AuthContext),
+        service.injectCreatedBy([{}], 'person', authContext as AuthContext),
       ).rejects.toThrowErrorMatchingInlineSnapshot(
         `"Unable to build createdBy metadata - no valid actor information found in auth context"`,
       );

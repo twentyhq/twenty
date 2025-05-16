@@ -13,7 +13,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type RecordToCreateData = Record<string, any>;
+export type CreateInput = Record<string, any>;
 
 @Injectable()
 export class CreatedByFromAuthContextService {
@@ -25,28 +25,16 @@ export class CreatedByFromAuthContextService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  injectCreatedBy(
-    records: RecordToCreateData[],
-    objectName: string,
-    authContext: AuthContext,
-  ): Promise<RecordToCreateData[]>;
-
-  injectCreatedBy(
-    record: RecordToCreateData,
-    objectName: string,
-    authContext: AuthContext,
-  ): Promise<RecordToCreateData>;
-
   async injectCreatedBy(
-    recordOrRecords: RecordToCreateData | RecordToCreateData[],
-    objectName: string,
+    records: CreateInput[],
+    objectMetadataNameSingular: string,
     authContext: AuthContext,
-  ): Promise<RecordToCreateData | RecordToCreateData[]> {
+  ): Promise<CreateInput[]> {
     // TODO: Once all objects have it, we can remove this check
     const createdByFieldMetadata = await this.fieldMetadataRepository.findOne({
       where: {
         object: {
-          nameSingular: objectName,
+          nameSingular: objectMetadataNameSingular,
         },
         name: 'createdBy',
         workspaceId: authContext.workspace.id,
@@ -54,25 +42,27 @@ export class CreatedByFromAuthContextService {
     });
 
     if (!createdByFieldMetadata) {
-      return recordOrRecords;
+      return records;
     }
+
+    const clonedRecords = structuredClone(records);
 
     const createdBy = await this.buildCreatedBy(authContext);
 
-    if (Array.isArray(recordOrRecords)) {
-      for (const datum of recordOrRecords) {
+    if (Array.isArray(clonedRecords)) {
+      for (const datum of clonedRecords) {
         this.injectCreatedByToRecord(createdBy, datum);
       }
     } else {
-      this.injectCreatedByToRecord(createdBy, recordOrRecords);
+      this.injectCreatedByToRecord(createdBy, clonedRecords);
     }
 
-    return recordOrRecords;
+    return clonedRecords;
   }
 
   private injectCreatedByToRecord(
     createdBy: ActorMetadata,
-    record: RecordToCreateData,
+    record: CreateInput,
   ) {
     // Front-end can fill the source field
     if (createdBy && (!record.createdBy || !record.createdBy?.name)) {

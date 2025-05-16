@@ -2,7 +2,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
-import chalk from 'chalk';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
@@ -35,53 +34,40 @@ export class FixCreatedByDefaultValueCommand extends ActiveOrSuspendedWorkspaces
 
   override async runOnWorkspace({
     workspaceId,
-    options,
+    dataSource,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const objectsMetadata = await this.objectMetadataRepository.find({
+    const objectsMetadataItems = await this.objectMetadataRepository.find({
       where: { workspaceId },
       relations: ['fields'],
     });
 
-    for (const objectMetadata of objectsMetadata) {
-      const createdByFieldExists = objectMetadata.fields.some(
-        (field) => field.name === 'createdBy',
+    for (const objectMetadataItem of objectsMetadataItems) {
+      const createdByFieldExists = objectMetadataItem.fields.some(
+        (field) => field.type === FieldMetadataType.ACTOR,
       );
 
       if (!createdByFieldExists) {
         continue;
       }
 
-      const workspaceDataSource =
-        await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-          workspaceId,
-          shouldFailIfMetadataNotFound: false,
-        });
-
       const schemaName =
         this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-      const nameSingular = objectMetadata.nameSingular;
-      const tableName = computeTableName(nameSingular, objectMetadata.isCustom);
+      const tableName = computeTableName(
+        objectMetadataItem.nameSingular,
+        objectMetadataItem.isCustom,
+      );
 
       const actualDefaultValue = (
-        await workspaceDataSource.query(`
-      SELECT column_default FROM information_schema.columns
-        WHERE table_schema = '${schemaName}'
-          AND table_name = '${tableName}'
-          AND column_name = 'createdBySource';
-      `)
+        await dataSource.query(`
+          SELECT column_default FROM information_schema.columns
+            WHERE table_schema = '${schemaName}'
+              AND table_name = '${tableName}'
+              AND column_name = 'createdBySource';
+          `)
       )?.[0]?.column_default;
 
       if (actualDefaultValue !== null) {
-        continue;
-      }
-
-      if (options.dryRun) {
-        this.logger.log(
-          chalk.yellow(
-            `Dry run mode: skipping set default values for 'createdBy' fields in workspace '${workspaceId}' on object '${nameSingular}'`,
-          ),
-        );
         continue;
       }
 
@@ -89,7 +75,7 @@ export class FixCreatedByDefaultValueCommand extends ActiveOrSuspendedWorkspaces
         FieldMetadataType.ACTOR,
       ) as ActorMetadata;
 
-      await workspaceDataSource.query(`
+      await dataSource.query(`
           ALTER TABLE "${schemaName}"."${tableName}"
               ALTER COLUMN "createdBySource" SET DEFAULT ${createdByDefaultValues.source},
               ALTER COLUMN "createdByName" SET DEFAULT ${createdByDefaultValues.name},
