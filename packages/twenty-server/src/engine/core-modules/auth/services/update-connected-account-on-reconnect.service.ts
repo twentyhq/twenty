@@ -10,6 +10,16 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
+export type UpdateConnectedAccountOnReconnectInput = {
+  workspaceId: string;
+  connectedAccountId: string;
+  accessToken: string;
+  refreshToken: string;
+  scopes: string[];
+  connectedAccount: ConnectedAccountWorkspaceEntity;
+  manager: WorkspaceEntityManager;
+};
+
 @Injectable()
 export class UpdateConnectedAccountOnReconnectService {
   constructor(
@@ -20,14 +30,18 @@ export class UpdateConnectedAccountOnReconnectService {
   ) {}
 
   async updateConnectedAccountOnReconnect(
-    workspaceId: string,
-    connectedAccountId: string,
-    accessToken: string,
-    refreshToken: string,
-    scopes: string[],
-    connectedAccount: ConnectedAccountWorkspaceEntity,
-    manager: WorkspaceEntityManager,
+    input: UpdateConnectedAccountOnReconnectInput,
   ): Promise<void> {
+    const {
+      workspaceId,
+      connectedAccountId,
+      accessToken,
+      refreshToken,
+      scopes,
+      connectedAccount,
+      manager,
+    } = input;
+
     const connectedAccountRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
         workspaceId,

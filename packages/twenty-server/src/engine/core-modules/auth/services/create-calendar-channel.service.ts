@@ -14,6 +14,14 @@ import {
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
+export type CreateCalendarChannelInput = {
+  workspaceId: string;
+  connectedAccountId: string;
+  handle: string;
+  calendarVisibility?: CalendarChannelVisibility;
+  manager: WorkspaceEntityManager;
+};
+
 @Injectable()
 export class CreateCalendarChannelService {
   constructor(
@@ -24,12 +32,16 @@ export class CreateCalendarChannelService {
   ) {}
 
   async createCalendarChannel(
-    workspaceId: string,
-    connectedAccountId: string,
-    handle: string,
-    calendarVisibility: CalendarChannelVisibility | undefined,
-    manager: WorkspaceEntityManager,
+    input: CreateCalendarChannelInput,
   ): Promise<string> {
+    const {
+      workspaceId,
+      connectedAccountId,
+      handle,
+      calendarVisibility,
+      manager,
+    } = input;
+
     const calendarChannelRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarChannelWorkspaceEntity>(
         workspaceId,

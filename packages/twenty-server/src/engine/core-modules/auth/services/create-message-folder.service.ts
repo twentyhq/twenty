@@ -7,17 +7,21 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
 
+export type CreateMessageFoldersInput = {
+  workspaceId: string;
+  messageChannelId: string;
+  manager: WorkspaceEntityManager;
+};
+
 @Injectable()
 export class CreateMessageFolderService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  async createMessageFolders(
-    workspaceId: string,
-    messageChannelId: string,
-    manager: WorkspaceEntityManager,
-  ): Promise<void> {
+  async createMessageFolders(input: CreateMessageFoldersInput): Promise<void> {
+    const { workspaceId, messageChannelId, manager } = input;
+
     const messageFolderRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageFolderWorkspaceEntity>(
         workspaceId,

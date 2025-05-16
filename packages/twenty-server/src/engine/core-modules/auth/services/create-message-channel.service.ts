@@ -16,6 +16,14 @@ import {
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
+export type CreateMessageChannelInput = {
+  workspaceId: string;
+  connectedAccountId: string;
+  handle: string;
+  messageVisibility?: MessageChannelVisibility;
+  manager: WorkspaceEntityManager;
+};
+
 @Injectable()
 export class CreateMessageChannelService {
   constructor(
@@ -26,12 +34,16 @@ export class CreateMessageChannelService {
   ) {}
 
   async createMessageChannel(
-    workspaceId: string,
-    connectedAccountId: string,
-    handle: string,
-    messageVisibility: MessageChannelVisibility | undefined,
-    manager: WorkspaceEntityManager,
+    input: CreateMessageChannelInput,
   ): Promise<string> {
+    const {
+      workspaceId,
+      connectedAccountId,
+      handle,
+      messageVisibility,
+      manager,
+    } = input;
+
     const messageChannelRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
         workspaceId,

@@ -117,44 +117,46 @@ export class GoogleAPIsService {
     await workspaceDataSource.transaction(
       async (manager: WorkspaceEntityManager) => {
         if (!existingAccountId) {
-          await this.createConnectedAccountService.createConnectedAccount(
+          await this.createConnectedAccountService.createConnectedAccount({
             workspaceId,
-            newOrExistingConnectedAccountId,
+            connectedAccountId: newOrExistingConnectedAccountId,
             handle,
-            ConnectedAccountProvider.GOOGLE,
-            input.accessToken,
-            input.refreshToken,
-            workspaceMemberId,
+            provider: ConnectedAccountProvider.GOOGLE,
+            accessToken: input.accessToken,
+            refreshToken: input.refreshToken,
+            accountOwnerId: workspaceMemberId,
             scopes,
             manager,
-          );
+          });
 
-          await this.createMessageChannelService.createMessageChannel(
+          await this.createMessageChannelService.createMessageChannel({
             workspaceId,
-            newOrExistingConnectedAccountId,
+            connectedAccountId: newOrExistingConnectedAccountId,
             handle,
             messageVisibility,
             manager,
-          );
+          });
 
           if (isCalendarEnabled) {
-            await this.createCalendarChannelService.createCalendarChannel(
+            await this.createCalendarChannelService.createCalendarChannel({
               workspaceId,
-              newOrExistingConnectedAccountId,
+              connectedAccountId: newOrExistingConnectedAccountId,
               handle,
               calendarVisibility,
               manager,
-            );
+            });
           }
         } else {
           await this.updateConnectedAccountOnReconnectService.updateConnectedAccountOnReconnect(
-            workspaceId,
-            newOrExistingConnectedAccountId,
-            input.accessToken,
-            input.refreshToken,
-            scopes,
-            connectedAccount,
-            manager,
+            {
+              workspaceId,
+              connectedAccountId: newOrExistingConnectedAccountId,
+              accessToken: input.accessToken,
+              refreshToken: input.refreshToken,
+              scopes,
+              connectedAccount,
+              manager,
+            },
           );
 
           const workspaceMemberRepository =
@@ -177,17 +179,17 @@ export class GoogleAPIsService {
             newOrExistingConnectedAccountId,
           );
 
-          await this.resetMessageChannelService.resetMessageChannels(
+          await this.resetMessageChannelService.resetMessageChannels({
             workspaceId,
-            newOrExistingConnectedAccountId,
+            connectedAccountId: newOrExistingConnectedAccountId,
             manager,
-          );
+          });
 
-          await this.resetCalendarChannelService.resetCalendarChannels(
+          await this.resetCalendarChannelService.resetCalendarChannels({
             workspaceId,
-            newOrExistingConnectedAccountId,
+            connectedAccountId: newOrExistingConnectedAccountId,
             manager,
-          );
+          });
         }
       },
     );

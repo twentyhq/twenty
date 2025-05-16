@@ -13,6 +13,12 @@ import {
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
+export type ResetCalendarChannelsInput = {
+  workspaceId: string;
+  connectedAccountId: string;
+  manager: WorkspaceEntityManager;
+};
+
 @Injectable()
 export class ResetCalendarChannelService {
   constructor(
@@ -23,10 +29,10 @@ export class ResetCalendarChannelService {
   ) {}
 
   async resetCalendarChannels(
-    workspaceId: string,
-    connectedAccountId: string,
-    manager: WorkspaceEntityManager,
+    input: ResetCalendarChannelsInput,
   ): Promise<void> {
+    const { workspaceId, connectedAccountId, manager } = input;
+
     const calendarChannelRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarChannelWorkspaceEntity>(
         workspaceId,

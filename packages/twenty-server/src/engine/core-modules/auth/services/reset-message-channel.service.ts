@@ -13,6 +13,12 @@ import {
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
+export type ResetMessageChannelsInput = {
+  workspaceId: string;
+  connectedAccountId: string;
+  manager: WorkspaceEntityManager;
+};
+
 @Injectable()
 export class ResetMessageChannelService {
   constructor(
@@ -22,11 +28,9 @@ export class ResetMessageChannelService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
-  async resetMessageChannels(
-    workspaceId: string,
-    connectedAccountId: string,
-    manager: WorkspaceEntityManager,
-  ): Promise<void> {
+  async resetMessageChannels(input: ResetMessageChannelsInput): Promise<void> {
+    const { workspaceId, connectedAccountId, manager } = input;
+
     const messageChannelRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
         workspaceId,
