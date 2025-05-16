@@ -92,9 +92,8 @@ export const ConfirmationModal = ({
   const { closeModal } = useModal();
 
   const handleConfirmClick = () => {
-    onConfirmClick();
-
     closeModal(modalId);
+    onConfirmClick();
   };
 
   const handleCancelClick = () => {
