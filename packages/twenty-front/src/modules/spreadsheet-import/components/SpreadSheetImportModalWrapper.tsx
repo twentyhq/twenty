@@ -36,7 +36,7 @@ type SpreadSheetImportModalWrapperProps = {
 export const SpreadSheetImportModalWrapper = ({
   modalId,
   children,
-  onClose = () => null,
+  onClose,
 }: SpreadSheetImportModalWrapperProps) => {
   const { rtl } = useSpreadsheetImportInternal();
 

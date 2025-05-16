@@ -20,7 +20,7 @@ const StyledCloseButtonContainer = styled.div`
 `;
 
 type SpreadSheetImportModalCloseButtonProps = {
-  onClose: () => void;
+  onClose?: () => void;
 };
 
 export const SpreadSheetImportModalCloseButton = ({
@@ -42,7 +42,7 @@ export const SpreadSheetImportModalCloseButton = ({
 
   const handleClose = () => {
     if (activeStep === -1) {
-      onClose();
+      onClose?.();
       return;
     }
     enqueueDialog({

@@ -175,7 +175,7 @@ export type ModalProps = React.PropsWithChildren & {
   onEnter?: () => void;
   modalVariant?: ModalVariants;
 } & (
-    | { isClosable: true; onClose: () => void }
+    | { isClosable: true; onClose?: () => void }
     | { isClosable?: false; onClose?: never }
   );
 
