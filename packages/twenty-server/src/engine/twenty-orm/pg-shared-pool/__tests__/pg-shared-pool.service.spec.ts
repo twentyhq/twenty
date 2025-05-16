@@ -60,6 +60,7 @@ describe('PgPoolSharedService', () => {
       log: jest.fn(),
       debug: jest.fn(),
       warn: jest.fn(),
+      error: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -87,6 +88,10 @@ describe('PgPoolSharedService', () => {
   });
 
   afterEach(() => {
+    // Unpatch the service and clean up its state AFTER each test
+    if (service && typeof (service as any).unpatchForTesting === 'function') {
+      (service as any).unpatchForTesting();
+    }
     jest.clearAllMocks();
   });
 
@@ -143,6 +148,9 @@ describe('PgPoolSharedService', () => {
   describe('pool sharing functionality', () => {
     beforeEach(() => {
       service.initialize();
+    });
+
+    afterEach(() => {
       jest.clearAllMocks();
     });
 
@@ -251,7 +259,11 @@ describe('PgPoolSharedService', () => {
       );
 
       // Verify we only logged the close message once
-      expect(mockLogger.log).toHaveBeenCalledTimes(1);
+      const closeMessageCalls = (mockLogger.log as jest.Mock).mock.calls.filter(
+        (call: any[]) => call[0].includes('has been closed'),
+      );
+
+      expect(closeMessageCalls.length).toBe(1);
       expect(mockLogger.log).toHaveBeenCalledWith(
         expect.stringContaining('has been closed'),
       );

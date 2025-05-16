@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-// Define type extension for pg module to support our symbol property
 interface PgWithPatchSymbol {
   Pool: typeof Pool;
   [key: symbol]: boolean;
@@ -16,12 +15,10 @@ interface SSLConfig {
   [key: string]: unknown;
 }
 
-// Add interface for Pool with our custom property
 interface PoolWithEndTracker extends Pool {
   __hasEnded?: boolean;
 }
 
-// Extend PoolConfig to include extra properties not in base type
 interface ExtendedPoolConfig extends PoolConfig {
   extra?: {
     allowExitOnIdle?: boolean;
@@ -45,6 +42,10 @@ export class PgPoolSharedService {
 
   // Internal pool cache - exposed for testing only
   private poolsMap = new Map<string, Pool>();
+
+  // Store the original pg.Pool property descriptor and value for unpatching
+  private capturedOriginalPoolValue: typeof Pool | null = null;
+  private originalPgPoolDescriptor: PropertyDescriptor | undefined = undefined;
 
   constructor(private readonly configService: TwentyConfigService) {
     // Check if debug logging is enabled
@@ -83,11 +84,8 @@ export class PgPoolSharedService {
       return;
     }
 
-    // Read max connections here to ensure it's always read during initialization
     const maxConnections = this.configService.get('PG_POOL_MAX_CONNECTIONS');
-    // Read idle timeout here to ensure it's always read during initialization
     const idleTimeoutMs = this.configService.get('PG_POOL_IDLE_TIMEOUT_MS');
-    // Read allow exit on idle setting
     const allowExitOnIdle = this.configService.get(
       'PG_POOL_ALLOW_EXIT_ON_IDLE',
     );
@@ -97,12 +95,24 @@ export class PgPoolSharedService {
     );
 
     this.patchPgPool();
+
+    // Check if patching was successful by verifying the PATCH_SYMBOL on pg
+    const pgWithSymbol = pg as PgWithPatchSymbol;
+
+    if (!pgWithSymbol[this.PATCH_SYMBOL]) {
+      this.logger.error(
+        'Failed to patch pg.Pool. PgPoolSharedService will not be active.',
+      );
+      this.initialized = false; // Ensure it's marked as not initialized if patch wasn't set
+
+      return;
+    }
+
     this.initialized = true;
     this.logger.log(
       'Pg pool sharing initialized - pools will be shared across tenants',
     );
 
-    // Start logging stats periodically if debug is enabled
     if (this.isDebugEnabled) {
       this.startPoolStatsLogging();
     }
@@ -118,7 +128,6 @@ export class PgPoolSharedService {
       this.logStatsInterval = null;
     }
 
-    // Attempt to gracefully close all remaining pools
     const closePromises: Promise<void>[] = [];
 
     for (const [key, pool] of this.poolsMap.entries()) {
@@ -126,7 +135,6 @@ export class PgPoolSharedService {
         pool
           .end()
           .catch((err) => {
-            // Ignore duplicate-end errors; log unexpected ones
             if (err?.message !== 'Called end on pool more than once') {
               this.logger.debug(
                 `Pool[${key}] error during shutdown: ${err.message}`,
@@ -141,12 +149,8 @@ export class PgPoolSharedService {
       );
     }
 
-    // We intentionally do not await here to keep the shutdown hook synchronous
-    // Promise.allSettled(closePromises).then(() => {
-    //   this.logger.debug('All pg pools closed');
-    // });
     this.logger.debug('Attempting to close all pg pools...');
-    await Promise.allSettled(closePromises); // Add await
+    await Promise.allSettled(closePromises);
     this.logger.debug('All pg pools closure attempts completed.');
   }
 
@@ -205,10 +209,8 @@ export class PgPoolSharedService {
    * Starts periodically logging pool statistics if debug is enabled
    */
   private startPoolStatsLogging(): void {
-    // Log initial stats
     this.logPoolStats();
 
-    // Set up interval (every 30 seconds)
     this.logStatsInterval = setInterval(() => {
       this.logPoolStats();
     }, 30000);
@@ -223,19 +225,44 @@ export class PgPoolSharedService {
   private patchPgPool(): void {
     const pgWithSymbol = pg as PgWithPatchSymbol;
 
-    // Don't patch twice
+    // If pg is already patched (e.g., by another instance or a previous test run that wasn't cleaned up),
+    // log it and return. In a test environment, unpatchForTesting should prevent this.
+    // In production, this implies a setup issue if multiple instances try to patch.
     if (pgWithSymbol[this.PATCH_SYMBOL]) {
+      this.logger.debug(
+        'pg.Pool is already patched. Skipping patch operation for this instance.',
+      );
+
+      // If another instance patched pg, this current instance's poolsMap will not be used by the global pg.Pool.
+      // This service instance will then be in a state where this.initialized might become true,
+      // but its map isn't the active one. This is handled by the check in initialize().
       return;
     }
 
-    // Keep reference to the original constructor
-    const OriginalPool = pgWithSymbol.Pool;
+    // Capture original Pool constructor's property descriptor and value
+    this.originalPgPoolDescriptor = Object.getOwnPropertyDescriptor(
+      pgWithSymbol,
+      'Pool',
+    );
 
-    // Retrieve max connections from config
+    if (
+      !this.originalPgPoolDescriptor ||
+      typeof this.originalPgPoolDescriptor.value !== 'function'
+    ) {
+      this.logger.error(
+        'Could not get original pg.Pool constructor or descriptor is invalid. Aborting patch.',
+      );
+
+      return; // Patching cannot proceed
+    }
+    this.capturedOriginalPoolValue = this.originalPgPoolDescriptor
+      .value as typeof Pool;
+
+    // Keep reference to the original constructor for creating new pools
+    const OriginalPool = this.capturedOriginalPoolValue;
+
     const maxConnections = this.configService.get('PG_POOL_MAX_CONNECTIONS');
-    // Retrieve idle timeout from config
     const idleTimeoutMs = this.configService.get('PG_POOL_IDLE_TIMEOUT_MS');
-    // Retrieve allow exit on idle from config
     const allowExitOnIdle = this.configService.get(
       'PG_POOL_ALLOW_EXIT_ON_IDLE',
     );
@@ -247,7 +274,6 @@ export class PgPoolSharedService {
     const isDebugEnabled = this.isDebugEnabled;
 
     // Define a proper constructor function that can be used with "new"
-    // Use a function declaration to be compatible with 'new' keyword
     function SharedPool(this: Pool, config?: PoolConfig): Pool {
       // When called as a function (without new), make sure to return a new instance
       if (!(this instanceof SharedPool)) {
@@ -256,24 +282,20 @@ export class PgPoolSharedService {
         return new SharedPool(config);
       }
 
-      // Initialize config if not provided
       const poolConfig = config
         ? ({ ...config } as ExtendedPoolConfig)
         : ({} as ExtendedPoolConfig);
 
-      // Apply max connections setting from config
       if (maxConnections) {
         poolConfig.max = maxConnections;
       }
 
-      // Apply idle timeout from config and set exit on idle
       if (idleTimeoutMs) {
         poolConfig.idleTimeoutMillis = idleTimeoutMs;
       }
       if (!poolConfig.extra) {
         poolConfig.extra = {};
       }
-      // Use config setting for allowing connections to exit when idle
       poolConfig.extra.allowExitOnIdle = allowExitOnIdle;
 
       const key = buildPoolKey(poolConfig);
@@ -287,10 +309,8 @@ export class PgPoolSharedService {
         return existing;
       }
 
-      // Create a new Pool instance
       const pool = new OriginalPool(poolConfig);
 
-      // Store it in our map
       poolsMap.set(key, pool);
 
       logger.log(
@@ -298,7 +318,6 @@ export class PgPoolSharedService {
       );
 
       if (isDebugEnabled) {
-        // Add event listeners for connection activity when debug is enabled
         pool.on('connect', () => {
           logger.debug(`Pool[${key}]: New connection established`);
         });
@@ -321,14 +340,11 @@ export class PgPoolSharedService {
         (callback?: (err?: Error) => void): void;
       };
 
-      // Replace the `end` method to clean up the pool from our cache
       (pool as PoolWithEndTracker).end = (
         callback?: (err?: Error) => void,
       ): Promise<void> => {
-        // Track if this pool has already been ended
         if ((pool as PoolWithEndTracker).__hasEnded) {
           if (callback) {
-            // If a callback is provided, call it without an error
             callback();
           }
 
@@ -341,7 +357,6 @@ export class PgPoolSharedService {
         // Mark this pool as ended to prevent subsequent calls
         (pool as PoolWithEndTracker).__hasEnded = true;
 
-        // Remove from our cache only on the first end call
         poolsMap.delete(key);
 
         logger.log(
@@ -382,11 +397,17 @@ export class PgPoolSharedService {
     // Set the constructor property correctly
     SharedPool.prototype.constructor = SharedPool;
 
-    // Replace the original Pool with our patched version
-    pgWithSymbol.Pool = SharedPool as unknown as typeof Pool;
+    // Replace the original Pool with our patched version using defineProperty for robustness
+    Object.defineProperty(pgWithSymbol, 'Pool', {
+      value: SharedPool as unknown as typeof Pool,
+      writable: true, // Allow further modifications if necessary (e.g., by other tools or tests)
+      configurable: true, // MUST be true to allow unpatching by deleting or redefining
+      enumerable: this.originalPgPoolDescriptor.enumerable,
+    });
 
     // Mark as patched
     pgWithSymbol[this.PATCH_SYMBOL] = true;
+    this.logger.log('pg.Pool patched successfully by this service instance.');
   }
 
   /**
@@ -394,8 +415,7 @@ export class PgPoolSharedService {
    */
   private buildPoolKey(config: PoolConfig = {}): string {
     // We identify pools only by parameters that open a *physical* connection.
-    // `search_path`/schema is not included because it can be changed via
-    // `SET search_path` at session level.
+    // `search_path`/schema is not included because it is changed at session level.
     const {
       host = 'localhost',
       port = 5432,
@@ -415,5 +435,55 @@ export class PgPoolSharedService {
       : 'no-ssl';
 
     return [host, port, user, database, sslKey].join('|');
+  }
+
+  /**
+   * Resets the pg.Pool patch and clears service state. For testing purposes only.
+   */
+  public unpatchForTesting(): void {
+    this.logger.debug('Attempting to unpatch pg.Pool for testing...');
+    const pgWithSymbol = pg as PgWithPatchSymbol;
+
+    if (pgWithSymbol[this.PATCH_SYMBOL]) {
+      if (this.originalPgPoolDescriptor) {
+        Object.defineProperty(
+          pgWithSymbol,
+          'Pool',
+          this.originalPgPoolDescriptor,
+        );
+        this.logger.debug(
+          'pg.Pool restored using original property descriptor.',
+        );
+      } else if (this.capturedOriginalPoolValue) {
+        // Fallback if descriptor wasn't captured (should ideally not happen with current logic)
+        pgWithSymbol.Pool = this.capturedOriginalPoolValue;
+        this.logger.warn(
+          'pg.Pool restored using captured value (descriptor method preferred).',
+        );
+      } else {
+        this.logger.error(
+          'Cannot unpatch pg.Pool: no original Pool reference or descriptor was captured by this instance.',
+        );
+      }
+      delete pgWithSymbol[this.PATCH_SYMBOL];
+      this.logger.debug('PATCH_SYMBOL removed from pg module.');
+    } else {
+      this.logger.debug(
+        'pg.Pool was not patched by this instance or PATCH_SYMBOL not found, no unpatch needed from this instance.',
+      );
+    }
+
+    // Reset service instance state
+    this.initialized = false;
+    this.poolsMap.clear();
+    this.capturedOriginalPoolValue = null;
+    this.originalPgPoolDescriptor = undefined;
+    if (this.logStatsInterval) {
+      clearInterval(this.logStatsInterval);
+      this.logStatsInterval = null;
+    }
+    this.logger.debug(
+      'Service instance state (initialized, poolsMap, captured originals, timers) reset for testing.',
+    );
   }
 }
