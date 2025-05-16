@@ -454,7 +454,11 @@ describe('UserWorkspaceService', () => {
         user.id,
         workspace.id,
       );
-      expect(service.create).toHaveBeenCalledWith(user.id, workspace.id);
+      expect(service.create).toHaveBeenCalledWith({
+        workspaceId: workspace.id,
+        userId: user.id,
+        isExistingUser: true,
+      });
       expect(service.createWorkspaceMember).toHaveBeenCalledWith(
         workspace.id,
         user,
