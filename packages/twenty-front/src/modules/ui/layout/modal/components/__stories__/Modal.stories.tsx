@@ -5,6 +5,7 @@ import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkey
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { isModalOpenedComponentState } from '../../states/isModalOpenedComponentState';
 import { Modal } from '../Modal';
@@ -32,7 +33,7 @@ const initializeState = ({ set }: { set: (atom: any, value: any) => void }) => {
 const meta: Meta<typeof Modal> = {
   title: 'UI/Layout/Modal/Modal',
   component: Modal,
-  decorators: [RootDecorator, ComponentDecorator],
+  decorators: [I18nFrontDecorator, RootDecorator, ComponentDecorator],
   parameters: {
     initializeState,
     disableHotkeyInitialization: true,
