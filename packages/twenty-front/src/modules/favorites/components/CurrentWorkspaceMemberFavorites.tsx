@@ -105,9 +105,11 @@ export const CurrentWorkspaceMemberFavorites = ({
     setIsFavoriteFolderRenaming(false);
   };
 
+  const modalId = `${FAVORITE_FOLDER_DELETE_MODAL_ID}-${folder.folderId}`;
+
   const handleFavoriteFolderDelete = async () => {
     if (folder.favorites.length > 0) {
-      openModal(`${FAVORITE_FOLDER_DELETE_MODAL_ID}-${folder.folderId}`);
+      openModal(modalId);
       closeFavoriteFolderEditDropdown();
     } else {
       await deleteFavoriteFolder(folder.folderId);
@@ -130,7 +132,7 @@ export const CurrentWorkspaceMemberFavorites = ({
 
   const isModalOpened = useRecoilComponentValueV2(
     isModalOpenedComponentState,
-    `${FAVORITE_FOLDER_DELETE_MODAL_ID}-${folder.folderId}`,
+    modalId,
   );
 
   return (
@@ -217,7 +219,7 @@ export const CurrentWorkspaceMemberFavorites = ({
       {isModalOpened &&
         createPortal(
           <ConfirmationModal
-            modalId={`${FAVORITE_FOLDER_DELETE_MODAL_ID}-${folder.folderId}`}
+            modalId={modalId}
             title={`Remove ${folder.favorites.length} ${folder.favorites.length > 1 ? 'favorites' : 'favorite'}?`}
             subtitle={`This action will delete this favorite folder ${folder.favorites.length > 1 ? `and all ${folder.favorites.length} favorites` : 'and the favorite'} inside. Do you want to continue?`}
             onConfirmClick={handleConfirmDelete}
