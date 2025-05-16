@@ -7009,6 +7009,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@faker-js/faker@npm:^9.8.0":
+  version: 9.8.0
+  resolution: "@faker-js/faker@npm:9.8.0"
+  checksum: 10c0/f5db1125c1ea0115b9142fb4d4cb37cac2da4cd12ed02afb1cabf3b9600bd365bf480386250975a4fb200d77c00e8364dc8f61ac273a9dcdd2f2f42c3b29b0ec
+  languageName: node
+  linkType: hard
+
 "@fal-works/esbuild-plugin-global-externals@npm:^2.1.2":
   version: 2.1.2
   resolution: "@fal-works/esbuild-plugin-global-externals@npm:2.1.2"
@@ -55091,6 +55098,7 @@ __metadata:
   dependencies:
     "@clickhouse/client": "npm:^1.11.0"
     "@esbuild-plugins/node-modules-polyfill": "npm:^0.2.2"
+    "@faker-js/faker": "npm:^9.8.0"
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch"
     "@langchain/mistralai": "npm:^0.0.24"
     "@langchain/openai": "npm:^0.1.3"

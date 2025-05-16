@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`updateOne FieldMetadataService Enum Default Value Validation should delete related view filter if all select field options got deleted 1`] = `
+[
+  {
+    "extensions": {
+      "code": "NOT_FOUND",
+    },
+    "message": "Record not found",
+  },
+]
+`;
+
+exports[`updateOne FieldMetadataService Enum Default Value Validation should update related view filter label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "NOT_FOUND",
+    },
+    "message": "Record not found",
+  },
+]
+`;
