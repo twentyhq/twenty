@@ -776,6 +776,25 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
+    description: 'Idle timeout in milliseconds for pg connection pool clients',
+    isEnvOnly: true,
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  PG_POOL_IDLE_TIMEOUT_MS = 3600000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
+    description: 'Allow idle pg connection pool clients to exit',
+    isEnvOnly: true,
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  PG_POOL_ALLOW_EXIT_ON_IDLE = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
     description: 'Enable configuration variables to be stored in the database',
     isEnvOnly: true,
     type: ConfigVariableType.BOOLEAN,

@@ -21,6 +21,15 @@ interface PoolWithEndTracker extends Pool {
   __hasEnded?: boolean;
 }
 
+// Extend PoolConfig to include extra properties not in base type
+interface ExtendedPoolConfig extends PoolConfig {
+  extra?: {
+    allowExitOnIdle?: boolean;
+    idleTimeoutMillis?: number;
+    [key: string]: unknown;
+  };
+}
+
 /**
  * Service that manages shared pg connection pools across tenants.
  * It patches the pg.Pool constructor to return cached instances for
@@ -76,9 +85,15 @@ export class PgPoolSharedService {
 
     // Read max connections here to ensure it's always read during initialization
     const maxConnections = this.configService.get('PG_POOL_MAX_CONNECTIONS');
+    // Read idle timeout here to ensure it's always read during initialization
+    const idleTimeoutMs = this.configService.get('PG_POOL_IDLE_TIMEOUT_MS');
+    // Read allow exit on idle setting
+    const allowExitOnIdle = this.configService.get(
+      'PG_POOL_ALLOW_EXIT_ON_IDLE',
+    );
 
     this.logger.log(
-      `Pool sharing will use max ${maxConnections} connections per pool`,
+      `Pool sharing will use max ${maxConnections} connections per pool with ${idleTimeoutMs}ms idle timeout and allowExitOnIdle=${allowExitOnIdle}`,
     );
 
     this.patchPgPool();
@@ -97,11 +112,42 @@ export class PgPoolSharedService {
    * Stops the periodic logging of pool statistics.
    * Call this during application shutdown.
    */
-  onApplicationShutdown(): void {
+  async onApplicationShutdown(): Promise<void> {
     if (this.logStatsInterval) {
       clearInterval(this.logStatsInterval);
       this.logStatsInterval = null;
     }
+
+    // Attempt to gracefully close all remaining pools
+    const closePromises: Promise<void>[] = [];
+
+    for (const [key, pool] of this.poolsMap.entries()) {
+      closePromises.push(
+        pool
+          .end()
+          .catch((err) => {
+            // Ignore duplicate-end errors; log unexpected ones
+            if (err?.message !== 'Called end on pool more than once') {
+              this.logger.debug(
+                `Pool[${key}] error during shutdown: ${err.message}`,
+              );
+            }
+          })
+          .then(() => {
+            this.logger.debug(
+              `Pool[${key}] closed during application shutdown`,
+            );
+          }),
+      );
+    }
+
+    // We intentionally do not await here to keep the shutdown hook synchronous
+    // Promise.allSettled(closePromises).then(() => {
+    //   this.logger.debug('All pg pools closed');
+    // });
+    this.logger.debug('Attempting to close all pg pools...');
+    await Promise.allSettled(closePromises); // Add await
+    this.logger.debug('All pg pools closure attempts completed.');
   }
 
   /**
@@ -187,6 +233,12 @@ export class PgPoolSharedService {
 
     // Retrieve max connections from config
     const maxConnections = this.configService.get('PG_POOL_MAX_CONNECTIONS');
+    // Retrieve idle timeout from config
+    const idleTimeoutMs = this.configService.get('PG_POOL_IDLE_TIMEOUT_MS');
+    // Retrieve allow exit on idle from config
+    const allowExitOnIdle = this.configService.get(
+      'PG_POOL_ALLOW_EXIT_ON_IDLE',
+    );
 
     // Store references to service functions/properties that we need in our constructor
     const buildPoolKey = this.buildPoolKey.bind(this);
@@ -206,12 +258,24 @@ export class PgPoolSharedService {
       }
 
       // Initialize config if not provided
-      const poolConfig = config ? { ...config } : {};
+      const poolConfig = config
+        ? ({ ...config } as ExtendedPoolConfig)
+        : ({} as ExtendedPoolConfig);
 
       // Apply max connections setting from config
       if (maxConnections) {
         poolConfig.max = maxConnections;
       }
+
+      // Apply idle timeout from config and set exit on idle
+      if (idleTimeoutMs) {
+        poolConfig.idleTimeoutMillis = idleTimeoutMs;
+      }
+      if (!poolConfig.extra) {
+        poolConfig.extra = {};
+      }
+      // Use config setting for allowing connections to exit when idle
+      poolConfig.extra.allowExitOnIdle = allowExitOnIdle;
 
       const key = buildPoolKey(poolConfig);
       const existing = poolsMap.get(key);
@@ -231,7 +295,7 @@ export class PgPoolSharedService {
       poolsMap.set(key, pool);
 
       logger.log(
-        `Created new shared pg Pool for key "${key}" with ${poolConfig.max ?? 'default'} max connections. Total pools: ${poolsMap.size}`,
+        `Created new shared pg Pool for key "${key}" with ${poolConfig.max ?? 'default'} max connections and ${poolConfig.idleTimeoutMillis ?? 'default'} ms idle timeout. Total pools: ${poolsMap.size}`,
       );
 
       if (isDebugEnabled) {

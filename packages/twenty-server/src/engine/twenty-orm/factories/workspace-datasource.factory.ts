@@ -200,8 +200,7 @@ export class WorkspaceDatasourceFactory {
           try {
             await dataSource.destroy();
           } catch (error) {
-            // Ignore errors related to pools already being destroyed, which can happen
-            // during concurrent operations or race conditions during shutdown
+            // Ignore known race-condition errors to prevent noise during shutdown
             if (
               error.message === 'Called end on pool more than once' ||
               error.message?.includes(
@@ -214,6 +213,8 @@ export class WorkspaceDatasourceFactory {
 
               return;
             }
+
+            // Re-throw unexpected errors so they are handled by the outer catch
             throw error;
           }
         },
@@ -366,13 +367,31 @@ export class WorkspaceDatasourceFactory {
 
   public async destroy(workspaceId: string) {
     try {
-      await this.promiseMemoizer.clearKeys(`${workspaceId}-`, (dataSource) => {
-        dataSource.destroy().catch((error) => {
-          this.logger.debug(
-            `Error during datasource destroy (safely ignored): ${error.message}`,
-          );
-        });
-      });
+      await this.promiseMemoizer.clearKeys(
+        `${workspaceId}-`,
+        async (dataSource) => {
+          try {
+            await dataSource.destroy();
+          } catch (error) {
+            // Ignore known race-condition errors to prevent noise during shutdown
+            if (
+              error.message === 'Called end on pool more than once' ||
+              error.message?.includes(
+                'pool is draining and cannot accommodate new clients',
+              )
+            ) {
+              this.logger.debug(
+                `Ignoring pool error during cleanup: ${error.message}`,
+              );
+
+              return;
+            }
+
+            // Re-throw unexpected errors so they are handled by the outer catch
+            throw error;
+          }
+        },
+      );
     } catch (error) {
       // Log and swallow any errors during cleanup to prevent crashes
       this.logger.warn(
