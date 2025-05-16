@@ -8,7 +8,6 @@ export const UPDATE_FOCUS_NFE_INTEGRATION = gql`
       id
       integrationName
       status
-      token
       createdAt
       updatedAt
       workspace {

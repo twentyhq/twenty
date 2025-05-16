@@ -2,6 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { CreateFocusNfeIntegrationInput } from 'src/engine/core-modules/focus-nfe/dtos/create-focus-nfe-integration.input';
+import { FocusNfeIntegrationPublicDto } from 'src/engine/core-modules/focus-nfe/dtos/public-focus-nfe-integration.result';
 import { UpdateFocusNfeIntegrationInput } from 'src/engine/core-modules/focus-nfe/dtos/update-focus-nfe-integration.input';
 import { FocusNfeIntegration } from 'src/engine/core-modules/focus-nfe/focus-nfe-integration.entity';
 import { FocusNfeService } from 'src/engine/core-modules/focus-nfe/focus-nfe-integration.service';
@@ -12,7 +13,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 export class FocusNfeResolver {
   constructor(private readonly focusNfeService: FocusNfeService) {}
 
-  @Mutation(() => FocusNfeIntegration)
+  @Mutation(() => FocusNfeIntegrationPublicDto)
   async createFocusNfeIntegration(
     @Args('createInput') createInput: CreateFocusNfeIntegrationInput,
   ): Promise<FocusNfeIntegration> {
@@ -22,21 +23,21 @@ export class FocusNfeResolver {
     return newFocusNfeIntegration;
   }
 
-  @Query(() => [FocusNfeIntegration])
+  @Query(() => [FocusNfeIntegrationPublicDto])
   async getFocusNfeIntegrationsByWorkspace(
     @Args('workspaceId') workspaceId: string,
   ): Promise<FocusNfeIntegration[]> {
     return await this.focusNfeService.findAll(workspaceId);
   }
 
-  @Query(() => FocusNfeIntegration)
+  @Query(() => FocusNfeIntegrationPublicDto)
   async getFocusNfeIntegrationById(
     @Args('focusNfeIntegrationId') focusNfeIntegrationId: string,
   ): Promise<FocusNfeIntegration | null> {
     return await this.focusNfeService.findById(focusNfeIntegrationId);
   }
 
-  @Mutation(() => FocusNfeIntegration)
+  @Mutation(() => FocusNfeIntegrationPublicDto)
   async updateFocusNfeIntegration(
     @Args('updateInput') updateInput: UpdateFocusNfeIntegrationInput,
   ): Promise<FocusNfeIntegration> {

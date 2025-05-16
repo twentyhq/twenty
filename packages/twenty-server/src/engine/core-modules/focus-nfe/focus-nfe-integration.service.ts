@@ -24,7 +24,6 @@ export class FocusNfeService {
 
   async encryptText(text: string): Promise<string> {
     const secretKey = this.environmentService.get('FOCUS_NFE_ENCRYPTION_KEY');
-    console.log('FOCUS_NFE_ENCRYPTION_KEY', secretKey);
 
     if (!secretKey) return text;
     const key = CryptoJS.enc.Utf8.parse(secretKey);
@@ -41,13 +40,12 @@ export class FocusNfeService {
 
   async decryptText(cipherText: string): Promise<string> {
     const secretKey = this.environmentService.get('FOCUS_NFE_ENCRYPTION_KEY');
-    console.log('FOCUS_NFE_ENCRYPTION_KEY', secretKey);
     if (!secretKey) return cipherText;
     const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
 
     const decrypted = bytes.toString(CryptoJS.enc.Utf8);
 
-    return bytes.toString(CryptoJS.enc.Utf8);
+    return decrypted;
   }
 
   async create(
@@ -78,6 +76,16 @@ export class FocusNfeService {
       relations: ['workspace'],
       order: {
         createdAt: 'DESC',
+      },
+      select: {
+        id: true,
+        integrationName: true,
+        workspace: {
+          id: true,
+        },
+        status: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
   }

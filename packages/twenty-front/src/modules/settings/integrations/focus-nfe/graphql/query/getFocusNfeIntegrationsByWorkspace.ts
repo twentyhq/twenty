@@ -5,7 +5,6 @@ export const GET_FOCUS_NFE_INTEGRATIONS_BY_WORKSPACE = gql`
     getFocusNfeIntegrationsByWorkspace(workspaceId: $workspaceId) {
       id
       integrationName
-      token
       createdAt
       status
       workspace {

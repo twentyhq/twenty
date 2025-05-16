@@ -23,7 +23,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 export const settingsIntegrationFocusNfeConnectionFormSchema = z.object({
   id: z.string(),
   integrationName: z.string().min(1),
-  token: z.string(),
+  token: z.string().optional(),
 });
 
 export type SettingsEditIntegrationFocusNfeConnectionFormValues = z.infer<
@@ -83,7 +83,7 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
       await updateFocusNfeIntegration({
         id: formValues?.id,
         integrationName: formValues?.integrationName,
-        token: formValues?.token,
+        token: formValues?.token ?? undefined,
       });
 
       navigate(SettingsPath.IntegrationFocusNfe);

@@ -7,7 +7,6 @@ export const CREATE_FOCUS_NFE_INTEGRATION = gql`
     createFocusNfeIntegration(createInput: $createInput) {
       id
       integrationName
-      token
       status
       workspace {
         id
