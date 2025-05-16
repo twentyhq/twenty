@@ -101,7 +101,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
             ({ recordId }) => recordId,
           ),
           offset: loadMore ? paginationState.currentOffset : 0,
-          limit: MULTIPLE_RECORD_PICKER_PAGE_SIZE,
+          limitPerObject: MULTIPLE_RECORD_PICKER_PAGE_SIZE,
         });
 
         const existingMorphItems = loadMore
@@ -366,14 +366,14 @@ const performSearchQueries = async ({
   searchableObjectMetadataItems,
   pickedRecordIds,
   offset = 0,
-  limit = MULTIPLE_RECORD_PICKER_PAGE_SIZE,
+  limitPerObject = MULTIPLE_RECORD_PICKER_PAGE_SIZE,
 }: {
   client: ApolloClient<object>;
   searchFilter: string;
   searchableObjectMetadataItems: ObjectMetadataItem[];
   pickedRecordIds: string[];
   offset?: number;
-  limit?: number;
+  limitPerObject?: number;
 }): Promise<[SearchRecord[], SearchRecord[]]> => {
   if (searchableObjectMetadataItems.length === 0) {
     return [[], []];
@@ -388,7 +388,7 @@ const performSearchQueries = async ({
           ({ nameSingular }) => nameSingular,
         ),
         filter,
-        limit,
+        limitPerObject,
         offset,
       },
     });
