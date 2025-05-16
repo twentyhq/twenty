@@ -1,18 +1,16 @@
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { ModalHotkeysAndClickOutsideEffect } from '@/ui/layout/modal/components/ModalHotkeysAndClickOutsideEffect';
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import {
-  ClickOutsideMode,
-  useListenClickOutside,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { ModalComponentInstanceContext } from '@/ui/layout/modal/contexts/ModalComponentInstanceContext';
+import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import React, { useEffect, useRef } from 'react';
-import { Key } from 'ts-key-enum';
-
+import React, { useRef } from 'react';
 const StyledModalDiv = styled(motion.div)<{
   size?: ModalSize;
   padding?: ModalPadding;
@@ -169,6 +167,7 @@ export type ModalPadding = 'none' | 'small' | 'medium' | 'large';
 export type ModalVariants = 'primary' | 'secondary' | 'tertiary';
 
 export type ModalProps = React.PropsWithChildren & {
+  modalId: string;
   size?: ModalSize;
   padding?: ModalPadding;
   className?: string;
@@ -176,7 +175,7 @@ export type ModalProps = React.PropsWithChildren & {
   onEnter?: () => void;
   modalVariant?: ModalVariants;
 } & (
-    | { isClosable: true; onClose: () => void }
+    | { isClosable: true; onClose?: () => void }
     | { isClosable?: false; onClose?: never }
   );
 
@@ -187,11 +186,11 @@ const modalAnimation = {
 };
 
 export const Modal = ({
+  modalId,
   children,
   size = 'medium',
   padding = 'medium',
   className,
-  hotkeyScope = ModalHotkeyScope.Default,
   onEnter,
   isClosable = false,
   onClose,
@@ -200,80 +199,65 @@ export const Modal = ({
   const isMobile = useIsMobile();
   const modalRef = useRef<HTMLDivElement>(null);
 
-  const {
-    goBackToPreviousHotkeyScope,
-    setHotkeyScopeAndMemorizePreviousScope,
-  } = usePreviousHotkeyScope();
-
-  useEffect(() => {
-    setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
-    return () => {
-      goBackToPreviousHotkeyScope();
-    };
-  }, [
-    hotkeyScope,
-    setHotkeyScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeyScope,
-  ]);
-
-  useScopedHotkeys(
-    [Key.Enter],
-    () => {
-      onEnter?.();
-    },
-    hotkeyScope,
-  );
-
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      if (isClosable && onClose !== undefined) {
-        onClose();
-      }
-    },
-    hotkeyScope,
-  );
-
-  useListenClickOutside({
-    refs: [modalRef],
-    listenerId: 'MODAL_CLICK_OUTSIDE_LISTENER_ID',
-    callback: () => {
-      if (isClosable && onClose !== undefined) {
-        onClose();
-      }
-    },
-    mode: ClickOutsideMode.comparePixels,
-  });
+  const theme = useTheme();
 
   const stopEventPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
 
-  const theme = useTheme();
+  const isModalOpened = useRecoilComponentValueV2(
+    isModalOpenedComponentState,
+    modalId,
+  );
+
+  const { closeModal } = useModal();
+
+  const handleClose = () => {
+    onClose?.();
+    closeModal(modalId);
+  };
 
   return (
-    <StyledBackDrop
-      className="modal-backdrop"
-      onMouseDown={stopEventPropagation}
-      modalVariant={modalVariant}
-    >
-      <StyledModalDiv
-        ref={modalRef}
-        size={size}
-        padding={padding}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        layout
-        modalVariant={modalVariant}
-        variants={modalAnimation}
-        transition={{ duration: theme.animation.duration.normal }}
-        className={className}
-        isMobile={isMobile}
-      >
-        {children}
-      </StyledModalDiv>
-    </StyledBackDrop>
+    <>
+      {isModalOpened && (
+        <ModalComponentInstanceContext.Provider
+          value={{
+            instanceId: modalId,
+          }}
+        >
+          <ModalHotkeysAndClickOutsideEffect
+            modalId={modalId}
+            modalRef={modalRef}
+            onEnter={onEnter}
+            isClosable={isClosable}
+            onClose={handleClose}
+          />
+          <StyledBackDrop
+            data-testid="modal-backdrop"
+            className="modal-backdrop"
+            onMouseDown={stopEventPropagation}
+            modalVariant={modalVariant}
+          >
+            <StyledModalDiv
+              ref={modalRef}
+              size={size}
+              padding={padding}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              layout
+              modalVariant={modalVariant}
+              variants={modalAnimation}
+              transition={{ duration: theme.animation.duration.normal }}
+              className={className}
+              isMobile={isMobile}
+            >
+              {children}
+            </StyledModalDiv>
+          </StyledBackDrop>
+        </ModalComponentInstanceContext.Provider>
+      )}
+    </>
   );
 };
 

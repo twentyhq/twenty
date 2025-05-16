@@ -51,10 +51,12 @@ export function transformMetadataForComparison<T, Keys extends keyof T>(
       ) {
         const orderedValue = orderObjectProperties(datum[property] as object);
 
+        // @ts-expect-error legacy noImplicitAny
         transformedField[property as string] = JSON.stringify(
           orderedValue,
         ) as T[Keys];
       } else {
+        // @ts-expect-error legacy noImplicitAny
         transformedField[property as string] = datum[property];
       }
     }

@@ -622,7 +622,7 @@ msgid "Are you sure you want to delete this record? It can be recovered from the
 msgstr "Да ли сте сигурни да желите да обришете овај запис? Може се повратити из командног менија."
 
 #. js-lingui-id: rnCqBK
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Are you sure? Your current information will not be saved."
 msgstr ""
 
@@ -804,7 +804,7 @@ msgstr "Не могу се мењати API имена за стандардне
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 msgid "Cancel"
 msgstr "Откажи"
@@ -1266,6 +1266,11 @@ msgstr "Креирај свој радни простор"
 msgid "Created"
 msgstr "Креирано"
 
+#. js-lingui-id: R3PLzn
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
+msgid "currencies"
+msgstr ""
+
 #. js-lingui-id: 6YzXhC
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Current value from server environment. Set a custom value to override."
@@ -1501,6 +1506,11 @@ msgstr "Обриши налог и све асоциране податке"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete API key"
 msgstr "Обриши API кључ"
+
+#. js-lingui-id: x2p4/4
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
+msgid "Delete field"
+msgstr ""
 
 #. js-lingui-id: 4dpwsE
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
@@ -2057,7 +2067,7 @@ msgid "Existing objects"
 msgstr "Постојећи објекти"
 
 #. js-lingui-id: ydzS9x
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Exit"
 msgstr ""
 
@@ -2067,7 +2077,7 @@ msgstr ""
 #~ msgstr "Изађи из целог екрана"
 
 #. js-lingui-id: XB4onr
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Exit import flow"
 msgstr ""
 
@@ -2293,6 +2303,11 @@ msgstr "Првих 5 линија"
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "First Name"
 msgstr "Име"
+
+#. js-lingui-id: ylQd2j
+#: src/modules/chatbot/hooks/useChatbotFlowCommandMenu.ts
+msgid "Flow"
+msgstr ""
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
@@ -2861,6 +2876,16 @@ msgstr "Последњих 7 дана (од најстаријег → најн�
 msgid "Last Name"
 msgstr "Презиме"
 
+#. js-lingui-id: s0kiVA
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Last payment failed. Please contact your admin."
+msgstr ""
+
+#. js-lingui-id: 3u/3zO
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Last payment failed. Please update your billing details."
+msgstr ""
+
 #. js-lingui-id: wL3cK8
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Latest"
@@ -3288,6 +3313,11 @@ msgstr ""
 msgid "No free workflow executions left. End trial period and activate your billing to continue."
 msgstr ""
 
+#. js-lingui-id: pxYUeX
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "No free workflow executions left. Please contact your admin."
+msgstr ""
+
 #. js-lingui-id: OcMef3
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "No latest version found"
@@ -3366,6 +3396,7 @@ msgstr "Нису пронађени подаци"
 
 #. js-lingui-id: Ev2r9A
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
 msgid "No results"
 msgstr ""
 
@@ -3921,6 +3952,11 @@ msgstr "Уклоните из фаворита"
 msgid "Remove option"
 msgstr "Уклони опцију"
 
+#. js-lingui-id: Ee8JBW
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
+msgid "Reorder field"
+msgstr ""
+
 #. js-lingui-id: OfhWJH
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
@@ -4092,16 +4128,22 @@ msgstr "Претражите индекс..."
 msgid "Search config variables"
 msgstr ""
 
+#. js-lingui-id: WLfEv1
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
+msgid "Search country"
+msgstr ""
+
 #. js-lingui-id: sSARNY
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "Search currency"
 msgstr ""
 
 #. js-lingui-id: 7taA9j
+#: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFieldSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterDropdownFieldSelectMenu.tsx
 msgid "Search fields"
 msgstr "Претражите поља"
 
@@ -4540,6 +4582,11 @@ msgstr "Субјекат, тело и додаци ће бити подељен�
 msgid "Submit"
 msgstr ""
 
+#. js-lingui-id: EDl9kS
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Subscribe"
+msgstr ""
+
 #. js-lingui-id: uvY7Wk
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Subscription activated."
@@ -4888,6 +4935,16 @@ msgstr ""
 msgid "Track your monthly workflow credit consumption."
 msgstr ""
 
+#. js-lingui-id: wN0jHF
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Trial expired. Please contact your admin"
+msgstr ""
+
+#. js-lingui-id: y985qL
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Trial expired. Please update your billing details."
+msgstr ""
+
 #. js-lingui-id: PiUt3N
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
@@ -4953,6 +5010,12 @@ msgstr "Непозната грешка"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Unlimited contacts"
 msgstr "Неограничени контакти"
+
+#. js-lingui-id: EkH9pt
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Update"
+msgstr ""
 
 #. js-lingui-id: +b7T3G
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -5166,10 +5229,15 @@ msgstr ""
 msgid "was restored by"
 msgstr ""
 
+#. js-lingui-id: Rhpaof
+#: src/modules/ui/input/components/ImageInput.tsx
+msgid "We support your square PNGs, JPEGs and GIFs under {maxSize}MB"
+msgstr ""
+
 #. js-lingui-id: id6ein
 #: src/modules/ui/input/components/ImageInput.tsx
-msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
-msgstr "Подржавамо ваше квадратне PNG, JPEG и GIF фајлове величине испод 10MB"
+#~ msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
+#~ msgstr "Подржавамо ваше квадратне PNG, JPEG и GIF фајлове величине испод 10MB"
 
 #. js-lingui-id: ZS7vYp
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -5372,6 +5440,16 @@ msgstr "Ваше име како ће бити приказано у аплик�
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
 msgstr "Ваш радни простор"
+
+#. js-lingui-id: oC6WBs
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Your workspace doesn't have an active subscription."
+msgstr ""
+
+#. js-lingui-id: QBTEtW
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Your workspace doesn't have an active subscription. Please contact your admin."
+msgstr ""
 
 #. js-lingui-id: RhNbPE
 #: src/pages/settings/SettingsBilling.tsx

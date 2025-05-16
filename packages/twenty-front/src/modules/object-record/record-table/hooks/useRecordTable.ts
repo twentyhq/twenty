@@ -7,6 +7,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
+import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { useUpsertRecordFromState } from '../../hooks/useUpsertRecordFromState';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
@@ -163,22 +164,22 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     );
 
     useScopedHotkeys(
-      [Key.ArrowUp, 'k'],
+      [Key.ArrowUp],
       () => {
         setHotkeyScopeAndMemorizePreviousScope(TableHotkeyScope.TableFocus);
         move('up');
       },
-      TableHotkeyScope.Table,
+      RecordIndexHotkeyScope.RecordIndex,
       [move],
     );
 
     useScopedHotkeys(
-      [Key.ArrowDown, 'j'],
+      [Key.ArrowDown],
       () => {
         setHotkeyScopeAndMemorizePreviousScope(TableHotkeyScope.TableFocus);
         move('down');
       },
-      TableHotkeyScope.Table,
+      RecordIndexHotkeyScope.RecordIndex,
       [move],
     );
 

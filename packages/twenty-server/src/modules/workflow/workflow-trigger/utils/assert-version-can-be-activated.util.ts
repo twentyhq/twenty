@@ -73,6 +73,7 @@ function assertVersionIsValid(workflowVersion: WorkflowVersionWorkspaceEntity) {
 
 function assertTriggerSettingsAreValid(
   triggerType: WorkflowTriggerType,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   settings: any,
 ) {
   switch (triggerType) {
@@ -93,6 +94,7 @@ function assertTriggerSettingsAreValid(
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function assertCronTriggerSettingsAreValid(settings: any) {
   if (!settings?.type) {
     throw new WorkflowTriggerException(
@@ -191,6 +193,7 @@ function assertCronTriggerSettingsAreValid(settings: any) {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function assertDatabaseEventTriggerSettingsAreValid(settings: any) {
   if (!settings?.eventName) {
     throw new WorkflowTriggerException(

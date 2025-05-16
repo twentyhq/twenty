@@ -20,6 +20,7 @@ import {
   CalendarEventListFetchJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import {
+  CalendarChannelSyncStage,
   CalendarChannelVisibility,
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
@@ -329,6 +330,47 @@ export class MicrosoftAPIsService {
               properties: {
                 before: messageChannel,
                 after: { ...messageChannel, ...messageChannelUpdates.raw[0] },
+              },
+            })),
+            workspaceId,
+          });
+
+          // now for the calendar channels
+          const calendarChannels = await calendarChannelRepository.find({
+            where: { connectedAccountId: newOrExistingConnectedAccountId },
+          });
+
+          const calendarChannelUpdates = await calendarChannelRepository.update(
+            {
+              connectedAccountId: newOrExistingConnectedAccountId,
+            },
+            {
+              syncStage:
+                CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+              syncStatus: null,
+              syncCursor: '',
+              syncStageStartedAt: null,
+            },
+            manager,
+          );
+
+          const calendarChannelMetadata =
+            await this.objectMetadataRepository.findOneOrFail({
+              where: { nameSingular: 'calendarChannel', workspaceId },
+            });
+
+          this.workspaceEventEmitter.emitDatabaseBatchEvent({
+            objectMetadataNameSingular: 'calendarChannel',
+            action: DatabaseEventAction.UPDATED,
+            events: calendarChannels.map((calendarChannel) => ({
+              recordId: calendarChannel.id,
+              objectMetadata: calendarChannelMetadata,
+              properties: {
+                before: calendarChannel,
+                after: {
+                  ...calendarChannel,
+                  ...calendarChannelUpdates.raw[0],
+                },
               },
             })),
             workspaceId,

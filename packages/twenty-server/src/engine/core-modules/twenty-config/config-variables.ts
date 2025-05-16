@@ -764,7 +764,7 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  IS_CONFIG_VARIABLES_IN_DB_ENABLED = false;
+  IS_CONFIG_VARIABLES_IN_DB_ENABLED = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
@@ -989,7 +989,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  WORKFLOW_EXEC_THROTTLE_LIMIT = 500;
+  WORKFLOW_EXEC_THROTTLE_LIMIT = 100;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RateLimiting,

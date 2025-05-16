@@ -91,18 +91,20 @@ export const SettingsCustomDomain = () => {
             Icon={IconTrash}
             variant="primary"
             onClick={deleteCustomDomain}
-            type="button"
           />
         </StyledButtonGroup>
       </StyledDomainFormWrapper>
       {currentWorkspace?.customDomain && (
         <StyledRecordsWrapper>
           <SettingsCustomDomainRecordsStatus />
-          {customDomainRecords && (
-            <SettingsCustomDomainRecords
-              records={customDomainRecords.records}
-            />
-          )}
+          {customDomainRecords &&
+            customDomainRecords.records.some(
+              (record) => record.status !== 'success',
+            ) && (
+              <SettingsCustomDomainRecords
+                records={customDomainRecords.records}
+              />
+            )}
         </StyledRecordsWrapper>
       )}
     </Section>

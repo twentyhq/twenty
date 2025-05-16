@@ -55,6 +55,7 @@ export class MessageImportExceptionHandlerService {
           syncStep,
           messageChannel,
           workspaceId,
+          exception,
         );
         break;
       case MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
@@ -89,6 +90,7 @@ export class MessageImportExceptionHandlerService {
       'id' | 'throttleFailureCount'
     >,
     workspaceId: string,
+    exception: MessageImportDriverException,
   ): Promise<void> {
     if (
       messageChannel.throttleFailureCount >= MESSAGING_THROTTLE_MAX_ATTEMPTS
@@ -98,8 +100,21 @@ export class MessageImportExceptionHandlerService {
         workspaceId,
         MessageChannelSyncStatus.FAILED_UNKNOWN,
       );
+
+      this.exceptionHandlerService.captureExceptions(
+        [
+          `Temporary error occurred ${MESSAGING_THROTTLE_MAX_ATTEMPTS} times while importing messages for message channel ${messageChannel.id.slice(0, 5)}... in workspace ${workspaceId}: ${exception?.message}`,
+        ],
+        {
+          additionalData: {
+            messageChannelId: messageChannel.id,
+          },
+          workspace: { id: workspaceId },
+        },
+      );
+
       throw new MessageImportException(
-        `Unknown temporary error occurred multiple times while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}`,
+        `Temporary error occurred multiple times while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception?.message}`,
         MessageImportExceptionCode.UNKNOWN,
       );
     }
@@ -161,14 +176,19 @@ export class MessageImportExceptionHandlerService {
       MessageChannelSyncStatus.FAILED_UNKNOWN,
     );
 
-    this.exceptionHandlerService.captureExceptions([
-      `Unknown error importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
-    ]);
-
-    throw new MessageImportException(
+    const messageImportException = new MessageImportException(
       exception.message,
       MessageImportExceptionCode.UNKNOWN,
     );
+
+    this.exceptionHandlerService.captureExceptions([messageImportException], {
+      additionalData: {
+        messageChannelId: messageChannel.id,
+      },
+      workspace: { id: workspaceId },
+    });
+
+    throw messageImportException;
   }
 
   private async handlePermanentException(

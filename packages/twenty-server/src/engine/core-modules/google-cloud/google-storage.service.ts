@@ -107,7 +107,7 @@ export class GoogleStorageService {
       video: folderName.VIDEOS,
     };
 
-    const folder = validTypes[type.toLowerCase()];
+    const folder = validTypes[type.toLowerCase() as keyof typeof validTypes];
 
     if (!folder) {
       throw new Error(

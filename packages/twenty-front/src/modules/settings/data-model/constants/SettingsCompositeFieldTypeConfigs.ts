@@ -54,7 +54,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     label: 'Emails',
     Icon: IllustrationIconMail,
     subFields: ['primaryEmail', 'additionalEmails'],
-    filterableSubFields: ['primaryEmail'],
+    filterableSubFields: ['primaryEmail', 'additionalEmails'],
     labelBySubField: {
       primaryEmail: 'Primary Email',
       additionalEmails: 'Additional Emails',
@@ -79,7 +79,11 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     },
     category: 'Basic',
     subFields: ['primaryLinkUrl', 'primaryLinkLabel', 'secondaryLinks'],
-    filterableSubFields: ['primaryLinkUrl', 'primaryLinkLabel'],
+    filterableSubFields: [
+      'primaryLinkUrl',
+      'primaryLinkLabel',
+      'secondaryLinks',
+    ],
     labelBySubField: {
       primaryLinkUrl: 'Link URL',
       primaryLinkLabel: 'Link Label',
@@ -100,9 +104,14 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     subFields: [
       'primaryPhoneNumber',
       'primaryPhoneCountryCode',
+      'primaryPhoneCallingCode',
       'additionalPhones',
     ],
-    filterableSubFields: ['primaryPhoneNumber', 'primaryPhoneCountryCode'],
+    filterableSubFields: [
+      'primaryPhoneNumber',
+      'primaryPhoneCallingCode',
+      'additionalPhones',
+    ],
     labelBySubField: {
       primaryPhoneNumber: 'Primary Phone Number',
       primaryPhoneCountryCode: 'Primary Phone Country Code',
@@ -170,8 +179,8 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     label: 'Actor',
     Icon: IllustrationIconSetting,
     category: 'Basic',
-    subFields: ['source'],
-    filterableSubFields: ['source'],
+    subFields: ['source', 'name'],
+    filterableSubFields: ['source', 'name'],
     labelBySubField: {
       source: 'Source',
       name: 'Name',

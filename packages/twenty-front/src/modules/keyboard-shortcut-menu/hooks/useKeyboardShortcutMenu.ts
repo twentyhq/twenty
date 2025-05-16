@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
@@ -6,38 +6,52 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { isKeyboardShortcutMenuOpenedState } from '../states/isKeyboardShortcutMenuOpenedState';
 
 export const useKeyboardShortcutMenu = () => {
-  const [, setIsKeyboardShortcutMenuOpened] = useRecoilState(
-    isKeyboardShortcutMenuOpenedState,
-  );
-  const isKeyboardShortcutMenuOpened = useRecoilValue(
-    isKeyboardShortcutMenuOpenedState,
-  );
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const toggleKeyboardShortcutMenu = () => {
-    if (isKeyboardShortcutMenuOpened === false) {
-      setIsKeyboardShortcutMenuOpened(true);
-      setHotkeyScopeAndMemorizePreviousScope(
-        AppHotkeyScope.KeyboardShortcutMenu,
-      );
-    } else {
-      setIsKeyboardShortcutMenuOpened(false);
-      goBackToPreviousHotkeyScope();
-    }
-  };
+  const openKeyboardShortcutMenu = useRecoilCallback(
+    ({ set }) =>
+      () => {
+        set(isKeyboardShortcutMenuOpenedState, true);
+        setHotkeyScopeAndMemorizePreviousScope(
+          AppHotkeyScope.KeyboardShortcutMenu,
+        );
+      },
+    [setHotkeyScopeAndMemorizePreviousScope],
+  );
 
-  const openKeyboardShortcutMenu = () => {
-    setIsKeyboardShortcutMenuOpened(true);
-    setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.KeyboardShortcutMenu);
-  };
+  const closeKeyboardShortcutMenu = useRecoilCallback(
+    ({ set, snapshot }) =>
+      () => {
+        const isKeyboardShortcutMenuOpened = snapshot
+          .getLoadable(isKeyboardShortcutMenuOpenedState)
+          .getValue();
 
-  const closeKeyboardShortcutMenu = () => {
-    setIsKeyboardShortcutMenuOpened(false);
-    goBackToPreviousHotkeyScope();
-  };
+        if (isKeyboardShortcutMenuOpened) {
+          set(isKeyboardShortcutMenuOpenedState, false);
+          goBackToPreviousHotkeyScope();
+        }
+      },
+    [goBackToPreviousHotkeyScope],
+  );
+
+  const toggleKeyboardShortcutMenu = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const isKeyboardShortcutMenuOpened = snapshot
+          .getLoadable(isKeyboardShortcutMenuOpenedState)
+          .getValue();
+
+        if (isKeyboardShortcutMenuOpened === false) {
+          openKeyboardShortcutMenu();
+        } else {
+          closeKeyboardShortcutMenu();
+        }
+      },
+    [closeKeyboardShortcutMenu, openKeyboardShortcutMenu],
+  );
 
   return {
     toggleKeyboardShortcutMenu,

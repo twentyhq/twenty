@@ -1,17 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
 import {
-  WorkspaceMetadataCacheException,
-  WorkspaceMetadataCacheExceptionCode,
-} from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
+  WorkspaceMetadataVersionException,
+  WorkspaceMetadataVersionExceptionCode,
+} from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
@@ -46,9 +46,9 @@ export class WorkspaceMetadataCacheService {
       await this.getMetadataVersionFromDatabase(workspaceId);
 
     if (!isDefined(currentDatabaseVersion)) {
-      throw new WorkspaceMetadataCacheException(
+      throw new WorkspaceMetadataVersionException(
         'Metadata version not found in the database',
-        WorkspaceMetadataCacheExceptionCode.METADATA_VERSION_NOT_FOUND,
+        WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
       );
     }
 

@@ -40,8 +40,10 @@ export class FileController {
     @Req() req: Request,
   ) {
     const folderPath = checkFilePath(params[0]);
+    // @ts-expect-error legacy noImplicitAny
     const filename = checkFilename(params['filename']);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const workspaceId = (req as any)?.workspaceId;
 
     if (!workspaceId) {

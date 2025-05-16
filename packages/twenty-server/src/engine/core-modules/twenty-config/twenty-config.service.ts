@@ -1,9 +1,8 @@
-import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 
 import { isString } from 'class-validator';
 
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
-import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { CONFIG_VARIABLES_MASKING_CONFIG } from 'src/engine/core-modules/twenty-config/constants/config-variables-masking-config';
 import { ConfigVariablesMetadataOptions } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { DatabaseConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/database-config.driver';
@@ -26,8 +25,6 @@ export class TwentyConfigService {
   constructor(
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
     @Optional() private readonly databaseConfigDriver: DatabaseConfigDriver,
-    @Inject(CONFIG_VARIABLES_INSTANCE_TOKEN)
-    private readonly configVariablesInstance: ConfigVariables,
   ) {
     const isConfigVariablesInDbEnabled = this.environmentConfigDriver.get(
       'IS_CONFIG_VARIABLES_IN_DB_ENABLED',
@@ -240,7 +237,9 @@ export class TwentyConfigService {
 
   private maskSensitiveValue<T extends keyof ConfigVariables>(
     key: T,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): any {
     if (!isString(value) || !(key in CONFIG_VARIABLES_MASKING_CONFIG)) {
       return value;

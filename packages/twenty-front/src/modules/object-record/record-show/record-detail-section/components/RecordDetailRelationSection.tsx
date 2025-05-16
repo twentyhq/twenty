@@ -102,17 +102,16 @@ export const RecordDetailRelationSection = ({
       } satisfies RecordGqlOperationFilter)
     : {};
 
-  const { data: relationAggregateResult, loading: aggregateLoading } =
-    useAggregateRecords<{
-      id: { COUNT: number };
-    }>({
-      objectNameSingular: relationObjectMetadataItem.nameSingular,
-      filter: filtersForAggregate,
-      skip: !isToManyObjects,
-      recordGqlFieldsAggregate: {
-        id: [AGGREGATE_OPERATIONS.count],
-      },
-    });
+  const { data: relationAggregateResult } = useAggregateRecords<{
+    id: { COUNT: number };
+  }>({
+    objectNameSingular: relationObjectMetadataItem.nameSingular,
+    filter: filtersForAggregate,
+    skip: !isToManyObjects,
+    recordGqlFieldsAggregate: {
+      id: [AGGREGATE_OPERATIONS.count],
+    },
+  });
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId,
@@ -123,7 +122,7 @@ export const RecordDetailRelationSection = ({
     isRecordReadOnly,
   });
 
-  if (loading || aggregateLoading || isFieldReadOnly) return null;
+  if (loading || isFieldReadOnly) return null;
 
   const relationRecordsCount = relationAggregateResult?.id?.COUNT ?? 0;
 

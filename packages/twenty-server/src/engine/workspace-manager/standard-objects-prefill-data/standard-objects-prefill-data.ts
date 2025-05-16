@@ -20,6 +20,7 @@ export const standardObjectsPrefillData = async (
       throw new Error('Standard Id is not set for object: ${object.name}');
     }
 
+    // @ts-expect-error legacy noImplicitAny
     acc[object.standardId] = {
       id: object.id,
       fields: object.fields.reduce((acc, field) => {
@@ -27,6 +28,7 @@ export const standardObjectsPrefillData = async (
           throw new Error('Standard Id is not set for field: ${field.name}');
         }
 
+        // @ts-expect-error legacy noImplicitAny
         acc[field.standardId] = field.id;
 
         return acc;

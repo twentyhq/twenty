@@ -65,6 +65,7 @@ export const EditableFilterDropdownButton = ({
         dropdownOffset={{ y: 8, x: 0 }}
         dropdownPlacement="bottom-start"
         onClickOutside={handleDropdownClickOutside}
+        dropdownWidth={280}
       />
     </>
   );

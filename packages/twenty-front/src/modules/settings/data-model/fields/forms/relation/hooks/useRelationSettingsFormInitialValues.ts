@@ -5,6 +5,7 @@ import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMe
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { SettingsDataModelFieldPreviewCardProps } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { isDefined } from 'twenty-shared/utils';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 export const useRelationSettingsFormInitialValues = ({
@@ -14,7 +15,7 @@ export const useRelationSettingsFormInitialValues = ({
   fieldMetadataItem?: Pick<FieldMetadataItem, 'type' | 'relationDefinition'>;
   objectMetadataItem?: SettingsDataModelFieldPreviewCardProps['objectMetadataItem'];
 }) => {
-  const { objectMetadataItems } = useFilteredObjectMetadataItems();
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
   const getRelationMetadata = useGetRelationMetadata();
   const {
@@ -27,17 +28,25 @@ export const useRelationSettingsFormInitialValues = ({
     [fieldMetadataItem, getRelationMetadata],
   ) ?? {};
 
-  const initialRelationObjectMetadataItem = useMemo(
-    () =>
+  const initialRelationObjectMetadataItem = useMemo(() => {
+    const availableItems = activeObjectMetadataItems.filter(
+      isObjectMetadataAvailableForRelation,
+    );
+    const initialObjectCandidate =
       relationObjectMetadataItemFromFieldMetadata ??
       objectMetadataItem ??
-      objectMetadataItems.filter(isObjectMetadataAvailableForRelation)[0],
-    [
-      objectMetadataItem,
-      objectMetadataItems,
-      relationObjectMetadataItemFromFieldMetadata,
-    ],
-  );
+      availableItems[0];
+    if (!isDefined(initialObjectCandidate)) {
+      throw new Error(
+        'Relation Form initialization error: invariant violated – no valid object available for relation (this should never happen).',
+      );
+    }
+    return initialObjectCandidate;
+  }, [
+    objectMetadataItem,
+    activeObjectMetadataItems,
+    relationObjectMetadataItemFromFieldMetadata,
+  ]);
 
   const initialRelationType =
     relationTypeFromFieldMetadata ?? RelationDefinitionType.ONE_TO_MANY;

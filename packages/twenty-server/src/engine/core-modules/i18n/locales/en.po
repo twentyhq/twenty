@@ -48,6 +48,11 @@ msgstr "(System) Views"
 msgid "A charge"
 msgstr "A charge"
 
+#. js-lingui-id: g1e0e9
+#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
+msgid "A chatbot"
+msgstr "A chatbot"
+
 #. js-lingui-id: kZR6+h
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "A company"
@@ -123,6 +128,11 @@ msgstr "A traceable link"
 msgid "A webhook"
 msgstr "A webhook"
 
+#. js-lingui-id: J2VOcy
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "A whatsapp integration"
+msgstr "A whatsapp integration"
+
 #. js-lingui-id: ZIN9Ga
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "A workflow"
@@ -154,6 +164,7 @@ msgid "A workspace member"
 msgstr "A workspace member"
 
 #. js-lingui-id: GDKKxT
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Access Token"
 msgstr "Access Token"
@@ -280,6 +291,16 @@ msgstr "ApiKey name"
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "ApiKey revocation date"
 msgstr "ApiKey revocation date"
+
+#. js-lingui-id: UU5sRu
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "App ID"
+msgstr "App ID"
+
+#. js-lingui-id: nFB1iz
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "App Key"
+msgstr "App Key"
 
 #. js-lingui-id: 3EiOLz
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -530,6 +551,11 @@ msgstr "Body"
 msgid "Body (deprecated)"
 msgstr "Body (deprecated)"
 
+#. js-lingui-id: XTXVIh
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "Business Account ID"
+msgstr "Business Account ID"
+
 #. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Cached record name"
@@ -634,6 +660,11 @@ msgstr "Channel Type"
 msgid "Charge"
 msgstr "Charge"
 
+#. js-lingui-id: +pX1ao
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge Action"
+msgstr "Charge Action"
+
 #. js-lingui-id: 4aKU9p
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Charge discount"
@@ -665,6 +696,11 @@ msgstr "Charge record position"
 msgid "Charge recurrence"
 msgstr "Charge recurrence"
 
+#. js-lingui-id: ciCuby
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge request code"
+msgstr "Charge request code"
+
 #. js-lingui-id: Kb+0BT
 #: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
@@ -675,6 +711,24 @@ msgstr "Charges"
 #: src/modules/product/standard-objects/product.workspace-entity.ts
 msgid "Charges using this product"
 msgstr "Charges using this product"
+
+#. js-lingui-id: p+8Mxh
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
+msgid "Chatbot"
+msgstr "Chatbot"
+
+#. js-lingui-id: h2J5/Q
+#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
+msgid "Chatbot record position"
+msgstr "Chatbot record position"
+
+#. js-lingui-id: 9MCO4/
+#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
+msgid "Chatbots"
+msgstr "Chatbots"
 
 #. js-lingui-id: 3wV73y
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -821,6 +875,11 @@ msgstr "Context"
 msgid "Cost"
 msgstr "Cost"
 
+#. js-lingui-id: UuEIJ+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "CPF or CNPJ identifier for the charge"
+msgstr "CPF or CNPJ identifier for the charge"
+
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -828,6 +887,7 @@ msgstr "Cost"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Created by"
 msgstr "Created by"
@@ -938,10 +998,20 @@ msgstr "Employees"
 msgid "End Date"
 msgstr "End Date"
 
+#. js-lingui-id: VND5UK
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Entity Type"
+msgstr "Entity Type"
+
 #. js-lingui-id: VYKxBB
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event charge"
 msgstr "Event charge"
+
+#. js-lingui-id: dNnjfa
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event chatbot"
+msgstr "Event chatbot"
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1122,6 +1192,11 @@ msgstr "extensionNumber"
 msgid "Favorite"
 msgstr "Favorite"
 
+#. js-lingui-id: 8BSbVD
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+msgid "Favorite chatbot"
+msgstr "Favorite chatbot"
+
 #. js-lingui-id: aKUOPp
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite company"
@@ -1206,6 +1281,7 @@ msgstr "Favorite workspace member"
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Favorites"
 msgstr "Favorites"
@@ -1214,6 +1290,11 @@ msgstr "Favorites"
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Favorites in this folder"
 msgstr "Favorites in this folder"
+
+#. js-lingui-id: NlDM8j
+#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
+msgid "Favorites linked to the chatbot"
+msgstr "Favorites linked to the chatbot"
 
 #. js-lingui-id: zQponA
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -1386,6 +1467,11 @@ msgstr "Ideal Customer Profile:  Indicates whether the company is the most suita
 #~ msgid "If the event is related to a particular object"
 #~ msgstr "If the event is related to a particular object"
 
+#. js-lingui-id: RLHsle
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Indicates if the entity is an individual or a company"
+msgstr "Indicates if the entity is an individual or a company"
+
 #. js-lingui-id: AHWM9N
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
@@ -1395,9 +1481,15 @@ msgstr "Integration"
 
 #. js-lingui-id: uhnn/8
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Integration linked to the charge"
 msgstr "Integration linked to the charge"
+
+#. js-lingui-id: 5Nvgmt
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "Integration linked to the Chatbot"
+msgstr "Integration linked to the Chatbot"
 
 #. js-lingui-id: u4iuBc
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
@@ -1792,6 +1884,7 @@ msgstr "Messaging provider refresh token"
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -1800,6 +1893,7 @@ msgstr "Messaging provider refresh token"
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
@@ -2093,6 +2187,11 @@ msgstr "Person record Position"
 msgid "Phone"
 msgstr "Phone"
 
+#. js-lingui-id: 4lE45u
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "Phone ID"
+msgstr "Phone ID"
+
 #. js-lingui-id: m2ivgq
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Phones"
@@ -2122,6 +2221,7 @@ msgstr "Point of Contact"
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -2170,6 +2270,11 @@ msgstr "Probability"
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Product"
 msgstr "Product"
+
+#. js-lingui-id: bt5TbG
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Product charge action(issue products can be used in charges)"
+msgstr "Product charge action(issue products can be used in charges)"
 
 #. js-lingui-id: bodmtG
 #: src/modules/product/standard-objects/product.workspace-entity.ts
@@ -2264,6 +2369,11 @@ msgstr "Related user email address"
 msgid "Relations"
 msgstr "Relations"
 
+#. js-lingui-id: BrEm08
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Request Code"
+msgstr "Request Code"
+
 #. js-lingui-id: rnCndp
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -2303,6 +2413,16 @@ msgstr "Search vector"
 msgid "Secret"
 msgstr "Secret"
 
+#. js-lingui-id: L5P0h3
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "Service Level Agreement"
+msgstr "Service Level Agreement"
+
+#. js-lingui-id: c3j3Wn
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "Service Level Agreement (SLA) in minutes"
+msgstr "Service Level Agreement (SLA) in minutes"
+
 #. js-lingui-id: Tz0i8g
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "Settings"
@@ -2330,13 +2450,20 @@ msgid "Start Date"
 msgstr "Start Date"
 
 #. js-lingui-id: uAQUqI
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/product/standard-objects/product.workspace-entity.ts
 msgid "Status"
 msgstr "Status"
 
+#. js-lingui-id: sPl2pb
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "Status of the integration"
+msgstr "Status of the integration"
+
 #. js-lingui-id: Db4W3/
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 msgid "Statuses"
 msgstr "Statuses"
 
@@ -2507,11 +2634,21 @@ msgstr "TaskTarget person"
 msgid "TaskTarget task"
 msgstr "TaskTarget task"
 
+#. js-lingui-id: m+elvG
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Tax ID"
+msgstr "Tax ID"
+
 #. js-lingui-id: xeiujy
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Text"
 msgstr "Text"
+
+#. js-lingui-id: kcAkbZ
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "The Access Token obtained from Facebook Developer"
+msgstr "The Access Token obtained from Facebook Developer"
 
 #. js-lingui-id: 6PJbR2
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -2522,6 +2659,26 @@ msgstr "The account handle (email, username, phone number, etc.)"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "The account provider"
 msgstr "The account provider"
+
+#. js-lingui-id: y4NQ7b
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "The App ID obtained from Facebook Developer"
+msgstr "The App ID obtained from Facebook Developer"
+
+#. js-lingui-id: mD7PpP
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "The App Secret Key obtained from Facebook Developer"
+msgstr "The App Secret Key obtained from Facebook Developer"
+
+#. js-lingui-id: zYeB/b
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "The business account ID obtained from Facebook Developer"
+msgstr "The business account ID obtained from Facebook Developer"
+
+#. js-lingui-id: ftUrkL
+#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
+msgid "The chatbot flow name"
+msgstr "The chatbot flow name"
 
 #. js-lingui-id: qnNFrW
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -2555,9 +2712,15 @@ msgstr "The content of the traceable link (e.g., bannerSale)"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "The creator of the record"
 msgstr "The creator of the record"
+
+#. js-lingui-id: ZVYmSG
+#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
+msgid "The current statuses of the chatbot flow"
+msgstr "The current statuses of the chatbot flow"
 
 #. js-lingui-id: bMyVOx
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -2604,10 +2767,20 @@ msgstr "The name of the traceable link"
 msgid "The name of the traceable link associated with the link"
 msgstr "The name of the traceable link associated with the link"
 
+#. js-lingui-id: cgODOx
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "The name of the whatsapp integration"
+msgstr "The name of the whatsapp integration"
+
 #. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "The opportunity name"
 msgstr "The opportunity name"
+
+#. js-lingui-id: bDvBRk
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "The phone number ID obtained from Facebook Developer"
+msgstr "The phone number ID obtained from Facebook Developer"
 
 #. js-lingui-id: Jiq0u3
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
@@ -2628,6 +2801,11 @@ msgstr "The URL used to track final url metadata."
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 #~ msgid "The used to track final url metadata."
 #~ msgstr "The used to track final url metadata."
+
+#. js-lingui-id: Kduucd
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "The Verify Token obtained from Facebook Developer"
+msgstr "The Verify Token obtained from Facebook Developer"
 
 #. js-lingui-id: 5N6QtE
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
@@ -2701,9 +2879,15 @@ msgstr "Time zone"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Timeline Activities"
 msgstr "Timeline Activities"
+
+#. js-lingui-id: xSqX1G
+#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
+msgid "Timeline activities linked to the chatbot"
+msgstr "Timeline activities linked to the chatbot"
 
 #. js-lingui-id: fqKMpF
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -2882,6 +3066,11 @@ msgstr "UTM Source"
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Value"
 msgstr "Value"
+
+#. js-lingui-id: BFDmoA
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "Verify Token"
+msgstr "Verify Token"
 
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -3150,6 +3339,21 @@ msgstr "Website URL"
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Welcome to Twenty: Please Confirm Your Email"
 msgstr "Welcome to Twenty: Please Confirm Your Email"
+
+#. js-lingui-id: 60h12G
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "Whatsapp Integration"
+msgstr "Whatsapp Integration"
+
+#. js-lingui-id: VFwGfG
+#: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
+msgid "Whatsapp Integrations"
+msgstr "Whatsapp Integrations"
+
+#. js-lingui-id: thcy+J
+#: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
+msgid "WhatsappIntegrations"
+msgstr "WhatsappIntegrations"
 
 #. js-lingui-id: bLt/0J
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts

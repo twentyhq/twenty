@@ -11,10 +11,11 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useRecoilValue } from 'recoil';
 
 import { ActivityList } from '@/activities/components/ActivityList';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { AttachmentRow } from './AttachmentRow';
-import { IconButton } from 'twenty-ui/input';
 import { IconDownload, IconX } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
+import { AttachmentRow } from './AttachmentRow';
 
 const DocumentViewer = lazy(() =>
   import('@/activities/files/components/DocumentViewer').then((module) => ({
@@ -112,6 +113,8 @@ const StyledButtonContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
+export const PREVIEW_MODAL_ID = 'preview-modal';
+
 export const AttachmentList = ({
   targetableObject,
   title,
@@ -122,9 +125,12 @@ export const AttachmentList = ({
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const [previewedAttachment, setPreviewedAttachment] =
     useState<Attachment | null>(null);
+
   const isAttachmentPreviewEnabled = useRecoilValue(
     isAttachmentPreviewEnabledState,
   );
+
+  const { openModal, closeModal } = useModal();
 
   const onUploadFile = async (file: File) => {
     await uploadAttachmentFile(file, targetableObject);
@@ -133,9 +139,11 @@ export const AttachmentList = ({
   const handlePreview = (attachment: Attachment) => {
     if (!isAttachmentPreviewEnabled) return;
     setPreviewedAttachment(attachment);
+    openModal(PREVIEW_MODAL_ID);
   };
 
   const handleClosePreview = () => {
+    closeModal(PREVIEW_MODAL_ID);
     setPreviewedAttachment(null);
   };
 
@@ -177,7 +185,12 @@ export const AttachmentList = ({
         </StyledContainer>
       )}
       {previewedAttachment && isAttachmentPreviewEnabled && (
-        <StyledModal size="large" isClosable onClose={handleClosePreview}>
+        <StyledModal
+          modalId={PREVIEW_MODAL_ID}
+          size="large"
+          isClosable
+          onClose={handleClosePreview}
+        >
           <StyledModalHeader>
             <StyledHeader>
               <StyledModalTitle>{previewedAttachment.name}</StyledModalTitle>

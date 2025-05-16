@@ -6,6 +6,7 @@ import { fetchMetadataFields } from 'src/engine/api/rest/metadata/query-builder/
 
 @Injectable()
 export class FindManyMetadataQueryFactory {
+  // @ts-expect-error legacy noImplicitAny
   create(objectNamePlural): string {
     const fields = fetchMetadataFields(objectNamePlural);
 

@@ -10,9 +10,20 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
+import {
+  WorkspaceMetadataCacheException,
+  WorkspaceMetadataCacheExceptionCode,
+} from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import {
+  WorkspaceMetadataVersionException,
+  WorkspaceMetadataVersionExceptionCode,
+} from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
 import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import {
+  ROLES_PERMISSIONS,
+  WorkspacePermissionsCacheService,
+} from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import {
   TwentyORMException,
@@ -28,6 +39,8 @@ type CacheResult<T, U> = {
   version: T;
   data: U;
 };
+
+const ONE_HOUR_IN_MS = 3600_000;
 
 @Injectable()
 export class WorkspaceDatasourceFactory {
@@ -111,9 +124,9 @@ export class WorkspaceDatasourceFactory {
             );
 
           if (!cachedObjectMetadataMaps) {
-            throw new TwentyORMException(
+            throw new WorkspaceMetadataCacheException(
               `Object metadata collection not found for workspace ${workspaceId}`,
-              TwentyORMExceptionCode.METADATA_COLLECTION_NOT_FOUND,
+              WorkspaceMetadataCacheExceptionCode.OBJECT_METADATA_COLLECTION_NOT_FOUND,
             );
           }
 
@@ -166,6 +179,16 @@ export class WorkspaceDatasourceFactory {
                     rejectUnauthorized: false,
                   }
                 : undefined,
+              extra: {
+                query_timeout: 10000,
+                // https://node-postgres.com/apis/pool
+                // TypeORM doesn't allow sharing connection pools bet
+                // So for now we keep a small pool open for longer
+                // for each workspace.
+                idleTimeoutMillis: ONE_HOUR_IN_MS,
+                max: 4,
+                allowExitOnIdle: true,
+              },
             },
             cachedFeatureFlagMapVersion,
             cachedFeatureFlagMap,
@@ -227,10 +250,10 @@ export class WorkspaceDatasourceFactory {
       recomputeCache: () =>
         this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
           workspaceId,
-          ignoreLock: true,
         }),
-      cachedEntityName: 'Roles permissions',
+      cachedEntityName: ROLES_PERMISSIONS,
       exceptionCode: TwentyORMExceptionCode.ROLES_PERMISSIONS_VERSION_NOT_FOUND,
+      logger: this.logger,
     });
   }
 
@@ -309,9 +332,9 @@ export class WorkspaceDatasourceFactory {
 
     if (!isDefined(latestWorkspaceMetadataVersion)) {
       if (shouldFailIfMetadataNotFound) {
-        throw new TwentyORMException(
-          `Metadata version not found for workspace ${workspaceId}`,
-          TwentyORMExceptionCode.METADATA_VERSION_NOT_FOUND,
+        throw new WorkspaceMetadataVersionException(
+          `Metadata version not found while fetching datasource for workspace ${workspaceId}`,
+          WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
         );
       } else {
         await this.workspaceMetadataCacheService.recomputeMetadataCache({
@@ -326,9 +349,9 @@ export class WorkspaceDatasourceFactory {
     }
 
     if (!isDefined(latestWorkspaceMetadataVersion)) {
-      throw new TwentyORMException(
-        `Metadata version not found after recompute for workspace ${workspaceId}`,
-        TwentyORMExceptionCode.METADATA_VERSION_NOT_FOUND,
+      throw new WorkspaceMetadataVersionException(
+        `Metadata version not found after recompute`,
+        WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
       );
     }
 

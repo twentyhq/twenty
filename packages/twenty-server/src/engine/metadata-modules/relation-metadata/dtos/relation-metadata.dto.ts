@@ -26,6 +26,7 @@ registerEnumType(RelationMetadataType, {
 
 @ObjectType('RelationMetadata')
 @Authorize({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.workspace?.id },
   }),

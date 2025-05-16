@@ -3,9 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { getAuthExceptionRestStatus } from 'src/engine/core-modules/auth/utils/get-auth-exception-rest-status.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -51,11 +52,16 @@ export class MiddlewareService {
     return isUserUnauthenticated && isExcludedOperation;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public writeRestResponseOnExceptionCaught(res: Response, error: any) {
-    // capture and handle custom exceptions
-    handleException(error as CustomException, this.exceptionHandlerService);
-
     const statusCode = this.getStatus(error);
+
+    // capture and handle custom exceptions
+    handleException({
+      exception: error as CustomException,
+      exceptionHandlerService: this.exceptionHandlerService,
+      statusCode,
+    });
 
     res.writeHead(statusCode, { 'Content-Type': 'application/json' });
     res.write(
@@ -69,6 +75,7 @@ export class MiddlewareService {
     res.end();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public writeGraphqlResponseOnExceptionCaught(res: Response, error: any) {
     const errors = [
       handleExceptionAndConvertToGraphQLError(
@@ -150,18 +157,14 @@ export class MiddlewareService {
     request.userWorkspaceId = data.userWorkspaceId;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private getStatus(error: any): number {
     if (this.hasErrorStatus(error)) {
       return error.status;
     }
 
-    if (error instanceof CustomException) {
-      switch (error.code) {
-        case AuthExceptionCode.UNAUTHENTICATED:
-          return 401;
-        default:
-          return 400;
-      }
+    if (error instanceof AuthException) {
+      return getAuthExceptionRestStatus(error);
     }
 
     return 500;

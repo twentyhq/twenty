@@ -91,14 +91,17 @@ export class MicrosoftGetMessagesService {
           'from',
         ),
         ...formatAddressObjectAsParticipants(
+          // @ts-expect-error legacy noImplicitAny
           response?.toRecipients?.map((recipient) => recipient.emailAddress),
           'to',
         ),
         ...formatAddressObjectAsParticipants(
+          // @ts-expect-error legacy noImplicitAny
           response?.ccRecipients?.map((recipient) => recipient.emailAddress),
           'cc',
         ),
         ...formatAddressObjectAsParticipants(
+          // @ts-expect-error legacy noImplicitAny
           response?.bccRecipients?.map((recipient) => recipient.emailAddress),
           'bcc',
         ),
@@ -133,6 +136,7 @@ export class MicrosoftGetMessagesService {
       return [];
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return batchResponse.responses.map((response: any) => {
       if (response.status === 200) {
         return response.body;

@@ -1,7 +1,6 @@
 import { Catch, ExceptionFilter } from '@nestjs/common';
 
 import {
-  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -25,8 +24,13 @@ export class WorkflowTriggerGraphqlApiExceptionFilter
         throw new UserInputError(exception.message);
       case WorkflowTriggerExceptionCode.NOT_FOUND:
         throw new NotFoundError(exception.message);
-      default:
-        throw new InternalServerError(exception.message);
+      case WorkflowTriggerExceptionCode.INTERNAL_ERROR:
+        throw exception;
+      default: {
+        const _exhaustiveCheck: never = exception.code;
+
+        throw exception;
+      }
     }
   }
 }

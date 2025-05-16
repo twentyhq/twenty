@@ -9,6 +9,7 @@ import { Telephony } from 'src/engine/core-modules/telephony/telephony.entity';
 import { CreateTelephonyHandler } from 'src/engine/core-modules/telephony/types/Create';
 import { DeleteTelephonyHandler } from 'src/engine/core-modules/telephony/types/Delete';
 import { GetAllTelephonyHandler } from 'src/engine/core-modules/telephony/types/GetAll';
+import { FindOneTelephonyHandler } from 'src/engine/core-modules/telephony/types/GetOne/FindOne.type';
 import { UpdateTelephonyHandler } from 'src/engine/core-modules/telephony/types/Update';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -71,7 +72,7 @@ export class TelephonyService extends TypeOrmQueryService<Telephony> {
     }
   };
 
-  findOne = async ({ id }) => {
+  findOne: FindOneTelephonyHandler = async ({ id }) => {
     const telephony = await this.telephonyRepository.findOne({
       where: {
         id,

@@ -2,11 +2,11 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { buildFindOneRecordForShowPageOperationSignature } from '@/object-record/record-show/graphql/operations/factories/findOneRecordForShowPageOperationSignatureFactory';
+import { useSetRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isDefined } from 'twenty-shared/utils';
+import { useRecoilCallback } from 'recoil';
 
 type RecordShowEffectProps = {
   objectNameSingular: string;
@@ -19,6 +19,7 @@ export const RecordShowEffect = ({
 }: RecordShowEffectProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
   const { objectMetadataItems } = useObjectMetadataItems();
+  const setRecordValueInContextSelector = useSetRecordValue();
 
   const FIND_ONE_RECORD_FOR_SHOW_PAGE_OPERATION_SIGNATURE =
     buildFindOneRecordForShowPageOperationSignature({
@@ -33,15 +34,25 @@ export const RecordShowEffect = ({
     withSoftDeleted: true,
   });
 
-  const [recordFromStore, setRecordFromStore] = useRecoilState(
-    recordStoreFamilyState(recordId),
+  const setRecordStore = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async (newRecord: ObjectRecord | null | undefined) => {
+        const previousRecordValue = snapshot
+          .getLoadable(recordStoreFamilyState(recordId))
+          .getValue();
+
+        if (JSON.stringify(previousRecordValue) !== JSON.stringify(newRecord)) {
+          set(recordStoreFamilyState(recordId), newRecord);
+        }
+
+        setRecordValueInContextSelector(recordId, newRecord);
+      },
+    [recordId, setRecordValueInContextSelector],
   );
 
   useEffect(() => {
-    if (isDefined(record) && !isDeeplyEqual(record, recordFromStore)) {
-      setRecordFromStore(record);
-    }
-  }, [record, recordFromStore, setRecordFromStore]);
+    setRecordStore(record);
+  }, [record, setRecordStore]);
 
   return <></>;
 };
