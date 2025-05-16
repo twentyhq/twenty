@@ -2,6 +2,7 @@
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationFocusNfeDatabaseConnectionForm } from '@/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeDatabaseConnectionForm';
+import { useCriptographText } from '@/settings/integrations/focus-nfe/hooks/useCriptograph';
 import { useGetAllFocusNfeIntegrationsByWorkspace } from '@/settings/integrations/focus-nfe/hooks/useGetAllFocusNfeIntegrationByWorkspace';
 import { useUpdateFocusNfeIntegration } from '@/settings/integrations/focus-nfe/hooks/useUpdateFocusNfeIntegration';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
@@ -38,6 +39,7 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
   const settingsIntegrationsPagePath = getSettingsPath(
     SettingsPath.Integrations,
   );
+  const { decryptText } = useCriptographText();
 
   const { updateFocusNfeIntegration } = useUpdateFocusNfeIntegration();
 
@@ -71,7 +73,7 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
       defaultValues: {
         id: activeConnection?.id,
         integrationName: activeConnection?.integrationName,
-        token: activeConnection?.token,
+        token: decryptText(activeConnection?.token ?? ''),
       },
     });
 
