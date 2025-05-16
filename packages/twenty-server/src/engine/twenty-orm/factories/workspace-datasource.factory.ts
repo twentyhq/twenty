@@ -26,7 +26,6 @@ import {
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
-import { PgPoolSharedService } from 'src/engine/twenty-orm/services/pg-shared-pool.service';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import { CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
 import { getFromCacheWithRecompute } from 'src/engine/utils/get-data-from-cache-with-recompute.util';
@@ -53,10 +52,7 @@ export class WorkspaceDatasourceFactory {
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
-    private readonly pgPoolSharedService: PgPoolSharedService,
-  ) {
-    this.pgPoolSharedService.initialize();
-  }
+  ) {}
 
   public async create(
     workspaceId: string,
@@ -204,8 +200,18 @@ export class WorkspaceDatasourceFactory {
           try {
             await dataSource.destroy();
           } catch (error) {
-            // Ignore error if pool has already been destroyed which is a common race condition case
-            if (error.message === 'Called end on pool more than once') {
+            // Ignore errors related to pools already being destroyed, which can happen
+            // during concurrent operations or race conditions during shutdown
+            if (
+              error.message === 'Called end on pool more than once' ||
+              error.message?.includes(
+                'pool is draining and cannot accommodate new clients',
+              )
+            ) {
+              this.logger.debug(
+                `Ignoring pool error during cleanup: ${error.message}`,
+              );
+
               return;
             }
             throw error;
@@ -359,8 +365,19 @@ export class WorkspaceDatasourceFactory {
   }
 
   public async destroy(workspaceId: string) {
-    await this.promiseMemoizer.clearKeys(`${workspaceId}-`, (dataSource) => {
-      dataSource.destroy();
-    });
+    try {
+      await this.promiseMemoizer.clearKeys(`${workspaceId}-`, (dataSource) => {
+        dataSource.destroy().catch((error) => {
+          this.logger.debug(
+            `Error during datasource destroy (safely ignored): ${error.message}`,
+          );
+        });
+      });
+    } catch (error) {
+      // Log and swallow any errors during cleanup to prevent crashes
+      this.logger.warn(
+        `Error cleaning up datasources for workspace ${workspaceId}: ${error.message}`,
+      );
+    }
   }
 }

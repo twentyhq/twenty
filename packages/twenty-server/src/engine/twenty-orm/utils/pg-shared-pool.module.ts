@@ -1,4 +1,9 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import {
+    Global,
+    Module,
+    OnApplicationShutdown,
+    OnModuleInit,
+} from '@nestjs/common';
 
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -7,25 +12,29 @@ import { PgPoolSharedService } from 'src/engine/twenty-orm/services/pg-shared-po
 /**
  * Module that initializes the shared pg pool at application bootstrap
  */
+@Global()
 @Module({
   imports: [TwentyConfigModule],
   providers: [PgPoolSharedService],
   exports: [PgPoolSharedService],
 })
-export class PgPoolSharedModule implements OnModuleInit {
+export class PgPoolSharedModule implements OnModuleInit, OnApplicationShutdown {
   constructor(
     private readonly pgPoolSharedService: PgPoolSharedService,
     private readonly configService: TwentyConfigService,
-  ) {
-    // Initialize immediately in constructor for earliest possible patching
+  ) {}
+
+  /**
+   * Initialize the pool sharing service when the module is initialized
+   */
+  onModuleInit() {
     this.pgPoolSharedService.initialize();
   }
 
   /**
-   * Initialize again during module init as a safety measure
+   * Clean up any resources when the application shuts down
    */
-  onModuleInit() {
-    // The initialize method is idempotent so calling it twice is safe
-    this.pgPoolSharedService.initialize();
+  onApplicationShutdown() {
+    this.pgPoolSharedService.onApplicationShutdown();
   }
 }

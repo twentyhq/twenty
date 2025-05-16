@@ -16,6 +16,11 @@ interface SSLConfig {
   [key: string]: unknown;
 }
 
+// Add interface for Pool with our custom property
+interface PoolWithEndTracker extends Pool {
+  __hasEnded?: boolean;
+}
+
 /**
  * Service that manages shared pg connection pools across tenants.
  * It patches the pg.Pool constructor to return cached instances for
@@ -26,11 +31,20 @@ export class PgPoolSharedService {
   private readonly logger = new Logger('PgPoolSharedService');
   private initialized = false;
   private readonly PATCH_SYMBOL = Symbol.for('@@twenty/pg-shared-pool');
+  private isDebugEnabled = false;
+  private logStatsInterval: NodeJS.Timeout | null = null;
 
   // Internal pool cache - exposed for testing only
   private poolsMap = new Map<string, Pool>();
 
-  constructor(private readonly configService: TwentyConfigService) {}
+  constructor(private readonly configService: TwentyConfigService) {
+    // Check if debug logging is enabled
+    const logLevels = this.configService.get('LOG_LEVELS');
+
+    this.isDebugEnabled =
+      Array.isArray(logLevels) &&
+      logLevels.some((level) => level === 'debug' || level === 'verbose');
+  }
 
   /**
    * Provides access to the internal pools map for testing purposes
@@ -72,6 +86,88 @@ export class PgPoolSharedService {
     this.logger.log(
       'Pg pool sharing initialized - pools will be shared across tenants',
     );
+
+    // Start logging stats periodically if debug is enabled
+    if (this.isDebugEnabled) {
+      this.startPoolStatsLogging();
+    }
+  }
+
+  /**
+   * Stops the periodic logging of pool statistics.
+   * Call this during application shutdown.
+   */
+  onApplicationShutdown(): void {
+    if (this.logStatsInterval) {
+      clearInterval(this.logStatsInterval);
+      this.logStatsInterval = null;
+    }
+  }
+
+  /**
+   * Logs detailed statistics about all connection pools
+   */
+  logPoolStats(): void {
+    if (!this.initialized || this.poolsMap.size === 0) {
+      this.logger.debug('No active pg pools to log stats for');
+
+      return;
+    }
+
+    let totalActive = 0;
+    let totalIdle = 0;
+    let totalPoolSize = 0;
+    let totalQueueSize = 0;
+
+    this.logger.debug('=== PostgreSQL Connection Pool Stats ===');
+
+    for (const [key, pool] of this.poolsMap.entries()) {
+      // Access internal properties that contain pool statistics
+      // Note: These are not officially documented properties, but are available
+      const poolStats = pool as unknown as {
+        _clients?: Array<unknown>;
+        _idle?: Array<unknown>;
+        _pendingQueue?: {
+          length: number;
+        };
+      };
+
+      const active =
+        (poolStats._clients?.length || 0) - (poolStats._idle?.length || 0);
+      const idle = poolStats._idle?.length || 0;
+      const poolSize = poolStats._clients?.length || 0;
+      const queueSize = poolStats._pendingQueue?.length || 0;
+
+      totalActive += active;
+      totalIdle += idle;
+      totalPoolSize += poolSize;
+      totalQueueSize += queueSize;
+
+      this.logger.debug(
+        `Pool [${key}]: active=${active}, idle=${idle}, size=${poolSize}, queue=${queueSize}`,
+      );
+    }
+
+    this.logger.debug(
+      `Total pools: ${this.poolsMap.size}, active=${totalActive}, idle=${totalIdle}, ` +
+        `total connections=${totalPoolSize}, queued requests=${totalQueueSize}`,
+    );
+    this.logger.debug('=========================================');
+  }
+
+  /**
+   * Starts periodically logging pool statistics if debug is enabled
+   */
+  private startPoolStatsLogging(): void {
+    // Log initial stats
+    this.logPoolStats();
+
+    // Set up interval (every 30 seconds)
+    this.logStatsInterval = setInterval(() => {
+      this.logPoolStats();
+    }, 30000);
+
+    this.logger.debug('Pool statistics logging enabled (30s interval)');
   }
 
   /**
@@ -96,6 +192,7 @@ export class PgPoolSharedService {
     const buildPoolKey = this.buildPoolKey.bind(this);
     const poolsMap = this.poolsMap;
     const logger = this.logger;
+    const isDebugEnabled = this.isDebugEnabled;
 
     // Define a proper constructor function that can be used with "new"
     // Use a function declaration to be compatible with 'new' keyword
@@ -120,6 +217,10 @@ export class PgPoolSharedService {
       const existing = poolsMap.get(key);
 
       if (existing) {
+        if (isDebugEnabled) {
+          logger.debug(`Reusing existing pg Pool for key "${key}"`);
+        }
+
         return existing;
       }
 
@@ -133,25 +234,78 @@ export class PgPoolSharedService {
         `Created new shared pg Pool for key "${key}" with ${poolConfig.max ?? 'default'} max connections. Total pools: ${poolsMap.size}`,
       );
 
+      if (isDebugEnabled) {
+        // Add event listeners for connection activity when debug is enabled
+        pool.on('connect', () => {
+          logger.debug(`Pool[${key}]: New connection established`);
+        });
+
+        pool.on('acquire', () => {
+          logger.debug(`Pool[${key}]: Client acquired from pool`);
+        });
+
+        pool.on('remove', () => {
+          logger.debug(`Pool[${key}]: Connection removed from pool`);
+        });
+
+        pool.on('error', (err) => {
+          logger.warn(`Pool[${key}]: Connection error: ${err.message}`);
+        });
+      }
+
       // Replace the pool's end method to clean up our cache
       const originalEnd = pool.end.bind(pool) as {
         (callback?: (err?: Error) => void): void;
       };
 
       // Replace the `end` method to clean up the pool from our cache
-      (pool as { end: unknown }).end = (
+      (pool as PoolWithEndTracker).end = (
         callback?: (err?: Error) => void,
       ): Promise<void> => {
+        // Track if this pool has already been ended
+        if ((pool as PoolWithEndTracker).__hasEnded) {
+          if (callback) {
+            // If a callback is provided, call it without an error
+            callback();
+          }
+
+          // Silently succeed instead of rejecting - safer during app shutdown
+          logger.debug(`Ignoring duplicate end() call for pool "${key}"`);
+
+          return Promise.resolve();
+        }
+
+        // Mark this pool as ended to prevent subsequent calls
+        (pool as PoolWithEndTracker).__hasEnded = true;
+
+        // Remove from our cache only on the first end call
         poolsMap.delete(key);
+
         logger.log(
           `pg Pool for key "${key}" has been closed. Remaining pools: ${poolsMap.size}`,
         );
 
         return new Promise<void>((resolve, reject) => {
           originalEnd((err) => {
-            if (callback) callback(err);
-            if (err) reject(err);
-            else resolve();
+            // Even if there's an error, consider the pool ended
+            if (err) {
+              // If error is about duplicate end, suppress it as we've already
+              // removed from our pool map
+              if (err.message === 'Called end on pool more than once') {
+                if (callback) callback();
+                resolve();
+
+                return;
+              }
+
+              if (callback) callback(err);
+              reject(err);
+
+              return;
+            }
+
+            if (callback) callback();
+            resolve();
           });
         });
       };
