@@ -33,6 +33,7 @@ describe('GoogleAPIsService', () => {
   let service: GoogleAPIsService;
   let resetCalendarChannelService: ResetCalendarChannelService;
   let resetMessageChannelService: ResetMessageChannelService;
+  let createMessageChannelService: CreateMessageChannelService;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
 
   const mockConnectedAccountRepository = {
@@ -175,6 +176,9 @@ describe('GoogleAPIsService', () => {
     resetMessageChannelService = module.get<ResetMessageChannelService>(
       ResetMessageChannelService,
     );
+    createMessageChannelService = module.get<CreateMessageChannelService>(
+      CreateMessageChannelService,
+    );
     twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
       TwentyORMGlobalManager,
     );
@@ -182,7 +186,6 @@ describe('GoogleAPIsService', () => {
 
   describe('refreshGoogleRefreshToken', () => {
     it('should reset calendar channels with FAILED_UNKNOWN syncStatus and FAILED syncStage', async () => {
-      // Mock configuration
       mockTwentyConfigService.get.mockImplementation((key) => {
         if (key === 'CALENDAR_PROVIDER_GOOGLE_ENABLED') return true;
         if (key === 'MESSAGING_PROVIDER_GMAIL_ENABLED') return true;
@@ -244,6 +247,10 @@ describe('GoogleAPIsService', () => {
         connectedAccountId: 'existing-account-id',
         manager: expect.any(Object),
       });
+
+      expect(
+        createMessageChannelService.createMessageChannel,
+      ).not.toHaveBeenCalled();
     });
   });
 });

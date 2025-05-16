@@ -34,6 +34,7 @@ describe('MicrosoftAPIsService', () => {
   let service: MicrosoftAPIsService;
   let resetCalendarChannelService: ResetCalendarChannelService;
   let resetMessageChannelService: ResetMessageChannelService;
+  let createMessageChannelService: CreateMessageChannelService;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
 
   const mockConnectedAccountRepository = {
@@ -184,6 +185,9 @@ describe('MicrosoftAPIsService', () => {
     resetMessageChannelService = module.get<ResetMessageChannelService>(
       ResetMessageChannelService,
     );
+    createMessageChannelService = module.get<CreateMessageChannelService>(
+      CreateMessageChannelService,
+    );
     twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
       TwentyORMGlobalManager,
     );
@@ -191,7 +195,6 @@ describe('MicrosoftAPIsService', () => {
 
   describe('refreshMicrosoftRefreshToken', () => {
     it('should reset calendar channels and message channels', async () => {
-      // Mock configuration
       mockTwentyConfigService.get.mockImplementation((key) => {
         if (key === 'CALENDAR_PROVIDER_MICROSOFT_ENABLED') return true;
         if (key === 'MESSAGING_PROVIDER_MICROSOFT_ENABLED') return true;
@@ -258,6 +261,10 @@ describe('MicrosoftAPIsService', () => {
         connectedAccountId: 'existing-account-id',
         manager: expect.any(Object),
       });
+
+      expect(
+        createMessageChannelService.createMessageChannel,
+      ).not.toHaveBeenCalled();
     });
   });
 });
