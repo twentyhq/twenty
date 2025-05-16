@@ -139,7 +139,7 @@ export const WorkspaceInviteTeam = () => {
         <Button
           Icon={IconSend}
           variant="primary"
-          accent="blue"
+          accent="green"
           title={t`Invite`}
           type="submit"
           disabled={isEmailsEmpty || !!errors.emails}

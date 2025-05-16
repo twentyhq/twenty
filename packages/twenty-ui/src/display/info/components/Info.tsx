@@ -6,7 +6,7 @@ import { Button } from '@ui/input/button/components/Button/Button';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export type InfoAccent = 'blue' | 'danger';
+export type InfoAccent = 'blue' | 'green' | 'danger';
 export type InfoProps = {
   accent?: InfoAccent;
   text: string;
@@ -38,8 +38,13 @@ const StyledInfo = styled.div<Pick<InfoProps, 'accent'>>`
     switch (accent) {
       case 'blue':
         return css`
-          background: ${theme.color.blueAccent20};
-          color: ${theme.color.blue50};
+          background: ${theme.color.greenAccent20};
+          color: ${theme.color.green50};
+        `;
+      case 'green':
+        return css`
+          background: ${theme.color.greenAccent20};
+          color: ${theme.color.green50};
         `;
       case 'danger':
         return css`

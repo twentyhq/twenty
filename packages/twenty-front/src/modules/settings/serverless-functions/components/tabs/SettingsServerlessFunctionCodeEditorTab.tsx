@@ -53,7 +53,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
     <Button
       title="Test"
       variant="primary"
-      accent="blue"
+      accent="green"
       size="small"
       Icon={IconPlayerPlay}
       onClick={handleExecute}

@@ -115,7 +115,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     <Button
       title="Open"
       variant="primary"
-      accent="blue"
+      accent="green"
       size="medium"
       Icon={IconBrowserMaximize}
       hotkeys={[getOsControlSymbol(), '⏎']}
