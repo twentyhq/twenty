@@ -233,6 +233,7 @@ export const Modal = ({
             onClose={handleClose}
           />
           <StyledBackDrop
+            data-testid="modal-backdrop"
             className="modal-backdrop"
             onMouseDown={stopEventPropagation}
             modalVariant={modalVariant}
