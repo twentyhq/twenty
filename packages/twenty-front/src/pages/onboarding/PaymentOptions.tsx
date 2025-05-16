@@ -10,7 +10,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useRecoilState } from 'recoil';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { plans, selectedPlanState } from '~/pages/onboarding/Plans';
+import { selectedPlanState } from '~/pages/onboarding/Plans';
 import { z } from 'zod';
 import {
   REACT_APP_STRIPE_PUBLISHABLE_KEY,
@@ -113,14 +113,11 @@ export const PaymentOptions = () => {
   // eslint-disable-next-line @nx/workspace-matching-state-variable
   const [selectedPlanId] = useRecoilState(selectedPlanState);
 
+  console.log('plano em payment', selectedPlanId);
+
+  console.log('price', selectedPlanId.price);
+
   const stripePaymentMethod = async () => {
-    const selectedPlan = plans.find((p) => p.id === selectedPlanId);
-
-    if (!selectedPlan) {
-      enqueueSnackBar('Plano inválido', { variant: SnackBarVariant.Error });
-      return;
-    }
-
     const response = await fetch(
       `${REACT_APP_SERVER_BASE_URL}/stripe/create-checkout-session`,
       {
@@ -129,7 +126,7 @@ export const PaymentOptions = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: selectedPlan.price,
+          amount: selectedPlanId.price,
           currency: 'brl',
           success_url: `${window.location.origin}/payment-required/payment-success`,
           cancel_url: `${window.location.origin}/plan-required`,

@@ -9,7 +9,6 @@ import { AgentModule } from 'src/engine/core-modules/agent/agent.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
-import { BillingPlansModule } from 'src/engine/core-modules/billing-plans/billing-plans.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
@@ -59,6 +58,8 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
+import { BillingPlansModule } from 'src/engine/core-modules/billing-plans/billing-plans.module';
+import { OnboardingPlansModule } from 'src/engine/core-modules/onboarding-plans/onboarding-plans.module';
 
 import { FocusNfeModule } from 'src/engine/core-modules/focus-nfe/focus-nfe-integration.module';
 import { AuditModule } from './audit/audit.module';
@@ -77,6 +78,7 @@ import { StripeModule } from './stripe/stripe.module';
     FeatureFlagModule,
     FileModule,
     OpenApiModule,
+    OnboardingPlansModule,
     AppTokenModule,
     TimelineMessagingModule,
     TimelineCalendarEventModule,
@@ -161,6 +163,7 @@ import { StripeModule } from './stripe/stripe.module';
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
     StripeModule,
+    OnboardingPlansModule,
     BillingPlansModule,
     InterModule,
     FocusNfeModule,
