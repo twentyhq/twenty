@@ -12,12 +12,18 @@ import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/contro
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 import { SSOAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
 import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
+import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
+import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
+import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
+import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
+import { CreateMessageFolderService } from 'src/engine/core-modules/auth/services/create-message-folder.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
-// import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
-import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
+import { ResetCalendarChannelService } from 'src/engine/core-modules/auth/services/reset-calendar-channel.service';
+import { ResetMessageChannelService } from 'src/engine/core-modules/auth/services/reset-message-channel.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { UpdateConnectedAccountService } from 'src/engine/core-modules/auth/services/update-connected-account.service';
 import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
@@ -114,11 +120,16 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     RefreshTokenService,
     LoginTokenService,
     ResetPasswordService,
+    ResetMessageChannelService,
+    ResetCalendarChannelService,
+    CreateMessageChannelService,
+    CreateCalendarChannelService,
+    CreateMessageFolderService,
+    CreateConnectedAccountService,
+    UpdateConnectedAccountService,
     TransientTokenService,
     ApiKeyService,
     AuthSsoService,
-    // reenable when working on: https://github.com/twentyhq/twenty/issues/9143
-    // OAuthService,
   ],
   exports: [AccessTokenService, LoginTokenService, RefreshTokenService],
 })

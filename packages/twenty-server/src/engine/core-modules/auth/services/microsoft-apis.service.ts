@@ -5,7 +5,13 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
+import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
+import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
+import { CreateMessageFolderService } from 'src/engine/core-modules/auth/services/create-message-folder.service';
+import { ResetCalendarChannelService } from 'src/engine/core-modules/auth/services/reset-calendar-channel.service';
+import { ResetMessageChannelService } from 'src/engine/core-modules/auth/services/reset-message-channel.service';
+import { UpdateConnectedAccountService } from 'src/engine/core-modules/auth/services/update-connected-account.service';
 import { getMicrosoftApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -20,21 +26,15 @@ import {
   CalendarEventListFetchJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import {
-  CalendarChannelSyncStage,
   CalendarChannelVisibility,
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
-  MessageChannelSyncStage,
-  MessageChannelSyncStatus,
-  MessageChannelType,
   MessageChannelVisibility,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
-import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
 import {
   MessagingMessageListFetchJob,
   MessagingMessageListFetchJobData,
@@ -50,6 +50,13 @@ export class MicrosoftAPIsService {
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
     private readonly accountsToReconnectService: AccountsToReconnectService,
+    private readonly resetMessageChannelService: ResetMessageChannelService,
+    private readonly resetCalendarChannelService: ResetCalendarChannelService,
+    private readonly createMessageChannelService: CreateMessageChannelService,
+    private readonly createCalendarChannelService: CreateCalendarChannelService,
+    private readonly createMessageFolderService: CreateMessageFolderService,
+    private readonly createConnectedAccountService: CreateConnectedAccountService,
+    private readonly updateConnectedAccountService: UpdateConnectedAccountService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
@@ -98,12 +105,6 @@ export class MicrosoftAPIsService {
         'messageChannel',
       );
 
-    const messageFolderRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageFolderWorkspaceEntity>(
-        workspaceId,
-        'messageFolder',
-      );
-
     const workspaceDataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace({
         workspaceId,
@@ -114,169 +115,53 @@ export class MicrosoftAPIsService {
     await workspaceDataSource.transaction(
       async (manager: WorkspaceEntityManager) => {
         if (!existingAccountId) {
-          const newConnectedAccount = await connectedAccountRepository.save(
-            {
-              id: newOrExistingConnectedAccountId,
-              handle,
-              provider: ConnectedAccountProvider.MICROSOFT,
-              accessToken: input.accessToken,
-              refreshToken: input.refreshToken,
-              accountOwnerId: workspaceMemberId,
-              scopes,
-            },
-            {},
-            manager,
-          );
-
-          const connectedAccountMetadata =
-            await this.objectMetadataRepository.findOneOrFail({
-              where: { nameSingular: 'connectedAccount', workspaceId },
-            });
-
-          this.workspaceEventEmitter.emitDatabaseBatchEvent({
-            objectMetadataNameSingular: 'connectedAccount',
-            action: DatabaseEventAction.CREATED,
-            events: [
-              {
-                recordId: newConnectedAccount.id,
-                objectMetadata: connectedAccountMetadata,
-                properties: {
-                  after: newConnectedAccount,
-                },
-              },
-            ],
+          await this.createConnectedAccountService.createConnectedAccount(
             workspaceId,
-          });
+            handle,
+            ConnectedAccountProvider.MICROSOFT,
+            input.accessToken,
+            input.refreshToken,
+            workspaceMemberId,
+            scopes,
+            manager,
+          );
 
-          const newMessageChannel = await messageChannelRepository.save(
-            {
-              id: v4(),
-              connectedAccountId: newOrExistingConnectedAccountId,
-              type: MessageChannelType.EMAIL,
+          const newMessageChannelId =
+            await this.createMessageChannelService.createMessageChannel(
+              workspaceId,
+              newOrExistingConnectedAccountId,
               handle,
-              visibility:
-                messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
-              syncStatus: MessageChannelSyncStatus.ONGOING,
-            },
-            {},
-            manager,
-          );
+              messageVisibility,
+              manager,
+            );
 
-          await messageFolderRepository.save(
-            {
-              id: v4(),
-              messageChannelId: newMessageChannel.id,
-              name: MessageFolderName.INBOX,
-              syncCursor: '',
-            },
-            {},
-            manager,
-          );
-
-          await messageFolderRepository.save(
-            {
-              id: v4(),
-              messageChannelId: newMessageChannel.id,
-              name: MessageFolderName.SENT_ITEMS,
-              syncCursor: '',
-            },
-            {},
-            manager,
-          );
-
-          const messageChannelMetadata =
-            await this.objectMetadataRepository.findOneOrFail({
-              where: { nameSingular: 'messageChannel', workspaceId },
-            });
-
-          this.workspaceEventEmitter.emitDatabaseBatchEvent({
-            objectMetadataNameSingular: 'messageChannel',
-            action: DatabaseEventAction.CREATED,
-            events: [
-              {
-                recordId: newMessageChannel.id,
-                objectMetadata: messageChannelMetadata,
-                properties: {
-                  after: newMessageChannel,
-                },
-              },
-            ],
+          await this.createMessageFolderService.createMessageFolders(
             workspaceId,
-          });
+            newMessageChannelId,
+            manager,
+          );
 
           if (
             this.twentyConfigService.get('CALENDAR_PROVIDER_MICROSOFT_ENABLED')
           ) {
-            const newCalendarChannel = await calendarChannelRepository.save(
-              {
-                id: v4(),
-                connectedAccountId: newOrExistingConnectedAccountId,
-                handle,
-                visibility:
-                  calendarVisibility ||
-                  CalendarChannelVisibility.SHARE_EVERYTHING,
-              },
-              {},
+            await this.createCalendarChannelService.createCalendarChannel(
+              workspaceId,
+              newOrExistingConnectedAccountId,
+              handle,
+              calendarVisibility,
               manager,
             );
-
-            const calendarChannelMetadata =
-              await this.objectMetadataRepository.findOneOrFail({
-                where: { nameSingular: 'calendarChannel', workspaceId },
-              });
-
-            this.workspaceEventEmitter.emitDatabaseBatchEvent({
-              objectMetadataNameSingular: 'calendarChannel',
-              action: DatabaseEventAction.CREATED,
-              events: [
-                {
-                  recordId: newCalendarChannel.id,
-                  objectMetadata: calendarChannelMetadata,
-                  properties: {
-                    after: newCalendarChannel,
-                  },
-                },
-              ],
-              workspaceId,
-            });
           }
         } else {
-          const updatedConnectedAccount =
-            await connectedAccountRepository.update(
-              {
-                id: newOrExistingConnectedAccountId,
-              },
-              {
-                accessToken: input.accessToken,
-                refreshToken: input.refreshToken,
-                scopes,
-              },
-              manager,
-            );
-
-          const connectedAccountMetadata =
-            await this.objectMetadataRepository.findOneOrFail({
-              where: { nameSingular: 'connectedAccount', workspaceId },
-            });
-
-          this.workspaceEventEmitter.emitDatabaseBatchEvent({
-            objectMetadataNameSingular: 'connectedAccount',
-            action: DatabaseEventAction.UPDATED,
-            events: [
-              {
-                recordId: newOrExistingConnectedAccountId,
-                objectMetadata: connectedAccountMetadata,
-                properties: {
-                  before: connectedAccount,
-                  after: {
-                    ...connectedAccount,
-                    ...updatedConnectedAccount.raw[0],
-                  },
-                },
-              },
-            ],
+          await this.updateConnectedAccountService.updateConnectedAccount(
             workspaceId,
-          });
+            newOrExistingConnectedAccountId,
+            input.accessToken,
+            input.refreshToken,
+            scopes,
+            connectedAccount,
+            manager,
+          );
 
           const workspaceMemberRepository =
             await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
@@ -298,83 +183,17 @@ export class MicrosoftAPIsService {
             newOrExistingConnectedAccountId,
           );
 
-          const messageChannels = await messageChannelRepository.find({
-            where: { connectedAccountId: newOrExistingConnectedAccountId },
-          });
-
-          const messageChannelUpdates = await messageChannelRepository.update(
-            {
-              connectedAccountId: newOrExistingConnectedAccountId,
-            },
-            {
-              syncStage:
-                MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
-              syncStatus: MessageChannelSyncStatus.ONGOING,
-              syncCursor: '',
-              syncStageStartedAt: null,
-            },
+          await this.resetMessageChannelService.resetMessageChannels(
+            workspaceId,
+            newOrExistingConnectedAccountId,
             manager,
           );
 
-          const messageChannelMetadata =
-            await this.objectMetadataRepository.findOneOrFail({
-              where: { nameSingular: 'messageChannel', workspaceId },
-            });
-
-          this.workspaceEventEmitter.emitDatabaseBatchEvent({
-            objectMetadataNameSingular: 'messageChannel',
-            action: DatabaseEventAction.UPDATED,
-            events: messageChannels.map((messageChannel) => ({
-              recordId: messageChannel.id,
-              objectMetadata: messageChannelMetadata,
-              properties: {
-                before: messageChannel,
-                after: { ...messageChannel, ...messageChannelUpdates.raw[0] },
-              },
-            })),
+          await this.resetCalendarChannelService.resetCalendarChannels(
             workspaceId,
-          });
-
-          // now for the calendar channels
-          const calendarChannels = await calendarChannelRepository.find({
-            where: { connectedAccountId: newOrExistingConnectedAccountId },
-          });
-
-          const calendarChannelUpdates = await calendarChannelRepository.update(
-            {
-              connectedAccountId: newOrExistingConnectedAccountId,
-            },
-            {
-              syncStage:
-                CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
-              syncStatus: null,
-              syncCursor: '',
-              syncStageStartedAt: null,
-            },
+            newOrExistingConnectedAccountId,
             manager,
           );
-
-          const calendarChannelMetadata =
-            await this.objectMetadataRepository.findOneOrFail({
-              where: { nameSingular: 'calendarChannel', workspaceId },
-            });
-
-          this.workspaceEventEmitter.emitDatabaseBatchEvent({
-            objectMetadataNameSingular: 'calendarChannel',
-            action: DatabaseEventAction.UPDATED,
-            events: calendarChannels.map((calendarChannel) => ({
-              recordId: calendarChannel.id,
-              objectMetadata: calendarChannelMetadata,
-              properties: {
-                before: calendarChannel,
-                after: {
-                  ...calendarChannel,
-                  ...calendarChannelUpdates.raw[0],
-                },
-              },
-            })),
-            workspaceId,
-          });
         }
       },
     );
