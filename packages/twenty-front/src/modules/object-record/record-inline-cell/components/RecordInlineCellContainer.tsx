@@ -43,7 +43,6 @@ const StyledLabelAndIconContainer = styled.div`
 `;
 
 const StyledValueContainer = styled.div<{ readonly: boolean }>`
-  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
   display: flex;
   min-width: 0;
   position: relative;
@@ -72,7 +71,7 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
   width: ${({ width }) => width}px;
 `;
 
-const StyledInlineCellBaseContainer = styled.div`
+const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
   box-sizing: border-box;
   width: 100%;
   display: flex;
@@ -80,6 +79,7 @@ const StyledInlineCellBaseContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   align-items: center;
+  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
 `;
 
 export const StyledSkeletonDiv = styled.div`
@@ -129,6 +129,7 @@ export const RecordInlineCellContainer = () => {
 
   return (
     <StyledInlineCellBaseContainer
+      readonly={readonly ?? false}
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
       onClick={shouldContainerBeClickable ? openInlineCell : undefined}
