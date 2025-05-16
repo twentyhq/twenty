@@ -9,6 +9,9 @@ import { FocusNfeIntegration } from 'src/engine/core-modules/focus-nfe/focus-nfe
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
+import CryptoJS from 'crypto-js';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
 export class FocusNfeService {
   constructor(
     @InjectRepository(FocusNfeIntegration, 'core')
@@ -16,7 +19,36 @@ export class FocusNfeService {
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly environmentService: TwentyConfigService,
   ) {}
+
+  async encryptText(text: string): Promise<string> {
+    const secretKey = this.environmentService.get('FOCUS_NFE_ENCRYPTION_KEY');
+    console.log('FOCUS_NFE_ENCRYPTION_KEY', secretKey);
+
+    if (!secretKey) return text;
+    const key = CryptoJS.enc.Utf8.parse(secretKey);
+    const iv = CryptoJS.enc.Utf8.parse(secretKey.slice(0, 16));
+
+    const encrypted = CryptoJS.AES.encrypt(text, key, {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+
+    return encrypted.toString();
+  }
+
+  async decryptText(cipherText: string): Promise<string> {
+    const secretKey = this.environmentService.get('FOCUS_NFE_ENCRYPTION_KEY');
+    console.log('FOCUS_NFE_ENCRYPTION_KEY', secretKey);
+    if (!secretKey) return cipherText;
+    const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
+
+    const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+
+    return bytes.toString(CryptoJS.enc.Utf8);
+  }
 
   async create(
     createInput: CreateFocusNfeIntegrationInput,
@@ -33,6 +65,7 @@ export class FocusNfeService {
 
     const createdFocusNfeIntegration = this.focusNfeRepository.create({
       ...createInput,
+      token: await this.encryptText(createInput.token),
       workspace,
     });
 
@@ -70,6 +103,9 @@ export class FocusNfeService {
       throw new Error('Focus NFe integration not found');
     }
 
+    if (updateInput.token) {
+      updateInput.token = await this.encryptText(updateInput.token);
+    }
     const updatedFocusNfeIntegration = {
       ...focusNfeIntegration,
       ...updateInput,

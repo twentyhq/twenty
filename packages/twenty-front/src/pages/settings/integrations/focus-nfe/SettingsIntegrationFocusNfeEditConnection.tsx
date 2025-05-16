@@ -2,7 +2,6 @@
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationFocusNfeDatabaseConnectionForm } from '@/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeDatabaseConnectionForm';
-import { useCriptographText } from '@/settings/integrations/focus-nfe/hooks/useCriptograph';
 import { useGetAllFocusNfeIntegrationsByWorkspace } from '@/settings/integrations/focus-nfe/hooks/useGetAllFocusNfeIntegrationByWorkspace';
 import { useUpdateFocusNfeIntegration } from '@/settings/integrations/focus-nfe/hooks/useUpdateFocusNfeIntegration';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
@@ -21,7 +20,6 @@ import { z } from 'zod';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-
 export const settingsIntegrationFocusNfeConnectionFormSchema = z.object({
   id: z.string(),
   integrationName: z.string().min(1),
@@ -39,7 +37,6 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
   const settingsIntegrationsPagePath = getSettingsPath(
     SettingsPath.Integrations,
   );
-  const { decryptText } = useCriptographText();
 
   const { updateFocusNfeIntegration } = useUpdateFocusNfeIntegration();
 
@@ -73,7 +70,7 @@ export const SettingsIntegrationFocusNfeEditDatabaseConnection = () => {
       defaultValues: {
         id: activeConnection?.id,
         integrationName: activeConnection?.integrationName,
-        token: decryptText(activeConnection?.token ?? ''),
+        token: activeConnection?.token,
       },
     });
 

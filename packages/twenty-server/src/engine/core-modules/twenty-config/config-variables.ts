@@ -1224,6 +1224,20 @@ export class ConfigVariables {
   )
   @IsString()
   PABX_TOKEN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Focus NFe encryption key.',
+    isSensitive: true,
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf(
+    (data: ConfigVariables) =>
+      !!data.FOCUS_NFE_ENCRYPTION_KEY &&
+      data.FOCUS_NFE_ENCRYPTION_KEY === NodeEnvironment.production,
+  )
+  @IsString()
+  FOCUS_NFE_ENCRYPTION_KEY: string;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {
