@@ -42,10 +42,7 @@ export default meta;
 export const Default = () => (
   <DialogManagerScope dialogManagerScopeId="dialog-manager">
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
-      <SpreadSheetImportModalWrapper
-        modalId="select-header-step"
-        onClose={() => null}
-      >
+      <SpreadSheetImportModalWrapper modalId="select-header-step">
         <SelectHeaderStep
           importedRows={headerSelectionTableFields}
           setCurrentStepState={() => null}

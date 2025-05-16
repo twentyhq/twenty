@@ -43,7 +43,7 @@ export const SettingsServerlessFunctionSettingsTab = ({
   useScopedHotkeys(
     [Key.Delete],
     () => {
-      openModal(`delete-function-modal`);
+      openModal(DELETE_FUNCTION_MODAL_ID);
     },
     SettingsServerlessFunctionHotkeyScope.ServerlessFunctionSettingsTab,
   );
