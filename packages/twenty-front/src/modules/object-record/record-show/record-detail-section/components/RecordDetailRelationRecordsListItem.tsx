@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -34,6 +34,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { createPortal } from 'react-dom';
 import {
   IconChevronDown,
@@ -87,6 +88,8 @@ const StyledClickableZone = styled.div`
 
 const MotionIconChevronDown = motion.create(IconChevronDown);
 
+const DELETE_RELATION_MODAL_ID = 'delete-relation-modal';
+
 type RecordDetailRelationRecordsListItemProps = {
   isExpanded: boolean;
   onClick: (relationRecordId: string) => void;
@@ -100,8 +103,7 @@ export const RecordDetailRelationRecordsListItem = ({
 }: RecordDetailRelationRecordsListItemProps) => {
   const { fieldDefinition } = useContext(FieldContext);
 
-  const [isDeleteRelationModalOpen, setIsDeleteRelationModalOpen] =
-    useState(false);
+  const { openModal } = useModal();
 
   const {
     relationFieldMetadataId,
@@ -173,13 +175,12 @@ export const RecordDetailRelationRecordsListItem = ({
   };
 
   const handleDelete = async () => {
-    setIsDeleteRelationModalOpen(true);
     closeDropdown();
+    openModal(DELETE_RELATION_MODAL_ID);
   };
 
   const handleConfirmDelete = async () => {
     await deleteOneRelationRecord(relationRecord.id);
-    setIsDeleteRelationModalOpen(false);
   };
 
   const useUpdateOneObjectRecordMutation: RecordUpdateHook = () => {
@@ -306,8 +307,7 @@ export const RecordDetailRelationRecordsListItem = ({
       </AnimatedEaseInOut>
       {createPortal(
         <ConfirmationModal
-          isOpen={isDeleteRelationModalOpen}
-          setIsOpen={setIsDeleteRelationModalOpen}
+          modalId={DELETE_RELATION_MODAL_ID}
           title={`Delete Related ${relationObjectTypeName}`}
           subtitle={
             <>

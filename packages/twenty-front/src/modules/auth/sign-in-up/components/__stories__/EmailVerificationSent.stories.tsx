@@ -10,7 +10,11 @@ const RenderWithModal = (
   args: React.ComponentProps<typeof EmailVerificationSent>,
 ) => {
   return (
-    <Modal padding="none" modalVariant="primary">
+    <Modal
+      modalId={'email-verification-sent-modal'}
+      padding="none"
+      modalVariant="primary"
+    >
       <Modal.Content isVerticalCentered isHorizontalCentered>
         <EmailVerificationSent email={args.email} isError={args.isError} />
       </Modal.Content>

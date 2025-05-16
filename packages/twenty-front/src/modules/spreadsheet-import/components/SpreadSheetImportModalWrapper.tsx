@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import { ModalCloseButton } from './ModalCloseButton';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { SpreadSheetImportModalCloseButton } from './SpreadSheetImportModalCloseButton';
 
 const StyledModal = styled(Modal)`
   height: 61%;
@@ -27,29 +27,30 @@ const StyledRtlLtr = styled.div`
   flex-direction: column;
 `;
 
-type ModalWrapperProps = {
+type SpreadSheetImportModalWrapperProps = {
   children: React.ReactNode;
-  isOpen: boolean;
-  onClose: () => void;
+  modalId: string;
+  onClose?: () => void;
 };
 
-export const ModalWrapper = ({
+export const SpreadSheetImportModalWrapper = ({
+  modalId,
   children,
-  isOpen,
   onClose,
-}: ModalWrapperProps) => {
+}: SpreadSheetImportModalWrapperProps) => {
   const { rtl } = useSpreadsheetImportInternal();
 
   return (
-    <>
-      {isOpen && (
-        <StyledModal size="large">
-          <StyledRtlLtr dir={rtl ? 'rtl' : 'ltr'}>
-            <ModalCloseButton onClose={onClose} />
-            {children}
-          </StyledRtlLtr>
-        </StyledModal>
-      )}
-    </>
+    <StyledModal
+      size="large"
+      modalId={modalId}
+      isClosable={true}
+      onClose={onClose}
+    >
+      <StyledRtlLtr dir={rtl ? 'rtl' : 'ltr'}>
+        <SpreadSheetImportModalCloseButton onClose={onClose} />
+        {children}
+      </StyledRtlLtr>
+    </StyledModal>
   );
 };

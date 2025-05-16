@@ -4,11 +4,13 @@ import {
   ConfirmationModal,
   StyledCenteredButton,
 } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
-import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
-import { useRecoilState } from 'recoil';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getAppPath } from '~/utils/navigation/getAppPath';
+
+const OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID =
+  'override-workflow-draft-confirmation-modal';
 
 export const OverrideWorkflowDraftConfirmationModal = ({
   workflowId,
@@ -17,10 +19,7 @@ export const OverrideWorkflowDraftConfirmationModal = ({
   workflowId: string;
   workflowVersionIdToCopy: string;
 }) => {
-  const [
-    openOverrideWorkflowDraftConfirmationModal,
-    setOpenOverrideWorkflowDraftConfirmationModal,
-  ] = useRecoilState(openOverrideWorkflowDraftConfirmationModalState);
+  const { closeModal } = useModal();
 
   const { createDraftFromWorkflowVersion } =
     useCreateDraftFromWorkflowVersion();
@@ -42,8 +41,7 @@ export const OverrideWorkflowDraftConfirmationModal = ({
   return (
     <>
       <ConfirmationModal
-        isOpen={openOverrideWorkflowDraftConfirmationModal}
-        setIsOpen={setOpenOverrideWorkflowDraftConfirmationModal}
+        modalId={OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID}
         title="A draft already exists"
         subtitle="A draft already exists for this workflow. Are you sure you want to erase it?"
         onConfirmClick={handleOverrideDraft}
@@ -55,7 +53,7 @@ export const OverrideWorkflowDraftConfirmationModal = ({
               objectRecordId: workflowId,
             })}
             onClick={() => {
-              setOpenOverrideWorkflowDraftConfirmationModal(false);
+              closeModal(OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID);
             }}
             variant="secondary"
             title="Go to Draft"
