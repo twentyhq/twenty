@@ -246,8 +246,12 @@ export const SignInUpGlobalScopeForm = () => {
                       {workspace.displayName || workspace.id}
                     </StyledWorkspaceName>
                     <StyledWorkspaceUrl>
-                      {new URL(workspace.workspaceUrls.customUrl ||
-                        workspace.workspaceUrls.subdomainUrl).hostname}
+                      {
+                        new URL(
+                          workspace.workspaceUrls.customUrl ||
+                            workspace.workspaceUrls.subdomainUrl,
+                        ).hostname
+                      }
                     </StyledWorkspaceUrl>
                   </StyledWorkspaceTextContainer>
                   <StyledChevronIcon>
