@@ -124,9 +124,11 @@ export const useGraphQLErrorHandlerHook = <
                 },
               );
 
-              errorsToCapture.forEach((error, i) => {
+              errorsToCapture.forEach((_, i) => {
                 if (eventIds?.[i] && eventIdKey !== null) {
-                  error.eventId = eventIds[i];
+                  processedErrors[
+                    processedErrors.indexOf(errorsToCapture[i])
+                  ].eventId = eventIds[i];
                 }
               });
             }
