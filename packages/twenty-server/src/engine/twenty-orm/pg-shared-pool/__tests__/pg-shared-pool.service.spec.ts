@@ -110,13 +110,11 @@ describe('PgPoolSharedService', () => {
     });
 
     it('should not initialize when pool sharing is disabled', () => {
-      jest
-        .spyOn(configService, 'get')
-        .mockImplementation((key: string): ConfigValue => {
-          if (key === 'PG_ENABLE_POOL_SHARING') return false;
+      jest.spyOn(configService, 'get').mockImplementation((key: string) => {
+        if (key === 'PG_ENABLE_POOL_SHARING') return false;
 
-          return configValues[key as ConfigKey];
-        });
+        return configValues[key as ConfigKey];
+      });
 
       service.initialize();
 

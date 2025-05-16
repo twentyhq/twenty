@@ -782,7 +782,7 @@ export class ConfigVariables {
   })
   @CastToPositiveNumber()
   @IsOptional()
-  PG_POOL_IDLE_TIMEOUT_MS = 3600000;
+  PG_POOL_IDLE_TIMEOUT_MS = 600000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
