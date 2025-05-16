@@ -27,6 +27,14 @@ interface ExtendedPoolConfig extends PoolConfig {
   };
 }
 
+interface PoolInternalStats {
+  _clients?: Array<unknown>;
+  _idle?: Array<unknown>;
+  _pendingQueue?: {
+    length: number;
+  };
+}
+
 /**
  * Service that manages shared pg connection pools across tenants.
  * It patches the pg.Pool constructor to return cached instances for
@@ -209,13 +217,7 @@ export class PgPoolSharedService {
   }
 
   private collectPoolStats(key: string, pool: Pool) {
-    const poolStats = pool as unknown as {
-      _clients?: Array<unknown>;
-      _idle?: Array<unknown>;
-      _pendingQueue?: {
-        length: number;
-      };
-    };
+    const poolStats = pool as PoolInternalStats;
 
     const active =
       (poolStats._clients?.length || 0) - (poolStats._idle?.length || 0);
@@ -325,7 +327,6 @@ export class PgPoolSharedService {
       enumerable: this.originalPgPoolDescriptor?.enumerable,
     });
 
-    // Mark as patched
     pgWithSymbol[this.PATCH_SYMBOL] = true;
     this.logger.log('pg.Pool patched successfully by this service instance.');
   }
