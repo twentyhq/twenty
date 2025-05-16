@@ -14,6 +14,8 @@ const getBackgroundColor = (inverted: boolean, accent: string) => {
       return MAIN_COLORS.red;
     case 'blue':
       return MAIN_COLORS.blue;
+    case 'green':
+      return MAIN_COLORS.green;
     default:
       return undefined;
   }

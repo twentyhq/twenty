@@ -1,10 +1,10 @@
 import { COLOR } from '@/ui/theme/constants/Colors';
 
 export const ACCENT_DARK = {
-  primary: COLOR.blueAccent75,
-  secondary: COLOR.blueAccent80,
-  tertiary: COLOR.blueAccent85,
-  quaternary: COLOR.blueAccent90,
-  accent3570: COLOR.blueAccent70,
-  accent4060: COLOR.blueAccent60,
+  primary: COLOR.greenAccent75,
+  secondary: COLOR.greenAccent80,
+  tertiary: COLOR.greenAccent85,
+  quaternary: COLOR.greenAccent90,
+  accent3570: COLOR.greenAccent70,
+  accent4060: COLOR.greenAccent60,
 };
