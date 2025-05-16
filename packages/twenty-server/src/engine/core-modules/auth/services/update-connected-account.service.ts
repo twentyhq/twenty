@@ -42,6 +42,7 @@ export class UpdateConnectedAccountService {
         accessToken,
         refreshToken,
         scopes,
+        authFailedAt: null,
       },
       manager,
     );
