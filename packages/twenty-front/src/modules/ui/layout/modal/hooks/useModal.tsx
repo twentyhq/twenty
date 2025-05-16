@@ -33,8 +33,18 @@ export const useModal = () => {
   );
 
   const openModal = useRecoilCallback(
-    ({ set }) =>
+    ({ set, snapshot }) =>
       (modalId: string, customHotkeyScope?: HotkeyScope) => {
+        const isModalOpened = snapshot
+          .getLoadable(
+            isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
+          )
+          .getValue();
+
+        if (isModalOpened) {
+          return;
+        }
+
         set(
           isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
           true,
