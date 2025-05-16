@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import { getAuthExceptionRestStatus } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception-rest-status.util';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -159,11 +160,8 @@ export class MiddlewareService {
       return error.status;
     }
 
-    if (error instanceof CustomException) {
-      switch (error.code) {
-        case AuthExceptionCode.UNAUTHENTICATED:
-          return 401;
-      }
+    if (error instanceof AuthException) {
+      return getAuthExceptionRestStatus(error);
     }
 
     return 500;

@@ -79,7 +79,7 @@ export const shouldCaptureException = (
     return false;
   }
 
-  if (statusCode && statusCode >= 400 && statusCode < 500) {
+  if (statusCode && statusCode < 500) {
     return false;
   }
 
