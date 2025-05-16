@@ -99,7 +99,8 @@ export const CloseOnClickOutside: Story = {
 
     await canvas.findByText('Click Outside Test');
 
-    const backdrop = document.querySelector('.modal-backdrop') as HTMLElement;
+    const backdrop = await canvas.findByTestId('modal-backdrop');
+
     await userEvent.click(backdrop);
 
     await waitFor(() => {
