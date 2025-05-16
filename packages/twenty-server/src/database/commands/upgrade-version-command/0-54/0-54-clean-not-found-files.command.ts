@@ -1,14 +1,15 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { basename, dirname } from 'path';
+
+import { isNonEmptyString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
-import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -55,9 +56,8 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
       },
     });
 
-    if (isDefined(workspace.logo)) {
+    if (isNonEmptyString(workspace.logo)) {
       const isFileFound = await this.checkIfFileIsFound(
-        FileFolder.ProfilePicture,
         workspace.logo,
         workspace.id,
       );
@@ -83,7 +83,6 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
 
     for (const attachment of attachments) {
       const isFileFound = await this.checkIfFileIsFound(
-        FileFolder.Attachment,
         attachment.fullPath,
         workspaceId,
       );
@@ -105,9 +104,8 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
     const workspaceMembers = await workspaceMemberRepository.find();
 
     for (const workspaceMember of workspaceMembers) {
-      if (isDefined(workspaceMember.avatarUrl)) {
+      if (isNonEmptyString(workspaceMember.avatarUrl)) {
         const isFileFound = await this.checkIfFileIsFound(
-          FileFolder.ProfilePicture,
           workspaceMember.avatarUrl,
           workspaceId,
         );
@@ -133,9 +131,8 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
     const persons = await personRepository.find();
 
     for (const person of persons) {
-      if (isDefined(person.avatarUrl)) {
+      if (isNonEmptyString(person.avatarUrl)) {
         const isFileFound = await this.checkIfFileIsFound(
-          FileFolder.ProfilePicture,
           person.avatarUrl,
           workspaceId,
         );
@@ -152,15 +149,15 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
     }
   }
 
-  private async checkIfFileIsFound(
-    folderPath: string,
-    filename: string,
-    workspaceId: string,
-  ) {
-    if (filename.startsWith('https://')) return true; // seed data
+  private async checkIfFileIsFound(path: string, workspaceId: string) {
+    if (path.startsWith('https://')) return true; // seed data
 
     try {
-      await this.fileService.getFileStream(folderPath, filename, workspaceId);
+      await this.fileService.getFileStream(
+        dirname(path),
+        basename(path),
+        workspaceId,
+      );
     } catch (error) {
       if (
         error instanceof FileStorageException &&
