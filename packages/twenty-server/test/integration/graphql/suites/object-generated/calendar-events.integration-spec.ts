@@ -27,13 +27,9 @@ describe('calendarEventsResolver (e2e)', () => {
     const calendarEvent = edges[0].node;
 
     expect(calendarEvent).toMatchSnapshot({
-      id: DEV_SEED_CALENDAR_EVENT_IDS.CALENDAR_EVENT_1,
       createdAt: expect.any(String),
-      deletedAt: null,
-      description: 'Discuss project progress',
       endsAt: expect.any(String),
       startsAt: expect.any(String),
-      title: 'Meeting with Christoph',
       updatedAt: expect.any(String),
     });
   });
@@ -52,11 +48,8 @@ describe('calendarEventsResolver (e2e)', () => {
     expect(data).toBeDefined();
     expect(data).toMatchSnapshot({
       createdAt: expect.any(String),
-      deletedAt: null,
-      description: 'Discuss project progress',
       endsAt: expect.any(String),
       startsAt: expect.any(String),
-      title: 'Meeting with Christoph',
       updatedAt: expect.any(String),
     });
   });
