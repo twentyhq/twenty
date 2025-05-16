@@ -3,7 +3,6 @@ import { MultipleRecordPickerOnClickOutsideEffect } from '@/object-record/record
 import { MultipleRecordPickerSearchInput } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerSearchInput';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
-import { multipleRecordPickerIsLoadingInitialSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPaginationSelectors';
 import { multipleRecordPickerPickableMorphItemsLengthComponentSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPickableMorphItemsLengthComponentSelector';
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
@@ -62,11 +61,6 @@ export const MultipleRecordPicker = ({
     componentInstanceId,
   );
 
-  const isLoadingInitial = useRecoilComponentValueV2(
-    multipleRecordPickerIsLoadingInitialSelector,
-    componentInstanceId,
-  );
-
   const multipleRecordPickerSearchFilterState =
     useRecoilComponentCallbackStateV2(
       multipleRecordPickerSearchFilterComponentState,
@@ -115,8 +109,6 @@ export const MultipleRecordPicker = ({
       </DropdownMenuItemsContainer>
     );
 
-  const showLoader = isLoadingInitial && itemsLength === 0;
-
   return (
     <MultipleRecordPickerComponentInstanceContext.Provider
       value={{ instanceId: componentInstanceId }}
@@ -129,19 +121,13 @@ export const MultipleRecordPicker = ({
         {layoutDirection === 'search-bar-on-bottom' && (
           <>
             {createNewButtonSection}
-            <MultipleRecordPickerItemsDisplay
-              showLoader={showLoader}
-              onChange={onChange}
-            />
+            <MultipleRecordPickerItemsDisplay onChange={onChange} />
           </>
         )}
         <MultipleRecordPickerSearchInput />
         {layoutDirection === 'search-bar-on-top' && (
           <>
-            <MultipleRecordPickerItemsDisplay
-              showLoader={showLoader}
-              onChange={onChange}
-            />
+            <MultipleRecordPickerItemsDisplay onChange={onChange} />
             {createNewButtonSection}
           </>
         )}
