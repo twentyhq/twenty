@@ -33,10 +33,7 @@ import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-ap
 import { GetLoginTokenFromCredentialsInput } from 'src/engine/core-modules/auth/dto/get-login-token-from-credentials.input';
 import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
-import {
-  UserExists,
-  UserNotExists,
-} from 'src/engine/core-modules/auth/dto/user-exists.entity';
+
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
@@ -60,6 +57,7 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.entity';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -285,7 +283,7 @@ export class AuthService {
     };
   }
 
-  async checkUserExists(email: string): Promise<UserExists | UserNotExists> {
+  async checkUserExists(email: string): Promise<CheckUserExistOutput> {
     const user = await this.userRepository.findOneBy({
       email,
     });
@@ -299,7 +297,7 @@ export class AuthService {
       };
     }
 
-    return { exists: false };
+    return { exists: false, availableWorkspaces: [], isEmailVerified: false };
   }
 
   async checkWorkspaceInviteHashIsValid(

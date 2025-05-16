@@ -5,8 +5,8 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 
-import { SignInUpEmailField } from '@/auth/sign-in-up/components/SignInUpEmailField';
-import { SignInUpPasswordField } from '@/auth/sign-in-up/components/SignInUpPasswordField';
+import { SignInUpEmailField } from '@/auth/sign-in-up/components/internal/SignInUpEmailField';
+import { SignInUpPasswordField } from '@/auth/sign-in-up/components/internal/SignInUpPasswordField';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { captchaState } from '@/client-config/states/captchaState';
