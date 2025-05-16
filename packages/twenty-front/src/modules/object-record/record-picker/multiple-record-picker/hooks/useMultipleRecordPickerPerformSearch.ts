@@ -2,6 +2,7 @@ import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { search } from '@/command-menu/graphql/queries/search';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { usePerformCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/usePerformCombinedFindManyRecords';
+import { multipleRecordPickerPaginationState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
@@ -26,13 +27,33 @@ export const useMultipleRecordPickerPerformSearch = () => {
         forceSearchFilter = '',
         forceSearchableObjectMetadataItems = [],
         forcePickableMorphItems = [],
+        loadMore = false,
       }: {
         multipleRecordPickerInstanceId: string;
         forceSearchFilter?: string;
         forceSearchableObjectMetadataItems?: ObjectMetadataItem[];
         forcePickableMorphItems?: RecordPickerPickableMorphItem[];
+        loadMore?: boolean;
       }) => {
         const { getLoadable } = snapshot;
+
+        const paginationState = getLoadable(
+          multipleRecordPickerPaginationState.atomFamily({
+            instanceId: multipleRecordPickerInstanceId,
+          }),
+        ).getValue();
+
+        set(
+          multipleRecordPickerPaginationState.atomFamily({
+            instanceId: multipleRecordPickerInstanceId,
+          }),
+          {
+            ...paginationState,
+            currentOffset: loadMore ? paginationState.currentOffset : 0,
+            hasMore: loadMore ? paginationState.hasMore : true,
+            isLoadingMore: loadMore,
+          },
+        );
 
         const recordPickerSearchFilter = getLoadable(
           multipleRecordPickerSearchFilterComponentState.atomFamily({
@@ -77,28 +98,86 @@ export const useMultipleRecordPickerPerformSearch = () => {
           pickedRecordIds: selectedPickableMorphItems.map(
             ({ recordId }) => recordId,
           ),
+          offset: loadMore ? paginationState.currentOffset : 0,
+          limit: paginationState.pageSize,
         });
 
-        const pickedMorphItems = pickableMorphItems.filter(
-          ({ isSelected }) => isSelected,
+        const existingMorphItems = loadMore
+          ? getLoadable(
+              multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
+                instanceId: multipleRecordPickerInstanceId,
+              }),
+            ).getValue()
+          : [];
+
+        const allPickedItems = [
+          ...existingMorphItems.filter(({ isSelected }) => isSelected),
+          ...pickableMorphItems.filter(({ isSelected }) => isSelected),
+        ];
+
+        const uniquePickedItems = allPickedItems.reduce(
+          (acc, item) => {
+            if (!acc.some((existing) => existing.recordId === item.recordId)) {
+              acc.push(item);
+            }
+            return acc;
+          },
+          [] as typeof allPickedItems,
         );
 
-        // We update the existing pickedMorphItems to be matching the search filter
-        const updatedPickedMorphItems = pickedMorphItems.map((morphItem) => {
-          const record = searchRecordsFilteredOnPickedRecords.find(
-            ({ recordId }) => recordId === morphItem.recordId,
-          );
+        const updatedPickedItems = uniquePickedItems.map((morphItem) => {
+          if (!searchFilter) {
+            return {
+              ...morphItem,
+              isMatchingSearchFilter: true,
+            };
+          }
+
+          const isMatchingSearchFilter =
+            searchRecordsFilteredOnPickedRecords.some(
+              ({ recordId }) => recordId === morphItem.recordId,
+            ) ||
+            searchRecordsExcludingPickedRecords.some(
+              ({ recordId }) => recordId === morphItem.recordId,
+            );
 
           return {
             ...morphItem,
-            isMatchingSearchFilter: isDefined(record),
+            isMatchingSearchFilter,
           };
         });
+
+        const updatedNonPickedExistingItems = existingMorphItems
+          .filter((item) => !item.isSelected)
+          .map((morphItem) => {
+            if (!searchFilter) {
+              return {
+                ...morphItem,
+                isMatchingSearchFilter: true,
+              };
+            }
+
+            const isMatchingSearchFilter =
+              searchRecordsFilteredOnPickedRecords.some(
+                ({ recordId }) => recordId === morphItem.recordId,
+              ) ||
+              searchRecordsExcludingPickedRecords.some(
+                ({ recordId }) => recordId === morphItem.recordId,
+              );
+
+            return {
+              ...morphItem,
+              isMatchingSearchFilter,
+            };
+          });
 
         const searchRecordsFilteredOnPickedRecordsWithoutDuplicates =
           searchRecordsFilteredOnPickedRecords.filter(
             (searchRecord) =>
-              !updatedPickedMorphItems.some(
+              !updatedPickedItems.some(
+                ({ recordId }) => recordId === searchRecord.recordId,
+              ) &&
+              !updatedNonPickedExistingItems.some(
                 ({ recordId }) => recordId === searchRecord.recordId,
               ),
           );
@@ -109,13 +188,17 @@ export const useMultipleRecordPickerPerformSearch = () => {
               !searchRecordsFilteredOnPickedRecords.some(
                 ({ recordId }) => recordId === searchRecord.recordId,
               ) &&
-              !pickedMorphItems.some(
+              !updatedPickedItems.some(
+                ({ recordId }) => recordId === searchRecord.recordId,
+              ) &&
+              !updatedNonPickedExistingItems.some(
                 ({ recordId }) => recordId === searchRecord.recordId,
               ),
           );
 
-        const morphItems = [
-          ...updatedPickedMorphItems,
+        const newMorphItems = [
+          ...updatedPickedItems,
+          ...updatedNonPickedExistingItems,
           ...searchRecordsFilteredOnPickedRecordsWithoutDuplicates.map(
             ({ recordId, objectNameSingular }) => ({
               isMatchingSearchFilter: true,
@@ -139,6 +222,20 @@ export const useMultipleRecordPickerPerformSearch = () => {
             }),
           ),
         ];
+
+        const morphItems = loadMore
+          ? newMorphItems.reduce(
+              (acc, item) => {
+                if (
+                  !acc.some((existing) => existing.recordId === item.recordId)
+                ) {
+                  acc.push(item);
+                }
+                return acc;
+              },
+              [] as typeof newMorphItems,
+            )
+          : newMorphItems;
 
         set(
           multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
@@ -234,6 +331,25 @@ export const useMultipleRecordPickerPerformSearch = () => {
             },
           );
         }
+
+        const hasMore =
+          searchRecordsExcludingPickedRecords.length ===
+          paginationState.pageSize;
+        const newOffset = loadMore
+          ? paginationState.currentOffset + paginationState.pageSize
+          : paginationState.pageSize;
+
+        set(
+          multipleRecordPickerPaginationState.atomFamily({
+            instanceId: multipleRecordPickerInstanceId,
+          }),
+          {
+            ...paginationState,
+            currentOffset: newOffset,
+            hasMore,
+            isLoadingMore: false,
+          },
+        );
       },
     [client, performCombinedFindManyRecords],
   );
@@ -246,11 +362,15 @@ const performSearchQueries = async ({
   searchFilter,
   searchableObjectMetadataItems,
   pickedRecordIds,
+  offset = 0,
+  limit = MAX_SEARCH_RESULTS,
 }: {
   client: ApolloClient<object>;
   searchFilter: string;
   searchableObjectMetadataItems: ObjectMetadataItem[];
   pickedRecordIds: string[];
+  offset?: number;
+  limit?: number;
 }): Promise<[SearchRecord[], SearchRecord[]]> => {
   if (searchableObjectMetadataItems.length === 0) {
     return [[], []];
@@ -265,7 +385,8 @@ const performSearchQueries = async ({
           ({ nameSingular }) => nameSingular,
         ),
         filter,
-        limit: MAX_SEARCH_RESULTS,
+        limit,
+        offset,
       },
     });
     return data.search;
