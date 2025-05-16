@@ -26,6 +26,7 @@ import {
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
+import { PgPoolSharedService } from 'src/engine/twenty-orm/services/pg-shared-pool.service';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import { CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
 import { getFromCacheWithRecompute } from 'src/engine/utils/get-data-from-cache-with-recompute.util';
@@ -52,7 +53,10 @@ export class WorkspaceDatasourceFactory {
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
-  ) {}
+    private readonly pgPoolSharedService: PgPoolSharedService,
+  ) {
+    this.pgPoolSharedService.initialize();
+  }
 
   public async create(
     workspaceId: string,

@@ -757,6 +757,25 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
+    description: 'Enable pg connection pool sharing across tenants',
+    isEnvOnly: true,
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  PG_ENABLE_POOL_SHARING = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
+    description: 'Maximum number of clients in pg connection pool',
+    isEnvOnly: true,
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  PG_POOL_MAX_CONNECTIONS = 10;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
     description: 'Enable configuration variables to be stored in the database',
     isEnvOnly: true,
     type: ConfigVariableType.BOOLEAN,
