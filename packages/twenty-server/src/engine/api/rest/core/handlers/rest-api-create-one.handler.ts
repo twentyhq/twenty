@@ -28,6 +28,12 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
       throw new BadRequestException('Record already exists');
     }
 
+    await this.createdByFromAuthContextService.injectCreatedBy(
+      overriddenBody,
+      objectMetadataNameSingular,
+      this.getAuthContextFromRequest(request),
+    );
+
     const createdRecord = await repository.save(overriddenBody);
 
     this.apiEventEmitterService.emitCreateEvents(
