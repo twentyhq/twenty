@@ -23,6 +23,14 @@ export const StyledSelectableItem = styled(SelectableListItem)`
   width: 100%;
 `;
 
+const StyledEmptyText = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.light};
+  display: flex;
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
 type MultipleRecordPickerMenuItemsProps = {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
 };
@@ -84,26 +92,30 @@ export const MultipleRecordPickerMenuItems = ({
 
   return (
     <DropdownMenuItemsContainer hasMaxHeight>
-      <SelectableList
-        selectableListInstanceId={selectableListComponentInstanceId}
-        selectableItemIdArray={pickableRecordIds}
-        hotkeyScope={MultipleRecordPickerHotkeyScope.MultipleRecordPicker}
-      >
-        {pickableRecordIds.map((recordId) => {
-          return (
-            <MultipleRecordPickerMenuItem
-              key={recordId}
-              recordId={recordId}
-              onChange={(morphItem) => {
-                handleChange(morphItem);
-                onChange?.(morphItem);
-                resetSelectedItem();
-              }}
-            />
-          );
-        })}
-        {hasMore && <MultipleRecordPickerFetchMoreLoader />}
-      </SelectableList>
+      {pickableRecordIds.length === 0 ? (
+        <StyledEmptyText>No results found</StyledEmptyText>
+      ) : (
+        <SelectableList
+          selectableListInstanceId={selectableListComponentInstanceId}
+          selectableItemIdArray={pickableRecordIds}
+          hotkeyScope={MultipleRecordPickerHotkeyScope.MultipleRecordPicker}
+        >
+          {pickableRecordIds.map((recordId) => {
+            return (
+              <MultipleRecordPickerMenuItem
+                key={recordId}
+                recordId={recordId}
+                onChange={(morphItem) => {
+                  handleChange(morphItem);
+                  onChange?.(morphItem);
+                  resetSelectedItem();
+                }}
+              />
+            );
+          })}
+          {hasMore && <MultipleRecordPickerFetchMoreLoader />}
+        </SelectableList>
+      )}
     </DropdownMenuItemsContainer>
   );
 };
