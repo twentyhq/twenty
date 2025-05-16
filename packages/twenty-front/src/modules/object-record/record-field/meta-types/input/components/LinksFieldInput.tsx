@@ -19,17 +19,28 @@ export const LinksFieldInput = ({
 }: LinksFieldInputProps) => {
   const { persistLinksField, fieldValue, fieldDefinition } = useLinksField();
 
-  const links = useMemo<{ url: string; label: string }[]>(
+  const links = useMemo<{ url: string; label: string | null }[]>(
     () =>
       [
-        fieldValue.primaryLinkUrl
+        isDefined(fieldValue.primaryLinkUrl)
           ? {
               url: fieldValue.primaryLinkUrl,
               label: fieldValue.primaryLinkLabel,
             }
           : null,
         ...(fieldValue.secondaryLinks ?? []),
-      ].filter(isDefined),
+      ]
+        .map((link) => {
+          if (!(isDefined(link) && isDefined(link.url))) {
+            return undefined;
+          }
+
+          return {
+            url: link.url,
+            label: link.label,
+          };
+        })
+        .filter(isDefined),
     [
       fieldValue.primaryLinkLabel,
       fieldValue.primaryLinkUrl,
@@ -38,7 +49,7 @@ export const LinksFieldInput = ({
   );
 
   const handlePersistLinks = (
-    updatedLinks: { url: string; label: string }[],
+    updatedLinks: { url: string | null; label: string | null }[],
   ) => {
     const [nextPrimaryLink, ...nextSecondaryLinks] = updatedLinks;
     persistLinksField({

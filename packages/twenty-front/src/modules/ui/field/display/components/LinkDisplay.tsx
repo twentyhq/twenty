@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { LinkType, RoundedLink, SocialLink } from 'twenty-ui/navigation';
 
 type LinkDisplayProps = {
-  value?: { url: string; label?: string };
+  value?: { url: string | null; label?: string | null };
 };
 
 export const LinkDisplay = ({ value }: LinkDisplayProps) => {
