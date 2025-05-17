@@ -84,8 +84,8 @@ export class FileService {
     toWorkspaceId: string,
   ) {
     const subFolder = dirname(fromPath);
-    const fromFolderPath = `workspace-${fromWorkspaceId}/${subFolder}`;
-    const toFolderPath = `workspace-${toWorkspaceId}/${subFolder}`;
+    const fromWorkspaceFolderPath = `workspace-${fromWorkspaceId}`;
+    const toWorkspaceFolderPath = `workspace-${toWorkspaceId}`;
     const fromFilename = basename(fromPath);
 
     const ext = fromFilename.split('.')?.[1];
@@ -94,15 +94,15 @@ export class FileService {
 
     await this.fileStorageService.copy({
       from: {
-        folderPath: fromFolderPath,
+        folderPath: `${fromWorkspaceFolderPath}/${subFolder}`,
         filename: fromFilename,
       },
       to: {
-        folderPath: toFolderPath,
+        folderPath: `${toWorkspaceFolderPath}/${subFolder}`,
         filename: toFilename,
       },
     });
 
-    return `${subFolder}/${toFilename}`;
+    return [toWorkspaceFolderPath, subFolder, toFilename];
   }
 }

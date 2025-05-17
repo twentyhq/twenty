@@ -178,7 +178,7 @@ describe('UserWorkspaceService', () => {
       } as UserWorkspace);
       jest
         .spyOn(fileService, 'copyFileToNewWorkspace')
-        .mockResolvedValue('path/to/copy');
+        .mockResolvedValue(['', 'path/to', 'copy']);
       jest
         .spyOn(workspaceEventEmitter, 'emitCustomBatchEvent')
         .mockImplementation();

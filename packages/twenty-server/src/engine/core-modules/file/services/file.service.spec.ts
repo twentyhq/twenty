@@ -61,6 +61,10 @@ describe('FileService', () => {
       },
     });
 
-    expect(result).toBe('path/to/mocked-uuid');
+    expect(result).toEqual([
+      'workspace-newWorkspaceId',
+      'path/to',
+      'mocked-uuid',
+    ]);
   });
 });
