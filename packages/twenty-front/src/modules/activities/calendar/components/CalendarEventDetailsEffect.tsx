@@ -1,4 +1,5 @@
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { useSetRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useEffect } from 'react';
 
@@ -10,6 +11,7 @@ export const CalendarEventDetailsEffect = ({
   record,
 }: CalendarEventDetailsEffectProps) => {
   const { upsertRecords } = useUpsertRecordsInStore();
+  const setRecordValueInContextSelector = useSetRecordValue();
 
   useEffect(() => {
     if (!record) {
@@ -17,7 +19,8 @@ export const CalendarEventDetailsEffect = ({
     }
 
     upsertRecords([record]);
-  }, [record, upsertRecords]);
+    setRecordValueInContextSelector(record.id, record);
+  }, [record, upsertRecords, setRecordValueInContextSelector]);
 
   return <></>;
 };

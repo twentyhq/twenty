@@ -8,7 +8,6 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
-import { useUpsertRecordFromState } from '../../hooks/useUpsertRecordFromState';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
@@ -136,8 +135,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const resetTableRowSelection = useResetTableRowSelection(recordTableId);
 
-  const upsertRecordTableItem = useUpsertRecordFromState;
-
   const setFocusPosition = useSetRecordTableFocusPosition(recordTableId);
 
   const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
@@ -212,7 +209,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     leaveTableFocus,
     setRowSelected,
     resetTableRowSelection,
-    upsertRecordTableItem,
     move,
     useMapKeyboardToFocus,
     selectAllRows,
