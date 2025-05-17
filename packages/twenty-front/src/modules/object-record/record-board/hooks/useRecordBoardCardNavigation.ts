@@ -35,23 +35,22 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
           return;
         }
 
-        for (
-          let columnIndex = 0;
-          columnIndex < visibleRecordGroupIds.length;
-          columnIndex++
-        ) {
-          const groupId = visibleRecordGroupIds[columnIndex];
-          const recordIdsInGroup = snapshot
-            .getLoadable(recordIdsByGroupState(groupId))
-            .getValue();
+        const firstColumnWithRecords = visibleRecordGroupIds.findIndex(
+          (groupId) => {
+            const recordIdsInGroup = snapshot
+              .getLoadable(recordIdsByGroupState(groupId))
+              .getValue();
+            return (
+              Array.isArray(recordIdsInGroup) && recordIdsInGroup.length > 0
+            );
+          },
+        );
 
-          if (Array.isArray(recordIdsInGroup) && recordIdsInGroup.length > 0) {
-            focusBoardCard({
-              columnIndex,
-              rowIndex: 0,
-            });
-            return;
-          }
+        if (firstColumnWithRecords !== -1) {
+          focusBoardCard({
+            columnIndex: firstColumnWithRecords,
+            rowIndex: 0,
+          });
         }
       },
     [visibleRecordGroupIds, recordIdsByGroupState, focusBoardCard],
