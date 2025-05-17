@@ -32,6 +32,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
+import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -78,6 +79,8 @@ export abstract class RestApiBaseHandler {
   protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
   @Inject()
   protected readonly apiEventEmitterService: ApiEventEmitterService;
+  @Inject()
+  protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
 
   protected abstract handle(
     request: Request,
@@ -136,8 +139,6 @@ export abstract class RestApiBaseHandler {
     );
 
     return {
-      objectMetadataNameSingular,
-      objectMetadataNamePlural: objectMetadata.objectMetadataMapItem.namePlural,
       objectMetadata,
       repository,
       dataSource,
@@ -279,7 +280,6 @@ export abstract class RestApiBaseHandler {
     recordId,
     repository,
     objectMetadata,
-    objectMetadataNameSingular,
     objectMetadataItemWithFieldsMaps,
     extraFilters,
   }: {
@@ -290,12 +290,14 @@ export abstract class RestApiBaseHandler {
       objectMetadataMaps: ObjectMetadataMaps;
       objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     };
-    objectMetadataNameSingular: string;
     objectMetadataItemWithFieldsMaps:
       | ObjectMetadataItemWithFieldMaps
       | undefined;
     extraFilters?: Partial<ObjectRecordFilter>;
   }) {
+    const objectMetadataNameSingular =
+      objectMetadata.objectMetadataMapItem.nameSingular;
+
     const qb = repository.createQueryBuilder(objectMetadataNameSingular);
 
     const inputs = this.getVariablesFactory.create(

@@ -8,7 +8,7 @@ import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api
 @Injectable()
 export class RestApiCreateManyHandler extends RestApiBaseHandler {
   async handle(request: Request) {
-    const { objectMetadataNamePlural, objectMetadata, repository } =
+    const { objectMetadata, repository } =
       await this.getRepositoryAndMetadataOrFail(request);
 
     const body = request.body;
@@ -45,7 +45,14 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
       overriddenRecordsToCreate.push(overriddenBody);
     }
 
-    const createdRecords = await repository.save(overriddenRecordsToCreate);
+    const recordsToCreate =
+      await this.createdByFromAuthContextService.injectCreatedBy(
+        overriddenRecordsToCreate,
+        objectMetadata.objectMetadataMapItem.nameSingular,
+        this.getAuthContextFromRequest(request),
+      );
+
+    const createdRecords = await repository.save(recordsToCreate);
 
     this.apiEventEmitterService.emitCreateEvents(
       createdRecords,
@@ -68,7 +75,7 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
 
     return this.formatResult({
       operation: 'create',
-      objectNamePlural: objectMetadataNamePlural,
+      objectNamePlural: objectMetadata.objectMetadataMapItem.namePlural,
       data: records,
     });
   }

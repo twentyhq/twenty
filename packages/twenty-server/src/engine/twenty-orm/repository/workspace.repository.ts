@@ -226,7 +226,7 @@ export class WorkspaceRepository<
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
     let result: U | U[];
 
-    // Needed becasuse save method has multiple signature, otherwise we will need to do a type assertion
+    // Needed because save method has multiple signature, otherwise we will need to do a type assertion
     if (Array.isArray(formattedEntityOrEntities)) {
       result = await manager.save(
         this.target,
