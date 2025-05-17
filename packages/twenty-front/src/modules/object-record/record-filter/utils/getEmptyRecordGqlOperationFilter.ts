@@ -5,7 +5,6 @@ import {
   ArrayFilter,
   CurrencyFilter,
   DateFilter,
-  EmailsFilter,
   FloatFilter,
   MultiSelectFilter,
   PhonesFilter,
@@ -15,9 +14,10 @@ import {
   RelationFilter,
   SelectFilter,
   StringFilter,
-  URLFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { computeEmptyGqlOperationFilterForEmails } from '@/object-record/record-filter/utils/compute-empty-record-gql-operation-filter/for-composite-field/computeEmptyGqlOperationFilterForEmails';
+import { computeEmptyGqlOperationFilterForLinks } from '@/object-record/record-filter/utils/compute-empty-record-gql-operation-filter/for-composite-field/computeEmptyGqlOperationFilterForLinks';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Field } from '~/generated/graphql';
@@ -187,33 +187,10 @@ export const getEmptyRecordGqlOperationFilter = ({
       break;
     }
     case 'LINKS': {
-      if (!isSubFieldFilter) {
-        const linksFilters = generateILikeFiltersForCompositeFields(
-          '',
-          correspondingField.name,
-          ['primaryLinkLabel', 'primaryLinkUrl'],
-          true,
-        );
-
-        emptyRecordFilter = {
-          and: linksFilters,
-        };
-      } else {
-        emptyRecordFilter = {
-          or: [
-            {
-              [correspondingField.name]: {
-                [compositeFieldName]: { ilike: '' },
-              } as URLFilter,
-            },
-            {
-              [correspondingField.name]: {
-                [compositeFieldName]: { is: 'NULL' },
-              } as URLFilter,
-            },
-          ],
-        };
-      }
+      emptyRecordFilter = computeEmptyGqlOperationFilterForLinks({
+        correspondingFieldMetadataItem: correspondingField,
+        recordFilter,
+      });
       break;
     }
     case 'ADDRESS':
@@ -401,20 +378,10 @@ export const getEmptyRecordGqlOperationFilter = ({
       };
       break;
     case 'EMAILS':
-      emptyRecordFilter = {
-        or: [
-          {
-            [correspondingField.name]: {
-              primaryEmail: { ilike: '' },
-            } as EmailsFilter,
-          },
-          {
-            [correspondingField.name]: {
-              primaryEmail: { is: 'NULL' },
-            } as EmailsFilter,
-          },
-        ],
-      };
+      emptyRecordFilter = computeEmptyGqlOperationFilterForEmails({
+        correspondingFieldMetadataItem: correspondingField,
+        recordFilter,
+      });
       break;
     default:
       throw new Error(`Unsupported empty filter type ${filterType}`);

@@ -1,8 +1,8 @@
 import {
-  PERSON_1_ID,
-  PERSON_2_ID,
-  PERSON_3_ID,
-} from 'test/integration/constants/mock-person-ids.constants';
+  TEST_PERSON_1_ID,
+  TEST_PERSON_2_ID,
+  TEST_PERSON_3_ID,
+} from 'test/integration/constants/test-person-ids.constants';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
@@ -16,22 +16,27 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
+import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 describe('people resolvers (integration)', () => {
+  beforeAll(async () => {
+    await deleteAllRecords('person');
+  });
+
   it('1. should create and return people', async () => {
-    const personCity1 = generateRecordName(PERSON_1_ID);
-    const personCity2 = generateRecordName(PERSON_2_ID);
+    const personCity1 = generateRecordName(TEST_PERSON_1_ID);
+    const personCity2 = generateRecordName(TEST_PERSON_2_ID);
     const graphqlOperation = createManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
       gqlFields: PERSON_GQL_FIELDS,
       data: [
         {
-          id: PERSON_1_ID,
+          id: TEST_PERSON_1_ID,
           city: personCity1,
         },
         {
-          id: PERSON_2_ID,
+          id: TEST_PERSON_2_ID,
           city: personCity2,
         },
       ],
@@ -41,6 +46,7 @@ describe('people resolvers (integration)', () => {
 
     expect(response.body.data.createPeople).toHaveLength(2);
 
+    // @ts-expect-error legacy noImplicitAny
     response.body.data.createPeople.forEach((person) => {
       expect(person).toHaveProperty('city');
       expect([personCity1, personCity2]).toContain(person.city);
@@ -57,13 +63,13 @@ describe('people resolvers (integration)', () => {
   });
 
   it('1b. should create and return one person', async () => {
-    const personCity3 = generateRecordName(PERSON_3_ID);
+    const personCity3 = generateRecordName(TEST_PERSON_3_ID);
 
     const graphqlOperation = createOneOperationFactory({
       objectMetadataSingularName: 'person',
       gqlFields: PERSON_GQL_FIELDS,
       data: {
-        id: PERSON_3_ID,
+        id: TEST_PERSON_3_ID,
         city: personCity3,
       },
     });
@@ -121,7 +127,7 @@ describe('people resolvers (integration)', () => {
       gqlFields: PERSON_GQL_FIELDS,
       filter: {
         id: {
-          eq: PERSON_3_ID,
+          eq: TEST_PERSON_3_ID,
         },
       },
     });
@@ -152,7 +158,7 @@ describe('people resolvers (integration)', () => {
       },
       filter: {
         id: {
-          in: [PERSON_1_ID, PERSON_2_ID],
+          in: [TEST_PERSON_1_ID, TEST_PERSON_2_ID],
         },
       },
     });
@@ -163,6 +169,7 @@ describe('people resolvers (integration)', () => {
 
     expect(updatedPeople).toHaveLength(2);
 
+    // @ts-expect-error legacy noImplicitAny
     updatedPeople.forEach((person) => {
       expect(person.city).toEqual('Updated City');
     });
@@ -175,7 +182,7 @@ describe('people resolvers (integration)', () => {
       data: {
         city: 'New City',
       },
-      recordId: PERSON_3_ID,
+      recordId: TEST_PERSON_3_ID,
     });
 
     const response = await makeGraphqlAPIRequest(graphqlOperation);
@@ -225,7 +232,7 @@ describe('people resolvers (integration)', () => {
       gqlFields: PERSON_GQL_FIELDS,
       filter: {
         id: {
-          in: [PERSON_1_ID, PERSON_2_ID],
+          in: [TEST_PERSON_1_ID, TEST_PERSON_2_ID],
         },
       },
     });
@@ -236,6 +243,7 @@ describe('people resolvers (integration)', () => {
 
     expect(deletePeople).toHaveLength(2);
 
+    // @ts-expect-error legacy noImplicitAny
     deletePeople.forEach((person) => {
       expect(person.deletedAt).toBeTruthy();
     });
@@ -245,7 +253,7 @@ describe('people resolvers (integration)', () => {
     const graphqlOperation = deleteOneOperationFactory({
       objectMetadataSingularName: 'person',
       gqlFields: PERSON_GQL_FIELDS,
-      recordId: PERSON_3_ID,
+      recordId: TEST_PERSON_3_ID,
     });
 
     const response = await makeGraphqlAPIRequest(graphqlOperation);
@@ -260,7 +268,7 @@ describe('people resolvers (integration)', () => {
       gqlFields: PERSON_GQL_FIELDS,
       filter: {
         id: {
-          in: [PERSON_1_ID, PERSON_2_ID],
+          in: [TEST_PERSON_1_ID, TEST_PERSON_2_ID],
         },
       },
     });
@@ -276,7 +284,7 @@ describe('people resolvers (integration)', () => {
       gqlFields: PERSON_GQL_FIELDS,
       filter: {
         id: {
-          eq: PERSON_3_ID,
+          eq: TEST_PERSON_3_ID,
         },
       },
     });
@@ -293,7 +301,7 @@ describe('people resolvers (integration)', () => {
       gqlFields: PERSON_GQL_FIELDS,
       filter: {
         id: {
-          in: [PERSON_1_ID, PERSON_2_ID],
+          in: [TEST_PERSON_1_ID, TEST_PERSON_2_ID],
         },
         not: {
           deletedAt: {
@@ -314,7 +322,7 @@ describe('people resolvers (integration)', () => {
       gqlFields: PERSON_GQL_FIELDS,
       filter: {
         id: {
-          eq: PERSON_3_ID,
+          eq: TEST_PERSON_3_ID,
         },
         not: {
           deletedAt: {
@@ -326,7 +334,7 @@ describe('people resolvers (integration)', () => {
 
     const response = await makeGraphqlAPIRequest(graphqlOperation);
 
-    expect(response.body.data.person.id).toEqual(PERSON_3_ID);
+    expect(response.body.data.person.id).toEqual(TEST_PERSON_3_ID);
   });
 
   it('8. should destroy many people', async () => {
@@ -336,7 +344,7 @@ describe('people resolvers (integration)', () => {
       gqlFields: PERSON_GQL_FIELDS,
       filter: {
         id: {
-          in: [PERSON_1_ID, PERSON_2_ID],
+          in: [TEST_PERSON_1_ID, TEST_PERSON_2_ID],
         },
       },
     });
@@ -350,7 +358,7 @@ describe('people resolvers (integration)', () => {
     const graphqlOperation = destroyOneOperationFactory({
       objectMetadataSingularName: 'person',
       gqlFields: PERSON_GQL_FIELDS,
-      recordId: PERSON_3_ID,
+      recordId: TEST_PERSON_3_ID,
     });
 
     const destroyPeopleResponse = await makeGraphqlAPIRequest(graphqlOperation);
@@ -365,7 +373,7 @@ describe('people resolvers (integration)', () => {
       gqlFields: PERSON_GQL_FIELDS,
       filter: {
         id: {
-          in: [PERSON_1_ID, PERSON_2_ID],
+          in: [TEST_PERSON_1_ID, TEST_PERSON_2_ID],
         },
         not: {
           deletedAt: {
@@ -386,7 +394,7 @@ describe('people resolvers (integration)', () => {
       gqlFields: PERSON_GQL_FIELDS,
       filter: {
         id: {
-          eq: PERSON_3_ID,
+          eq: TEST_PERSON_3_ID,
         },
         not: {
           deletedAt: {

@@ -617,7 +617,7 @@ msgid "Are you sure you want to delete this record? It can be recovered from the
 msgstr "このレコードを本当に削除しますか？ コマンドメニューから復元できます。"
 
 #. js-lingui-id: rnCqBK
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Are you sure? Your current information will not be saved."
 msgstr ""
 
@@ -798,7 +798,7 @@ msgstr "標準オブジェクトのAPI名は変更できません"
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 msgid "Cancel"
 msgstr "キャンセル"
@@ -1488,6 +1488,11 @@ msgstr "アカウントと関連データをすべて削除"
 msgid "Delete API key"
 msgstr "APIキーを削除"
 
+#. js-lingui-id: x2p4/4
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
+msgid "Delete field"
+msgstr ""
+
 #. js-lingui-id: 4dpwsE
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #~ msgid "Delete record"
@@ -2031,7 +2036,7 @@ msgid "Existing objects"
 msgstr "既存のオブジェクト"
 
 #. js-lingui-id: ydzS9x
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Exit"
 msgstr ""
 
@@ -2041,7 +2046,7 @@ msgstr ""
 #~ msgstr "フルスクリーンを終了"
 
 #. js-lingui-id: XB4onr
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Exit import flow"
 msgstr ""
 
@@ -2830,6 +2835,16 @@ msgstr "直近7日間（古い順 → 新しい順）"
 msgid "Last Name"
 msgstr "姓"
 
+#. js-lingui-id: s0kiVA
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Last payment failed. Please contact your admin."
+msgstr ""
+
+#. js-lingui-id: 3u/3zO
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Last payment failed. Please update your billing details."
+msgstr ""
+
 #. js-lingui-id: wL3cK8
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Latest"
@@ -3255,6 +3270,11 @@ msgstr ""
 #. js-lingui-id: xlUOps
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "No free workflow executions left. End trial period and activate your billing to continue."
+msgstr ""
+
+#. js-lingui-id: pxYUeX
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "No free workflow executions left. Please contact your admin."
 msgstr ""
 
 #. js-lingui-id: OcMef3
@@ -3886,6 +3906,11 @@ msgstr "お気に入りから削除"
 msgid "Remove option"
 msgstr "オプションを削除"
 
+#. js-lingui-id: Ee8JBW
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
+msgid "Reorder field"
+msgstr ""
+
 #. js-lingui-id: OfhWJH
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
@@ -4511,6 +4536,11 @@ msgstr "件名、本文、添付ファイルがチームと共有されます。
 msgid "Submit"
 msgstr ""
 
+#. js-lingui-id: EDl9kS
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Subscribe"
+msgstr ""
+
 #. js-lingui-id: uvY7Wk
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Subscription activated."
@@ -4859,6 +4889,16 @@ msgstr ""
 msgid "Track your monthly workflow credit consumption."
 msgstr ""
 
+#. js-lingui-id: wN0jHF
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Trial expired. Please contact your admin"
+msgstr ""
+
+#. js-lingui-id: y985qL
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Trial expired. Please update your billing details."
+msgstr ""
+
 #. js-lingui-id: PiUt3N
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
@@ -4924,6 +4964,12 @@ msgstr "不明なエラー"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Unlimited contacts"
 msgstr "連絡先無制限"
+
+#. js-lingui-id: EkH9pt
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Update"
+msgstr ""
 
 #. js-lingui-id: +b7T3G
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -5338,6 +5384,16 @@ msgstr "アプリ上での表示名"
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
 msgstr "あなたのワークスペース"
+
+#. js-lingui-id: oC6WBs
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Your workspace doesn't have an active subscription."
+msgstr ""
+
+#. js-lingui-id: QBTEtW
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Your workspace doesn't have an active subscription. Please contact your admin."
+msgstr ""
 
 #. js-lingui-id: RhNbPE
 #: src/pages/settings/SettingsBilling.tsx

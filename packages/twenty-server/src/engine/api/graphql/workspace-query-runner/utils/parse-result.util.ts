@@ -4,8 +4,10 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/utils/composite-field-metadata.util';
 
 export const handleCompositeKey = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   result: any,
   key: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
 ): void => {
   const parsedFieldKey = parseCompositeFieldKey(key);
@@ -22,6 +24,8 @@ export const handleCompositeKey = (
   result[parsedFieldKey.parentFieldName][parsedFieldKey.childFieldName] = value;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const parseResult = (obj: any): any => {
   if (obj === null || typeof obj !== 'object' || typeof obj === 'function') {
     return obj;
@@ -31,6 +35,7 @@ export const parseResult = (obj: any): any => {
     return obj.map((item) => parseResult(item));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result: any = {};
 
   for (const key in obj) {

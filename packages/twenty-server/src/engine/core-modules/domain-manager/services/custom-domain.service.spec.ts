@@ -36,7 +36,7 @@ describe('CustomDomainService', () => {
         {
           provide: DomainManagerService,
           useValue: {
-            getFrontUrl: jest.fn(),
+            getBaseUrl: jest.fn(),
           },
         },
       ],
@@ -148,7 +148,7 @@ describe('CustomDomainService', () => {
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
 
       jest
-        .spyOn(domainManagerService, 'getFrontUrl')
+        .spyOn(domainManagerService, 'getBaseUrl')
         .mockReturnValue(new URL('https://front.domain'));
       (customDomainService as any).cloudflareClient = cloudflareMock;
 
@@ -185,7 +185,7 @@ describe('CustomDomainService', () => {
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
       jest
-        .spyOn(domainManagerService, 'getFrontUrl')
+        .spyOn(domainManagerService, 'getBaseUrl')
         .mockReturnValue(new URL('https://front.domain'));
       (customDomainService as any).cloudflareClient = cloudflareMock;
 

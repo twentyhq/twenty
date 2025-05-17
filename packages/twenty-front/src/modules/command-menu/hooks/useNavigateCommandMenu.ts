@@ -51,16 +51,16 @@ export const useNavigateCommandMenu = () => {
           commandMenuCloseAnimationCompleteCleanup();
         }
 
+        if (isCommandMenuOpened) {
+          return;
+        }
+
         setHotkeyScopeAndMemorizePreviousScope(
           CommandMenuHotkeyScope.CommandMenuFocused,
           {
             commandMenuOpen: true,
           },
         );
-
-        if (isCommandMenuOpened) {
-          return;
-        }
 
         copyContextStoreStates({
           instanceIdToCopyFrom: MAIN_CONTEXT_STORE_INSTANCE_ID,

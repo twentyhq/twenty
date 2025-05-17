@@ -20,6 +20,7 @@ export class MicrosoftAPIsOauthExchangeCodeForTokenStrategy extends MicrosoftAPI
     request: MicrosoftAPIsRequest,
     accessToken: string,
     refreshToken: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     profile: any,
     done: VerifyCallback,
   ): Promise<void> {

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'class-validator';
 import { Repository } from 'typeorm';
 
-import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
+import { WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
@@ -26,7 +26,7 @@ type CustomWorkspaceItem = Omit<
 
 @WorkspaceQueryHook(`*.createOne`)
 export class CreatedByCreateOnePreQueryHook
-  implements WorkspaceQueryHookInstance
+  implements WorkspacePreQueryHookInstance
 {
   constructor(
     @InjectRepository(FieldMetadataEntity, 'metadata')

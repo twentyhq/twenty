@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`messagesResolver (e2e) should find many messages 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": "20202020-04c8-4f24-93f2-764948e95014",
+  "subject": "Inquiry Regarding Topic",
+  "text": "Good Morning,
+ I am writing to inquire about information. Could you please provide me with details regarding this topic? 
+ Your assistance in this matter would be greatly appreciated. Thank you in advance for your prompt response. 
+ Best regards,Tim",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`messagesResolver (e2e) should find one message 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": "20202020-2b8a-405d-8f42-e820ca921421",
+  "subject": "Meeting Request",
+  "text": "Hello, 
+ I hope this email finds you well. I am writing to request a meeting. I believe it would be beneficial for both parties to collaborate and explore potential opportunities. Would you be available for a meeting sometime next week? Please let me know your availability, and I will arrange a suitable time. 
+ Looking forward to your response.
+ Best regards",
+  "updatedAt": Any<String>,
+}
+`;

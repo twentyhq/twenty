@@ -8,6 +8,7 @@ import { MicrosoftImportDriverException } from 'src/modules/messaging/message-im
 
 @Injectable()
 export class MicrosoftHandleErrorService {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public handleMicrosoftMessageFetchError(error: any): void {
     if (!error.statusCode) {
       throw new MessageImportDriverException(
@@ -43,6 +44,7 @@ export class MicrosoftHandleErrorService {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public throwMicrosoftBatchError(error: any): void {
     throw new MicrosoftImportDriverException(
       error.message,

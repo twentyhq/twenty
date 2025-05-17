@@ -1,5 +1,6 @@
 import { expect } from '@storybook/test';
-import { act, renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
+import { act } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { isKeyboardShortcutMenuOpenedState } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedState';

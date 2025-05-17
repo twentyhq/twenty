@@ -4,6 +4,7 @@ import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manag
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 export function WorkspaceIsUnique(): PropertyDecorator {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (target: any, propertyKey: string | symbol) => {
     if (propertyKey === undefined) {
       throw new Error('This decorator should be used with a field not a class');

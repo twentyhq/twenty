@@ -1,18 +1,35 @@
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { useSetRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+import {
+  useRecordValue,
+  useSetRecordValue,
+} from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 // TODO: should be optimized and put higher up
 export const RecordValueSetterEffect = ({ recordId }: { recordId: string }) => {
-  const setRecordValue = useSetRecordValue();
+  const setRecordValueInContextSelector = useSetRecordValue();
 
-  const recordValue = useRecoilValue(recordStoreFamilyState(recordId));
+  const recordValueFromContextSelector = useRecordValue(recordId);
+
+  const recordValueFromRecoil = useRecoilValue(
+    recordStoreFamilyState(recordId),
+  );
 
   useEffect(() => {
-    setRecordValue(recordId, recordValue);
-  }, [setRecordValue, recordValue, recordId]);
+    if (
+      JSON.stringify(recordValueFromContextSelector) !==
+      JSON.stringify(recordValueFromRecoil)
+    ) {
+      setRecordValueInContextSelector(recordId, recordValueFromRecoil);
+    }
+  }, [
+    setRecordValueInContextSelector,
+    recordValueFromRecoil,
+    recordId,
+    recordValueFromContextSelector,
+  ]);
 
   return null;
 };

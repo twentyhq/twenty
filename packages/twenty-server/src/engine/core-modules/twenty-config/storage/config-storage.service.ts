@@ -51,20 +51,23 @@ export class ConfigStorageService implements ConfigStorageInterface {
     ];
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private logAndRethrow(message: string, error: any): never {
     this.logger.error(message, error);
     throw error;
   }
 
   private async convertAndSecureValue<T extends keyof ConfigVariables>(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
     key: T,
     isDecrypt = false,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     try {
       const convertedValue = isDecrypt
         ? this.configValueConverter.convertDbValueToAppValue(value, key)
-        : this.configValueConverter.convertAppValueToDbValue(value);
+        : this.configValueConverter.convertAppValueToDbValue(value, key);
 
       const metadata = this.getConfigMetadata(key);
       const isSensitiveString =

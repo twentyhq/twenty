@@ -62,6 +62,7 @@ export class RemoteTableSchemaUpdateService {
       const tableName = remoteTable.distantTableName;
 
       if (!distantTable) {
+        // @ts-expect-error legacy noImplicitAny
         updates[tableName] = [DistantTableUpdate.TABLE_DELETED];
         continue;
       }
@@ -78,13 +79,17 @@ export class RemoteTableSchemaUpdateService {
       );
 
       if (columnsAdded.length > 0) {
+        // @ts-expect-error legacy noImplicitAny
         updates[tableName] = [
+          // @ts-expect-error legacy noImplicitAny
           ...(updates[tableName] || []),
           DistantTableUpdate.COLUMNS_ADDED,
         ];
       }
       if (columnsDeleted.length > 0) {
+        // @ts-expect-error legacy noImplicitAny
         updates[tableName] = [
+          // @ts-expect-error legacy noImplicitAny
           ...(updates[tableName] || []),
           DistantTableUpdate.COLUMNS_DELETED,
         ];

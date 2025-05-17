@@ -26,11 +26,15 @@ async function ensureDatabaseExists() {
     url,
   });
 
-  await client.command({
-    query: `CREATE DATABASE IF NOT EXISTS "${database}"`,
-  });
-
-  await client.close();
+  try {
+    await client.command({
+      query: `CREATE DATABASE IF NOT EXISTS "${database}"`,
+    });
+  } catch (error) {
+    // It may fail due to permissions, but the database already exists
+  } finally {
+    await client.close();
+  }
 }
 
 async function ensureMigrationTable(client: ClickHouseClient) {

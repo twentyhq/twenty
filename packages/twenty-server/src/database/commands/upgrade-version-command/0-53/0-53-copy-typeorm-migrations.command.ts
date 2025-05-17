@@ -59,6 +59,7 @@ export class CopyTypeormMigrationsCommand extends ActiveOrSuspendedWorkspacesMig
       );
 
       const existingMigrationNames = new Set(
+        // @ts-expect-error legacy noImplicitAny
         existingCoreMigrations.map((migration) => migration.name),
       );
 
