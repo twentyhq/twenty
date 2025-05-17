@@ -78,7 +78,7 @@ describe('ConfigValueConverterService', () => {
     });
 
     const mockConfigVariables = {
-      NODE_PORT: 3000,
+      CACHE_STORAGE_TTL: 3600 * 24 * 7,
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -122,25 +122,25 @@ describe('ConfigValueConverterService', () => {
 
     it('should use number transformer for number type', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
-        NODE_PORT: {
+        CACHE_STORAGE_TTL: {
           type: ConfigVariableType.NUMBER,
           group: ConfigVariablesGroup.ServerConfig,
-          description: 'Port for the node server',
+          description: 'Time-to-live for cache storage in seconds',
         },
       });
 
-      typeTransformers.number.toApp.mockReturnValueOnce(3000);
+      typeTransformers.number.toApp.mockReturnValueOnce(3600 * 24 * 7);
 
       const result = service.convertDbValueToAppValue(
-        '3000',
-        'NODE_PORT' as keyof ConfigVariables,
+        '604800',
+        'CACHE_STORAGE_TTL' as keyof ConfigVariables,
       );
 
       expect(typeTransformers.number.toApp).toHaveBeenCalledWith(
-        '3000',
+        '604800',
         undefined,
       );
-      expect(result).toBe(3000);
+      expect(result).toBe(3600 * 24 * 7);
     });
 
     it('should use string transformer for string type', () => {
@@ -222,28 +222,28 @@ describe('ConfigValueConverterService', () => {
     it('should infer type from default value when no metadata is available', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce(undefined);
 
-      typeTransformers.number.toApp.mockReturnValueOnce(3000);
+      typeTransformers.number.toApp.mockReturnValueOnce(3600 * 24 * 7);
 
       const result = service.convertDbValueToAppValue(
-        '3000',
-        'NODE_PORT' as keyof ConfigVariables,
+        '604800',
+        'CACHE_STORAGE_TTL' as keyof ConfigVariables,
       );
 
       expect(typeTransformers.number.toApp).toHaveBeenCalledWith(
-        '3000',
+        '604800',
         undefined,
       );
-      expect(result).toBe(3000);
+      expect(result).toBe(3600 * 24 * 7);
     });
 
     it('should return undefined for null or undefined input', () => {
       const result1 = service.convertDbValueToAppValue(
         null,
-        'NODE_PORT' as keyof ConfigVariables,
+        'CACHE_STORAGE_TTL' as keyof ConfigVariables,
       );
       const result2 = service.convertDbValueToAppValue(
         undefined,
-        'NODE_PORT' as keyof ConfigVariables,
+        'CACHE_STORAGE_TTL' as keyof ConfigVariables,
       );
 
       expect(result1).toBeUndefined();
@@ -252,10 +252,10 @@ describe('ConfigValueConverterService', () => {
 
     it('should propagate errors from transformers with context', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
-        NODE_PORT: {
+        CACHE_STORAGE_TTL: {
           type: ConfigVariableType.NUMBER,
           group: ConfigVariablesGroup.ServerConfig,
-          description: 'Port for the node server',
+          description: 'Time-to-live for cache storage in seconds',
         },
       });
 
@@ -268,9 +268,11 @@ describe('ConfigValueConverterService', () => {
       expect(() => {
         service.convertDbValueToAppValue(
           'not-a-number',
-          'NODE_PORT' as keyof ConfigVariables,
+          'CACHE_STORAGE_TTL' as keyof ConfigVariables,
         );
-      }).toThrow(`Failed to convert NODE_PORT to app value: Test error`);
+      }).toThrow(
+        `Failed to convert CACHE_STORAGE_TTL to app value: Test error`,
+      );
     });
   });
 
@@ -300,25 +302,25 @@ describe('ConfigValueConverterService', () => {
 
     it('should use number transformer for number type', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
-        NODE_PORT: {
+        CACHE_STORAGE_TTL: {
           type: ConfigVariableType.NUMBER,
           group: ConfigVariablesGroup.ServerConfig,
-          description: 'Port for the node server',
+          description: 'Time-to-live for cache storage in seconds',
         },
       });
 
-      typeTransformers.number.toStorage.mockReturnValueOnce(3000);
+      typeTransformers.number.toStorage.mockReturnValueOnce(3600 * 24 * 7);
 
       const result = service.convertAppValueToDbValue(
-        3000,
-        'NODE_PORT' as keyof ConfigVariables,
+        3600 * 24 * 7,
+        'CACHE_STORAGE_TTL' as keyof ConfigVariables,
       );
 
       expect(typeTransformers.number.toStorage).toHaveBeenCalledWith(
-        3000,
+        3600 * 24 * 7,
         undefined,
       );
-      expect(result).toBe(3000);
+      expect(result).toBe(3600 * 24 * 7);
     });
 
     it('should use string transformer for string type', () => {
@@ -400,28 +402,28 @@ describe('ConfigValueConverterService', () => {
     it('should infer type from default value when no metadata is available', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce(undefined);
 
-      typeTransformers.number.toStorage.mockReturnValueOnce(3000);
+      typeTransformers.number.toStorage.mockReturnValueOnce(3600 * 24 * 7);
 
       const result = service.convertAppValueToDbValue(
-        3000,
-        'NODE_PORT' as keyof ConfigVariables,
+        3600 * 24 * 7,
+        'CACHE_STORAGE_TTL' as keyof ConfigVariables,
       );
 
       expect(typeTransformers.number.toStorage).toHaveBeenCalledWith(
-        3000,
+        3600 * 24 * 7,
         undefined,
       );
-      expect(result).toBe(3000);
+      expect(result).toBe(3600 * 24 * 7);
     });
 
     it('should return null for null or undefined input', () => {
       const result1 = service.convertAppValueToDbValue(
         null,
-        'NODE_PORT' as keyof ConfigVariables,
+        'CACHE_STORAGE_TTL' as keyof ConfigVariables,
       );
       const result2 = service.convertAppValueToDbValue(
         undefined,
-        'NODE_PORT' as keyof ConfigVariables,
+        'CACHE_STORAGE_TTL' as keyof ConfigVariables,
       );
 
       expect(result1).toBeNull();
@@ -449,10 +451,10 @@ describe('ConfigValueConverterService', () => {
 
     it('should propagate errors from transformers with context', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
-        NODE_PORT: {
+        CACHE_STORAGE_TTL: {
           type: ConfigVariableType.NUMBER,
           group: ConfigVariablesGroup.ServerConfig,
-          description: 'Port for the node server',
+          description: 'Time-to-live for cache storage in seconds',
         },
       });
 
@@ -465,9 +467,9 @@ describe('ConfigValueConverterService', () => {
       expect(() => {
         service.convertAppValueToDbValue(
           'not-a-number' as any,
-          'NODE_PORT' as keyof ConfigVariables,
+          'CACHE_STORAGE_TTL' as keyof ConfigVariables,
         );
-      }).toThrow(`Failed to convert NODE_PORT to DB value: Test error`);
+      }).toThrow(`Failed to convert CACHE_STORAGE_TTL to DB value: Test error`);
     });
   });
 
@@ -497,10 +499,10 @@ describe('ConfigValueConverterService', () => {
 
     it('should validate number values when converting to storage', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
-        NODE_PORT: {
+        CACHE_STORAGE_TTL: {
           type: ConfigVariableType.NUMBER,
           group: ConfigVariablesGroup.ServerConfig,
-          description: 'Port for the node server',
+          description: 'Time-to-live for cache storage in seconds',
         },
       });
 
@@ -510,11 +512,11 @@ describe('ConfigValueConverterService', () => {
 
       expect(() => {
         service.convertAppValueToDbValue(
-          'invalid-port' as any,
-          'NODE_PORT' as keyof ConfigVariables,
+          'invalid-ttl' as any,
+          'CACHE_STORAGE_TTL' as keyof ConfigVariables,
         );
       }).toThrow(
-        'Failed to convert NODE_PORT to DB value: Expected number, got string',
+        'Failed to convert CACHE_STORAGE_TTL to DB value: Expected number, got string',
       );
     });
 
