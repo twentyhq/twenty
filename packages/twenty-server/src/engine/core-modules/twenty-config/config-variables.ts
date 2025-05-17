@@ -209,6 +209,7 @@ export class ConfigVariables {
     description:
       'Legacy variable to be deprecated when all API Keys expire. Replaced by APP_KEY',
     type: ConfigVariableType.STRING,
+    isEnvOnly: true,
   })
   @IsOptional()
   ACCESS_TOKEN_SECRET: string;
@@ -299,6 +300,7 @@ export class ConfigVariables {
     description: 'Email driver to use for sending emails',
     type: ConfigVariableType.ENUM,
     options: Object.values(EmailDriver),
+    isEnvOnly: true,
   })
   EMAIL_DRIVER: EmailDriver = EmailDriver.Logger;
 
@@ -346,6 +348,7 @@ export class ConfigVariables {
     description: 'Type of storage to use (local or S3)',
     type: ConfigVariableType.ENUM,
     options: Object.values(StorageDriverType),
+    isEnvOnly: true,
   })
   @IsOptional()
   STORAGE_TYPE: StorageDriverType = StorageDriverType.Local;
@@ -411,6 +414,7 @@ export class ConfigVariables {
     description: 'Type of serverless execution (local or Lambda)',
     type: ConfigVariableType.ENUM,
     options: Object.values(ServerlessDriverType),
+    isEnvOnly: true,
   })
   @IsOptional()
   SERVERLESS_TYPE: ServerlessDriverType = ServerlessDriverType.Local;
@@ -593,6 +597,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Url for the frontend application',
     type: ConfigVariableType.STRING,
+    isEnvOnly: true,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
@@ -628,6 +633,7 @@ export class ConfigVariables {
     description: 'Driver used for handling exceptions (Console or Sentry)',
     type: ConfigVariableType.ENUM,
     options: Object.values(ExceptionHandlerDriver),
+    isEnvOnly: true,
   })
   @IsOptional()
   EXCEPTION_HANDLER_DRIVER: ExceptionHandlerDriver =
@@ -637,7 +643,8 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.Logging,
     description: 'Levels of logging to be captured',
     type: ConfigVariableType.ARRAY,
-    options: ['log', 'error', 'warn', 'debug', 'verbose'],
+    options: ['log', 'error', 'warn', 'debug'],
+    isEnvOnly: true,
   })
   @CastToLogLevelArray()
   @IsOptional()
@@ -648,6 +655,7 @@ export class ConfigVariables {
     description: 'Driver used for collect metrics (OpenTelemetry or Console)',
     type: ConfigVariableType.ARRAY,
     options: ['OpenTelemetry', 'Console'],
+    isEnvOnly: true,
   })
   @CastToMeterDriverArray()
   @IsOptional()
@@ -657,6 +665,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.Metering,
     description: 'Endpoint URL for the OpenTelemetry collector',
     type: ConfigVariableType.STRING,
+    isEnvOnly: true,
   })
   @IsOptional()
   OTLP_COLLECTOR_ENDPOINT_URL: string;
@@ -666,6 +675,7 @@ export class ConfigVariables {
     description: 'Driver used for logging (only console for now)',
     type: ConfigVariableType.ENUM,
     options: Object.values(LoggerDriverType),
+    isEnvOnly: true,
   })
   @IsOptional()
   LOGGER_DRIVER: LoggerDriverType = LoggerDriverType.Console;
@@ -830,6 +840,7 @@ export class ConfigVariables {
     description: 'Node environment (development, production, etc.)',
     type: ConfigVariableType.ENUM,
     options: Object.values(NodeEnvironment),
+    isEnvOnly: true,
   })
   NODE_ENV: NodeEnvironment = NodeEnvironment.production;
 
@@ -837,6 +848,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Port for the node server',
     type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
   })
   @CastToPositiveNumber()
   @IsOptional()
@@ -846,6 +858,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Base URL for the server',
     type: ConfigVariableType.STRING,
+    isEnvOnly: true,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
@@ -890,6 +903,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SSL,
     description: 'Path to the SSL key for enabling HTTPS in local development',
     type: ConfigVariableType.STRING,
+    isEnvOnly: true,
   })
   @IsOptional()
   SSL_KEY_PATH: string;
@@ -899,6 +913,7 @@ export class ConfigVariables {
     description:
       'Path to the SSL certificate for enabling HTTPS in local development',
     type: ConfigVariableType.STRING,
+    isEnvOnly: true,
   })
   @IsOptional()
   SSL_CERT_PATH: string;
@@ -934,6 +949,7 @@ export class ConfigVariables {
     description: 'Driver for the LLM chat model',
     type: ConfigVariableType.ENUM,
     options: Object.values(LLMChatModelDriver),
+    isEnvOnly: true,
   })
   LLM_CHAT_MODEL_DRIVER: LLMChatModelDriver;
 
@@ -965,6 +981,7 @@ export class ConfigVariables {
     description: 'Driver for LLM tracing',
     type: ConfigVariableType.ENUM,
     options: Object.values(LLMTracingDriver),
+    isEnvOnly: true,
   })
   LLM_TRACING_DRIVER: LLMTracingDriver = LLMTracingDriver.Console;
 
@@ -972,6 +989,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Enable or disable multi-workspace support',
     type: ConfigVariableType.BOOLEAN,
+    isEnvOnly: true,
   })
   @IsOptional()
   IS_MULTIWORKSPACE_ENABLED = false;
@@ -1040,6 +1058,7 @@ export class ConfigVariables {
     description: 'Driver for captcha integration',
     type: ConfigVariableType.ENUM,
     options: Object.values(CaptchaDriverType),
+    isEnvOnly: true,
   })
   @IsOptional()
   CAPTCHA_DRIVER?: CaptchaDriverType;

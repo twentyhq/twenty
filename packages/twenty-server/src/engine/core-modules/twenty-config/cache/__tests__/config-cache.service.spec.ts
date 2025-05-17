@@ -44,15 +44,15 @@ describe('ConfigCacheService', () => {
     it('should handle different value types', () => {
       const booleanKey = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
       const stringKey = 'EMAIL_FROM_ADDRESS' as keyof ConfigVariables;
-      const numberKey = 'NODE_PORT' as keyof ConfigVariables;
+      const numberKey = 'CACHE_STORAGE_TTL' as keyof ConfigVariables;
 
       service.set(booleanKey, true);
       service.set(stringKey, 'test@example.com');
-      service.set(numberKey, 3000);
+      service.set(numberKey, 3600 * 24 * 7);
 
       expect(service.get(booleanKey)).toBe(true);
       expect(service.get(stringKey)).toBe('test@example.com');
-      expect(service.get(numberKey)).toBe(3000);
+      expect(service.get(numberKey)).toBe(3600 * 24 * 7);
     });
   });
 
@@ -105,7 +105,7 @@ describe('ConfigCacheService', () => {
     it('should return correct cache information', () => {
       const key1 = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
       const key2 = 'EMAIL_FROM_ADDRESS' as keyof ConfigVariables;
-      const key3 = 'NODE_PORT' as keyof ConfigVariables;
+      const key3 = 'CACHE_STORAGE_TTL' as keyof ConfigVariables;
 
       service.set(key1, true);
       service.set(key2, 'test@example.com');
