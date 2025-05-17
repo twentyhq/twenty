@@ -19,6 +19,9 @@ export type LinkChipProps = Omit<
 
 const StyledLink = styled(Link)`
   text-decoration: none;
+  --chip-horizontal-padding: ${({ theme }) => theme.spacing(1)};
+  display: inline-flex;
+  width: calc(100% - 2 * var(--chip-horizontal-padding));
 `;
 
 export const LinkChip = ({
