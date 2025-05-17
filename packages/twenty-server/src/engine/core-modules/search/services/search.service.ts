@@ -2,14 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
+import { getLogoUrlFromDomainName, isDefined } from 'twenty-shared/utils';
 import { Brackets, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { RESULTS_LIMIT_BY_OBJECT_WITHOUT_SEARCH_TERMS } from 'src/engine/core-modules/search/constants/results-limit-by-object-without-search-terms';
 import { STANDARD_OBJECTS_BY_PRIORITY_RANK } from 'src/engine/core-modules/search/constants/standard-objects-by-priority-rank';
 import { ObjectRecordFilterInput } from 'src/engine/core-modules/search/dtos/object-record-filter-input';
 import { SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record-dto';
@@ -59,6 +58,7 @@ export class SearchService {
     searchTerms,
     searchTermsOr,
     limit,
+    offset,
     filter,
   }: {
     entityManager: WorkspaceRepository<Entity>;
@@ -66,6 +66,7 @@ export class SearchService {
     searchTerms: string;
     searchTermsOr: string;
     limit: number;
+    offset?: number;
     filter: ObjectRecordFilterInput;
   }) {
     const queryBuilder = entityManager.createQueryBuilder();
@@ -125,7 +126,6 @@ export class SearchService {
           )
           .setParameter('searchTerms', searchTerms)
           .setParameter('searchTermsOr', searchTermsOr)
-          .take(limit)
       : queryBuilder
           .select(fieldsToSelect)
           .addSelect('0', 'tsRankCD')
@@ -134,8 +134,13 @@ export class SearchService {
             new Brackets((qb) => {
               qb.where(`"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`);
             }),
-          )
-          .take(RESULTS_LIMIT_BY_OBJECT_WITHOUT_SEARCH_TERMS);
+          );
+
+    searchQuery.take(limit);
+
+    if (isDefined(offset)) {
+      searchQuery.offset(offset);
+    }
 
     return await searchQuery.getRawMany();
   }
@@ -222,8 +227,8 @@ export class SearchService {
 
   computeSearchObjectResults(
     recordsWithObjectMetadataItems: RecordsWithObjectMetadataItem[],
-    limit: number,
     workspaceId: string,
+    limit?: number,
   ) {
     const searchRecords = recordsWithObjectMetadataItems.flatMap(
       ({ objectMetadataItem, records }) => {
@@ -244,7 +249,13 @@ export class SearchService {
       },
     );
 
-    return this.sortSearchObjectResults(searchRecords).slice(0, limit);
+    const sortedResults = this.sortSearchObjectResults(searchRecords);
+
+    if (limit !== undefined) {
+      return sortedResults.slice(0, limit);
+    }
+
+    return sortedResults;
   }
 
   sortSearchObjectResults(searchObjectResultsWithRank: SearchRecordDTO[]) {

@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
 
+import { MultipleRecordPickerFetchMoreLoader } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerFetchMoreLoader';
 import { MultipleRecordPickerMenuItem } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItem';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
+import { multipleRecordPickerHasMoreSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPaginationSelectors';
 import { multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector';
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
@@ -21,6 +23,14 @@ export const StyledSelectableItem = styled(SelectableListItem)`
   width: 100%;
 `;
 
+const StyledEmptyText = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.light};
+  display: flex;
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
 type MultipleRecordPickerMenuItemsProps = {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
 };
@@ -37,6 +47,11 @@ export const MultipleRecordPickerMenuItems = ({
 
   const pickableRecordIds = useRecoilComponentValueV2(
     multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector,
+    componentInstanceId,
+  );
+
+  const hasMore = useRecoilComponentValueV2(
+    multipleRecordPickerHasMoreSelector,
     componentInstanceId,
   );
 
@@ -77,25 +92,30 @@ export const MultipleRecordPickerMenuItems = ({
 
   return (
     <DropdownMenuItemsContainer hasMaxHeight>
-      <SelectableList
-        selectableListInstanceId={selectableListComponentInstanceId}
-        selectableItemIdArray={pickableRecordIds}
-        hotkeyScope={MultipleRecordPickerHotkeyScope.MultipleRecordPicker}
-      >
-        {pickableRecordIds.map((recordId) => {
-          return (
-            <MultipleRecordPickerMenuItem
-              key={recordId}
-              recordId={recordId}
-              onChange={(morphItem) => {
-                handleChange(morphItem);
-                onChange?.(morphItem);
-                resetSelectedItem();
-              }}
-            />
-          );
-        })}
-      </SelectableList>
+      {pickableRecordIds.length === 0 ? (
+        <StyledEmptyText>No results found</StyledEmptyText>
+      ) : (
+        <SelectableList
+          selectableListInstanceId={selectableListComponentInstanceId}
+          selectableItemIdArray={pickableRecordIds}
+          hotkeyScope={MultipleRecordPickerHotkeyScope.MultipleRecordPicker}
+        >
+          {pickableRecordIds.map((recordId) => {
+            return (
+              <MultipleRecordPickerMenuItem
+                key={recordId}
+                recordId={recordId}
+                onChange={(morphItem) => {
+                  handleChange(morphItem);
+                  onChange?.(morphItem);
+                  resetSelectedItem();
+                }}
+              />
+            );
+          })}
+          {hasMore && <MultipleRecordPickerFetchMoreLoader />}
+        </SelectableList>
+      )}
     </DropdownMenuItemsContainer>
   );
 };
