@@ -20,11 +20,7 @@ interface PoolWithEndTracker extends Pool {
 }
 
 interface ExtendedPoolConfig extends PoolConfig {
-  extra?: {
-    allowExitOnIdle?: boolean;
-    idleTimeoutMillis?: number;
-    [key: string]: unknown;
-  };
+  allowExitOnIdle?: boolean;
 }
 
 interface PoolInternalStats {
@@ -367,10 +363,9 @@ export class PgPoolSharedService {
         poolConfig.idleTimeoutMillis = idleTimeoutMs;
       }
 
-      if (!poolConfig.extra) {
-        poolConfig.extra = {};
+      if (allowExitOnIdle) {
+        poolConfig.allowExitOnIdle = allowExitOnIdle;
       }
-      poolConfig.extra.allowExitOnIdle = allowExitOnIdle;
 
       const key = buildPoolKey(poolConfig);
       const existing = poolsMap.get(key);
