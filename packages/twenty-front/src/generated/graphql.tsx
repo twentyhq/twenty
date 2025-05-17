@@ -288,6 +288,13 @@ export enum CaptchaDriverType {
   Turnstile = 'Turnstile'
 }
 
+export type CheckUserExistOutput = {
+  __typename?: 'CheckUserExistOutput';
+  availableWorkspaces: Array<AvailableWorkspaceOutput>;
+  exists: Scalars['Boolean'];
+  isEmailVerified: Scalars['Boolean'];
+};
+
 export type ClientConfig = {
   __typename?: 'ClientConfig';
   analyticsEnabled: Scalars['Boolean'];
@@ -1517,7 +1524,7 @@ export type PublishServerlessFunctionInput = {
 export type Query = {
   __typename?: 'Query';
   billingPortalSession: BillingSessionOutput;
-  checkUserExists: UserExistsOutput;
+  checkUserExists: CheckUserExistOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
   currentUser: User;
@@ -2247,15 +2254,6 @@ export type UserEdge = {
   node: User;
 };
 
-export type UserExists = {
-  __typename?: 'UserExists';
-  availableWorkspaces: Array<AvailableWorkspaceOutput>;
-  exists: Scalars['Boolean'];
-  isEmailVerified: Scalars['Boolean'];
-};
-
-export type UserExistsOutput = UserExists | UserNotExists;
-
 export type UserInfo = {
   __typename?: 'UserInfo';
   email: Scalars['String'];
@@ -2273,11 +2271,6 @@ export type UserLookup = {
 export type UserMappingOptionsUser = {
   __typename?: 'UserMappingOptionsUser';
   user?: Maybe<Scalars['String']>;
-};
-
-export type UserNotExists = {
-  __typename?: 'UserNotExists';
-  exists: Scalars['Boolean'];
 };
 
 export type UserWorkspace = {
@@ -2656,7 +2649,7 @@ export type CheckUserExistsQueryVariables = Exact<{
 }>;
 
 
-export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename: 'UserExists', exists: boolean, isEmailVerified: boolean, availableWorkspaces: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } | { __typename: 'UserNotExists', exists: boolean } };
+export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename?: 'CheckUserExistOutput', exists: boolean, isEmailVerified: boolean, availableWorkspaces: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
 
 export type GetPublicWorkspaceDataByDomainQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4138,30 +4131,24 @@ export type UpdatePasswordViaResetTokenMutationOptions = Apollo.BaseMutationOpti
 export const CheckUserExistsDocument = gql`
     query CheckUserExists($email: String!, $captchaToken: String) {
   checkUserExists(email: $email, captchaToken: $captchaToken) {
-    __typename
-    ... on UserExists {
-      exists
-      availableWorkspaces {
-        id
-        displayName
-        workspaceUrls {
-          subdomainUrl
-          customUrl
-        }
-        logo
-        sso {
-          type
-          id
-          issuer
-          name
-          status
-        }
+    exists
+    availableWorkspaces {
+      id
+      displayName
+      workspaceUrls {
+        subdomainUrl
+        customUrl
       }
-      isEmailVerified
+      logo
+      sso {
+        type
+        id
+        issuer
+        name
+        status
+      }
     }
-    ... on UserNotExists {
-      exists
-    }
+    isEmailVerified
   }
 }
     `;

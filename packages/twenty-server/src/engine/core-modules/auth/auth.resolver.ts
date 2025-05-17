@@ -59,7 +59,7 @@ import { GetLoginTokenFromCredentialsInput } from './dto/get-login-token-from-cr
 import { LoginToken } from './dto/login-token.entity';
 import { SignUpInput } from './dto/sign-up.input';
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
-import { UserExistsOutput } from './dto/user-exists.entity';
+import { CheckUserExistOutput } from './dto/user-exists.entity';
 import { CheckUserExistsInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
@@ -88,10 +88,10 @@ export class AuthResolver {
   ) {}
 
   @UseGuards(CaptchaGuard)
-  @Query(() => UserExistsOutput)
+  @Query(() => CheckUserExistOutput)
   async checkUserExists(
     @Args() checkUserExistsInput: CheckUserExistsInput,
-  ): Promise<typeof UserExistsOutput> {
+  ): Promise<CheckUserExistOutput> {
     return await this.authService.checkUserExists(checkUserExistsInput.email);
   }
 
