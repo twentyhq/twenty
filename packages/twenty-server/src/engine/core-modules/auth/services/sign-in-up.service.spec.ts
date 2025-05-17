@@ -39,7 +39,6 @@ describe('SignInUpService', () => {
   let service: SignInUpService;
   let UserRepository: Repository<User>;
   let WorkspaceRepository: Repository<Workspace>;
-  let fileUploadService: FileUploadService;
   let workspaceInvitationService: WorkspaceInvitationService;
   let userWorkspaceService: UserWorkspaceService;
   let twentyConfigService: TwentyConfigService;
@@ -137,7 +136,6 @@ describe('SignInUpService', () => {
     service = module.get<SignInUpService>(SignInUpService);
     UserRepository = module.get(getRepositoryToken(User, 'core'));
     WorkspaceRepository = module.get(getRepositoryToken(Workspace, 'core'));
-    fileUploadService = module.get<FileUploadService>(FileUploadService);
     workspaceInvitationService = module.get<WorkspaceInvitationService>(
       WorkspaceInvitationService,
     );
@@ -249,11 +247,6 @@ describe('SignInUpService', () => {
       id: 'newWorkspaceId',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
     } as Workspace);
-    jest.spyOn(fileUploadService, 'uploadImage').mockResolvedValue({
-      id: '',
-      mimeType: '',
-      paths: ['path/to/image'],
-    });
     jest.spyOn(UserRepository, 'create').mockReturnValue({} as User);
     jest
       .spyOn(domainManagerService, 'generateSubdomain')
@@ -274,7 +267,12 @@ describe('SignInUpService', () => {
     expect(WorkspaceRepository.save).toHaveBeenCalled();
     expect(UserRepository.create).toHaveBeenCalled();
     expect(UserRepository.save).toHaveBeenCalled();
-    expect(fileUploadService.uploadImage).toHaveBeenCalled();
+    expect(userWorkspaceService.create).toHaveBeenCalledWith({
+      workspaceId: 'newWorkspaceId',
+      userId: 'newUserId',
+      isExistingUser: false,
+      pictureUrl: 'pictureUrl',
+    });
   });
 
   it('should handle signIn on workspace in pending state', async () => {

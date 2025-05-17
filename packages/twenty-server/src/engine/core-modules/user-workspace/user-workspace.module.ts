@@ -5,6 +5,8 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
+import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceResolver } from 'src/engine/core-modules/user-workspace/user-workspace.resolver';
@@ -34,6 +36,8 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
         DomainManagerModule,
         TwentyORMModule,
         UserRoleModule,
+        FileUploadModule,
+        FileModule,
       ],
       services: [UserWorkspaceService],
     }),

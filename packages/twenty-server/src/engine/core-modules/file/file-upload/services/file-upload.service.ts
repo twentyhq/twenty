@@ -1,22 +1,25 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 
 import DOMPurify from 'dompurify';
+import FileType from 'file-type';
 import { JSDOM } from 'jsdom';
 import sharp from 'sharp';
-import { v4 as uuidV4 } from 'uuid';
+import { v4 as uuidV4, v4 } from 'uuid';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { settings } from 'src/engine/constants/settings';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { getCropSize } from 'src/utils/image';
+import { getCropSize, getImageBufferFromUrl } from 'src/utils/image';
 
 @Injectable()
 export class FileUploadService {
   constructor(
     private readonly fileStorage: FileStorageService,
     private readonly fileService: FileService,
+    private readonly httpService: HttpService,
   ) {}
 
   private async _uploadFile({
@@ -91,6 +94,31 @@ export class FileUploadService {
       mimeType,
       path: `${fileFolder}/${name}?token=${signedPayload}`,
     };
+  }
+
+  async uploadImageFromUrl({
+    imageUrl,
+    fileFolder,
+    workspaceId,
+  }: {
+    imageUrl: string;
+    fileFolder: FileFolder;
+    workspaceId: string;
+  }) {
+    const buffer = await getImageBufferFromUrl(
+      imageUrl,
+      this.httpService.axiosRef,
+    );
+
+    const type = await FileType.fromBuffer(buffer);
+
+    return await this.uploadImage({
+      file: buffer,
+      filename: `${v4()}.${type?.ext}`,
+      mimeType: type?.mime,
+      fileFolder,
+      workspaceId,
+    });
   }
 
   async uploadImage({
