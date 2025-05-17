@@ -208,7 +208,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
             }
           } catch (error) {
             this.logger.debug(
-              `Skipping invalid config value for key ${key as string}: ${error.message}`,
+              `Skipping invalid config value for key ${key as string}: ${error.error}`,
             );
 
             continue;
