@@ -41,13 +41,14 @@ export const ModalHotkeysAndClickOutsideEffect = ({
 
   useListenClickOutside({
     refs: [modalRef],
+    excludeClassNames: ['disable-modal-click-outside-event'],
     listenerId: `MODAL_CLICK_OUTSIDE_LISTENER_ID_${modalId}`,
     callback: () => {
       if (isClosable && onClose !== undefined) {
         onClose();
       }
     },
-    mode: ClickOutsideMode.comparePixels,
+    mode: ClickOutsideMode.compareHTMLRef,
   });
 
   return null;

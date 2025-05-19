@@ -8,6 +8,7 @@ import { onToggleColumnSortComponentState } from '@/object-record/record-table/s
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconArrowLeft,
@@ -23,6 +24,10 @@ import { ColumnDefinition } from '../../types/ColumnDefinition';
 export type RecordTableColumnHeadDropdownMenuProps = {
   column: ColumnDefinition<FieldMetadata>;
 };
+
+const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
+  z-index: ${({ theme }) => theme.lastLayerZIndex};
+`;
 
 export const RecordTableColumnHeadDropdownMenu = ({
   column,
@@ -102,7 +107,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const canHide = column.isLabelIdentifier !== true;
 
   return (
-    <DropdownMenuItemsContainer>
+    <StyledDropdownMenuItemsContainer>
       {isFilterable && (
         <MenuItem
           LeftIcon={IconFilter}
@@ -139,6 +144,6 @@ export const RecordTableColumnHeadDropdownMenu = ({
           text={t`Hide`}
         />
       )}
-    </DropdownMenuItemsContainer>
+    </StyledDropdownMenuItemsContainer>
   );
 };

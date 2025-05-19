@@ -5,6 +5,7 @@ import { ModalComponentInstanceContext } from '@/ui/layout/modal/contexts/ModalC
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { css, useTheme } from '@emotion/react';
@@ -225,12 +226,15 @@ export const Modal = ({
             instanceId: modalId,
           }}
         >
-          <ModalHotkeysAndClickOutsideEffect
-            modalId={modalId}
-            modalRef={modalRef}
-            onEnter={onEnter}
-            isClosable={isClosable}
-            onClose={handleClose}
+          <ClickOutsideListenerContext.Provider
+            value={{ excludeClassName: 'disable-modal-click-outside-event' }}
+          >
+            <ModalHotkeysAndClickOutsideEffect
+              modalId={modalId}
+              modalRef={modalRef}
+              onEnter={onEnter}
+              isClosable={isClosable}
+              onClose={handleClose}
           />
           <StyledBackDrop
             data-testid="modal-backdrop"
@@ -254,7 +258,8 @@ export const Modal = ({
             >
               {children}
             </StyledModalDiv>
-          </StyledBackDrop>
+            </StyledBackDrop>
+          </ClickOutsideListenerContext.Provider>
         </ModalComponentInstanceContext.Provider>
       )}
     </>
