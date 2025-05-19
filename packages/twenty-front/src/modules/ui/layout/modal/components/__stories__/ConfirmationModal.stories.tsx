@@ -7,6 +7,7 @@ import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
+import { sleep } from '~/utils/sleep';
 import { isModalOpenedComponentState } from '../../states/isModalOpenedComponentState';
 import { ConfirmationModal } from '../ConfirmationModal';
 
@@ -100,6 +101,9 @@ export const CloseOnClickOutside: Story = {
     await canvas.findByText('Click Outside Test');
 
     const backdrop = await canvas.findByTestId('modal-backdrop');
+
+    // We need to wait for the outside click listener to be registered
+    await sleep(100);
 
     await userEvent.click(backdrop);
 
