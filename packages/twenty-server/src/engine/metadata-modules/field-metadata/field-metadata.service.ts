@@ -105,7 +105,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   ): Promise<FieldMetadataEntity> {
     const [createdFieldMetadata] = await this.createMany([fieldMetadataInput]);
 
-    if (!createdFieldMetadata) {
+    if (!isDefined(createdFieldMetadata)) {
       throw new FieldMetadataException(
         'Failed to create field metadata',
         FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
@@ -702,7 +702,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
     }
 
-    this.validateFieldMetadataOptions({
+    await this.validateFieldMetadataOptions({
       fieldMetadataInput,
       fieldMetadataType,
     });
@@ -889,7 +889,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       for (const objectMetadataId of objectMetadataIds) {
         const objectMetadata = objectMetadataMap[objectMetadataId];
 
-        if (!objectMetadata) {
+        if (!isDefined(objectMetadata)) {
           throw new FieldMetadataException(
             'Object metadata does not exist',
             FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
@@ -914,7 +914,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             fieldMetadataInput.isRemoteCreation ?? false,
           );
 
-          if (migrationAction) {
+          if (isDefined(migrationAction)) {
             migrationActions.push(migrationAction);
           }
         }

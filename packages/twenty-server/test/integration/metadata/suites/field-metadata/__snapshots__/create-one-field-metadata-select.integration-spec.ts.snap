@@ -1,5 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Field metadata select creation tests group It should fail to create field metadata with empty options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Options are required for enum fields",
+  },
+]
+`;
+
 exports[`Field metadata select creation tests group It should fail to create option with invalid id 1`] = `
 [
   {
@@ -15,10 +26,9 @@ exports[`Field metadata select creation tests group It should fail to create two
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "duplicate key value violates unique constraint "pg_enum_typid_label_index"",
+    "message": "Option id "fd1f11fd-3f05-4a33-bddf-800c3412ce98" already exists",
   },
 ]
 `;
