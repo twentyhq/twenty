@@ -66,7 +66,7 @@ export class MigrateDefaultAvatarUrlToUserWorkspaceCommand extends ActiveOrSuspe
         });
 
         if (userWorkspacesCount === 1) {
-          if (dryRun)
+          if (!dryRun)
             await this.userWorkspaceRepository.update(
               {
                 userId: workspaceUser.user.id,
@@ -78,7 +78,7 @@ export class MigrateDefaultAvatarUrlToUserWorkspaceCommand extends ActiveOrSuspe
             );
 
           this.logger.log(
-            `Updated default avatar url for user ${workspaceUser.user.id} in workspace ${workspace.id}`,
+            `Updated default avatar url for user ${workspaceUser.user.id} on user workspace ${workspaceUser.id}`,
           );
         }
       }
