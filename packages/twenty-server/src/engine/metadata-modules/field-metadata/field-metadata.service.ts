@@ -10,6 +10,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource, FindOneOptions, In, Repository } from 'typeorm';
 import { v4 as uuidV4, v4 } from 'uuid';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { settings } from 'src/engine/constants/settings';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
@@ -44,7 +46,7 @@ import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata-name.exception';
+import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
@@ -59,11 +61,11 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewService } from 'src/modules/view/services/view.service';
-import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
@@ -81,6 +83,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(RelationMetadataEntity, 'metadata')
+    private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
@@ -213,7 +217,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             : existingFieldMetadata.defaultValue,
       };
 
-      this.validateFieldMetadata<UpdateFieldInput>(
+      await this.validateFieldMetadata<UpdateFieldInput>(
         existingFieldMetadata.type,
         fieldMetadataForUpdate,
         objectMetadata,
@@ -255,9 +259,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
 
       if (
-        fieldMetadataInput.name ||
-        updatableFieldInput.options ||
-        updatableFieldInput.defaultValue
+        isDefined(fieldMetadataInput.name) ||
+        isDefined(updatableFieldInput.options) ||
+        isDefined(updatableFieldInput.defaultValue)
       ) {
         await this.workspaceMigrationService.createCustomMigration(
           generateMigrationName(`update-${updatedFieldMetadata.name}`),
@@ -314,31 +318,30 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           id: input.id,
           workspaceId: workspaceId,
         },
+        relations: [
+          'object',
+          'relationTargetFieldMetadata',
+          'relationTargetObjectMetadata',
+        ],
       });
 
-      if (!fieldMetadata) {
+      if (!isDefined(fieldMetadata)) {
         throw new FieldMetadataException(
           'Field does not exist',
           FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
         );
       }
 
-      const [objectMetadata] = await this.objectMetadataRepository.find({
-        where: {
-          id: fieldMetadata.objectMetadataId,
-        },
-        relations: ['fields'],
-        order: {},
-      });
-
-      if (!objectMetadata) {
+      if (!isDefined(fieldMetadata.object)) {
         throw new FieldMetadataException(
           'Object metadata does not exist',
           FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         );
       }
 
-      if (objectMetadata.labelIdentifierFieldMetadataId === fieldMetadata.id) {
+      if (
+        fieldMetadata.object.labelIdentifierFieldMetadataId === fieldMetadata.id
+      ) {
         throw new FieldMetadataException(
           'Cannot delete, please update the label identifier field first',
           FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
@@ -350,9 +353,63 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         fieldMetadataId: fieldMetadata.id,
       });
 
-      await fieldMetadataRepository.delete(fieldMetadata.id);
+      if (fieldMetadata.type === FieldMetadataType.RELATION) {
+        const isManyToOneRelation =
+          (fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>)
+            .settings?.relationType === RelationType.MANY_TO_ONE;
 
-      if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+        if (!isDefined(fieldMetadata.relationTargetFieldMetadata)) {
+          throw new FieldMetadataException(
+            'Target field metadata does not exist',
+            FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+          );
+        }
+
+        // TODO: remove this once we have deleted the relation metadata table
+        await this.relationMetadataRepository.delete({
+          fromFieldMetadataId: In([
+            fieldMetadata.id,
+            fieldMetadata.relationTargetFieldMetadata.id,
+          ]),
+        });
+        await this.relationMetadataRepository.delete({
+          toFieldMetadataId: In([
+            fieldMetadata.id,
+            fieldMetadata.relationTargetFieldMetadata.id,
+          ]),
+        });
+
+        await fieldMetadataRepository.delete({
+          id: In([
+            fieldMetadata.id,
+            fieldMetadata.relationTargetFieldMetadata.id,
+          ]),
+        });
+
+        await this.workspaceMigrationService.createCustomMigration(
+          generateMigrationName(`delete-${fieldMetadata.name}`),
+          workspaceId,
+          [
+            {
+              name: isManyToOneRelation
+                ? computeObjectTargetTable(fieldMetadata.object)
+                : computeObjectTargetTable(
+                    fieldMetadata.relationTargetObjectMetadata,
+                  ),
+              action: WorkspaceMigrationTableActionType.ALTER,
+              columns: [
+                {
+                  action: WorkspaceMigrationColumnActionType.DROP,
+                  columnName: isManyToOneRelation
+                    ? `${(fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>).settings?.joinColumnName}`
+                    : `${(fieldMetadata.relationTargetFieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>).settings?.joinColumnName}`,
+                } satisfies WorkspaceMigrationColumnDrop,
+              ],
+            } satisfies WorkspaceMigrationTableAction,
+          ],
+        );
+      } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+        await fieldMetadataRepository.delete(fieldMetadata.id);
         const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
         if (!compositeType) {
@@ -368,7 +425,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           workspaceId,
           [
             {
-              name: computeObjectTargetTable(objectMetadata),
+              name: computeObjectTargetTable(fieldMetadata.object),
               action: WorkspaceMigrationTableActionType.ALTER,
               columns: compositeType.properties.map((property) => {
                 return {
@@ -383,12 +440,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           ],
         );
       } else {
+        await fieldMetadataRepository.delete(fieldMetadata.id);
         await this.workspaceMigrationService.createCustomMigration(
           generateMigrationName(`delete-${fieldMetadata.name}`),
           workspaceId,
           [
             {
-              name: computeObjectTargetTable(objectMetadata),
+              name: computeObjectTargetTable(fieldMetadata.object),
               action: WorkspaceMigrationTableActionType.ALTER,
               columns: [
                 {
@@ -472,9 +530,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     };
 
     if ('standardOverrides' in fieldMetadataInput) {
-      updatableStandardFieldInput.standardOverrides = (
-        fieldMetadataInput as any
-      ).standardOverrides;
+      updatableStandardFieldInput.standardOverrides =
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (fieldMetadataInput as any).standardOverrides;
     }
 
     if (
@@ -545,16 +603,18 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
   }
 
-  private validateFieldMetadata<T extends UpdateFieldInput | CreateFieldInput>(
+  private async validateFieldMetadata<
+    T extends UpdateFieldInput | CreateFieldInput,
+  >(
     fieldMetadataType: FieldMetadataType,
     fieldMetadataInput: T,
     objectMetadata: ObjectMetadataEntity,
-  ): T {
+  ): Promise<T> {
     if (fieldMetadataInput.name) {
       try {
         validateMetadataNameOrThrow(fieldMetadataInput.name);
       } catch (error) {
-        if (error instanceof InvalidMetadataNameException) {
+        if (error instanceof InvalidMetadataException) {
           throw new FieldMetadataException(
             error.message,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -570,7 +630,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           objectMetadata,
         );
       } catch (error) {
-        if (error instanceof InvalidMetadataNameException) {
+        if (error instanceof InvalidMetadataException) {
           throw new FieldMetadataException(
             `Name "${fieldMetadataInput.name}" is not available, check that it is not duplicating another field's name.`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -599,10 +659,17 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           );
         }
       }
+      if (isDefined(fieldMetadataInput.defaultValue)) {
+        await this.fieldMetadataValidationService.validateDefaultValueOrThrow({
+          fieldType: fieldMetadataType,
+          options: fieldMetadataInput.options,
+          defaultValue: fieldMetadataInput.defaultValue ?? null,
+        });
+      }
     }
 
     if (fieldMetadataInput.settings) {
-      this.fieldMetadataValidationService.validateSettingsOrThrow({
+      await this.fieldMetadataValidationService.validateSettingsOrThrow({
         fieldType: fieldMetadataType,
         settings: fieldMetadataInput.settings,
       });
@@ -632,6 +699,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     const translationValue =
+      // @ts-expect-error legacy noImplicitAny
       fieldMetadata.standardOverrides?.translations?.[locale]?.[labelKey];
 
     if (isDefined(translationValue)) {
@@ -717,7 +785,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     const fieldMetadataForCreate =
       this.prepareCustomFieldMetadata(fieldMetadataInput);
 
-    this.validateFieldMetadata<CreateFieldInput>(
+    await this.validateFieldMetadata<CreateFieldInput>(
       fieldMetadataForCreate.type,
       fieldMetadataForCreate,
       objectMetadata,
@@ -857,74 +925,70 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     createdFieldMetadatas: FieldMetadataEntity[],
     workspaceId: string,
   ) {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        workspaceId,
-      );
-
     const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
 
-    const workspaceQueryRunner = workspaceDataSource?.createQueryRunner();
+    await workspaceDataSource.transaction(
+      async (workspaceEntityManager: WorkspaceEntityManager) => {
+        const viewsRepository = workspaceEntityManager.getRepository('view', {
+          shouldBypassPermissionChecks: true,
+        });
 
-    if (!workspaceQueryRunner) {
-      throw new FieldMetadataException(
-        'Could not create workspace query runner',
-        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    await workspaceQueryRunner.connect();
-    await workspaceQueryRunner.startTransaction();
-
-    try {
-      for (const createdFieldMetadata of createdFieldMetadatas) {
-        const view = await workspaceQueryRunner?.query(
-          `SELECT id FROM ${dataSourceMetadata.schema}."view"
-        WHERE "objectMetadataId" = '${createdFieldMetadata.objectMetadataId}'`,
+        const viewFieldsRepository = workspaceEntityManager.getRepository(
+          'viewField',
+          {
+            shouldBypassPermissionChecks: true,
+          },
         );
 
-        if (!isEmpty(view)) {
-          const existingViewFields = (await workspaceQueryRunner?.query(
-            `SELECT * FROM ${dataSourceMetadata.schema}."viewField"
-          WHERE "viewId" = '${view[0].id}'`,
-          )) as ViewFieldWorkspaceEntity[];
-          const isVisible =
-            existingViewFields.length < settings.maxVisibleViewFields;
+        for (const createdFieldMetadata of createdFieldMetadatas) {
+          const views = await viewsRepository.find({
+            where: {
+              objectMetadataId: createdFieldMetadata.objectMetadataId,
+            },
+          });
 
-          const createdFieldIsAlreadyInView = existingViewFields.some(
-            (existingViewField) =>
-              existingViewField.fieldMetadataId === createdFieldMetadata.id,
-          );
+          if (!isEmpty(views)) {
+            const view = views[0];
+            const existingViewFields = await viewFieldsRepository.find({
+              where: {
+                viewId: view.id,
+              },
+            });
 
-          if (!createdFieldIsAlreadyInView) {
-            const lastPosition = existingViewFields
-              .map((viewField) => viewField.position)
-              .reduce((acc, position) => {
-                if (position > acc) {
-                  return position;
-                }
+            const isVisible =
+              existingViewFields.length < settings.maxVisibleViewFields;
 
-                return acc;
-              }, -1);
-
-            await workspaceQueryRunner?.query(
-              `INSERT INTO ${dataSourceMetadata.schema}."viewField"
-            ("fieldMetadataId", "position", "isVisible", "size", "viewId")
-            VALUES ('${createdFieldMetadata.id}', '${
-              lastPosition + 1
-            }', ${isVisible}, 180, '${view[0].id}')`,
+            const createdFieldIsAlreadyInView = existingViewFields.some(
+              (existingViewField) =>
+                existingViewField.fieldMetadataId === createdFieldMetadata.id,
             );
+
+            if (!createdFieldIsAlreadyInView) {
+              const lastPosition = existingViewFields
+                .map((viewField) => viewField.position)
+                .reduce((acc, position) => {
+                  if (position > acc) {
+                    return position;
+                  }
+
+                  return acc;
+                }, -1);
+
+              await viewFieldsRepository.insert({
+                fieldMetadataId: createdFieldMetadata.id,
+                position: lastPosition + 1,
+                isVisible,
+                size: 180,
+                viewId: view.id,
+              });
+            }
           }
         }
-      }
-      await workspaceQueryRunner.commitTransaction();
-    } catch (error) {
-      await workspaceQueryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await workspaceQueryRunner.release();
-    }
+      },
+    );
   }
 
   async getFieldMetadataItemsByBatch(

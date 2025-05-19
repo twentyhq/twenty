@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { DomainManagerService } from './domain-manager.service';
@@ -12,12 +12,13 @@ describe('DomainManagerService', () => {
   describe('getWorkspaceUrls', () => {
     it('should return a URL containing the correct customDomain if customDomain is provided', () => {
       jest
-        .spyOn(environmentService, 'get')
+        .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
           const env = {
             FRONTEND_URL: 'https://example.com',
           };
 
+          // @ts-expect-error legacy noImplicitAny
           return env[key];
         });
 
@@ -35,13 +36,14 @@ describe('DomainManagerService', () => {
 
     it('should return a URL containing the correct subdomain if customDomain is not provided but subdomain is', () => {
       jest
-        .spyOn(environmentService, 'get')
+        .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
           const env = {
             FRONTEND_URL: 'https://example.com',
             IS_MULTIWORKSPACE_ENABLED: true,
           };
 
+          // @ts-expect-error legacy noImplicitAny
           return env[key];
         });
 
@@ -58,7 +60,7 @@ describe('DomainManagerService', () => {
     });
   });
   let domainManagerService: DomainManagerService;
-  let environmentService: EnvironmentService;
+  let twentyConfigService: TwentyConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -69,7 +71,7 @@ describe('DomainManagerService', () => {
           useClass: Repository,
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
           },
@@ -79,18 +81,19 @@ describe('DomainManagerService', () => {
 
     domainManagerService =
       module.get<DomainManagerService>(DomainManagerService);
-    environmentService = module.get<EnvironmentService>(EnvironmentService);
+    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
   });
 
   describe('buildBaseUrl', () => {
     it('should build the base URL from environment variables', () => {
       jest
-        .spyOn(environmentService, 'get')
+        .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
           const env = {
             FRONTEND_URL: 'https://example.com',
           };
 
+          // @ts-expect-error legacy noImplicitAny
           return env[key];
         });
 
@@ -101,7 +104,7 @@ describe('DomainManagerService', () => {
 
     it('should append default subdomain if multiworkspace is enabled', () => {
       jest
-        .spyOn(environmentService, 'get')
+        .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
           const env = {
             FRONTEND_URL: 'https://example.com',
@@ -109,6 +112,7 @@ describe('DomainManagerService', () => {
             DEFAULT_SUBDOMAIN: 'test',
           };
 
+          // @ts-expect-error legacy noImplicitAny
           return env[key];
         });
 
@@ -121,7 +125,7 @@ describe('DomainManagerService', () => {
   describe('buildWorkspaceURL', () => {
     it('should build workspace URL with given subdomain', () => {
       jest
-        .spyOn(environmentService, 'get')
+        .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
           const env = {
             FRONTEND_URL: 'https://example.com',
@@ -129,6 +133,7 @@ describe('DomainManagerService', () => {
             DEFAULT_SUBDOMAIN: 'default',
           };
 
+          // @ts-expect-error legacy noImplicitAny
           return env[key];
         });
 
@@ -145,12 +150,13 @@ describe('DomainManagerService', () => {
 
     it('should set the pathname if provided', () => {
       jest
-        .spyOn(environmentService, 'get')
+        .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
           const env = {
             FRONTEND_URL: 'https://example.com',
           };
 
+          // @ts-expect-error legacy noImplicitAny
           return env[key];
         });
 
@@ -168,12 +174,13 @@ describe('DomainManagerService', () => {
 
     it('should set the search parameters if provided', () => {
       jest
-        .spyOn(environmentService, 'get')
+        .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
           const env = {
             FRONTEND_URL: 'https://example.com',
           };
 
+          // @ts-expect-error legacy noImplicitAny
           return env[key];
         });
 

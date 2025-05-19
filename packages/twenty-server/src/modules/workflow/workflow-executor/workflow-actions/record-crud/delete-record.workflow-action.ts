@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'class-validator';
+import { isValidUuid } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
@@ -35,12 +37,18 @@ export class DeleteRecordWorkflowAction implements WorkflowExecutor {
   ) {}
 
   async execute({
-    currentStepIndex,
+    currentStepId,
     steps,
     context,
   }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
-    const step = steps[currentStepIndex];
+    const step = steps.find((step) => step.id === currentStepId);
 
+    if (!step) {
+      throw new WorkflowStepExecutorException(
+        'Step not found',
+        WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
+      );
+    }
     if (!isWorkflowDeleteRecordAction(step)) {
       throw new WorkflowStepExecutorException(
         'Step is not a delete record action',
@@ -52,6 +60,17 @@ export class DeleteRecordWorkflowAction implements WorkflowExecutor {
       step.settings.input,
       context,
     ) as WorkflowDeleteRecordActionInput;
+
+    if (
+      !isDefined(workflowActionInput.objectRecordId) ||
+      !isValidUuid(workflowActionInput.objectRecordId) ||
+      !isDefined(workflowActionInput.objectName)
+    ) {
+      throw new RecordCRUDActionException(
+        'Failed to update: Object record ID and name are required',
+        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+      );
+    }
 
     const repository = await this.twentyORMManager.getRepository(
       workflowActionInput.objectName,

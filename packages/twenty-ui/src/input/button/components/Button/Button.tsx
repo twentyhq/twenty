@@ -100,7 +100,9 @@ const StyledButton = styled('button', {
           case 'blue':
             return css`
               background: ${!inverted
-                ? theme.color.blue
+                ? disabled
+                  ? theme.accent.accent4060
+                  : theme.color.blue
                 : theme.background.primary};
               border-color: ${!inverted
                 ? focus
@@ -345,6 +347,7 @@ const StyledButton = styled('button', {
   padding: ${({ theme }) => {
     return `0 ${theme.spacing(2)} 0 ${theme.spacing(2)}`;
   }};
+  box-sizing: border-box;
 
   transition: background 0.1s ease;
 

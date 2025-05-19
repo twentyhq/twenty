@@ -61,6 +61,19 @@ const mockStep = {
 } satisfies StepOutputSchema;
 
 describe('searchVariableThroughOutputSchema', () => {
+  it('should not break with wrong path', () => {
+    const result = searchVariableThroughOutputSchema({
+      stepOutputSchema: mockStep,
+      rawVariableName: '{{step-1.wrong.wrong.wrong}}',
+      isFullRecord: false,
+    });
+
+    expect(result).toEqual({
+      variableLabel: undefined,
+      variablePathLabel: 'Step 1 > undefined',
+    });
+  });
+
   it('should find a company field variable', () => {
     const result = searchVariableThroughOutputSchema({
       stepOutputSchema: mockStep,

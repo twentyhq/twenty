@@ -15,8 +15,8 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilCallback } from 'recoil';
-import { v4 } from 'uuid';
 import { IconComponent } from 'twenty-ui/display';
+import { v4 } from 'uuid';
 
 export type CommandMenuNavigationStackItem = {
   page: CommandMenuPages;
@@ -51,16 +51,16 @@ export const useNavigateCommandMenu = () => {
           commandMenuCloseAnimationCompleteCleanup();
         }
 
+        if (isCommandMenuOpened) {
+          return;
+        }
+
         setHotkeyScopeAndMemorizePreviousScope(
           CommandMenuHotkeyScope.CommandMenuFocused,
           {
             commandMenuOpen: true,
           },
         );
-
-        if (isCommandMenuOpened) {
-          return;
-        }
 
         copyContextStoreStates({
           instanceIdToCopyFrom: MAIN_CONTEXT_STORE_INSTANCE_ID,

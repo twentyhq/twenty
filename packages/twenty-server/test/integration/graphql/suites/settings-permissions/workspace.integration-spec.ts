@@ -11,7 +11,7 @@ import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permiss
 const client = request(`http://localhost:${APP_PORT}`);
 
 describe('workspace permissions', () => {
-  let originalWorkspaceState;
+  let originalWorkspaceState: Record<string, unknown>;
 
   beforeAll(async () => {
     // Store original workspace state
@@ -337,12 +337,12 @@ describe('workspace permissions', () => {
   });
 
   describe('billing', () => {
-    describe('updateBillingSubscription', () => {
+    describe('switchToYearlyInterval', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
         const queryData = {
           query: `
-            mutation UpdateBillingSubscription {
-              updateBillingSubscription {
+            mutation SwitchToYearlyInterval {
+              switchToYearlyInterval {
                 success
               }
             }
@@ -456,7 +456,6 @@ describe('workspace permissions', () => {
                   $input: UpdateLabPublicFeatureFlagInput!
                 ) {
                   updateLabPublicFeatureFlag(input: $input) {
-                    id
                     key
                     value
                   }
@@ -490,7 +489,6 @@ describe('workspace permissions', () => {
                 $input: UpdateLabPublicFeatureFlagInput!
               ) {
                 updateLabPublicFeatureFlag(input: $input) {
-                  id
                   key
                   value
                 }

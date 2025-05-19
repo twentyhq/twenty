@@ -10,8 +10,7 @@ import {
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
-import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
-
+import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 export type MessagingMessagesImportJobData = {
   messageChannelId: string;
   workspaceId: string;
@@ -24,7 +23,7 @@ export type MessagingMessagesImportJobData = {
 export class MessagingMessagesImportJob {
   constructor(
     private readonly messagingMessagesImportService: MessagingMessagesImportService,
-    private readonly messagingTelemetryService: MessagingTelemetryService,
+    private readonly messagingMonitoringService: MessagingMonitoringService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
@@ -32,7 +31,7 @@ export class MessagingMessagesImportJob {
   async handle(data: MessagingMessagesImportJobData): Promise<void> {
     const { messageChannelId, workspaceId } = data;
 
-    await this.messagingTelemetryService.track({
+    await this.messagingMonitoringService.track({
       eventName: 'messages_import.triggered',
       workspaceId,
       messageChannelId,
@@ -51,7 +50,7 @@ export class MessagingMessagesImportJob {
     });
 
     if (!messageChannel) {
-      await this.messagingTelemetryService.track({
+      await this.messagingMonitoringService.track({
         eventName: 'messages_import.error.message_channel_not_found',
         messageChannelId,
         workspaceId,

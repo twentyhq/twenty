@@ -1,18 +1,16 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { IMaskInput, IMaskInputProps } from 'react-imask';
+import { useEffect, useRef, useState } from 'react';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
+import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
+import { Currency } from '@/ui/input/components/internal/types/Currency';
+import { IMaskInput } from 'react-imask';
 import { IconComponent } from 'twenty-ui/display';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 
-type StyledInputProps = React.ComponentProps<'input'> &
-  IMaskInputProps<HTMLInputElement>;
-
-export const StyledIMaskInput = styled(IMaskInput)<StyledInputProps>`
+export const StyledIMaskInput = styled(IMaskInput)`
   margin: 0;
   ${TEXT_INPUT_STYLE}
   width: 100%;
@@ -51,12 +49,6 @@ export type CurrencyInputProps = {
   onChange?: (newText: string) => void;
   onSelect?: (newText: string) => void;
   hotkeyScope: string;
-};
-
-type Currency = {
-  label: string;
-  value: string;
-  Icon: any;
 };
 
 export const CurrencyInput = ({
@@ -99,19 +91,7 @@ export const CurrencyInput = ({
     hotkeyScope,
   });
 
-  const currencies = useMemo<Currency[]>(
-    () =>
-      Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(
-        ([key, { Icon, label }]) => ({
-          value: key,
-          Icon,
-          label,
-        }),
-      ),
-    [],
-  );
-
-  const currency = currencies.find(({ value }) => value === currencyCode);
+  const currency = CURRENCIES.find(({ value }) => value === currencyCode);
 
   useEffect(() => {
     setInternalText(value);
@@ -122,9 +102,8 @@ export const CurrencyInput = ({
   return (
     <StyledContainer ref={wrapperRef}>
       <CurrencyPickerDropdownButton
-        valueCode={currency?.value ?? ''}
+        selectedCurrencyCode={currency?.value ?? ''}
         onChange={handleCurrencyChange}
-        currencies={currencies}
       />
       <StyledIcon>
         {Icon && (

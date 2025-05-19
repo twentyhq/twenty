@@ -54,10 +54,10 @@ const StyledTitleContainer = styled.div`
   display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-left: ${({ theme }) => theme.spacing(0.5)};
   margin-right: ${({ theme }) => theme.spacing(1)};
   width: 100%;
   overflow: hidden;
+  align-items: center;
 `;
 
 const StyledTopBarIconStyledTitleContainer = styled.div`
@@ -72,7 +72,7 @@ const StyledTopBarIconStyledTitleContainer = styled.div`
 const StyledPageActionContainer = styled.div`
   display: inline-flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  flex: 1 0 1;
+  flex: 1 0 auto;
 `;
 
 const StyledTopBarButtonContainer = styled.div`
@@ -92,6 +92,7 @@ type PageHeaderProps = {
   onClosePage?: () => void;
   Icon?: IconComponent;
   children?: ReactNode;
+  className?: string;
 };
 
 export const PageHeader = ({
@@ -100,6 +101,7 @@ export const PageHeader = ({
   onClosePage,
   Icon,
   children,
+  className,
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
   const theme = useTheme();
@@ -108,7 +110,7 @@ export const PageHeader = ({
   );
 
   return (
-    <StyledTopBarContainer>
+    <StyledTopBarContainer className={className}>
       <StyledLeftContainer>
         {!isMobile && !isNavigationDrawerExpanded && (
           <StyledTopBarButtonContainer>

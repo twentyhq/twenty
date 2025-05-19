@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
 import { MicrosoftAPIsOauthCommonStrategy } from 'src/engine/core-modules/auth/strategies/microsoft-apis-oauth-common.auth.strategy';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class MicrosoftAPIsOauthRequestCodeStrategy extends MicrosoftAPIsOauthCommonStrategy {
-  constructor(environmentService: EnvironmentService) {
-    super(environmentService);
+  constructor(twentyConfigService: TwentyConfigService) {
+    super(twentyConfigService);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   authenticate(req: any, options: any) {
     options = {
       ...options,

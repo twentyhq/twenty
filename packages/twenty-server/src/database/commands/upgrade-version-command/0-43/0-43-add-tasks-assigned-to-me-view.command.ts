@@ -64,9 +64,11 @@ export class AddTasksAssignedToMeViewCommand extends ActiveOrSuspendedWorkspaces
     });
 
     const objectMetadataMap = objectMetadata.reduce((acc, object) => {
+      // @ts-expect-error legacy noImplicitAny
       acc[object.standardId ?? ''] = {
         id: object.id,
         fields: object.fields.reduce((acc, field) => {
+          // @ts-expect-error legacy noImplicitAny
           acc[field.standardId ?? ''] = field.id;
 
           return acc;
@@ -88,7 +90,6 @@ export class AddTasksAssignedToMeViewCommand extends ActiveOrSuspendedWorkspaces
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
         workspaceId,
         'view',
-        false,
       );
 
     const existingView = await viewRepository.findOne({
@@ -126,7 +127,6 @@ export class AddTasksAssignedToMeViewCommand extends ActiveOrSuspendedWorkspaces
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewFieldWorkspaceEntity>(
           workspaceId,
           'viewField',
-          false,
         );
 
       const viewFields = viewDefinition.fields.map((field) => ({
@@ -145,7 +145,6 @@ export class AddTasksAssignedToMeViewCommand extends ActiveOrSuspendedWorkspaces
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewFilterWorkspaceEntity>(
           workspaceId,
           'viewFilter',
-          false,
         );
 
       const viewFilters = viewDefinition.filters.map((filter) => ({
@@ -202,7 +201,6 @@ export class AddTasksAssignedToMeViewCommand extends ActiveOrSuspendedWorkspaces
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewGroupWorkspaceEntity>(
         workspaceId,
         'viewGroup',
-        false,
       );
 
     await viewGroupRepository.insert(viewGroups);

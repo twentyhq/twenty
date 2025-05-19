@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
 
+import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { RecordTableAggregateFooterCell } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooterCell';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { FIRST_TH_WIDTH } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
-import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/states/scrollWrapperInstanceComponentState';
+import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isUndefined } from '@sniptt/guards';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
@@ -16,14 +17,14 @@ const StyledTd = styled.td`
 const StyledTableRow = styled.tr<{
   hasHorizontalOverflow?: boolean;
 }>`
-  z-index: 5;
+  z-index: ${TABLE_Z_INDEX.footer.default};
   position: sticky;
   border: none;
 
   &.footer-sticky {
     td {
       border-top: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-      z-index: 5;
+      z-index: ${TABLE_Z_INDEX.footer.default};
       position: sticky;
       bottom: 0;
     }
@@ -35,9 +36,12 @@ const StyledTableRow = styled.tr<{
     border-top: none;
   }
   &.first-columns-sticky {
+    td:nth-of-type(1) {
+      z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
+    }
     td:nth-of-type(2) {
       position: sticky;
-      z-index: 10;
+      z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
       transition: 0.3s ease;
       &::after {
         content: '';
@@ -86,14 +90,11 @@ export const RecordTableAggregateFooter = ({
     visibleTableColumnsComponentSelector,
   );
 
-  const overlayScrollbarsInstance = useRecoilComponentValueV2(
-    scrollWrapperInstanceComponentState,
-  );
+  const { scrollWrapperHTMLElement } = useScrollWrapperElement();
 
-  const hasHorizontalOverflow = overlayScrollbarsInstance
-    ? overlayScrollbarsInstance.elements().scrollOffsetElement.scrollWidth >
-      overlayScrollbarsInstance.elements().scrollOffsetElement.clientWidth
-    : false;
+  const hasHorizontalOverflow =
+    (scrollWrapperHTMLElement?.scrollWidth ?? 0) >
+    (scrollWrapperHTMLElement?.clientWidth ?? 0);
 
   return (
     <StyledTableRow

@@ -13,10 +13,17 @@ import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/wor
 @Injectable()
 export class FormWorkflowAction implements WorkflowExecutor {
   async execute({
-    currentStepIndex,
+    currentStepId,
     steps,
   }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
-    const step = steps[currentStepIndex];
+    const step = steps.find((step) => step.id === currentStepId);
+
+    if (!step) {
+      throw new WorkflowStepExecutorException(
+        'Step not found',
+        WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
+      );
+    }
 
     if (!isWorkflowFormAction(step)) {
       throw new WorkflowStepExecutorException(

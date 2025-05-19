@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
@@ -9,8 +7,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import {
   IconCalendarEvent,
   IconDotsVertical,
@@ -20,18 +18,20 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
 };
+
+const DELETE_ACCOUNT_MODAL_ID = 'delete-account-modal';
 
 export const SettingsAccountsRowDropdownMenu = ({
   account,
 }: SettingsAccountsRowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${account.id}`;
   const { t } = useLingui();
-  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
-    useState(false);
+  const { openModal } = useModal();
 
   const navigate = useNavigateSettings();
   const { closeDropdown } = useDropdown(dropdownId);
@@ -43,7 +43,6 @@ export const SettingsAccountsRowDropdownMenu = ({
 
   const deleteAccount = async () => {
     await destroyOneRecord(account.id);
-    setIsDeleteAccountModalOpen(false);
   };
 
   return (
@@ -55,7 +54,7 @@ export const SettingsAccountsRowDropdownMenu = ({
         clickableComponent={
           <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
         }
-        dropdownMenuWidth={160}
+        dropdownWidth={160}
         dropdownComponents={
           <DropdownMenuItemsContainer>
             <MenuItem
@@ -89,16 +88,15 @@ export const SettingsAccountsRowDropdownMenu = ({
               LeftIcon={IconTrash}
               text={t`Remove account`}
               onClick={() => {
-                setIsDeleteAccountModalOpen(true);
                 closeDropdown();
+                openModal(DELETE_ACCOUNT_MODAL_ID);
               }}
             />
           </DropdownMenuItemsContainer>
         }
       />
       <ConfirmationModal
-        isOpen={isDeleteAccountModalOpen}
-        setIsOpen={setIsDeleteAccountModalOpen}
+        modalId={DELETE_ACCOUNT_MODAL_ID}
         title={t`Data deletion`}
         subtitle={
           <Trans>

@@ -1,11 +1,10 @@
 import { Scope } from '@nestjs/common';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -30,8 +29,7 @@ export class RunWorkflowJob {
     private readonly workflowExecutorWorkspaceService: WorkflowExecutorWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly throttlerService: ThrottlerService,
-    private readonly environmentService: EnvironmentService,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @Process(RunWorkflowJob.name)
@@ -97,6 +95,11 @@ export class RunWorkflowJob {
           trigger: workflowVersion.trigger,
           steps: workflowVersion.steps,
         },
+        stepsOutput: {
+          trigger: {
+            result: payload,
+          },
+        },
       },
     });
 
@@ -104,7 +107,7 @@ export class RunWorkflowJob {
 
     await this.executeWorkflow({
       workflowRunId,
-      currentStepIndex: 0,
+      currentStepId: workflowVersion.steps[0].id,
       steps: workflowVersion.steps,
       context,
     });
@@ -129,20 +132,31 @@ export class RunWorkflowJob {
       );
     }
 
-    const lastExecutedStepIndex = workflowRun.output?.flow?.steps?.findIndex(
+    const lastExecutedStep = workflowRun.output?.flow?.steps?.find(
       (step) => step.id === lastExecutedStepId,
     );
 
-    if (lastExecutedStepIndex === undefined) {
+    if (!lastExecutedStep) {
       throw new WorkflowRunException(
         'Last executed step not found',
         WorkflowRunExceptionCode.INVALID_INPUT,
       );
     }
 
+    const nextStepId = lastExecutedStep.nextStepIds?.[0];
+
+    if (!nextStepId) {
+      await this.workflowRunWorkspaceService.endWorkflowRun({
+        workflowRunId,
+        status: WorkflowRunStatus.COMPLETED,
+      });
+
+      return;
+    }
+
     await this.executeWorkflow({
       workflowRunId,
-      currentStepIndex: lastExecutedStepIndex + 1,
+      currentStepId: nextStepId,
       steps: workflowRun.output?.flow?.steps ?? [],
       context: workflowRun.context ?? {},
     });
@@ -150,19 +164,20 @@ export class RunWorkflowJob {
 
   private async executeWorkflow({
     workflowRunId,
-    currentStepIndex,
+    currentStepId,
     steps,
     context,
   }: {
     workflowRunId: string;
-    currentStepIndex: number;
+    currentStepId: string;
     steps: WorkflowAction[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context: Record<string, any>;
   }) {
     const { error, pendingEvent } =
       await this.workflowExecutorWorkspaceService.execute({
         workflowRunId,
-        currentStepIndex,
+        currentStepId,
         steps,
         context,
       });
@@ -182,8 +197,8 @@ export class RunWorkflowJob {
     try {
       await this.throttlerService.throttle(
         `${workflowId}-workflow-execution`,
-        this.environmentService.get('WORKFLOW_EXEC_THROTTLE_LIMIT'),
-        this.environmentService.get('WORKFLOW_EXEC_THROTTLE_TTL'),
+        this.twentyConfigService.get('WORKFLOW_EXEC_THROTTLE_LIMIT'),
+        this.twentyConfigService.get('WORKFLOW_EXEC_THROTTLE_TTL'),
       );
     } catch (error) {
       throw new WorkflowRunException(

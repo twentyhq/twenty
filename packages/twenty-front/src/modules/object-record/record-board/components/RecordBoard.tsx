@@ -1,41 +1,40 @@
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useContext, useRef } from 'react';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
-import { Key } from 'ts-key-enum';
+import { useRecoilCallback } from 'recoil';
 
-import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
+import { RecordBoardScrollToFocusedCardEffect } from '@/object-record/record-board/components/RecordBoardScrollToFocusedCardEffect';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
 import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
+import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
+import { RecordBoardDeactivateBoardCardEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardDeactivateBoardCardEffect';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
+import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { ViewType } from '@/views/types/ViewType';
-import { useScrollRestoration } from '~/hooks/useScrollRestoration';
+import { getIndexNeighboursElementsFromArray } from '~/utils/array/getIndexNeighboursElementsFromArray';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -61,17 +60,12 @@ const StyledBoardContentContainer = styled.div`
   height: calc(100% - 48px);
 `;
 
-const RecordBoardScrollRestoreEffect = () => {
-  useScrollRestoration();
-  return null;
-};
-
 export const RecordBoard = () => {
   const { updateOneRecord, selectFieldMetadataItem, recordBoardId } =
     useContext(RecordBoardContext);
   const boardRef = useRef<HTMLDivElement>(null);
 
-  const { toggleClickOutsideListener } = useClickOutsideListener(
+  const { toggleClickOutside } = useClickOutsideListener(
     RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
   );
 
@@ -79,14 +73,17 @@ export const RecordBoard = () => {
 
   const { closeDropdown } = useDropdownV2();
 
+  const { deactivateBoardCard } = useActiveRecordBoardCard(recordBoardId);
+  const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
+
   const handleDragSelectionStart = () => {
     closeDropdown(actionMenuId);
 
-    toggleClickOutsideListener(false);
+    toggleClickOutside(false);
   };
 
   const handleDragSelectionEnd = () => {
-    toggleClickOutsideListener(true);
+    toggleClickOutside(true);
   };
 
   const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(
@@ -98,10 +95,6 @@ export const RecordBoard = () => {
     useRecoilComponentCallbackStateV2(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
-
-  const recordIndexAllRecordIdsState = useRecoilComponentCallbackStateV2(
-    recordIndexAllRecordIdsComponentSelector,
-  );
 
   const { resetRecordSelection, setRecordAsSelected } =
     useRecordBoardSelection(recordBoardId);
@@ -123,36 +116,12 @@ export const RecordBoard = () => {
     refs: [],
     callback: () => {
       resetRecordSelection();
+      deactivateBoardCard();
+      unfocusBoardCard();
     },
   });
 
-  const selectAll = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const allRecordIds = getSnapshotValue(
-          snapshot,
-          recordIndexAllRecordIdsState,
-        );
-
-        for (const recordId of allRecordIds) {
-          setRecordAsSelected(recordId, true);
-        }
-      },
-    [recordIndexAllRecordIdsState, setRecordAsSelected],
-  );
-
-  useScopedHotkeys('ctrl+a,meta+a', selectAll, TableHotkeyScope.Table);
-  useScopedHotkeys('ctrl+a,meta+a', selectAll, ActionBarHotkeyScope.ActionBar);
-
-  useScopedHotkeys(
-    Key.Escape,
-    resetRecordSelection,
-    ActionBarHotkeyScope.ActionBar,
-  );
-
-  const setIsRemoveSortingModalOpen = useSetRecoilState(
-    isRemoveSortingModalOpenState,
-  );
+  const { openModal } = useModal();
 
   const handleDragEnd: OnDragEndResponder = useRecoilCallback(
     ({ snapshot }) =>
@@ -160,7 +129,7 @@ export const RecordBoard = () => {
         if (!result.destination) return;
 
         if (currentRecordSorts.length > 0) {
-          setIsRemoveSortingModalOpen(true);
+          openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
           return;
         }
 
@@ -189,14 +158,15 @@ export const RecordBoard = () => {
               )
             : destinationRecordByGroupIds;
 
-        const recordBeforeId =
-          otherRecordIdsInDestinationColumn[destinationIndexInColumn - 1];
+        const { before: recordBeforeId, after: recordAfterId } =
+          getIndexNeighboursElementsFromArray({
+            index: destinationIndexInColumn,
+            array: otherRecordIdsInDestinationColumn,
+          });
         const recordBefore = recordBeforeId
           ? getSnapshotValue(snapshot, recordStoreFamilyState(recordBeforeId))
           : null;
 
-        const recordAfterId =
-          otherRecordIdsInDestinationColumn[destinationIndexInColumn];
         const recordAfter = recordAfterId
           ? getSnapshotValue(snapshot, recordStoreFamilyState(recordAfterId))
           : null;
@@ -218,7 +188,7 @@ export const RecordBoard = () => {
       recordIndexRecordIdsByGroupFamilyState,
       selectFieldMetadataItem,
       updateOneRecord,
-      setIsRemoveSortingModalOpen,
+      openModal,
       currentRecordSorts,
     ],
   );
@@ -231,7 +201,7 @@ export const RecordBoard = () => {
 
   return (
     <RecordBoardScope
-      recordBoardScopeId={getScopeIdFromComponentId(recordBoardId)}
+      recordBoardScopeId={recordBoardId}
       onColumnsChange={() => {}}
       onFieldsChange={() => {}}
     >
@@ -239,26 +209,27 @@ export const RecordBoard = () => {
         value={{ instanceId: recordBoardId }}
       >
         <ScrollWrapper
-          contextProviderName="recordBoard"
           componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
         >
           <RecordBoardStickyHeaderEffect />
+          <RecordBoardScrollToFocusedCardEffect />
+          <RecordBoardDeactivateBoardCardEffect />
           <StyledContainerContainer>
             <RecordBoardHeader />
             <StyledBoardContentContainer>
               <StyledContainer ref={boardRef}>
                 <DragDropContext onDragEnd={handleDragEnd}>
                   <StyledColumnContainer>
-                    {visibleRecordGroupIds.map((recordGroupId) => (
+                    {visibleRecordGroupIds.map((recordGroupId, index) => (
                       <RecordBoardColumn
                         key={recordGroupId}
                         recordBoardColumnId={recordGroupId}
+                        recordBoardColumnIndex={index}
                       />
                     ))}
                   </StyledColumnContainer>
                 </DragDropContext>
               </StyledContainer>
-              <RecordBoardScrollRestoreEffect />
               <DragSelect
                 dragSelectable={boardRef}
                 onDragSelectionEnd={handleDragSelectionEnd}

@@ -54,8 +54,7 @@ export const emailTheme = {
   },
   background: {
     colors: { highlight: grayScale.gray15 },
-    radialGradient: `radial-gradient(50% 62.62% at 50% 0%, #505050 0%, ${grayScale.gray60} 100%)`,
-    radialGradientHover: `radial-gradient(76.32% 95.59% at 50% 0%, #505050 0%, ${grayScale.gray60} 100%)`,
+    button: grayScale.gray60,
     transparent: {
       medium: 'rgba(0, 0, 0, 0.08)',
       light: 'rgba(0, 0, 0, 0.04)',

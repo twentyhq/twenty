@@ -4,9 +4,16 @@ const SERVER_URL = `http://localhost:${APP_PORT}`;
 
 const client = request(SERVER_URL);
 
+const ORIGIN = new URL(SERVER_URL);
+
+ORIGIN.hostname =
+  process.env.IS_MULTIWORKSPACE_ENABLED === 'true'
+    ? `apple.${ORIGIN.hostname}`
+    : ORIGIN.hostname;
+
 const auth = {
   email: 'tim@apple.dev',
-  password: 'Applecar2025',
+  password: 'tim@apple.dev',
 };
 
 describe('AuthResolve (integration)', () => {
@@ -28,7 +35,7 @@ describe('AuthResolve (integration)', () => {
 
     return client
       .post('/graphql')
-      .set('Origin', SERVER_URL)
+      .set('Origin', ORIGIN.toString())
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -62,7 +69,7 @@ describe('AuthResolve (integration)', () => {
 
     return client
       .post('/graphql')
-      .set('Origin', SERVER_URL)
+      .set('Origin', ORIGIN.toString())
       .send(queryData)
       .expect(200)
       .expect((res) => {

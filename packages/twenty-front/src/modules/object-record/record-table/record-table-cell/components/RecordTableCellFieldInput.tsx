@@ -1,5 +1,6 @@
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
+
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
@@ -7,12 +8,12 @@ import {
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
+import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
   const { onMoveFocus, onCloseTableCell } = useRecordTableBodyContextOrThrow();
-
-  const isFieldReadOnly = useIsFieldValueReadOnly();
+  const { isReadOnly } = useContext(FieldContext);
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
@@ -77,7 +78,7 @@ export const RecordTableCellFieldInput = () => {
       onShiftTab={handleShiftTab}
       onSubmit={handleSubmit}
       onTab={handleTab}
-      isReadOnly={isFieldReadOnly}
+      isReadOnly={isReadOnly}
     />
   );
 };

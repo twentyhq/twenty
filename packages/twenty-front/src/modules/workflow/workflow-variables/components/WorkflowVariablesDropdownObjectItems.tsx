@@ -121,7 +121,7 @@ export const WorkflowVariablesDropdownObjectItems = ({
         {shouldDisplaySubStepObject && displayedSubStepObject?.label && (
           <MenuItemSelect
             selected={false}
-            hovered={false}
+            focused={false}
             onClick={handleSelectObject}
             text={displayedSubStepObject.label}
             hasSubMenu={false}
@@ -136,7 +136,7 @@ export const WorkflowVariablesDropdownObjectItems = ({
           <MenuItemSelect
             key={key}
             selected={false}
-            hovered={false}
+            focused={false}
             onClick={() => handleSelectField(key)}
             text={value.label || key}
             hasSubMenu={!value.isLeaf}

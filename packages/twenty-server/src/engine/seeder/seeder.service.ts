@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { capitalize, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+import { DataSource, EntityManager } from 'typeorm';
 
 import { ObjectMetadataSeed } from 'src/engine/seeder/interfaces/object-metadata-seed';
 
@@ -26,6 +27,7 @@ export class SeederService {
     dataSourceId: string,
     workspaceId: string,
     objectMetadataSeed: ObjectMetadataSeed,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     objectRecordSeeds: Record<string, any>[],
   ): Promise<void> {
     const createdObjectMetadata = await this.objectMetadataService.createOne({
@@ -60,12 +62,10 @@ export class SeederService {
     const schemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
+    const mainDataSource: DataSource =
+      await this.workspaceDataSourceService.connectToMainDataSource();
 
-    const entityManager = workspaceDataSource.createEntityManager();
+    const entityManager: EntityManager = mainDataSource.createEntityManager();
 
     const filteredFieldMetadataSeeds = objectMetadataSeed.fields.filter(
       (field) =>
@@ -112,6 +112,7 @@ export class SeederService {
 
               const subFieldNameAsSQLColumnName = `${field.name}${capitalize(subFieldName)}`;
 
+              // @ts-expect-error legacy noImplicitAny
               objectRecordSeedsAsSQLFlattenedSeeds[
                 subFieldNameAsSQLColumnName
               ] = subFieldValueAsSQLValue;
@@ -124,6 +125,7 @@ export class SeederService {
               fieldValue,
             );
 
+            // @ts-expect-error legacy noImplicitAny
             objectRecordSeedsAsSQLFlattenedSeeds[field.name] =
               fieldValueAsSQLValue;
           }
@@ -185,6 +187,7 @@ export class SeederService {
   private turnCompositeSubFieldValueAsSQLValue(
     fieldType: FieldMetadataType,
     subFieldName: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     subFieldValue: any,
   ) {
     if (!isCompositeFieldMetadataType(fieldType)) {
@@ -212,6 +215,7 @@ export class SeederService {
 
   private turnFieldValueAsSQLValue(
     fieldType: FieldMetadataType,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fieldValue: any,
   ) {
     if (fieldType === FieldMetadataType.RAW_JSON) {

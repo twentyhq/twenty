@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
@@ -38,21 +40,19 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
   ) {}
 
   async execute({
-    currentStepIndex,
+    currentStepId,
     steps,
     context,
     attemptCount = 1,
     workflowRunId,
   }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
-    if (currentStepIndex >= steps.length) {
+    const step = steps.find((step) => step.id === currentStepId);
+
+    if (!step) {
       return {
-        result: {
-          success: true,
-        },
+        error: 'Step not found',
       };
     }
-
-    const step = steps[currentStepIndex];
 
     const workflowExecutor = this.workflowExecutorFactory.get(step.type);
 
@@ -80,7 +80,7 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
 
     try {
       actionOutput = await workflowExecutor.execute({
-        currentStepIndex,
+        currentStepId,
         steps,
         context,
         attemptCount,
@@ -111,11 +111,17 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
       return actionOutput;
     }
 
-    if (actionOutput.result) {
-      const updatedContext = {
-        ...context,
-        [step.id]: actionOutput.result,
-      };
+    const shouldContinue =
+      isDefined(actionOutput.result) ||
+      step.settings.errorHandlingOptions.continueOnFailure.value;
+
+    if (shouldContinue) {
+      const updatedContext = isDefined(actionOutput.result)
+        ? {
+            ...context,
+            [step.id]: actionOutput.result,
+          }
+        : context;
 
       await this.workflowRunWorkspaceService.saveWorkflowRunState({
         workflowRunId,
@@ -123,26 +129,16 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
         context: updatedContext,
       });
 
+      if (!isDefined(step.nextStepIds?.[0])) {
+        return actionOutput;
+      }
+
+      // TODO: handle multiple next steps
       return await this.execute({
         workflowRunId,
-        currentStepIndex: currentStepIndex + 1,
+        currentStepId: step.nextStepIds[0],
         steps,
         context: updatedContext,
-      });
-    }
-
-    if (step.settings.errorHandlingOptions.continueOnFailure.value) {
-      await this.workflowRunWorkspaceService.saveWorkflowRunState({
-        workflowRunId,
-        stepOutput,
-        context,
-      });
-
-      return await this.execute({
-        workflowRunId,
-        currentStepIndex: currentStepIndex + 1,
-        steps,
-        context,
       });
     }
 
@@ -152,7 +148,7 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
     ) {
       return await this.execute({
         workflowRunId,
-        currentStepIndex,
+        currentStepId,
         steps,
         context,
         attemptCount: attemptCount + 1,

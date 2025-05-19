@@ -9,6 +9,7 @@ import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/worksp
 import { BasicColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/basic-column-action.factory';
 import { CompositeColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { EnumColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
+import { RelationColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/relation-column-action.factory';
 import { TsVectorColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/ts-vector-column-action.factory';
 import {
   WorkspaceMigrationColumnAction,
@@ -25,6 +26,7 @@ export class WorkspaceMigrationFactory {
   private factoriesMap: Map<
     FieldMetadataType,
     {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       factory: WorkspaceColumnActionFactory<any>;
       options?: WorkspaceColumnActionOptions;
     }
@@ -35,10 +37,12 @@ export class WorkspaceMigrationFactory {
     private readonly tsVectorColumnActionFactory: TsVectorColumnActionFactory,
     private readonly enumColumnActionFactory: EnumColumnActionFactory,
     private readonly compositeColumnActionFactory: CompositeColumnActionFactory,
+    private readonly relationColumnActionFactory: RelationColumnActionFactory,
   ) {
     this.factoriesMap = new Map<
       FieldMetadataType,
       {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         factory: WorkspaceColumnActionFactory<any>;
         options?: WorkspaceColumnActionOptions;
       }
@@ -97,6 +101,10 @@ export class WorkspaceMigrationFactory {
       [
         FieldMetadataType.RICH_TEXT_V2,
         { factory: this.compositeColumnActionFactory },
+      ],
+      [
+        FieldMetadataType.RELATION,
+        { factory: this.relationColumnActionFactory },
       ],
     ]);
   }

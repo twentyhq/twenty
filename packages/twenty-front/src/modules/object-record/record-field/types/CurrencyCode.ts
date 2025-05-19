@@ -147,6 +147,7 @@ export enum CurrencyCode {
   VUV = 'VUV',
   WST = 'WST',
   XCD = 'XCD',
+  XOF = 'XOF',
   YER = 'YER',
   ZAR = 'ZAR',
   ZMW = 'ZMW',

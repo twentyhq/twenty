@@ -5194,6 +5194,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@clickhouse/client-common@npm:1.11.0":
+  version: 1.11.0
+  resolution: "@clickhouse/client-common@npm:1.11.0"
+  checksum: 10c0/84a74458acdf279bc4e844c235d0f658cb77f82e90f19fa285481c31f2f17210a5e801a61f080d6dfd100d970bc4e15a5692d2b7fd067502fbaad99d0dc51310
+  languageName: node
+  linkType: hard
+
+"@clickhouse/client@npm:^1.11.0":
+  version: 1.11.0
+  resolution: "@clickhouse/client@npm:1.11.0"
+  dependencies:
+    "@clickhouse/client-common": "npm:1.11.0"
+  checksum: 10c0/8557de33dd9c88d2813d563f89b49e666dc2d8166c9131e9727f6935db8dc65428927b4b4ab20b1bc7646b9c38c1eb8d1e372ba483b0b2bb69d64ed89488dec2
+  languageName: node
+  linkType: hard
+
 "@codemirror/autocomplete@npm:^6.0.0, @codemirror/autocomplete@npm:^6.4.0":
   version: 6.18.0
   resolution: "@codemirror/autocomplete@npm:6.18.0"
@@ -10542,6 +10558,20 @@ __metadata:
     "@nestjs/common": ^9.0.0
     "@nestjs/core": ^9.0.0
   checksum: 10c0/7444872a5a6b9c2722561ff9c3722987f9654122098ef3f976d93bd55316be2b865be9c19756e529327346a032ff3ddbba0d9bd11bfc3526c8a5ffbe57173b43
+  languageName: node
+  linkType: hard
+
+"@nestjs/schedule@npm:^3.0.0":
+  version: 3.0.4
+  resolution: "@nestjs/schedule@npm:3.0.4"
+  dependencies:
+    cron: "npm:2.4.3"
+    uuid: "npm:9.0.1"
+  peerDependencies:
+    "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0
+    "@nestjs/core": ^8.0.0 || ^9.0.0 || ^10.0.0
+    reflect-metadata: ^0.1.12
+  checksum: 10c0/10af832f611139b586bd85714da1697276ddf51513c91cb20c82eb481c9b1741ec85560f7c55d6e560c8ab7f4665f95cb9fd77241a84f2b432b03e2819ba0f86
   languageName: node
   linkType: hard
 
@@ -16492,13 +16522,6 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   checksum: 10c0/2eacf7ed585b8e6e6f191d0cf30c693a09a006314eb0d8def9b96de02b4f54db594e0c60480e6444dc36cd79958abf35c8e7142a57898cc9899b999ab565a5cb
-  languageName: node
-  linkType: hard
-
-"@recoiljs/refine@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "@recoiljs/refine@npm:0.1.1"
-  checksum: 10c0/27ca1c4ea500b1b99a3af5ee48d6749310e5138e83b87ddfb41304e2222fa64567acb985f340334ab73980202ab277a0f133c40817fbec786076c06bfb3f5363
   languageName: node
   linkType: hard
 
@@ -22581,6 +22604,13 @@ __metadata:
   version: 3.4.2
   resolution: "@types/luxon@npm:3.4.2"
   checksum: 10c0/d835467de3daf7e17ba78b50bb5a14efd94272439ca067990d71332a54b311544459c69623eddd243b511b28d70194c9591a9ee8cf9c038962c965f991affd7e
+  languageName: node
+  linkType: hard
+
+"@types/luxon@npm:~3.3.0":
+  version: 3.3.8
+  resolution: "@types/luxon@npm:3.3.8"
+  checksum: 10c0/f2ffa31364eb94ca0474a196f533d301025a203bb2758ce0cf209f338cece0af169edea230b5c0b1a68a71adb02f369faa5ec0bd824deb8f0a08cac6803b1b06
   languageName: node
   linkType: hard
 
@@ -30183,12 +30213,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cron-parser@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "cron-parser@npm:5.1.1"
+  dependencies:
+    luxon: "npm:^3.6.1"
+  checksum: 10c0/6e0a62833111974884407eb9e2c57f4d6abdddf302f9e43097363c57a1e32bd950f17fb4f14d857ce44bf73a6e5822918c9e5951a4b274c2eb02d5ec03e34b15
+  languageName: node
+  linkType: hard
+
 "cron-validate@npm:^1.4.5":
   version: 1.4.5
   resolution: "cron-validate@npm:1.4.5"
   dependencies:
     yup: "npm:0.32.9"
   checksum: 10c0/4c210bea21832269fd8e18e4c9e9d750b314da04bc475b8b58414a6421a4c86804a6f1a8b9eda6d357af4c43f627fa3ee372f6fbb99b849d2a9b2aef2917bddf
+  languageName: node
+  linkType: hard
+
+"cron@npm:2.4.3":
+  version: 2.4.3
+  resolution: "cron@npm:2.4.3"
+  dependencies:
+    "@types/luxon": "npm:~3.3.0"
+    luxon: "npm:~3.3.0"
+  checksum: 10c0/3112d4cb0aa1c1129c0bb742eec205e38948806c907e21a0680d1aa83a1270bfade9fcf090c1604529684d21a64d74eb89075e25c16d48d95cf3c5b5d032f316
   languageName: node
   linkType: hard
 
@@ -36130,6 +36179,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"graphql-redis-subscriptions@npm:^2.7.0":
+  version: 2.7.0
+  resolution: "graphql-redis-subscriptions@npm:2.7.0"
+  dependencies:
+    ioredis: "npm:^5.3.2"
+  peerDependencies:
+    graphql-subscriptions: ^1.0.0 || ^2.0.0 || ^3.0.0
+  dependenciesMeta:
+    ioredis:
+      optional: true
+  checksum: 10c0/f98e9a16aa60d5470f6916f5a85b0b91898e3ec341a70ae3ddac878aa5b415dae9081ba872afdab5873cef3933fde1c3f1ee690ffa6d5b6d164a9165aed5cad1
+  languageName: node
+  linkType: hard
+
 "graphql-request@npm:^6.0.0":
   version: 6.1.0
   resolution: "graphql-request@npm:6.1.0"
@@ -36165,6 +36228,15 @@ __metadata:
     graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     graphql-middleware: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^6.0.0
   checksum: 10c0/aed5783f2b632a31d93c5b3dc2cd8d62d99a471db397aad8d8db58487b4fbce3ae431129369de711500795ac9b5f5aaa2bdef48c4650ac81a9ff8bd8840a3605
+  languageName: node
+  linkType: hard
+
+"graphql-sse@npm:^2.5.4":
+  version: 2.5.4
+  resolution: "graphql-sse@npm:2.5.4"
+  peerDependencies:
+    graphql: ">=0.11 <=16"
+  checksum: 10c0/b2635a4098b86492ecb04e7aab7efb715847ad11b785591cf90cf1f342ba78a03db0c6cf903975a7ad9e2c278dee55cd9e2e9d7edb560f334528bb8ee926ed95
   languageName: node
   linkType: hard
 
@@ -38124,9 +38196,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ioredis@npm:^5.4.1":
-  version: 5.4.2
-  resolution: "ioredis@npm:5.4.2"
+"ioredis@npm:^5.4.1, ioredis@npm:^5.6.0":
+  version: 5.6.0
+  resolution: "ioredis@npm:5.6.0"
   dependencies:
     "@ioredis/commands": "npm:^1.1.1"
     cluster-key-slot: "npm:^1.1.0"
@@ -38137,7 +38209,7 @@ __metadata:
     redis-errors: "npm:^1.2.0"
     redis-parser: "npm:^3.0.0"
     standard-as-callback: "npm:^2.1.0"
-  checksum: 10c0/e59d2cceb43ed74b487d7b50fa91b93246e734e5d4835c7e62f64e44da072f12ab43b044248012e6f8b76c61a7c091a2388caad50e8ad69a8ce5515a730b23b8
+  checksum: 10c0/a885e5146640fc448706871290ef424ffa39af561f7ee3cf1590085209a509f85e99082bdaaf3cd32fa66758aea3fc2055d1109648ddca96fac4944bf2092c30
   languageName: node
   linkType: hard
 
@@ -42003,6 +42075,20 @@ __metadata:
   version: 3.5.0
   resolution: "luxon@npm:3.5.0"
   checksum: 10c0/335789bba95077db831ef99894edadeb23023b3eb2137a1b56acd0d290082b691cf793143d69e30bc069ec95f0b49f36419f48e951c68014f19ffe12045e3494
+  languageName: node
+  linkType: hard
+
+"luxon@npm:^3.6.1":
+  version: 3.6.1
+  resolution: "luxon@npm:3.6.1"
+  checksum: 10c0/906d57a9dc4d1de9383f2e9223e378c298607c1b4d17b6657b836a3cd120feb1c1de3b5d06d846a3417e1ca764de8476e8c23b3cd4083b5cdb870adcb06a99d5
+  languageName: node
+  linkType: hard
+
+"luxon@npm:~3.3.0":
+  version: 3.3.0
+  resolution: "luxon@npm:3.3.0"
+  checksum: 10c0/47f8e1e96b25441c799b8aa833b3f007fb1854713bcffc8c3384eda8e61fc9af1f038474d137274d2d386492f341c8a8c992fc78c213adfb3143780feba2776c
   languageName: node
   linkType: hard
 
@@ -46580,23 +46666,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"overlayscrollbars-react@npm:^0.5.4":
-  version: 0.5.6
-  resolution: "overlayscrollbars-react@npm:0.5.6"
-  peerDependencies:
-    overlayscrollbars: ^2.0.0
-    react: ">=16.8.0"
-  checksum: 10c0/59a2aad3664d81dc4dee5e747b72bb2645047e0e6d300d9583244167d1e4b19c4cc263932e4b112d5c24358430f78d15d34ea389beb8845e3b5319ccc57db8d8
-  languageName: node
-  linkType: hard
-
-"overlayscrollbars@npm:^2.6.1":
-  version: 2.10.0
-  resolution: "overlayscrollbars@npm:2.10.0"
-  checksum: 10c0/d8eead54a8459cade66cac347524858a41f2d207737ea7bbb9df690c242cfd6804023bac85d245168893284cae32e11ed19acf236fad5e8e47116018d7e7d43a
-  languageName: node
-  linkType: hard
-
 "override-require@npm:^1.1.1":
   version: 1.1.1
   resolution: "override-require@npm:1.1.1"
@@ -50090,18 +50159,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recoil-sync@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "recoil-sync@npm:0.2.0"
-  dependencies:
-    "@recoiljs/refine": "npm:^0.1.1"
-    transit-js: "npm:^0.8.874"
-  peerDependencies:
-    recoil: ">=0.7.3"
-  checksum: 10c0/f3a671a3cfcecadb5bbb22d47b3b040721be1013ee91d4fa0570a64ca1707eb68e818b291a82e133551adf4a2dd2fc9a0715d550c1f1e3db82f3b8d9169e2a5a
-  languageName: node
-  linkType: hard
-
 "recoil@npm:^0.7.7":
   version: 0.7.7
   resolution: "recoil@npm:0.7.7"
@@ -52918,6 +52975,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"storybook-addon-mock-date@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "storybook-addon-mock-date@npm:0.6.0"
+  checksum: 10c0/24c48d65a04eb1931e39495fe42692cea428db4b66874db86ab4e9e6f99cd0bba56cd25c56c9a56b42e53a14edfd38f79bcdef4c1f0e2758096528863d32d408
+  languageName: node
+  linkType: hard
+
 "storybook-addon-pseudo-states@npm:^2.1.2":
   version: 2.2.1
   resolution: "storybook-addon-pseudo-states@npm:2.2.1"
@@ -54405,13 +54469,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"transit-js@npm:^0.8.874":
-  version: 0.8.874
-  resolution: "transit-js@npm:0.8.874"
-  checksum: 10c0/6ca0b413f1e3780a4a56b9bbde54b67a2ffefda1c052f8dc68bf28c1a3df4c29baa6f17f60484c9f2fb056a8c7dcd1fe04d24e091fb99afe1525e4d4406ad58a
-  languageName: node
-  linkType: hard
-
 "transliteration@npm:^2.3.5":
   version: 2.3.5
   resolution: "transliteration@npm:2.3.5"
@@ -55022,7 +55079,6 @@ __metadata:
     eslint-plugin-unused-imports: "npm:^3.0.0"
     file-saver: "npm:^2.0.5"
     optionator: "npm:^0.9.1"
-    recoil-sync: "npm:^0.2.0"
     transliteration: "npm:^2.3.5"
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
@@ -55033,6 +55089,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-server@workspace:packages/twenty-server"
   dependencies:
+    "@clickhouse/client": "npm:^1.11.0"
     "@esbuild-plugins/node-modules-polyfill": "npm:^0.2.2"
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch"
     "@langchain/mistralai": "npm:^0.0.24"
@@ -55044,6 +55101,7 @@ __metadata:
     "@nestjs/cli": "npm:10.3.0"
     "@nestjs/devtools-integration": "npm:^0.1.6"
     "@nestjs/graphql": "patch:@nestjs/graphql@12.1.1#./patches/@nestjs+graphql+12.1.1.patch"
+    "@nestjs/schedule": "npm:^3.0.0"
     "@node-saml/passport-saml": "npm:^5.0.0"
     "@nx/js": "npm:18.3.3"
     "@opentelemetry/api": "npm:^1.9.0"
@@ -55365,6 +55423,7 @@ __metadata:
     class-transformer: "npm:^0.5.1"
     clsx: "npm:^2.1.1"
     concurrently: "npm:^8.2.2"
+    cron-parser: "npm:^5.1.1"
     cron-validate: "npm:^1.4.5"
     cross-env: "npm:^7.0.3"
     cross-var: "npm:^1.1.0"
@@ -55407,7 +55466,9 @@ __metadata:
     graphql-fields: "npm:^2.0.3"
     graphql-middleware: "npm:^6.1.35"
     graphql-rate-limit: "npm:^3.3.0"
+    graphql-redis-subscriptions: "npm:^2.7.0"
     graphql-scalars: "npm:^1.23.0"
+    graphql-sse: "npm:^2.5.4"
     graphql-subscriptions: "npm:2.0.0"
     graphql-tag: "npm:^2.12.6"
     graphql-type-json: "npm:^0.3.2"
@@ -55457,8 +55518,6 @@ __metadata:
     nodemailer: "npm:^6.9.8"
     nx: "npm:18.3.3"
     openapi-types: "npm:^12.1.3"
-    overlayscrollbars: "npm:^2.6.1"
-    overlayscrollbars-react: "npm:^0.5.4"
     passport: "npm:^0.7.0"
     passport-google-oauth20: "npm:^2.0.0"
     passport-jwt: "npm:^4.0.1"
@@ -55505,6 +55564,7 @@ __metadata:
     source-map-support: "npm:^0.5.20"
     storybook: "npm:^7.6.3"
     storybook-addon-cookie: "npm:^3.2.0"
+    storybook-addon-mock-date: "npm:^0.6.0"
     storybook-addon-pseudo-states: "npm:^2.1.2"
     storybook-dark-mode: "npm:^3.0.3"
     stripe: "npm:^17.3.1"

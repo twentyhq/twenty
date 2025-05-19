@@ -3,21 +3,24 @@ import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/get
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
+import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
+import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
 
+import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { RecordBoardCardBody } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBody';
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
-import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { AppPath } from '@/types/AppPath';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
@@ -25,31 +28,48 @@ import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 
-const StyledBoardCard = styled.div<{ selected: boolean }>`
-  background-color: ${({ theme, selected }) =>
-    selected ? theme.accent.quaternary : theme.background.secondary};
-  border: 1px solid
-    ${({ theme, selected }) =>
-      selected ? theme.accent.secondary : theme.border.color.medium};
+const StyledBoardCard = styled.div<{
+  isDragging?: boolean;
+}>`
+  background-color: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   color: ${({ theme }) => theme.font.color.primary};
-  &:hover {
-    background-color: ${({ theme, selected }) =>
-      selected && theme.accent.tertiary};
-    border: 1px solid
-      ${({ theme, selected }) =>
-        selected ? theme.accent.primary : theme.border.color.medium};
-  }
   cursor: pointer;
+
+  &[data-selected='true'] {
+    background-color: ${({ theme }) => theme.accent.quaternary};
+  }
+
+  &[data-focused='true'] {
+    background-color: ${({ theme }) => theme.background.tertiary};
+  }
+
+  &[data-active='true'] {
+    background-color: ${({ theme }) => theme.accent.quaternary};
+    border: 1px solid ${({ theme }) => theme.adaptiveColors.blue3};
+  }
+
+  &:hover {
+    border: 1px solid ${({ theme }) => theme.border.color.strong};
+
+    &[data-active='true'] {
+      border: 1px solid ${({ theme }) => theme.adaptiveColors.blue3};
+    }
+  }
 
   .checkbox-container {
     transition: all ease-in-out 160ms;
-    opacity: ${({ selected }) => (selected ? 1 : 0)};
+    opacity: 0;
+  }
+
+  &[data-selected='true'] .checkbox-container {
+    opacity: 1;
   }
 
   &:hover .checkbox-container {
@@ -74,7 +94,9 @@ export const RecordBoardCard = () => {
   const navigate = useNavigateApp();
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-  const { recordId } = useContext(RecordBoardCardContext);
+  const { recordId, rowIndex, columnIndex } = useContext(
+    RecordBoardCardContext,
+  );
 
   const visibleFieldDefinitions = useRecoilComponentValueV2(
     recordBoardVisibleFieldDefinitionsComponentSelector,
@@ -91,6 +113,22 @@ export const RecordBoardCard = () => {
       isRecordBoardCardSelectedComponentFamilyState,
       recordId,
     );
+
+  const isCurrentCardFocused = useRecoilComponentFamilyValueV2(
+    isRecordBoardCardFocusedComponentFamilyState,
+    {
+      rowIndex,
+      columnIndex,
+    },
+  );
+
+  const isCurrentCardActive = useRecoilComponentFamilyValueV2(
+    isRecordBoardCardActiveComponentFamilyState,
+    {
+      rowIndex,
+      columnIndex,
+    },
+  );
 
   const { objectNameSingular } = useRecordIndexContextOrThrow();
 
@@ -121,7 +159,9 @@ export const RecordBoardCard = () => {
       x: event.clientX,
       y: event.clientY,
     });
-    openDropdown(actionMenuDropdownId);
+    openDropdown(actionMenuDropdownId, {
+      scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
+    });
   };
 
   const handleCardClick = () => {
@@ -144,10 +184,10 @@ export const RecordBoardCard = () => {
     }
   }, 800);
 
-  const scrollWrapperRef = useContext(RecordBoardScrollWrapperContext);
+  const { scrollWrapperHTMLElement } = useScrollWrapperElement();
 
   const { ref: cardRef } = useInView({
-    root: scrollWrapperRef?.ref.current,
+    root: scrollWrapperHTMLElement,
     rootMargin: '1000px',
   });
 
@@ -160,11 +200,12 @@ export const RecordBoardCard = () => {
       className="record-board-card"
       onContextMenu={handleActionMenuDropdown}
     >
-      <RecordValueSetterEffect recordId={recordId} />
       <InView>
         <StyledBoardCard
           ref={cardRef}
-          selected={isCurrentCardSelected}
+          data-selected={isCurrentCardSelected}
+          data-focused={isCurrentCardFocused}
+          data-active={isCurrentCardActive}
           onMouseLeave={onMouseLeaveBoard}
           onClick={handleCardClick}
         >

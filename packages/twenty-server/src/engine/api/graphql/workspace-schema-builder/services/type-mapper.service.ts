@@ -40,6 +40,7 @@ import { RawJSONScalar } from 'src/engine/api/graphql/workspace-schema-builder/g
 import { getNumberFilterType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-number-filter-type.util';
 import { getNumberScalarType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-number-scalar-type.util';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface TypeOptions<T = any> {
   nullable?: boolean;
   isArray?: boolean;
@@ -58,7 +59,7 @@ export class TypeMapperService {
     settings?: FieldMetadataSettings<FieldMetadataType>,
     isIdField?: boolean,
   ): GraphQLScalarType | undefined {
-    if (isIdField || settings?.isForeignKey) {
+    if (isIdField || fieldMetadataType === FieldMetadataType.RELATION) {
       return GraphQLID;
     }
     const typeScalarMapping = new Map<FieldMetadataType, GraphQLScalarType>([
@@ -93,7 +94,7 @@ export class TypeMapperService {
     settings?: FieldMetadataSettings<FieldMetadataType>,
     isIdField?: boolean,
   ): GraphQLInputObjectType | GraphQLScalarType | undefined {
-    if (isIdField || settings?.isForeignKey) {
+    if (isIdField || fieldMetadataType === FieldMetadataType.RELATION) {
       return IDFilterType;
     }
 
@@ -132,6 +133,7 @@ export class TypeMapperService {
   ): GraphQLInputType | undefined {
     const typeOrderByMapping = new Map<FieldMetadataType, GraphQLEnumType>([
       [FieldMetadataType.UUID, OrderByDirectionType],
+      [FieldMetadataType.RELATION, OrderByDirectionType],
       [FieldMetadataType.TEXT, OrderByDirectionType],
       [FieldMetadataType.DATE_TIME, OrderByDirectionType],
       [FieldMetadataType.DATE, OrderByDirectionType],

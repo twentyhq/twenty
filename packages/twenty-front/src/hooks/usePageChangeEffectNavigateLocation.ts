@@ -7,10 +7,10 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { OnboardingStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { isDefined } from 'twenty-shared/utils';
 
 export const usePageChangeEffectNavigateLocation = () => {
   const { isMatchingLocation } = useIsMatchingLocation();
@@ -19,27 +19,24 @@ export const usePageChangeEffectNavigateLocation = () => {
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
   );
-
   const { defaultHomePagePath } = useDefaultHomePagePath();
 
-  const isMatchingOpenRoute =
-    isMatchingLocation(AppPath.Invite) ||
-    isMatchingLocation(AppPath.ResetPassword);
-
-  const isMatchingOngoingUserCreationRoute =
-    isMatchingOpenRoute ||
-    isMatchingLocation(AppPath.SignInUp) ||
-    isMatchingLocation(AppPath.VerifyEmail) ||
-    isMatchingLocation(AppPath.Verify);
-
-  const isMatchingOnboardingRoute =
-    isMatchingOngoingUserCreationRoute ||
-    isMatchingLocation(AppPath.CreateWorkspace) ||
-    isMatchingLocation(AppPath.CreateProfile) ||
-    isMatchingLocation(AppPath.SyncEmails) ||
-    isMatchingLocation(AppPath.InviteTeam) ||
-    isMatchingLocation(AppPath.PlanRequired) ||
-    isMatchingLocation(AppPath.PlanRequiredSuccess);
+  const someMatchingLocationOf = (appPaths: AppPath[]): boolean =>
+    appPaths.some((appPath) => isMatchingLocation(appPath));
+  const onGoingUserCreationPaths = [
+    AppPath.Invite,
+    AppPath.SignInUp,
+    AppPath.VerifyEmail,
+    AppPath.Verify,
+  ];
+  const onboardingPaths = [
+    AppPath.CreateWorkspace,
+    AppPath.CreateProfile,
+    AppPath.SyncEmails,
+    AppPath.InviteTeam,
+    AppPath.PlanRequired,
+    AppPath.PlanRequiredSuccess,
+  ];
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
@@ -47,18 +44,19 @@ export const usePageChangeEffectNavigateLocation = () => {
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
 
-  if (isMatchingOpenRoute) {
-    return;
-  }
-
-  if (!isLoggedIn && !isMatchingOngoingUserCreationRoute) {
+  if (
+    !isLoggedIn &&
+    !someMatchingLocationOf([
+      ...onGoingUserCreationPaths,
+      AppPath.ResetPassword,
+    ])
+  ) {
     return AppPath.SignInUp;
   }
 
   if (
     onboardingStatus === OnboardingStatus.PLAN_REQUIRED &&
-    !isMatchingLocation(AppPath.PlanRequired) &&
-    !isMatchingLocation(AppPath.PlanRequiredSuccess)
+    !someMatchingLocationOf([AppPath.PlanRequired, AppPath.PlanRequiredSuccess])
   ) {
     return AppPath.PlanRequired;
   }
@@ -71,8 +69,10 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION &&
-    !isMatchingLocation(AppPath.CreateWorkspace) &&
-    !isMatchingLocation(AppPath.PlanRequiredSuccess)
+    !someMatchingLocationOf([
+      AppPath.CreateWorkspace,
+      AppPath.PlanRequiredSuccess,
+    ])
   ) {
     return AppPath.CreateWorkspace;
   }
@@ -100,7 +100,8 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.COMPLETED &&
-    isMatchingOnboardingRoute &&
+    someMatchingLocationOf([...onboardingPaths, ...onGoingUserCreationPaths]) &&
+    !isMatchingLocation(AppPath.ResetPassword) &&
     isLoggedIn
   ) {
     return defaultHomePagePath;

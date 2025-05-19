@@ -9,8 +9,11 @@ import {
   ObjectRecordFilter,
   ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import {
@@ -24,33 +27,34 @@ import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modu
 
 export class GraphqlQueryParser {
   private fieldMetadataMapByName: FieldMetadataMap;
+  private fieldMetadataMapByJoinColumnName: FieldMetadataMap;
   private objectMetadataMaps: ObjectMetadataMaps;
   private filterConditionParser: GraphqlQueryFilterConditionParser;
   private orderFieldParser: GraphqlQueryOrderFieldParser;
-  private featureFlagsMap: FeatureFlagMap;
 
   constructor(
     fieldMetadataMapByName: FieldMetadataMap,
+    fieldMetadataMapByJoinColumnName: FieldMetadataMap,
     objectMetadataMaps: ObjectMetadataMaps,
-    featureFlagsMap: FeatureFlagMap,
   ) {
     this.objectMetadataMaps = objectMetadataMaps;
     this.fieldMetadataMapByName = fieldMetadataMapByName;
-    this.featureFlagsMap = featureFlagsMap;
+    this.fieldMetadataMapByJoinColumnName = fieldMetadataMapByJoinColumnName;
     this.filterConditionParser = new GraphqlQueryFilterConditionParser(
       this.fieldMetadataMapByName,
-      featureFlagsMap,
+      this.fieldMetadataMapByJoinColumnName,
     );
     this.orderFieldParser = new GraphqlQueryOrderFieldParser(
       this.fieldMetadataMapByName,
-      featureFlagsMap,
     );
   }
 
   public applyFilterToBuilder(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     queryBuilder: SelectQueryBuilder<any>,
     objectNameSingular: string,
     recordFilter: Partial<ObjectRecordFilter>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): SelectQueryBuilder<any> {
     return this.filterConditionParser.parse(
       queryBuilder,
@@ -60,8 +64,10 @@ export class GraphqlQueryParser {
   }
 
   public applyDeletedAtToBuilder(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     queryBuilder: SelectQueryBuilder<any>,
     recordFilter: Partial<ObjectRecordFilter>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): SelectQueryBuilder<any> {
     if (this.checkForDeletedAtFilter(recordFilter)) {
       queryBuilder.withDeleted();
@@ -97,10 +103,12 @@ export class GraphqlQueryParser {
   };
 
   public applyOrderToBuilder(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     queryBuilder: SelectQueryBuilder<any>,
     orderBy: ObjectRecordOrderBy,
     objectNameSingular: string,
     isForwardPagination = true,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): SelectQueryBuilder<any> {
     const parsedOrderBys = this.orderFieldParser.parse(
       orderBy,
@@ -113,6 +121,7 @@ export class GraphqlQueryParser {
 
   public parseSelectedFields(
     parentObjectMetadata: ObjectMetadataItemWithFieldMaps,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
   ): GraphqlQuerySelectedFieldsResult {
     const parentFields = getObjectMetadataMapItemByNameSingular(
@@ -121,14 +130,14 @@ export class GraphqlQueryParser {
     )?.fieldsByName;
 
     if (!parentFields) {
-      throw new Error(
+      throw new GraphqlQueryRunnerException(
         `Could not find object metadata for ${parentObjectMetadata.nameSingular}`,
+        GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
     }
 
     const selectedFieldsParser = new GraphqlQuerySelectedFieldsParser(
       this.objectMetadataMaps,
-      this.featureFlagsMap,
     );
 
     return selectedFieldsParser.parse(graphqlSelectedFields, parentFields);

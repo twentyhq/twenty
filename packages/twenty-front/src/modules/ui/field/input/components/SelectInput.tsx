@@ -20,7 +20,6 @@ export const SelectInput = ({
   selectableListComponentInstanceId,
   selectableItemIdArray,
   hotkeyScope,
-  onEnter,
   onOptionSelected,
   options,
   onCancel,
@@ -31,10 +30,9 @@ export const SelectInput = ({
 }: SelectInputProps) => {
   return (
     <SelectableList
-      selectableListId={selectableListComponentInstanceId}
+      selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={selectableItemIdArray}
       hotkeyScope={hotkeyScope}
-      onEnter={onEnter}
     >
       <SelectBaseInput
         onOptionSelected={onOptionSelected}

@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { StyledMultipleSelectDropdownAvatarChip } from '@/object-record/select/components/StyledMultipleSelectDropdownAvatarChip';
@@ -8,9 +6,11 @@ import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListStates';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 
 export const MultipleSelectDropdown = ({
@@ -35,13 +35,13 @@ export const MultipleSelectDropdown = ({
   loadingItems: boolean;
 }) => {
   const { closeDropdown } = useDropdown();
-  const { selectedItemIdState } = useSelectableListStates({
-    selectableListScopeId: selectableListId,
-  });
 
   const { resetSelectedItem } = useSelectableList(selectableListId);
 
-  const selectedItemId = useRecoilValue(selectedItemIdState);
+  const selectedItemId = useRecoilComponentValueV2(
+    selectedItemIdComponentState,
+    selectableListId,
+  );
 
   const handleItemSelectChange = (
     itemToSelect: SelectableItem,
@@ -56,19 +56,10 @@ export const MultipleSelectDropdown = ({
     );
   };
 
-  const [itemsInDropdown, setItemInDropdown] = useState([
+  const itemsInDropdown = [
     ...(filteredSelectedItems ?? []),
     ...(itemsToSelect ?? []),
-  ]);
-
-  useEffect(() => {
-    if (!loadingItems) {
-      setItemInDropdown([
-        ...(filteredSelectedItems ?? []),
-        ...(itemsToSelect ?? []),
-      ]);
-    }
-  }, [itemsToSelect, filteredSelectedItems, loadingItems]);
+  ];
 
   useScopedHotkeys(
     [Key.Escape],
@@ -90,46 +81,41 @@ export const MultipleSelectDropdown = ({
 
   return (
     <SelectableList
-      selectableListId={selectableListId}
+      selectableListInstanceId={selectableListId}
       selectableItemIdArray={selectableItemIds}
       hotkeyScope={hotkeyScope}
-      onEnter={(itemId) => {
-        const item = itemsInDropdown.findIndex(
-          (entity) => entity.id === itemId,
-        );
-        const itemIsSelectedInDropwdown = filteredSelectedItems.find(
-          (entity) => entity.id === itemId,
-        );
-        handleItemSelectChange(
-          itemsInDropdown[item],
-          !itemIsSelectedInDropwdown,
-        );
-        resetSelectedItem();
-      }}
     >
-      <DropdownMenuItemsContainer hasMaxHeight>
+      <DropdownMenuItemsContainer hasMaxHeight width="auto">
         {itemsInDropdown?.map((item) => {
           return (
-            <MenuItemMultiSelectAvatar
-              key={item.id}
-              selected={item.isSelected}
-              isKeySelected={item.id === selectedItemId}
-              onSelectChange={(newCheckedValue) => {
+            <SelectableListItem
+              itemId={item.id}
+              onEnter={() => {
                 resetSelectedItem();
-                handleItemSelectChange(item, newCheckedValue);
+                handleItemSelectChange(item, !item.isSelected);
               }}
-              avatar={
-                <StyledMultipleSelectDropdownAvatarChip
-                  className="avatar-icon-container"
-                  name={item.name}
-                  avatarUrl={item.avatarUrl}
-                  LeftIcon={item.AvatarIcon}
-                  avatarType={item.avatarType}
-                  isIconInverted={item.isIconInverted}
-                  placeholderColorSeed={item.id}
-                />
-              }
-            />
+            >
+              <MenuItemMultiSelectAvatar
+                key={item.id}
+                selected={item.isSelected}
+                isKeySelected={item.id === selectedItemId}
+                onSelectChange={(newCheckedValue) => {
+                  resetSelectedItem();
+                  handleItemSelectChange(item, newCheckedValue);
+                }}
+                avatar={
+                  <StyledMultipleSelectDropdownAvatarChip
+                    className="avatar-icon-container"
+                    name={item.name}
+                    avatarUrl={item.avatarUrl}
+                    LeftIcon={item.AvatarIcon}
+                    avatarType={item.avatarType}
+                    isIconInverted={item.isIconInverted}
+                    placeholderColorSeed={item.id}
+                  />
+                }
+              />
+            </SelectableListItem>
           );
         })}
         {showNoResult && <MenuItem text="No results" />}

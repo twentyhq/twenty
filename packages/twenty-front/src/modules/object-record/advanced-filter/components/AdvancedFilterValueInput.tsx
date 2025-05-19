@@ -4,8 +4,12 @@ import { AdvancedFilterValueInputDropdownButtonClickableSelect } from '@/object-
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
+import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
+import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
+import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
+import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
@@ -13,6 +17,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
 import styled from '@emotion/styled';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledValueDropdownContainer = styled.div`
@@ -32,6 +37,10 @@ export const AdvancedFilterValueInput = ({
     currentRecordFiltersComponentState,
   );
 
+  const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
+    subFieldNameUsedInDropdownComponentState,
+  );
+
   const recordFilter = currentRecordFilters.find(
     (recordFilter) => recordFilter.id === recordFilterId,
   );
@@ -42,19 +51,63 @@ export const AdvancedFilterValueInput = ({
     objectFilterDropdownSearchInputComponentState,
   );
 
+  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
+    fieldMetadataItemIdUsedInDropdownComponentState,
+  );
+
+  const setObjectFilterDropdownCurrentRecordFilter =
+    useSetRecoilComponentStateV2(
+      objectFilterDropdownCurrentRecordFilterComponentState,
+    );
+
   const operandHasNoInput =
     recordFilter && !configurableViewFilterOperands.has(recordFilter.operand);
+
+  if (!isDefined(recordFilter)) {
+    return null;
+  }
 
   const handleFilterValueDropdownClose = () => {
     setObjectFilterDropdownSearchInput('');
   };
 
-  const filterType = recordFilter?.type;
+  const handleFilterValueDropdownOpen = () => {
+    setObjectFilterDropdownCurrentRecordFilter(recordFilter);
+    setFieldMetadataItemIdUsedInDropdown(recordFilter.fieldMetadataId);
+  };
+
+  const filterType = recordFilter.type;
 
   const dropdownContentOffset =
     filterType === 'DATE' || filterType === 'DATE_TIME'
       ? ({ y: -33, x: 0 } satisfies DropdownOffset)
       : DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET;
+
+  const isFilterableByTextValue =
+    isDefined(filterType) &&
+    (TEXT_FILTER_TYPES.includes(filterType) ||
+      NUMBER_FILTER_TYPES.includes(filterType));
+
+  const isCurrencyAmountMicrosFilter = isExpectedSubFieldName(
+    FieldMetadataType.CURRENCY,
+    'amountMicros',
+    recordFilter.subFieldName,
+  );
+
+  const isAddressFilterOnSubFieldOtherThanCountry =
+    filterType === 'ADDRESS' && subFieldNameUsedInDropdown !== 'addressCountry';
+
+  const isActorNameFilter = isExpectedSubFieldName(
+    FieldMetadataType.ACTOR,
+    'name',
+    recordFilter.subFieldName,
+  );
+
+  const showFilterTextInputInsteadOfDropdown =
+    isFilterableByTextValue ||
+    isCurrencyAmountMicrosFilter ||
+    isAddressFilterOnSubFieldOtherThanCountry ||
+    isActorNameFilter;
 
   return (
     <StyledValueDropdownContainer>
@@ -64,10 +117,8 @@ export const AdvancedFilterValueInput = ({
         <AdvancedFilterValueInputDropdownButtonClickableSelect
           recordFilterId={recordFilterId}
         />
-      ) : isDefined(filterType) &&
-        (TEXT_FILTER_TYPES.includes(filterType) ||
-          NUMBER_FILTER_TYPES.includes(filterType)) ? (
-        <AdvancedFilterDropdownTextInput />
+      ) : showFilterTextInputInsteadOfDropdown ? (
+        <AdvancedFilterDropdownTextInput recordFilter={recordFilter} />
       ) : (
         <Dropdown
           dropdownId={dropdownId}
@@ -77,15 +128,14 @@ export const AdvancedFilterValueInput = ({
             />
           }
           dropdownComponents={
-            <AdvancedFilterDropdownFilterInput
-              recordFilterId={recordFilter.id}
-            />
+            <AdvancedFilterDropdownFilterInput recordFilter={recordFilter} />
           }
           dropdownHotkeyScope={{ scope: dropdownId }}
           dropdownOffset={dropdownContentOffset}
           dropdownPlacement="bottom-start"
-          dropdownMenuWidth={280}
+          dropdownWidth={280}
           onClose={handleFilterValueDropdownClose}
+          onOpen={handleFilterValueDropdownOpen}
         />
       )}
     </StyledValueDropdownContainer>

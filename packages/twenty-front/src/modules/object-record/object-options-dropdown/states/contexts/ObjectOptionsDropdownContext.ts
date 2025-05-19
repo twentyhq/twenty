@@ -1,6 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
 import { ViewType } from '@/views/types/ViewType';
+import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { createContext } from 'react';
 
 export type ObjectOptionsDropdownContextValue = {
@@ -11,6 +12,7 @@ export type ObjectOptionsDropdownContextValue = {
   onContentChange: (key: ObjectOptionsContentId) => void;
   resetContent: () => void;
   dropdownId: string;
+  handleRecordGroupOrderChangeWithModal?: OnDragEndResponder;
 };
 
 export const ObjectOptionsDropdownContext =

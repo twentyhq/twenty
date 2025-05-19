@@ -4,6 +4,7 @@ import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
 import { AppPath } from '@/types/AppPath';
+import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -62,9 +63,10 @@ export const MainContextStoreProvider = () => {
   );
 
   const viewId = getViewId(viewIdQueryParam, indexViewId, lastVisitedViewId);
+  const showAuthModal = useShowAuthModal();
 
   const shouldComputeContextStore =
-    isRecordIndexPage || isRecordShowPage || isSettingsPage;
+    (isRecordIndexPage || isRecordShowPage || isSettingsPage) && !showAuthModal;
 
   if (!shouldComputeContextStore) {
     return null;

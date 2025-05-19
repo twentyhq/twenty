@@ -16,8 +16,8 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useDebouncedCallback } from 'use-debounce';
 import { useIcons } from 'twenty-ui/display';
+import { useDebouncedCallback } from 'use-debounce';
 
 export type WorkflowEditActionFormFillerProps = {
   action: WorkflowFormAction;
@@ -39,6 +39,8 @@ export const WorkflowEditActionFormFiller = ({
   const { workflowRunId } = useWorkflowStepContextOrThrow();
   const { closeCommandMenu } = useCommandMenu();
   const { updateWorkflowRunStep } = useUpdateWorkflowRunStep();
+  const [error, setError] = useState<string | undefined>(undefined);
+  const canSubmit = !actionOptions.readonly && !isDefined(error);
 
   if (!isDefined(workflowRunId)) {
     throw new Error('Form filler action must be used in a workflow run');
@@ -164,6 +166,9 @@ export const WorkflowEditActionFormFiller = ({
                 field.placeholder ??
                 getDefaultFormFieldSettings(field.type).placeholder
               }
+              onError={(error) => {
+                setError(error);
+              }}
             />
           );
         })}
@@ -174,7 +179,7 @@ export const WorkflowEditActionFormFiller = ({
             <CmdEnterActionButton
               title="Submit"
               onClick={onSubmit}
-              disabled={actionOptions.readonly}
+              disabled={!canSubmit}
             />,
           ]}
         />

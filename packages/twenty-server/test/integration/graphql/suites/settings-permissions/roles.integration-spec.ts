@@ -63,28 +63,23 @@ describe('roles permissions', () => {
       .send(query);
 
     adminRoleId = resp.body.data.getRoles.find(
+      // @ts-expect-error legacy noImplicitAny
       (role) => role.label === 'Admin',
     ).id;
 
     guestRoleId = resp.body.data.getRoles.find(
+      // @ts-expect-error legacy noImplicitAny
       (role) => role.label === 'Guest',
     ).id;
   });
 
   afterAll(async () => {
-    const disablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
-      false,
-    );
-
     const disablePermissionsV2Query = updateFeatureFlagFactory(
       SEED_APPLE_WORKSPACE_ID,
       'IsPermissionsV2Enabled',
       false,
     );
 
-    await makeGraphqlAPIRequest(disablePermissionsQuery);
     await makeGraphqlAPIRequest(disablePermissionsV2Query);
   });
 
@@ -238,10 +233,12 @@ describe('roles permissions', () => {
         .send(getRolesQuery);
 
       const memberRoleId = resp.body.data.getRoles.find(
+        // @ts-expect-error legacy noImplicitAny
         (role) => role.label === 'Member',
       ).id;
 
       const guestRoleId = resp.body.data.getRoles.find(
+        // @ts-expect-error legacy noImplicitAny
         (role) => role.label === 'Guest',
       ).id;
 
@@ -480,9 +477,10 @@ describe('roles permissions', () => {
         roleId: string;
       }) => `
       mutation UpsertObjectPermissions {
-          upsertOneObjectPermission(upsertObjectPermissionInput: {objectMetadataId: "${objectMetadataId}", roleId: "${roleId}", canUpdateObjectRecords: true}) {
+          upsertObjectPermissions(upsertObjectPermissionsInput: { roleId: "${roleId}", objectPermissions: [{objectMetadataId: "${objectMetadataId}", canUpdateObjectRecords: true}]}) {
               id
               roleId
+              objectMetadataId
               canUpdateObjectRecords
           }
       }
@@ -540,35 +538,37 @@ describe('roles permissions', () => {
           .expect((res) => {
             expect(res.body.data).toBeDefined();
             expect(res.body.errors).toBeUndefined();
-            expect(res.body.data.upsertOneObjectPermission.roleId).toBe(
-              createdEditableRoleId,
+            expect(res.body.data.upsertObjectPermissions).toEqual(
+              expect.arrayContaining([
+                expect.objectContaining({
+                  roleId: createdEditableRoleId,
+                  objectMetadataId: listingObjectId,
+                  canUpdateObjectRecords: true,
+                }),
+              ]),
             );
-            expect(
-              res.body.data.upsertOneObjectPermission.canUpdateObjectRecords,
-            ).toBe(true);
           });
       });
     });
 
-    describe('upsertSettingPermission', () => {
-      const upsertSettingPermissionMutation = ({
+    describe('upsertSettingPermissions', () => {
+      const upsertSettingPermissionsMutation = ({
         roleId,
       }: {
         roleId: string;
       }) => `
       mutation UpsertSettingPermissions {
-          upsertOneSettingPermission(upsertSettingPermissionInput: {roleId: "${roleId}", setting: ${SettingPermissionType.DATA_MODEL}, canUpdateSetting: true}) {
+          upsertSettingPermissions(upsertSettingPermissionsInput: {roleId: "${roleId}", settingPermissionKeys: [${SettingPermissionType.DATA_MODEL}]}) {
               id
               roleId
               setting
-              canUpdateSetting
           }
       }
     `;
 
-      it('should throw a permission error when user does not have permission to upsert object permission (member role)', async () => {
+      it('should throw a permission error when user does not have permission to upsert setting permission (member role)', async () => {
         const query = {
-          query: upsertSettingPermissionMutation({
+          query: upsertSettingPermissionsMutation({
             roleId: guestRoleId,
           }),
         };
@@ -578,7 +578,7 @@ describe('roles permissions', () => {
 
       it('should throw an error when role is not editable', async () => {
         const query = {
-          query: upsertSettingPermissionMutation({
+          query: upsertSettingPermissionsMutation({
             roleId: adminRoleId,
           }),
         };
@@ -602,7 +602,7 @@ describe('roles permissions', () => {
 
       it('should upsert a setting permission when user has permission', async () => {
         const query = {
-          query: upsertSettingPermissionMutation({
+          query: upsertSettingPermissionsMutation({
             roleId: createdEditableRoleId,
           }),
         };
@@ -615,14 +615,13 @@ describe('roles permissions', () => {
           .expect((res) => {
             expect(res.body.data).toBeDefined();
             expect(res.body.errors).toBeUndefined();
-            expect(res.body.data.upsertOneSettingPermission.roleId).toBe(
-              createdEditableRoleId,
-            );
-            expect(
-              res.body.data.upsertOneSettingPermission.canUpdateSetting,
-            ).toBe(true);
-            expect(res.body.data.upsertOneSettingPermission.setting).toBe(
-              SettingPermissionType.DATA_MODEL,
+            expect(res.body.data.upsertSettingPermissions).toEqual(
+              expect.arrayContaining([
+                expect.objectContaining({
+                  roleId: createdEditableRoleId,
+                  setting: SettingPermissionType.DATA_MODEL,
+                }),
+              ]),
             );
           });
       });

@@ -1,55 +1,41 @@
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
+import { isWorkflowRunJsonField } from '@/object-record/record-field/meta-types/utils/isWorkflowRunJsonField';
 import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
-import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type isFieldValueReadOnlyParams = {
   objectNameSingular?: string;
   fieldName?: string;
   fieldType?: FieldMetadataType;
-  isObjectRemote?: boolean;
-  isRecordDeleted?: boolean;
-  hasObjectReadOnlyPermission?: boolean;
-  contextStoreCurrentViewType: ContextStoreViewType | null;
+  isRecordReadOnly?: boolean;
+  isCustom?: boolean;
 };
 
 export const isFieldValueReadOnly = ({
   objectNameSingular,
   fieldName,
   fieldType,
-  isObjectRemote = false,
-  isRecordDeleted = false,
-  hasObjectReadOnlyPermission = false,
-  contextStoreCurrentViewType,
+  isCustom,
+  isRecordReadOnly = false,
 }: isFieldValueReadOnlyParams) => {
-  const isTableViewOrKanbanView =
-    contextStoreCurrentViewType === ContextStoreViewType.Table ||
-    contextStoreCurrentViewType === ContextStoreViewType.Kanban;
-
-  const isTargetField =
-    fieldName === 'noteTargets' || fieldName === 'taskTargets';
-
-  if (isTableViewOrKanbanView && isTargetField) {
+  if (isRecordReadOnly) {
     return true;
   }
 
-  if (isObjectRemote) {
-    return true;
+  if (
+    isWorkflowRunJsonField({
+      objectMetadataNameSingular: objectNameSingular,
+      fieldName,
+    })
+  ) {
+    return false;
   }
 
-  if (isRecordDeleted) {
-    return true;
-  }
-
-  if (hasObjectReadOnlyPermission) {
-    return true;
-  }
-
-  if (isWorkflowSubObjectMetadata(objectNameSingular)) {
+  if (isWorkflowSubObjectMetadata(objectNameSingular) && !isCustom) {
     return true;
   }
 
@@ -59,16 +45,29 @@ export const isFieldValueReadOnly = ({
 
   if (
     objectNameSingular === CoreObjectNameSingular.Workflow &&
-    fieldName !== 'name'
+    fieldName !== 'name' &&
+    !isCustom
+  ) {
+    return true;
+  }
+
+  if (
+    objectNameSingular !== CoreObjectNameSingular.Note &&
+    fieldName === 'noteTargets'
+  ) {
+    return true;
+  }
+
+  if (
+    objectNameSingular !== CoreObjectNameSingular.Task &&
+    fieldName === 'taskTargets'
   ) {
     return true;
   }
 
   if (
     isDefined(fieldType) &&
-    (isFieldActor({ type: fieldType }) ||
-      isFieldRichText({ type: fieldType }) ||
-      isFieldRichTextV2({ type: fieldType }))
+    (isFieldActor({ type: fieldType }) || isFieldRichText({ type: fieldType }))
   ) {
     return true;
   }

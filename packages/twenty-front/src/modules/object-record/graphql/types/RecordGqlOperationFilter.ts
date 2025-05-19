@@ -66,6 +66,7 @@ export type DateFilter = {
 
 export type CurrencyFilter = {
   amountMicros?: FloatFilter;
+  currencyCode?: SelectFilter;
 };
 
 export type URLFilter = {
@@ -90,19 +91,23 @@ export type AddressFilter = {
 export type LinksFilter = {
   primaryLinkUrl?: StringFilter;
   primaryLinkLabel?: StringFilter;
+  secondaryLinks?: RawJsonFilter;
 };
 
 export type ActorFilter = {
   name?: StringFilter;
-  source?: IsFilter;
+  source?: SelectFilter;
 };
 
 export type EmailsFilter = {
   primaryEmail?: StringFilter;
+  additionalEmails?: RawJsonFilter;
 };
 
 export type PhonesFilter = {
   primaryPhoneNumber?: StringFilter;
+  primaryPhoneCallingCode?: StringFilter;
+  additionalPhones?: RawJsonFilter;
 };
 
 export type SelectFilter = {

@@ -1,25 +1,24 @@
 import { isPlainObject } from '@nestjs/common/utils/shared.utils';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { computeRelationType } from 'src/engine/twenty-orm/utils/compute-relation-type.util';
 import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils/get-composite-field-metadata-collection';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { isDate } from 'src/utils/date/isDate';
 import { isValidDate } from 'src/utils/date/isValidDate';
 
 export function formatResult<T>(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any,
-  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps | undefined,
   objectMetadataMaps: ObjectMetadataMaps,
 ): T {
   if (!data) {
@@ -44,76 +43,68 @@ export function formatResult<T>(
     objectMetadataItemWithFieldMaps,
   );
 
-  const relationMetadataMap = new Map(
-    Object.values(objectMetadataItemWithFieldMaps.fieldsById)
-      .filter(({ type }) => isRelationFieldMetadataType(type))
-      .map((fieldMetadata) => [
-        fieldMetadata.name,
-        {
-          relationMetadata:
-            fieldMetadata.fromRelationMetadata ??
-            fieldMetadata.toRelationMetadata,
-          relationType: computeRelationType(
-            fieldMetadata,
-            fieldMetadata.fromRelationMetadata ??
-              (fieldMetadata.toRelationMetadata as RelationMetadataEntity),
-          ),
-        },
-      ]),
-  );
   const newData: object = {};
   const objectMetadaItemFieldsByName =
     objectMetadataMaps.byId[objectMetadataItemWithFieldMaps.id]?.fieldsByName;
 
   for (const [key, value] of Object.entries(data)) {
     const compositePropertyArgs = compositeFieldMetadataMap.get(key);
-    const { relationMetadata, relationType } =
-      relationMetadataMap.get(key) ?? {};
 
-    if (!compositePropertyArgs && !relationMetadata) {
+    const fieldMetadata = objectMetadataItemWithFieldMaps.fieldsByName[key] as
+      | FieldMetadataInterface<FieldMetadataType>
+      | undefined;
+
+    const isRelation = fieldMetadata
+      ? isFieldMetadataInterfaceOfType(
+          fieldMetadata,
+          FieldMetadataType.RELATION,
+        )
+      : false;
+
+    if (!compositePropertyArgs && !isRelation) {
       if (isPlainObject(value)) {
+        // @ts-expect-error legacy noImplicitAny
         newData[key] = formatResult(
           value,
           objectMetadataItemWithFieldMaps,
           objectMetadataMaps,
         );
       } else if (objectMetadaItemFieldsByName[key]) {
+        // @ts-expect-error legacy noImplicitAny
         newData[key] = formatFieldMetadataValue(
           value,
           objectMetadaItemFieldsByName[key],
         );
       } else {
+        // @ts-expect-error legacy noImplicitAny
         newData[key] = value;
       }
 
       continue;
     }
 
-    if (relationMetadata) {
-      const toObjectMetadata =
-        objectMetadataMaps.byId[relationMetadata.toObjectMetadataId];
-
-      const fromObjectMetadata =
-        objectMetadataMaps.byId[relationMetadata.fromObjectMetadataId];
-
-      if (!toObjectMetadata) {
+    if (isRelation) {
+      if (!isDefined(fieldMetadata?.relationTargetObjectMetadataId)) {
         throw new Error(
-          `Object metadata for object metadataId "${relationMetadata.toObjectMetadataId}" is missing`,
+          `Relation target object metadata ID is missing for field "${key}"`,
         );
       }
 
-      if (!fromObjectMetadata) {
+      const targetObjectMetadata =
+        objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
+
+      if (!targetObjectMetadata) {
         throw new Error(
-          `Object metadata for object metadataId "${relationMetadata.fromObjectMetadataId}" is missing`,
+          `Object metadata for object metadataId "${fieldMetadata.relationTargetObjectMetadataId}" is missing`,
         );
       }
 
+      // @ts-expect-error legacy noImplicitAny
       newData[key] = formatResult(
         value,
-        relationType === 'one-to-many' ? toObjectMetadata : fromObjectMetadata,
+        targetObjectMetadata,
         objectMetadataMaps,
       );
-      continue;
     }
 
     if (!compositePropertyArgs) {
@@ -122,10 +113,13 @@ export function formatResult<T>(
 
     const { parentField, ...compositeProperty } = compositePropertyArgs;
 
+    // @ts-expect-error legacy noImplicitAny
     if (!newData[parentField]) {
+      // @ts-expect-error legacy noImplicitAny
       newData[parentField] = {};
     }
 
+    // @ts-expect-error legacy noImplicitAny
     newData[parentField][compositeProperty.name] = value;
   }
 
@@ -148,6 +142,7 @@ export function formatResult<T>(
     new Date().getTimezoneOffset() * 60 * 1000;
 
   for (const dateFieldMetadata of dateFieldMetadataCollection) {
+    // @ts-expect-error legacy noImplicitAny
     const rawUpdatedDate = newData[dateFieldMetadata.name] as
       | string
       | null
@@ -165,9 +160,11 @@ export function formatResult<T>(
             serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift,
         );
 
+        // @ts-expect-error legacy noImplicitAny
         newData[dateFieldMetadata.name] = shiftedDate;
       }
     } else if (isNonEmptyString(rawUpdatedDate)) {
+      // @ts-expect-error legacy noImplicitAny
       const currentDate = new Date(newData[dateFieldMetadata.name]);
 
       const shiftedDate = new Date(
@@ -175,6 +172,7 @@ export function formatResult<T>(
           serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift,
       );
 
+      // @ts-expect-error legacy noImplicitAny
       newData[dateFieldMetadata.name] = shiftedDate;
     }
   }
@@ -208,6 +206,7 @@ export function getCompositeFieldMetadataMap(
 }
 
 function formatFieldMetadataValue(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
   fieldMetadata: FieldMetadataInterface,
 ) {

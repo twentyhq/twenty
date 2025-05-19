@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
@@ -7,15 +6,15 @@ import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/re
 import { multipleRecordPickerIsSelectedComponentFamilySelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerIsSelectedComponentFamilySelector';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { SearchRecord } from '~/generated-metadata/graphql';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
+import { SearchRecord } from '~/generated-metadata/graphql';
 
-export const StyledSelectableItem = styled(SelectableItem)`
+export const StyledSelectableItem = styled(SelectableListItem)`
   height: 100%;
   width: 100%;
 `;
@@ -38,12 +37,10 @@ export const MultipleRecordPickerMenuItemContent = ({
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
 
-  const { isSelectedItemIdSelector } = useSelectableList(
+  const isSelectedByKeyboard = useRecoilComponentFamilyValueV2(
+    isSelectedItemIdComponentFamilySelector,
+    searchRecord.recordId,
     selectableListComponentInstanceId,
-  );
-
-  const isSelectedByKeyboard = useRecoilValue(
-    isSelectedItemIdSelector(searchRecord.recordId),
   );
 
   const isRecordSelectedWithObjectItem = useRecoilComponentFamilyValueV2(
@@ -65,6 +62,7 @@ export const MultipleRecordPickerMenuItemContent = ({
     <StyledSelectableItem
       itemId={searchRecord.recordId}
       key={searchRecord.recordId}
+      onEnter={() => handleSelectChange(!isRecordSelectedWithObjectItem)}
     >
       <MenuItemMultiSelectAvatar
         onSelectChange={(isSelected) => handleSelectChange(isSelected)}

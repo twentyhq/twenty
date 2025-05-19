@@ -4,7 +4,7 @@ import { VerifyCallback } from 'passport-google-oauth20';
 
 import { MicrosoftAPIsOauthCommonStrategy } from 'src/engine/core-modules/auth/strategies/microsoft-apis-oauth-common.auth.strategy';
 import { MicrosoftAPIsRequest } from 'src/engine/core-modules/auth/types/microsoft-api-request.type';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type MicrosoftAPIScopeConfig = {
   isCalendarEnabled?: boolean;
@@ -12,14 +12,15 @@ export type MicrosoftAPIScopeConfig = {
 
 @Injectable()
 export class MicrosoftAPIsOauthExchangeCodeForTokenStrategy extends MicrosoftAPIsOauthCommonStrategy {
-  constructor(environmentService: EnvironmentService) {
-    super(environmentService);
+  constructor(twentyConfigService: TwentyConfigService) {
+    super(twentyConfigService);
   }
 
   async validate(
     request: MicrosoftAPIsRequest,
     accessToken: string,
     refreshToken: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     profile: any,
     done: VerifyCallback,
   ): Promise<void> {

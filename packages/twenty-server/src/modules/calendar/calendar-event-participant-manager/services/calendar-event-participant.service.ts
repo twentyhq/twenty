@@ -4,6 +4,7 @@ import { isDefined } from 'class-validator';
 import differenceWith from 'lodash.differencewith';
 import { Any } from 'typeorm';
 
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventParticipantWithCalendarEventId } from 'src/modules/calendar/common/types/calendar-event';
@@ -19,7 +20,7 @@ export class CalendarEventParticipantService {
   public async upsertAndDeleteCalendarEventParticipants(
     participantsToSave: CalendarEventParticipantWithCalendarEventId[],
     participantsToUpdate: CalendarEventParticipantWithCalendarEventId[],
-    transactionManager?: any,
+    transactionManager?: WorkspaceEntityManager,
   ): Promise<void> {
     const calendarEventParticipantRepository =
       await this.twentyORMManager.getRepository<CalendarEventParticipantWorkspaceEntity>(

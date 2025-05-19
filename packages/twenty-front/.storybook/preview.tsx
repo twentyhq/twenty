@@ -8,7 +8,9 @@ import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 import { mockedUserJWT } from '../src/testing/mock-data/jwt';
 
 import 'react-loading-skeleton/dist/skeleton.css';
+import 'twenty-ui/style.css';
 import { THEME_DARK, THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 
 initialize({
   onUnhandledRequest: async (request: Request) => {
@@ -45,7 +47,11 @@ const preview: Preview = {
       return (
         <ThemeProvider theme={theme}>
           <ThemeContextProvider theme={theme}>
-            <Story />
+            <ClickOutsideListenerContext.Provider
+              value={{ excludeClassName: undefined }}
+            >
+              <Story />
+            </ClickOutsideListenerContext.Provider>
           </ThemeContextProvider>
         </ThemeProvider>
       );
@@ -61,6 +67,7 @@ const preview: Preview = {
         date: /Date$/,
       },
     },
+    mockingDate: new Date('2024-03-12T09:30:00.000Z'),
     options: {
       storySort: {
         order: ['UI', 'Modules', 'Pages'],

@@ -8,16 +8,24 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { checkArrayFields } from 'src/engine/api/rest/core/query-builder/utils/check-order-by.utils';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 export const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
 
 @Injectable()
 export class OrderByInputFactory {
-  create(request: Request, objectMetadata): ObjectRecordOrderBy {
+  create(
+    request: Request,
+    objectMetadata: {
+      objectMetadataMaps: ObjectMetadataMaps;
+      objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    },
+  ): ObjectRecordOrderBy {
     const orderByQuery = request.query.order_by;
 
     if (typeof orderByQuery !== 'string') {
-      return [{}];
+      return this.addDefaultOrderById([{}]);
     }
 
     //orderByQuery = field_1[AscNullsFirst],field_2[DescNullsLast],field_3
@@ -61,19 +69,29 @@ export class OrderByInputFactory {
           if (Object.keys(fieldResult).length) {
             fieldResult = { [field]: fieldResult };
           } else {
+            // @ts-expect-error legacy noImplicitAny
             fieldResult[field] = itemDirection;
           }
         }, itemDirection);
 
       const resultFields = Object.keys(fieldResult).map((key) => ({
+        // @ts-expect-error legacy noImplicitAny
         [key]: fieldResult[key],
       }));
 
       result = [...result, ...resultFields];
     }
 
-    checkArrayFields(objectMetadata.objectMetadataItem, result);
+    checkArrayFields(objectMetadata.objectMetadataMapItem, result);
 
-    return result;
+    return this.addDefaultOrderById(result);
+  }
+
+  addDefaultOrderById(orderBy: ObjectRecordOrderBy) {
+    const hasIdOrder = orderBy.some((o) => Object.keys(o).includes('id'));
+
+    return hasIdOrder
+      ? orderBy
+      : [...orderBy, { id: OrderByDirection.AscNullsFirst }];
   }
 }

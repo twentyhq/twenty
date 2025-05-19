@@ -11,27 +11,18 @@ import {
 } from '@/object-record/record-field/types/FieldInputEvent';
 
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
-import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
-import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
-import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
-import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { useRecoilCallback } from 'recoil';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { useIcons } from 'twenty-ui/display';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
   RecordInlineCellContext,
   RecordInlineCellContextProps,
 } from './RecordInlineCellContext';
-import { useIcons } from 'twenty-ui/display';
 
 type RecordInlineCellProps = {
   readonly?: boolean;
@@ -46,13 +37,12 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     isDisplayModeFixHeight,
     onOpenEditMode,
     onCloseEditMode,
+    isReadOnly,
   } = useContext(FieldContext);
 
   const buttonIcon = useGetButtonIcon();
 
   const isFieldInputOnly = useIsFieldInputOnly();
-
-  const isFieldReadOnly = useIsFieldValueReadOnly();
 
   const { closeInlineCell } = useInlineCell();
 
@@ -90,9 +80,11 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
         const hotkeyScope = snapshot
           .getLoadable(currentHotkeyScopeState)
           .getValue();
-        if (hotkeyScope.scope !== InlineCellHotkeyScope.InlineCell) {
+
+        if (hotkeyScope.scope !== DEFAULT_CELL_SCOPE.scope) {
           return;
         }
+
         event.stopImmediatePropagation();
 
         persistField();
@@ -104,37 +96,8 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
   const { getIcon } = useIcons();
   const { openFieldInput, closeFieldInput } = useOpenFieldInputEditMode();
 
-  // TODO: deprecate this and use useOpenFieldInput hooks to set the hotkey scope
-  const computedHotkeyScope = (
-    columnDefinition: FieldDefinition<FieldMetadata>,
-  ) => {
-    if (isFieldRelation(columnDefinition)) {
-      if (
-        columnDefinition.metadata.relationType ===
-        RelationDefinitionType.MANY_TO_ONE
-      ) {
-        return SingleRecordPickerHotkeyScope.SingleRecordPicker;
-      }
-
-      if (
-        columnDefinition.metadata.relationType ===
-        RelationDefinitionType.ONE_TO_MANY
-      ) {
-        return MultipleRecordPickerHotkeyScope.MultipleRecordPicker;
-      }
-
-      return SingleRecordPickerHotkeyScope.SingleRecordPicker;
-    }
-
-    if (isFieldSelect(columnDefinition)) {
-      return SelectFieldHotkeyScope.SelectField;
-    }
-
-    return undefined;
-  };
-
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
-    readonly: isFieldReadOnly,
+    readonly: isReadOnly,
     buttonIcon: buttonIcon,
     IconLabel: fieldDefinition.iconName
       ? getIcon(fieldDefinition.iconName)
@@ -152,14 +115,13 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
         onTab={handleTab}
         onShiftTab={handleShiftTab}
         onClickOutside={handleClickOutside}
-        isReadOnly={isFieldReadOnly}
+        isReadOnly={isReadOnly}
       />
     ),
     displayModeContent: <FieldDisplay />,
     isDisplayModeFixHeight: isDisplayModeFixHeight,
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
-    customEditHotkeyScope: computedHotkeyScope(fieldDefinition),
     onOpenEditMode:
       onOpenEditMode ?? (() => openFieldInput({ fieldDefinition, recordId })),
     onCloseEditMode: onCloseEditMode ?? (() => closeFieldInput()),

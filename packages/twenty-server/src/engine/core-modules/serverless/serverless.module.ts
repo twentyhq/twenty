@@ -8,12 +8,14 @@ import {
   ServerlessModuleAsyncOptions,
 } from 'src/engine/core-modules/serverless/serverless.interface';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
+import { AddPackagesCommand } from 'src/engine/core-modules/serverless/commands/add-packages.command';
 
 @Global()
 export class ServerlessModule {
   static forRootAsync(options: ServerlessModuleAsyncOptions): DynamicModule {
     const provider = {
       provide: SERVERLESS_DRIVER,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       useFactory: async (...args: any[]) => {
         const config = await options.useFactory(...args);
 
@@ -27,7 +29,7 @@ export class ServerlessModule {
     return {
       module: ServerlessModule,
       imports: options.imports || [],
-      providers: [ServerlessService, provider],
+      providers: [ServerlessService, provider, AddPackagesCommand],
       exports: [ServerlessService],
     };
   }

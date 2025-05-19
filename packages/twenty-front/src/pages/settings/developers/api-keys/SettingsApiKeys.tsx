@@ -6,11 +6,11 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { Button } from 'twenty-ui/input';
 import { H2Title, IconPlus } from 'twenty-ui/display';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -24,7 +24,7 @@ const StyledButtonContainer = styled.div`
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 

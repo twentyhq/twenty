@@ -12,15 +12,13 @@ import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfa
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -39,17 +37,23 @@ import { WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-ex
 export class FindRecordsWorkflowAction implements WorkflowExecutor {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
-    private readonly featureFlagService: FeatureFlagService,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
   async execute({
-    currentStepIndex,
+    currentStepId,
     steps,
     context,
   }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
-    const step = steps[currentStepIndex];
+    const step = steps.find((step) => step.id === currentStepId);
+
+    if (!step) {
+      throw new WorkflowStepExecutorException(
+        'Step not found',
+        WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
+      );
+    }
 
     if (!isWorkflowFindRecordsAction(step)) {
       throw new WorkflowStepExecutorException(
@@ -76,49 +80,16 @@ export class FindRecordsWorkflowAction implements WorkflowExecutor {
       );
     }
 
-    const currentCacheVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
-
-    if (currentCacheVersion === undefined) {
-      throw new RecordCRUDActionException(
-        'Failed to read: Metadata cache version not found',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
-      );
-    }
-
-    const objectMetadataMaps =
-      await this.workspaceCacheStorageService.getObjectMetadataMaps(
-        workspaceId,
-        currentCacheVersion,
-      );
-
-    if (!objectMetadataMaps) {
-      throw new RecordCRUDActionException(
-        'Failed to read: Object metadata collection not found',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
-      );
-    }
-
-    const objectMetadataItemWithFieldsMaps =
-      getObjectMetadataMapItemByNameSingular(
-        objectMetadataMaps,
+    const { objectMetadataItemWithFieldsMaps, objectMetadataMaps } =
+      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
         workflowActionInput.objectName,
+        workspaceId,
       );
-
-    if (!objectMetadataItemWithFieldsMaps) {
-      throw new RecordCRUDActionException(
-        `Failed to read: Object ${workflowActionInput.objectName} not found`,
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
-      );
-    }
-
-    const featureFlagMaps =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
     const graphqlQueryParser = new GraphqlQueryParser(
       objectMetadataItemWithFieldsMaps.fieldsByName,
+      objectMetadataItemWithFieldsMaps.fieldsByJoinColumnName,
       objectMetadataMaps,
-      featureFlagMaps,
     );
 
     const objectRecords = await this.getObjectRecords(

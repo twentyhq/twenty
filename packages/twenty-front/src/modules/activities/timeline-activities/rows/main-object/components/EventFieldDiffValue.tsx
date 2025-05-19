@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
@@ -37,10 +36,7 @@ export const EventFieldDiffValue = ({
         <FieldContext.Provider
           value={{
             recordId: diffArtificialRecordStoreId,
-            isLabelIdentifier: isLabelIdentifierField({
-              fieldMetadataItem,
-              objectMetadataItem: mainObjectMetadataItem,
-            }),
+            isLabelIdentifier: false,
             fieldDefinition: {
               type: fieldMetadataItem.type,
               iconName: fieldMetadataItem?.icon || 'FieldIcon',
@@ -53,7 +49,7 @@ export const EventFieldDiffValue = ({
               },
               defaultValue: fieldMetadataItem.defaultValue,
             },
-            hotkeyScope: 'field-event-diff',
+            isReadOnly: false,
           }}
         >
           <FieldDisplay />

@@ -7,19 +7,11 @@ import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent
 import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
 
 export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
-  selected: boolean;
   disabled?: boolean;
-  hovered?: boolean;
+  focused?: boolean;
 }>`
-  ${({ theme, selected, disabled, hovered }) => {
-    if (selected) {
-      return css`
-        background: ${theme.background.transparent.light};
-        &:hover {
-          background: ${theme.background.transparent.medium};
-        }
-      `;
-    } else if (disabled === true) {
+  ${({ theme, disabled, focused }) => {
+    if (disabled === true) {
       return css`
         background: inherit;
         &:hover {
@@ -30,7 +22,7 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
 
         cursor: default;
       `;
-    } else if (hovered === true) {
+    } else if (focused === true) {
       return css`
         background: ${theme.background.transparent.light};
       `;
@@ -46,7 +38,7 @@ type MenuItemSelectProps = {
   className?: string;
   onClick?: () => void;
   disabled?: boolean;
-  hovered?: boolean;
+  focused?: boolean;
   hasSubMenu?: boolean;
   contextualText?: ReactNode;
 };
@@ -59,7 +51,7 @@ export const MenuItemSelect = ({
   className,
   onClick,
   disabled,
-  hovered,
+  focused,
   hasSubMenu = false,
   contextualText,
 }: MenuItemSelectProps) => {
@@ -69,9 +61,8 @@ export const MenuItemSelect = ({
     <StyledMenuItemSelect
       onClick={onClick}
       className={className}
-      selected={selected}
       disabled={disabled}
-      hovered={hovered}
+      focused={focused}
       role="option"
       aria-selected={selected}
       aria-disabled={disabled}

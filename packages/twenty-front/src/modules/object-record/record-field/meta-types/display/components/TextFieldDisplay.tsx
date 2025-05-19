@@ -10,12 +10,11 @@ export const TextFieldDisplay = () => {
     ? fieldDefinition.metadata?.settings?.displayedMaxRows
     : undefined;
 
+  const displayMaxRowCalculated = displayedMaxRows
+    ? displayedMaxRows
+    : displayedMaxRowsFromSettings;
+
   return (
-    <TextDisplay
-      text={fieldValue}
-      displayedMaxRows={
-        displayedMaxRows ? displayedMaxRows : displayedMaxRowsFromSettings
-      }
-    />
+    <TextDisplay text={fieldValue} displayedMaxRows={displayMaxRowCalculated} />
   );
 };

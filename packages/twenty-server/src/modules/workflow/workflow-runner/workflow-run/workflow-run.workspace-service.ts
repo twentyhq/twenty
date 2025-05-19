@@ -1,9 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
+import { Repository } from 'typeorm';
+
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   StepOutput,
   WorkflowRunOutput,
@@ -23,8 +30,11 @@ export class WorkflowRunWorkspaceService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
-    private readonly recordPositionService: RecordPositionService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly recordPositionService: RecordPositionService,
   ) {}
 
   async createWorkflowRun({
@@ -105,8 +115,9 @@ export class WorkflowRunWorkspaceService {
     output,
   }: {
     workflowRunId: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context: Record<string, any>;
-    output: Pick<WorkflowRunOutput, 'flow'>;
+    output: WorkflowRunOutput;
   }) {
     const workflowRunRepository =
       await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
@@ -131,11 +142,18 @@ export class WorkflowRunWorkspaceService {
       );
     }
 
-    return workflowRunRepository.update(workflowRunToUpdate.id, {
+    const partialUpdate = {
       status: WorkflowRunStatus.RUNNING,
       startedAt: new Date().toISOString(),
       context,
       output,
+    };
+
+    await workflowRunRepository.update(workflowRunToUpdate.id, partialUpdate);
+
+    await this.emitWorkflowRunUpdatedEvent({
+      workflowRunBefore: workflowRunToUpdate,
+      updatedFields: ['status', 'startedAt', 'context', 'output'],
     });
   }
 
@@ -164,13 +182,20 @@ export class WorkflowRunWorkspaceService {
       );
     }
 
-    return workflowRunRepository.update(workflowRunToUpdate.id, {
+    const partialUpdate = {
       status,
       endedAt: new Date().toISOString(),
       output: {
         ...(workflowRunToUpdate.output ?? {}),
         error,
       },
+    };
+
+    await workflowRunRepository.update(workflowRunToUpdate.id, partialUpdate);
+
+    await this.emitWorkflowRunUpdatedEvent({
+      workflowRunBefore: workflowRunToUpdate,
+      updatedFields: ['status', 'endedAt', 'output'],
     });
   }
 
@@ -181,6 +206,7 @@ export class WorkflowRunWorkspaceService {
   }: {
     workflowRunId: string;
     stepOutput: StepOutput;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context: Record<string, any>;
   }) {
     const workflowRunRepository =
@@ -199,7 +225,7 @@ export class WorkflowRunWorkspaceService {
       );
     }
 
-    return workflowRunRepository.update(workflowRunId, {
+    const partialUpdate = {
       output: {
         flow: workflowRunToUpdate.output?.flow ?? {
           trigger: undefined,
@@ -211,6 +237,13 @@ export class WorkflowRunWorkspaceService {
         },
       },
       context,
+    };
+
+    await workflowRunRepository.update(workflowRunId, partialUpdate);
+
+    await this.emitWorkflowRunUpdatedEvent({
+      workflowRunBefore: workflowRunToUpdate,
+      updatedFields: ['context', 'output'],
     });
   }
 
@@ -251,7 +284,7 @@ export class WorkflowRunWorkspaceService {
       (existingStep) => (step.id === existingStep.id ? step : existingStep),
     );
 
-    return workflowRunRepository.update(workflowRunToUpdate.id, {
+    const partialUpdate = {
       output: {
         ...(workflowRunToUpdate.output ?? {}),
         flow: {
@@ -259,6 +292,13 @@ export class WorkflowRunWorkspaceService {
           steps: updatedSteps,
         },
       },
+    };
+
+    await workflowRunRepository.update(workflowRunToUpdate.id, partialUpdate);
+
+    await this.emitWorkflowRunUpdatedEvent({
+      workflowRunBefore: workflowRunToUpdate,
+      updatedFields: ['output'],
     });
   }
 
@@ -282,5 +322,73 @@ export class WorkflowRunWorkspaceService {
     }
 
     return workflowRun;
+  }
+
+  private async emitWorkflowRunUpdatedEvent({
+    workflowRunBefore,
+    updatedFields,
+  }: {
+    workflowRunBefore: WorkflowRunWorkspaceEntity;
+    updatedFields: string[];
+  }) {
+    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
+    if (!workspaceId) {
+      return;
+    }
+
+    const objectMetadata = await this.objectMetadataRepository.findOne({
+      where: {
+        nameSingular: 'workflowRun',
+        workspaceId,
+      },
+      relations: ['fields'],
+    });
+
+    if (!objectMetadata) {
+      throw new WorkflowRunException(
+        'Object metadata not found',
+        WorkflowRunExceptionCode.FAILURE,
+      );
+    }
+
+    const workflowRunRepository =
+      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
+        'workflowRun',
+      );
+
+    const workflowRunAfter = await workflowRunRepository.findOneBy({
+      id: workflowRunBefore.id,
+    });
+
+    if (!workflowRunAfter) {
+      throw new WorkflowRunException(
+        'WorkflowRun not found',
+        WorkflowRunExceptionCode.FAILURE,
+      );
+    }
+
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: 'workflowRun',
+      action: DatabaseEventAction.UPDATED,
+      events: [
+        {
+          recordId: workflowRunBefore.id,
+          objectMetadata,
+          properties: {
+            after: workflowRunAfter,
+            before: workflowRunBefore,
+            updatedFields,
+            diff: objectRecordChangedValues(
+              workflowRunBefore,
+              workflowRunAfter,
+              updatedFields,
+              objectMetadata,
+            ),
+          },
+        },
+      ],
+      workspaceId,
+    });
   }
 }

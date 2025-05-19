@@ -10,7 +10,7 @@ import {
 import * as Sentry from '@sentry/node';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
-import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
@@ -20,13 +20,13 @@ import { parseArrayEnvVar } from 'src/utils/parse-array-env-var';
 const meterDrivers = parseArrayEnvVar(
   process.env.METER_DRIVER,
   Object.values(MeterDriver),
-  [MeterDriver.Console],
+  [],
 );
 
 if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry) {
   Sentry.init({
     environment: process.env.SENTRY_ENVIRONMENT,
-    release: process.env.SENTRY_RELEASE,
+    release: process.env.APP_VERSION,
     dsn: process.env.SENTRY_DSN,
     integrations: [
       // TODO: Redis integration doesn't seem to work - investigate why

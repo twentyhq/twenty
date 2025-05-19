@@ -5,6 +5,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
       [ObjectPermissionEntity, RoleEntity, ObjectMetadataEntity],
       'metadata',
     ),
+    WorkspacePermissionsCacheModule,
   ],
   providers: [ObjectPermissionService],
   exports: [ObjectPermissionService],

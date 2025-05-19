@@ -4,14 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { basename, dirname, join } from 'path';
 
 import deepEqual from 'deep-equal';
-import { IsNull, Not, Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { IsNull, Not, Repository } from 'typeorm';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
-import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/serverless-function/serverless-function-executed';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -25,6 +25,7 @@ import { getLayerDependencies } from 'src/engine/core-modules/serverless/drivers
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import {
@@ -44,12 +45,13 @@ export class ServerlessFunctionService {
     @InjectRepository(ServerlessFunctionEntity, 'metadata')
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
     private readonly throttlerService: ThrottlerService,
-    private readonly environmentService: EnvironmentService,
-    private readonly analyticsService: AnalyticsService,
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly auditService: AuditService,
     @InjectMessageQueue(MessageQueue.serverlessFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
+  // @ts-expect-error legacy noImplicitAny
   async findManyServerlessFunctions(where) {
     return this.serverlessFunctionRepository.findBy(where);
   }
@@ -143,9 +145,11 @@ export class ServerlessFunctionService {
       version,
     );
 
-    const eventInput = {
-      action: 'serverlessFunction.executed',
-      payload: {
+    this.auditService
+      .createContext({
+        workspaceId,
+      })
+      .insertWorkspaceEvent(SERVERLESS_FUNCTION_EXECUTED_EVENT, {
         duration: resultServerlessFunction.duration,
         status: resultServerlessFunction.status,
         ...(resultServerlessFunction.error && {
@@ -153,14 +157,7 @@ export class ServerlessFunctionService {
         }),
         functionId: functionToExecute.id,
         functionName: functionToExecute.name,
-      },
-    };
-
-    this.analyticsService.create(
-      eventInput,
-      'serverless-function',
-      workspaceId,
-    );
+      });
 
     return resultServerlessFunction;
   }
@@ -280,6 +277,7 @@ export class ServerlessFunctionService {
 
     for (const key of Object.keys(serverlessFunctionInput.code)) {
       await this.fileStorageService.write({
+        // @ts-expect-error legacy noImplicitAny
         file: serverlessFunctionInput.code[key],
         name: basename(key),
         mimeType: undefined,
@@ -310,6 +308,7 @@ export class ServerlessFunctionService {
       const packageName = match[1].split('@', 1)[0];
       const version = match[2];
 
+      // @ts-expect-error legacy noImplicitAny
       if (packageJson.dependencies[packageName]) {
         versions[packageName] = version;
       }
@@ -346,8 +345,6 @@ export class ServerlessFunctionService {
         folder: join(draftFileFolder, file.path),
       });
     }
-
-    await this.serverlessService.build(createdServerlessFunction);
 
     return this.serverlessFunctionRepository.findOneBy({
       id: createdServerlessFunction.id,
@@ -392,8 +389,8 @@ export class ServerlessFunctionService {
     try {
       await this.throttlerService.throttle(
         `${workspaceId}-serverless-function-execution`,
-        this.environmentService.get('SERVERLESS_FUNCTION_EXEC_THROTTLE_LIMIT'),
-        this.environmentService.get('SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL'),
+        this.twentyConfigService.get('SERVERLESS_FUNCTION_EXEC_THROTTLE_LIMIT'),
+        this.twentyConfigService.get('SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL'),
       );
     } catch (error) {
       throw new ServerlessFunctionException(

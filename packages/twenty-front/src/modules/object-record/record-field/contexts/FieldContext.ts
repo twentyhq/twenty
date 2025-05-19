@@ -23,8 +23,8 @@ export type GenericFieldContextType = {
   fieldDefinition: FieldDefinition<FieldMetadata>;
   useUpdateRecord?: RecordUpdateHook;
   recordId: string;
-  hotkeyScope: string;
   isLabelIdentifier: boolean;
+  isLabelIdentifierCompact?: boolean;
   labelIdentifierLink?: string;
   clearable?: boolean;
   maxWidth?: number;
@@ -32,9 +32,10 @@ export type GenericFieldContextType = {
   overridenIsFieldEmpty?: boolean;
   displayedMaxRows?: number;
   isDisplayModeFixHeight?: boolean;
+  isReadOnly: boolean;
+  disableChipClick?: boolean;
   onOpenEditMode?: () => void;
   onCloseEditMode?: () => void;
-  isLabelHidden?: boolean;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(

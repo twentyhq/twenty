@@ -1,14 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { SemVer } from 'semver';
 import { Repository } from 'typeorm';
 
 import {
-  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  RunOnWorkspaceArgs,
-} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { UpgradeCommandRunner } from 'src/database/commands/command-runners/upgrade.command-runner';
+  AllCommands,
+  UpgradeCommandRunner,
+  VersionCommands,
+} from 'src/database/commands/command-runners/upgrade.command-runner';
 import { AddTasksAssignedToMeViewCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-add-tasks-assigned-to-me-view.command';
 import { MigrateIsSearchableForCustomObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-migrate-is-searchable-for-custom-object-metadata.command';
 import { MigrateRichTextContentPatchCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-migrate-rich-text-content-patch.command';
@@ -17,27 +16,31 @@ import { UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand } from 'src/data
 import { InitializePermissionsCommand } from 'src/database/commands/upgrade-version-command/0-44/0-44-initialize-permissions.command';
 import { UpdateViewAggregateOperationsCommand } from 'src/database/commands/upgrade-version-command/0-44/0-44-update-view-aggregate-operations.command';
 import { UpgradeCreatedByEnumCommand } from 'src/database/commands/upgrade-version-command/0-51/0-51-update-workflow-trigger-type-enum.command';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/0-52/0-52-migrate-relations-to-field-metadata.command';
+import { UpgradeDateAndDateTimeFieldsSettingsJsonCommand } from 'src/database/commands/upgrade-version-command/0-52/0-52-upgrade-settings-field';
+import { BackfillWorkflowNextStepIdsCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-backfill-workflow-next-step-ids.command';
+import { CopyTypeormMigrationsCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-copy-typeorm-migrations.command';
+import { MigrateWorkflowEventListenersToAutomatedTriggersCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-migrate-workflow-event-listeners-to-automated-triggers.command';
+import { RemoveRelationForeignKeyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-remove-relation-foreign-key-field-metadata.command';
+import { UpgradeSearchVectorOnPersonEntityCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-upgrade-search-vector-on-person-entity.command';
+import { FixStandardSelectFieldsPositionCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-fix-standard-select-fields-position.command';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
+import { FixCreatedByDefaultValueCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-created-by-default-value.command';
 
-type VersionCommands = {
-  beforeSyncMetadata: ActiveOrSuspendedWorkspacesMigrationCommandRunner[];
-  afterSyncMetadata: ActiveOrSuspendedWorkspacesMigrationCommandRunner[];
-};
 @Command({
   name: 'upgrade',
   description: 'Upgrade workspaces to the latest version',
 })
 export class UpgradeCommand extends UpgradeCommandRunner {
-  fromWorkspaceVersion = new SemVer('0.44.0');
-  private commands: VersionCommands;
+  override allCommands: AllCommands;
 
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
-    protected readonly environmentService: EnvironmentService,
+    protected readonly twentyConfigService: TwentyConfigService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     protected readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
 
@@ -54,15 +57,30 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 0.51 Commands
     protected readonly upgradeCreatedByEnumCommand: UpgradeCreatedByEnumCommand,
+
+    // 0.52 Commands
+    protected readonly upgradeDateAndDateTimeFieldsSettingsJsonCommand: UpgradeDateAndDateTimeFieldsSettingsJsonCommand,
+    protected readonly migrateRelationsToFieldMetadataCommand: MigrateRelationsToFieldMetadataCommand,
+
+    // 0.53 Commands
+    protected readonly migrateWorkflowEventListenersToAutomatedTriggersCommand: MigrateWorkflowEventListenersToAutomatedTriggersCommand,
+    protected readonly backfillWorkflowNextStepIdsCommand: BackfillWorkflowNextStepIdsCommand,
+    protected readonly copyTypeormMigrationsCommand: CopyTypeormMigrationsCommand,
+    protected readonly upgradeSearchVectorOnPersonEntityCommand: UpgradeSearchVectorOnPersonEntityCommand,
+    protected readonly removeRelationForeignKeyFieldMetadataCommand: RemoveRelationForeignKeyFieldMetadataCommand,
+
+    // 0.54 Commands
+    protected readonly fixStandardSelectFieldsPositionCommand: FixStandardSelectFieldsPositionCommand,
+    protected readonly fixCreatedByDefaultValueCommand: FixCreatedByDefaultValueCommand,
   ) {
     super(
       workspaceRepository,
-      environmentService,
+      twentyConfigService,
       twentyORMGlobalManager,
       syncWorkspaceMetadataCommand,
     );
 
-    const _commands_043: VersionCommands = {
+    const commands_043: VersionCommands = {
       beforeSyncMetadata: [
         this.migrateRichTextContentPatchCommand,
         this.migrateIsSearchableForCustomObjectMetadataCommand,
@@ -74,7 +92,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.addTasksAssignedToMeViewCommand,
       ],
     };
-    const _commands_044: VersionCommands = {
+    const commands_044: VersionCommands = {
       beforeSyncMetadata: [
         this.initializePermissionsCommand,
         this.updateViewAggregateOperationsCommand,
@@ -87,23 +105,45 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
 
-    const _commands_051: VersionCommands = {
+    const commands_051: VersionCommands = {
       beforeSyncMetadata: [this.upgradeCreatedByEnumCommand],
       afterSyncMetadata: [],
     };
 
-    this.commands = commands_050;
-  }
+    const commands_052: VersionCommands = {
+      beforeSyncMetadata: [
+        this.upgradeDateAndDateTimeFieldsSettingsJsonCommand,
+        this.migrateRelationsToFieldMetadataCommand,
+      ],
+      afterSyncMetadata: [],
+    };
 
-  override async runBeforeSyncMetadata(args: RunOnWorkspaceArgs) {
-    for (const command of this.commands.beforeSyncMetadata) {
-      await command.runOnWorkspace(args);
-    }
-  }
+    const commands_053: VersionCommands = {
+      beforeSyncMetadata: [this.removeRelationForeignKeyFieldMetadataCommand],
+      afterSyncMetadata: [
+        this.migrateWorkflowEventListenersToAutomatedTriggersCommand,
+        this.backfillWorkflowNextStepIdsCommand,
+        this.copyTypeormMigrationsCommand,
+        this.upgradeSearchVectorOnPersonEntityCommand,
+      ],
+    };
 
-  override async runAfterSyncMetadata(args: RunOnWorkspaceArgs) {
-    for (const command of this.commands.afterSyncMetadata) {
-      await command.runOnWorkspace(args);
-    }
+    const commands_054: VersionCommands = {
+      beforeSyncMetadata: [
+        this.fixStandardSelectFieldsPositionCommand,
+        this.fixCreatedByDefaultValueCommand,
+      ],
+      afterSyncMetadata: [],
+    };
+
+    this.allCommands = {
+      '0.43.0': commands_043,
+      '0.44.0': commands_044,
+      '0.50.0': commands_050,
+      '0.51.0': commands_051,
+      '0.52.0': commands_052,
+      '0.53.0': commands_053,
+      '0.54.0': commands_054,
+    };
   }
 }

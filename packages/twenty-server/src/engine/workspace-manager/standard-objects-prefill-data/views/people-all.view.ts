@@ -11,7 +11,7 @@ export const peopleAllView = (
   objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
 ) => {
   return {
-    name: 'All',
+    name: 'All People',
     objectMetadataId:
       objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.person].id,
     type: 'table',

@@ -7,9 +7,6 @@ import {
   BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
-import { IconButton } from 'twenty-ui/input';
-import { IconX } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 type FullScreenContainerProps = {
@@ -19,19 +16,22 @@ type FullScreenContainerProps = {
 };
 
 const StyledFullScreen = styled.div`
+  background: ${({ theme }) => theme.background.noisy};
   display: flex;
   flex-direction: column;
-  width: 100dvw;
-  height: 100dvh;
-  background: ${({ theme }) => theme.background.noisy};
+  width: 100%;
 `;
 
 const StyledMainContainer = styled.div`
-  border-top: 1px solid ${({ theme }) => theme.border.color.medium};
   height: calc(
-    100% - ${PAGE_BAR_MIN_HEIGHT}px - ${({ theme }) => theme.spacing(2 * 2)}
+    100% - ${PAGE_BAR_MIN_HEIGHT}px - ${({ theme }) => theme.spacing(2 * 2 + 3)}
   );
-  width: 100%;
+  padding: ${({ theme }) =>
+    `0 ${theme.spacing(3)} ${theme.spacing(3)} ${theme.spacing(3)}`};
+`;
+
+const StyledPageHeader = styled(PageHeader)`
+  padding-left: ${({ theme }) => theme.spacing(3)};
 `;
 
 export const FullScreenContainer = ({
@@ -40,25 +40,14 @@ export const FullScreenContainer = ({
   exitFullScreen,
 }: FullScreenContainerProps) => {
   const isMobile = useIsMobile();
-  const { t } = useLingui();
-
-  const handleExitFullScreen = () => {
-    exitFullScreen();
-  };
 
   return (
     <StyledFullScreen>
-      <PageHeader title={<Breadcrumb links={links} />}>
-        <IconButton
-          Icon={IconX}
-          dataTestId="close-button"
-          size={isMobile ? 'medium' : 'small'}
-          variant="secondary"
-          accent="default"
-          onClick={handleExitFullScreen}
-          ariaLabel={t`Exit Full Screen`}
-        />
-      </PageHeader>
+      <StyledPageHeader
+        title={<Breadcrumb links={links} />}
+        hasClosePageButton={!isMobile}
+        onClosePage={exitFullScreen}
+      />
       <StyledMainContainer>{children}</StyledMainContainer>
     </StyledFullScreen>
   );

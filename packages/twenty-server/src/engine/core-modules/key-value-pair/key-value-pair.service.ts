@@ -8,6 +8,8 @@ import {
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 
 export class KeyValuePairService<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   KeyValueTypesMap extends Record<string, any> = Record<string, any>,
 > {
   constructor(
@@ -73,6 +75,7 @@ export class KeyValuePairService<
     const conflictPaths = Object.keys(upsertData).filter(
       (key) =>
         ['userId', 'workspaceId', 'key'].includes(key) &&
+        // @ts-expect-error legacy noImplicitAny
         upsertData[key] !== undefined,
     );
 

@@ -17,7 +17,6 @@ type SpreadsheetKey = 'spreadsheet_key';
 
 export const mockedSpreadsheetOptions: SpreadsheetImportDialogOptions<SpreadsheetKey> =
   {
-    isOpen: true,
     onClose: () => {},
     fields: [],
     uploadStepHook: async () => [],
@@ -45,6 +44,7 @@ export const mockedSpreadsheetOptions: SpreadsheetImportDialogOptions<Spreadshee
     parseRaw: true,
     rtl: false,
     selectHeader: true,
+    availableFieldMetadataItems: [],
   };
 
 describe('useSpreadsheetImport', () => {

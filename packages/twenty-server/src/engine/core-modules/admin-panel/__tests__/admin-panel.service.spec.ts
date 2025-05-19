@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import axios from 'axios';
+
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
 import {
   AuthException,
@@ -8,17 +10,18 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 
 const UserFindOneMock = jest.fn();
 const LoginTokenServiceGenerateLoginTokenMock = jest.fn();
-const EnvironmentServiceGetAllMock = jest.fn();
+const TwentyConfigServiceGetAllMock = jest.fn();
+const TwentyConfigServiceGetVariableWithMetadataMock = jest.fn();
 
 jest.mock(
-  '../../environment/constants/environment-variables-group-metadata',
+  'src/engine/core-modules/twenty-config/constants/config-variables-group-metadata',
   () => ({
-    ENVIRONMENT_VARIABLES_GROUP_METADATA: {
+    CONFIG_VARIABLES_GROUP_METADATA: {
       SERVER_CONFIG: {
         position: 100,
         description: 'Server config description',
@@ -67,9 +70,11 @@ describe('AdminPanelService', () => {
           },
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
-            getAll: EnvironmentServiceGetAllMock,
+            getAll: TwentyConfigServiceGetAllMock,
+            getVariableWithMetadata:
+              TwentyConfigServiceGetVariableWithMetadataMock,
           },
         },
       ],
@@ -155,41 +160,53 @@ describe('AdminPanelService', () => {
     expect(UserFindOneMock).toHaveBeenCalled();
   });
 
-  describe('getEnvironmentVariablesGrouped', () => {
-    it('should correctly group and sort environment variables', () => {
-      EnvironmentServiceGetAllMock.mockReturnValue({
+  describe('getConfigVariablesGrouped', () => {
+    it('should correctly group and sort config variables', () => {
+      TwentyConfigServiceGetAllMock.mockReturnValue({
         SERVER_URL: {
           value: 'http://localhost',
           metadata: {
             group: 'SERVER_CONFIG',
             description: 'Server URL',
+            type: 'string',
+            options: undefined,
           },
+          source: 'env',
         },
         RATE_LIMIT_TTL: {
-          value: '60',
+          value: 60,
           metadata: {
             group: 'RATE_LIMITING',
             description: 'Rate limit TTL',
+            type: 'number',
+            options: undefined,
           },
+          source: 'env',
         },
         API_KEY: {
           value: 'secret-key',
           metadata: {
             group: 'SERVER_CONFIG',
             description: 'API Key',
-            sensitive: true,
+            isSensitive: true,
+            type: 'string',
+            options: undefined,
           },
+          source: 'env',
         },
         OTHER_VAR: {
           value: 'other',
           metadata: {
             group: 'OTHER',
             description: 'Other var',
+            type: 'string',
+            options: undefined,
           },
+          source: 'env',
         },
       });
 
-      const result = service.getEnvironmentVariablesGrouped();
+      const result = service.getConfigVariablesGrouped();
 
       expect(result).toEqual({
         groups: [
@@ -202,13 +219,21 @@ describe('AdminPanelService', () => {
                 name: 'API_KEY',
                 value: 'secret-key',
                 description: 'API Key',
-                sensitive: true,
+                isSensitive: true,
+                isEnvOnly: false,
+                type: 'string',
+                options: undefined,
+                source: 'env',
               },
               {
                 name: 'SERVER_URL',
                 value: 'http://localhost',
                 description: 'Server URL',
-                sensitive: false,
+                isSensitive: false,
+                isEnvOnly: false,
+                type: 'string',
+                options: undefined,
+                source: 'env',
               },
             ],
           },
@@ -219,9 +244,13 @@ describe('AdminPanelService', () => {
             variables: [
               {
                 name: 'RATE_LIMIT_TTL',
-                value: '60',
+                value: 60,
                 description: 'Rate limit TTL',
-                sensitive: false,
+                isSensitive: false,
+                isEnvOnly: false,
+                type: 'number',
+                options: undefined,
+                source: 'env',
               },
             ],
           },
@@ -234,7 +263,11 @@ describe('AdminPanelService', () => {
                 name: 'OTHER_VAR',
                 value: 'other',
                 description: 'Other var',
-                sensitive: false,
+                isSensitive: false,
+                isEnvOnly: false,
+                type: 'string',
+                options: undefined,
+                source: 'env',
               },
             ],
           },
@@ -246,10 +279,10 @@ describe('AdminPanelService', () => {
       expect(result.groups[2].name).toBe('OTHER');
     });
 
-    it('should handle empty environment variables', () => {
-      EnvironmentServiceGetAllMock.mockReturnValue({});
+    it('should handle empty config variables', () => {
+      TwentyConfigServiceGetAllMock.mockReturnValue({});
 
-      const result = service.getEnvironmentVariablesGrouped();
+      const result = service.getConfigVariablesGrouped();
 
       expect(result).toEqual({
         groups: [],
@@ -257,23 +290,166 @@ describe('AdminPanelService', () => {
     });
 
     it('should handle variables with undefined metadata fields', () => {
-      EnvironmentServiceGetAllMock.mockReturnValue({
+      TwentyConfigServiceGetAllMock.mockReturnValue({
         TEST_VAR: {
           value: 'test',
           metadata: {
             group: 'SERVER_CONFIG',
+            type: 'string',
+            options: undefined,
           },
+          source: 'env',
         },
       });
 
-      const result = service.getEnvironmentVariablesGrouped();
+      const result = service.getConfigVariablesGrouped();
 
       expect(result.groups[0].variables[0]).toEqual({
         name: 'TEST_VAR',
         value: 'test',
         description: undefined,
-        sensitive: false,
+        isSensitive: false,
+        isEnvOnly: false,
+        options: undefined,
+        source: 'env',
+        type: 'string',
       });
+    });
+  });
+
+  describe('getVersionInfo', () => {
+    const mockEnvironmentGet = jest.fn();
+    const mockAxiosGet = jest.fn();
+
+    beforeEach(() => {
+      mockEnvironmentGet.mockReset();
+      mockAxiosGet.mockReset();
+      jest.spyOn(axios, 'get').mockImplementation(mockAxiosGet);
+      service['twentyConfigService'].get = mockEnvironmentGet;
+    });
+
+    it('should return current and latest version when everything works', async () => {
+      mockEnvironmentGet.mockReturnValue('1.0.0');
+      mockAxiosGet.mockResolvedValue({
+        data: {
+          results: [
+            { name: '2.0.0' },
+            { name: '1.5.0' },
+            { name: '1.0.0' },
+            { name: 'latest' },
+          ],
+        },
+      });
+
+      const result = await service.getVersionInfo();
+
+      expect(result).toEqual({
+        currentVersion: '1.0.0',
+        latestVersion: '2.0.0',
+      });
+    });
+
+    it('should handle undefined APP_VERSION', async () => {
+      mockEnvironmentGet.mockReturnValue(undefined);
+      mockAxiosGet.mockResolvedValue({
+        data: {
+          results: [{ name: '2.0.0' }, { name: 'latest' }],
+        },
+      });
+
+      const result = await service.getVersionInfo();
+
+      expect(result).toEqual({
+        currentVersion: undefined,
+        latestVersion: '2.0.0',
+      });
+    });
+
+    it('should handle Docker Hub API error', async () => {
+      mockEnvironmentGet.mockReturnValue('1.0.0');
+      mockAxiosGet.mockRejectedValue(new Error('API Error'));
+
+      const result = await service.getVersionInfo();
+
+      expect(result).toEqual({
+        currentVersion: '1.0.0',
+        latestVersion: 'latest',
+      });
+    });
+
+    it('should handle empty Docker Hub tags', async () => {
+      mockEnvironmentGet.mockReturnValue('1.0.0');
+      mockAxiosGet.mockResolvedValue({
+        data: {
+          results: [],
+        },
+      });
+
+      const result = await service.getVersionInfo();
+
+      expect(result).toEqual({
+        currentVersion: '1.0.0',
+        latestVersion: 'latest',
+      });
+    });
+
+    it('should handle invalid semver tags', async () => {
+      mockEnvironmentGet.mockReturnValue('1.0.0');
+      mockAxiosGet.mockResolvedValue({
+        data: {
+          results: [
+            { name: '2.0.0' },
+            { name: 'invalid-version' },
+            { name: 'latest' },
+            { name: '1.0.0' },
+          ],
+        },
+      });
+
+      const result = await service.getVersionInfo();
+
+      expect(result).toEqual({
+        currentVersion: '1.0.0',
+        latestVersion: '2.0.0',
+      });
+    });
+  });
+
+  describe('getConfigVariable', () => {
+    it('should return config variable with all fields', () => {
+      TwentyConfigServiceGetVariableWithMetadataMock.mockReturnValue({
+        value: 'test-value',
+        metadata: {
+          group: 'SERVER_CONFIG',
+          description: 'Test description',
+          isSensitive: true,
+          isEnvOnly: true,
+          type: 'string',
+          options: ['option1', 'option2'],
+        },
+        source: 'env',
+      });
+
+      const result = service.getConfigVariable('SERVER_URL');
+
+      expect(result).toEqual({
+        name: 'SERVER_URL',
+        value: 'test-value',
+        description: 'Test description',
+        isSensitive: true,
+        isEnvOnly: true,
+        type: 'string',
+        options: ['option1', 'option2'],
+        source: 'env',
+      });
+    });
+
+    it('should throw error when variable not found', () => {
+      TwentyConfigServiceGetVariableWithMetadataMock.mockReturnValue(undefined);
+
+      expect(() => service.getConfigVariable('INVALID_VAR')).toThrow(
+        'Config variable INVALID_VAR not found',
+      );
     });
   });
 });

@@ -14,12 +14,13 @@ export const AvatarChip = ({
   maxWidth,
   placeholderColorSeed,
   size,
+  variant = ChipVariant.Transparent,
 }: AvatarChipProps) => (
   <Chip
     label={name}
-    variant={ChipVariant.Transparent}
+    variant={variant}
     size={size}
-    leftComponent={() => (
+    leftComponent={
       <AvatarChipsLeftComponent
         name={name}
         LeftIcon={LeftIcon}
@@ -29,7 +30,7 @@ export const AvatarChip = ({
         isIconInverted={isIconInverted}
         placeholderColorSeed={placeholderColorSeed}
       />
-    )}
+    }
     clickable={false}
     className={className}
     maxWidth={maxWidth}

@@ -1,90 +1,139 @@
-import { INITIAL_PERSON_DATA } from 'test/integration/constants/initial-person-data.constants';
 import {
-  FAKE_PERSON_ID,
-  PERSON_2_ID,
-} from 'test/integration/constants/mock-person-ids.constants';
+  NOT_EXISTING_TEST_PERSON_ID,
+  TEST_PERSON_1_ID,
+} from 'test/integration/constants/test-person-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
+import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
+import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 
-describe.skip('Core REST API Update One endpoint', () => {
-  let initialPersonData;
+describe('Core REST API Update One endpoint', () => {
+  const updatedData = {
+    name: {
+      firstName: 'Updated',
+      lastName: 'Person',
+    },
+    emails: {
+      primaryEmail: 'updated@example.com',
+      additionalEmails: ['extra@example.com'],
+    },
+    city: generateRecordName(TEST_PERSON_1_ID),
+  };
 
   beforeAll(async () => {
-    initialPersonData = INITIAL_PERSON_DATA;
-
+    await deleteAllRecords('person');
+    await makeRestAPIRequest({
+      method: 'post',
+      path: '/companies',
+      body: {
+        id: TEST_COMPANY_1_ID,
+        domainName: {
+          primaryLinkUrl: TEST_PRIMARY_LINK_URL,
+        },
+      },
+    });
     await makeRestAPIRequest({
       method: 'post',
       path: `/people`,
-      body: initialPersonData,
-    }).expect(200);
+      body: {
+        id: TEST_PERSON_1_ID,
+        companyId: TEST_COMPANY_1_ID,
+      },
+    });
   });
 
-  afterAll(async () => {
+  it('should update an existing person (name, emails, and city)', async () => {
     await makeRestAPIRequest({
-      method: 'delete',
-      path: `/people/${PERSON_2_ID}`,
-    }).expect(200);
-  });
-
-  it('3.a. should update an existing person (name, emails, and city)', async () => {
-    const updatedData = {
-      name: {
-        firstName: 'Updated',
-        lastName: 'Person',
-      },
-      emails: {
-        primaryEmail: 'updated@example.com',
-        additionalEmails: ['extra@example.com'],
-      },
-      city: generateRecordName(PERSON_2_ID),
-    };
-
-    const response = await makeRestAPIRequest({
       method: 'patch',
-      path: `/people/${PERSON_2_ID}`,
+      path: `/people/${TEST_PERSON_1_ID}`,
       body: updatedData,
-    }).expect(200);
-
-    const updatedPerson = response.body.data.updatePerson;
-
-    expect(updatedPerson.id).toBe(PERSON_2_ID);
-    expect(updatedPerson.name.firstName).toBe(updatedData.name.firstName);
-    expect(updatedPerson.name.lastName).toBe(updatedData.name.lastName);
-    expect(updatedPerson.emails.primaryEmail).toBe(
-      updatedData.emails.primaryEmail,
-    );
-    expect(updatedPerson.emails.additionalEmails).toEqual(
-      updatedData.emails.additionalEmails,
-    );
-    expect(updatedPerson.city).toBe(updatedData.city);
-
-    expect(updatedPerson.jobTitle).toBe(initialPersonData.jobTitle);
-    expect(updatedPerson.companyId).toBe(initialPersonData.companyId);
-  });
-
-  it('3.b. should return a BadRequestException when trying to update a non-existing person', async () => {
-    await makeRestAPIRequest({
-      method: 'patch',
-      path: `/people/${FAKE_PERSON_ID}`,
-      body: { city: 'NonExistingCity' },
     })
-      .expect(400)
+      .expect(200)
       .expect((res) => {
-        expect(res.body.error).toBe('BadRequestException');
-        expect(res.body.messages[0]).toContain('Record ID not found');
+        const updatedPerson = res.body.data.updatePerson;
+
+        expect(updatedPerson.id).toBe(TEST_PERSON_1_ID);
+        expect(updatedPerson.name.firstName).toBe(updatedData.name.firstName);
+        expect(updatedPerson.name.lastName).toBe(updatedData.name.lastName);
+        expect(updatedPerson.emails.primaryEmail).toBe(
+          updatedData.emails.primaryEmail,
+        );
+        expect(updatedPerson.emails.additionalEmails).toEqual(
+          updatedData.emails.additionalEmails,
+        );
+        expect(updatedPerson.city).toBe(updatedData.city);
+
+        expect(updatedPerson.jobTitle).toBe('');
+        expect(updatedPerson.companyId).toBe(TEST_COMPANY_1_ID);
       });
   });
 
-  it('3.c. should return an UnauthorizedException when an invalid token is provided', async () => {
+  it('should support depth 0 parameter', async () => {
     await makeRestAPIRequest({
       method: 'patch',
-      path: `/people/${PERSON_2_ID}`,
-      headers: { authorization: 'Bearer invalid-token' },
-      body: { city: 'InvalidTokenCity' },
+      path: `/people/${TEST_PERSON_1_ID}?depth=0`,
+      body: updatedData,
     })
-      .expect(401)
+      .expect(200)
       .expect((res) => {
-        expect(res.body.error).toBe('UNAUTHENTICATED');
+        const updatedPerson = res.body.data.updatePerson;
+
+        expect(updatedPerson.companyId).toBeDefined();
+        expect(updatedPerson.company).not.toBeDefined();
+      });
+  });
+
+  it('should support depth 1 parameter', async () => {
+    await makeRestAPIRequest({
+      method: 'patch',
+      path: `/people/${TEST_PERSON_1_ID}?depth=1`,
+      body: updatedData,
+    })
+      .expect(200)
+      .expect((res) => {
+        const updatedPerson = res.body.data.updatePerson;
+
+        expect(updatedPerson.company).toBeDefined();
+        expect(updatedPerson.company.domainName.primaryLinkUrl).toBe(
+          TEST_PRIMARY_LINK_URL,
+        );
+        expect(updatedPerson.company.people).not.toBeDefined();
+      });
+  });
+
+  it('should support depth 2 parameter', async () => {
+    await makeRestAPIRequest({
+      method: 'patch',
+      path: `/people/${TEST_PERSON_1_ID}?depth=2`,
+      body: updatedData,
+    })
+      .expect(200)
+      .expect((res) => {
+        const updatedPerson = res.body.data.updatePerson;
+
+        expect(updatedPerson.company.people).toBeDefined();
+
+        const depth2Person = updatedPerson.company.people.find(
+          // @ts-expect-error legacy noImplicitAny
+          (p) => p.id === updatedPerson.id,
+        );
+
+        expect(depth2Person).toBeDefined();
+      });
+  });
+
+  it('should return a EntityNotFoundError when trying to update a non-existing person', async () => {
+    await makeRestAPIRequest({
+      method: 'patch',
+      path: `/people/${NOT_EXISTING_TEST_PERSON_ID}`,
+    })
+      .expect(400)
+      .expect((res) => {
+        expect(res.body.messages[0]).toContain(
+          `Could not find any entity of type "person"`,
+        );
+        expect(res.body.error).toBe('EntityNotFoundError');
       });
   });
 });

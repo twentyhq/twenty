@@ -4,8 +4,6 @@ import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpe
 import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useRecoilState } from 'recoil';
-import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
-import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
 import {
   IconComponent,
   IconList,
@@ -13,6 +11,8 @@ import {
   IconSettings,
 } from 'twenty-ui/display';
 import { NavigationBar } from 'twenty-ui/navigation';
+import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
+import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
 
 type NavigationBarItemName = 'main' | 'search' | 'tasks' | 'settings';
 
@@ -25,7 +25,6 @@ export const MobileNavigationBar = () => {
     useRecoilState(isNavigationDrawerExpandedState);
   const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
     useRecoilState(currentMobileNavigationDrawerState);
-
   const { openSettingsMenu } = useOpenSettingsMenu();
 
   const activeItemName = isNavigationDrawerExpanded

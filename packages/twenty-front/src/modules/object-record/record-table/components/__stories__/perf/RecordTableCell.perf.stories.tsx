@@ -23,9 +23,9 @@ import { RecordTableContextProvider } from '@/object-record/record-table/context
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockPerformance } from './mock';
-import { ComponentDecorator } from 'twenty-ui/testing';
 
 const RelationFieldValueSetterEffect = () => {
   const setEntity = useSetRecoilState(
@@ -93,7 +93,7 @@ const meta: Meta = {
                     onOpenTableCell: () => {},
                     onMoveFocus: () => {},
                     onCloseTableCell: () => {},
-                    onMoveSoftFocusToCurrentCell: () => {},
+                    onMoveHoverToCurrentCell: () => {},
                     onActionMenuDropdownOpened: () => {},
                     onCellMouseEnter: () => {},
                   }}
@@ -110,7 +110,6 @@ const meta: Meta = {
                             mockPerformance.entityValue.__typename.toLocaleLowerCase(),
                         }) + mockPerformance.recordId,
                       isSelected: false,
-                      isPendingRow: false,
                       inView: true,
                     }}
                   >
@@ -123,10 +122,7 @@ const meta: Meta = {
                       <RecordTableCellContext.Provider
                         value={{
                           columnDefinition: mockPerformance.fieldDefinition,
-                          columnIndex: 0,
                           cellPosition: { row: 0, column: 0 },
-                          hasSoftFocus: false,
-                          isInEditMode: false,
                         }}
                       >
                         <FieldContext.Provider
@@ -136,7 +132,7 @@ const meta: Meta = {
                             fieldDefinition: {
                               ...mockPerformance.fieldDefinition,
                             },
-                            hotkeyScope: 'hotkey-scope',
+                            isReadOnly: false,
                           }}
                         >
                           <RelationFieldValueSetterEffect />

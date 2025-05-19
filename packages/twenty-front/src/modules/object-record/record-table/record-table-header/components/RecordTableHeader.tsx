@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableHeaderCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCell';
 import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn';
@@ -26,21 +27,21 @@ const StyledTableHead = styled.thead`
     th:nth-of-type(1) {
       position: sticky;
       left: 0;
-      z-index: 5;
+      z-index: ${TABLE_Z_INDEX.header.default};
       transition: 0.3s ease;
     }
 
     th:nth-of-type(2) {
       position: sticky;
       left: 11px;
-      z-index: 5;
+      z-index: ${TABLE_Z_INDEX.header.default};
       transition: 0.3s ease;
     }
 
     th:nth-of-type(3) {
       position: sticky;
       left: 43px;
-      z-index: 5;
+      z-index: ${TABLE_Z_INDEX.header.default};
       transition: 0.3s ease;
 
       &::after {
@@ -65,7 +66,7 @@ const StyledTableHead = styled.thead`
     th {
       position: sticky;
       top: 0;
-      z-index: 5;
+      z-index: ${TABLE_Z_INDEX.header.default};
     }
   }
 
@@ -73,7 +74,7 @@ const StyledTableHead = styled.thead`
     th:nth-of-type(1),
     th:nth-of-type(2),
     th:nth-of-type(3) {
-      z-index: 10;
+      z-index: ${TABLE_Z_INDEX.header.stickyColumn};
     }
   }
 `;

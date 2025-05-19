@@ -8,9 +8,9 @@ import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditB
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateDefaultRecordChipData';
-import { FieldContext } from '../../contexts/FieldContext';
-import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
-import { isFieldRelation } from '../../types/guards/isFieldRelation';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
+import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRelationToOneFieldDisplay = () => {
@@ -60,9 +60,8 @@ export const useRelationToOneFieldDisplay = () => {
     : (record: ObjectRecord) =>
         generateDefaultRecordChipData({
           record,
-          // @ts-expect-error Above assertions does not infer that fieldDefinition.metadata.objectMetadataNameSingular always defined
           objectNameSingular:
-            fieldDefinition.metadata.objectMetadataNameSingular,
+            fieldDefinition.metadata.relationObjectMetadataNameSingular,
         });
 
   return {

@@ -1,4 +1,5 @@
 import {
+  FieldActorValue,
   FieldAddressValue,
   FieldCurrencyValue,
   FieldEmailsValue,
@@ -46,5 +47,5 @@ export const COMPOSITE_FIELD_IMPORT_LABELS = {
   } satisfies Partial<CompositeFieldLabels<FieldRichTextV2Value>>,
   [FieldMetadataType.ACTOR]: {
     sourceLabel: 'Source',
-  },
+  } satisfies Partial<CompositeFieldLabels<FieldActorValue>>,
 };

@@ -2,9 +2,9 @@ import { HttpException } from '@nestjs/common';
 
 import { GraphQLError } from 'graphql';
 
-import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 import { ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {
@@ -18,6 +18,7 @@ import {
   TimeoutError,
   ValidationError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { CustomException } from 'src/utils/custom-exception';
 
 const graphQLPredefinedExceptions = {
   400: ValidationError,
@@ -46,44 +47,63 @@ export const handleExceptionAndConvertToGraphQLError = (
   user?: ExceptionHandlerUser,
   workspace?: ExceptionHandlerWorkspace,
 ): BaseGraphQLError => {
-  handleException(exception, exceptionHandlerService, user, workspace);
+  handleException({
+    exception,
+    exceptionHandlerService,
+    user,
+    workspace,
+  });
 
   return convertExceptionToGraphQLError(exception);
 };
 
-export const shouldFilterException = (exception: Error): boolean => {
+export const shouldCaptureException = (
+  exception: Error,
+  statusCode?: number,
+): boolean => {
   if (
     exception instanceof GraphQLError &&
     (exception?.extensions?.http?.status ?? 500) < 500
   ) {
-    return true;
+    return false;
   }
 
   if (
     exception instanceof BaseGraphQLError &&
     graphQLErrorCodesToFilter.includes(exception?.extensions?.code)
   ) {
-    return true;
+    return false;
   }
 
   if (exception instanceof HttpException && exception.getStatus() < 500) {
-    return true;
+    return false;
   }
 
-  return false;
+  if (statusCode && statusCode < 500) {
+    return false;
+  }
+
+  return true;
 };
 
-export const handleException = (
-  exception: Error,
-  exceptionHandlerService: ExceptionHandlerService,
-  user?: ExceptionHandlerUser,
-  workspace?: ExceptionHandlerWorkspace,
-): void => {
-  if (shouldFilterException(exception)) {
-    return;
+export const handleException = <T extends Error | CustomException>({
+  exception,
+  exceptionHandlerService,
+  user,
+  workspace,
+  statusCode,
+}: {
+  exception: T;
+  exceptionHandlerService: ExceptionHandlerService;
+  user?: ExceptionHandlerUser;
+  workspace?: ExceptionHandlerWorkspace;
+  statusCode?: number;
+}): T => {
+  if (shouldCaptureException(exception, statusCode)) {
+    exceptionHandlerService.captureExceptions([exception], { user, workspace });
   }
 
-  exceptionHandlerService.captureExceptions([exception], { user, workspace });
+  return exception;
 };
 
 export const convertExceptionToGraphQLError = (
@@ -104,8 +124,10 @@ const convertHttpExceptionToGraphql = (exception: HttpException) => {
   let error: BaseGraphQLError;
 
   if (status in graphQLPredefinedExceptions) {
+    // @ts-expect-error legacy noImplicitAny
     const message = exception.getResponse()['message'] ?? exception.message;
 
+    // @ts-expect-error legacy noImplicitAny
     error = new graphQLPredefinedExceptions[exception.getStatus()](message);
   } else {
     error = new BaseGraphQLError(

@@ -12,6 +12,7 @@ export function IsValidMetadataName(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       validator: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         validate(value: any) {
           return /^(?!(?:not|or|and|Int|Float|Boolean|String|ID)$)[^'"\\;.=*/]+$/.test(
             value,

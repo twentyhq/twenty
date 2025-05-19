@@ -6,6 +6,8 @@ import { mergeUserVars } from 'src/engine/core-modules/user/user-vars/utils/merg
 
 @Injectable()
 export class UserVarsService<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   KeyValueTypesMap extends Record<string, any> = Record<string, any>,
 > {
   constructor(private readonly keyValuePairService: KeyValuePairService) {}
@@ -19,11 +21,12 @@ export class UserVarsService<
     workspaceId?: string;
     key: Extract<K, string>;
   }): Promise<KeyValueTypesMap[K]> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let userVarWorkspaceLevel: any[] = [];
 
     if (workspaceId) {
       userVarWorkspaceLevel = await this.keyValuePairService.get({
-        type: KeyValuePairType.USER_VAR,
+        type: KeyValuePairType.USER_VARIABLE,
         userId: null,
         workspaceId,
         key,
@@ -36,11 +39,12 @@ export class UserVarsService<
       );
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let userVarUserLevel: any[] = [];
 
     if (userId) {
       userVarUserLevel = await this.keyValuePairService.get({
-        type: KeyValuePairType.USER_VAR,
+        type: KeyValuePairType.USER_VARIABLE,
         userId,
         workspaceId: null,
         key,
@@ -51,11 +55,12 @@ export class UserVarsService<
       throw new Error(`Multiple values found for key ${key} at user level`);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let userVarWorkspaceAndUserLevel: any[] = [];
 
     if (userId && workspaceId) {
       userVarWorkspaceAndUserLevel = await this.keyValuePairService.get({
-        type: KeyValuePairType.USER_VAR,
+        type: KeyValuePairType.USER_VARIABLE,
         userId,
         workspaceId,
         key,
@@ -81,14 +86,16 @@ export class UserVarsService<
   }: {
     userId?: string;
     workspaceId?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }): Promise<Map<Extract<keyof KeyValueTypesMap, string>, any>> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let result: any[] = [];
 
     if (userId) {
       result = [
         ...result,
         ...(await this.keyValuePairService.get({
-          type: KeyValuePairType.USER_VAR,
+          type: KeyValuePairType.USER_VARIABLE,
           userId,
           workspaceId: null,
         })),
@@ -99,7 +106,7 @@ export class UserVarsService<
       result = [
         ...result,
         ...(await this.keyValuePairService.get({
-          type: KeyValuePairType.USER_VAR,
+          type: KeyValuePairType.USER_VARIABLE,
           userId: null,
           workspaceId,
         })),
@@ -110,7 +117,7 @@ export class UserVarsService<
       result = [
         ...result,
         ...(await this.keyValuePairService.get({
-          type: KeyValuePairType.USER_VAR,
+          type: KeyValuePairType.USER_VARIABLE,
           userId,
           workspaceId,
         })),
@@ -136,7 +143,7 @@ export class UserVarsService<
       workspaceId,
       key: key,
       value,
-      type: KeyValuePairType.USER_VAR,
+      type: KeyValuePairType.USER_VARIABLE,
     });
   }
 
@@ -153,7 +160,7 @@ export class UserVarsService<
       userId,
       workspaceId,
       key,
-      type: KeyValuePairType.USER_VAR,
+      type: KeyValuePairType.USER_VARIABLE,
     });
   }
 }

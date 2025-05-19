@@ -1,10 +1,13 @@
+import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { settingsRoleIdsState } from '@/settings/roles/states/settingsRoleIdsState';
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useEffect } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Role, useGetRolesQuery } from '~/generated/graphql';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const SettingsRolesQueryEffect = () => {
   const { data, loading } = useGetRolesQuery({
@@ -16,11 +19,19 @@ export const SettingsRolesQueryEffect = () => {
   );
 
   const populateRoles = useRecoilCallback(
-    ({ set }) =>
+    ({ set, snapshot }) =>
       (roles: Role[]) => {
         const roleIds = roles.map((role) => role.id);
         set(settingsRoleIdsState, roleIds);
         roles.forEach((role) => {
+          const persistedRole = getSnapshotValue(
+            snapshot,
+            settingsPersistedRoleFamilyState(role.id),
+          );
+          if (isDeeplyEqual(role, persistedRole)) {
+            return;
+          }
+          set(settingsDraftRoleFamilyState(role.id), role);
           set(settingsPersistedRoleFamilyState(role.id), role);
         });
       },

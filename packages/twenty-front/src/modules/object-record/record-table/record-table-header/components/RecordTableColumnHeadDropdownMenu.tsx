@@ -3,13 +3,13 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
-import { onToggleColumnFilterComponentState } from '@/object-record/record-table/states/onToggleColumnFilterComponentState';
+import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
+import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useTableColumns } from '../../hooks/useTableColumns';
-import { ColumnDefinition } from '../../types/ColumnDefinition';
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -18,15 +18,24 @@ import {
   IconSortDescending,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { useTableColumns } from '../../hooks/useTableColumns';
+import { ColumnDefinition } from '../../types/ColumnDefinition';
 
 export type RecordTableColumnHeadDropdownMenuProps = {
   column: ColumnDefinition<FieldMetadata>;
 };
 
+const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
+  z-index: ${({ theme }) => theme.lastLayerZIndex};
+`;
+
 export const RecordTableColumnHeadDropdownMenu = ({
   column,
 }: RecordTableColumnHeadDropdownMenuProps) => {
   const { t } = useLingui();
+
+  const { toggleScrollXWrapper, toggleScrollYWrapper } =
+    useToggleScrollWrapper();
 
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
@@ -46,16 +55,21 @@ export const RecordTableColumnHeadDropdownMenu = ({
 
   const { closeDropdown } = useDropdown(column.fieldMetadataId + '-header');
 
-  const handleColumnMoveLeft = () => {
+  const closeDropdownAndToggleScroll = () => {
     closeDropdown();
+    toggleScrollXWrapper(true);
+    toggleScrollYWrapper(false);
+  };
 
+  const handleColumnMoveLeft = () => {
+    closeDropdownAndToggleScroll();
     if (!canMoveLeft) return;
 
     handleMoveTableColumn('left', column);
   };
 
   const handleColumnMoveRight = () => {
-    closeDropdown();
+    closeDropdownAndToggleScroll();
 
     if (!canMoveRight) return;
 
@@ -63,27 +77,27 @@ export const RecordTableColumnHeadDropdownMenu = ({
   };
 
   const handleColumnVisibility = () => {
-    closeDropdown();
+    closeDropdownAndToggleScroll();
     handleColumnVisibilityChange(column);
   };
 
-  const onToggleColumnFilter = useRecoilComponentValueV2(
-    onToggleColumnFilterComponentState,
-  );
   const onToggleColumnSort = useRecoilComponentValueV2(
     onToggleColumnSortComponentState,
   );
 
   const handleSortClick = () => {
-    closeDropdown();
+    closeDropdownAndToggleScroll();
 
     onToggleColumnSort?.(column.fieldMetadataId);
   };
 
-  const handleFilterClick = () => {
-    closeDropdown();
+  const { openRecordFilterChipFromTableHeader } =
+    useOpenRecordFilterChipFromTableHeader();
 
-    onToggleColumnFilter?.(column.fieldMetadataId);
+  const handleFilterClick = () => {
+    closeDropdownAndToggleScroll();
+
+    openRecordFilterChipFromTableHeader(column.fieldMetadataId);
   };
 
   const isSortable = column.isSortable === true;
@@ -93,7 +107,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const canHide = column.isLabelIdentifier !== true;
 
   return (
-    <DropdownMenuItemsContainer>
+    <StyledDropdownMenuItemsContainer>
       {isFilterable && (
         <MenuItem
           LeftIcon={IconFilter}
@@ -130,6 +144,6 @@ export const RecordTableColumnHeadDropdownMenu = ({
           text={t`Hide`}
         />
       )}
-    </DropdownMenuItemsContainer>
+    </StyledDropdownMenuItemsContainer>
   );
 };

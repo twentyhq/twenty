@@ -1,15 +1,25 @@
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
-import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/workflow-diagram/states/workflowDiagramTriggerNodeSelectionState';
+import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
+import { workflowDiagramTriggerNodeSelectionComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramTriggerNodeSelectionComponentState';
 import { act, renderHook } from '@testing-library/react';
 import { useReactFlow } from '@xyflow/react';
-import { RecoilRoot, useRecoilState } from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 jest.mock('@xyflow/react', () => ({
   useReactFlow: jest.fn(),
 }));
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
+  <RecoilRoot>
+    <WorkflowVisualizerComponentInstanceContext.Provider
+      value={{
+        instanceId: 'test-instance-id',
+      }}
+    >
+      {children}
+    </WorkflowVisualizerComponentInstanceContext.Provider>
+  </RecoilRoot>
 );
 
 describe('useTriggerNodeSelection', () => {
@@ -31,7 +41,9 @@ describe('useTriggerNodeSelection', () => {
         const [
           workflowDiagramTriggerNodeSelection,
           setWorkflowDiagramTriggerNodeSelection,
-        ] = useRecoilState(workflowDiagramTriggerNodeSelectionState);
+        ] = useRecoilComponentStateV2(
+          workflowDiagramTriggerNodeSelectionComponentState,
+        );
 
         useTriggerNodeSelection();
 

@@ -13,6 +13,7 @@ import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { SettingPermissionModule } from 'src/engine/metadata-modules/setting-permission/setting-permission.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
     FeatureFlagModule,
     ObjectPermissionModule,
     SettingPermissionModule,
+    WorkspacePermissionsCacheModule,
   ],
   providers: [RoleService, RoleResolver],
   exports: [RoleService],

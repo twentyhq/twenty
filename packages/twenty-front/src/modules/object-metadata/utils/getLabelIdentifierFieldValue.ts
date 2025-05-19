@@ -9,16 +9,16 @@ export const getLabelIdentifierFieldValue = (
   labelIdentifierFieldMetadataItem: FieldMetadataItem | undefined,
   objectNameSingular: string,
 ): string => {
+  if (!isDefined(labelIdentifierFieldMetadataItem)) {
+    return record.id;
+  }
+
   if (
     objectNameSingular === CoreObjectNameSingular.WorkspaceMember ||
-    labelIdentifierFieldMetadataItem?.type === FieldMetadataType.FULL_NAME
+    labelIdentifierFieldMetadataItem.type === FieldMetadataType.FULL_NAME
   ) {
-    return `${record.name?.firstName ?? ''} ${record.name?.lastName ?? ''}`;
+    return `${record[labelIdentifierFieldMetadataItem.name]?.firstName ?? ''} ${record[labelIdentifierFieldMetadataItem.name]?.lastName ?? ''}`;
   }
 
-  if (isDefined(labelIdentifierFieldMetadataItem?.name)) {
-    return record[labelIdentifierFieldMetadataItem.name];
-  }
-
-  return '';
+  return record[labelIdentifierFieldMetadataItem.name] ?? '';
 };

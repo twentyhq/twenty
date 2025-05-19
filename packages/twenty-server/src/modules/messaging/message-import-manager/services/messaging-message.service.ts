@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
@@ -16,8 +16,11 @@ export class MessagingMessageService {
   public async saveMessagesWithinTransaction(
     messages: MessageWithParticipants[],
     messageChannelId: string,
-    transactionManager: EntityManager,
-  ): Promise<Map<string, string>> {
+    transactionManager: WorkspaceEntityManager,
+  ): Promise<{
+    createdMessages: Partial<MessageWorkspaceEntity>[];
+    messageExternalIdsAndIdsMap: Map<string, string>;
+  }> {
     const messageChannelMessageAssociationRepository =
       await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
         'messageChannelMessageAssociation',
@@ -34,6 +37,7 @@ export class MessagingMessageService {
       );
 
     const messageExternalIdsAndIdsMap = new Map<string, string>();
+    const createdMessages: Partial<MessageWorkspaceEntity>[] = [];
 
     for (const message of messages) {
       const existingMessageChannelMessageAssociation =
@@ -58,19 +62,39 @@ export class MessagingMessageService {
       });
 
       if (existingMessage) {
-        await messageChannelMessageAssociationRepository.upsert(
-          {
-            messageChannelId,
-            messageId: existingMessage.id,
-            messageExternalId: message.externalId,
-            messageThreadExternalId: message.messageThreadExternalId,
-          },
-          {
-            conflictPaths: ['messageChannelId', 'messageId'],
-            indexPredicate: '"deletedAt" IS NULL',
-          },
-          transactionManager,
-        );
+        const existingAssociation =
+          await messageChannelMessageAssociationRepository.findOne(
+            {
+              where: {
+                messageChannelId,
+                messageId: existingMessage.id,
+              },
+            },
+            transactionManager,
+          );
+
+        if (existingAssociation) {
+          await messageChannelMessageAssociationRepository.update(
+            {
+              id: existingAssociation.id,
+            },
+            {
+              messageExternalId: message.externalId,
+              messageThreadExternalId: message.messageThreadExternalId,
+            },
+            transactionManager,
+          );
+        } else {
+          await messageChannelMessageAssociationRepository.insert(
+            {
+              messageChannelId,
+              messageId: existingMessage.id,
+              messageExternalId: message.externalId,
+              messageThreadExternalId: message.messageThreadExternalId,
+            },
+            transactionManager,
+          );
+        }
 
         continue;
       }
@@ -101,18 +125,18 @@ export class MessagingMessageService {
       }
 
       const newMessageId = v4();
+      const messageToCreate = {
+        id: newMessageId,
+        headerMessageId: message.headerMessageId,
+        subject: message.subject,
+        receivedAt: message.receivedAt,
+        text: message.text,
+        messageThreadId: newOrExistingMessageThreadId,
+      };
 
-      await messageRepository.insert(
-        {
-          id: newMessageId,
-          headerMessageId: message.headerMessageId,
-          subject: message.subject,
-          receivedAt: message.receivedAt,
-          text: message.text,
-          messageThreadId: newOrExistingMessageThreadId,
-        },
-        transactionManager,
-      );
+      await messageRepository.insert(messageToCreate, transactionManager);
+
+      createdMessages.push(messageToCreate);
 
       messageExternalIdsAndIdsMap.set(message.externalId, newMessageId);
 
@@ -128,6 +152,9 @@ export class MessagingMessageService {
       );
     }
 
-    return messageExternalIdsAndIdsMap;
+    return {
+      createdMessages,
+      messageExternalIdsAndIdsMap,
+    };
   }
 }

@@ -7,7 +7,6 @@ import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetad
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
 import { SELECT_COUNTRY_DROPDOWN_ID } from '@/ui/input/components/internal/country/constants/SelectCountryDropdownId';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -77,7 +76,7 @@ export const AddressInput = ({
   const addressStreet2InputRef = useRef<HTMLInputElement>(null);
   const addressCityInputRef = useRef<HTMLInputElement>(null);
   const addressStateInputRef = useRef<HTMLInputElement>(null);
-  const addressPostCodeInputRef = useRef<HTMLInputElement>(null);
+  const addressPostcodeInputRef = useRef<HTMLInputElement>(null);
 
   const inputRefs: {
     [key in keyof FieldAddressDraftValue]?: RefObject<HTMLInputElement>;
@@ -86,15 +85,11 @@ export const AddressInput = ({
     addressStreet2: addressStreet2InputRef,
     addressCity: addressCityInputRef,
     addressState: addressStateInputRef,
-    addressPostcode: addressPostCodeInputRef,
+    addressPostcode: addressPostcodeInputRef,
   };
 
   const [focusPosition, setFocusPosition] =
     useState<keyof FieldAddressDraftValue>('addressStreet1');
-
-  const { closeDropdown: closeCountryDropdown } = useDropdown(
-    SELECT_COUNTRY_DROPDOWN_ID,
-  );
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -193,7 +188,6 @@ export const AddressInput = ({
 
       event.stopImmediatePropagation();
 
-      closeCountryDropdown();
       onClickOutside?.(event, internalValue);
     },
     enabled: isDefined(onClickOutside),

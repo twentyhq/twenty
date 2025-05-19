@@ -1,7 +1,8 @@
+import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
-import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
+import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { FieldMetadataType } from '~/generated/graphql';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
@@ -219,31 +220,124 @@ describe('should work as expected for the different field types', () => {
         {
           and: [
             {
-              not: {
-                address: {
-                  addressStreet1: {
-                    ilike: '%123 Main St%',
+              or: [
+                {
+                  not: {
+                    address: {
+                      addressStreet1: {
+                        ilike: '%123 Main St%',
+                      },
+                    },
                   },
                 },
-              },
+                {
+                  address: {
+                    addressStreet1: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
             },
             {
-              not: {
-                address: {
-                  addressStreet2: {
-                    ilike: '%123 Main St%',
+              or: [
+                {
+                  not: {
+                    address: {
+                      addressStreet2: {
+                        ilike: '%123 Main St%',
+                      },
+                    },
                   },
                 },
-              },
+                {
+                  address: {
+                    addressStreet2: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
             },
             {
-              not: {
-                address: {
-                  addressCity: {
-                    ilike: '%123 Main St%',
+              or: [
+                {
+                  not: {
+                    address: {
+                      addressCity: {
+                        ilike: '%123 Main St%',
+                      },
+                    },
                   },
                 },
-              },
+                {
+                  address: {
+                    addressCity: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
+            },
+            {
+              or: [
+                {
+                  not: {
+                    address: {
+                      addressState: {
+                        ilike: '%123 Main St%',
+                      },
+                    },
+                  },
+                },
+                {
+                  address: {
+                    addressState: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
+            },
+            {
+              or: [
+                {
+                  not: {
+                    address: {
+                      addressPostcode: {
+                        ilike: '%123 Main St%',
+                      },
+                    },
+                  },
+                },
+                {
+                  address: {
+                    addressPostcode: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
+            },
+            {
+              or: [
+                {
+                  not: {
+                    address: {
+                      addressCountry: {
+                        ilike: '%123 Main St%',
+                      },
+                    },
+                  },
+                },
+                {
+                  address: {
+                    addressCountry: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
             },
           ],
         },
@@ -546,6 +640,20 @@ describe('should work as expected for the different field types', () => {
                 },
               },
             },
+            {
+              phones: {
+                primaryPhoneCallingCode: {
+                  ilike: '%1234567890%',
+                },
+              },
+            },
+            {
+              phones: {
+                additionalPhones: {
+                  like: '%1234567890%',
+                },
+              },
+            },
           ],
         },
         {
@@ -559,6 +667,35 @@ describe('should work as expected for the different field types', () => {
                 },
               },
             },
+            {
+              not: {
+                phones: {
+                  primaryPhoneCallingCode: {
+                    ilike: '%1234567890%',
+                  },
+                },
+              },
+            },
+            {
+              or: [
+                {
+                  not: {
+                    phones: {
+                      additionalPhones: {
+                        like: '%1234567890%',
+                      },
+                    },
+                  },
+                },
+                {
+                  phones: {
+                    additionalPhones: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
+            },
           ],
         },
         {
@@ -567,16 +704,40 @@ describe('should work as expected for the different field types', () => {
               or: [
                 {
                   phones: {
-                    primaryPhoneNumber: {
-                      is: 'NULL',
-                    },
+                    primaryPhoneNumber: { is: 'NULL' },
                   },
                 },
                 {
                   phones: {
-                    primaryPhoneNumber: {
-                      ilike: '',
-                    },
+                    primaryPhoneNumber: { ilike: '' },
+                  },
+                },
+              ],
+            },
+            {
+              or: [
+                {
+                  phones: {
+                    primaryPhoneCallingCode: { is: 'NULL' },
+                  },
+                },
+                {
+                  phones: {
+                    primaryPhoneCallingCode: { ilike: '' },
+                  },
+                },
+              ],
+            },
+            {
+              or: [
+                {
+                  phones: {
+                    additionalPhones: { is: 'NULL' },
+                  },
+                },
+                {
+                  phones: {
+                    additionalPhones: { like: '[]' },
                   },
                 },
               ],
@@ -590,16 +751,40 @@ describe('should work as expected for the different field types', () => {
                 or: [
                   {
                     phones: {
-                      primaryPhoneNumber: {
-                        is: 'NULL',
-                      },
+                      primaryPhoneNumber: { is: 'NULL' },
                     },
                   },
                   {
                     phones: {
-                      primaryPhoneNumber: {
-                        ilike: '',
-                      },
+                      primaryPhoneNumber: { ilike: '' },
+                    },
+                  },
+                ],
+              },
+              {
+                or: [
+                  {
+                    phones: {
+                      primaryPhoneCallingCode: { is: 'NULL' },
+                    },
+                  },
+                  {
+                    phones: {
+                      primaryPhoneCallingCode: { ilike: '' },
+                    },
+                  },
+                ],
+              },
+              {
+                or: [
+                  {
+                    phones: {
+                      additionalPhones: { is: 'NULL' },
+                    },
+                  },
+                  {
+                    phones: {
+                      additionalPhones: { like: '[]' },
                     },
                   },
                 ],
@@ -680,6 +865,13 @@ describe('should work as expected for the different field types', () => {
                 },
               },
             },
+            {
+              emails: {
+                additionalEmails: {
+                  like: '%test@test.com%',
+                },
+              },
+            },
           ],
         },
         {
@@ -693,42 +885,106 @@ describe('should work as expected for the different field types', () => {
                 },
               },
             },
+            {
+              or: [
+                {
+                  not: {
+                    emails: {
+                      additionalEmails: {
+                        like: '%test@test.com%',
+                      },
+                    },
+                  },
+                },
+                {
+                  emails: {
+                    additionalEmails: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
+            },
           ],
         },
         {
-          or: [
+          and: [
             {
-              emails: {
-                primaryEmail: {
-                  ilike: '',
+              or: [
+                {
+                  emails: {
+                    primaryEmail: {
+                      eq: '',
+                    },
+                  },
                 },
-              },
+                {
+                  emails: {
+                    primaryEmail: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
             },
             {
-              emails: {
-                primaryEmail: {
-                  is: 'NULL',
+              or: [
+                {
+                  emails: {
+                    additionalEmails: {
+                      is: 'NULL',
+                    },
+                  },
                 },
-              },
+                {
+                  emails: {
+                    additionalEmails: {
+                      like: '[]',
+                    },
+                  },
+                },
+              ],
             },
           ],
         },
         {
           not: {
-            or: [
+            and: [
               {
-                emails: {
-                  primaryEmail: {
-                    ilike: '',
+                or: [
+                  {
+                    emails: {
+                      primaryEmail: {
+                        eq: '',
+                      },
+                    },
                   },
-                },
+                  {
+                    emails: {
+                      primaryEmail: {
+                        is: 'NULL',
+                      },
+                    },
+                  },
+                ],
               },
               {
-                emails: {
-                  primaryEmail: {
-                    is: 'NULL',
+                or: [
+                  {
+                    emails: {
+                      additionalEmails: {
+                        is: 'NULL',
+                      },
+                    },
                   },
-                },
+                  {
+                    emails: {
+                      additionalEmails: {
+                        like: '[]',
+                      },
+                    },
+                  },
+                ],
               },
             ],
           },
@@ -927,6 +1183,179 @@ describe('should work as expected for the different field types', () => {
           not: {
             employees: {
               is: 'NULL',
+            },
+          },
+        },
+      ],
+    });
+  });
+
+  it('currency amount micros sub field type', () => {
+    const companyMockARRFieldMetadataId =
+      companyMockObjectMetadataItem.fields.find(
+        (field) => field.name === 'annualRecurringRevenue',
+      );
+
+    const ARRFilterIsGreaterThan: RecordFilter = {
+      id: 'company-ARR-filter-is-greater-than',
+      value: '1000',
+      fieldMetadataId: companyMockARRFieldMetadataId?.id,
+      displayValue: '1000',
+      operand: RecordFilterOperand.GreaterThan,
+      subFieldName: 'amountMicros' satisfies Extract<
+        keyof FieldCurrencyValue,
+        'amountMicros'
+      >,
+      label: 'Amount',
+      type: FieldMetadataType.CURRENCY,
+    };
+
+    const ARRFilterIsLessThan: RecordFilter = {
+      id: 'company-ARR-filter-is-less-than',
+      value: '1000',
+      fieldMetadataId: companyMockARRFieldMetadataId?.id,
+      displayValue: '1000',
+      operand: RecordFilterOperand.LessThan,
+      subFieldName: 'amountMicros' satisfies Extract<
+        keyof FieldCurrencyValue,
+        'amountMicros'
+      >,
+      label: 'Amount',
+      type: FieldMetadataType.CURRENCY,
+    };
+
+    const ARRFilterIs: RecordFilter = {
+      id: 'company-ARR-filter-is',
+      value: '1000',
+      fieldMetadataId: companyMockARRFieldMetadataId?.id,
+      displayValue: '1000',
+      operand: RecordFilterOperand.Is,
+      subFieldName: 'amountMicros' satisfies Extract<
+        keyof FieldCurrencyValue,
+        'amountMicros'
+      >,
+      label: 'Amount',
+      type: FieldMetadataType.CURRENCY,
+    };
+
+    const ARRFilterIsNot: RecordFilter = {
+      id: 'company-ARR-filter-is-not',
+      value: '1000',
+      fieldMetadataId: companyMockARRFieldMetadataId?.id,
+      displayValue: '1000',
+      operand: RecordFilterOperand.IsNot,
+      subFieldName: 'amountMicros' satisfies Extract<
+        keyof FieldCurrencyValue,
+        'amountMicros'
+      >,
+      label: 'Amount',
+      type: FieldMetadataType.CURRENCY,
+    };
+
+    const result = computeRecordGqlOperationFilter({
+      filterValueDependencies: mockFilterValueDependencies,
+      recordFilters: [
+        ARRFilterIsGreaterThan,
+        ARRFilterIsLessThan,
+        ARRFilterIs,
+        ARRFilterIsNot,
+      ],
+      recordFilterGroups: [],
+      fields: companyMockObjectMetadataItem.fields,
+    });
+
+    expect(result).toEqual({
+      and: [
+        {
+          annualRecurringRevenue: {
+            amountMicros: {
+              gte: 1000 * 1000000,
+            },
+          },
+        },
+        {
+          annualRecurringRevenue: {
+            amountMicros: {
+              lte: 1000 * 1000000,
+            },
+          },
+        },
+        {
+          annualRecurringRevenue: {
+            amountMicros: {
+              eq: 1000 * 1000000,
+            },
+          },
+        },
+        {
+          not: {
+            annualRecurringRevenue: {
+              amountMicros: {
+                eq: 1000 * 1000000,
+              },
+            },
+          },
+        },
+      ],
+    });
+  });
+
+  it('currency currency code sub field type', () => {
+    const companyMockARRFieldMetadataId =
+      companyMockObjectMetadataItem.fields.find(
+        (field) => field.name === 'annualRecurringRevenue',
+      );
+
+    const ARRFilterIn: RecordFilter = {
+      id: 'company-ARR-filter-in',
+      value: '["USD"]',
+      fieldMetadataId: companyMockARRFieldMetadataId?.id,
+      displayValue: 'USD',
+      operand: RecordFilterOperand.Is,
+      subFieldName: 'currencyCode' satisfies Extract<
+        keyof FieldCurrencyValue,
+        'currencyCode'
+      >,
+      label: 'Currency',
+      type: FieldMetadataType.CURRENCY,
+    };
+
+    const ARRFilterNotIn: RecordFilter = {
+      id: 'company-ARR-filter-not-in',
+      value: '["USD"]',
+      fieldMetadataId: companyMockARRFieldMetadataId?.id,
+      displayValue: 'Not USD',
+      operand: RecordFilterOperand.IsNot,
+      subFieldName: 'currencyCode' satisfies Extract<
+        keyof FieldCurrencyValue,
+        'currencyCode'
+      >,
+      label: 'Currency',
+      type: FieldMetadataType.CURRENCY,
+    };
+
+    const result = computeRecordGqlOperationFilter({
+      filterValueDependencies: mockFilterValueDependencies,
+      recordFilters: [ARRFilterIn, ARRFilterNotIn],
+      recordFilterGroups: [],
+      fields: companyMockObjectMetadataItem.fields,
+    });
+
+    expect(result).toEqual({
+      and: [
+        {
+          annualRecurringRevenue: {
+            currencyCode: {
+              in: ['USD'],
+            },
+          },
+        },
+        {
+          not: {
+            annualRecurringRevenue: {
+              currencyCode: {
+                in: ['USD'],
+              },
             },
           },
         },

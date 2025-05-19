@@ -6,7 +6,6 @@ import {
   ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { CONNECTION_MAX_DEPTH } from 'src/engine/api/graphql/graphql-query-runner/constants/connection-max-depth.constant';
@@ -15,10 +14,8 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { getRelationObjectMetadata } from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -29,14 +26,9 @@ import { isPlainObject } from 'src/utils/is-plain-object';
 
 export class ObjectRecordsToGraphqlConnectionHelper {
   private objectMetadataMaps: ObjectMetadataMaps;
-  private featureFlagsMap: FeatureFlagMap;
 
-  constructor(
-    objectMetadataMaps: ObjectMetadataMaps,
-    featureFlagsMap: FeatureFlagMap,
-  ) {
+  constructor(objectMetadataMaps: ObjectMetadataMaps) {
     this.objectMetadataMaps = objectMetadataMaps;
-    this.featureFlagsMap = featureFlagsMap;
   }
 
   public createConnection<T extends ObjectRecord = ObjectRecord>({
@@ -54,7 +46,9 @@ export class ObjectRecordsToGraphqlConnectionHelper {
   }: {
     objectRecords: T[];
     parentObjectRecord?: T;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     objectRecordsAggregatedValues?: Record<string, any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     selectedAggregatedFields?: Record<string, any>;
     objectName: string;
     take: number;
@@ -103,6 +97,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     objectRecordsAggregatedValues,
   }: {
     selectedAggregatedFields: Record<string, AggregationField[]>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     objectRecordsAggregatedValues: Record<string, any>;
   }) => {
     if (!isDefined(objectRecordsAggregatedValues)) {
@@ -128,6 +123,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     );
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public processRecord<T extends Record<string, any>>({
     objectRecord,
     objectName,
@@ -140,7 +136,9 @@ export class ObjectRecordsToGraphqlConnectionHelper {
   }: {
     objectRecord: T;
     objectName: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     objectRecordsAggregatedValues?: Record<string, any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     selectedAggregatedFields?: Record<string, any>;
     take: number;
     totalCount: number;
@@ -154,9 +152,6 @@ export class ObjectRecordsToGraphqlConnectionHelper {
       );
     }
 
-    const isNewRelationEnabled =
-      this.featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled];
-
     const objectMetadata = getObjectMetadataMapItemByNameSingular(
       this.objectMetadataMaps,
       objectName,
@@ -169,6 +164,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
       );
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const processedObjectRecord: Record<string, any> = {};
 
     for (const [key, value] of Object.entries(objectRecord)) {
@@ -181,12 +177,10 @@ export class ObjectRecordsToGraphqlConnectionHelper {
 
       if (isRelationFieldMetadataType(fieldMetadata.type)) {
         if (Array.isArray(value)) {
-          const targetObjectMetadata = isNewRelationEnabled
-            ? getTargetObjectMetadataOrThrow(
-                fieldMetadata,
-                this.objectMetadataMaps,
-              )
-            : getRelationObjectMetadata(fieldMetadata, this.objectMetadataMaps);
+          const targetObjectMetadata = getTargetObjectMetadataOrThrow(
+            fieldMetadata,
+            this.objectMetadataMaps,
+          );
 
           processedObjectRecord[key] = this.createConnection({
             objectRecords: value,
@@ -206,12 +200,10 @@ export class ObjectRecordsToGraphqlConnectionHelper {
             depth: depth + 1,
           });
         } else if (isPlainObject(value)) {
-          const targetObjectMetadata = isNewRelationEnabled
-            ? getTargetObjectMetadataOrThrow(
-                fieldMetadata,
-                this.objectMetadataMaps,
-              )
-            : getRelationObjectMetadata(fieldMetadata, this.objectMetadataMaps);
+          const targetObjectMetadata = getTargetObjectMetadataOrThrow(
+            fieldMetadata,
+            this.objectMetadataMaps,
+          );
 
           processedObjectRecord[key] = this.processRecord({
             objectRecord: value,
@@ -244,7 +236,9 @@ export class ObjectRecordsToGraphqlConnectionHelper {
 
   private processCompositeField(
     fieldMetadata: FieldMetadataInterface,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fieldValue: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Record<string, any> {
     const compositeType = compositeTypeDefinitions.get(
       fieldMetadata.type as CompositeFieldMetadataType,
@@ -277,10 +271,12 @@ export class ObjectRecordsToGraphqlConnectionHelper {
 
         return acc;
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       {} as Record<string, any>,
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private formatFieldValue(value: any, fieldType: FieldMetadataType) {
     switch (fieldType) {
       case FieldMetadataType.RAW_JSON:

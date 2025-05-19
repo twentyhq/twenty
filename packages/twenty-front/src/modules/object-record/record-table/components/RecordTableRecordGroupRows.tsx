@@ -52,12 +52,11 @@ export const RecordTableRecordGroupRows = () => {
             recordId={recordId}
             rowIndexForFocus={rowIndex}
             rowIndexForDrag={rowIndexInGroup}
-            isPendingRow={!isRecordGroupTableSectionToggled}
           />
         );
       })}
-      <RecordTableRecordGroupSectionAddNew />
       <RecordTableRecordGroupSectionLoadMore />
+      <RecordTableRecordGroupSectionAddNew />
       <RecordTableAggregateFooter
         key={currentRecordGroupId}
         currentRecordGroupId={currentRecordGroupId}

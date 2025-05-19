@@ -6,7 +6,6 @@ import {
 } from 'typeorm';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
@@ -14,23 +13,27 @@ import { GraphqlQueryFilterFieldParser } from './graphql-query-filter-field.pars
 
 export class GraphqlQueryFilterConditionParser {
   private fieldMetadataMapByName: FieldMetadataMap;
+  private fieldMetadataMapByJoinColumnName: FieldMetadataMap;
   private queryFilterFieldParser: GraphqlQueryFilterFieldParser;
 
   constructor(
     fieldMetadataMapByName: FieldMetadataMap,
-    featureFlagsMap: FeatureFlagMap,
+    fieldMetadataMapByJoinColumnName: FieldMetadataMap,
   ) {
     this.fieldMetadataMapByName = fieldMetadataMapByName;
+    this.fieldMetadataMapByJoinColumnName = fieldMetadataMapByJoinColumnName;
     this.queryFilterFieldParser = new GraphqlQueryFilterFieldParser(
       this.fieldMetadataMapByName,
-      featureFlagsMap,
+      this.fieldMetadataMapByJoinColumnName,
     );
   }
 
   public parse(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     queryBuilder: SelectQueryBuilder<any>,
     objectNameSingular: string,
     filter: Partial<ObjectRecordFilter>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): SelectQueryBuilder<any> {
     if (!filter || Object.keys(filter).length === 0) {
       return queryBuilder;
@@ -49,6 +52,7 @@ export class GraphqlQueryFilterConditionParser {
     queryBuilder: WhereExpressionBuilder,
     objectNameSingular: string,
     key: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
     isFirst = false,
   ): void {

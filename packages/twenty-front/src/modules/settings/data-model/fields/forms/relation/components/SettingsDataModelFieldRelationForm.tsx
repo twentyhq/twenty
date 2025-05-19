@@ -15,9 +15,9 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 import { useIcons } from 'twenty-ui/display';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 export const settingsDataModelFieldRelationFormSchema = z.object({
   relation: z.object({
@@ -98,7 +98,7 @@ export const SettingsDataModelFieldRelationForm = ({
   const { control, watch: watchFormValue } =
     useFormContext<SettingsDataModelFieldRelationFormValues>();
   const { getIcon } = useIcons();
-  const { objectMetadataItems, findObjectMetadataItemById } =
+  const { activeObjectMetadataItems, findObjectMetadataItemById } =
     useFilteredObjectMetadataItems();
 
   const {
@@ -156,7 +156,7 @@ export const SettingsDataModelFieldRelationForm = ({
               fullWidth
               disabled={disableRelationEdition}
               value={value}
-              options={objectMetadataItems
+              options={activeObjectMetadataItems
                 .filter(isObjectMetadataAvailableForRelation)
                 .map((objectMetadataItem) => ({
                   label: objectMetadataItem.labelPlural,
