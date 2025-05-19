@@ -34,7 +34,7 @@ import {
 import { SettingPermissionType } from '~/generated/graphql';
 
 // eslint-disable-next-line no-restricted-imports
-import { IconIdBadge2, IconMessageCircleCog } from '@tabler/icons-react';
+import { IconCreditCard, IconIdBadge2, IconMessageCircleCog, IconWallet } from '@tabler/icons-react';
 
 export type SettingsNavigationSection = {
   label: string;
@@ -118,6 +118,11 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.WorkspaceMembersPage,
           Icon: IconUsers,
           isHidden: !permissionMap[SettingPermissionType.WORKSPACE_MEMBERS],
+        },
+        {
+          label: 'Billing',
+          path: SettingsPath.BillingPlan,
+          Icon: IconCreditCard,
         },
         {
           label: 'Service Center',
