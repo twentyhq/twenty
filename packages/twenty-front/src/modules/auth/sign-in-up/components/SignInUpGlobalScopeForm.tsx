@@ -39,6 +39,8 @@ import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
+import { useSignUpInNewWorkspaceMutation } from '~/generated/graphql';
+import { AppPath } from '@/types/AppPath';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -126,6 +128,7 @@ export const SignInUpGlobalScopeForm = () => {
   const authProviders = useRecoilValue(authProvidersState);
   const signInUpStep = useRecoilValue(signInUpStepState);
   const availableWorkspaces = useRecoilValue(availableWorkspacesState);
+  const [signUpInNewWorkspaceMutation] = useSignUpInNewWorkspaceMutation();
 
   const { checkUserExists } = useAuth();
   const { readCaptchaToken } = useReadCaptchaToken();
@@ -144,6 +147,7 @@ export const SignInUpGlobalScopeForm = () => {
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
 
   const [showErrors, setShowErrors] = useState(false);
+  const [userExists, setUserExists] = useState(false);
 
   const { form } = useSignInUpForm();
   const { pathname } = useLocation();
@@ -176,6 +180,7 @@ export const SignInUpGlobalScopeForm = () => {
         requestFreshCaptchaToken();
         const response = data.checkUserExists;
 
+        setUserExists(response.exists);
         setAvailableWorkspaces(response.availableWorkspaces);
 
         if (
@@ -221,8 +226,25 @@ export const SignInUpGlobalScopeForm = () => {
   };
 
   const handleCreateWorkspace = async () => {
-    // if user exist create workspace
-    // else set password and create workspace
+    if (userExists) {
+      return signUpInNewWorkspaceMutation({
+        onCompleted: async (data) => {
+          return await redirectToWorkspaceDomain(
+            getWorkspaceUrl(data.signUpInNewWorkspace.workspace.workspaceUrls),
+            AppPath.Verify,
+            {
+              loginToken: data.signUpInNewWorkspace.loginToken.token,
+            },
+          );
+        },
+        onError: (error: Error) => {
+          enqueueSnackBar(error.message, {
+            variant: SnackBarVariant.Error,
+          });
+        },
+      });
+    }
+
     setSignInUpMode(SignInUpMode.SignUp);
     setSignInUpStep(SignInUpStep.Password);
   };
