@@ -1,6 +1,39 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Field metadata select creation tests group It should fail to create field metadata with an option that has value exceeding maximal name size 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option value "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters",
+  },
+]
+`;
+
 exports[`Field metadata select creation tests group It should fail to create field metadata with empty options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Options are required for enum fields",
+  },
+]
+`;
+
+exports[`Field metadata select creation tests group It should fail to create field metadata with null options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Options are required for enum fields",
+  },
+]
+`;
+
+exports[`Field metadata select creation tests group It should fail to create field metadata with undefined options 1`] = `
 [
   {
     "extensions": {

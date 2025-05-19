@@ -57,7 +57,7 @@ describe('Field metadata select creation tests group', () => {
             label: `Option ${index}`,
             value: `option${index}`,
             color: 'green',
-            position: 1,
+            position: index,
           };
           if (index % 2 === 0) {
             return {
@@ -120,6 +120,66 @@ describe('Field metadata select creation tests group', () => {
             color: 'green',
             position: 1,
             id: 'not a uuid',
+          },
+        ],
+      },
+    },
+    {
+      title: 'It should fail to create field metadata with null options',
+      context: {
+        options: null as unknown as FieldMetadataComplexOption[],
+      },
+    },
+    {
+      title: 'It should fail to create field metadata with undefined options',
+      context: {
+        options: undefined as unknown as FieldMetadataComplexOption[],
+      },
+    },
+    {
+      title:
+        'It should fail to create field metadata with an option that has value exceeding maximal name size',
+      context: {
+        options: [
+          {
+            label: 'Option 1',
+            value: 'a'.repeat(64),
+            color: 'green',
+            position: 1,
+          },
+        ],
+      },
+    },
+    {
+      title:
+        'It should fail to create field metadata with an option that has a comma',
+      context: {
+        options: [
+          {
+            label: 'Some option value, 1',
+            value: 'value , value 2',
+            color: 'green',
+            position: 1,
+          },
+        ],
+      },
+    },
+    {
+      title:
+        'It should fail to create field metadata with options having duplicated values',
+      context: {
+        options: [
+          {
+            label: 'Option 1',
+            value: 'option1',
+            color: 'green',
+            position: 0,
+          },
+          {
+            label: 'Option 1',
+            value: 'option1',
+            color: 'green',
+            position: 1,
           },
         ],
       },
