@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
@@ -15,7 +15,6 @@ import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/bil
 import { transformStripeEntitlementUpdatedEventToDatabaseEntitlement } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-entitlement-updated-event-to-database-entitlement.util';
 @Injectable()
 export class BillingWebhookEntitlementService {
-  protected readonly logger = new Logger(BillingWebhookEntitlementService.name);
   constructor(
     @InjectRepository(BillingCustomer, 'core')
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
