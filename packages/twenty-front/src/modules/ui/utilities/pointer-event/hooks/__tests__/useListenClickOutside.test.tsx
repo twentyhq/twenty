@@ -1,6 +1,5 @@
 import { fireEvent, renderHook } from '@testing-library/react';
-import React from 'react';
-import { act } from 'react-dom/test-utils';
+import React, { act } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
