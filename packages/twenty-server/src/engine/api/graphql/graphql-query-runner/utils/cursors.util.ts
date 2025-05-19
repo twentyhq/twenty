@@ -45,6 +45,10 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>(
     id: objectRecord.id,
   };
 
+  return encodeCursorData(cursorData);
+};
+
+export const encodeCursorData = (cursorData: CursorData) => {
   return Buffer.from(JSON.stringify(cursorData)).toString('base64');
 };
 

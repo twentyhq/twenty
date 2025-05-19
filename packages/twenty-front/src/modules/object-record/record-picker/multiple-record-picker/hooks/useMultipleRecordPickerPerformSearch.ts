@@ -12,6 +12,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { SearchRecord } from '~/generated-metadata/graphql';
+import { SearchEdge } from '~/generated/graphql';
 
 const MULTIPLE_RECORD_PICKER_PAGE_SIZE = 30;
 
@@ -100,7 +101,6 @@ export const useMultipleRecordPickerPerformSearch = () => {
           pickedRecordIds: selectedPickableMorphItems.map(
             ({ recordId }) => recordId,
           ),
-          offset: loadMore ? paginationState.currentOffset : 0,
           limitPerObject: MULTIPLE_RECORD_PICKER_PAGE_SIZE,
         });
 
@@ -365,14 +365,12 @@ const performSearchQueries = async ({
   searchFilter,
   searchableObjectMetadataItems,
   pickedRecordIds,
-  offset = 0,
   limitPerObject = MULTIPLE_RECORD_PICKER_PAGE_SIZE,
 }: {
   client: ApolloClient<object>;
   searchFilter: string;
   searchableObjectMetadataItems: ObjectMetadataItem[];
   pickedRecordIds: string[];
-  offset?: number;
   limitPerObject?: number;
 }): Promise<[SearchRecord[], SearchRecord[]]> => {
   if (searchableObjectMetadataItems.length === 0) {
@@ -389,10 +387,9 @@ const performSearchQueries = async ({
         ),
         filter,
         limit: MULTIPLE_RECORD_PICKER_PAGE_SIZE,
-        offset,
       },
     });
-    return data.search;
+    return data.search.edges.map((edge: SearchEdge) => edge.node);
   };
 
   const searchRecordsExcludingPickedRecords = await searchRecords(

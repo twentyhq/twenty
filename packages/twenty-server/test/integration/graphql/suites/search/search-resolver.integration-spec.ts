@@ -19,7 +19,8 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { EachTestingContext } from 'twenty-shared/testing';
 
-import { SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record-dto';
+import { SearchDTO } from 'src/engine/core-modules/search/dtos/search.dto';
+import { SearchEdgeDTO } from 'src/engine/core-modules/search/dtos/search-edge.dto';
 
 describe('SearchResolver', () => {
   let listingObjectMetadataId: { objectMetadataId: string };
@@ -40,8 +41,10 @@ describe('SearchResolver', () => {
     { id: randomUUID(), name: 'searchInput2' },
   ];
 
-  const hasSearchRecord = (search: SearchRecordDTO[], recordId: string) => {
-    return search.some((item: SearchRecordDTO) => item.recordId === recordId);
+  const hasSearchRecord = (search: SearchDTO, recordId: string) => {
+    return search.edges.some(
+      (edge: SearchEdgeDTO) => edge.node.recordId === recordId,
+    );
   };
 
   beforeAll(async () => {
@@ -147,6 +150,10 @@ describe('SearchResolver', () => {
     eval: {
       definedRecordIds: string[];
       undefinedRecordIds: string[];
+      pageInfo: {
+        hasNextPage: boolean;
+        endCursor: string | null;
+      };
     };
   }>[] = [
     {
@@ -159,6 +166,10 @@ describe('SearchResolver', () => {
         eval: {
           definedRecordIds: [firstListing.id, secondListing.id],
           undefinedRecordIds: [apiKey.id],
+          pageInfo: {
+            hasNextPage: false,
+            endCursor: null,
+          },
         },
       },
     },
@@ -171,6 +182,10 @@ describe('SearchResolver', () => {
         eval: {
           definedRecordIds: [firstPerson.id, firstListing.id],
           undefinedRecordIds: [secondPerson.id, secondListing.id],
+          pageInfo: {
+            hasNextPage: false,
+            endCursor: null,
+          },
         },
       },
     },
@@ -184,6 +199,10 @@ describe('SearchResolver', () => {
         eval: {
           definedRecordIds: [firstListing.id, secondListing.id],
           undefinedRecordIds: [firstPerson.id, secondPerson.id],
+          pageInfo: {
+            hasNextPage: false,
+            endCursor: null,
+          },
         },
       },
     },
@@ -197,6 +216,10 @@ describe('SearchResolver', () => {
         eval: {
           definedRecordIds: [firstListing.id, secondListing.id],
           undefinedRecordIds: [firstPerson.id, secondPerson.id],
+          pageInfo: {
+            hasNextPage: false,
+            endCursor: null,
+          },
         },
       },
     },
@@ -212,6 +235,27 @@ describe('SearchResolver', () => {
         eval: {
           definedRecordIds: [firstListing.id],
           undefinedRecordIds: [secondListing.id],
+          pageInfo: {
+            hasNextPage: false,
+            endCursor: null,
+          },
+        },
+      },
+    },
+    {
+      title: 'should return endCursor when paginating',
+      context: {
+        input: {
+          searchInput: '',
+          limit: 2,
+        },
+        eval: {
+          definedRecordIds: [firstPerson.id],
+          undefinedRecordIds: [secondPerson.id, secondListing.id],
+          pageInfo: {
+            hasNextPage: true,
+            endCursor: 'null',
+          },
         },
       },
     },
@@ -225,10 +269,12 @@ describe('SearchResolver', () => {
     expect(response.body.data.search).toBeDefined();
 
     const search = response.body.data.search;
+    const edges = search.edges;
+    const pageInfo = search.pageInfo;
 
     context.eval.definedRecordIds.length > 0
-      ? expect(search).not.toHaveLength(0)
-      : expect(search).toHaveLength(0);
+      ? expect(edges).not.toHaveLength(0)
+      : expect(edges).toHaveLength(0);
 
     context.eval.definedRecordIds.forEach((recordId) => {
       expect(hasSearchRecord(search, recordId)).toBeTruthy();
@@ -237,5 +283,8 @@ describe('SearchResolver', () => {
     context.eval.undefinedRecordIds.forEach((recordId) => {
       expect(hasSearchRecord(search, recordId)).toBeFalsy();
     });
+
+    expect(pageInfo).toBeDefined();
+    expect(context.eval.pageInfo).toEqual(pageInfo);
   });
 });

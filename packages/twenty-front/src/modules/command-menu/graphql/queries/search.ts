@@ -4,7 +4,6 @@ export const SEARCH_QUERY = gql`
   query Search(
     $searchInput: String!
     $limit: Int!
-    $offset: Int
     $excludedObjectNameSingulars: [String!]
     $includedObjectNameSingulars: [String!]
     $filter: ObjectRecordFilterInput
@@ -12,17 +11,25 @@ export const SEARCH_QUERY = gql`
     search(
       searchInput: $searchInput
       limit: $limit
-      offset: $offset
       excludedObjectNameSingulars: $excludedObjectNameSingulars
       includedObjectNameSingulars: $includedObjectNameSingulars
       filter: $filter
     ) {
-      recordId
-      objectNameSingular
-      label
-      imageUrl
-      tsRankCD
-      tsRank
+      edges {
+        node {
+          recordId
+          objectNameSingular
+          label
+          imageUrl
+          tsRankCD
+          tsRank
+        }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
     }
   }
 `;

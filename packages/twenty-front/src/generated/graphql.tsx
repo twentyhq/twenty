@@ -1550,7 +1550,7 @@ export type Query = {
   object: Object;
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
-  search: Array<SearchRecord>;
+  search: Search;
   validatePasswordResetToken: ValidatePasswordResetToken;
   versionInfo: VersionInfo;
 };
@@ -1637,11 +1637,11 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 
 
 export type QuerySearchArgs = {
+  after?: InputMaybe<Scalars['String']>;
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
   filter?: InputMaybe<ObjectRecordFilterInput>;
   includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
   limit: Scalars['Int'];
-  offset?: InputMaybe<Scalars['Int']>;
   searchInput: Scalars['String'];
 };
 
@@ -1831,6 +1831,24 @@ export enum SsoIdentityProviderStatus {
   Error = 'Error',
   Inactive = 'Inactive'
 }
+
+export type Search = {
+  __typename?: 'Search';
+  edges: Array<SearchEdge>;
+  pageInfo: SearchPageInfoDto;
+};
+
+export type SearchEdge = {
+  __typename?: 'SearchEdge';
+  cursor?: Maybe<Scalars['String']>;
+  node: SearchRecord;
+};
+
+export type SearchPageInfoDto = {
+  __typename?: 'SearchPageInfoDTO';
+  endCursor?: Maybe<Scalars['String']>;
+  hasNextPage: Scalars['Boolean'];
+};
 
 export type SearchRecord = {
   __typename?: 'SearchRecord';
@@ -2716,14 +2734,13 @@ export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typ
 export type SearchQueryVariables = Exact<{
   searchInput: Scalars['String'];
   limit: Scalars['Int'];
-  offset?: InputMaybe<Scalars['Int']>;
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
   includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
   filter?: InputMaybe<ObjectRecordFilterInput>;
 }>;
 
 
-export type SearchQuery = { __typename?: 'Query', search: Array<{ __typename?: 'SearchRecord', recordId: string, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number }> };
+export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'Search', edges: Array<{ __typename?: 'SearchEdge', cursor?: string | null, node: { __typename?: 'SearchRecord', recordId: string, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchPageInfoDTO', hasNextPage: boolean, endCursor?: string | null } } };
 
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -4602,21 +4619,29 @@ export type GetClientConfigQueryHookResult = ReturnType<typeof useGetClientConfi
 export type GetClientConfigLazyQueryHookResult = ReturnType<typeof useGetClientConfigLazyQuery>;
 export type GetClientConfigQueryResult = Apollo.QueryResult<GetClientConfigQuery, GetClientConfigQueryVariables>;
 export const SearchDocument = gql`
-    query Search($searchInput: String!, $limit: Int!, $offset: Int, $excludedObjectNameSingulars: [String!], $includedObjectNameSingulars: [String!], $filter: ObjectRecordFilterInput) {
+    query Search($searchInput: String!, $limit: Int!, $excludedObjectNameSingulars: [String!], $includedObjectNameSingulars: [String!], $filter: ObjectRecordFilterInput) {
   search(
     searchInput: $searchInput
     limit: $limit
-    offset: $offset
     excludedObjectNameSingulars: $excludedObjectNameSingulars
     includedObjectNameSingulars: $includedObjectNameSingulars
     filter: $filter
   ) {
-    recordId
-    objectNameSingular
-    label
-    imageUrl
-    tsRankCD
-    tsRank
+    edges {
+      node {
+        recordId
+        objectNameSingular
+        label
+        imageUrl
+        tsRankCD
+        tsRank
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
   }
 }
     `;
@@ -4635,7 +4660,6 @@ export const SearchDocument = gql`
  *   variables: {
  *      searchInput: // value for 'searchInput'
  *      limit: // value for 'limit'
- *      offset: // value for 'offset'
  *      excludedObjectNameSingulars: // value for 'excludedObjectNameSingulars'
  *      includedObjectNameSingulars: // value for 'includedObjectNameSingulars'
  *      filter: // value for 'filter'

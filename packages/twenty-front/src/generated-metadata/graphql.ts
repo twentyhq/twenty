@@ -1688,7 +1688,7 @@ export type Query = {
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
   relationMetadata: RelationMetadataConnection;
-  search: Array<SearchRecord>;
+  search: Search;
   validatePasswordResetToken: ValidatePasswordResetToken;
   versionInfo: VersionInfo;
 };
@@ -1828,11 +1828,11 @@ export type QueryRelationMetadataArgs = {
 
 
 export type QuerySearchArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
   filter?: InputMaybe<ObjectRecordFilterInput>;
   includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
   limit: Scalars['Int']['input'];
-  offset?: InputMaybe<Scalars['Int']['input']>;
   searchInput: Scalars['String']['input'];
 };
 
@@ -2036,6 +2036,24 @@ export enum SsoIdentityProviderStatus {
   Error = 'Error',
   Inactive = 'Inactive'
 }
+
+export type Search = {
+  __typename?: 'Search';
+  edges: Array<SearchEdge>;
+  pageInfo: SearchPageInfoDto;
+};
+
+export type SearchEdge = {
+  __typename?: 'SearchEdge';
+  cursor?: Maybe<Scalars['String']['output']>;
+  node: SearchRecord;
+};
+
+export type SearchPageInfoDto = {
+  __typename?: 'SearchPageInfoDTO';
+  endCursor?: Maybe<Scalars['String']['output']>;
+  hasNextPage: Scalars['Boolean']['output'];
+};
 
 export type SearchRecord = {
   __typename?: 'SearchRecord';

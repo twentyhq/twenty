@@ -7,6 +7,7 @@ export type SearchFactoryParams = {
   excludedObjectNameSingulars?: string[];
   includedObjectNameSingulars?: string[];
   filter?: ObjectRecordFilterInput;
+  limit?: number;
 };
 
 export const searchFactory = ({
@@ -14,6 +15,7 @@ export const searchFactory = ({
   excludedObjectNameSingulars,
   includedObjectNameSingulars,
   filter,
+  limit = 50,
 }: SearchFactoryParams) => ({
   query: gql`
     query Search(
@@ -30,18 +32,27 @@ export const searchFactory = ({
         includedObjectNameSingulars: $includedObjectNameSingulars
         filter: $filter
       ) {
-        recordId
-        objectNameSingular
-        label
-        imageUrl
-        tsRankCD
-        tsRank
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        edges {
+          node {
+            recordId
+            objectNameSingular
+            label
+            imageUrl
+            tsRankCD
+            tsRank
+          }
+          cursor
+        }
       }
     }
   `,
   variables: {
     searchInput,
-    limit: 50,
+    limit,
     excludedObjectNameSingulars,
     includedObjectNameSingulars,
     filter,
