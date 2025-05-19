@@ -21,8 +21,21 @@ type Differences<T> = {
   updated: { old: T; new: T }[];
   deleted: T[];
 };
+type GetOptionsDifferences = Differences<
+  FieldMetadataDefaultOption | FieldMetadataComplexOption
+>;
 
-export type SelectFieldMetadataEntity = FieldMetadataEntity<FieldMetadataType.SELECT>;
+type Tmp = {
+  viewFilter: ViewFilterWorkspaceEntity;
+  deletedOption: (FieldMetadataDefaultOption | FieldMetadataComplexOption)[];
+  updatedOption: GetOptionsDifferences['updated'];
+  filteredOptionsCounter: number;
+};
+
+const MAX_OPTIONS_TO_DISPLAY = 3; // TODO mutualize;
+
+export type SelectFieldMetadataEntity =
+  FieldMetadataEntity<FieldMetadataType.SELECT>;
 
 @Injectable()
 export class FieldMetadataRelatedRecordsService {
@@ -108,6 +121,41 @@ export class FieldMetadataRelatedRecordsService {
     }
   }
 
+  private computeViewFilterDisplayValue({
+    deletedOption,
+    updatedOption,
+    viewFilter,
+    filteredOptionsCounter,
+  }: Tmp): string {
+    if (filteredOptionsCounter > MAX_OPTIONS_TO_DISPLAY) {
+      return `${filteredOptionsCounter} options`;
+    }
+
+    const viewFilterDisplayValues = viewFilter.displayValue.split(',');
+
+    const remainingViewFilterDisplayValue = viewFilterDisplayValues.filter(
+      (viewFilterOptionLabel) => {
+        !deletedOption.find((option) => option.label === viewFilterOptionLabel);
+      },
+    );
+
+    const updatedViewFilterDisplayValue = remainingViewFilterDisplayValue.map(
+      (viewFilterOptionLabel) => {
+        const matchingUpdatedOption = updatedOption.find(
+          (option) => option.old.label === viewFilterOptionLabel,
+        );
+
+        if (!isDefined(matchingUpdatedOption)) {
+          return viewFilterOptionLabel;
+        }
+
+        return matchingUpdatedOption.new.label;
+      },
+    );
+
+    return updatedViewFilterDisplayValue.join(', ');
+  }
+
   public async updateRelatedViewFilters(
     oldFieldMetadata: SelectFieldMetadataEntity,
     newFieldMetadata: SelectFieldMetadataEntity,
@@ -144,47 +192,53 @@ export class FieldMetadataRelatedRecordsService {
       for (const viewFilter of filter.viewFilters) {
         try {
           const viewFilterValue: string[] = JSON.parse(viewFilter.value);
-          const relatedDeletedLabels = deletedFieldMetadata
-            .filter((deleted) => viewFilterValue.includes(deleted.label))
-            .map(({ label }) => label);
+          const relatedDeletedOptions = deletedFieldMetadata.filter((deleted) =>
+            viewFilterValue.includes(deleted.value),
+          );
 
-          if (relatedDeletedLabels.length === viewFilterValue.length) {
+          if (relatedDeletedOptions.length === viewFilterValue.length) {
             await viewFilterRepository.delete({ id: viewFilter.id });
             continue;
           }
 
-          const remainingFilterLabels = viewFilterValue.filter(
-            (viewFilterLabel) => !relatedDeletedLabels.includes(viewFilterLabel),
+          const remainingViewFilterValues = viewFilterValue.filter(
+            (viewFilterOptionValue) =>
+              !relatedDeletedOptions.find(
+                (option) => option.value === viewFilterOptionValue,
+              ),
           );
-          const relatedUpdatedLabels = updatedFieldMetadata
-            .filter((updated) =>
-              remainingFilterLabels.includes(updated.old.label),
-            )
-            .map((data) => ({
-              newLabel: data.new.label,
-              oldLabel: data.old.label,
-            }));
 
-          const updatedFilterLabels = remainingFilterLabels.flatMap((label) => {
-            const containsUpdatedFilter = relatedUpdatedLabels.find(
-              ({ oldLabel }) => label === oldLabel,
-            );
-            if (!isDefined(containsUpdatedFilter)) {
-              return label;
-            }
+          const relatedUpdatedOptions = updatedFieldMetadata.filter((updated) =>
+            remainingViewFilterValues.includes(updated.old.value),
+          );
 
-            return containsUpdatedFilter.newLabel;
+          const updatedViewFilterValues = remainingViewFilterValues.map(
+            (viewFilterOptionValue) => {
+              const containsUpdatedFilter = relatedUpdatedOptions.find(
+                ({ old }) => viewFilterOptionValue === old.value,
+              );
+              if (!isDefined(containsUpdatedFilter)) {
+                return viewFilterOptionValue;
+              }
+
+              return containsUpdatedFilter.new.value;
+            },
+          );
+
+          const displayValue = this.computeViewFilterDisplayValue({
+            deletedOption: relatedDeletedOptions,
+            updatedOption: relatedUpdatedOptions,
+            viewFilter,
+            filteredOptionsCounter: updatedViewFilterValues.length,
           });
 
           await viewFilterRepository.update(
             { id: viewFilter.id },
             {
-              value: JSON.stringify(updatedFilterLabels),
-              displayValue: updatedFilterLabels.join(','),
+              value: JSON.stringify(updatedViewFilterValues),
+              displayValue,
             },
           );
-
-          ///
         } catch (error) {
           // TODO
           console.error(error);
@@ -221,7 +275,7 @@ export class FieldMetadataRelatedRecordsService {
   private getOptionsDifferences(
     oldOptions: (FieldMetadataDefaultOption | FieldMetadataComplexOption)[],
     newOptions: (FieldMetadataDefaultOption | FieldMetadataComplexOption)[],
-  ): Differences<FieldMetadataDefaultOption | FieldMetadataComplexOption> {
+  ): GetOptionsDifferences {
     const differences: Differences<
       FieldMetadataDefaultOption | FieldMetadataComplexOption
     > = {
