@@ -40,10 +40,12 @@ const StyledContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: row;
+  min-height: 100%;
 `;
 
 const StyledColumnContainer = styled.div`
   display: flex;
+
   & > *:not(:first-of-type) {
     border-left: 1px solid ${({ theme }) => theme.border.color.light};
   }
@@ -52,19 +54,21 @@ const StyledColumnContainer = styled.div`
 const StyledContainerContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: calc(100% - ${({ theme }) => theme.spacing(2)});
+  height: min-content;
 `;
 
 const StyledBoardContentContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: calc(100% - 48px);
+  flex: 1;
 `;
 
 export const RecordBoard = () => {
   const { updateOneRecord, selectFieldMetadataItem, recordBoardId } =
     useContext(RecordBoardContext);
-  const boardRef = useRef<HTMLDivElement>(null);
+  const selectableElementsRef = useRef<HTMLDivElement>(null);
+  const selectionBoundaryRef = useRef<HTMLDivElement>(null);
 
   const { toggleClickOutside } = useClickOutsideListener(
     RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
@@ -215,10 +219,13 @@ export const RecordBoard = () => {
           <RecordBoardStickyHeaderEffect />
           <RecordBoardScrollToFocusedCardEffect />
           <RecordBoardDeactivateBoardCardEffect />
-          <StyledContainerContainer ref={boardRef}>
+          <StyledContainerContainer
+            ref={selectionBoundaryRef}
+            className="record-board-container"
+          >
             <RecordBoardHeader />
-            <StyledBoardContentContainer>
-              <StyledContainer ref={boardRef}>
+            <StyledBoardContentContainer className="record-board-content-container">
+              <StyledContainer ref={selectableElementsRef}>
                 <DragDropContext onDragEnd={handleDragEnd}>
                   <StyledColumnContainer>
                     {visibleRecordGroupIds.map((recordGroupId, index) => (
@@ -232,8 +239,8 @@ export const RecordBoard = () => {
                 </DragDropContext>
               </StyledContainer>
               <DragSelect
-                dragSelectable={boardRef}
-                selectionAreaRef={boardRef}
+                selectableElementsRef={selectableElementsRef}
+                selectionBoundaryRef={selectionBoundaryRef}
                 onDragSelectionEnd={handleDragSelectionEnd}
                 onDragSelectionChange={setRecordAsSelected}
                 onDragSelectionStart={handleDragSelectionStart}

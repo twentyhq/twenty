@@ -9,16 +9,16 @@ import { RGBA } from 'twenty-ui/theme';
 import { useDragSelect } from '../hooks/useDragSelect';
 
 type DragSelectProps = {
-  dragSelectable: RefObject<HTMLElement>;
-  selectionAreaRef?: RefObject<HTMLElement>;
+  selectableElementsRef: RefObject<HTMLElement>;
+  selectionBoundaryRef?: RefObject<HTMLElement>;
   onDragSelectionChange: (id: string, selected: boolean) => void;
   onDragSelectionStart?: (event: MouseEvent) => void;
   onDragSelectionEnd?: (event: MouseEvent) => void;
 };
 
 export const DragSelect = ({
-  dragSelectable,
-  selectionAreaRef,
+  selectableElementsRef,
+  selectionBoundaryRef,
   onDragSelectionChange,
   onDragSelectionStart,
   onDragSelectionEnd,
@@ -32,15 +32,15 @@ export const DragSelect = ({
       if (!isDragSelectionStartEnabled()) {
         return false;
       }
-      const isSelectionAreaRefProvided =
-        !!selectionAreaRef?.current && target instanceof Node;
-      if (isSelectionAreaRefProvided) {
-        if (!selectionAreaRef.current.contains(target)) {
+      const isSelectionBoundaryRefProvided =
+        !!selectionBoundaryRef?.current && target instanceof Node;
+      if (isSelectionBoundaryRefProvided) {
+        if (!selectionBoundaryRef.current.contains(target)) {
           return false;
         }
       } else if (
         target instanceof Node &&
-        !dragSelectable.current?.contains(target)
+        !selectableElementsRef.current?.contains(target)
       ) {
         return false;
       }
@@ -63,7 +63,9 @@ export const DragSelect = ({
         left: box.left + window.scrollX,
       };
       Array.from(
-        dragSelectable.current?.querySelectorAll('[data-selectable-id]') ?? [],
+        selectableElementsRef.current?.querySelectorAll(
+          '[data-selectable-id]',
+        ) ?? [],
       ).forEach((item) => {
         const id = item.getAttribute('data-selectable-id');
         if (!id) {

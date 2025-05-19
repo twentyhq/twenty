@@ -14,6 +14,8 @@ const StyledColumn = styled.div`
   flex-direction: column;
   max-width: 200px;
   min-width: 200px;
+  min-height: 100%;
+  flex: 1;
   padding: ${({ theme }) => theme.spacing(2)};
   padding-top: 0px;
   position: relative;
