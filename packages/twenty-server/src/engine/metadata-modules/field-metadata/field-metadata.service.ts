@@ -47,7 +47,6 @@ import {
   RelationMetadataType,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
-import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
@@ -70,6 +69,7 @@ import { ViewService } from 'src/modules/view/services/view.service';
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
 
+import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import * as z from 'zod';
 import { generateDefaultValue } from './utils/generate-default-value';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
@@ -189,26 +189,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         await viewsRepository.delete({
           kanbanFieldMetadataId: id,
         });
-      }
-
-      // Should check it's not empty or should be defined ?
-      if (fieldMetadataInput.options) {
-        for (const option of fieldMetadataInput.options) {
-          if (!isDefined(option.id)) {
-            throw new FieldMetadataException(
-              'Option id is required',
-              FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-            );
-          }
-
-          const parseResult = z.string().uuid().safeParse(option.id);
-          if (!parseResult.success) {
-            throw new FieldMetadataException(
-              'Option id is invalid',
-              FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-            );
-          }
-        }
       }
 
       const updatableFieldInput =
@@ -613,6 +593,68 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
   }
 
+  private async validateFieldMetadataOptions({
+    fieldMetadataInput,
+    fieldMetadataType,
+  }: {
+    fieldMetadataInput: CreateFieldInput | UpdateFieldInput;
+    fieldMetadataType: FieldMetadataType;
+  }) {
+    if (!isEnumFieldMetadataType(fieldMetadataType)) {
+      return;
+    }
+
+    const { options } = fieldMetadataInput;
+    if (!isDefined(options) || options.length === 0) {
+      throw new FieldMetadataException(
+        'Options are required for enum fields',
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
+    }
+
+    const seenOptionIds = new Set<string>();
+    for (const option of options) {
+      if (!isDefined(option.id)) {
+        throw new FieldMetadataException(
+          'Option id is required',
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+
+      const parseResult = z.string().uuid().safeParse(option.id);
+      if (!parseResult.success) {
+        throw new FieldMetadataException(
+          'Option id is invalid',
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+
+      if (exceedsDatabaseIdentifierMaximumLength(option.value)) {
+        throw new FieldMetadataException(
+          `Option value "${option.value}" exceeds 63 characters`,
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+
+      const duplicatedOptionId = seenOptionIds.has(option.id);
+      if (duplicatedOptionId) {
+        throw new FieldMetadataException(
+          `Option id "${option.id}" already exists`,
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+
+      seenOptionIds.add(option.id);
+    }
+    if (isDefined(fieldMetadataInput.defaultValue)) {
+      await this.fieldMetadataValidationService.validateDefaultValueOrThrow({
+        fieldType: fieldMetadataType,
+        options,
+        defaultValue: fieldMetadataInput.defaultValue ?? null,
+      });
+    }
+  }
+
   private async validateFieldMetadata<
     T extends UpdateFieldInput | CreateFieldInput,
   >(
@@ -660,38 +702,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
     }
 
-    if (fieldMetadataInput.options) {
-      for (const option of fieldMetadataInput.options) {
-        if (exceedsDatabaseIdentifierMaximumLength(option.value)) {
-          throw new FieldMetadataException(
-            `Option value "${option.value}" exceeds 63 characters`,
-            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          );
-        }
-
-        if (!isDefined(option.id)) {
-          throw new FieldMetadataException(
-            'Option id is required',
-            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          );
-        }
-
-        const parseResult = z.string().uuid().safeParse(option.id);
-        if (!parseResult.success) {
-          throw new FieldMetadataException(
-            'Option id is invalid',
-            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          );
-        }
-      }
-      if (isDefined(fieldMetadataInput.defaultValue)) {
-        await this.fieldMetadataValidationService.validateDefaultValueOrThrow({
-          fieldType: fieldMetadataType,
-          options: fieldMetadataInput.options,
-          defaultValue: fieldMetadataInput.defaultValue ?? null,
-        });
-      }
-    }
+    this.validateFieldMetadataOptions({
+      fieldMetadataInput,
+      fieldMetadataType,
+    });
 
     if (fieldMetadataInput.settings) {
       await this.fieldMetadataValidationService.validateSettingsOrThrow({
@@ -791,18 +805,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       assertMutationNotOnRemoteObject(objectMetadata);
     }
 
-    if (isEnumFieldMetadataType(fieldMetadataInput.type)) {
-      if (
-        !isDefined(fieldMetadataInput.options) &&
-        fieldMetadataInput.type !== FieldMetadataType.RATING
-      ) {
-        throw new FieldMetadataException(
-          'Options are required for enum fields',
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
-    }
-
     if (fieldMetadataInput.type === FieldMetadataType.RATING) {
       fieldMetadataInput.options = generateRatingOptions();
     }
@@ -815,13 +817,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       fieldMetadataForCreate,
       objectMetadata,
     );
-
-    if (fieldMetadataForCreate.isLabelSyncedWithName === true) {
-      validateNameAndLabelAreSyncOrThrow(
-        fieldMetadataForCreate.label,
-        fieldMetadataForCreate.name,
-      );
-    }
 
     return await fieldMetadataRepository.save(fieldMetadataForCreate);
   }
