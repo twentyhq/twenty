@@ -49,6 +49,10 @@ export enum SettingsPath {
   IntegrationInterNewDatabaseConnection = 'integrations/inter/new',
   IntegrationInterEditDatabaseConnection = 'integrations/inter/:connectionId/edit',
 
+  IntegrationFocusNfe = 'integrations/focus-nfe',
+  IntegrationFocusNfeNewDatabaseConnection = 'integrations/focus-nfe/new',
+  IntegrationFocusNfeEditDatabaseConnection = 'integrations/focus-nfe/:connectionId/edit',
+
   Security = 'security',
   NewSSOIdentityProvider = 'security/sso/new',
   NewApprovedAccessDomain = 'security/approved-access-domain/new',

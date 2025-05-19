@@ -62,6 +62,7 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 import { BillingPlansModule } from 'src/engine/core-modules/billing-plans/billing-plans.module';
 import { OnboardingPlansModule } from 'src/engine/core-modules/onboarding-plans/onboarding-plans.module';
 
+import { FocusNfeModule } from 'src/engine/core-modules/focus-nfe/focus-nfe-integration.module';
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
@@ -98,6 +99,7 @@ import { StripeModule } from './stripe/stripe.module';
     StripeModule,
     BillingPlansModule,
     InterModule,
+    FocusNfeModule,
     TwentyConfigModule,
     RedisClientModule,
     MetaModule,
@@ -166,6 +168,7 @@ import { StripeModule } from './stripe/stripe.module';
     OnboardingPlansModule,
     BillingPlansModule,
     InterModule,
+    FocusNfeModule,
   ],
 })
 export class CoreEngineModule {}

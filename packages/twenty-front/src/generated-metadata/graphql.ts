@@ -504,6 +504,13 @@ export type CreateFieldInput = {
   type: FieldMetadataType;
 };
 
+export type CreateFocusNfeIntegrationInput = {
+  integrationName: Scalars['String']['input'];
+  status?: Scalars['String']['input'];
+  token: Scalars['String']['input'];
+  workspaceId: Scalars['ID']['input'];
+};
+
 export type CreateInterIntegrationInput = {
   certificate?: InputMaybe<Scalars['String']['input']>;
   clientId: Scalars['String']['input'];
@@ -933,6 +940,16 @@ export type FindManyRemoteTablesInput = {
   shouldFetchPendingSchemaUpdates?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+export type FocusNfeIntegrationPublicDto = {
+  __typename?: 'FocusNfeIntegrationPublicDto';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  integrationName?: Maybe<Scalars['String']['output']>;
+  status: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  workspace?: Maybe<Workspace>;
+};
+
 export type FullName = {
   __typename?: 'FullName';
   firstName: Scalars['String']['output'];
@@ -1183,6 +1200,7 @@ export type Mutation = {
   createBillingPlans: BillingPlans;
   createDatabaseConfigVariable: Scalars['Boolean']['output'];
   createDraftFromWorkflowVersion: WorkflowVersion;
+  createFocusNfeIntegration: FocusNfeIntegrationPublicDto;
   createInterIntegration: InterIntegration;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
@@ -1204,6 +1222,7 @@ export type Mutation = {
   deleteApprovedAccessDomain: Scalars['Boolean']['output'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean']['output'];
+  deleteFocusNfeIntegration: Scalars['Boolean']['output'];
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRelation: RelationMetadata;
@@ -1251,6 +1270,7 @@ export type Mutation = {
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
   toggleAgentStatus: Scalars['Boolean']['output'];
+  toggleFocusNfeIntegrationStatus: Scalars['String']['output'];
   toggleInterIntegrationStatus: Scalars['String']['output'];
   toggleWhatsappIntegrationStatus: Scalars['Boolean']['output'];
   trackAnalytics: Analytics;
@@ -1259,6 +1279,7 @@ export type Mutation = {
   updateBillingPlans: BillingPlans;
   updateChatbotFlow: Scalars['Boolean']['output'];
   updateDatabaseConfigVariable: Scalars['Boolean']['output'];
+  updateFocusNfeIntegration: FocusNfeIntegrationPublicDto;
   updateInterIntegration: InterIntegration;
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneField: Field;
@@ -1343,6 +1364,11 @@ export type MutationCreateDatabaseConfigVariableArgs = {
 
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
+};
+
+
+export type MutationCreateFocusNfeIntegrationArgs = {
+  createInput: CreateFocusNfeIntegrationInput;
 };
 
 
@@ -1446,6 +1472,11 @@ export type MutationDeleteApprovedAccessDomainArgs = {
 
 export type MutationDeleteDatabaseConfigVariableArgs = {
   key: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteFocusNfeIntegrationArgs = {
+  focusNfeIntegrationId: Scalars['String']['input'];
 };
 
 
@@ -1658,6 +1689,11 @@ export type MutationToggleAgentStatusArgs = {
 };
 
 
+export type MutationToggleFocusNfeIntegrationStatusArgs = {
+  focusNfeIntegrationId: Scalars['String']['input'];
+};
+
+
 export type MutationToggleInterIntegrationStatusArgs = {
   integrationId: Scalars['String']['input'];
 };
@@ -1699,6 +1735,11 @@ export type MutationUpdateChatbotFlowArgs = {
 export type MutationUpdateDatabaseConfigVariableArgs = {
   key: Scalars['String']['input'];
   value: Scalars['JSON']['input'];
+};
+
+
+export type MutationUpdateFocusNfeIntegrationArgs = {
+  updateInput: UpdateFocusNfeIntegrationInput;
 };
 
 
@@ -2098,6 +2139,8 @@ export type Query = {
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getDashboardLinklogs: Array<LinkLogsWorkspaceEntity>;
   getDatabaseConfigVariable: ConfigVariable;
+  getFocusNfeIntegrationById: FocusNfeIntegrationPublicDto;
+  getFocusNfeIntegrationsByWorkspace: Array<FocusNfeIntegrationPublicDto>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getInterAccountInfo: Scalars['String']['output'];
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -2232,6 +2275,16 @@ export type QueryGetChatbotFlowByIdArgs = {
 
 export type QueryGetDatabaseConfigVariableArgs = {
   key: Scalars['String']['input'];
+};
+
+
+export type QueryGetFocusNfeIntegrationByIdArgs = {
+  focusNfeIntegrationId: Scalars['String']['input'];
+};
+
+
+export type QueryGetFocusNfeIntegrationsByWorkspaceArgs = {
+  workspaceId: Scalars['String']['input'];
 };
 
 
@@ -3036,6 +3089,13 @@ export type UpdateFieldInput = {
   name?: InputMaybe<Scalars['String']['input']>;
   options?: InputMaybe<Scalars['JSON']['input']>;
   settings?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type UpdateFocusNfeIntegrationInput = {
+  id: Scalars['String']['input'];
+  integrationName?: InputMaybe<Scalars['String']['input']>;
+  status?: Scalars['String']['input'];
+  token?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateInterIntegrationInput = {

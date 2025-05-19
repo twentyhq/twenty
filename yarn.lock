@@ -22382,6 +22382,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/crypto-js@npm:^4.2.2":
+  version: 4.2.2
+  resolution: "@types/crypto-js@npm:4.2.2"
+  checksum: 10c0/760a2078f36f2a3a1089ef367b0d13229876adcf4bcd6e8824d00d9e9bfad8118dc7e6a3cc66322b083535e12be3a29044ccdc9603bfb12519ff61551a3322c6
+  languageName: node
+  linkType: hard
+
 "@types/d3-array@npm:^3.0.3":
   version: 3.2.1
   resolution: "@types/d3-array@npm:3.2.1"
@@ -56455,6 +56462,7 @@ __metadata:
     "@types/better-sqlite3": "npm:^7.6.8"
     "@types/bytes": "npm:^3.1.1"
     "@types/chrome": "npm:^0.0.267"
+    "@types/crypto-js": "npm:^4.2.2"
     "@types/deep-equal": "npm:^1.0.1"
     "@types/dompurify": "npm:^3.0.5"
     "@types/express": "npm:^4.17.13"
@@ -56525,6 +56533,7 @@ __metadata:
     cron-validate: "npm:^1.4.5"
     cross-env: "npm:^7.0.3"
     cross-var: "npm:^1.1.0"
+    crypto-js: "npm:^4.2.0"
     css-loader: "npm:^7.1.2"
     danger: "npm:^11.3.0"
     danger-plugin-todos: "npm:^1.3.1"
