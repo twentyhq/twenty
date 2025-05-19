@@ -3,6 +3,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { currentFocusIdentifierSelector } from '@/ui/utilities/focus/states/currentFocusIdentifierSelector';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useTheme } from '@emotion/react';
@@ -11,6 +12,7 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledCommandMenu = styled(motion.div)`
@@ -51,7 +53,14 @@ export const CommandMenuOpenContainer = ({
           .getLoadable(currentHotkeyScopeState)
           .getValue();
 
-        if (hotkeyScope?.scope === CommandMenuHotkeyScope.CommandMenuFocused) {
+        const currentFocusIdentifier = snapshot
+          .getLoadable(currentFocusIdentifierSelector)
+          .getValue();
+
+        if (
+          hotkeyScope?.scope === CommandMenuHotkeyScope.CommandMenuFocused &&
+          !isDefined(currentFocusIdentifier)
+        ) {
           closeCommandMenu();
         }
       },
