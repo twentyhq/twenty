@@ -4,7 +4,7 @@ import { basename, dirname } from 'path';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
+import { Equal, Not, Repository } from 'typeorm';
 
 import {
   FileStorageException,
@@ -50,6 +50,34 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
   }
 
   private async cleanNotFoundFiles(workspaceId: string, dryRun: boolean) {
+    await this.cleanWorkspaceLogo(workspaceId, dryRun);
+    await this.softDeleteAttachments(workspaceId, dryRun);
+    await this.cleanWorkspaceMembersAvatarUrl(workspaceId, dryRun);
+    await this.cleanPeopleAvatarUrl(workspaceId, dryRun);
+  }
+
+  private async checkIfFileIsFound(path: string, workspaceId: string) {
+    if (path.startsWith('https://')) return true; // seed data
+
+    try {
+      await this.fileService.getFileStream(
+        dirname(path),
+        basename(path),
+        workspaceId,
+      );
+    } catch (error) {
+      if (
+        error instanceof FileStorageException &&
+        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private async cleanWorkspaceLogo(workspaceId: string, dryRun: boolean) {
     const workspace = await this.workspaceRepository.findOneOrFail({
       where: {
         id: workspaceId,
@@ -73,100 +101,125 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
         );
       }
     }
+  }
 
+  private async softDeleteAttachments(workspaceId: string, dryRun: boolean) {
     const attachmentRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
         workspaceId,
         'attachment',
       );
-    const attachments = await attachmentRepository.find();
+    const attachmentsCount = await attachmentRepository.count();
+    const chunkSize = 10;
 
-    for (const attachment of attachments) {
-      const isFileFound = await this.checkIfFileIsFound(
-        attachment.fullPath,
-        workspaceId,
+    const attachmentIdsToSoftDelete: string[] = [];
+
+    for (let offset = 0; offset < attachmentsCount; offset += chunkSize) {
+      const attachmentsChunk = await attachmentRepository.find({
+        skip: offset,
+        take: chunkSize,
+      });
+
+      const attachmentIdsToSoftDeleteChunk = await Promise.all(
+        attachmentsChunk.map(async (attachment) => {
+          const isFileFound = await this.checkIfFileIsFound(
+            attachment.fullPath,
+            workspaceId,
+          );
+
+          return isFileFound ? '' : attachment.id;
+        }),
       );
 
-      if (!isFileFound) {
-        if (!dryRun) await attachmentRepository.softDelete(attachment.id);
-
-        this.logger.log(
-          `${dryRun ? 'Dry run - ' : ''}Deleted attachment ${attachment.id}`,
-        );
-      }
+      attachmentIdsToSoftDelete.push(
+        ...attachmentIdsToSoftDeleteChunk.filter(isNonEmptyString),
+      );
     }
 
+    if (attachmentIdsToSoftDelete.length > 0) {
+      if (!dryRun)
+        await attachmentRepository.softDelete(attachmentIdsToSoftDelete);
+
+      this.logger.log(
+        `${dryRun ? 'Dry run - ' : ''}Deleted attachments ${attachmentIdsToSoftDelete.join(', ')}`,
+      );
+    }
+  }
+
+  private async cleanWorkspaceMembersAvatarUrl(
+    workspaceId: string,
+    dryRun: boolean,
+  ) {
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
         'workspaceMember',
       );
-    const workspaceMembers = await workspaceMemberRepository.find();
+    const workspaceMembers = await workspaceMemberRepository.find({
+      where: {
+        avatarUrl: Not(Equal('')),
+      },
+    });
+
+    const workspaceMemberIdsToUpdate: string[] = [];
 
     for (const workspaceMember of workspaceMembers) {
-      if (isNonEmptyString(workspaceMember.avatarUrl)) {
-        const isFileFound = await this.checkIfFileIsFound(
-          workspaceMember.avatarUrl,
-          workspaceId,
-        );
+      const isFileFound = await this.checkIfFileIsFound(
+        workspaceMember.avatarUrl,
+        workspaceId,
+      );
 
-        if (!isFileFound) {
-          if (!dryRun)
-            await workspaceMemberRepository.update(workspaceMember.id, {
-              avatarUrl: '',
-            });
-
-          this.logger.log(
-            `${dryRun ? 'Dry run - ' : ''}Set avatarUrl to '' for workspaceMember ${workspaceMember.id}`,
-          );
-        }
+      if (!isFileFound) {
+        workspaceMemberIdsToUpdate.push(workspaceMember.id);
       }
     }
 
+    if (workspaceMemberIdsToUpdate.length > 0) {
+      if (!dryRun)
+        await workspaceMemberRepository.update(workspaceMemberIdsToUpdate, {
+          avatarUrl: '',
+        });
+
+      this.logger.log(
+        `${dryRun ? 'Dry run - ' : ''}Set avatarUrl to '' for workspaceMembers ${workspaceMemberIdsToUpdate.join(', ')}`,
+      );
+    }
+  }
+
+  private async cleanPeopleAvatarUrl(workspaceId: string, dryRun: boolean) {
     const personRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
         workspaceId,
         'person',
       );
-    const persons = await personRepository.find();
+    const people = await personRepository.find({
+      where: {
+        avatarUrl: Not(Equal('')),
+      },
+    });
 
-    for (const person of persons) {
-      if (isNonEmptyString(person.avatarUrl)) {
-        const isFileFound = await this.checkIfFileIsFound(
-          person.avatarUrl,
-          workspaceId,
-        );
+    const personIdsToUpdate: string[] = [];
 
-        if (!isFileFound) {
-          if (!dryRun)
-            await personRepository.update(person.id, { avatarUrl: '' });
-
-          this.logger.log(
-            `${dryRun ? 'Dry run - ' : ''}Set avatarUrl to '' for person ${person.id}`,
-          );
-        }
-      }
-    }
-  }
-
-  private async checkIfFileIsFound(path: string, workspaceId: string) {
-    if (path.startsWith('https://')) return true; // seed data
-
-    try {
-      await this.fileService.getFileStream(
-        dirname(path),
-        basename(path),
+    for (const person of people) {
+      const isFileFound = await this.checkIfFileIsFound(
+        person.avatarUrl,
         workspaceId,
       );
-    } catch (error) {
-      if (
-        error instanceof FileStorageException &&
-        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
-      ) {
-        return false;
+
+      if (!isFileFound) {
+        personIdsToUpdate.push(person.id);
       }
     }
 
-    return true;
+    if (personIdsToUpdate.length > 0) {
+      if (!dryRun)
+        await personRepository.update(personIdsToUpdate, {
+          avatarUrl: '',
+        });
+
+      this.logger.log(
+        `${dryRun ? 'Dry run - ' : ''}Set avatarUrl to '' for people ${personIdsToUpdate.join(', ')}`,
+      );
+    }
   }
 }
