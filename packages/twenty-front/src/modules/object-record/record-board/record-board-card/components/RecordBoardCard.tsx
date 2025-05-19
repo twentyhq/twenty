@@ -15,7 +15,6 @@ import { RecordBoardCardBody } from '@/object-record/record-board/record-board-c
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
-import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { AppPath } from '@/types/AppPath';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
@@ -201,7 +200,6 @@ export const RecordBoardCard = () => {
       className="record-board-card"
       onContextMenu={handleActionMenuDropdown}
     >
-      <RecordValueSetterEffect recordId={recordId} />
       <InView>
         <StyledBoardCard
           ref={cardRef}
