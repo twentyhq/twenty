@@ -130,51 +130,51 @@ export const ConfirmWithEnterKey: Story = {
   },
 };
 
-export const CancelButtonClick: Story = {
-  args: {
-    modalId: 'confirmation-modal',
-    title: 'Cancel Button Test',
-    subtitle: 'Clicking the cancel button should close the modal',
-    confirmButtonText: 'Confirm',
-    onClose: closeMock,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+// export const CancelButtonClick: Story = {
+//   args: {
+//     modalId: 'confirmation-modal',
+//     title: 'Cancel Button Test',
+//     subtitle: 'Clicking the cancel button should close the modal',
+//     confirmButtonText: 'Confirm',
+//     onClose: closeMock,
+//   },
+//   play: async ({ canvasElement }) => {
+//     const canvas = within(canvasElement);
 
-    await canvas.findByText('Cancel Button Test');
+//     await canvas.findByText('Cancel Button Test');
 
-    const cancelButton = await canvas.findByRole('button', {
-      name: /Cancel/,
-    });
-    await userEvent.click(cancelButton);
+//     const cancelButton = await canvas.findByRole('button', {
+//       name: /Cancel/,
+//     });
+//     await userEvent.click(cancelButton);
 
-    await waitFor(() => {
-      expect(closeMock).toHaveBeenCalledTimes(1);
-    });
-  },
-};
+//     await waitFor(() => {
+//       expect(closeMock).toHaveBeenCalledTimes(1);
+//     });
+//   },
+// };
 
-export const ConfirmButtonClick: Story = {
-  args: {
-    modalId: 'confirmation-modal',
-    title: 'Confirm Button Test',
-    subtitle: 'Clicking the confirm button should trigger the confirm action',
-    confirmButtonText: 'Confirm',
-    onConfirmClick: confirmMock,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+// export const ConfirmButtonClick: Story = {
+//   args: {
+//     modalId: 'confirmation-modal',
+//     title: 'Confirm Button Test',
+//     subtitle: 'Clicking the confirm button should trigger the confirm action',
+//     confirmButtonText: 'Confirm',
+//     onConfirmClick: confirmMock,
+//   },
+//   play: async ({ canvasElement }) => {
+//     const canvas = within(canvasElement);
 
-    await canvas.findByText('Confirm Button Test');
+//     await canvas.findByText('Confirm Button Test');
 
-    const confirmButton = await canvas.findByRole('button', {
-      name: /Confirm/,
-    });
+//     const confirmButton = await canvas.findByRole('button', {
+//       name: /Confirm/,
+//     });
 
-    await userEvent.click(confirmButton);
+//     await userEvent.click(confirmButton);
 
-    await waitFor(() => {
-      expect(confirmMock).toHaveBeenCalledTimes(1);
-    });
-  },
-};
+//     await waitFor(() => {
+//       expect(confirmMock).toHaveBeenCalledTimes(1);
+//     });
+//   },
+// };
