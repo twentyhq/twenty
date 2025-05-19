@@ -855,6 +855,16 @@ export type FindAvailableSsoidpOutput = {
   workspace: WorkspaceNameAndId;
 };
 
+export type FocusNfeIntegrationPublicDto = {
+  __typename?: 'FocusNfeIntegrationPublicDto';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  integrationName?: Maybe<Scalars['String']>;
+  status: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  workspace?: Maybe<Workspace>;
+};
+
 export type FullName = {
   __typename?: 'FullName';
   firstName: Scalars['String'];
@@ -1105,7 +1115,7 @@ export type Mutation = {
   createBillingPlans: BillingPlans;
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDraftFromWorkflowVersion: WorkflowVersion;
-  createFocusNfeIntegration: FocusNfeIntegration;
+  createFocusNfeIntegration: FocusNfeIntegrationPublicDto;
   createInterIntegration: InterIntegration;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
@@ -1169,6 +1179,7 @@ export type Mutation = {
   switchToYearlyInterval: BillingUpdateOutput;
   syncInterData: Scalars['Boolean'];
   toggleAgentStatus: Scalars['Boolean'];
+  toggleFocusNfeIntegrationStatus: Scalars['String'];
   toggleInterIntegrationStatus: Scalars['String'];
   toggleWhatsappIntegrationStatus: Scalars['Boolean'];
   trackAnalytics: Analytics;
@@ -1176,7 +1187,7 @@ export type Mutation = {
   updateBillingPlans: BillingPlans;
   updateChatbotFlow: Scalars['Boolean'];
   updateDatabaseConfigVariable: Scalars['Boolean'];
-  updateFocusNfeIntegration: FocusNfeIntegration;
+  updateFocusNfeIntegration: FocusNfeIntegrationPublicDto;
   updateInterIntegration: InterIntegration;
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneField: Field;
@@ -1542,6 +1553,11 @@ export type MutationSyncInterDataArgs = {
 
 export type MutationToggleAgentStatusArgs = {
   agentId: Scalars['String'];
+};
+
+
+export type MutationToggleFocusNfeIntegrationStatusArgs = {
+  focusNfeIntegrationId: Scalars['String'];
 };
 
 
@@ -1977,8 +1993,8 @@ export type Query = {
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getDashboardLinklogs: Array<LinkLogsWorkspaceEntity>;
   getDatabaseConfigVariable: ConfigVariable;
-  getFocusNfeIntegrationById: FocusNfeIntegration;
-  getFocusNfeIntegrationsByWorkspace: Array<FocusNfeIntegration>;
+  getFocusNfeIntegrationById: FocusNfeIntegrationPublicDto;
+  getFocusNfeIntegrationsByWorkspace: Array<FocusNfeIntegrationPublicDto>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getInterAccountInfo: Scalars['String'];
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -3307,17 +3323,6 @@ export type WorkspaceUrlsAndId = {
   workspaceUrls: WorkspaceUrls;
 };
 
-export type FocusNfeIntegration = {
-  __typename?: 'focusNfeIntegration';
-  createdAt: Scalars['DateTime'];
-  id: Scalars['UUID'];
-  integrationName: Scalars['String'];
-  status: Scalars['String'];
-  token: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-  workspace: Workspace;
-};
-
 export type TimelineCalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
 
 export type TimelineCalendarEventParticipantFragmentFragment = { __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
@@ -3739,7 +3744,28 @@ export type CreateFocusNfeIntegrationMutationVariables = Exact<{
 }>;
 
 
-export type CreateFocusNfeIntegrationMutation = { __typename?: 'Mutation', createFocusNfeIntegration: { __typename?: 'focusNfeIntegration', id: any, integrationName: string, token: string, status: string, workspace: { __typename?: 'Workspace', id: any } } };
+export type CreateFocusNfeIntegrationMutation = { __typename?: 'Mutation', createFocusNfeIntegration: { __typename?: 'FocusNfeIntegrationPublicDto', id: string, integrationName?: string | null, status: string, workspace?: { __typename?: 'Workspace', id: any } | null } };
+
+export type ToggleFocusNfeIntegrationStatusMutationVariables = Exact<{
+  focusNfeIntegrationId: Scalars['String'];
+}>;
+
+
+export type ToggleFocusNfeIntegrationStatusMutation = { __typename?: 'Mutation', toggleFocusNfeIntegrationStatus: string };
+
+export type UpdateFocusNfeIntegrationMutationVariables = Exact<{
+  updateInput: UpdateFocusNfeIntegrationInput;
+}>;
+
+
+export type UpdateFocusNfeIntegrationMutation = { __typename?: 'Mutation', updateFocusNfeIntegration: { __typename?: 'FocusNfeIntegrationPublicDto', id: string, integrationName?: string | null, status: string, createdAt: string, updatedAt: string, workspace?: { __typename?: 'Workspace', displayName?: string | null, id: any } | null } };
+
+export type GetFocusNfeIntegrationsByWorkspaceQueryVariables = Exact<{
+  workspaceId: Scalars['String'];
+}>;
+
+
+export type GetFocusNfeIntegrationsByWorkspaceQuery = { __typename?: 'Query', getFocusNfeIntegrationsByWorkspace: Array<{ __typename?: 'FocusNfeIntegrationPublicDto', id: string, integrationName?: string | null, createdAt: string, status: string, workspace?: { __typename?: 'Workspace', displayName?: string | null } | null }> };
 
 export type CreateInterIntegrationMutationVariables = Exact<{
   createInput: CreateInterIntegrationInput;
@@ -6618,7 +6644,6 @@ export const CreateFocusNfeIntegrationDocument = gql`
   createFocusNfeIntegration(createInput: $createInput) {
     id
     integrationName
-    token
     status
     workspace {
       id
@@ -6652,6 +6677,119 @@ export function useCreateFocusNfeIntegrationMutation(baseOptions?: Apollo.Mutati
 export type CreateFocusNfeIntegrationMutationHookResult = ReturnType<typeof useCreateFocusNfeIntegrationMutation>;
 export type CreateFocusNfeIntegrationMutationResult = Apollo.MutationResult<CreateFocusNfeIntegrationMutation>;
 export type CreateFocusNfeIntegrationMutationOptions = Apollo.BaseMutationOptions<CreateFocusNfeIntegrationMutation, CreateFocusNfeIntegrationMutationVariables>;
+export const ToggleFocusNfeIntegrationStatusDocument = gql`
+    mutation ToggleFocusNfeIntegrationStatus($focusNfeIntegrationId: String!) {
+  toggleFocusNfeIntegrationStatus(focusNfeIntegrationId: $focusNfeIntegrationId)
+}
+    `;
+export type ToggleFocusNfeIntegrationStatusMutationFn = Apollo.MutationFunction<ToggleFocusNfeIntegrationStatusMutation, ToggleFocusNfeIntegrationStatusMutationVariables>;
+
+/**
+ * __useToggleFocusNfeIntegrationStatusMutation__
+ *
+ * To run a mutation, you first call `useToggleFocusNfeIntegrationStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleFocusNfeIntegrationStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleFocusNfeIntegrationStatusMutation, { data, loading, error }] = useToggleFocusNfeIntegrationStatusMutation({
+ *   variables: {
+ *      focusNfeIntegrationId: // value for 'focusNfeIntegrationId'
+ *   },
+ * });
+ */
+export function useToggleFocusNfeIntegrationStatusMutation(baseOptions?: Apollo.MutationHookOptions<ToggleFocusNfeIntegrationStatusMutation, ToggleFocusNfeIntegrationStatusMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ToggleFocusNfeIntegrationStatusMutation, ToggleFocusNfeIntegrationStatusMutationVariables>(ToggleFocusNfeIntegrationStatusDocument, options);
+      }
+export type ToggleFocusNfeIntegrationStatusMutationHookResult = ReturnType<typeof useToggleFocusNfeIntegrationStatusMutation>;
+export type ToggleFocusNfeIntegrationStatusMutationResult = Apollo.MutationResult<ToggleFocusNfeIntegrationStatusMutation>;
+export type ToggleFocusNfeIntegrationStatusMutationOptions = Apollo.BaseMutationOptions<ToggleFocusNfeIntegrationStatusMutation, ToggleFocusNfeIntegrationStatusMutationVariables>;
+export const UpdateFocusNfeIntegrationDocument = gql`
+    mutation UpdateFocusNfeIntegration($updateInput: UpdateFocusNfeIntegrationInput!) {
+  updateFocusNfeIntegration(updateInput: $updateInput) {
+    id
+    integrationName
+    status
+    createdAt
+    updatedAt
+    workspace {
+      displayName
+      id
+    }
+  }
+}
+    `;
+export type UpdateFocusNfeIntegrationMutationFn = Apollo.MutationFunction<UpdateFocusNfeIntegrationMutation, UpdateFocusNfeIntegrationMutationVariables>;
+
+/**
+ * __useUpdateFocusNfeIntegrationMutation__
+ *
+ * To run a mutation, you first call `useUpdateFocusNfeIntegrationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateFocusNfeIntegrationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateFocusNfeIntegrationMutation, { data, loading, error }] = useUpdateFocusNfeIntegrationMutation({
+ *   variables: {
+ *      updateInput: // value for 'updateInput'
+ *   },
+ * });
+ */
+export function useUpdateFocusNfeIntegrationMutation(baseOptions?: Apollo.MutationHookOptions<UpdateFocusNfeIntegrationMutation, UpdateFocusNfeIntegrationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateFocusNfeIntegrationMutation, UpdateFocusNfeIntegrationMutationVariables>(UpdateFocusNfeIntegrationDocument, options);
+      }
+export type UpdateFocusNfeIntegrationMutationHookResult = ReturnType<typeof useUpdateFocusNfeIntegrationMutation>;
+export type UpdateFocusNfeIntegrationMutationResult = Apollo.MutationResult<UpdateFocusNfeIntegrationMutation>;
+export type UpdateFocusNfeIntegrationMutationOptions = Apollo.BaseMutationOptions<UpdateFocusNfeIntegrationMutation, UpdateFocusNfeIntegrationMutationVariables>;
+export const GetFocusNfeIntegrationsByWorkspaceDocument = gql`
+    query GetFocusNfeIntegrationsByWorkspace($workspaceId: String!) {
+  getFocusNfeIntegrationsByWorkspace(workspaceId: $workspaceId) {
+    id
+    integrationName
+    createdAt
+    status
+    workspace {
+      displayName
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetFocusNfeIntegrationsByWorkspaceQuery__
+ *
+ * To run a query within a React component, call `useGetFocusNfeIntegrationsByWorkspaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFocusNfeIntegrationsByWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFocusNfeIntegrationsByWorkspaceQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *   },
+ * });
+ */
+export function useGetFocusNfeIntegrationsByWorkspaceQuery(baseOptions: Apollo.QueryHookOptions<GetFocusNfeIntegrationsByWorkspaceQuery, GetFocusNfeIntegrationsByWorkspaceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFocusNfeIntegrationsByWorkspaceQuery, GetFocusNfeIntegrationsByWorkspaceQueryVariables>(GetFocusNfeIntegrationsByWorkspaceDocument, options);
+      }
+export function useGetFocusNfeIntegrationsByWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFocusNfeIntegrationsByWorkspaceQuery, GetFocusNfeIntegrationsByWorkspaceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFocusNfeIntegrationsByWorkspaceQuery, GetFocusNfeIntegrationsByWorkspaceQueryVariables>(GetFocusNfeIntegrationsByWorkspaceDocument, options);
+        }
+export type GetFocusNfeIntegrationsByWorkspaceQueryHookResult = ReturnType<typeof useGetFocusNfeIntegrationsByWorkspaceQuery>;
+export type GetFocusNfeIntegrationsByWorkspaceLazyQueryHookResult = ReturnType<typeof useGetFocusNfeIntegrationsByWorkspaceLazyQuery>;
+export type GetFocusNfeIntegrationsByWorkspaceQueryResult = Apollo.QueryResult<GetFocusNfeIntegrationsByWorkspaceQuery, GetFocusNfeIntegrationsByWorkspaceQueryVariables>;
 export const CreateInterIntegrationDocument = gql`
     mutation CreateInterIntegration($createInput: CreateInterIntegrationInput!) {
   createInterIntegration(createInput: $createInput) {
