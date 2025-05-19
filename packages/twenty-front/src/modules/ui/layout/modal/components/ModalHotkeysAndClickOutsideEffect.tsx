@@ -1,8 +1,7 @@
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import {
-  ClickOutsideMode,
-  useListenClickOutside,
+  useListenClickOutside
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Key } from 'ts-key-enum';
 
@@ -48,7 +47,6 @@ export const ModalHotkeysAndClickOutsideEffect = ({
         onClose();
       }
     },
-    mode: ClickOutsideMode.compareHTMLRef,
   });
 
   return null;

@@ -235,29 +235,29 @@ export const Modal = ({
               onEnter={onEnter}
               isClosable={isClosable}
               onClose={handleClose}
-          />
-          <StyledBackDrop
-            data-testid="modal-backdrop"
-            className="modal-backdrop"
-            onMouseDown={stopEventPropagation}
-            modalVariant={modalVariant}
-          >
-            <StyledModalDiv
-              ref={modalRef}
-              size={size}
-              padding={padding}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              layout
+            />
+            <StyledBackDrop
+              data-testid="modal-backdrop"
+              className="modal-backdrop"
+              onMouseDown={stopEventPropagation}
               modalVariant={modalVariant}
-              variants={modalAnimation}
-              transition={{ duration: theme.animation.duration.normal }}
-              className={className}
-              isMobile={isMobile}
             >
-              {children}
-            </StyledModalDiv>
+              <StyledModalDiv
+                ref={modalRef}
+                size={size}
+                padding={padding}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                layout
+                modalVariant={modalVariant}
+                variants={modalAnimation}
+                transition={{ duration: theme.animation.duration.normal }}
+                className={className}
+                isMobile={isMobile}
+              >
+                {children}
+              </StyledModalDiv>
             </StyledBackDrop>
           </ClickOutsideListenerContext.Provider>
         </ModalComponentInstanceContext.Provider>
