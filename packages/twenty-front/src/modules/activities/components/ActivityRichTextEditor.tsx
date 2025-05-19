@@ -1,6 +1,6 @@
 import { useApolloClient } from '@apollo/client';
 import { useCallback, useMemo } from 'react';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
@@ -26,7 +26,9 @@ import { Task } from '@/activities/types/Task';
 import { filterAttachmentsToRestore } from '@/activities/utils/filterAttachmentsToRestore';
 import { getActivityAttachmentIdsToDelete } from '@/activities/utils/getActivityAttachmentIdsToDelete';
 import { getActivityAttachmentPathsToRestore } from '@/activities/utils/getActivityAttachmentPathsToRestore';
+import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
@@ -295,6 +297,8 @@ export const ActivityRichTextEditor = ({
     uploadFile: handleEditorBuiltInUploadFile,
   });
 
+  const commandMenuPage = useRecoilValue(commandMenuPageState);
+
   useScopedHotkeys(
     Key.Escape,
     () => {
@@ -306,6 +310,11 @@ export const ActivityRichTextEditor = ({
   useScopedHotkeys(
     '*',
     (keyboardEvent) => {
+      // TODO: remove once stacked hotkeys / focusKeys are in place
+      if (commandMenuPage !== CommandMenuPages.EditRichText) {
+        return;
+      }
+
       if (keyboardEvent.key === Key.Escape) {
         return;
       }
