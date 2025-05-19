@@ -40,7 +40,6 @@ const StyledClickableComponent = styled.div<{
 `;
 
 export type DropdownProps = {
-  className?: string;
   clickableComponent?: ReactNode;
   clickableComponentWidth?: Width;
   dropdownComponents: ReactNode;
@@ -57,11 +56,9 @@ export type DropdownProps = {
   onClickOutside?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
-  avoidPortal?: boolean;
 };
 
 export const Dropdown = ({
-  className,
   clickableComponent,
   dropdownComponents,
   dropdownWidth,
@@ -74,7 +71,6 @@ export const Dropdown = ({
   onClickOutside,
   onClose,
   onOpen,
-  avoidPortal,
   clickableComponentWidth = 'auto',
 }: DropdownProps) => {
   const { isDropdownOpen, toggleDropdown } = useDropdown(dropdownId);
@@ -174,7 +170,6 @@ export const Dropdown = ({
           )}
           {isDropdownOpen && (
             <DropdownContent
-              className={className}
               floatingStyles={floatingStyles}
               dropdownWidth={dropdownWidth}
               dropdownComponents={dropdownComponents}
@@ -185,7 +180,6 @@ export const Dropdown = ({
               hotkey={hotkey}
               onClickOutside={onClickOutside}
               onHotkeyTriggered={toggleDropdown}
-              avoidPortal={avoidPortal}
             />
           )}
           <DropdownOnToggleEffect
