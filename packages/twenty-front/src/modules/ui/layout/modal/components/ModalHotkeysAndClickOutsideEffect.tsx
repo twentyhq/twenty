@@ -1,5 +1,4 @@
-import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/focus/hooks/useHotkeysOnFocusedElement';
 import {
   ClickOutsideMode,
   useListenClickOutside,
@@ -21,22 +20,22 @@ export const ModalHotkeysAndClickOutsideEffect = ({
   onClose,
   modalId,
 }: ModalHotkeysAndClickOutsideEffectProps) => {
-  useScopedHotkeys(
+  useHotkeysOnFocusedElement(
     [Key.Enter],
     () => {
       onEnter?.();
     },
-    ModalHotkeyScope.ModalFocus,
+    modalId,
   );
 
-  useScopedHotkeys(
+  useHotkeysOnFocusedElement(
     [Key.Escape],
     () => {
       if (isClosable && onClose !== undefined) {
         onClose();
       }
     },
-    ModalHotkeyScope.ModalFocus,
+    modalId,
   );
 
   useListenClickOutside({

@@ -1,18 +1,16 @@
+import { useScopedHotkeyCallback } from '@/ui/utilities/hotkey/hooks/useScopedHotkeyCallback';
+import { pendingHotkeyState } from '@/ui/utilities/hotkey/states/internal/pendingHotkeysState';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { HotkeyCallback, Keys, Options } from 'react-hotkeys-hook/dist/types';
-import { useRecoilState, useRecoilValue } from 'recoil';
-
-import { currentFocusIdentifierSelector } from '@/ui/utilities/focus/states/currentFocusIdentifierSelector';
+import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { pendingHotkeyState } from '../states/internal/pendingHotkeysState';
-import { useScopedHotkeyCallback } from './useScopedHotkeyCallback';
 
 type UseHotkeysOptionsWithoutBuggyOptions = Omit<Options, 'enabled'>;
 
-export const useScopedHotkeys = (
+export const useHotkeysOnFocusedElement = (
   keys: Keys,
   callback: HotkeyCallback,
-  scope: string,
+  focusedId: string,
   dependencies?: unknown[],
   options?: UseHotkeysOptionsWithoutBuggyOptions,
 ) => {
@@ -36,15 +34,9 @@ export const useScopedHotkeys = (
     ? options.ignoreModifiers === true
     : false;
 
-  const currentFocusIdentifier = useRecoilValue(currentFocusIdentifierSelector);
-
   return useHotkeys(
     keys,
     (keyboardEvent, hotkeysEvent) => {
-      if (isDefined(currentFocusIdentifier)) {
-        return;
-      }
-
       callScopedHotkeyCallback({
         keyboardEvent,
         hotkeysEvent,
@@ -55,7 +47,7 @@ export const useScopedHotkeys = (
           }
           setPendingHotkey(null);
         },
-        scope,
+        scope: focusedId,
         preventDefault,
       });
     },

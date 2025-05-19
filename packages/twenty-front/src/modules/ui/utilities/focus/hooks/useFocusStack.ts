@@ -13,7 +13,7 @@ export const useFocusStack = () => {
           instanceId: string;
         },
       ) => {
-        const focusKey: FocusIdentifier = {
+        const focusIdentifier: FocusIdentifier = {
           focusId,
           componentType: component.type,
           componentInstanceId: component.instanceId,
@@ -21,7 +21,7 @@ export const useFocusStack = () => {
 
         set(focusStackState, (previousFocusStack) => [
           ...previousFocusStack,
-          focusKey,
+          focusIdentifier,
         ]);
       },
     [],
@@ -31,7 +31,9 @@ export const useFocusStack = () => {
     ({ set }) =>
       (focusId: string) => {
         set(focusStackState, (previousFocusStack) =>
-          previousFocusStack.filter((focusKey) => focusKey.focusId !== focusId),
+          previousFocusStack.filter(
+            (focusIdentifier) => focusIdentifier.focusId !== focusId,
+          ),
         );
       },
     [],

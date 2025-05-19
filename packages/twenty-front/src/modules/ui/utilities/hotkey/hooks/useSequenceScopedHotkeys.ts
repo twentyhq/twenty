@@ -1,11 +1,12 @@
 import { Options, useHotkeys } from 'react-hotkeys-hook';
 import { Keys } from 'react-hotkeys-hook/dist/types';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { pendingHotkeyState } from '../states/internal/pendingHotkeysState';
 
-import { useScopedHotkeyCallback } from './useScopedHotkeyCallback';
+import { currentFocusIdentifierSelector } from '@/ui/utilities/focus/states/currentFocusIdentifierSelector';
 import { isDefined } from 'twenty-shared/utils';
+import { useScopedHotkeyCallback } from './useScopedHotkeyCallback';
 
 export const useSequenceHotkeys = (
   firstKey: Keys,
@@ -23,9 +24,15 @@ export const useSequenceHotkeys = (
 
   const callScopedHotkeyCallback = useScopedHotkeyCallback();
 
+  const currentFocusIdentifier = useRecoilValue(currentFocusIdentifierSelector);
+
   useHotkeys(
     firstKey,
     (keyboardEvent, hotkeysEvent) => {
+      if (isDefined(currentFocusIdentifier)) {
+        return;
+      }
+
       callScopedHotkeyCallback({
         keyboardEvent,
         hotkeysEvent,
@@ -46,6 +53,10 @@ export const useSequenceHotkeys = (
   useHotkeys(
     secondKey,
     (keyboardEvent, hotkeysEvent) => {
+      if (isDefined(currentFocusIdentifier)) {
+        return;
+      }
+
       callScopedHotkeyCallback({
         keyboardEvent,
         hotkeysEvent,

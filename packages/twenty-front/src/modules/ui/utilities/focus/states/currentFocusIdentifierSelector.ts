@@ -7,7 +7,7 @@ export const currentFocusIdentifierSelector = selector<
 >({
   key: 'currentFocusIdentifierSelector',
   get: ({ get }) => {
-    const stack = get(focusStackState);
-    return stack.length > 0 ? stack[stack.length - 1] : undefined;
+    const focusStack = get(focusStackState);
+    return focusStack.length > 0 ? focusStack.at(-1) : undefined;
   },
 });
