@@ -6,10 +6,6 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { RelationFromManyFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RelationFromManyFieldDisplay';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import {
-  RecordFieldValueSelectorContextProvider,
-  useSetRecordFieldValue,
-} from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -18,7 +14,6 @@ import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   fieldValue,
-  otherPersonMock,
   relationFromManyFieldDisplayMock,
 } from './relationFromManyFieldDisplayMock';
 
@@ -31,26 +26,10 @@ const RelationFieldValueSetterEffect = () => {
     recordStoreFamilyState(relationFromManyFieldDisplayMock.relationRecordId),
   );
 
-  const setRecordFieldValue = useSetRecordFieldValue();
-
   useEffect(() => {
     setEntity(relationFromManyFieldDisplayMock.entityValue);
     setRelationEntity(relationFromManyFieldDisplayMock.relationFieldValue);
-
-    setRecordFieldValue(
-      relationFromManyFieldDisplayMock.entityValue.id,
-      'company',
-      [relationFromManyFieldDisplayMock.entityValue],
-    );
-    setRecordFieldValue(otherPersonMock.entityValue.id, 'company', [
-      relationFromManyFieldDisplayMock.entityValue,
-    ]);
-    setRecordFieldValue(
-      relationFromManyFieldDisplayMock.relationFieldValue.id,
-      'company',
-      relationFromManyFieldDisplayMock.relationFieldValue,
-    );
-  }, [setEntity, setRelationEntity, setRecordFieldValue]);
+  }, [setEntity, setRelationEntity]);
 
   return null;
 };
@@ -61,21 +40,19 @@ const meta: Meta = {
     MemoryRouterDecorator,
     ChipGeneratorsDecorator,
     (Story) => (
-      <RecordFieldValueSelectorContextProvider>
-        <FieldContext.Provider
-          value={{
-            recordId: relationFromManyFieldDisplayMock.recordId,
-            isLabelIdentifier: false,
-            fieldDefinition: {
-              ...relationFromManyFieldDisplayMock.fieldDefinition,
-            } as unknown as FieldDefinition<FieldMetadata>,
-            isReadOnly: false,
-          }}
-        >
-          <RelationFieldValueSetterEffect />
-          <Story />
-        </FieldContext.Provider>
-      </RecordFieldValueSelectorContextProvider>
+      <FieldContext.Provider
+        value={{
+          recordId: relationFromManyFieldDisplayMock.recordId,
+          isLabelIdentifier: false,
+          fieldDefinition: {
+            ...relationFromManyFieldDisplayMock.fieldDefinition,
+          } as unknown as FieldDefinition<FieldMetadata>,
+          isReadOnly: false,
+        }}
+      >
+        <RelationFieldValueSetterEffect />
+        <Story />
+      </FieldContext.Provider>
     ),
     ComponentDecorator,
   ],
