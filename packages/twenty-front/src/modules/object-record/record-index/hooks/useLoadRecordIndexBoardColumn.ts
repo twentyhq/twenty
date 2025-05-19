@@ -8,29 +8,31 @@ import { useSetRecordIdsForColumn } from '@/object-record/record-board/hooks/use
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
+import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hooks/useRecordBoardRecordGqlFields';
 
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
+import { useSetRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseLoadRecordIndexBoardProps = {
   objectNameSingular: string;
-  boardFieldMetadataId: string | null;
+  kanbanFieldMetadataItem: FieldMetadataItem;
   recordBoardId: string;
   columnId: string;
 };
 
 export const useLoadRecordIndexBoardColumn = ({
   objectNameSingular,
-  boardFieldMetadataId,
+  kanbanFieldMetadataItem,
   recordBoardId,
   columnId,
 }: UseLoadRecordIndexBoardProps) => {
+  const setRecordValueInContextSelector = useSetRecordValue();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -69,29 +71,11 @@ export const useLoadRecordIndexBoardColumn = ({
     recordBoardId,
   });
 
-  let recordIndexKanbanFieldMetadataFilter: { [x: string]: any } = {};
-
-  if (isDefined(boardFieldMetadataId)) {
-    const recordIndexKanbanFieldMetadataItem = objectMetadataItem.fields.find(
-      (field) => field.id === boardFieldMetadataId,
-    );
-
-    if (!isDefined(recordIndexKanbanFieldMetadataItem)) {
-      throw new Error('Record index kanban field metadata item not found');
-    }
-
-    if (!isNonEmptyString(recordIndexKanbanFieldMetadataItem?.name ?? '')) {
-      throw new Error('Record index kanban field metadata item name not found');
-    }
-
-    recordIndexKanbanFieldMetadataFilter = {
-      [recordIndexKanbanFieldMetadataItem.name]: isDefined(
-        recordGroupDefinition?.value,
-      )
-        ? { in: [recordGroupDefinition.value] }
-        : { is: 'NULL' },
-    };
-  }
+  const recordIndexKanbanFieldMetadataFilter = {
+    [kanbanFieldMetadataItem.name]: isDefined(recordGroupDefinition?.value)
+      ? { in: [recordGroupDefinition.value] }
+      : { is: 'NULL' },
+  };
 
   const filter = {
     ...requestFilters,
@@ -118,7 +102,10 @@ export const useLoadRecordIndexBoardColumn = ({
 
   useEffect(() => {
     upsertRecordsInStore(records);
-  }, [records, upsertRecordsInStore]);
+    for (const record of records) {
+      setRecordValueInContextSelector(record.id, record);
+    }
+  }, [records, upsertRecordsInStore, setRecordValueInContextSelector]);
 
   return {
     records,

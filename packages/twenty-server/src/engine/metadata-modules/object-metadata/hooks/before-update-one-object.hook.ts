@@ -246,6 +246,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     // Reset the override by setting it to null
     const localeTranslations = update.standardOverrides.translations[locale];
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (localeTranslations as Record<string, any>)[overrideKey] = null;
 
     return true;
@@ -301,6 +302,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
 
     const localeTranslations = update.standardOverrides.translations[locale];
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (localeTranslations as Record<string, any>)[overrideKey] = value;
   }
 

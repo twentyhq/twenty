@@ -180,8 +180,10 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconTrash,
     accent: 'default',
     isPinned: true,
-    shouldBeRegistered: ({ selectedRecord }) =>
-      isDefined(selectedRecord) && !selectedRecord.isRemote,
+    shouldBeRegistered: ({ selectedRecord, isSoftDeleteFilterActive }) =>
+      isDefined(selectedRecord) &&
+      !selectedRecord.isRemote &&
+      !isSoftDeleteFilterActive,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,

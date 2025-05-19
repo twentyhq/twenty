@@ -11,6 +11,7 @@ export const genericTrackSchema = baseEventSchema.extend({
 export type GenericTrackEvent<E extends string = string> = {
   type: 'track';
   event: E;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   properties: any;
   timestamp: string;
   version: string;
@@ -18,8 +19,10 @@ export type GenericTrackEvent<E extends string = string> = {
   workspaceId?: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const eventsRegistry = new Map<string, z.ZodSchema<any>>();
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function registerEvent<E extends string, S extends z.ZodObject<any>>(
   event: E,
   schema: S,

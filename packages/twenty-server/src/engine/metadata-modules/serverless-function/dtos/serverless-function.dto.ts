@@ -32,6 +32,7 @@ registerEnumType(ServerlessFunctionSyncStatus, {
 
 @ObjectType('ServerlessFunction')
 @Authorize({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.workspace?.id },
   }),

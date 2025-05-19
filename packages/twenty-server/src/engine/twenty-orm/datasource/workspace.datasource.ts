@@ -75,6 +75,7 @@ export class WorkspaceDataSource extends DataSource {
 
     Object.assign(queryRunner, { manager: manager });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return queryRunner as any as WorkspaceQueryRunner;
   }
 

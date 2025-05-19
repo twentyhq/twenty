@@ -28,6 +28,7 @@ export class AddPackagesCommand extends CommandRunner {
 
   async run(
     passedParams: string[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     options: Record<string, any>,
   ): Promise<void> {
     this.logger.log('---------------------------------------');

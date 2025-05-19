@@ -38,6 +38,7 @@ export class SyncDriver implements MessageQueueDriver {
       id: '',
       name: jobName,
       // TODO: Fix this type issue
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       data: data as any,
     });
   }

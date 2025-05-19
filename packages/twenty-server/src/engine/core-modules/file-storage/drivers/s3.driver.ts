@@ -67,6 +67,7 @@ export class S3Driver implements StorageDriver {
     await this.s3Client.send(command);
   }
 
+  // @ts-expect-error legacy noImplicitAny
   private async emptyS3Directory(folderPath) {
     const listParams = {
       Bucket: this.bucketName,

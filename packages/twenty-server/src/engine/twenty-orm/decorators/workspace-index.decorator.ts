@@ -18,6 +18,7 @@ export function WorkspaceIndex(
     throw new Error('Class level WorkspaceIndex should be used with columns');
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (target: any) => {
     const gate = TypedReflect.getMetadata(
       'workspace:gate-metadata-args',

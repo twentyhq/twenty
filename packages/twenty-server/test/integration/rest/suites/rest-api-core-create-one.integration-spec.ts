@@ -1,9 +1,12 @@
+import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
 import { TEST_PERSON_1_ID } from 'test/integration/constants/test-person-ids.constants';
+import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
-import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
-import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
+import { TIM_ACCOUNT_ID } from 'test/integration/graphql/integration.constants';
+
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
 describe('Core REST API Create One endpoint', () => {
   beforeEach(async () => {
@@ -39,6 +42,56 @@ describe('Core REST API Create One endpoint', () => {
 
         expect(createdPerson.id).toBe(TEST_PERSON_1_ID);
         expect(createdPerson.city).toBe(personCity);
+        expect(createdPerson.createdBy.source).toBe(FieldActorSource.API);
+        expect(createdPerson.createdBy.workspaceMemberId).toBe(null);
+      });
+  });
+
+  it('should create a new person with specific createdBy', async () => {
+    const personCity = generateRecordName(TEST_PERSON_1_ID);
+    const requestBody = {
+      id: TEST_PERSON_1_ID,
+      city: personCity,
+      companyId: TEST_COMPANY_1_ID,
+      createdBy: {
+        source: FieldActorSource.EMAIL,
+      },
+    };
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: `/people`,
+      body: requestBody,
+    })
+      .expect(201)
+      .expect((res) => {
+        const createdPerson = res.body.data.createPerson;
+
+        expect(createdPerson.createdBy.source).toBe(FieldActorSource.EMAIL);
+        expect(createdPerson.createdBy.workspaceMemberId).toBe(null);
+      });
+  });
+
+  it('should create a new person with MANUAL createdBy if user identified', async () => {
+    const personCity = generateRecordName(TEST_PERSON_1_ID);
+    const requestBody = {
+      id: TEST_PERSON_1_ID,
+      city: personCity,
+      companyId: TEST_COMPANY_1_ID,
+    };
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: `/people`,
+      body: requestBody,
+      bearer: ADMIN_ACCESS_TOKEN,
+    })
+      .expect(201)
+      .expect((res) => {
+        const createdPerson = res.body.data.createPerson;
+
+        expect(createdPerson.createdBy.source).toBe(FieldActorSource.MANUAL);
+        expect(createdPerson.createdBy.workspaceMemberId).toBe(TIM_ACCOUNT_ID);
       });
   });
 
@@ -108,6 +161,7 @@ describe('Core REST API Create One endpoint', () => {
 
         expect(createdPerson.company.people).toBeDefined();
         const depth2Person = createdPerson.company.people.find(
+          // @ts-expect-error legacy noImplicitAny
           (p) => p.id === createdPerson.id,
         );
 

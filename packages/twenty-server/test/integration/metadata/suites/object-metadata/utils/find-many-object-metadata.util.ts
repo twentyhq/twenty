@@ -25,5 +25,6 @@ export const findManyObjectMetadata = async ({
     });
   }
 
+  // @ts-expect-error legacy noImplicitAny
   return response.body.data.objects.edges.map((edge) => edge.node);
 };

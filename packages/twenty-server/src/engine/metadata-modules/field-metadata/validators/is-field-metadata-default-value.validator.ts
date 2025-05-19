@@ -31,10 +31,12 @@ export class IsFieldMetadataDefaultValue
     args: ValidationArguments,
   ): Promise<boolean> {
     // Try to extract type value from the object
+    // @ts-expect-error legacy noImplicitAny
     let type: FieldMetadataType | null = args.object['type'];
 
     if (!type) {
       // Extract id value from the instance, should happen only when updating
+      // @ts-expect-error legacy noImplicitAny
       const id: string | undefined = args.instance?.['id'];
 
       if (!id) {

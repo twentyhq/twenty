@@ -40,6 +40,7 @@ import { RawJSONScalar } from 'src/engine/api/graphql/workspace-schema-builder/g
 import { getNumberFilterType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-number-filter-type.util';
 import { getNumberScalarType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-number-scalar-type.util';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface TypeOptions<T = any> {
   nullable?: boolean;
   isArray?: boolean;

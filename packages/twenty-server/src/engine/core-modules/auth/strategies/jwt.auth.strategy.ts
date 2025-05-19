@@ -33,6 +33,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
   ) {
     const jwtFromRequestFunction = jwtWrapperService.extractJwtFromRequest();
+    // @ts-expect-error legacy noImplicitAny
     const secretOrKeyProviderFunction = async (_request, rawJwtToken, done) => {
       try {
         const decodedToken = jwtWrapperService.decode(

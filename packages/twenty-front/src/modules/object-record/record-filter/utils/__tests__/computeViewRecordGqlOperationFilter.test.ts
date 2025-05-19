@@ -2,7 +2,7 @@ import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMeta
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
-import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
+import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { FieldMetadataType } from '~/generated/graphql';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
@@ -682,7 +682,7 @@ describe('should work as expected for the different field types', () => {
                   not: {
                     phones: {
                       additionalPhones: {
-                        like: `%1234567890%`,
+                        like: '%1234567890%',
                       },
                     },
                   },
@@ -865,6 +865,13 @@ describe('should work as expected for the different field types', () => {
                 },
               },
             },
+            {
+              emails: {
+                additionalEmails: {
+                  like: '%test@test.com%',
+                },
+              },
+            },
           ],
         },
         {
@@ -878,42 +885,106 @@ describe('should work as expected for the different field types', () => {
                 },
               },
             },
+            {
+              or: [
+                {
+                  not: {
+                    emails: {
+                      additionalEmails: {
+                        like: '%test@test.com%',
+                      },
+                    },
+                  },
+                },
+                {
+                  emails: {
+                    additionalEmails: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
+            },
           ],
         },
         {
-          or: [
+          and: [
             {
-              emails: {
-                primaryEmail: {
-                  ilike: '',
+              or: [
+                {
+                  emails: {
+                    primaryEmail: {
+                      eq: '',
+                    },
+                  },
                 },
-              },
+                {
+                  emails: {
+                    primaryEmail: {
+                      is: 'NULL',
+                    },
+                  },
+                },
+              ],
             },
             {
-              emails: {
-                primaryEmail: {
-                  is: 'NULL',
+              or: [
+                {
+                  emails: {
+                    additionalEmails: {
+                      is: 'NULL',
+                    },
+                  },
                 },
-              },
+                {
+                  emails: {
+                    additionalEmails: {
+                      like: '[]',
+                    },
+                  },
+                },
+              ],
             },
           ],
         },
         {
           not: {
-            or: [
+            and: [
               {
-                emails: {
-                  primaryEmail: {
-                    ilike: '',
+                or: [
+                  {
+                    emails: {
+                      primaryEmail: {
+                        eq: '',
+                      },
+                    },
                   },
-                },
+                  {
+                    emails: {
+                      primaryEmail: {
+                        is: 'NULL',
+                      },
+                    },
+                  },
+                ],
               },
               {
-                emails: {
-                  primaryEmail: {
-                    is: 'NULL',
+                or: [
+                  {
+                    emails: {
+                      additionalEmails: {
+                        is: 'NULL',
+                      },
+                    },
                   },
-                },
+                  {
+                    emails: {
+                      additionalEmails: {
+                        like: '[]',
+                      },
+                    },
+                  },
+                ],
               },
             ],
           },

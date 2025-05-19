@@ -134,6 +134,7 @@ export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<Workspace
             continue;
           }
 
+          // @ts-expect-error legacy noImplicitAny
           const value = currentDefaultValue[key];
 
           const newValue =
@@ -146,7 +147,9 @@ export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<Workspace
               : value;
 
           alteredDefaultValue = {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ...(currentDefaultValue as any),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ...(alteredDefaultValue as any),
             [key]: newValue,
           };

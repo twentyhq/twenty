@@ -1,15 +1,17 @@
 import { ActorFieldDisplay } from '@/object-record/record-field/meta-types/display/components/ActorFieldDisplay';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
-import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
-import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { AuthContextDecorator } from '~/testing/decorators/AuthContextDecorator';
+import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
+import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
 const meta: Meta = {
   title: 'UI/Data/Field/Display/ActorFieldDisplay',
   decorators: [
+    AuthContextDecorator,
     MemoryRouterDecorator,
     ChipGeneratorsDecorator,
     getFieldDecorator('company', 'createdBy', {

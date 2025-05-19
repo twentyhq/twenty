@@ -44,7 +44,11 @@ export class CompositeObjectTypeDefinitionFactory {
     compositeType: CompositeType,
     kind: ObjectTypeDefinitionKind,
     options: WorkspaceBuildSchemaOptions,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): GraphQLFieldConfigMap<any, any> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const fields: GraphQLFieldConfigMap<any, any> = {};
 
     for (const property of compositeType.properties) {
