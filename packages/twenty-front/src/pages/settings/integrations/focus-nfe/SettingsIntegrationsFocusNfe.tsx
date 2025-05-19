@@ -1,6 +1,7 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationPreview } from '@/settings/integrations/components/SettingsIntegrationPreview';
 import { SettingsIntegrationFocusNfeConectionsListCard } from '@/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeDatabaseConectionsListCard';
+import { SettingsIntegrationFocusNfeIssuersListCard } from '@/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeIssuersListCard';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -47,6 +48,8 @@ export const SettingsIntegrationFocusNfeDatabase = () => {
         <SettingsIntegrationFocusNfeConectionsListCard
           integration={integration}
         />
+        Issuer Registration
+        <SettingsIntegrationFocusNfeIssuersListCard integration={integration} />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

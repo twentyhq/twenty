@@ -18,13 +18,13 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { IconPencil, IconPlus } from '@tabler/icons-react';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-type SettingsIntegrationInterDatabaseConectionsListCardProps = {
+type SettingsIntegrationFocusNfeConectionsListCardProps = {
   integration: SettingsIntegration;
 };
 
 const StyledDatabaseLogo = styled.img`
-  height: 100%;
-  width: 28px;
+  height: 20px;
+  width: 20px;
 `;
 
 const StyledIntegrationsSection = styled.div`
@@ -81,7 +81,7 @@ const StyledButton = styled.button`
 
 export const SettingsIntegrationFocusNfeConectionsListCard = ({
   integration,
-}: SettingsIntegrationInterDatabaseConectionsListCardProps) => {
+}: SettingsIntegrationFocusNfeConectionsListCardProps) => {
   // const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();

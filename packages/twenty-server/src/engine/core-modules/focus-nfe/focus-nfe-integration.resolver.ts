@@ -56,6 +56,7 @@ export class FocusNfeResolver {
     @Args('focusNfeIntegrationId') focusNfeIntegrationId: string,
   ): Promise<string> {
     await this.focusNfeService.toggleStatus(focusNfeIntegrationId);
+
     return 'Focus NFE integration status updated successfully';
   }
 }
