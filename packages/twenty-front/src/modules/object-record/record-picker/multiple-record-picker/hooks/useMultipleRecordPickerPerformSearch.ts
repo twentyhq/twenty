@@ -1,4 +1,4 @@
-import { search } from '@/command-menu/graphql/queries/search';
+import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { usePerformCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/usePerformCombinedFindManyRecords';
 import { multipleRecordPickerPaginationState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState';
@@ -381,14 +381,14 @@ const performSearchQueries = async ({
 
   const searchRecords = async (filter: any) => {
     const { data } = await client.query({
-      query: search,
+      query: SEARCH_QUERY,
       variables: {
         searchInput: searchFilter,
         includedObjectNameSingulars: searchableObjectMetadataItems.map(
           ({ nameSingular }) => nameSingular,
         ),
         filter,
-        limitPerObject,
+        limit: MULTIPLE_RECORD_PICKER_PAGE_SIZE,
         offset,
       },
     });

@@ -1,10 +1,9 @@
 import gql from 'graphql-tag';
 
-export const search = gql`
+export const SEARCH_QUERY = gql`
   query Search(
     $searchInput: String!
-    $limit: Int
-    $limitPerObject: Int
+    $limit: Int!
     $offset: Int
     $excludedObjectNameSingulars: [String!]
     $includedObjectNameSingulars: [String!]
@@ -13,7 +12,6 @@ export const search = gql`
     search(
       searchInput: $searchInput
       limit: $limit
-      limitPerObject: $limitPerObject
       offset: $offset
       excludedObjectNameSingulars: $excludedObjectNameSingulars
       includedObjectNameSingulars: $includedObjectNameSingulars

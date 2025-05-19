@@ -1,12 +1,6 @@
 import { ArgsType, Field, Int } from '@nestjs/graphql';
 
-import {
-  IsArray,
-  IsInt,
-  IsOptional,
-  IsString,
-  ValidateIf,
-} from 'class-validator';
+import { IsArray, IsInt, IsOptional, IsString, Max } from 'class-validator';
 
 import { ObjectRecordFilterInput } from 'src/engine/core-modules/search/dtos/object-record-filter-input';
 
@@ -16,17 +10,10 @@ export class SearchArgs {
   @IsString()
   searchInput: string;
 
-  @Field(() => Int, { nullable: true })
-  @IsOptional()
+  @Field(() => Int)
   @IsInt()
-  @ValidateIf((o) => !o.limitPerObject)
-  limit?: number;
-
-  @Field(() => Int, { nullable: true })
-  @IsOptional()
-  @IsInt()
-  @ValidateIf((o) => !o.limit)
-  limitPerObject?: number;
+  @Max(100, { message: 'Limit cannot exceed 100 items' })
+  limit: number;
 
   @Field(() => Int, { nullable: true })
   @IsOptional()
