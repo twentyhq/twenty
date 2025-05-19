@@ -1,3 +1,4 @@
+import { Theme } from '@emotion/react';
 import { styled } from '@linaria/react';
 import {
   Chip,
@@ -17,7 +18,7 @@ export type LinkChipProps = Omit<
   onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
 };
 
-const StyledLink = styled(Link)`
+const StyledLink = styled(Link)<{ theme: Theme }>`
   text-decoration: none;
   --chip-horizontal-padding: ${({ theme }) => theme.spacing(1)};
   display: inline-flex;
