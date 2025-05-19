@@ -1,4 +1,4 @@
-import { Theme } from '@emotion/react';
+import { Theme, withTheme } from '@emotion/react';
 import { styled } from '@linaria/react';
 import {
   Chip,
@@ -8,7 +8,7 @@ import {
   ChipVariant,
 } from '@ui/components/chip/Chip';
 import { MouseEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, LinkProps } from 'react-router-dom';
 
 export type LinkChipProps = Omit<
   ChipProps,
@@ -18,12 +18,12 @@ export type LinkChipProps = Omit<
   onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
 };
 
-const StyledLink = styled(Link)<{ theme: Theme }>`
+const StyledLink = withTheme(styled(Link)<LinkProps & { theme: Theme }>`
   text-decoration: none;
   --chip-horizontal-padding: ${({ theme }) => theme.spacing(1)};
   display: inline-flex;
   width: calc(100% - 2 * var(--chip-horizontal-padding));
-`;
+`);
 
 export const LinkChip = ({
   to,
