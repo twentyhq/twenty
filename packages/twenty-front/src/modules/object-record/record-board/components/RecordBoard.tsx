@@ -219,12 +219,9 @@ export const RecordBoard = () => {
           <RecordBoardStickyHeaderEffect />
           <RecordBoardScrollToFocusedCardEffect />
           <RecordBoardDeactivateBoardCardEffect />
-          <StyledContainerContainer
-            ref={selectionBoundaryRef}
-            className="record-board-container"
-          >
+          <StyledContainerContainer ref={selectionBoundaryRef}>
             <RecordBoardHeader />
-            <StyledBoardContentContainer className="record-board-content-container">
+            <StyledBoardContentContainer>
               <StyledContainer ref={selectableElementsRef}>
                 <DragDropContext onDragEnd={handleDragEnd}>
                   <StyledColumnContainer>
