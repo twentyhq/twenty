@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, ILike, Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -494,7 +494,7 @@ describe('UserWorkspaceService', () => {
 
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: {
-          email,
+          email: ILike(email),
         },
         relations: [
           'workspaces',
