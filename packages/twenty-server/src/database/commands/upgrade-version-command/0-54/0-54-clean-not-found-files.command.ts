@@ -84,23 +84,23 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
       },
     });
 
-    if (isNonEmptyString(workspace.logo)) {
-      const isFileFound = await this.checkIfFileIsFound(
-        workspace.logo,
-        workspace.id,
-      );
+    if (!isNonEmptyString(workspace.logo)) return;
 
-      if (!isFileFound) {
-        if (!dryRun)
-          await this.workspaceRepository.update(workspace.id, {
-            logo: '',
-          });
+    const isFileFound = await this.checkIfFileIsFound(
+      workspace.logo,
+      workspace.id,
+    );
 
-        this.logger.log(
-          `${dryRun ? 'Dry run - ' : ''}Set logo to '' for workspace ${workspace.id}`,
-        );
-      }
-    }
+    if (isFileFound) return;
+
+    if (!dryRun)
+      await this.workspaceRepository.update(workspace.id, {
+        logo: '',
+      });
+
+    this.logger.log(
+      `${dryRun ? 'Dry run - ' : ''}Set logo to '' for workspace ${workspace.id}`,
+    );
   }
 
   private async softDeleteAttachments(workspaceId: string, dryRun: boolean) {
@@ -136,14 +136,14 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
       );
     }
 
-    if (attachmentIdsToSoftDelete.length > 0) {
-      if (!dryRun)
-        await attachmentRepository.softDelete(attachmentIdsToSoftDelete);
+    if (attachmentIdsToSoftDelete.length === 0) return;
 
-      this.logger.log(
-        `${dryRun ? 'Dry run - ' : ''}Deleted attachments ${attachmentIdsToSoftDelete.join(', ')}`,
-      );
-    }
+    if (!dryRun)
+      await attachmentRepository.softDelete(attachmentIdsToSoftDelete);
+
+    this.logger.log(
+      `${dryRun ? 'Dry run - ' : ''}Deleted attachments ${attachmentIdsToSoftDelete.join(', ')}`,
+    );
   }
 
   private async cleanWorkspaceMembersAvatarUrl(
@@ -169,21 +169,21 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
         workspaceId,
       );
 
-      if (!isFileFound) {
-        workspaceMemberIdsToUpdate.push(workspaceMember.id);
-      }
+      if (isFileFound) continue;
+
+      workspaceMemberIdsToUpdate.push(workspaceMember.id);
     }
 
-    if (workspaceMemberIdsToUpdate.length > 0) {
-      if (!dryRun)
-        await workspaceMemberRepository.update(workspaceMemberIdsToUpdate, {
-          avatarUrl: '',
-        });
+    if (workspaceMemberIdsToUpdate.length === 0) return;
 
-      this.logger.log(
-        `${dryRun ? 'Dry run - ' : ''}Set avatarUrl to '' for workspaceMembers ${workspaceMemberIdsToUpdate.join(', ')}`,
-      );
-    }
+    if (!dryRun)
+      await workspaceMemberRepository.update(workspaceMemberIdsToUpdate, {
+        avatarUrl: '',
+      });
+
+    this.logger.log(
+      `${dryRun ? 'Dry run - ' : ''}Set avatarUrl to '' for workspaceMembers ${workspaceMemberIdsToUpdate.join(', ')}`,
+    );
   }
 
   private async cleanPeopleAvatarUrl(workspaceId: string, dryRun: boolean) {
@@ -211,15 +211,15 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
       }
     }
 
-    if (personIdsToUpdate.length > 0) {
-      if (!dryRun)
-        await personRepository.update(personIdsToUpdate, {
-          avatarUrl: '',
-        });
+    if (personIdsToUpdate.length === 0) return;
 
-      this.logger.log(
-        `${dryRun ? 'Dry run - ' : ''}Set avatarUrl to '' for people ${personIdsToUpdate.join(', ')}`,
-      );
-    }
+    if (!dryRun)
+      await personRepository.update(personIdsToUpdate, {
+        avatarUrl: '',
+      });
+
+    this.logger.log(
+      `${dryRun ? 'Dry run - ' : ''}Set avatarUrl to '' for people ${personIdsToUpdate.join(', ')}`,
+    );
   }
 }
