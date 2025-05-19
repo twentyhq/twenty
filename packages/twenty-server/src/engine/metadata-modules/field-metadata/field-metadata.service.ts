@@ -818,6 +818,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       objectMetadata,
     );
 
+    if (fieldMetadataForCreate.isLabelSyncedWithName === true) {
+      validateNameAndLabelAreSyncOrThrow(
+        fieldMetadataForCreate.label,
+        fieldMetadataForCreate.name,
+      );
+    }
+
     return await fieldMetadataRepository.save(fieldMetadataForCreate);
   }
 
