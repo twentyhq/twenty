@@ -32,26 +32,37 @@ export const DragSelect = ({
       if (!isDragSelectionStartEnabled()) {
         return false;
       }
-      const isSelectionBoundaryRefProvided =
-        !!selectionBoundaryRef?.current && target instanceof Node;
-      if (isSelectionBoundaryRefProvided) {
-        if (!selectionBoundaryRef.current.contains(target)) {
-          return false;
-        }
-      } else if (
-        target instanceof Node &&
+
+      if (!(target instanceof Node)) {
+        return false;
+      }
+
+      const hasSelectionBoundary = !!selectionBoundaryRef?.current;
+      if (
+        hasSelectionBoundary &&
+        !selectionBoundaryRef.current.contains(target)
+      ) {
+        return false;
+      }
+
+      if (
+        !hasSelectionBoundary &&
         !selectableElementsRef.current?.contains(target)
       ) {
         return false;
       }
+
       if (target instanceof HTMLElement || target instanceof SVGElement) {
         let el = target;
         while (el.parentElement && !el.dataset.selectDisable) {
           el = el.parentElement;
         }
 
-        return el.dataset.selectDisable !== 'true';
+        if (el.dataset.selectDisable === 'true') {
+          return false;
+        }
       }
+
       return true;
     },
     onSelectionStart: onDragSelectionStart,
