@@ -232,6 +232,7 @@ export const RecordBoard = () => {
               </StyledContainer>
               <DragSelect
                 dragSelectable={boardRef}
+                selectionAreaRef={boardRef}
                 onDragSelectionEnd={handleDragSelectionEnd}
                 onDragSelectionChange={setRecordAsSelected}
                 onDragSelectionStart={handleDragSelectionStart}

@@ -5,11 +5,12 @@ import {
 import { useTheme } from '@emotion/react';
 import { RefObject } from 'react';
 
-import { useDragSelect } from '../hooks/useDragSelect';
 import { RGBA } from 'twenty-ui/theme';
+import { useDragSelect } from '../hooks/useDragSelect';
 
 type DragSelectProps = {
   dragSelectable: RefObject<HTMLElement>;
+  selectionAreaRef?: RefObject<HTMLElement>;
   onDragSelectionChange: (id: string, selected: boolean) => void;
   onDragSelectionStart?: (event: MouseEvent) => void;
   onDragSelectionEnd?: (event: MouseEvent) => void;
@@ -17,6 +18,7 @@ type DragSelectProps = {
 
 export const DragSelect = ({
   dragSelectable,
+  selectionAreaRef,
   onDragSelectionChange,
   onDragSelectionStart,
   onDragSelectionEnd,
@@ -26,8 +28,20 @@ export const DragSelect = ({
   const { isDragSelectionStartEnabled } = useDragSelect();
 
   const { DragSelection } = useSelectionContainer({
-    shouldStartSelecting: (target) => {
+    shouldStartSelecting: (target: EventTarget | null) => {
       if (!isDragSelectionStartEnabled()) {
+        return false;
+      }
+      const isSelectionAreaRefProvided =
+        !!selectionAreaRef?.current && target instanceof Node;
+      if (isSelectionAreaRefProvided) {
+        if (!selectionAreaRef.current.contains(target)) {
+          return false;
+        }
+      } else if (
+        target instanceof Node &&
+        !dragSelectable.current?.contains(target)
+      ) {
         return false;
       }
       if (target instanceof HTMLElement || target instanceof SVGElement) {
