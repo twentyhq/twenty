@@ -1,6 +1,6 @@
-import { focusStackState } from '@/ui/utilities/focus-key/states/focusStackState';
-import { FocusComponentType } from '@/ui/utilities/focus-key/types/FocusComponentType';
-import { FocusIdentifier } from '@/ui/utilities/focus-key/types/FocusIdentifier';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { FocusIdentifier } from '@/ui/utilities/focus/types/FocusIdentifier';
 import { useRecoilCallback } from 'recoil';
 
 export const useFocusStack = () => {

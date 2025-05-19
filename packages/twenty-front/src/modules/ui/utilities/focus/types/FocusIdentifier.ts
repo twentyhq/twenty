@@ -1,4 +1,4 @@
-import { FocusComponentType } from '@/ui/utilities/focus-key/types/FocusComponentType';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 
 export type FocusIdentifier = {
   focusId: string;

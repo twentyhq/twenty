@@ -1,4 +1,4 @@
-import { FocusIdentifier } from '@/ui/utilities/focus-key/types/FocusIdentifier';
+import { FocusIdentifier } from '@/ui/utilities/focus/types/FocusIdentifier';
 import { selector } from 'recoil';
 import { focusStackState } from './focusStackState';
 

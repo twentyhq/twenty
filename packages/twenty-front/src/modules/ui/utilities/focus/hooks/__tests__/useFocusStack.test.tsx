@@ -1,7 +1,7 @@
-import { useFocusStack } from '@/ui/utilities/focus-key/hooks/useFocusStack';
-import { currentFocusIdentifierSelector } from '@/ui/utilities/focus-key/states/currentFocusIdentifierSelector';
-import { focusStackState } from '@/ui/utilities/focus-key/states/focusStackState';
-import { FocusComponentType } from '@/ui/utilities/focus-key/types/FocusComponentType';
+import { useFocusStack } from '@/ui/utilities/focus/hooks/useFocusStack';
+import { currentFocusIdentifierSelector } from '@/ui/utilities/focus/states/currentFocusIdentifierSelector';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
