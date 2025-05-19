@@ -30,6 +30,7 @@ export class FileStorageModule {
   static forRootAsync(options: FileStorageModuleAsyncOptions): DynamicModule {
     const provider = {
       provide: STORAGE_DRIVER,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       useFactory: async (...args: any[]) => {
         const config = await options.useFactory(...args);
 

@@ -25,7 +25,7 @@ export const getDefaultSubFieldNameForCompositeFilterableFieldType = (
     case 'ADDRESS':
       return undefined;
     case 'ACTOR':
-      return 'source';
+      return 'name';
     case 'FULL_NAME':
       return undefined;
     default:

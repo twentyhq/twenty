@@ -233,6 +233,7 @@ export class QueryResultGettersFactory {
     objectMetadataItem: ObjectMetadataInterface,
     workspaceId: string,
     objectMetadataMaps: ObjectMetadataMaps,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     return await this.processQueryResultField(
       result,
@@ -245,6 +246,7 @@ export class QueryResultGettersFactory {
   private getHandler(objectType: string): QueryResultGetterHandlerInterface {
     return (
       this.handlers.get(objectType) || {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handle: (result: any) => result,
       }
     );

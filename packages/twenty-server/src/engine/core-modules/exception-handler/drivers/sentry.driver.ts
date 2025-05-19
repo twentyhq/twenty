@@ -9,6 +9,7 @@ export class ExceptionHandlerSentryDriver
   implements ExceptionHandlerDriverInterface
 {
   captureExceptions(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     exceptions: ReadonlyArray<any>,
     options?: ExceptionHandlerOptions,
   ) {
@@ -17,6 +18,7 @@ export class ExceptionHandlerSentryDriver
     Sentry.withScope((scope) => {
       if (options?.operation) {
         scope.setExtra('operation', options.operation.name);
+        scope.setExtra('operationType', options.operation.type);
       }
 
       if (options?.document) {
@@ -56,6 +58,13 @@ export class ExceptionHandlerSentryDriver
         if (exception instanceof CustomException) {
           scope.setTag('customExceptionCode', exception.code);
           scope.setFingerprint([exception.code]);
+          exception.name = exception.code
+            .split('_')
+            .map(
+              (word) =>
+                word.charAt(0)?.toUpperCase() + word.slice(1)?.toLowerCase(),
+            )
+            .join(' ');
         }
 
         const eventId = Sentry.captureException(exception, {

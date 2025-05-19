@@ -13,6 +13,7 @@ export class BeforeCreateOneRelation<T extends CreateRelationInput>
 {
   async run(
     instance: CreateOneInputType<T>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context: any,
   ): Promise<CreateOneInputType<T>> {
     const workspaceId = context?.req?.workspace?.id;

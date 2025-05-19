@@ -19,8 +19,8 @@ export const isFieldValueReadOnly = ({
   objectNameSingular,
   fieldName,
   fieldType,
+  isCustom,
   isRecordReadOnly = false,
-  isCustom = false,
 }: isFieldValueReadOnlyParams) => {
   if (isRecordReadOnly) {
     return true;
@@ -35,7 +35,7 @@ export const isFieldValueReadOnly = ({
     return false;
   }
 
-  if (isWorkflowSubObjectMetadata(objectNameSingular)) {
+  if (isWorkflowSubObjectMetadata(objectNameSingular) && !isCustom) {
     return true;
   }
 

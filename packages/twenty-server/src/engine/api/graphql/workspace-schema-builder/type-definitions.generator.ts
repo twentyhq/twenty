@@ -172,6 +172,7 @@ export class TypeDefinitionsGenerator {
   ) {
     const objectTypeDefs = objectMetadataCollection.map((objectMetadata) =>
       this.objectTypeDefinitionFactory.create(
+        // @ts-expect-error legacy noImplicitAny
         objectMetadata,
         ObjectTypeDefinitionKind.Plain,
         options,

@@ -9,10 +9,13 @@ import { CreateAppTokenInput } from 'src/engine/core-modules/app-token/dtos/crea
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 export const appTokenAutoResolverOpts: AutoResolverOpts<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   any,
   unknown,
   unknown,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ReadResolverOpts<any>,
   PagingStrategies
 >[] = [

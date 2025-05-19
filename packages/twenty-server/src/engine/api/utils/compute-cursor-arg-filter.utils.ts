@@ -33,6 +33,7 @@ const computeOperator = (
 const validateAndGetOrderBy = (
   key: string,
   orderBy: ObjectRecordOrderBy,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any> => {
   const keyOrderBy = orderBy.find((order) => key in order);
 
@@ -51,6 +52,7 @@ const isAscendingOrder = (direction: OrderByDirection): boolean =>
   direction === OrderByDirection.AscNullsLast;
 
 export const computeCursorArgFilter = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cursor: Record<string, any>,
   orderBy: ObjectRecordOrderBy,
   fieldMetadataMapByName: FieldMetadataMap,
@@ -99,11 +101,13 @@ export const computeCursorArgFilter = (
 
 const buildWhereCondition = (
   key: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
   fieldMetadataMapByName: FieldMetadataMap,
   orderBy: ObjectRecordOrderBy,
   isForwardPagination: boolean,
   operator?: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any> => {
   const fieldMetadata = fieldMetadataMapByName[key];
 
@@ -138,11 +142,13 @@ const buildWhereCondition = (
 
 const buildCompositeWhereCondition = (
   key: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
   fieldType: FieldMetadataType,
   orderBy: ObjectRecordOrderBy,
   isForwardPagination: boolean,
   operator?: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any> => {
   const compositeType = compositeTypeDefinitions.get(fieldType);
 
@@ -154,6 +160,7 @@ const buildCompositeWhereCondition = (
   }
 
   const keyOrderBy = validateAndGetOrderBy(key, orderBy);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result: Record<string, any> = {};
 
   compositeType.properties.forEach((property) => {

@@ -31,6 +31,7 @@ export class GraphqlQueryFilterFieldParser {
     queryBuilder: WhereExpressionBuilder,
     objectNameSingular: string,
     key: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     filterValue: any,
     isFirst = false,
   ): void {
@@ -81,6 +82,7 @@ export class GraphqlQueryFilterFieldParser {
     queryBuilder: WhereExpressionBuilder,
     fieldMetadata: FieldMetadataInterface,
     objectNameSingular: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fieldValue: any,
     isFirst = false,
   ): void {
@@ -108,6 +110,7 @@ export class GraphqlQueryFilterFieldParser {
       const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
 
       const [[operator, value]] = Object.entries(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         subFieldFilter as Record<string, any>,
       );
 

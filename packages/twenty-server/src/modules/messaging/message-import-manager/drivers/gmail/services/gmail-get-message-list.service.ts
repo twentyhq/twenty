@@ -77,6 +77,7 @@ export class GmailGetMessageListService {
         firstMessageExternalId = messageList.data.messages?.[0].id ?? undefined;
       }
 
+      // @ts-expect-error legacy noImplicitAny
       messageExternalIds.push(...messages.map((message) => message.id));
     }
 

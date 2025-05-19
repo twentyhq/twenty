@@ -4,8 +4,10 @@ import { FIND_ONE_CALENDAR_EVENT_OPERATION_SIGNATURE } from '@/activities/calend
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
-import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+import {
+  RecordFieldValueSelectorContextProvider,
+  useSetRecordValue,
+} from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
@@ -14,13 +16,18 @@ export const CommandMenuCalendarEventPage = () => {
   const viewableRecordId = useRecoilComponentValueV2(
     viewableRecordIdComponentState,
   );
+  const setRecordValueInContextSelector = useSetRecordValue();
 
   const { record: calendarEvent } = useFindOneRecord<CalendarEvent>({
     objectNameSingular:
       FIND_ONE_CALENDAR_EVENT_OPERATION_SIGNATURE.objectNameSingular,
     objectRecordId: viewableRecordId ?? '',
     recordGqlFields: FIND_ONE_CALENDAR_EVENT_OPERATION_SIGNATURE.fields,
-    onCompleted: (record) => upsertRecords([record]),
+    // TODO: this is not executed on sub-sequent runs, make sure that it is intended
+    onCompleted: (record) => {
+      upsertRecords([record]);
+      setRecordValueInContextSelector(record.id, record);
+    },
   });
 
   if (!calendarEvent) {
@@ -30,7 +37,6 @@ export const CommandMenuCalendarEventPage = () => {
   return (
     <RecordFieldValueSelectorContextProvider>
       <CalendarEventDetailsEffect record={calendarEvent} />
-      <RecordValueSetterEffect recordId={calendarEvent.id} />
       <CalendarEventDetails calendarEvent={calendarEvent} />
     </RecordFieldValueSelectorContextProvider>
   );
