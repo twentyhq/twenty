@@ -1831,8 +1831,7 @@ export type QuerySearchArgs = {
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
   filter?: InputMaybe<ObjectRecordFilterInput>;
   includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  limitPerObject?: InputMaybe<Scalars['Int']['input']>;
+  limit: Scalars['Int']['input'];
   offset?: InputMaybe<Scalars['Int']['input']>;
   searchInput: Scalars['String']['input'];
 };
