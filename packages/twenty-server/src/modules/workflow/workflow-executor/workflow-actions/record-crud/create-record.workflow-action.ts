@@ -54,6 +54,7 @@ export class CreateRecordWorkflowAction implements WorkflowExecutor {
         WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
       );
     }
+
     if (!isWorkflowCreateRecordAction(step)) {
       throw new WorkflowStepExecutorException(
         'Step is not a create record action',
@@ -104,9 +105,15 @@ export class CreateRecordWorkflowAction implements WorkflowExecutor {
         workspaceId,
       );
 
+    const validObjectRecord = Object.fromEntries(
+      Object.entries(workflowActionInput.objectRecord).filter(
+        ([key]) => objectMetadataItemWithFieldsMaps.fieldsByName[key],
+      ),
+    );
+
     const transformedObjectRecord =
       await this.recordInputTransformerService.process({
-        recordInput: workflowActionInput.objectRecord,
+        recordInput: validObjectRecord,
         objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
       });
 

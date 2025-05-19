@@ -63,10 +63,12 @@ describe('roles permissions', () => {
       .send(query);
 
     adminRoleId = resp.body.data.getRoles.find(
+      // @ts-expect-error legacy noImplicitAny
       (role) => role.label === 'Admin',
     ).id;
 
     guestRoleId = resp.body.data.getRoles.find(
+      // @ts-expect-error legacy noImplicitAny
       (role) => role.label === 'Guest',
     ).id;
   });
@@ -231,10 +233,12 @@ describe('roles permissions', () => {
         .send(getRolesQuery);
 
       const memberRoleId = resp.body.data.getRoles.find(
+        // @ts-expect-error legacy noImplicitAny
         (role) => role.label === 'Member',
       ).id;
 
       const guestRoleId = resp.body.data.getRoles.find(
+        // @ts-expect-error legacy noImplicitAny
         (role) => role.label === 'Guest',
       ).id;
 

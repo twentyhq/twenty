@@ -309,6 +309,7 @@ export type ClientConfig = {
   defaultSubdomain?: Maybe<Scalars['String']['output']>;
   frontDomain: Scalars['String']['output'];
   isAttachmentPreviewEnabled: Scalars['Boolean']['output'];
+  isConfigVariablesInDbEnabled: Scalars['Boolean']['output'];
   isEmailVerificationRequired: Scalars['Boolean']['output'];
   isGoogleCalendarEnabled: Scalars['Boolean']['output'];
   isGoogleMessagingEnabled: Scalars['Boolean']['output'];
@@ -326,13 +327,31 @@ export type ComputeStepOutputSchemaInput = {
   step: Scalars['JSON']['input'];
 };
 
+export enum ConfigSource {
+  DATABASE = 'DATABASE',
+  DEFAULT = 'DEFAULT',
+  ENVIRONMENT = 'ENVIRONMENT'
+}
+
 export type ConfigVariable = {
   __typename?: 'ConfigVariable';
   description: Scalars['String']['output'];
+  isEnvOnly: Scalars['Boolean']['output'];
   isSensitive: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
-  value: Scalars['String']['output'];
+  options?: Maybe<Scalars['JSON']['output']>;
+  source: ConfigSource;
+  type: ConfigVariableType;
+  value?: Maybe<Scalars['JSON']['output']>;
 };
+
+export enum ConfigVariableType {
+  ARRAY = 'ARRAY',
+  BOOLEAN = 'BOOLEAN',
+  ENUM = 'ENUM',
+  NUMBER = 'NUMBER',
+  STRING = 'STRING'
+}
 
 export enum ConfigVariablesGroup {
   AnalyticsConfig = 'AnalyticsConfig',
@@ -572,6 +591,15 @@ export type DeleteWorkflowVersionStepInput = {
   workflowVersionId: Scalars['String']['input'];
 };
 
+export type DeletedWorkspaceMember = {
+  __typename?: 'DeletedWorkspaceMember';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  name: FullName;
+  userEmail: Scalars['String']['output'];
+  userWorkspaceId?: Maybe<Scalars['String']['output']>;
+};
+
 /** Schema update on a table */
 export enum DistantTableUpdate {
   COLUMNS_ADDED = 'COLUMNS_ADDED',
@@ -628,7 +656,6 @@ export enum FeatureFlagKey {
   IsCopilotEnabled = 'IsCopilotEnabled',
   IsCustomDomainEnabled = 'IsCustomDomainEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
-  IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPermissionsV2Enabled = 'IsPermissionsV2Enabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
@@ -941,8 +968,10 @@ export type Mutation = {
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON']['output'];
   createApprovedAccessDomain: ApprovedAccessDomain;
+  createDatabaseConfigVariable: Scalars['Boolean']['output'];
   createDraftFromWorkflowVersion: WorkflowVersion;
   createOIDCIdentityProvider: SetupSsoOutput;
+  createObjectEvent: Analytics;
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
@@ -955,6 +984,7 @@ export type Mutation = {
   deactivateWorkflowVersion: Scalars['Boolean']['output'];
   deleteApprovedAccessDomain: Scalars['Boolean']['output'];
   deleteCurrentWorkspace: Workspace;
+  deleteDatabaseConfigVariable: Scalars['Boolean']['output'];
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRelation: RelationMetadata;
@@ -991,9 +1021,9 @@ export type Mutation = {
   switchToYearlyInterval: BillingUpdateOutput;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
-  track: Analytics;
   trackAnalytics: Analytics;
   unsyncRemoteTable: RemoteTable;
+  updateDatabaseConfigVariable: Scalars['Boolean']['output'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneField: Field;
   updateOneObject: Object;
@@ -1052,6 +1082,12 @@ export type MutationCreateApprovedAccessDomainArgs = {
 };
 
 
+export type MutationCreateDatabaseConfigVariableArgs = {
+  key: Scalars['String']['input'];
+  value: Scalars['JSON']['input'];
+};
+
+
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
 };
@@ -1059,6 +1095,14 @@ export type MutationCreateDraftFromWorkflowVersionArgs = {
 
 export type MutationCreateOidcIdentityProviderArgs = {
   input: SetupOidcSsoInput;
+};
+
+
+export type MutationCreateObjectEventArgs = {
+  event: Scalars['String']['input'];
+  objectMetadataId: Scalars['String']['input'];
+  properties?: InputMaybe<Scalars['JSON']['input']>;
+  recordId: Scalars['String']['input'];
 };
 
 
@@ -1114,6 +1158,11 @@ export type MutationDeactivateWorkflowVersionArgs = {
 
 export type MutationDeleteApprovedAccessDomainArgs = {
   input: DeleteApprovedAccessDomainInput;
+};
+
+
+export type MutationDeleteDatabaseConfigVariableArgs = {
+  key: Scalars['String']['input'];
 };
 
 
@@ -1269,12 +1318,6 @@ export type MutationSyncRemoteTableSchemaChangesArgs = {
 };
 
 
-export type MutationTrackArgs = {
-  action: Scalars['String']['input'];
-  payload: Scalars['JSON']['input'];
-};
-
-
 export type MutationTrackAnalyticsArgs = {
   event?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
@@ -1285,6 +1328,12 @@ export type MutationTrackAnalyticsArgs = {
 
 export type MutationUnsyncRemoteTableArgs = {
   input: RemoteTableInput;
+};
+
+
+export type MutationUpdateDatabaseConfigVariableArgs = {
+  key: Scalars['String']['input'];
+  value: Scalars['JSON']['input'];
 };
 
 
@@ -1619,6 +1668,7 @@ export type Query = {
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
+  getDatabaseConfigVariable: ConfigVariable;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
@@ -1698,6 +1748,11 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
+};
+
+
+export type QueryGetDatabaseConfigVariableArgs = {
+  key: Scalars['String']['input'];
 };
 
 
@@ -2379,6 +2434,7 @@ export type User = {
   currentWorkspace?: Maybe<Workspace>;
   defaultAvatarUrl?: Maybe<Scalars['String']['output']>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  deletedWorkspaceMembers?: Maybe<Array<DeletedWorkspaceMember>>;
   disabled?: Maybe<Scalars['Boolean']['output']>;
   email: Scalars['String']['output'];
   firstName: Scalars['String']['output'];
@@ -2494,6 +2550,7 @@ export type WorkflowAction = {
   __typename?: 'WorkflowAction';
   id: Scalars['UUID']['output'];
   name: Scalars['String']['output'];
+  nextStepIds?: Maybe<Array<Scalars['UUID']['output']>>;
   settings: Scalars['JSON']['output'];
   type: Scalars['String']['output'];
   valid: Scalars['Boolean']['output'];

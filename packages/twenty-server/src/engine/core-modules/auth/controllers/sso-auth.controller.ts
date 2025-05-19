@@ -57,6 +57,7 @@ export class SSOAuthController {
   @Get('saml/metadata/:identityProviderId')
   @UseGuards(EnterpriseFeaturesEnabledGuard)
   @UseFilters(AuthRestApiExceptionFilter)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async generateMetadata(@Req() req: any): Promise<string | void> {
     return generateServiceProviderMetadata({
       wantAssertionsSigned: false,

@@ -7,11 +7,11 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-export const seedCompaniesAllView = (
+export const companiesAllView = (
   objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
 ) => {
   return {
-    name: 'All',
+    name: 'All Companies',
     objectMetadataId:
       objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.company].id,
     type: 'table',

@@ -1,6 +1,6 @@
 import { useApolloClient } from '@apollo/client';
 import { useCallback, useMemo } from 'react';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
@@ -20,9 +20,18 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { ActivityRichTextEditorChangeOnActivityIdEffect } from '@/activities/components/ActivityRichTextEditorChangeOnActivityIdEffect';
+import { Attachment } from '@/activities/files/types/Attachment';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
+import { filterAttachmentsToRestore } from '@/activities/utils/filterAttachmentsToRestore';
+import { getActivityAttachmentIdsToDelete } from '@/activities/utils/getActivityAttachmentIdsToDelete';
+import { getActivityAttachmentPathsToRestore } from '@/activities/utils/getActivityAttachmentPathsToRestore';
+import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
+import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
+import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { PartialBlock } from '@blocknote/core';
@@ -38,6 +47,10 @@ type ActivityRichTextEditorProps = {
   activityObjectNameSingular:
     | CoreObjectNameSingular.Task
     | CoreObjectNameSingular.Note;
+};
+
+type Activity = (Task | Note) & {
+  attachments: Attachment[];
 };
 
 export const ActivityRichTextEditor = ({
@@ -59,7 +72,26 @@ export const ActivityRichTextEditor = ({
   const isReadOnly = isFieldValueReadOnly({
     objectNameSingular: activityObjectNameSingular,
     isRecordReadOnly,
+    isCustom: objectMetadataItemActivity.isCustom,
   });
+
+  const { deleteManyRecords: deleteAttachments } = useDeleteManyRecords({
+    objectNameSingular: CoreObjectNameSingular.Attachment,
+  });
+
+  const { restoreManyRecords: restoreAttachments } = useRestoreManyRecords({
+    objectNameSingular: CoreObjectNameSingular.Attachment,
+  });
+
+  const { fetchAllRecords: findSoftDeletedAttachments } =
+    useLazyFetchAllRecords({
+      objectNameSingular: CoreObjectNameSingular.Attachment,
+      filter: {
+        deletedAt: {
+          is: 'NOT_NULL',
+        },
+      },
+    });
 
   const {
     goBackToPreviousHotkeyScope,
@@ -137,8 +169,12 @@ export const ActivityRichTextEditor = ({
   );
 
   const handleBodyChange = useRecoilCallback(
-    ({ set }) =>
-      (newStringifiedBody: string) => {
+    ({ set, snapshot }) =>
+      async (newStringifiedBody: string) => {
+        const oldActivity = snapshot
+          .getLoadable(recordStoreFamilyState(activityId))
+          .getValue() as Activity;
+
         set(recordStoreFamilyState(activityId), (oldActivity) => {
           return {
             ...oldActivity,
@@ -166,8 +202,46 @@ export const ActivityRichTextEditor = ({
         });
 
         handlePersistBody(newStringifiedBody);
+
+        const attachmentIdsToDelete = getActivityAttachmentIdsToDelete(
+          newStringifiedBody,
+          oldActivity.attachments,
+        );
+
+        if (attachmentIdsToDelete.length > 0) {
+          await deleteAttachments({
+            recordIdsToDelete: attachmentIdsToDelete,
+          });
+        }
+
+        const attachmentPathsToRestore = getActivityAttachmentPathsToRestore(
+          newStringifiedBody,
+          oldActivity.attachments,
+        );
+
+        if (attachmentPathsToRestore.length > 0) {
+          const softDeletedAttachments =
+            (await findSoftDeletedAttachments()) as Attachment[];
+
+          const attachmentIdsToRestore = filterAttachmentsToRestore(
+            attachmentPathsToRestore,
+            softDeletedAttachments,
+          );
+
+          await restoreAttachments({
+            idsToRestore: attachmentIdsToRestore,
+          });
+        }
       },
-    [activityId, cache, objectMetadataItemActivity, handlePersistBody],
+    [
+      activityId,
+      cache,
+      objectMetadataItemActivity,
+      handlePersistBody,
+      deleteAttachments,
+      restoreAttachments,
+      findSoftDeletedAttachments,
+    ],
   );
 
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
@@ -223,6 +297,8 @@ export const ActivityRichTextEditor = ({
     uploadFile: handleEditorBuiltInUploadFile,
   });
 
+  const commandMenuPage = useRecoilValue(commandMenuPageState);
+
   useScopedHotkeys(
     Key.Escape,
     () => {
@@ -234,6 +310,11 @@ export const ActivityRichTextEditor = ({
   useScopedHotkeys(
     '*',
     (keyboardEvent) => {
+      // TODO: remove once stacked hotkeys / focusKeys are in place
+      if (commandMenuPage !== CommandMenuPages.EditRichText) {
+        return;
+      }
+
       if (keyboardEvent.key === Key.Escape) {
         return;
       }

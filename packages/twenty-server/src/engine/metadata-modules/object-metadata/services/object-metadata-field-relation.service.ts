@@ -160,6 +160,7 @@ export class ObjectMetadataFieldRelationService {
         standardId: createRelationDeterministicUuid({
           objectId: sourceObjectMetadata.id,
           standardId:
+            // @ts-expect-error legacy noImplicitAny
             STANDARD_OBJECT_FIELD_IDS[targetObjectMetadata.nameSingular].custom,
         }),
         objectMetadataId: targetObjectMetadata.id,
@@ -192,6 +193,7 @@ export class ObjectMetadataFieldRelationService {
     const sourceFieldMetadataToUpdate =
       await this.fieldMetadataRepository.findOneByOrFail({
         standardId:
+          // @ts-expect-error legacy noImplicitAny
           CUSTOM_OBJECT_STANDARD_FIELD_IDS[targetObjectMetadata.namePlural],
         objectMetadataId: sourceObjectMetadata.id,
         workspaceId: workspaceId,
@@ -239,6 +241,7 @@ export class ObjectMetadataFieldRelationService {
     return {
       id: uuidV4(),
       standardId:
+        // @ts-expect-error legacy noImplicitAny
         CUSTOM_OBJECT_STANDARD_FIELD_IDS[relationObjectMetadataNamePlural],
       objectMetadataId: sourceObjectMetadata.id,
       workspaceId: workspaceId,
@@ -250,6 +253,7 @@ export class ObjectMetadataFieldRelationService {
       label: capitalize(relationObjectMetadataNamePlural),
       description,
       icon:
+        // @ts-expect-error legacy noImplicitAny
         STANDARD_OBJECT_ICONS[targetObjectMetadata.nameSingular] ||
         'IconBuildingSkyscraper',
       isNullable: true,
@@ -280,6 +284,7 @@ export class ObjectMetadataFieldRelationService {
     targetObjectMetadata: ObjectMetadataEntity,
   ): Partial<FieldMetadataEntity<FieldMetadataType.RELATION>> {
     const customStandardFieldId =
+      // @ts-expect-error legacy noImplicitAny
       STANDARD_OBJECT_FIELD_IDS[targetObjectMetadata.nameSingular].custom;
 
     if (!customStandardFieldId) {
@@ -318,6 +323,7 @@ export class ObjectMetadataFieldRelationService {
     targetObjectMetadata: ObjectMetadataEntity,
   ) {
     const customStandardFieldId =
+      // @ts-expect-error legacy noImplicitAny
       STANDARD_OBJECT_FIELD_IDS[targetObjectMetadata.nameSingular].custom;
 
     if (!customStandardFieldId) {

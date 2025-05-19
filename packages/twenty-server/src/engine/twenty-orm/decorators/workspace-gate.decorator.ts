@@ -16,6 +16,7 @@ export function WorkspaceGate(options: WorkspaceGateOptions) {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (target: any, propertyKey?: string | symbol) => {
     if (propertyKey !== undefined) {
       TypedReflect.defineMetadata(

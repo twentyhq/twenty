@@ -18,6 +18,7 @@ describe('DomainManagerService', () => {
             FRONTEND_URL: 'https://example.com',
           };
 
+          // @ts-expect-error legacy noImplicitAny
           return env[key];
         });
 
@@ -42,6 +43,7 @@ describe('DomainManagerService', () => {
             IS_MULTIWORKSPACE_ENABLED: true,
           };
 
+          // @ts-expect-error legacy noImplicitAny
           return env[key];
         });
 
@@ -91,6 +93,7 @@ describe('DomainManagerService', () => {
             FRONTEND_URL: 'https://example.com',
           };
 
+          // @ts-expect-error legacy noImplicitAny
           return env[key];
         });
 
@@ -109,6 +112,7 @@ describe('DomainManagerService', () => {
             DEFAULT_SUBDOMAIN: 'test',
           };
 
+          // @ts-expect-error legacy noImplicitAny
           return env[key];
         });
 
@@ -129,6 +133,7 @@ describe('DomainManagerService', () => {
             DEFAULT_SUBDOMAIN: 'default',
           };
 
+          // @ts-expect-error legacy noImplicitAny
           return env[key];
         });
 
@@ -151,6 +156,7 @@ describe('DomainManagerService', () => {
             FRONTEND_URL: 'https://example.com',
           };
 
+          // @ts-expect-error legacy noImplicitAny
           return env[key];
         });
 
@@ -174,6 +180,7 @@ describe('DomainManagerService', () => {
             FRONTEND_URL: 'https://example.com',
           };
 
+          // @ts-expect-error legacy noImplicitAny
           return env[key];
         });
 

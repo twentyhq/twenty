@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { useCallback, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
@@ -34,10 +33,6 @@ import { RelationDefinitionType } from '~/generated-metadata/graphql';
 type RecordDetailRelationSectionDropdownProps = {
   loading: boolean;
 };
-
-const StyledAddDropdown = styled(Dropdown)`
-  margin-left: auto;
-`;
 
 export const RecordDetailRelationSectionDropdown = ({
   loading,
@@ -196,7 +191,7 @@ export const RecordDetailRelationSectionDropdown = ({
 
   return (
     <DropdownScope dropdownScopeId={dropdownId}>
-      <StyledAddDropdown
+      <Dropdown
         dropdownId={dropdownId}
         dropdownPlacement="left-start"
         onClose={handleCloseRelationPickerDropdown}

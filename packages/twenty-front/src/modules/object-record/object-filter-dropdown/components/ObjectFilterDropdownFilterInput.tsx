@@ -4,7 +4,6 @@ import { ObjectFilterDropdownOptionSelect } from '@/object-record/object-filter-
 import { ObjectFilterDropdownRatingInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { ObjectFilterDropdownRecordSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSearchInput';
-import { ObjectFilterDropdownSourceSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSourceSelect';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
@@ -19,7 +18,6 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
-import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -71,9 +69,7 @@ export const ObjectFilterDropdownFilterInput = ({
     fieldMetadataItemUsedInDropdown.type,
   );
 
-  const isActorSourceCompositeFilter = isFilterOnActorSourceSubField(
-    subFieldNameUsedInDropdown,
-  );
+  const isNotASubFieldFilter = !isDefined(subFieldNameUsedInDropdown);
 
   return (
     <>
@@ -98,15 +94,18 @@ export const ObjectFilterDropdownFilterInput = ({
               />
             </>
           )}
-          {filterType === 'ACTOR' &&
-            (isActorSourceCompositeFilter ? (
-              <>
-                <ObjectFilterDropdownSourceSelect />
-              </>
-            ) : (
+          {filterType === 'ACTOR' && (
+            <>
+              <ObjectFilterDropdownTextInput />
+            </>
+          )}
+          {filterType === 'ADDRESS' &&
+            (isNotASubFieldFilter ? (
               <>
                 <ObjectFilterDropdownTextInput />
               </>
+            ) : (
+              <></>
             ))}
           {filterType === 'CURRENCY' &&
             (isExpectedSubFieldName(
@@ -126,7 +125,7 @@ export const ObjectFilterDropdownFilterInput = ({
                 <ObjectFilterDropdownNumberInput />
               </>
             ) : (
-              <></>
+              <ObjectFilterDropdownNumberInput />
             ))}
           {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
             <>

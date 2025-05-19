@@ -46,6 +46,7 @@ export class AdminPanelHealthService {
       : AdminPanelHealthServiceStatus.OUTAGE;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private transformServiceDetails(details: any) {
     if (!details) return details;
 
@@ -126,6 +127,7 @@ export class AdminPanelHealthService {
     if (indicatorId === HealthIndicatorId.worker) {
       return {
         ...indicatorStatus,
+        // @ts-expect-error legacy noImplicitAny
         queues: (indicatorStatus?.queues ?? []).map((queue) => ({
           id: `${indicatorId}-${queue.queueName}`,
           queueName: queue.queueName,

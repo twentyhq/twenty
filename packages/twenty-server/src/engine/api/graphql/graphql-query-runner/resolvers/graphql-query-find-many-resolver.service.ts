@@ -23,12 +23,11 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
-import { computeCursorArgFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-cursor-arg-filter';
+import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import {
   getCursor,
   getPaginationInfo,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
@@ -42,7 +41,6 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
 
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<FindManyResolverArgs>,
-    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<IConnection<ObjectRecord>> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
@@ -130,7 +128,6 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       nonFormattedObjectRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     const { hasNextPage, hasPreviousPage } = getPaginationInfo(
@@ -157,18 +154,13 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
         limit: QUERY_MAX_RECORDS,
         authContext,
         dataSource: executionArgs.dataSource,
-        isNewRelationEnabled:
-          featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(
-        objectMetadataMaps,
-        featureFlagsMap,
-      );
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     return typeORMObjectRecordsParser.createConnection({
       objectRecords,

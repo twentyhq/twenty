@@ -116,6 +116,10 @@ const StyledEditor = styled.div`
     margin-left: 8px;
   }
 
+  & .bn-inline-content a {
+    color: ${({ theme }) => theme.color.blue};
+  }
+
   & .bn-inline-content code {
     font-family: monospace;
     color: ${({ theme }) => theme.font.color.danger};

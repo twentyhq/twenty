@@ -56,6 +56,7 @@ describe('SearchResolver', () => {
       });
 
       const listingObjectMetadata = objectsMetadata.find(
+        // @ts-expect-error legacy noImplicitAny
         (object) => object.nameSingular === LISTING_NAME_SINGULAR,
       );
 

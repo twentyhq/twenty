@@ -617,7 +617,7 @@ msgid "Are you sure you want to delete this record? It can be recovered from the
 msgstr "Ви впевнені, що хочете видалити цей запис? Його можна відновити з меню Command."
 
 #. js-lingui-id: rnCqBK
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Are you sure? Your current information will not be saved."
 msgstr ""
 
@@ -798,7 +798,7 @@ msgstr "Неможливо змінити API імена для стандарт
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 msgid "Cancel"
 msgstr "Скасувати"
@@ -1247,6 +1247,11 @@ msgstr "Створіть свій робочий простір"
 msgid "Created"
 msgstr "Створено"
 
+#. js-lingui-id: R3PLzn
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
+msgid "currencies"
+msgstr ""
+
 #. js-lingui-id: 6YzXhC
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Current value from server environment. Set a custom value to override."
@@ -1482,6 +1487,11 @@ msgstr "Видалити обліковий запис та всі пов'яза
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete API key"
 msgstr "Видалити ключ API"
+
+#. js-lingui-id: x2p4/4
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
+msgid "Delete field"
+msgstr ""
 
 #. js-lingui-id: 4dpwsE
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
@@ -2026,7 +2036,7 @@ msgid "Existing objects"
 msgstr "Існуючі об'єкти"
 
 #. js-lingui-id: ydzS9x
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Exit"
 msgstr ""
 
@@ -2036,7 +2046,7 @@ msgstr ""
 #~ msgstr "Вийти з повноекранного режиму"
 
 #. js-lingui-id: XB4onr
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Exit import flow"
 msgstr ""
 
@@ -2825,6 +2835,16 @@ msgstr "Останні 7 днів (найстаріший → найновіши
 msgid "Last Name"
 msgstr "Прізвище"
 
+#. js-lingui-id: s0kiVA
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Last payment failed. Please contact your admin."
+msgstr ""
+
+#. js-lingui-id: 3u/3zO
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Last payment failed. Please update your billing details."
+msgstr ""
+
 #. js-lingui-id: wL3cK8
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Latest"
@@ -3252,6 +3272,11 @@ msgstr ""
 msgid "No free workflow executions left. End trial period and activate your billing to continue."
 msgstr ""
 
+#. js-lingui-id: pxYUeX
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "No free workflow executions left. Please contact your admin."
+msgstr ""
+
 #. js-lingui-id: OcMef3
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "No latest version found"
@@ -3330,6 +3355,7 @@ msgstr "Записів не знайдено"
 
 #. js-lingui-id: Ev2r9A
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
 msgid "No results"
 msgstr ""
 
@@ -3880,6 +3906,11 @@ msgstr "Вилучити з обраного"
 msgid "Remove option"
 msgstr "Видалити опцію"
 
+#. js-lingui-id: Ee8JBW
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
+msgid "Reorder field"
+msgstr ""
+
 #. js-lingui-id: OfhWJH
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
@@ -4051,16 +4082,22 @@ msgstr "Пошук індексу..."
 msgid "Search config variables"
 msgstr ""
 
+#. js-lingui-id: WLfEv1
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
+msgid "Search country"
+msgstr ""
+
 #. js-lingui-id: sSARNY
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "Search currency"
 msgstr ""
 
 #. js-lingui-id: 7taA9j
+#: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFieldSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterDropdownFieldSelectMenu.tsx
 msgid "Search fields"
 msgstr "Пошук полів"
 
@@ -4499,6 +4536,11 @@ msgstr "Тема, тіло та вкладення будуть поділені
 msgid "Submit"
 msgstr ""
 
+#. js-lingui-id: EDl9kS
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Subscribe"
+msgstr ""
+
 #. js-lingui-id: uvY7Wk
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Subscription activated."
@@ -4847,6 +4889,16 @@ msgstr ""
 msgid "Track your monthly workflow credit consumption."
 msgstr ""
 
+#. js-lingui-id: wN0jHF
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Trial expired. Please contact your admin"
+msgstr ""
+
+#. js-lingui-id: y985qL
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Trial expired. Please update your billing details."
+msgstr ""
+
 #. js-lingui-id: PiUt3N
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
@@ -4912,6 +4964,12 @@ msgstr "Невідома помилка"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Unlimited contacts"
 msgstr "Необмежена кількість контактів"
+
+#. js-lingui-id: EkH9pt
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Update"
+msgstr ""
 
 #. js-lingui-id: +b7T3G
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -5326,6 +5384,16 @@ msgstr "Ваше ім'я, як воно буде відображатися в �
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
 msgstr "Ваш робочий простір"
+
+#. js-lingui-id: oC6WBs
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Your workspace doesn't have an active subscription."
+msgstr ""
+
+#. js-lingui-id: QBTEtW
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Your workspace doesn't have an active subscription. Please contact your admin."
+msgstr ""
 
 #. js-lingui-id: RhNbPE
 #: src/pages/settings/SettingsBilling.tsx

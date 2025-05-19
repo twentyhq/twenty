@@ -34,7 +34,9 @@ import {
 } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { DeletedWorkspaceMember } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
+import { DeletedWorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/deleted-workspace-member-transpiler.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -79,6 +81,7 @@ export class UserResolver {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly userRoleService: UserRoleService,
     private readonly permissionsService: PermissionsService,
+    private readonly deletedWorkspaceMemberTranspiler: DeletedWorkspaceMemberTranspiler,
   ) {}
 
   @Query(() => User)
@@ -126,11 +129,15 @@ export class UserResolver {
 
     const grantedSettingsPermissions: SettingPermissionType[] = (
       Object.keys(settingsPermissions) as SettingPermissionType[]
-    ).filter((feature) => settingsPermissions[feature] === true);
+    )
+      // @ts-expect-error legacy noImplicitAny
+      .filter((feature) => settingsPermissions[feature] === true);
 
     const grantedObjectRecordsPermissions = (
       Object.keys(objectRecordsPermissions) as PermissionsOnAllObjectRecords[]
-    ).filter((permission) => objectRecordsPermissions[permission] === true);
+    )
+      // @ts-expect-error legacy noImplicitAny
+      .filter((permission) => objectRecordsPermissions[permission] === true);
 
     currentUserWorkspace.settingsPermissions = grantedSettingsPermissions;
     currentUserWorkspace.objectRecordsPermissions =
@@ -147,6 +154,7 @@ export class UserResolver {
   async userVars(
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<Record<string, any>> {
     const userVars = await this.userVarService.getAll({
       userId: user.id,
@@ -187,7 +195,7 @@ export class UserResolver {
       workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
     }
 
-    // TODO: Fix typing disrepency between Entity and DTO
+    // TODO Refactor to be transpiled to WorkspaceMember instead
     return workspaceMember as WorkspaceMember | null;
   }
 
@@ -195,17 +203,15 @@ export class UserResolver {
     nullable: true,
   })
   async workspaceMembers(
-    @Parent() user: User,
+    @Parent() _user: User,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<WorkspaceMember[]> {
-    const workspaceMemberEntities =
-      await this.userService.loadWorkspaceMembers(workspace);
+    const workspaceMemberEntities = await this.userService.loadWorkspaceMembers(
+      workspace,
+      false,
+    );
 
     const workspaceMembers: WorkspaceMember[] = [];
-
-    let userWorkspacesByUserId = new Map<string, UserWorkspace>();
-    let rolesByUserWorkspaces = new Map<string, RoleDTO[]>();
-
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
         userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
@@ -213,21 +219,20 @@ export class UserResolver {
       },
     });
 
-    userWorkspacesByUserId = new Map(
+    const userWorkspacesByUserId = new Map<string, UserWorkspace>(
       userWorkspaces.map((userWorkspace) => [
         userWorkspace.userId,
         userWorkspace,
       ]),
     );
 
-    rolesByUserWorkspaces = await this.userRoleService.getRolesByUserWorkspaces(
-      {
+    const rolesByUserWorkspaces: Map<string, RoleDTO[]> =
+      await this.userRoleService.getRolesByUserWorkspaces({
         userWorkspaceIds: userWorkspaces.map(
           (userWorkspace) => userWorkspace.id,
         ),
         workspaceId: workspace.id,
-      },
-    );
+      });
 
     for (const workspaceMemberEntity of workspaceMemberEntities) {
       if (workspaceMemberEntity.avatarUrl) {
@@ -239,12 +244,14 @@ export class UserResolver {
         workspaceMemberEntity.avatarUrl = `${workspaceMemberEntity.avatarUrl}?token=${avatarUrlToken}`;
       }
 
+      // TODO Refactor to be transpiled to WorkspaceMember instead
       const workspaceMember = workspaceMemberEntity as WorkspaceMember;
 
       const userWorkspace = userWorkspacesByUserId.get(
         workspaceMemberEntity.userId,
       );
 
+      // TODO Refactor should not throw ? typed as nullable ?
       if (!userWorkspace) {
         throw new Error('User workspace not found');
       }
@@ -277,6 +284,22 @@ export class UserResolver {
 
     // TODO: Fix typing disrepency between Entity and DTO
     return workspaceMembers;
+  }
+
+  @ResolveField(() => [DeletedWorkspaceMember], {
+    nullable: true,
+  })
+  async deletedWorkspaceMembers(
+    @Parent() _user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<DeletedWorkspaceMember[]> {
+    const workspaceMemberEntities =
+      await this.userService.loadDeletedWorkspaceMembersOnly(workspace);
+
+    return this.deletedWorkspaceMemberTranspiler.toDeletedWorkspaceMemberDtos(
+      workspaceMemberEntities,
+      workspace.id,
+    );
   }
 
   @ResolveField(() => String, {

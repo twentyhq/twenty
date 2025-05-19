@@ -73,6 +73,8 @@ export const validateDefaultValueForType = (
     };
   }
 
+  // @ts-expect-error legacy noImplicitAny
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const validators = defaultValueValidatorsMap[type] as any[];
 
   if (!validators) {
@@ -88,6 +90,7 @@ export const validateDefaultValueForType = (
       : { value: defaultValue };
 
     const defaultValueInstance = plainToInstance<
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       any,
       FieldMetadataClassValidation
     >(validator, conputedDefaultValue as FieldMetadataClassValidation);

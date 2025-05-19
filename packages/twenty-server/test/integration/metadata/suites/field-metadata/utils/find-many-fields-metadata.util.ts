@@ -25,5 +25,6 @@ export const findManyFieldsMetadata = async ({
     });
   }
 
+  // @ts-expect-error legacy noImplicitAny
   return response.body.data.fields.edges.map((edge) => edge.node);
 };

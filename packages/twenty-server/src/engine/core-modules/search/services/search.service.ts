@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
 import { Brackets, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
@@ -56,7 +56,6 @@ export class SearchService {
   async buildSearchQueryAndGetRecords<Entity extends ObjectLiteral>({
     entityManager,
     objectMetadataItem,
-    featureFlagMap,
     searchTerms,
     searchTermsOr,
     limit,
@@ -64,7 +63,6 @@ export class SearchService {
   }: {
     entityManager: WorkspaceRepository<Entity>;
     objectMetadataItem: ObjectMetadataItemWithFieldMaps;
-    featureFlagMap: FeatureFlagMap;
     searchTerms: string;
     searchTermsOr: string;
     limit: number;
@@ -76,7 +74,6 @@ export class SearchService {
       objectMetadataItem.fieldsByName,
       objectMetadataItem.fieldsByJoinColumnName,
       generateObjectMetadataMaps([objectMetadataItem]),
-      featureFlagMap,
     );
 
     queryParser.applyFilterToBuilder(
@@ -96,7 +93,7 @@ export class SearchService {
       ...(imageIdentifierField ? [imageIdentifierField] : []),
     ].map((field) => `"${field}"`);
 
-    const searchQuery = searchTerms
+    const searchQuery = isNonEmptyString(searchTerms)
       ? queryBuilder
           .select(fieldsToSelect)
           .addSelect(
@@ -261,7 +258,9 @@ export class SearchService {
       }
 
       return (
+        // @ts-expect-error legacy noImplicitAny
         (STANDARD_OBJECTS_BY_PRIORITY_RANK[b.objectNameSingular] || 0) -
+        // @ts-expect-error legacy noImplicitAny
         (STANDARD_OBJECTS_BY_PRIORITY_RANK[a.objectNameSingular] || 0)
       );
     });
