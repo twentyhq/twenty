@@ -37,11 +37,9 @@ import { isFieldText } from '@/object-record/record-field/types/guards/isFieldTe
 import { isFieldTsVector } from '@/object-record/record-field/types/guards/isFieldTsVectorValue';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { isDefined } from 'twenty-shared/utils';
-import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 const isValueEmpty = (value: unknown) =>
-  !isDefined(value) ||
-  (isString(value) && stripSimpleQuotesFromString(value) === '');
+  !isDefined(value) || (isString(value) && value === '');
 
 export const isFieldValueEmpty = ({
   fieldDefinition,

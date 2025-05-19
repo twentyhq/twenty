@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { getFieldLinkDefinedLinks } from '@/object-record/record-field/meta-types/input/utils/getFieldLinkDefinedLinks';
 import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import {
@@ -15,41 +16,28 @@ type LinksDisplayProps = {
 };
 
 export const LinksDisplay = ({ value }: LinksDisplayProps) => {
-  const links = useMemo(
-    () =>
-      [
-        isDefined(value?.primaryLinkUrl)
-          ? {
-              url: value.primaryLinkUrl,
-              label: value.primaryLinkLabel,
-            }
-          : null,
-        ...(value?.secondaryLinks ?? []),
-      ]
-        .filter(isDefined)
-        .map(({ url, label }) => {
-          if (!isDefined(url)) {
-            return undefined;
-          }
+  const links = useMemo(() => {
+    if (!isDefined(value)) {
+      return [];
+    }
 
-          let absoluteUrl = '';
-          let hostname = '';
-          try {
-            absoluteUrl = getAbsoluteUrlOrThrow(url);
-            hostname = getUrlHostnameOrThrow(absoluteUrl);
-          } catch {
-            absoluteUrl = '';
-            hostname = '';
-          }
-          return {
-            url: absoluteUrl,
-            label: label || hostname,
-            type: checkUrlType(absoluteUrl),
-          };
-        })
-        .filter(isDefined),
-    [value?.primaryLinkLabel, value?.primaryLinkUrl, value?.secondaryLinks],
-  );
+    return getFieldLinkDefinedLinks(value).map(({ url, label }) => {
+      let absoluteUrl = '';
+      let hostname = '';
+      try {
+        absoluteUrl = getAbsoluteUrlOrThrow(url);
+        hostname = getUrlHostnameOrThrow(absoluteUrl);
+      } catch {
+        absoluteUrl = '';
+        hostname = '';
+      }
+      return {
+        url: absoluteUrl,
+        label: label || hostname,
+        type: checkUrlType(absoluteUrl),
+      };
+    });
+  }, [value]);
 
   return (
     <ExpandableList>
