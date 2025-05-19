@@ -132,7 +132,10 @@ export class FieldMetadataRelatedRecordsService {
     }
 
     const viewFilterDisplayValues = viewFilter.displayValue.split(',');
-
+    if (viewFilterDisplayValues.length === 0) {
+      return updatedOption.map((option) => option.new.label).join(', ');
+    }
+    
     const remainingViewFilterDisplayValue = viewFilterDisplayValues.filter(
       (viewFilterOptionLabel) => {
         !deletedOption.find((option) => option.label === viewFilterOptionLabel);

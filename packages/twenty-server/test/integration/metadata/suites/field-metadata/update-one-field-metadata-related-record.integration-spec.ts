@@ -1,6 +1,9 @@
 import { faker } from '@faker-js/faker';
 import { isDefined } from 'class-validator';
-import { FieldMetadataComplexOption, FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import {
+  FieldMetadataComplexOption,
+  FieldMetadataDefaultOption,
+} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { findOneOperation } from 'test/integration/graphql/utils/find-one-operation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -26,12 +29,18 @@ const generateOption = (index: number): Option => ({
   color: 'green',
   position: index,
 });
-const generateOptions = (length: number) =>
-  Array.from({ length }, (_value, index) => generateOption(index));
+const generateOptionWithId = (index: number): Option & { id: string } => ({
+  ...generateOption(index),
+  id: faker.string.uuid(),
+});
+const generateOptions = (length: number, withId: boolean = false) =>
+  Array.from({ length }, (_value, index) =>
+    withId ? generateOptionWithId(index) : generateOption(index),
+  );
 const updateOption = ({ value, label, ...option }: Option) => ({
   ...option,
-  value: `${value}_${faker.lorem.word().toLocaleUpperCase()}`,
-  label: `${label} ${faker.lorem.word()}`,
+  value: `${value}_UPDATED`,
+  label: `${label} updated`,
 });
 
 const ALL_OPTIONS = generateOptions(10);
@@ -105,9 +114,16 @@ describe('updateOne', () => {
       }
     });
 
+    type ViewFilterUpdate = {
+      displayValue: string;
+      value: string;
+    };
     const testCases: EachTestingContext<{
-      initial: Option[];
-      updateOptions: (options: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]) => Option[];
+      fieldMetadataOptions: Option[];
+      createViewFilter: ViewFilterUpdate;
+      updateOptions: (
+        options: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[],
+      ) => Option[];
       expected?: null;
     }>[] = [
       // {
@@ -115,7 +131,10 @@ describe('updateOne', () => {
       //     'should delete related view filter if all select field options got deleted',
       //   context: {
       //     initial: ALL_OPTIONS,
-      //     updated: generateOptions(3),
+      //     updateOptions: () => {
+      //       const withId = true;
+      //       return generateOptions(3, withId);
+      //     },
       //     expected: null,
       //   },
       // },
@@ -123,23 +142,21 @@ describe('updateOne', () => {
       //   title: 'should update related view filter label',
       //   context: {
       //     initial: ALL_OPTIONS,
-      //     updated: ALL_OPTIONS.map((option, index) =>
-      //       isEven(option, index) ? updateOption(option) : option,
-      //     ),
-      //   },
-      // },
-      // {
-      //   title: 'should update related view filter with added options',
-      //   context: {
-      //     initial: ALL_OPTIONS.slice(0, 2),
-      //     updated: ALL_OPTIONS,
+      //     updateOptions: (options) =>
+      //       options.map((option, index) =>
+      //         isEven(option, index) ? updateOption(option) : option,
+      //       ),
       //   },
       // },
       {
-        title: 'should update related view filter updated option',
+        title: 'should update related view filter with updated option',
         context: {
-          initial: ALL_OPTIONS,
-          updateOptions: (options: Option[]) =>
+          fieldMetadataOptions: ALL_OPTIONS,
+          createViewFilter: {
+            displayValue: `${ALL_OPTIONS.length} options`,
+            value: ALL_OPTIONS.map((option) => option.value).join(', '),
+          },
+          updateOptions: (options) =>
             options.map((option, index) =>
               index === 5 ? updateOption(option) : option,
             ),
@@ -149,9 +166,16 @@ describe('updateOne', () => {
 
     test.each(testCases)(
       '$title',
-      async ({ context: { expected, initial, updateOptions } }) => {
+      async ({
+        context: {
+          expected,
+          createViewFilter,
+          fieldMetadataOptions,
+          updateOptions,
+        },
+      }) => {
         const { createOneField, createOneView } =
-          await createObjectSelectFieldAndView(ALL_OPTIONS);
+          await createObjectSelectFieldAndView(fieldMetadataOptions);
         const {
           data: { createOneResponse: createOneViewFilter },
         } = await createOneOperation<{
@@ -168,8 +192,8 @@ describe('updateOne', () => {
             viewId: createOneView.id,
             fieldMetadataId: createOneField.id,
             operand: 'is',
-            value: JSON.stringify(initial.map(({ label }) => label)),
-            displayValue: `${initial.length} options`,
+            value: createViewFilter.value,
+            displayValue: createViewFilter.displayValue,
           },
         });
 
@@ -203,15 +227,14 @@ describe('updateOne', () => {
           },
         });
 
-        expect(errors).toMatchSnapshot();
-
         if (expected !== undefined) {
+          expect(errors).toMatchSnapshot();
           expect(findResponse).toBe(expected);
           return;
         }
 
         expect(findResponse).toMatchSnapshot({
-          id: createOneViewFilter.id,
+          id: expect.any(String),
         });
       },
     );

@@ -30,11 +30,6 @@ export const findOneOperation = async ({
     });
   }
 
-  if (response.body.errors) {
-    console.log(response.body.errors);
-  }
-
-  console.log(response.body.data);
   return {
     data: {
       findResponse: response.body.data[objectMetadataSingularName],
