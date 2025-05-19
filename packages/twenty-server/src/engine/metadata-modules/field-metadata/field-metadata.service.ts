@@ -191,6 +191,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         });
       }
 
+      // Should check it's not empty or should be defined ?
       if (fieldMetadataInput.options) {
         for (const option of fieldMetadataInput.options) {
           if (!isDefined(option.id)) {

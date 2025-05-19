@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Field metadata select creation tests group It should fail to create option with invalid id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option id is invalid",
+  },
+]
+`;
+
+exports[`Field metadata select creation tests group It should fail to create two options with the same id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "duplicate key value violates unique constraint "pg_enum_typid_label_index"",
+  },
+]
+`;

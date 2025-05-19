@@ -1,3 +1,5 @@
+import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import {
   FindManyObjectMetadataFactoryInput,
   findManyObjectMetadataQueryFactory,
@@ -10,7 +12,10 @@ export const findManyObjectMetadata = async ({
   input,
   gqlFields,
   expectToFail = false,
-}: PerformMetadataQueryParams<FindManyObjectMetadataFactoryInput>) => {
+}: PerformMetadataQueryParams<FindManyObjectMetadataFactoryInput>): Promise<{
+  errors: BaseGraphQLError[];
+  objects: ObjectMetadataDTO[];
+}> => {
   const graphqlOperation = findManyObjectMetadataQueryFactory({
     input,
     gqlFields,
@@ -25,6 +30,9 @@ export const findManyObjectMetadata = async ({
     });
   }
 
-  // @ts-expect-error legacy noImplicitAny
-  return response.body.data.objects.edges.map((edge) => edge.node);
+  return {
+    errors: response.body.errors,
+    // TODO
+    objects: response.body.data.objects?.edges.map(({ node }: any) => node),
+  };
 };
