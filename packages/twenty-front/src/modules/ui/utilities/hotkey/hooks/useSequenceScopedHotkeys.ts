@@ -47,7 +47,7 @@ export const useSequenceHotkeys = (
       enableOnContentEditable: options.enableOnContentEditable,
       enableOnFormTags: options.enableOnFormTags,
     },
-    [setPendingHotkey, scope],
+    [setPendingHotkey, scope, currentFocusIdentifier],
   );
 
   useHotkeys(
@@ -83,6 +83,6 @@ export const useSequenceHotkeys = (
       enableOnContentEditable: options.enableOnContentEditable,
       enableOnFormTags: options.enableOnFormTags,
     },
-    [pendingHotkey, setPendingHotkey, scope, ...deps],
+    [pendingHotkey, setPendingHotkey, scope, currentFocusIdentifier, ...deps],
   );
 };

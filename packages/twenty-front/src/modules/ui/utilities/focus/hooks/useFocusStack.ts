@@ -20,7 +20,9 @@ export const useFocusStack = () => {
         };
 
         set(focusStackState, (previousFocusStack) => [
-          ...previousFocusStack,
+          ...previousFocusStack.filter(
+            (existingIdentifier) => existingIdentifier.focusId !== focusId,
+          ),
           focusIdentifier,
         ]);
       },

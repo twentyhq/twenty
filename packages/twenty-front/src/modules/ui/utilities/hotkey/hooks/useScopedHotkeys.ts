@@ -64,6 +64,6 @@ export const useScopedHotkeys = (
       enableOnFormTags,
       ignoreModifiers,
     },
-    dependencies,
+    [currentFocusIdentifier, ...(dependencies ?? [])],
   );
 };
