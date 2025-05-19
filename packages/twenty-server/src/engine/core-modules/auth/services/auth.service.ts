@@ -287,16 +287,14 @@ export class AuthService {
       email,
     });
 
-    if (userValidator.isDefined(user)) {
-      return {
-        exists: true,
-        availableWorkspaces:
-          await this.userWorkspaceService.findAvailableWorkspacesByEmail(email),
-        isEmailVerified: user.isEmailVerified,
-      };
-    }
+    const isUserExist = userValidator.isDefined(user);
 
-    return { exists: false, availableWorkspaces: [], isEmailVerified: false };
+    return {
+      exists: isUserExist,
+      availableWorkspaces:
+        await this.userWorkspaceService.findAvailableWorkspacesByEmail(email),
+      isEmailVerified: isUserExist ? user.isEmailVerified : false,
+    };
   }
 
   async checkWorkspaceInviteHashIsValid(
