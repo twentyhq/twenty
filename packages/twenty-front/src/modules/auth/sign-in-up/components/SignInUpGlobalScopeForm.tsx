@@ -221,6 +221,8 @@ export const SignInUpGlobalScopeForm = () => {
   };
 
   const handleCreateWorkspace = async () => {
+    // if user exist create workspace
+    // else set password and create workspace
     setSignInUpMode(SignInUpMode.SignUp);
     setSignInUpStep(SignInUpStep.Password);
   };
