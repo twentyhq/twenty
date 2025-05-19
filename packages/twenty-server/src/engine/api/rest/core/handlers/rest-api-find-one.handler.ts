@@ -18,19 +18,14 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
       );
     }
 
-    const {
-      objectMetadataNameSingular,
-      repository,
-      objectMetadata,
-      objectMetadataItemWithFieldsMaps,
-    } = await this.getRepositoryAndMetadataOrFail(request);
+    const { repository, objectMetadata, objectMetadataItemWithFieldsMaps } =
+      await this.getRepositoryAndMetadataOrFail(request);
 
     const { records } = await this.findRecords({
       request,
       recordId,
       repository,
       objectMetadata,
-      objectMetadataNameSingular,
       objectMetadataItemWithFieldsMaps,
     });
 
@@ -42,7 +37,7 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
 
     return this.formatResult({
       operation: 'findOne',
-      objectNameSingular: objectMetadataNameSingular,
+      objectNameSingular: objectMetadata.objectMetadataMapItem.nameSingular,
       data: record,
     });
   }
