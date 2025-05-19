@@ -310,6 +310,7 @@ export const ActivityRichTextEditor = ({
   useScopedHotkeys(
     '*',
     (keyboardEvent) => {
+      // TODO: remove once stacked hotkeys / focusKeys are in place
       if (commandMenuPage !== CommandMenuPages.EditRichText) {
         return;
       }
