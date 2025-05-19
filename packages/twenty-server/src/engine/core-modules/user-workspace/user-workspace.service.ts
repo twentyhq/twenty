@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -220,7 +220,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   async findAvailableWorkspacesByEmail(email: string) {
     const user = await this.userRepository.findOne({
       where: {
-        email,
+        email: ILike(email),
       },
       relations: [
         'workspaces',
