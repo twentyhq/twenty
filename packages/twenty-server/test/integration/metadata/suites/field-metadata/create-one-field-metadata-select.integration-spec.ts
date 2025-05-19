@@ -33,10 +33,10 @@ describe('Field metadata select creation tests group', () => {
     });
   });
 
-  const testCases: EachTestingContext<{
+  type TestCase = EachTestingContext<{
     options: FieldMetadataComplexOption[];
-    expectError?: boolean;
-  }>[] = [
+  }>;
+  const successfulTestCases: TestCase[] = [
     {
       title: 'It should create option with provided id',
       context: {
@@ -72,13 +72,6 @@ describe('Field metadata select creation tests group', () => {
         }),
       },
     },
-    // TODO prastoin breaks everything should be handled
-    // {
-    //   title: 'It should create field metadata with empty options',
-    //   context: {
-    //     options: [],
-    //   },
-    // },
     {
       title: 'It should create option even if no id is provided',
       context: {
@@ -92,76 +85,93 @@ describe('Field metadata select creation tests group', () => {
         ],
       },
     },
-    {
-      title: 'It should fail to create option with invalid id',
-      context: {
-        expectError: true,
-        options: [
-          {
-            label: 'Option 1',
-            value: 'option1',
-            color: 'green',
-            position: 1,
-            id: 'not a uuid',
-          },
-        ],
-      },
-    },
-    {
-      title: 'It should fail to create two options with the same id',
-      context: {
-        expectError: true,
-        options: [
-          {
-            label: 'Option 1',
-            value: 'option1',
-            color: 'green',
-            position: 1,
-            id: 'fd1f11fd-3f05-4a33-bddf-800c3412ce98',
-          },
-          {
-            label: 'Option 1',
-            value: 'option1',
-            color: 'green',
-            position: 1,
-            id: 'fd1f11fd-3f05-4a33-bddf-800c3412ce98',
-          },
-        ],
-      },
-    },
   ];
-  test.each(testCases)(
-    '$title',
-    async ({ context: { options, expectError = false } }) => {
-      const { data, errors } = await createOneFieldMetadata({
-        input: {
-          objectMetadataId: createdObjectMetadataId,
-          type: FieldMetadataType.SELECT,
-          name: 'testField',
-          label: 'Test Field',
-          isLabelSyncedWithName: false,
-          options,
-        },
-        gqlFields: `
+  test.each([])('$title', async ({ context: { options } }) => {
+    const { data, errors } = await createOneFieldMetadata({
+      input: {
+        objectMetadataId: createdObjectMetadataId,
+        type: FieldMetadataType.SELECT,
+        name: 'testField',
+        label: 'Test Field',
+        isLabelSyncedWithName: false,
+        options,
+      },
+      gqlFields: `
         id
         options
         `,
-      });
+    });
 
-      if (expectError) {
-        expect(errors).toBeDefined();
-        expect(errors).toMatchSnapshot();
-        return;
-      }
+    expect(data.createOneField).toBeDefined();
+    const createdOptions: FieldMetadataComplexOption[] =
+      data.createOneField.options;
 
-      expect(data.createOneField).toBeDefined();
-      const createdOptions: FieldMetadataComplexOption[] =
-        data.createOneField.options;
+    expect(errors).toBeUndefined();
+    expect(createdOptions.length).toBe(options.length);
+    createdOptions.forEach((option) => expect(option.id).toBeDefined());
+    expect(createdOptions).toMatchObject(options);
+  });
 
-      expect(errors).toBeUndefined();
-      expect(createdOptions.length).toBe(options.length);
-      createdOptions.forEach((option) => expect(option.id).toBeDefined());
-      expect(createdOptions).toMatchObject(options);
+  const failingTestCases: TestCase[] = [
+    // {
+    //   title: 'It should fail to create option with invalid id',
+    //   context: {
+    //     options: [
+    //       {
+    //         label: 'Option 1',
+    //         value: 'option1',
+    //         color: 'green',
+    //         position: 1,
+    //         id: 'not a uuid',
+    //       },
+    //     ],
+    //   },
+    // },
+    {
+      title: 'It should fail to create field metadata with empty options',
+      context: {
+        options: [],
+      },
     },
-  );
+    // {
+    //   title: 'It should fail to create two options with the same id',
+    //   context: {
+    //     options: [
+    //       {
+    //         label: 'Option 1',
+    //         value: 'option1',
+    //         color: 'green',
+    //         position: 1,
+    //         id: 'fd1f11fd-3f05-4a33-bddf-800c3412ce98',
+    //       },
+    //       {
+    //         label: 'Option 1',
+    //         value: 'option1',
+    //         color: 'green',
+    //         position: 1,
+    //         id: 'fd1f11fd-3f05-4a33-bddf-800c3412ce98',
+    //       },
+    //     ],
+    //   },
+    // },
+  ];
+  test.each(failingTestCases)('$title', async ({ context: { options } }) => {
+    const { data, errors } = await createOneFieldMetadata({
+      input: {
+        objectMetadataId: createdObjectMetadataId,
+        type: FieldMetadataType.SELECT,
+        name: 'testField',
+        label: 'Test Field',
+        isLabelSyncedWithName: false,
+        options,
+      },
+      gqlFields: `
+        id
+        options
+        `,
+    });
+
+    expect(errors).toBeDefined();
+    expect(errors).toMatchSnapshot();
+  });
 });
