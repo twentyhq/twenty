@@ -58,12 +58,8 @@ export const useRecordGroupReorderConfirmationModal = ({
 
   const handleDragEndWithModal: OnDragEndResponder = (result, provided) => {
     if (!isDragableSortRecordGroup) {
-<<<<<<< HEAD
       closeAnyOpenDropdown();
-      setIsRecordGroupReorderConfirmationModalVisible(true);
-=======
       openModal(RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID);
->>>>>>> main
       setActiveDropdownFocusIdAndMemorizePrevious(null);
       setPendingDragEndHandlerParams([result, provided]);
     } else {
