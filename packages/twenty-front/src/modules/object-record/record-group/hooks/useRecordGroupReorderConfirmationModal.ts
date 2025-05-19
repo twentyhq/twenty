@@ -1,17 +1,17 @@
+import { RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID } from '@/object-record/record-group/constants/RecordGroupReorderConfirmationModalId';
 import { useReorderRecordGroups } from '@/object-record/record-group/hooks/useReorderRecordGroups';
-import { isRecordGroupReorderConfirmationModalVisibleState } from '@/object-record/record-group/states/isRecordGroupReorderConfirmationModalVisibleState';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { recordIndexRecordGroupIsDraggableSortComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexRecordGroupIsDraggableSortComponentSelector';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewType } from '@/views/types/ViewType';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 type UseRecordGroupReorderConfirmationModalParams = {
   recordIndexId: string;
@@ -27,9 +27,7 @@ export const useRecordGroupReorderConfirmationModal = ({
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
-  const setIsRecordGroupReorderConfirmationModalVisible = useSetRecoilState(
-    isRecordGroupReorderConfirmationModalVisibleState,
-  );
+  const { openModal } = useModal();
 
   const [pendingDragEndHandlerParams, setPendingDragEndHandlerParams] =
     useState<Parameters<OnDragEndResponder> | null>(null);
@@ -60,8 +58,12 @@ export const useRecordGroupReorderConfirmationModal = ({
 
   const handleDragEndWithModal: OnDragEndResponder = (result, provided) => {
     if (!isDragableSortRecordGroup) {
+<<<<<<< HEAD
       closeAnyOpenDropdown();
       setIsRecordGroupReorderConfirmationModalVisible(true);
+=======
+      openModal(RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID);
+>>>>>>> main
       setActiveDropdownFocusIdAndMemorizePrevious(null);
       setPendingDragEndHandlerParams([result, provided]);
     } else {

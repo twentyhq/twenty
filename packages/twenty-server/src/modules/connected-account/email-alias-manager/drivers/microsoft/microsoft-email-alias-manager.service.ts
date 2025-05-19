@@ -26,12 +26,15 @@ export class MicrosoftEmailAliasManagerService {
 
     const handleAliases =
       proxyAddresses
+        // @ts-expect-error legacy noImplicitAny
         ?.filter((address) => {
           return address.startsWith('SMTP:') === false;
         })
+        // @ts-expect-error legacy noImplicitAny
         .map((address) => {
           return address.replace('smtp:', '').toLowerCase();
         })
+        // @ts-expect-error legacy noImplicitAny
         .filter((address) => {
           return address !== '';
         }) || [];

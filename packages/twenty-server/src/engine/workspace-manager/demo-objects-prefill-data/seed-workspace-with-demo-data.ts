@@ -16,9 +16,11 @@ export const seedWorkspaceWithDemoData = async (
   objectMetadata: ObjectMetadataEntity[],
 ) => {
   const objectMetadataMap = objectMetadata.reduce((acc, object) => {
+// @ts-expect-error legacy noImplicitAny
     acc[object.standardId ?? ''] = {
       id: object.id,
       fields: object.fields.reduce((acc, field) => {
+// @ts-expect-error legacy noImplicitAny
         acc[field.standardId ?? ''] = field.id;
 
         return acc;

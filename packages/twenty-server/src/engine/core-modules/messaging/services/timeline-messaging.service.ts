@@ -156,9 +156,12 @@ export class TimelineMessagingService {
         if (!threadParticipant.message.messageThreadId)
           return threadParticipantsAcc;
 
+        // @ts-expect-error legacy noImplicitAny
         if (!threadParticipantsAcc[threadParticipant.message.messageThreadId])
+          // @ts-expect-error legacy noImplicitAny
           threadParticipantsAcc[threadParticipant.message.messageThreadId] = [];
 
+        // @ts-expect-error legacy noImplicitAny
         threadParticipantsAcc[threadParticipant.message.messageThreadId].push(
           threadParticipant,
         );
@@ -248,6 +251,7 @@ export class TimelineMessagingService {
       [key: string]: MessageChannelVisibility;
     } = messageThreadIds.reduce((threadVisibilityAcc, messageThreadId) => {
       // If the workspace member is not the owner of the thread, use the visibility value from the query
+      // @ts-expect-error legacy noImplicitAny
       threadVisibilityAcc[messageThreadId] =
         threadIdsWithoutWorkspaceMember.includes(messageThreadId)
           ? (threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotOwner?.[

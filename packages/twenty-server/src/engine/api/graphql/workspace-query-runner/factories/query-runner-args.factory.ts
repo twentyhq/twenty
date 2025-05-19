@@ -174,8 +174,10 @@ export class QueryRunnerArgsFactory {
     const workspaceId = options.authContext.workspace.id;
     let isFieldPositionPresent = false;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const createArgByArgKeyPromises: Promise<[string, any]>[] = Object.entries(
       data,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ).map(async ([key, value]): Promise<[string, any]> => {
       const fieldMetadata = fieldMetadataMapByNameByName[key];
 
@@ -258,12 +260,15 @@ export class QueryRunnerArgsFactory {
     const overrideFilter = (filterObject: ObjectRecordFilter) => {
       return Object.entries(filterObject).reduce((acc, [key, value]) => {
         if (key === 'and' || key === 'or') {
+          // @ts-expect-error legacy noImplicitAny
           acc[key] = value.map((nestedFilter: ObjectRecordFilter) =>
             overrideFilter(nestedFilter),
           );
         } else if (key === 'not') {
+          // @ts-expect-error legacy noImplicitAny
           acc[key] = overrideFilter(value);
         } else {
+          // @ts-expect-error legacy noImplicitAny
           acc[key] = this.transformFilterValueByType(
             key,
             value,
@@ -280,6 +285,7 @@ export class QueryRunnerArgsFactory {
 
   private transformFilterValueByType(
     key: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
     fieldMetadataMapByName: FieldMetadataMap,
   ) {
@@ -310,6 +316,7 @@ export class QueryRunnerArgsFactory {
 
   private async overrideValueByFieldMetadata(
     key: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
     fieldMetadataMapByName: FieldMetadataMap,
   ) {

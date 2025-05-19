@@ -44,6 +44,7 @@ const findFieldNode = (
   return field;
 };
 
+// @ts-expect-error legacy noImplicitAny
 const parseValueNode = (
   valueNode: ValueNode,
   variables: GraphQLResolveInfo['variableValues'],
@@ -62,6 +63,7 @@ const parseValueNode = (
       return valueNode.values.map((value) => parseValueNode(value, variables));
     case Kind.OBJECT:
       return valueNode.fields.reduce((obj, field) => {
+        // @ts-expect-error legacy noImplicitAny
         obj[field.name.value] = parseValueNode(field.value, variables);
 
         return obj;
@@ -74,6 +76,7 @@ const parseValueNode = (
 export const getFieldArgumentsByKey = (
   info: GraphQLResolveInfo,
   fieldKey: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any> => {
   // Start from the first top-level field node and search recursively
   const targetField = findFieldNode(info.fieldNodes[0].selectionSet, fieldKey);
@@ -84,6 +87,7 @@ export const getFieldArgumentsByKey = (
   }
 
   // Extract the arguments from the field we've found
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const args: Record<string, any> = {};
 
   if (targetField.arguments && targetField.arguments.length) {

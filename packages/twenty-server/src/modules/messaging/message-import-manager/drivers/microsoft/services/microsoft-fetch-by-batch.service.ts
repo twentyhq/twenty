@@ -82,6 +82,7 @@ export class MicrosoftFetchByBatchService {
    *   },
    * }
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private isTemporaryError(error: any): boolean {
     return error?.body?.includes('Unexpected token < in JSON at position');
   }

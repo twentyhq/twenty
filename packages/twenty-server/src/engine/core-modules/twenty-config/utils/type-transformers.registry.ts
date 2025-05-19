@@ -27,6 +27,7 @@ export interface TypeTransformer<T> {
 
 export const typeTransformers: Record<
   ConfigVariableType,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   TypeTransformer<any>
 > = {
   [ConfigVariableType.BOOLEAN]: {

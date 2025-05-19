@@ -2,6 +2,7 @@ import { FieldMetadataDefaultSerializableValue } from 'src/engine/metadata-modul
 
 export const unserializeDefaultValue = (
   serializedDefaultValue: FieldMetadataDefaultSerializableValue,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any => {
   if (serializedDefaultValue === null) {
     return null;
@@ -28,6 +29,7 @@ export const unserializeDefaultValue = (
   if (typeof serializedDefaultValue === 'object') {
     return Object.entries(serializedDefaultValue).reduce(
       (acc, [key, value]) => {
+        // @ts-expect-error legacy noImplicitAny
         acc[key] = unserializeDefaultValue(value);
 
         return acc;

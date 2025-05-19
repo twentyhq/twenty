@@ -9,6 +9,7 @@ const companyMockObjectMetadataItem = mockObjectMetadataItemsWithFieldMaps.find(
 )!;
 
 describe('generateFakeFormResponse', () => {
+  // @ts-expect-error legacy noImplicitAny
   let objectMetadataRepository;
 
   beforeEach(() => {
@@ -52,6 +53,7 @@ describe('generateFakeFormResponse', () => {
     const result = await generateFakeFormResponse({
       formMetadata: schema,
       workspaceId: '1',
+      // @ts-expect-error legacy noImplicitAny
       objectMetadataRepository,
     });
 

@@ -111,6 +111,7 @@ export class WorkspaceHealthCommand extends CommandRunner {
     required: false,
   })
   fix(value: string): WorkspaceHealthFixKind {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!Object.values(WorkspaceHealthFixKind).includes(value as any)) {
       throw new Error(`Invalid fix kind ${value}`);
     }
@@ -125,6 +126,7 @@ export class WorkspaceHealthCommand extends CommandRunner {
     defaultValue: WorkspaceHealthMode.All,
   })
   parseMode(value: string): WorkspaceHealthMode {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!Object.values(WorkspaceHealthMode).includes(value as any)) {
       throw new Error(`Invalid mode ${value}`);
     }
