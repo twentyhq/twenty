@@ -70,6 +70,7 @@ import { ViewService } from 'src/modules/view/services/view.service';
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
 
+import * as z from 'zod';
 import { generateDefaultValue } from './utils/generate-default-value';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
 import { isEnumFieldMetadataType } from './utils/is-enum-field-metadata-type.util';
@@ -136,7 +137,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         },
       });
 
-      if (!existingFieldMetadata) {
+      if (!isDefined(existingFieldMetadata)) {
         throw new FieldMetadataException(
           'Field does not exist',
           FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
@@ -152,14 +153,14 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         order: {},
       });
 
-      if (!objectMetadata) {
+      if (!isDefined(objectMetadata)) {
         throw new FieldMetadataException(
           'Object metadata does not exist',
           FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         );
       }
 
-      if (!objectMetadata.labelIdentifierFieldMetadataId) {
+      if (!isDefined(objectMetadata.labelIdentifierFieldMetadataId)) {
         throw new FieldMetadataException(
           'Label identifier field metadata id does not exist',
           FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND,
@@ -192,9 +193,17 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       if (fieldMetadataInput.options) {
         for (const option of fieldMetadataInput.options) {
-          if (!option.id) {
+          if (!isDefined(option.id)) {
             throw new FieldMetadataException(
               'Option id is required',
+              FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+            );
+          }
+
+          const parseResult = z.string().uuid().safeParse(option.id);
+          if (!parseResult.success) {
+            throw new FieldMetadataException(
+              'Option id is invalid',
               FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
             );
           }
@@ -658,6 +667,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           );
         }
+
+        if (!isDefined(option.id)) {
+          throw new FieldMetadataException(
+            'Option id is required',
+            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          );
+        }
+
+        const parseResult = z.string().uuid().safeParse(option.id);
+        if (!parseResult.success) {
+          throw new FieldMetadataException(
+            'Option id is invalid',
+            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          );
+        }
       }
       if (isDefined(fieldMetadataInput.defaultValue)) {
         await this.fieldMetadataValidationService.validateDefaultValueOrThrow({
@@ -732,8 +756,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         generateDefaultValue(fieldMetadataInput.type),
       options: fieldMetadataInput.options
         ? fieldMetadataInput.options.map((option) => ({
-            ...option,
             id: uuidV4(),
+            ...option,
           }))
         : undefined,
       isActive: true,
@@ -768,7 +792,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     if (isEnumFieldMetadataType(fieldMetadataInput.type)) {
       if (
-        !fieldMetadataInput.options &&
+        !isDefined(fieldMetadataInput.options) &&
         fieldMetadataInput.type !== FieldMetadataType.RATING
       ) {
         throw new FieldMetadataException(
