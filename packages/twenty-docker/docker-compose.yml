@@ -57,7 +57,7 @@ services:
     image: twentycrm/twenty:${TAG:-latest}
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
-    command: [ "yarn", "worker:prod" ]
+    command: ["yarn", "worker:prod"]
     environment:
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
       SERVER_URL: ${SERVER_URL}
@@ -121,6 +121,5 @@ services:
     command: ["--maxmemory-policy", "noeviction"]
 
 volumes:
-  docker-data:
   db-data:
   server-local-data:
