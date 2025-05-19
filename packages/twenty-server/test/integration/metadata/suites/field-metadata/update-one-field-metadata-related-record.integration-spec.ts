@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { isDefined } from 'class-validator';
+import { FieldMetadataComplexOption, FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { findOneOperation } from 'test/integration/graphql/utils/find-one-operation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -17,17 +18,16 @@ type Option = {
   value: string;
   color: string;
   position: number;
-  id: string;
 };
 
-const generateOption = (index: number) => ({
+const generateOption = (index: number): Option => ({
   label: `Option ${index}`,
   value: `option${index}`,
   color: 'green',
   position: index,
-  id: faker.string.uuid()
-})
-const generateOptions = (length: number) => Array.from({ length }, (_value, index) => generateOption(index));
+});
+const generateOptions = (length: number) =>
+  Array.from({ length }, (_value, index) => generateOption(index));
 const updateOption = ({ value, label, ...option }: Option) => ({
   ...option,
   value: `${value}_${faker.lorem.word().toLocaleUpperCase()}`,
@@ -107,7 +107,7 @@ describe('updateOne', () => {
 
     const testCases: EachTestingContext<{
       initial: Option[];
-      updated: Option[];
+      updateOptions: (options: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]) => Option[];
       expected?: null;
     }>[] = [
       // {
@@ -119,23 +119,39 @@ describe('updateOne', () => {
       //     expected: null,
       //   },
       // },
+      // {
+      //   title: 'should update related view filter label',
+      //   context: {
+      //     initial: ALL_OPTIONS,
+      //     updated: ALL_OPTIONS.map((option, index) =>
+      //       isEven(option, index) ? updateOption(option) : option,
+      //     ),
+      //   },
+      // },
+      // {
+      //   title: 'should update related view filter with added options',
+      //   context: {
+      //     initial: ALL_OPTIONS.slice(0, 2),
+      //     updated: ALL_OPTIONS,
+      //   },
+      // },
       {
-        title: 'should update related view filter label',
+        title: 'should update related view filter updated option',
         context: {
           initial: ALL_OPTIONS,
-          updated: ALL_OPTIONS.map((option, index) =>
-            isEven(option, index) ? updateOption(option) : option,
-          ),
+          updateOptions: (options: Option[]) =>
+            options.map((option, index) =>
+              index === 5 ? updateOption(option) : option,
+            ),
         },
       },
     ];
 
     test.each(testCases)(
       '$title',
-      async ({ context: { expected, initial, updated } }) => {
+      async ({ context: { expected, initial, updateOptions } }) => {
         const { createOneField, createOneView } =
           await createObjectSelectFieldAndView(ALL_OPTIONS);
-
         const {
           data: { createOneResponse: createOneViewFilter },
         } = await createOneOperation<{
@@ -157,12 +173,13 @@ describe('updateOne', () => {
           },
         });
 
-        console.log({initial, updated})
+        const optionsWithIds = createOneField.options;
+
         await updateOneFieldMetadata({
           input: {
             idToUpdate: createOneField.id,
             updatePayload: {
-              options: updated,
+              options: updateOptions(optionsWithIds),
             },
           },
           gqlFields: `

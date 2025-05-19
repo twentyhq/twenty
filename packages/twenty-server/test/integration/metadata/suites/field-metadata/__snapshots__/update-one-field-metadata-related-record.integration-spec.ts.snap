@@ -1,23 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`updateOne FieldMetadataService Enum Default Value Validation should delete related view filter if all select field options got deleted 1`] = `
-[
-  {
-    "extensions": {
-      "code": "NOT_FOUND",
-    },
-    "message": "Record not found",
-  },
-]
-`;
+exports[`updateOne FieldMetadataService Enum Default Value Validation should update related view filter updated option 1`] = `undefined`;
 
-exports[`updateOne FieldMetadataService Enum Default Value Validation should update related view filter label 1`] = `
-[
-  {
-    "extensions": {
-      "code": "NOT_FOUND",
-    },
-    "message": "Record not found",
-  },
-]
+exports[`updateOne FieldMetadataService Enum Default Value Validation should update related view filter updated option 2`] = `
+{
+  "displayValue": "Option 0,Option 1,Option 2,Option 3,Option 4,Option 5 carus,Option 6,Option 7,Option 8,Option 9",
+  "id": "c3fab843-ef71-48ab-92fe-50a91fc91889",
+  "value": "["Option 0","Option 1","Option 2","Option 3","Option 4","Option 5 carus","Option 6","Option 7","Option 8","Option 9"]",
+}
 `;
