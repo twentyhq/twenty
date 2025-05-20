@@ -51,7 +51,7 @@ msgstr "(Sistema) Visualizações"
 #. js-lingui-id: kZR6+h
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "A company"
-msgstr "Uma Empresa"
+msgstr "Um Banco"
 
 #. js-lingui-id: +aeifv
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -91,7 +91,7 @@ msgstr "Um Alvo de Nota"
 #. js-lingui-id: Io42ej
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "A person"
-msgstr "Uma Pessoa"
+msgstr "Um Cliente"
 
 #. js-lingui-id: mkFXEH
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -182,8 +182,8 @@ msgstr "Endereço (obsoleto) "
 
 #. js-lingui-id: Knl3c9
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Address of the company"
-msgstr "Endereço da Empresa"
+msgid "Delete the Opportunity"
+msgstr "Excluir a Proposta"
 
 #. js-lingui-id: zJhwjv
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -229,7 +229,7 @@ msgstr "Um Anexo"
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "An opportunity"
-msgstr "Uma Oportunidade"
+msgstr "Uma Proposta"
 
 #. js-lingui-id: JKWicb
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -337,7 +337,6 @@ msgstr "Tipo de Anexo"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Attachments"
 msgstr "Anexos"
@@ -474,7 +473,8 @@ msgid "Cached record name"
 msgstr "Nome do Registro em Cache"
 
 #. js-lingui-id: Nh6GTX
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Calendar Channel"
 msgstr "Canal de Calendário"
 
@@ -565,7 +565,7 @@ msgstr "Visualização Compacta"
 #. js-lingui-id: s2QZS6
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Companies"
-msgstr "Empresas"
+msgstr "Bancos"
 
 #. js-lingui-id: 7i8j3G
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -577,7 +577,7 @@ msgstr "Empresas"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Company"
-msgstr "Empresa"
+msgstr "Banco"
 
 #. js-lingui-id: yA1de7
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -1661,7 +1661,7 @@ msgstr "Operações"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Opportunities"
-msgstr "Oportunidades"
+msgstr "Propostas"
 
 #. js-lingui-id: 5QgKbT
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -1676,7 +1676,7 @@ msgstr "Oportunidades Ligadas à Empresa."
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Opportunity"
-msgstr "Oportunidade"
+msgstr "Proposta"
 
 #. js-lingui-id: WnMlKn
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -1743,7 +1743,7 @@ msgstr "ID do Grupo de Filtros da Visualização Principal"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "People"
-msgstr "Pessoas"
+msgstr "Clientes"
 
 #. js-lingui-id: E1zc7W
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -1762,7 +1762,7 @@ msgstr "Pessoas Ligadas à Empresa."
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Person"
-msgstr "Pessoa"
+msgstr "Cliente"
 
 #. js-lingui-id: c3Qq6o
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1947,7 +1947,7 @@ msgstr "Status"
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Sub field name"
-msgstr ""
+msgstr "Nome do subcampo"
 
 #. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
