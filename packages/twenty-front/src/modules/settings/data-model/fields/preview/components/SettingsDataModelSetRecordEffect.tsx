@@ -6,12 +6,10 @@ import { useSetRecoilState } from 'recoil';
 
 type SettingsDataModelSetPreviewRecordEffectProps = {
   record: ObjectRecord;
-  fieldName: string;
 };
 
 export const SettingsDataModelSetPreviewRecordEffect = ({
   record,
-  fieldName,
 }: SettingsDataModelSetPreviewRecordEffectProps) => {
   const { upsertRecords: upsertRecordsInStore } = useUpsertRecordsInStore();
 
@@ -22,7 +20,7 @@ export const SettingsDataModelSetPreviewRecordEffect = ({
   useEffect(() => {
     upsertRecordsInStore([record]);
     setSettingsPreviewRecordId(record.id);
-  }, [record, upsertRecordsInStore, fieldName, setSettingsPreviewRecordId]);
+  }, [record, upsertRecordsInStore, setSettingsPreviewRecordId]);
 
   return null;
 };
