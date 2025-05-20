@@ -4,7 +4,6 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { MicrosoftImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception';
 
 @Injectable()
 export class MicrosoftHandleErrorService {
@@ -59,15 +58,6 @@ export class MicrosoftHandleErrorService {
     throw new MessageImportDriverException(
       `Microsoft driver error: ${error.message}`,
       MessageImportDriverExceptionCode.UNKNOWN,
-    );
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public throwMicrosoftBatchError(error: any): void {
-    throw new MicrosoftImportDriverException(
-      error.message,
-      error.code,
-      error.statusCode,
     );
   }
 }
