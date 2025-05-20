@@ -5,7 +5,7 @@ type LinksFieldMenuItemProps = {
   dropdownId: string;
   isPrimary?: boolean;
   label: string | null;
-  url: string | null;
+  url: string;
   onEdit?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
