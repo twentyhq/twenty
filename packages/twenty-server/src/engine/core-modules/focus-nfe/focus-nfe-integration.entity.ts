@@ -1,7 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+
 import { IDField } from '@ptc-org/nestjs-query-graphql';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   Column,
   CreateDateColumn,
@@ -11,6 +10,9 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'focusNfeIntegration', schema: 'core' })
 @ObjectType('focusNfeIntegration')

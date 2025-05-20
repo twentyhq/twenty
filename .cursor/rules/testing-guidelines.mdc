@@ -1,21 +1,31 @@
+---
+description: This will only be used when testing the application.
+globs: 
+alwaysApply: false
+---
+
 # Testing Guidelines
 
 ## Core Testing Principles
+
 Twenty follows a comprehensive testing strategy across all packages, ensuring high-quality, maintainable code. This document outlines our testing conventions and best practices.
 
 ## Testing Stack
 
 ### Backend Testing
+
 - Primary Framework: Jest
 - API Testing: Supertest
 - Coverage Requirements: 80% minimum
 
 ### Frontend Testing
+
 - Component Testing: Jest + React Testing Library
 - Visual Testing: Storybook
 - API Mocking: MSW (Mock Service Worker)
 
 ### End-to-End Testing
+
 - Framework: Playwright
 - Coverage: Critical user journeys
 - Cross-browser testing
@@ -23,6 +33,7 @@ Twenty follows a comprehensive testing strategy across all packages, ensuring hi
 ## Test Organization
 
 ### Test File Location
+
 - Co-locate tests with implementation files
 - Use consistent naming patterns
   ```
@@ -34,6 +45,7 @@ Twenty follows a comprehensive testing strategy across all packages, ensuring hi
   ```
 
 ### Test File Naming
+
 - Use `.test.ts(x)` for unit/integration tests
 - Use `.spec.ts(x)` for E2E tests
 - Use `.stories.tsx` for Storybook stories
@@ -41,8 +53,10 @@ Twenty follows a comprehensive testing strategy across all packages, ensuring hi
 ## Unit Testing
 
 ### Component Testing
+
 - Test behavior, not implementation
 - Use React Testing Library best practices
+
   ```typescript
   // ✅ Correct
   test('displays user name when provided', () => {
@@ -58,24 +72,27 @@ Twenty follows a comprehensive testing strategy across all packages, ensuring hi
   ```
 
 ### Hook Testing
+
 - Use `renderHook` from @testing-library/react-hooks
 - Test all possible states
   ```typescript
   // ✅ Correct
   test('useUser hook manages user state', () => {
     const { result } = renderHook(() => useUser());
-    
+
     act(() => {
       result.current.setUser({ id: '1', name: 'John' });
     });
-    
+
     expect(result.current.user).toEqual({ id: '1', name: 'John' });
   });
   ```
 
 ### Mocking
+
 - Mock external dependencies
 - Use jest.mock for module mocking
+
   ```typescript
   // ✅ Correct
   jest.mock('~/services/api', () => ({
@@ -91,16 +108,16 @@ Twenty follows a comprehensive testing strategy across all packages, ensuring hi
 ## Integration Testing
 
 ### API Testing
+
 - Test complete request/response cycles
 - Use Supertest for backend API testing
+
   ```typescript
   // ✅ Correct
   describe('GET /api/users/:id', () => {
     it('returns user when found', async () => {
-      const response = await request(app)
-        .get('/api/users/1')
-        .expect(200);
-      
+      const response = await request(app).get('/api/users/1').expect(200);
+
       expect(response.body).toEqual({
         id: '1',
         name: 'John Doe',
@@ -108,9 +125,7 @@ Twenty follows a comprehensive testing strategy across all packages, ensuring hi
     });
 
     it('returns 404 when user not found', async () => {
-      await request(app)
-        .get('/api/users/999')
-        .expect(404);
+      await request(app).get('/api/users/999').expect(404);
     });
   });
   ```
@@ -118,8 +133,10 @@ Twenty follows a comprehensive testing strategy across all packages, ensuring hi
 ## E2E Testing
 
 ### Test Structure
+
 - Organize by user journey
 - Use page objects for reusability
+
   ```typescript
   // pages/login.ts
   export class LoginPage {
@@ -139,8 +156,10 @@ Twenty follows a comprehensive testing strategy across all packages, ensuring hi
   ```
 
 ### Test Data
+
 - Use dedicated test environments
 - Reset state between tests
+
   ```typescript
   // ✅ Correct
   beforeEach(async () => {
@@ -156,8 +175,10 @@ Twenty follows a comprehensive testing strategy across all packages, ensuring hi
 ## Visual Testing
 
 ### Storybook Guidelines
+
 - Create stories for all components
 - Document component variants
+
   ```typescript
   // Button.stories.tsx
   export default {
@@ -181,8 +202,10 @@ Twenty follows a comprehensive testing strategy across all packages, ensuring hi
   ```
 
 ### Visual Regression
+
 - Use Storybook's visual regression testing
 - Review changes carefully
+
   ```typescript
   // jest.config.js
   module.exports = {
@@ -202,8 +225,10 @@ Twenty follows a comprehensive testing strategy across all packages, ensuring hi
 ## Test Quality
 
 ### Test Data Attributes
+
 - Use data-testid for test selectors
 - Avoid selecting by CSS classes
+
   ```typescript
   // ✅ Correct
   <button data-testid="submit-button">Submit</button>
@@ -216,17 +241,18 @@ Twenty follows a comprehensive testing strategy across all packages, ensuring hi
   ```
 
 ### Assertion Best Practices
+
 - Use explicit assertions
 - Test both positive and negative cases
   ```typescript
   // ✅ Correct
   test('form validation', async () => {
     render(<UserForm />);
-    
+
     // Negative case
     await userEvent.click(screen.getByText('Submit'));
     expect(screen.getByText('Name is required')).toBeInTheDocument();
-    
+
     // Positive case
     await userEvent.type(screen.getByLabelText('Name'), 'John Doe');
     await userEvent.click(screen.getByText('Submit'));
@@ -235,6 +261,7 @@ Twenty follows a comprehensive testing strategy across all packages, ensuring hi
   ```
 
 ### Coverage Requirements
+
 - A new feature should have at least 80% coverage
 - Focus on critical paths
 - Run coverage reports in CI
@@ -250,4 +277,4 @@ Twenty follows a comprehensive testing strategy across all packages, ensuring hi
       },
     },
   };
-  ``` 
+  ```

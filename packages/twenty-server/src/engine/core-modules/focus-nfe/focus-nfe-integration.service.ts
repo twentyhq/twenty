@@ -1,16 +1,15 @@
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import CryptoJS from 'crypto-js';
 import { Repository } from 'typeorm';
 
-import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { CreateFocusNfeIntegrationInput } from 'src/engine/core-modules/focus-nfe/dtos/create-focus-nfe-integration.input';
 import { UpdateFocusNfeIntegrationInput } from 'src/engine/core-modules/focus-nfe/dtos/update-focus-nfe-integration.input';
 import { FocusNfeIntegration } from 'src/engine/core-modules/focus-nfe/focus-nfe-integration.entity';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-
-import CryptoJS from 'crypto-js';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export class FocusNfeService {
   constructor(
@@ -40,6 +39,7 @@ export class FocusNfeService {
 
   async decryptText(cipherText: string): Promise<string> {
     const secretKey = this.environmentService.get('FOCUS_NFE_ENCRYPTION_KEY');
+
     if (!secretKey) return cipherText;
     const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
 

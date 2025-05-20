@@ -1,19 +1,28 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
 # Code Style Guidelines
 
 ## Core Code Style Principles
+
 Twenty emphasizes clean, readable, and maintainable code. This document outlines our code style conventions and best practices.
 
 ## Control Flow
 
 ### Early Returns
+
 - Use early returns to reduce nesting
 - Handle edge cases first
+
   ```typescript
   // ✅ Correct
   const processUser = (user: User | null) => {
     if (!user) return null;
     if (!user.isActive) return null;
-    
+
     return {
       id: user.id,
       name: user.name,
@@ -35,8 +44,10 @@ Twenty emphasizes clean, readable, and maintainable code. This document outlines
   ```
 
 ### No Nested Ternaries
+
 - Avoid nested ternary operators
 - Use if statements or early returns
+
   ```typescript
   // ✅ Correct
   const getUserDisplay = (user: User) => {
@@ -46,17 +57,15 @@ Twenty emphasizes clean, readable, and maintainable code. This document outlines
   };
 
   // ❌ Incorrect
-  const getUserDisplay = (user: User) => 
-    user.name 
-      ? user.isActive 
-        ? user.name 
-        : 'Inactive User'
-      : 'Anonymous';
+  const getUserDisplay = (user: User) =>
+    user.name ? (user.isActive ? user.name : 'Inactive User') : 'Anonymous';
   ```
 
 ### No Else-If Chains
+
 - Use switch statements or lookup objects
 - Keep conditions flat
+
   ```typescript
   // ✅ Correct
   const getStatusColor = (status: Status): string => {
@@ -97,8 +106,10 @@ Twenty emphasizes clean, readable, and maintainable code. This document outlines
 ## Operators and Expressions
 
 ### Optional Chaining Over &&
+
 - Use optional chaining for null/undefined checks
 - Clearer intent and better type safety
+
   ```typescript
   // ✅ Correct
   const userName = user?.name;
@@ -112,8 +123,10 @@ Twenty emphasizes clean, readable, and maintainable code. This document outlines
 ## Function Design
 
 ### Small Focused Functions
+
 - Keep functions small and single-purpose
 - Extract complex logic into helper functions
+
   ```typescript
   // ✅ Correct
   const validateUser = (user: User) => {
@@ -147,8 +160,10 @@ Twenty emphasizes clean, readable, and maintainable code. This document outlines
 ## Naming and Documentation
 
 ### Clear Variable Names
+
 - Use descriptive, intention-revealing names
 - Avoid abbreviations unless common
+
   ```typescript
   // ✅ Correct
   const isUserActive = user.status === 'active';
@@ -162,8 +177,10 @@ Twenty emphasizes clean, readable, and maintainable code. This document outlines
   ```
 
 ### No Console.logs in Commits
+
 - Remove all console.logs before committing
 - Use proper logging/error tracking in production
+
   ```typescript
   // ❌ Incorrect - Don't commit these
   console.log('user:', user);
@@ -175,12 +192,18 @@ Twenty emphasizes clean, readable, and maintainable code. This document outlines
   ```
 
 ### Minimal Comments
+
 - Write self-documenting code
 - Use comments only for complex business logic
+
   ```typescript
   // ✅ Correct
   // Calculate pro-rated amount based on billing cycle
-  const calculateProRatedAmount = (amount: number, daysLeft: number, totalDays: number) => {
+  const calculateProRatedAmount = (
+    amount: number,
+    daysLeft: number,
+    totalDays: number,
+  ) => {
     return (amount * daysLeft) / totalDays;
   };
 
@@ -195,8 +218,10 @@ Twenty emphasizes clean, readable, and maintainable code. This document outlines
 ## Error Handling
 
 ### Proper Error Handling
+
 - Use try-catch blocks appropriately
 - Provide meaningful error messages
+
   ```typescript
   // ✅ Correct
   const fetchUserData = async (userId: string) => {
@@ -227,8 +252,10 @@ Twenty emphasizes clean, readable, and maintainable code. This document outlines
 ## Code Organization
 
 ### Logical Grouping
+
 - Group related code together
 - Maintain consistent organization
+
   ```typescript
   // ✅ Correct
   class UserService {
@@ -256,4 +283,4 @@ Twenty emphasizes clean, readable, and maintainable code. This document outlines
       // Implementation
     }
   }
-  ``` 
+  ```

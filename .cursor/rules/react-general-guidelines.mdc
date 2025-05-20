@@ -1,13 +1,22 @@
+---
+description: If you are building front-end related features, use this rule.
+globs: 
+alwaysApply: false
+---
+
 # React Guidelines
 
 ## Core React Principles
+
 Twenty follows modern React best practices with a focus on functional components and clean, maintainable code. This document outlines our React conventions and best practices.
 
 ## Component Structure
 
 ### Functional Components Only
+
 - Use functional components exclusively
 - No class components allowed
+
   ```typescript
   // ✅ Correct
   export const UserProfile = ({ user }: UserProfileProps) => {
@@ -31,8 +40,10 @@ Twenty follows modern React best practices with a focus on functional components
   ```
 
 ### Named Exports
+
 - Use named exports exclusively
 - No default exports
+
   ```typescript
   // ✅ Correct
   export const Button = ({ label }: ButtonProps) => {
@@ -48,8 +59,10 @@ Twenty follows modern React best practices with a focus on functional components
 ## State and Effects
 
 ### Event Handlers Over useEffect
+
 - Prefer event handlers for state updates
 - Avoid useEffect for state synchronization
+
   ```typescript
   // ✅ Correct
   const UserForm = () => {
@@ -76,8 +89,10 @@ Twenty follows modern React best practices with a focus on functional components
 ## Component Design
 
 ### Small, Focused Components
+
 - Keep components small and single-purpose
 - Extract reusable logic into custom hooks
+
   ```typescript
   // ✅ Correct
   const UserCard = ({ user }: UserCardProps) => {
@@ -109,8 +124,10 @@ Twenty follows modern React best practices with a focus on functional components
 ## Props
 
 ### Prop Naming
+
 - Use clear, descriptive prop names
 - Follow React conventions (onClick, isActive, etc.)
+
   ```typescript
   // ✅ Correct
   type ButtonProps = {
@@ -128,8 +145,10 @@ Twenty follows modern React best practices with a focus on functional components
   ```
 
 ### Prop Destructuring
+
 - Destructure props with proper typing
 - Use TypeScript for prop types
+
   ```typescript
   // ✅ Correct
   const Button = ({ onClick, isDisabled, children }: ButtonProps) => {
@@ -153,8 +172,10 @@ Twenty follows modern React best practices with a focus on functional components
 ## Performance Optimization
 
 ### Memoization
+
 - Use memo for expensive computations
 - Avoid premature optimization
+
   ```typescript
   // ✅ Correct - Complex computation
   const MemoizedChart = memo(({ data }: ChartProps) => {
@@ -169,8 +190,10 @@ Twenty follows modern React best practices with a focus on functional components
   ```
 
 ### Event Handlers
+
 - Use callback refs for DOM manipulation
 - Memoize callbacks when needed
+
   ```typescript
   // ✅ Correct
   const UserList = () => {
@@ -185,8 +208,10 @@ Twenty follows modern React best practices with a focus on functional components
 ## Error Handling
 
 ### Error Boundaries
+
 - Use error boundaries for component error handling
 - Provide meaningful fallback UIs
+
   ```typescript
   // ✅ Correct
   const ErrorFallback = ({ error }: { error: Error }) => (
@@ -204,8 +229,10 @@ Twenty follows modern React best practices with a focus on functional components
   ```
 
 ### Loading States
+
 - Handle loading states gracefully
 - Provide meaningful loading indicators
+
   ```typescript
   // ✅ Correct
   const UserProfile = () => {
@@ -217,4 +244,4 @@ Twenty follows modern React best practices with a focus on functional components
 
     return <UserProfileContent user={user} />;
   };
-  ``` 
+  ```
