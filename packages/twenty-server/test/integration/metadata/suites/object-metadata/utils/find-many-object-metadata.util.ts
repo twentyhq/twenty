@@ -6,8 +6,8 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 
 export const findManyObjectMetadata = async ({
   input,
@@ -33,7 +33,8 @@ export const findManyObjectMetadata = async ({
 
   return {
     errors: response.body.errors,
-    // TODO
-    objects: response.body.data.objects?.edges.map(({ node }: any) => node),
+    objects: response.body.data.objects?.edges.map(
+      ({ node }: { node: unknown }) => node,
+    ),
   };
 };
