@@ -31,20 +31,17 @@ export class MessagingGetMessagesService {
       | 'handle'
       | 'handleAliases'
     >,
-    workspaceId: string,
   ): Promise<GetMessagesResponse> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
         return this.gmailGetMessagesService.getMessages(
           messageIds,
           connectedAccount,
-          workspaceId,
         );
       case ConnectedAccountProvider.MICROSOFT:
         return this.microsoftGetMessagesService.getMessages(
           messageIds,
           connectedAccount,
-          workspaceId,
         );
       default:
         throw new MessageImportException(

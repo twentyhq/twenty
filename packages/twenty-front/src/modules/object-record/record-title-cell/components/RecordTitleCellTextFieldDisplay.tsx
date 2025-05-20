@@ -1,12 +1,13 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
-import { useRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { Theme, withTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
+import { useRecoilValue } from 'recoil';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledDiv = styled.div`
@@ -33,7 +34,9 @@ const StyledEmptyText = withTheme(styled.div<{ theme: Theme }>`
 
 export const RecordTitleCellSingleTextDisplayMode = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
-  const recordValue = useRecordValue(recordId);
+
+  const recordValue = useRecoilValue(recordStoreFamilyState(recordId));
+
   const isEmpty =
     recordValue?.[fieldDefinition.metadata.fieldName]?.trim() === '';
 
