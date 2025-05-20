@@ -42,8 +42,8 @@ export const useFocusStack = () => {
           globalHotkeysConfig: {
             enableGlobalHotkeysWithModifiers:
               globalHotkeysConfig?.enableGlobalHotkeysWithModifiers ?? true,
-            enableConflictingWithKeyboardGlobalHotkeys:
-              globalHotkeysConfig?.enableConflictingWithKeyboardGlobalHotkeys ??
+            enableGlobalHotkeysConflictingWithKeyboard:
+              globalHotkeysConfig?.enableGlobalHotkeysConflictingWithKeyboard ??
               true,
           },
         };

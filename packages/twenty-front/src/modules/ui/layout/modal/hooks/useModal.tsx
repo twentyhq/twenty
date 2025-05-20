@@ -59,7 +59,7 @@ export const useModal = () => {
           },
           globalHotkeysConfig: {
             enableGlobalHotkeysWithModifiers: false,
-            enableConflictingWithKeyboardGlobalHotkeys: false,
+            enableGlobalHotkeysConflictingWithKeyboard: false,
           },
           // TODO: Remove this once we've migrated hotkey scopes to the new api
           hotkeyScope: {

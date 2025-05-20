@@ -1,3 +1,5 @@
+import { currentGlobalHotkeysConfigSelector } from '@/ui/utilities/focus/states/currentGlobalHotkeysConfigSelector';
+import { DEBUG_HOTKEY_SCOPE } from '@/ui/utilities/hotkey/hooks/useScopedHotkeyCallback';
 import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
 import {
   Hotkey,
@@ -5,11 +7,8 @@ import {
 } from 'react-hotkeys-hook/dist/types';
 import { useRecoilCallback } from 'recoil';
 import { logDebug } from '~/utils/logDebug';
-import { currentFocusIdSelector } from '../states/currentFocusIdentifierSelector';
 
-export const DEBUG_HOTKEY_SCOPE = false;
-
-export const useHotkeysOnFocusedElementCallback = (
+export const useGlobalHotkeysCallback = (
   dependencies?: OptionsOrDependencyArray,
 ) => {
   const dependencyArray = Array.isArray(dependencies) ? dependencies : [];
@@ -18,39 +17,37 @@ export const useHotkeysOnFocusedElementCallback = (
     ({ snapshot }) =>
       ({
         callback,
+        containsModifier,
         hotkeysEvent,
         keyboardEvent,
-        focusId,
-        scope,
         preventDefault,
+        scope,
       }: {
         keyboardEvent: KeyboardEvent;
         hotkeysEvent: Hotkey;
+        containsModifier: boolean;
         callback: (keyboardEvent: KeyboardEvent, hotkeysEvent: Hotkey) => void;
-        focusId: string;
-        scope: string;
         preventDefault?: boolean;
+        scope: string;
       }) => {
-        const currentFocusId = snapshot
-          .getLoadable(currentFocusIdSelector)
-          .getValue();
-
         // TODO: Remove this once we've migrated hotkey scopes to the new api
         const currentHotkeyScopes = snapshot
           .getLoadable(internalHotkeysEnabledScopesState)
           .getValue();
 
+        const currentGlobalHotkeysConfig = snapshot
+          .getLoadable(currentGlobalHotkeysConfigSelector)
+          .getValue();
+
         if (
-          currentFocusId !== focusId ||
-          !currentHotkeyScopes.includes(scope)
+          containsModifier &&
+          !currentGlobalHotkeysConfig.enableGlobalHotkeysWithModifiers
         ) {
           if (DEBUG_HOTKEY_SCOPE) {
             logDebug(
               `DEBUG: %cI can't call hotkey (${
                 hotkeysEvent.keys
-              }) because I'm in scope [${scope}] and the active scopes are : [${currentHotkeyScopes.join(
-                ', ',
-              )}] and the current focus identifier is [${focusId}]`,
+              }) because global hotkeys with modifiers are disabled`,
               'color: gray; ',
             );
           }
@@ -58,13 +55,45 @@ export const useHotkeysOnFocusedElementCallback = (
           return;
         }
 
+        if (
+          !containsModifier &&
+          !currentGlobalHotkeysConfig.enableGlobalHotkeysConflictingWithKeyboard
+        ) {
+          if (DEBUG_HOTKEY_SCOPE) {
+            logDebug(
+              `DEBUG: %cI can't call hotkey (${
+                hotkeysEvent.keys
+              }) because global hotkeys conflicting with keyboard are disabled`,
+              'color: gray; ',
+            );
+          }
+          return;
+        }
+
+        // TODO: Remove this once we've migrated hotkey scopes to the new api
+        if (!currentHotkeyScopes.includes(scope)) {
+          if (DEBUG_HOTKEY_SCOPE) {
+            logDebug(
+              `DEBUG: %cI can't call hotkey (${
+                hotkeysEvent.keys
+              }) because I'm in scope [${scope}] and the active scopes are : [${currentHotkeyScopes.join(
+                ', ',
+              )}]`,
+              'color: gray; ',
+            );
+          }
+
+          return;
+        }
+
+        // TODO: Remove this once we've migrated hotkey scopes to the new api
         if (DEBUG_HOTKEY_SCOPE) {
           logDebug(
             `DEBUG: %cI can call hotkey (${
               hotkeysEvent.keys
             }) because I'm in scope [${scope}] and the active scopes are : [${currentHotkeyScopes.join(
               ', ',
-            )}], and the current focus identifier is [${focusId}]`,
+            )}]`,
             'color: green;',
           );
         }
