@@ -153,6 +153,7 @@ export default defineConfig(({ command, mode }) => {
         '../../node_modules/.cache',
         '../../node_modules/twenty-ui',
       ],
+      force: true, // Force dependency pre-bundling, ignoring the cache
     },
 
     build: {
