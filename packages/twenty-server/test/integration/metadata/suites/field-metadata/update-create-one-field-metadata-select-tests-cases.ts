@@ -1,6 +1,7 @@
-import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { EachTestingContext } from 'twenty-shared/testing';
 import { v4 } from 'uuid';
+
+import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 type TestCase = EachTestingContext<{
   options: FieldMetadataComplexOption[];
