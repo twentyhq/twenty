@@ -51,7 +51,6 @@ xdescribe('Microsoft dev tests : get messages service', () => {
     const result = await service.getMessages(
       mockMessageIds,
       mockConnectedAccount,
-      'workspace-1',
     );
 
     expect(result).toHaveLength(1);

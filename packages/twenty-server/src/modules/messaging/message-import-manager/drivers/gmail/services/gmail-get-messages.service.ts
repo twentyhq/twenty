@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { AxiosResponse } from 'axios';
 import { gmail_v1 as gmailV1 } from 'googleapis';
@@ -12,8 +12,6 @@ import { MessageWithParticipants } from 'src/modules/messaging/message-import-ma
 
 @Injectable()
 export class GmailGetMessagesService {
-  private readonly logger = new Logger(GmailGetMessagesService.name);
-
   constructor(
     private readonly fetchByBatchesService: GmailFetchByBatchService,
     private readonly gmailHandleErrorService: GmailHandleErrorService,
@@ -25,25 +23,13 @@ export class GmailGetMessagesService {
       ConnectedAccountWorkspaceEntity,
       'accessToken' | 'refreshToken' | 'id' | 'handle' | 'handleAliases'
     >,
-    workspaceId: string,
   ): Promise<MessageWithParticipants[]> {
-    let startTime = Date.now();
-
     const { messageIdsByBatch, batchResponses } =
       await this.fetchByBatchesService.fetchAllByBatches(
         messageIds,
         connectedAccount.accessToken,
         'batch_gmail_messages',
       );
-    let endTime = Date.now();
-
-    this.logger.log(
-      `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} fetching ${
-        messageIds.length
-      } messages in ${endTime - startTime}ms`,
-    );
-
-    startTime = Date.now();
 
     const messages = batchResponses.flatMap((response, index) => {
       return this.formatBatchResponseAsMessage(
@@ -52,14 +38,6 @@ export class GmailGetMessagesService {
         connectedAccount,
       );
     });
-
-    endTime = Date.now();
-
-    this.logger.log(
-      `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} formatting ${
-        messageIds.length
-      } messages in ${endTime - startTime}ms`,
-    );
 
     return messages;
   }

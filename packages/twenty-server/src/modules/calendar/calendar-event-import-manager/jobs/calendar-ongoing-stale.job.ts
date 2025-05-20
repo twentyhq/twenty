@@ -1,4 +1,4 @@
-import { Logger, Scope } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 
 import { In } from 'typeorm';
 
@@ -22,16 +22,13 @@ export type CalendarOngoingStaleJobData = {
   scope: Scope.REQUEST,
 })
 export class CalendarOngoingStaleJob {
-  private readonly logger = new Logger(CalendarOngoingStaleJob.name);
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
   ) {}
 
   @Process(CalendarOngoingStaleJob.name)
-  async handle(data: CalendarOngoingStaleJobData): Promise<void> {
-    const { workspaceId } = data;
-
+  async handle(): Promise<void> {
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
@@ -51,9 +48,6 @@ export class CalendarOngoingStaleJob {
         calendarChannel.syncStageStartedAt &&
         isSyncStale(calendarChannel.syncStageStartedAt)
       ) {
-        this.logger.log(
-          `Sync for calendar channel ${calendarChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to pending`,
-        );
         await this.calendarChannelSyncStatusService.resetSyncStageStartedAt([
           calendarChannel.id,
         ]);
