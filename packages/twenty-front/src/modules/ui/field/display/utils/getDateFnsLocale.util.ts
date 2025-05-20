@@ -122,7 +122,6 @@ export const getDateFnsLocaleImport = (locale: AppLocale) => {
         'date-fns/locale/zh-TW'
       );
     default: {
-      const _exhaustiveCheck: never = locale;
       return /* webpackMode: "lazy", webpackChunkName: "en-US" */ import(
         'date-fns/locale/en-US'
       );
