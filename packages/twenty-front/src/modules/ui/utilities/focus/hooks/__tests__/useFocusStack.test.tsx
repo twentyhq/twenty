@@ -44,16 +44,22 @@ describe('useFocusStack', () => {
 
     const focusIdentifier = {
       focusId: 'test-focus-id',
-      componentType: FocusComponentType.MODAL,
-      componentInstanceId: 'test-instance-id',
+      componentInstance: {
+        componentType: FocusComponentType.MODAL,
+        componentInstanceId: 'test-instance-id',
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysWithModifiers: true,
+        enableConflictingWithKeyboardGlobalHotkeys: true,
+      },
     };
 
     await act(async () => {
       result.current.pushFocusIdentifier({
         focusId: focusIdentifier.focusId,
         component: {
-          type: focusIdentifier.componentType,
-          instanceId: focusIdentifier.componentInstanceId,
+          type: focusIdentifier.componentInstance.componentType,
+          instanceId: focusIdentifier.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
         memoizeKey: 'global',
@@ -62,18 +68,26 @@ describe('useFocusStack', () => {
 
     expect(result.current.focusStack).toEqual([focusIdentifier]);
     expect(result.current.currentFocusId).toEqual(focusIdentifier.focusId);
+
     const anotherFocusIdentifier = {
       focusId: 'another-focus-id',
-      componentType: FocusComponentType.MODAL,
-      componentInstanceId: 'another-instance-id',
+      componentInstance: {
+        componentType: FocusComponentType.MODAL,
+        componentInstanceId: 'another-instance-id',
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysWithModifiers: true,
+        enableConflictingWithKeyboardGlobalHotkeys: true,
+      },
     };
 
     await act(async () => {
       result.current.pushFocusIdentifier({
         focusId: anotherFocusIdentifier.focusId,
         component: {
-          type: anotherFocusIdentifier.componentType,
-          instanceId: anotherFocusIdentifier.componentInstanceId,
+          type: anotherFocusIdentifier.componentInstance.componentType,
+          instanceId:
+            anotherFocusIdentifier.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
         memoizeKey: 'global',
@@ -94,22 +108,35 @@ describe('useFocusStack', () => {
 
     const firstFocusIdentifier = {
       focusId: 'first-focus-id',
-      componentType: FocusComponentType.MODAL,
-      componentInstanceId: 'first-instance-id',
+      componentInstance: {
+        componentType: FocusComponentType.MODAL,
+        componentInstanceId: 'first-instance-id',
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysWithModifiers: true,
+        enableConflictingWithKeyboardGlobalHotkeys: true,
+      },
     };
 
     const secondFocusIdentifier = {
       focusId: 'second-focus-id',
-      componentType: FocusComponentType.MODAL,
-      componentInstanceId: 'second-instance-id',
+      componentInstance: {
+        componentType: FocusComponentType.MODAL,
+        componentInstanceId: 'second-instance-id',
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysWithModifiers: true,
+        enableConflictingWithKeyboardGlobalHotkeys: true,
+      },
     };
 
     await act(async () => {
       result.current.pushFocusIdentifier({
         focusId: firstFocusIdentifier.focusId,
         component: {
-          type: firstFocusIdentifier.componentType,
-          instanceId: firstFocusIdentifier.componentInstanceId,
+          type: firstFocusIdentifier.componentInstance.componentType,
+          instanceId:
+            firstFocusIdentifier.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
         memoizeKey: 'global',
@@ -120,8 +147,9 @@ describe('useFocusStack', () => {
       result.current.pushFocusIdentifier({
         focusId: secondFocusIdentifier.focusId,
         component: {
-          type: secondFocusIdentifier.componentType,
-          instanceId: secondFocusIdentifier.componentInstanceId,
+          type: secondFocusIdentifier.componentInstance.componentType,
+          instanceId:
+            secondFocusIdentifier.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
         memoizeKey: 'global',
@@ -154,16 +182,22 @@ describe('useFocusStack', () => {
 
     const focusIdentifier = {
       focusId: 'test-focus-id',
-      componentType: FocusComponentType.MODAL,
-      componentInstanceId: 'test-instance-id',
+      componentInstance: {
+        componentType: FocusComponentType.MODAL,
+        componentInstanceId: 'test-instance-id',
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysWithModifiers: true,
+        enableConflictingWithKeyboardGlobalHotkeys: true,
+      },
     };
 
     await act(async () => {
       result.current.pushFocusIdentifier({
         focusId: focusIdentifier.focusId,
         component: {
-          type: focusIdentifier.componentType,
-          instanceId: focusIdentifier.componentInstanceId,
+          type: focusIdentifier.componentInstance.componentType,
+          instanceId: focusIdentifier.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
         memoizeKey: 'global',
@@ -185,22 +219,35 @@ describe('useFocusStack', () => {
 
     const firstFocusIdentifier = {
       focusId: 'first-focus-id',
-      componentType: FocusComponentType.MODAL,
-      componentInstanceId: 'first-instance-id',
+      componentInstance: {
+        componentType: FocusComponentType.MODAL,
+        componentInstanceId: 'first-instance-id',
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysWithModifiers: true,
+        enableConflictingWithKeyboardGlobalHotkeys: true,
+      },
     };
 
     const secondFocusIdentifier = {
       focusId: 'second-focus-id',
-      componentType: FocusComponentType.MODAL,
-      componentInstanceId: 'second-instance-id',
+      componentInstance: {
+        componentType: FocusComponentType.MODAL,
+        componentInstanceId: 'second-instance-id',
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysWithModifiers: true,
+        enableConflictingWithKeyboardGlobalHotkeys: true,
+      },
     };
 
     await act(async () => {
       result.current.pushFocusIdentifier({
         focusId: firstFocusIdentifier.focusId,
         component: {
-          type: firstFocusIdentifier.componentType,
-          instanceId: firstFocusIdentifier.componentInstanceId,
+          type: firstFocusIdentifier.componentInstance.componentType,
+          instanceId:
+            firstFocusIdentifier.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
         memoizeKey: 'global',
@@ -211,8 +258,9 @@ describe('useFocusStack', () => {
       result.current.pushFocusIdentifier({
         focusId: secondFocusIdentifier.focusId,
         component: {
-          type: secondFocusIdentifier.componentType,
-          instanceId: secondFocusIdentifier.componentInstanceId,
+          type: secondFocusIdentifier.componentInstance.componentType,
+          instanceId:
+            secondFocusIdentifier.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
         memoizeKey: 'global',
@@ -229,8 +277,14 @@ describe('useFocusStack', () => {
 
     const newFocusIdentifier = {
       focusId: 'new-focus-id',
-      componentType: FocusComponentType.MODAL,
-      componentInstanceId: 'new-instance-id',
+      componentInstance: {
+        componentType: FocusComponentType.MODAL,
+        componentInstanceId: 'new-instance-id',
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysWithModifiers: true,
+        enableConflictingWithKeyboardGlobalHotkeys: true,
+      },
     };
 
     await act(async () => {
@@ -238,13 +292,11 @@ describe('useFocusStack', () => {
         focusStackItem: {
           focusId: newFocusIdentifier.focusId,
           componentInstance: {
-            componentType: newFocusIdentifier.componentType,
-            componentInstanceId: newFocusIdentifier.componentInstanceId,
+            componentType: newFocusIdentifier.componentInstance.componentType,
+            componentInstanceId:
+              newFocusIdentifier.componentInstance.componentInstanceId,
           },
-          globalHotkeysConfig: {
-            enableGlobalHotkeysWithModifiers: true,
-            enableConflictingWithKeyboardGlobalHotkeys: true,
-          },
+          globalHotkeysConfig: newFocusIdentifier.globalHotkeysConfig,
         },
         hotkeyScope: { scope: 'test-scope' },
         memoizeKey: 'global',
