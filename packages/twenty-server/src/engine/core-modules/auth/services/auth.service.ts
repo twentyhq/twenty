@@ -11,7 +11,7 @@ import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { ILike, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
@@ -288,7 +288,7 @@ export class AuthService {
   async checkUserExists(email: string): Promise<UserExists | UserNotExists> {
     const user = await this.userRepository.findOne({
       where: {
-        email: ILike(email),
+        email,
       },
     });
 
