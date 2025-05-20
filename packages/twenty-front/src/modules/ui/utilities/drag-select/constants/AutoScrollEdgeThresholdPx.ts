@@ -1,2 +1,1 @@
 export const AUTO_SCROLL_EDGE_THRESHOLD_PX = 20;
-export const AUTO_SCROLL_MAX_SPEED_PX = 15;

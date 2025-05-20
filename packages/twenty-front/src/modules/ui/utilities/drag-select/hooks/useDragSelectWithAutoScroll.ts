@@ -1,10 +1,8 @@
 import { RefObject, useState } from 'react';
 
+import { AUTO_SCROLL_MAX_SPEED_PX } from '@/ui/utilities/drag-select/constants/AutoScrollMaxSpeedPx';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AUTO_SCROLL_EDGE_THRESHOLD_PX,
-  AUTO_SCROLL_MAX_SPEED_PX,
-} from '../constants/autoScrollParams';
+import { AUTO_SCROLL_EDGE_THRESHOLD_PX } from '../constants/AutoScrollEdgeThresholdPx';
 import { clamp } from '../utils/clamp';
 import { DOMVector } from '../utils/DOMVector';
 
