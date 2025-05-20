@@ -20,7 +20,10 @@ export const useModal = () => {
           return;
         }
 
-        removeFocusId(modalId);
+        removeFocusId({
+          focusId: modalId,
+          memoizeKey: modalId,
+        });
 
         set(
           isModalOpenedComponentState.atomFamily({ instanceId: modalId }),

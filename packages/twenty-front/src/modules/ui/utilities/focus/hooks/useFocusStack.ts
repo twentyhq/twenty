@@ -55,7 +55,7 @@ export const useFocusStack = () => {
 
   const removeFocusId = useRecoilCallback(
     ({ set }) =>
-      (focusId: string) => {
+      ({ focusId, memoizeKey }: { focusId: string; memoizeKey: string }) => {
         set(focusStackState, (previousFocusStack) =>
           previousFocusStack.filter(
             (focusIdentifier) => focusIdentifier.focusId !== focusId,
@@ -63,7 +63,7 @@ export const useFocusStack = () => {
         );
 
         // TODO: Remove this once we've migrated hotkey scopes to the new api
-        goBackToPreviousHotkeyScope();
+        goBackToPreviousHotkeyScope(memoizeKey);
       },
     [goBackToPreviousHotkeyScope],
   );

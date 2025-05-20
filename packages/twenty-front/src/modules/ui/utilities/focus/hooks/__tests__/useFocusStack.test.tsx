@@ -139,7 +139,10 @@ describe('useFocusStack', () => {
     );
 
     await act(async () => {
-      result.current.removeFocusId(firstFocusIdentifier.focusId);
+      result.current.removeFocusId({
+        focusId: firstFocusIdentifier.focusId,
+        memoizeKey: 'global',
+      });
     });
 
     expect(result.current.focusStack).toEqual([secondFocusIdentifier]);
