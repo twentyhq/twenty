@@ -5,6 +5,7 @@ import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-me
 
 type TestCase = EachTestingContext<{
   options: FieldMetadataComplexOption[];
+  expectedOptions?: FieldMetadataComplexOption[];
 }>;
 const successfulTestCases: TestCase[] = [
   {
@@ -47,6 +48,27 @@ const successfulTestCases: TestCase[] = [
     title: 'It should create option even if no id is provided',
     context: {
       options: [
+        {
+          label: 'Option 1',
+          value: 'OPTION_1',
+          color: 'green',
+          position: 1,
+        },
+      ],
+    },
+  },
+  {
+    title: 'It should trim and create option',
+    context: {
+      options: [
+        {
+          label: '       Option        1       ',
+          value: '        OPTION_1        ',
+          color: 'green',
+          position: 1,
+        },
+      ],
+      expectedOptions: [
         {
           label: 'Option 1',
           value: 'OPTION_1',
@@ -213,6 +235,25 @@ const failingTestCases: TestCase[] = [
           value: 'OPTION_2',
           color: 'green',
           position: 1,
+        },
+      ],
+    },
+  },
+  {
+    title: 'It should fail to create duplicated trimmed options values',
+    context: {
+      options: [
+        {
+          label: 'Option 1',
+          value: '         OPTION_1                   ',
+          color: 'green',
+          position: 1,
+        },
+        {
+          label: 'Option 2',
+          value: '   OPTION_1        ',
+          color: 'green',
+          position: 2,
         },
       ],
     },

@@ -188,6 +188,17 @@ exports[`Field metadata select creation tests group It should fail to create a f
 ]
 `;
 
+exports[`Field metadata select creation tests group It should fail to create duplicated trimmed options values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Duplicated option value "OPTION_1"",
+  },
+]
+`;
+
 exports[`Field metadata select creation tests group It should fail to create field metadata with an option label that contains a comma 1`] = `
 [
   {

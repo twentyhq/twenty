@@ -6,7 +6,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Option label is required",
   },
 ]
 `;
@@ -17,7 +17,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Option value is required",
   },
 ]
 `;
@@ -28,7 +28,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Option id is invalid",
   },
 ]
 `;
@@ -39,7 +39,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Option label "" is beneath 1 character",
   },
 ]
 `;
@@ -50,7 +50,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Option value "" is beneath 1 character",
   },
 ]
 `;
@@ -61,7 +61,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Option id is invalid",
   },
 ]
 `;
@@ -70,9 +70,10 @@ exports[`Field metadata select update tests group It should fail to create a fie
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "label.includes is not a function",
   },
 ]
 `;
@@ -83,7 +84,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Value must be in UPPER_CASE and follow snake_case "22222"",
   },
 ]
 `;
@@ -94,7 +95,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Option id is required",
   },
 ]
 `;
@@ -105,7 +106,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Option label is required",
   },
 ]
 `;
@@ -116,7 +117,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Option value is required",
   },
 ]
 `;
@@ -127,7 +128,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Option id is invalid",
   },
 ]
 `;
@@ -138,7 +139,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Option label "" is beneath 1 character",
   },
 ]
 `;
@@ -149,7 +150,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Option value "" is beneath 1 character",
   },
 ]
 `;
@@ -160,7 +161,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Option id is invalid",
   },
 ]
 `;
@@ -171,7 +172,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Option label "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters",
   },
 ]
 `;
@@ -182,7 +183,18 @@ exports[`Field metadata select update tests group It should fail to create a fie
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Option value "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create duplicated trimmed options values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Duplicated option value "OPTION_1"",
   },
 ]
 `;
@@ -193,7 +205,7 @@ exports[`Field metadata select update tests group It should fail to create field
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Label must not contain a comma",
   },
 ]
 `;
@@ -204,7 +216,7 @@ exports[`Field metadata select update tests group It should fail to create field
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
   },
 ]
 `;
@@ -215,7 +227,7 @@ exports[`Field metadata select update tests group It should fail to create field
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Options are required for enum fields",
   },
 ]
 `;
@@ -226,7 +238,7 @@ exports[`Field metadata select update tests group It should fail to create field
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Options are required for enum fields",
   },
 ]
 `;
@@ -237,7 +249,7 @@ exports[`Field metadata select update tests group It should fail to create field
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Duplicated option value "OPTION_1"",
   },
 ]
 `;
@@ -248,7 +260,7 @@ exports[`Field metadata select update tests group It should fail to create field
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Options are required for enum fields",
   },
 ]
 `;
@@ -259,7 +271,7 @@ exports[`Field metadata select update tests group It should fail to create optio
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Option id is invalid",
   },
 ]
 `;
@@ -270,7 +282,7 @@ exports[`Field metadata select update tests group It should fail to create two o
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Duplicated option id "fd1f11fd-3f05-4a33-bddf-800c3412ce98"",
   },
 ]
 `;
@@ -281,7 +293,7 @@ exports[`Field metadata select update tests group It should fail to create two o
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+    "message": "Duplicated option position "1"",
   },
 ]
 `;

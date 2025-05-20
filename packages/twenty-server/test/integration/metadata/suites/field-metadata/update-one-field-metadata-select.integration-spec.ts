@@ -1,15 +1,15 @@
+import { UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/update-create-one-field-metadata-select-tests-cases';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import {
   LISTING_NAME_PLURAL,
   LISTING_NAME_SINGULAR,
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/update-create-one-field-metadata-select-tests-cases';
-import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 const { failingTestCases, successfulTestCases } =
   UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES;
@@ -19,7 +19,7 @@ describe('Field metadata select update tests group', () => {
   let createdFieldMetadata: string;
 
   beforeEach(async () => {
-    const { data } = await createOneObjectMetadata({
+    const { data, errors } = await createOneObjectMetadata({
       input: {
         labelSingular: LISTING_NAME_SINGULAR,
         labelPlural: LISTING_NAME_PLURAL,
@@ -64,39 +64,39 @@ describe('Field metadata select update tests group', () => {
     });
   });
 
-  test.each(successfulTestCases)('$title', async ({ context: { options } }) => {
-    const { data, errors } = await updateOneFieldMetadata({
-      input: {
-        idToUpdate: createdFieldMetadata,
-        updatePayload: {
-          options,
+  test.each(successfulTestCases)(
+    '$title',
+    async ({ context: { options, expectedOptions } }) => {
+      const { data, errors } = await updateOneFieldMetadata({
+        input: {
+          idToUpdate: createdFieldMetadata,
+          updatePayload: {
+            options,
+          },
         },
-      },
-      gqlFields: `
+        gqlFields: `
         id
         options
         `,
-    });
+      });
 
-    expect(data.updateOneField).toBeDefined();
-    const updatedOptions: FieldMetadataComplexOption[] =
-      data.updateOneField.options;
+      expect(data.updateOneField).toBeDefined();
+      const updatedOptions: FieldMetadataComplexOption[] =
+        data.updateOneField.options;
 
-    expect(errors).toBeUndefined();
-    expect(updatedOptions.length).toBe(options.length);
-    updatedOptions.forEach((option) => expect(option.id).toBeDefined());
-    expect(updatedOptions).toMatchObject(options);
-  });
+      const optionsToCompare = expectedOptions ?? options;
+      expect(errors).toBeUndefined();
+      expect(updatedOptions.length).toBe(optionsToCompare.length);
+      updatedOptions.forEach((option) => expect(option.id).toBeDefined());
+      expect(updatedOptions).toMatchObject(optionsToCompare);
+    },
+  );
 
   test.each(failingTestCases)('$title', async ({ context: { options } }) => {
     const { data, errors } = await updateOneFieldMetadata({
       input: {
         idToUpdate: createdFieldMetadata,
         updatePayload: {
-          objectMetadataId: createdObjectMetadataId,
-          name: 'testField',
-          label: 'Test Field',
-          isLabelSyncedWithName: false,
           options,
         },
       },
@@ -106,7 +106,7 @@ describe('Field metadata select update tests group', () => {
         `,
     });
 
-    expect(data).toBeUndefined();
+    expect(data).toBeNull();
     expect(errors).toBeDefined();
     expect(errors).toMatchSnapshot();
   });
