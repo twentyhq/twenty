@@ -5,6 +5,7 @@ import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppRootErrorFallback } from '@/error-handler/components/AppRootErrorFallback';
 import { ExceptionHandlerProvider } from '@/error-handler/components/ExceptionHandlerProvider';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { HelmetProvider } from 'react-helmet-async';
@@ -28,7 +29,11 @@ export const App = () => {
             <IconsProvider>
               <ExceptionHandlerProvider>
                 <HelmetProvider>
-                  <AppRouter />
+                  <ClickOutsideListenerContext.Provider
+                    value={{ excludeClassName: undefined }}
+                  >
+                    <AppRouter />
+                  </ClickOutsideListenerContext.Provider>
                 </HelmetProvider>
               </ExceptionHandlerProvider>
             </IconsProvider>

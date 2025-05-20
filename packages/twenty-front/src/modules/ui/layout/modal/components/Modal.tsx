@@ -4,7 +4,9 @@ import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkey
 import { ModalComponentInstanceContext } from '@/ui/layout/modal/contexts/ModalComponentInstanceContext';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 
+import { MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_CLASS_NAME } from '@/ui/layout/modal/constants/ModalClickOutsideListenerExcludedClassName';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { css, useTheme } from '@emotion/react';
@@ -225,36 +227,43 @@ export const Modal = ({
             instanceId: modalId,
           }}
         >
-          <ModalHotkeysAndClickOutsideEffect
-            modalId={modalId}
-            modalRef={modalRef}
-            onEnter={onEnter}
-            isClosable={isClosable}
-            onClose={handleClose}
-          />
-          <StyledBackDrop
-            data-testid="modal-backdrop"
-            className="modal-backdrop"
-            onMouseDown={stopEventPropagation}
-            modalVariant={modalVariant}
+          <ClickOutsideListenerContext.Provider
+            value={{
+              excludeClassName:
+                MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_CLASS_NAME,
+            }}
           >
-            <StyledModalDiv
-              ref={modalRef}
-              size={size}
-              padding={padding}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              layout
+            <ModalHotkeysAndClickOutsideEffect
+              modalId={modalId}
+              modalRef={modalRef}
+              onEnter={onEnter}
+              isClosable={isClosable}
+              onClose={handleClose}
+            />
+            <StyledBackDrop
+              data-testid="modal-backdrop"
+              className="modal-backdrop"
+              onMouseDown={stopEventPropagation}
               modalVariant={modalVariant}
-              variants={modalAnimation}
-              transition={{ duration: theme.animation.duration.normal }}
-              className={className}
-              isMobile={isMobile}
             >
-              {children}
-            </StyledModalDiv>
-          </StyledBackDrop>
+              <StyledModalDiv
+                ref={modalRef}
+                size={size}
+                padding={padding}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                layout
+                modalVariant={modalVariant}
+                variants={modalAnimation}
+                transition={{ duration: theme.animation.duration.normal }}
+                className={className}
+                isMobile={isMobile}
+              >
+                {children}
+              </StyledModalDiv>
+            </StyledBackDrop>
+          </ClickOutsideListenerContext.Provider>
         </ModalComponentInstanceContext.Provider>
       )}
     </>
