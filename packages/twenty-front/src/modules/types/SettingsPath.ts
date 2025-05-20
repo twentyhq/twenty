@@ -52,7 +52,9 @@ export enum SettingsPath {
   IntegrationFocusNfe = 'integrations/focus-nfe',
   IntegrationFocusNfeNewDatabaseConnection = 'integrations/focus-nfe/new',
   IntegrationFocusNfeEditDatabaseConnection = 'integrations/focus-nfe/:connectionId/edit',
+
   IntegrationFocusNfeNewIssuer = 'integrations/focus-nfe/new-issuer',
+  IntegrationFocusNfeEditIssuer = 'integrations/focus-nfe/:issuerId/edit-issuer',
 
   Security = 'security',
   NewSSOIdentityProvider = 'security/sso/new',

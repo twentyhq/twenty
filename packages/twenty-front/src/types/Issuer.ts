@@ -35,8 +35,7 @@ export type IssuerFormValues = {
   // workspaceId is usually handled by the hook/mutation logic from context
 };
 
-export type UpdateIssuerInput = {
-  id: string;
+export type UpdateIssuerData = {
   name?: string;
   cnpj?: string;
   cpf?: string | null;

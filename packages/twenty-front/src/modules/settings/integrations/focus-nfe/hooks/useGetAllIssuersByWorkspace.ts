@@ -1,4 +1,4 @@
-import { GET_ALL_ISSUERS_BY_WORKSPACE } from '@/settings/integrations/focus-nfe/graphql/get-all-issuers-by-workspace.gql';
+import { GET_ALL_ISSUERS_BY_WORKSPACE } from '@/settings/integrations/focus-nfe/graphql/query/getAllIssuersByWorkspace';
 import { useQuery } from '@apollo/client';
 import { Issuer } from '~/types/Issuer';
 

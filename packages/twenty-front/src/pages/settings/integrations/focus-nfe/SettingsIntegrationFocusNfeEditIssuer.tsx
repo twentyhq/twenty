@@ -1,8 +1,10 @@
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 /* eslint-disable react-hooks/rules-of-hooks */
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationFocusNfeIssuerForm } from '@/settings/integrations/focus-nfe/components/SettingsIntegrationFocusNfeIssuerForm';
 import { useGetAllIssuersByWorkspace } from '@/settings/integrations/focus-nfe/hooks/useGetAllIssuersByWorkspace';
+import { useUpdateIssuer } from '@/settings/integrations/focus-nfe/hooks/useUpdateIssuer';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -18,7 +20,6 @@ import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { useUpdateIssuer } from '~/hooks/useUpdateIssuer';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 // Re-using IssuerFormValues for edit, but with ID
 
@@ -78,6 +79,7 @@ export const SettingsIntegrationFocusNfeEditIssuer = () => {
     if (!isIntegrationAvailable) {
       navigateApp(AppPath.NotFound);
     }
+
     if (issuerId && !activeIssuer && issuers.length > 0) {
       // Check if issuerId is provided but not found after issuers load
       enqueueSnackBar('Issuer not found.', { variant: SnackBarVariant.Error });
@@ -142,22 +144,22 @@ export const SettingsIntegrationFocusNfeEditIssuer = () => {
 
   const handleUpdate = async () => {
     const formValues = formConfig.getValues();
+    const { id, ...updateData } = formValues;
 
     try {
-      await updateIssuer({
-        id: formValues.id,
-        name: formValues.name,
-        cnpj: formValues.cnpj,
-        cpf: formValues.cpf || null, // Ensure empty strings become null
-        ie: formValues.ie || null,
-        cnaeCode: formValues.cnaeCode || null,
-        cep: formValues.cep,
-        street: formValues.street,
-        number: formValues.number,
-        neighborhood: formValues.neighborhood,
-        city: formValues.city,
-        state: formValues.state,
-        taxRegime: formValues.taxRegime,
+      await updateIssuer(id, {
+        name: updateData.name,
+        cnpj: updateData.cnpj,
+        cpf: updateData.cpf || null, // Ensure empty strings become null
+        ie: updateData.ie || null,
+        cnaeCode: updateData.cnaeCode || null,
+        cep: updateData.cep,
+        street: updateData.street,
+        number: updateData.number,
+        neighborhood: updateData.neighborhood,
+        city: updateData.city,
+        state: updateData.state,
+        taxRegime: updateData.taxRegime,
       });
 
       navigate(SettingsPath.IntegrationFocusNfe);
@@ -191,7 +193,6 @@ export const SettingsIntegrationFocusNfeEditIssuer = () => {
           isSaveDisabled={!canSave}
           onCancel={() => navigate(SettingsPath.IntegrationFocusNfe)}
           onSave={handleUpdate}
-          saveButtonText="Save changes"
         />
       }
     >

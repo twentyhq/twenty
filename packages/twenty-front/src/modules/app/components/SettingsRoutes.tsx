@@ -6,6 +6,7 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingPermissionType } from '~/generated/graphql';
 import { SettingsIntegrationFocusNfeEditDatabaseConnection } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeEditConnection';
+import { SettingsIntegrationFocusNfeEditIssuer } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeEditIssuer';
 import { SettingsIntegrationFocusNfeNewDatabaseConnection } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewConnection';
 import { SettingsIntegrationFocusNfeNewIssuer } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewIssuer';
 import { SettingsIntegrationFocusNfeDatabase } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationsFocusNfe';
@@ -621,6 +622,10 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.IntegrationFocusNfeNewIssuer}
         element={<SettingsIntegrationFocusNfeNewIssuer />}
+      />
+      <Route
+        path={SettingsPath.IntegrationFocusNfeEditIssuer}
+        element={<SettingsIntegrationFocusNfeEditIssuer />}
       />
       <Route
         path={SettingsPath.ObjectNewFieldSelect}
