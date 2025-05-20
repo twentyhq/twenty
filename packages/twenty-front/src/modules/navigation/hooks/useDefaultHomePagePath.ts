@@ -6,13 +6,15 @@ import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { AppPath } from '@/types/AppPath';
 import { useCallback, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { getAppPath } from '~/utils/navigation/getAppPath';
 import { isDefined } from 'twenty-shared/utils';
+import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export const useDefaultHomePagePath = () => {
   const currentUser = useRecoilValue(currentUserState);
-  const { activeObjectMetadataItems, alphaSortedActiveObjectMetadataItems } =
-    useFilteredObjectMetadataItems();
+  const {
+    activeObjectNonSystemMetadataItems,
+    alphaSortedActiveNonSystemObjectMetadataItems,
+  } = useFilteredObjectMetadataItems();
   const prefetchViews = useRecoilValue(prefetchViewsState);
   const lastVisitedObjectMetadataItemId = useRecoilValue(
     lastVisitedObjectMetadataItemIdState,
@@ -20,11 +22,11 @@ export const useDefaultHomePagePath = () => {
 
   const getActiveObjectMetadataItemMatchingId = useCallback(
     (objectMetadataId: string) => {
-      return activeObjectMetadataItems.find(
+      return activeObjectNonSystemMetadataItems.find(
         (item) => item.id === objectMetadataId,
       );
     },
-    [activeObjectMetadataItems],
+    [activeObjectNonSystemMetadataItems],
   );
 
   const getFirstView = useCallback(
@@ -36,7 +38,8 @@ export const useDefaultHomePagePath = () => {
   );
 
   const firstObjectPathInfo = useMemo<ObjectPathInfo | null>(() => {
-    const [firstObjectMetadataItem] = alphaSortedActiveObjectMetadataItems;
+    const [firstObjectMetadataItem] =
+      alphaSortedActiveNonSystemObjectMetadataItems;
 
     if (!isDefined(firstObjectMetadataItem)) {
       return null;
@@ -45,7 +48,7 @@ export const useDefaultHomePagePath = () => {
     const view = getFirstView(firstObjectMetadataItem?.id);
 
     return { objectMetadataItem: firstObjectMetadataItem, view };
-  }, [alphaSortedActiveObjectMetadataItems, getFirstView]);
+  }, [alphaSortedActiveNonSystemObjectMetadataItems, getFirstView]);
 
   const defaultObjectPathInfo = useMemo<ObjectPathInfo | null>(() => {
     if (!isDefined(lastVisitedObjectMetadataItemId)) {

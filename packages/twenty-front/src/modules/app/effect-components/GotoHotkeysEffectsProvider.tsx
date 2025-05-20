@@ -1,5 +1,5 @@
 import { GoToHotkeyItemEffect } from '@/app/effect-components/GoToHotkeyItemEffect';
-import { useNonSystemActiveObjectMetadataItems } from '@/object-metadata/hooks/useNonSystemActiveObjectMetadataItems';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
@@ -8,8 +8,8 @@ import { useLocation } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
 export const GotoHotkeysEffectsProvider = () => {
-  const { nonSystemActiveObjectMetadataItems } =
-    useNonSystemActiveObjectMetadataItems();
+  const { activeObjectNonSystemMetadataItems } =
+    useFilteredObjectMetadataItems();
 
   const location = useLocation();
 
@@ -27,7 +27,7 @@ export const GotoHotkeysEffectsProvider = () => {
     ),
   });
 
-  return nonSystemActiveObjectMetadataItems.map((objectMetadataItem) => {
+  return activeObjectNonSystemMetadataItems.map((objectMetadataItem) => {
     if (!objectMetadataItem.shortcut) {
       return null;
     }

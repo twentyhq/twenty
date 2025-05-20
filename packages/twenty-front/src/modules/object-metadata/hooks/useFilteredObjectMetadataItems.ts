@@ -22,7 +22,9 @@ export const useFilteredObjectMetadataItems = () => {
     [isWorkflowEnabled],
   );
 
-  const activeObjectMetadataItems = useMemo(
+  // should naming include that its filtering out workflow related items?
+  // but it will be too long
+  const activeObjectNonSystemMetadataItems = useMemo(
     () =>
       objectMetadataItems.filter(
         ({ isActive, isSystem, nameSingular }) =>
@@ -31,8 +33,17 @@ export const useFilteredObjectMetadataItems = () => {
     [isWorkflowToBeFiltered, objectMetadataItems],
   );
 
-  const alphaSortedActiveObjectMetadataItems = activeObjectMetadataItems.sort(
-    (a, b) => {
+  const activeObjectMetadataItems = useMemo(
+    () =>
+      objectMetadataItems.filter(
+        ({ isActive, nameSingular }) =>
+          isActive && !isWorkflowToBeFiltered(nameSingular),
+      ),
+    [isWorkflowToBeFiltered, objectMetadataItems],
+  );
+
+  const alphaSortedActiveNonSystemObjectMetadataItems =
+    activeObjectNonSystemMetadataItems.sort((a, b) => {
       if (a.nameSingular < b.nameSingular) {
         return -1;
       }
@@ -40,15 +51,14 @@ export const useFilteredObjectMetadataItems = () => {
         return 1;
       }
       return 0;
-    },
-  );
+    });
 
-  const inactiveObjectMetadataItems = objectMetadataItems.filter(
+  const inactiveObjectNonSystemMetadataItems = objectMetadataItems.filter(
     ({ isActive, isSystem }) => !isActive && !isSystem,
   );
 
   const findActiveObjectMetadataItemByNamePlural = (namePlural: string) =>
-    activeObjectMetadataItems.find(
+    activeObjectNonSystemMetadataItems.find(
       (activeObjectMetadataItem) =>
         activeObjectMetadataItem.namePlural === namePlural,
     );
@@ -64,12 +74,13 @@ export const useFilteredObjectMetadataItems = () => {
     );
 
   return {
+    activeObjectNonSystemMetadataItems,
     activeObjectMetadataItems,
     findObjectMetadataItemById,
     findObjectMetadataItemByNamePlural,
     findActiveObjectMetadataItemByNamePlural,
-    inactiveObjectMetadataItems,
+    inactiveObjectNonSystemMetadataItems,
     objectMetadataItems,
-    alphaSortedActiveObjectMetadataItems,
+    alphaSortedActiveNonSystemObjectMetadataItems,
   };
 };

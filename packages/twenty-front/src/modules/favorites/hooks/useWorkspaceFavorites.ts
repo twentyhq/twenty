@@ -64,16 +64,17 @@ export const useWorkspaceFavorites = () => {
     }, []),
   );
 
-  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+  const { activeObjectNonSystemMetadataItems } =
+    useFilteredObjectMetadataItems();
 
-  const activeObjectMetadataItemsInWorkspaceFavorites =
-    activeObjectMetadataItems.filter((item) =>
+  const activeObjectNonSystemMetadataItemsInWorkspaceFavorites =
+    activeObjectNonSystemMetadataItems.filter((item) =>
       favoriteViewObjectMetadataIds.has(item.id),
     );
 
   return {
     workspaceFavorites: sortedWorkspaceFavorites,
     workspaceFavoritesObjectMetadataItems:
-      activeObjectMetadataItemsInWorkspaceFavorites,
+      activeObjectNonSystemMetadataItemsInWorkspaceFavorites,
   };
 };

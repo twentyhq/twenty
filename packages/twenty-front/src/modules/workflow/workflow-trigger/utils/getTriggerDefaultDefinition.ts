@@ -10,13 +10,13 @@ import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/uti
 export const getTriggerDefaultDefinition = ({
   defaultLabel,
   type,
-  activeObjectMetadataItems,
+  activeObjectNonSystemMetadataItems,
 }: {
   defaultLabel: string;
   type: WorkflowTriggerType;
-  activeObjectMetadataItems: ObjectMetadataItem[];
+  activeObjectNonSystemMetadataItems: ObjectMetadataItem[];
 }): WorkflowTrigger => {
-  if (activeObjectMetadataItems.length === 0) {
+  if (activeObjectNonSystemMetadataItems.length === 0) {
     throw new Error(
       'This function need to receive at least one object metadata item to run.',
     );
@@ -28,7 +28,7 @@ export const getTriggerDefaultDefinition = ({
         type,
         name: defaultLabel,
         settings: {
-          eventName: `${activeObjectMetadataItems[0].nameSingular}.${
+          eventName: `${activeObjectNonSystemMetadataItems[0].nameSingular}.${
             DATABASE_TRIGGER_TYPES.find(
               (availableEvent) => availableEvent.defaultLabel === defaultLabel,
             )?.event
@@ -43,7 +43,7 @@ export const getTriggerDefaultDefinition = ({
         name: defaultLabel,
         settings: getManualTriggerDefaultSettings({
           availability: 'WHEN_RECORD_SELECTED',
-          activeObjectMetadataItems,
+          activeObjectNonSystemMetadataItems,
         }),
       };
     }

@@ -36,10 +36,11 @@ export const WorkflowEditTriggerManualForm = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
 
-  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+  const { activeObjectNonSystemMetadataItems } =
+    useFilteredObjectMetadataItems();
 
   const availableMetadata: Array<SelectOption<string>> =
-    activeObjectMetadataItems.map((item) => ({
+    activeObjectNonSystemMetadataItems.map((item) => ({
       label: item.labelPlural,
       value: item.nameSingular,
       Icon: getIcon(item.icon),
@@ -91,7 +92,7 @@ export const WorkflowEditTriggerManualForm = ({
               ...trigger,
               settings: getManualTriggerDefaultSettings({
                 availability: updatedTriggerType,
-                activeObjectMetadataItems,
+                activeObjectNonSystemMetadataItems,
               }),
             });
           }}

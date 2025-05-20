@@ -5,7 +5,7 @@ it('returns settings for a manual trigger that can be activated from any where',
   expect(
     getManualTriggerDefaultSettings({
       availability: 'EVERYWHERE',
-      activeObjectMetadataItems: generatedMockObjectMetadataItems,
+      activeObjectNonSystemMetadataItems: generatedMockObjectMetadataItems,
     }),
   ).toStrictEqual({
     objectType: undefined,
@@ -17,7 +17,7 @@ it('returns settings for a manual trigger that can be activated from any where',
   expect(
     getManualTriggerDefaultSettings({
       availability: 'WHEN_RECORD_SELECTED',
-      activeObjectMetadataItems: generatedMockObjectMetadataItems,
+      activeObjectNonSystemMetadataItems: generatedMockObjectMetadataItems,
     }),
   ).toStrictEqual({
     objectType: generatedMockObjectMetadataItems[0].nameSingular,
