@@ -260,7 +260,7 @@ const failingTestCases: TestCase[] = [
   },
   {
     title:
-      'It should fail to create a field metada with an undefined option label',
+      'It should fail to create a field metadata with an undefined option label',
     context: {
       options: [
         {
@@ -274,7 +274,7 @@ const failingTestCases: TestCase[] = [
   },
   {
     title:
-      'It should fail to create a field metada with an undefined option value',
+      'It should fail to create a field metadata with an undefined option value',
     context: {
       options: [
         {

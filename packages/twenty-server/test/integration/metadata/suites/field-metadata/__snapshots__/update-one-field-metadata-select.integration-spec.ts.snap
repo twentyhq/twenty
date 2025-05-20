@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Field metadata select update tests group It should fail to create a field metada with an undefined option label 1`] = `
+exports[`Field metadata select update tests group It should fail to create a field metadata with an undefined option label 1`] = `
 [
   {
     "extensions": {
@@ -11,7 +11,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create a field metada with an undefined option value 1`] = `
+exports[`Field metadata select update tests group It should fail to create a field metadata with an undefined option value 1`] = `
 [
   {
     "extensions": {

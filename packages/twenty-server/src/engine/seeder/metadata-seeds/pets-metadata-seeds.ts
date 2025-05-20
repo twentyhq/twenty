@@ -16,7 +16,7 @@ export const PETS_METADATA_SEEDS: ObjectMetadataSeed = {
         { label: 'Dog', value: 'DOG', position: 0, color: 'blue' },
         { label: 'Cat', value: 'CAT', position: 1, color: 'red' },
         { label: 'Bird', value: 'BIRD', position: 2, color: 'green' },
-        { label: 'Fish', value: 'FIST', position: 3, color: 'yellow' },
+        { label: 'Fish', value: 'FISH', position: 3, color: 'yellow' },
         { label: 'Rabbit', value: 'RABBIT', position: 4, color: 'purple' },
         { label: 'Hamster', value: 'HAMSTER', position: 5, color: 'orange' },
       ],
