@@ -103,6 +103,9 @@ export class MessagingMessagesImportService {
               message: error.message,
             };
           default:
+            this.logger.error(
+              `Error (${error.code} refreshing access token for account ${connectedAccount.id}: ${error.message}`,
+            );
             throw error;
         }
       }
@@ -184,6 +187,9 @@ export class MessagingMessagesImportService {
         workspaceId,
       );
     } catch (error) {
+      this.logger.error(
+        `Error (${error.code}) importing messages for workspace ${workspaceId.slice(0, 8)} and account ${connectedAccount.id.slice(0, 8)}: ${error.message} - ${error.body}`,
+      );
       await this.cacheStorage.setAdd(
         `messages-to-import:${workspaceId}:${messageChannel.id}`,
         messageIdsToFetch,
