@@ -4,10 +4,11 @@ import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { DateFieldDisplay } from '@/object-record/record-field/meta-types/display/components/DateFieldDisplay';
 import { UserContext } from '@/users/contexts/UserContext';
+import { enUS } from 'date-fns/locale';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
-import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta = {
   title: 'UI/Data/Field/Display/DateFieldDisplay',
@@ -22,6 +23,7 @@ const meta: Meta = {
             dateFormat: DateFormat.SYSTEM,
             timeFormat: TimeFormat.SYSTEM,
             timeZone: 'UTC',
+            dateFnsLocale: enUS,
           }}
         >
           <Story />

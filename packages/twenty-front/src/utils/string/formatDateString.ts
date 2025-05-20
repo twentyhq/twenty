@@ -13,11 +13,13 @@ export const formatDateString = ({
   timeZone,
   dateFormat,
   dateFieldSettings,
+  locale,
 }: {
   timeZone: string;
   dateFormat: DateFormat;
   value?: string | null;
   dateFieldSettings?: FieldDateMetadataSettings;
+  locale?: Locale;
 }): string => {
   if (!isDefined(value)) {
     return '';
@@ -25,7 +27,11 @@ export const formatDateString = ({
 
   switch (dateFieldSettings?.displayFormat) {
     case FieldDateDisplayFormat.RELATIVE:
-      return formatDateISOStringToRelativeDate(value);
+      return formatDateISOStringToRelativeDate({
+        isoDate: value,
+        isDayMaximumPrecision: true,
+        locale,
+      });
     case FieldDateDisplayFormat.USER_SETTINGS:
       return formatDateISOStringToDate(value, timeZone, dateFormat);
     case FieldDateDisplayFormat.CUSTOM:

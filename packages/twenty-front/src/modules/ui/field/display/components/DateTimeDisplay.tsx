@@ -13,7 +13,8 @@ export const DateTimeDisplay = ({
   value,
   dateFieldSettings,
 }: DateTimeDisplayProps) => {
-  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
+  const { dateFormat, timeFormat, timeZone, dateFnsLocale } =
+    useContext(UserContext);
 
   const formattedDate = formatDateTimeString({
     value,
@@ -21,6 +22,7 @@ export const DateTimeDisplay = ({
     dateFormat,
     timeFormat,
     dateFieldSettings,
+    locale: dateFnsLocale,
   });
 
   return <EllipsisDisplay>{formattedDate}</EllipsisDisplay>;

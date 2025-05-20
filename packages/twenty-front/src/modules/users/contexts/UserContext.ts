@@ -6,6 +6,7 @@ export type UserContextType = {
   dateFormat: DateFormat;
   timeFormat: TimeFormat;
   timeZone: string;
+  dateFnsLocale: Locale;
 };
 
 export const UserContext = createContext<UserContextType>(
