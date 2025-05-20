@@ -47,7 +47,10 @@ export const ModalHotkeysAndClickOutsideEffect = ({
 
   useListenClickOutside({
     refs: [modalRef],
-    excludeClassNames: [MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_CLASS_NAME],
+    excludeClassNames: [
+      MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_CLASS_NAME,
+      'dialog-manager-dialog',
+    ],
     listenerId: `MODAL_CLICK_OUTSIDE_LISTENER_ID_${modalId}`,
     callback: () => {
       if (isClosable && onClose !== undefined) {

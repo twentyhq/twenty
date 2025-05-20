@@ -7,7 +7,7 @@ import { useRecoilCallback } from 'recoil';
 import { logDebug } from '~/utils/logDebug';
 import { currentFocusIdentifierSelector } from '../states/currentFocusIdentifierSelector';
 
-export const DEBUG_HOTKEY_SCOPE = false;
+export const DEBUG_HOTKEY_SCOPE = true;
 
 export const useHotkeysOnFocusedElementCallback = (
   dependencies?: OptionsOrDependencyArray,

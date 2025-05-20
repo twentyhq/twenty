@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
+import { DIALOG_MANAGER_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/ui/feedback/dialog-manager/constants/DialogManagerHotkeyScopeMemoizeKey';
 import { DialogManagerScopeInternalContext } from '../scopes/scope-internal-context/DialogManagerScopeInternalContext';
 import { dialogInternalScopedState } from '../states/dialogInternalScopedState';
 import { DialogOptions } from '../types/DialogOptions';
@@ -27,7 +28,7 @@ export const useDialogManager = (props?: useDialogManagerProps) => {
           ...prevState,
           queue: prevState.queue.filter((snackBar) => snackBar.id !== id),
         }));
-        goBackToPreviousHotkeyScope();
+        goBackToPreviousHotkeyScope(DIALOG_MANAGER_HOTKEY_SCOPE_MEMOIZE_KEY);
       },
     [goBackToPreviousHotkeyScope, scopeId],
   );
