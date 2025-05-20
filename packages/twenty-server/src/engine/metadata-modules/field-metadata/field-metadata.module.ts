@@ -33,6 +33,7 @@ import { ViewModule } from 'src/modules/view/view.module';
 import { FieldMetadataEntity } from './field-metadata.entity';
 import { FieldMetadataService } from './field-metadata.service';
 
+import { FieldMetadataEnumValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service';
 import { CreateFieldInput } from './dtos/create-field.input';
 import { UpdateFieldInput } from './dtos/update-field.input';
 
@@ -95,6 +96,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
     FieldMetadataService,
     FieldMetadataRelationService,
     FieldMetadataRelatedRecordsService,
+    FieldMetadataEnumValidationService,
     FieldMetadataResolver,
     BeforeUpdateOneField,
   ],
@@ -102,6 +104,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
     FieldMetadataService,
     FieldMetadataRelationService,
     FieldMetadataRelatedRecordsService,
+    FieldMetadataEnumValidationService,
   ],
 })
 export class FieldMetadataModule {}
