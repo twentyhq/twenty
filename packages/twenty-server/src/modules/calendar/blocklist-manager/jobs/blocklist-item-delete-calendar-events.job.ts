@@ -83,12 +83,6 @@ export class BlocklistItemDeleteCalendarEventsJob {
         continue;
       }
 
-      this.logger.log(
-        `Deleting calendar events from ${handles.join(
-          ', ',
-        )} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
-      );
-
       const calendarChannels = await calendarChannelRepository.find({
         select: {
           id: true,
@@ -145,12 +139,6 @@ export class BlocklistItemDeleteCalendarEventsJob {
           calendarEventsAssociationsToDelete.map(({ id }) => id),
         );
       }
-
-      this.logger.log(
-        `Deleted calendar events from handle ${handles.join(
-          ', ',
-        )} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
-      );
     }
 
     await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
