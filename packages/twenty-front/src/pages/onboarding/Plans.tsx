@@ -1,24 +1,27 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Title } from '@/auth/components/Title';
-import { Modal } from '@/ui/layout/modal/components/Modal';
-import styled from '@emotion/styled';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { MainButton } from 'twenty-ui/input';
+import { useAuth } from '@/auth/hooks/useAuth';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { useRecoilState, atom } from 'recoil';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { z } from 'zod';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { Key } from 'ts-key-enum';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { Modal } from '@/ui/layout/modal/components/Modal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import styled from '@emotion/styled';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { atom, useRecoilState, useRecoilValue } from 'recoil';
+import { Key } from 'ts-key-enum';
+import { MainButton } from 'twenty-ui/input';
+import { ClickToActionLink } from 'twenty-ui/navigation';
+import { z } from 'zod';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
-export type plans = {
+export type Plan = {
   id: string;
   title: string;
   price: number;
@@ -113,21 +116,23 @@ const StyledFooterContainer = styled.div`
   }
 `;
 
-export const selectedPlanState = atom<plans | string>({
+export const selectedPlanState = atom<Plan | string>({
   key: 'selectedPlanState',
   default: '',
 });
 
+const PLANS_MODAL_ID = 'plans-modal';
+
 export const Plans = () => {
   const { t } = useLingui();
+  const { signOut } = useAuth();
+  const { openModal } = useModal();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { enqueueSnackBar } = useSnackBar();
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
-    currentWorkspaceMemberState,
-  );
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const [selectedPlan, setSelectedPlan] = useRecoilState(selectedPlanState);
-  const [onboardingPlans, setOnboardingPlans] = useState<plans[]>([]);
+  const [onboardingPlans, setOnboardingPlans] = useState<Plan[]>([]);
 
   useEffect(() => {
     const fetchOnboardingPlans = async () => {
@@ -157,9 +162,9 @@ export const Plans = () => {
     if (onboardingPlans.length > 0 && !selectedPlan) {
       setSelectedPlan(onboardingPlans[0].id);
     }
-  }, [onboardingPlans]);
+  }, [onboardingPlans, selectedPlan, setSelectedPlan]);
 
-  const onboardingId = selectedPlan?.id;
+  const onboardingId = (selectedPlan as Plan)?.id;
 
   const planSchema = z.object({
     selectedPlanId: z.string().min(1, 'select a valid plan'),
@@ -180,34 +185,31 @@ export const Plans = () => {
     resolver: zodResolver(planSchema),
   });
 
-  const onSubmit: SubmitHandler<Form> = useCallback(
-    async (data) => {
-      try {
-        planSchema.parse({ selectedPlanId: selectedPlan?.id });
+  const onSubmit: SubmitHandler<Form> = useCallback(async () => {
+    try {
+      planSchema.parse({ selectedPlanId: (selectedPlan as Plan)?.id });
 
-        if (!currentWorkspaceMember?.id) {
-          throw new Error('User is not logged in');
-        }
-        const dataToPayement = selectedPlan;
-        setSelectedPlan(dataToPayement);
-        setNextOnboardingStatus();
-      } catch (error: any) {
-        enqueueSnackBar(error?.message, {
-          variant: SnackBarVariant.Error,
-        });
+      if (!currentWorkspaceMember?.id) {
+        throw new Error('User is not logged in');
       }
-    },
-    [
-      planSchema,
-      selectedPlan,
-      currentWorkspaceMember?.id,
-      setSelectedPlan,
-      setNextOnboardingStatus,
-      enqueueSnackBar,
-    ],
-  );
+      const dataToPayement = selectedPlan;
+      setSelectedPlan(dataToPayement);
+      setNextOnboardingStatus();
+    } catch (error: any) {
+      enqueueSnackBar(error?.message, {
+        variant: SnackBarVariant.Error,
+      });
+    }
+  }, [
+    planSchema,
+    selectedPlan,
+    currentWorkspaceMember?.id,
+    setSelectedPlan,
+    setNextOnboardingStatus,
+    enqueueSnackBar,
+  ]);
 
-  const [isEditingMode, setIsEditingMode] = useState(false);
+  const [isEditingMode] = useState(false);
 
   useScopedHotkeys(
     Key.Enter,
@@ -223,8 +225,10 @@ export const Plans = () => {
     return `$${(priceInCents / 100).toFixed(0)}`;
   };
 
+  openModal(PLANS_MODAL_ID);
+
   return (
-    <Modal size="large" className="custom-modal">
+    <Modal size="large" className="custom-modal" modalId={PLANS_MODAL_ID}>
       <style>{`
         .custom-modal {
           width: 70% !important;
@@ -277,13 +281,13 @@ export const Plans = () => {
             </StyledPlanLabel>
           ))}
         </div>
-
-        <StyledFeaturesList>
-          {onboardingPlans
-            .find((p) => p.id === selectedPlan?.id)
-            ?.features.map((feat, i) => <li key={i}>✔ {feat}</li>)}
-        </StyledFeaturesList>
-
+        {onboardingPlans && onboardingPlans.length > 0 && (
+          <StyledFeaturesList>
+            {onboardingPlans
+              .find((p) => p.id === (selectedPlan as Plan)?.id)
+              ?.features.map((feat, i) => <li key={i}>✔ {feat}</li>)}
+          </StyledFeaturesList>
+        )}
         <StyledButtonContainer>
           <MainButton
             title={t`Continue`}
@@ -295,9 +299,9 @@ export const Plans = () => {
         </StyledButtonContainer>
 
         <StyledFooterContainer>
-          <p>Log out</p>
+          <ClickToActionLink onClick={signOut}>{t`Log out`}</ClickToActionLink>
           <p>.</p>
-          <p>Book a Call</p>
+          <ClickToActionLink>Book a Call</ClickToActionLink>
         </StyledFooterContainer>
       </Modal.Content>
     </Modal>
