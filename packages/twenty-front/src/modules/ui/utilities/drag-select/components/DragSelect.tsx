@@ -12,14 +12,14 @@ import { useDragSelect } from '../hooks/useDragSelect';
 import { useDragSelectWithAutoScroll } from '../hooks/useDragSelectWithAutoScroll';
 
 type DragSelectProps = {
-  selectableAreaRef: RefObject<HTMLElement>;
+  selectableItemsContainerRef: RefObject<HTMLElement>;
   onDragSelectionChange: (id: string, selected: boolean) => void;
   onDragSelectionStart?: (event: MouseEvent) => void;
   onDragSelectionEnd?: (event: MouseEvent) => void;
 };
 
 export const DragSelect = ({
-  selectableAreaRef,
+  selectableItemsContainerRef,
   onDragSelectionChange,
   onDragSelectionStart,
   onDragSelectionEnd,
@@ -28,7 +28,7 @@ export const DragSelect = ({
   const { isDragSelectionStartEnabled } = useDragSelect();
 
   const { handleDragStart, handleDragEnd } = useDragSelectWithAutoScroll({
-    selectableAreaRef,
+    selectableItemsContainerRef,
   });
 
   const onSelectionChangeHandler: OnSelectionChange = useCallback(
@@ -40,8 +40,9 @@ export const DragSelect = ({
       };
 
       Array.from(
-        selectableAreaRef.current?.querySelectorAll('[data-selectable-id]') ??
-          [],
+        selectableItemsContainerRef.current?.querySelectorAll(
+          '[data-selectable-id]',
+        ) ?? [],
       ).forEach((item) => {
         const id = item.getAttribute('data-selectable-id');
         if (!isDefined(id)) {
@@ -54,7 +55,7 @@ export const DragSelect = ({
         }
       });
     },
-    [selectableAreaRef, onDragSelectionChange],
+    [selectableItemsContainerRef, onDragSelectionChange],
   );
 
   const handleSelectionStart = useCallback(
@@ -84,9 +85,9 @@ export const DragSelect = ({
       }
 
       const selectionBoundaryElement =
-        selectableAreaRef.current?.closest(
+        selectableItemsContainerRef.current?.closest(
           '.record-index-container-gater-for-drag-select',
-        ) ?? selectableAreaRef.current;
+        ) ?? selectableItemsContainerRef.current;
 
       if (!selectionBoundaryElement?.contains(target)) {
         return false;
@@ -105,7 +106,7 @@ export const DragSelect = ({
 
       return true;
     },
-    [isDragSelectionStartEnabled, selectableAreaRef],
+    [isDragSelectionStartEnabled, selectableItemsContainerRef],
   );
 
   const { DragSelection } = useSelectionContainer({

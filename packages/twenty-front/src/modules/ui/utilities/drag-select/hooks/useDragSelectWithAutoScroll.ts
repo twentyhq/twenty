@@ -2,18 +2,18 @@ import { RefObject, useState } from 'react';
 
 import { isDefined } from 'twenty-shared/utils';
 import {
-  AUTO_SCROLL_EDGE_THRESHOLD_PX,
-  AUTO_SCROLL_MAX_SPEED_PX,
+    AUTO_SCROLL_EDGE_THRESHOLD_PX,
+    AUTO_SCROLL_MAX_SPEED_PX,
 } from '../constants/autoScrollParams';
 import { clamp } from '../utils/clamp';
 import { DOMVector } from '../utils/DOMVector';
 
 type UseDragSelectWithAutoScrollProps = {
-  selectableAreaRef: RefObject<HTMLElement>;
+  selectableItemsContainerRef: RefObject<HTMLElement>;
 };
 
 export const useDragSelectWithAutoScroll = ({
-  selectableAreaRef,
+  selectableItemsContainerRef,
 }: UseDragSelectWithAutoScrollProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragVector, setDragVector] = useState<DOMVector | null>(null);
@@ -28,7 +28,7 @@ export const useDragSelectWithAutoScroll = ({
 
     let currentVector = startVector;
 
-    let parent = selectableAreaRef.current?.parentElement ?? null;
+    let parent = selectableItemsContainerRef.current?.parentElement ?? null;
     let scrollWrapper: HTMLElement | null = null;
     while (parent !== null) {
       const style = window.getComputedStyle(parent);

@@ -218,10 +218,10 @@ export const RecordBoard = () => {
           <RecordBoardStickyHeaderEffect />
           <RecordBoardScrollToFocusedCardEffect />
           <RecordBoardDeactivateBoardCardEffect />
-          <StyledContainerContainer ref={boardRef}>
+          <StyledContainerContainer>
             <RecordBoardHeader />
             <StyledBoardContentContainer>
-              <StyledContainer>
+              <StyledContainer ref={boardRef}>
                 <DragDropContext onDragEnd={handleDragEnd}>
                   <StyledColumnContainer>
                     {visibleRecordGroupIds.map((recordGroupId, index) => (
@@ -235,7 +235,7 @@ export const RecordBoard = () => {
                 </DragDropContext>
               </StyledContainer>
               <DragSelect
-                selectableAreaRef={boardRef}
+                selectableItemsContainerRef={boardRef}
                 onDragSelectionEnd={handleDragSelectionEnd}
                 onDragSelectionChange={setRecordAsSelected}
                 onDragSelectionStart={handleDragSelectionStart}

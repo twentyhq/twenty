@@ -64,7 +64,7 @@ export const RecordTableContent = ({
         <RecordTableStickyBottomEffect />
       </StyledTableWithPointerEvents>
       <DragSelect
-        selectableAreaRef={containerRef}
+        selectableItemsContainerRef={containerRef}
         onDragSelectionStart={handleDragStart}
         onDragSelectionChange={setRowSelected}
         onDragSelectionEnd={handleDragEnd}
