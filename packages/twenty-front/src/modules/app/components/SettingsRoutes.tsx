@@ -7,6 +7,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SettingPermissionType } from '~/generated/graphql';
 import { SettingsIntegrationFocusNfeEditDatabaseConnection } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeEditConnection';
 import { SettingsIntegrationFocusNfeNewDatabaseConnection } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewConnection';
+import { SettingsIntegrationFocusNfeNewIssuer } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewIssuer';
 import { SettingsIntegrationFocusNfeDatabase } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationsFocusNfe';
 import { SettingsIntegrationInterDatabase } from '~/pages/settings/integrations/inter/SettingsIntegrationInterDatabase';
 import { SettingsIntegrationInterEditDatabaseConnection } from '~/pages/settings/integrations/inter/SettingsIntegrationInterEditDatabaseConnection';
@@ -616,6 +617,10 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.IntegrationWhatsappEditDatabaseConnection}
         element={<SettingsIntegrationWhatsappEditDatabaseConnection />}
+      />
+      <Route
+        path={SettingsPath.IntegrationFocusNfeNewIssuer}
+        element={<SettingsIntegrationFocusNfeNewIssuer />}
       />
       <Route
         path={SettingsPath.ObjectNewFieldSelect}

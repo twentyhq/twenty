@@ -1,4 +1,5 @@
-export interface Issuer {
+// Base Issuer type, similar to IssuerDto from backend
+export type Issuer = {
   id: string;
   name: string;
   cnpj: string;
@@ -11,20 +12,20 @@ export interface Issuer {
   neighborhood: string;
   city: string;
   state: string;
-  taxRegime: string;
-  createdAt?: string; // Or Date, adjust as per actual GQL response
-  updatedAt?: string; // Or Date
-  workspaceId?: string;
-  // workspace?: { id: string }; // Example if full workspace object is returned
-}
+  taxRegime: string; // Consider using a string literal union if values are fixed
+  createdAt: string; // Or Date
+  updatedAt: string; // Or Date
+  workspaceId: string;
+  // workspace: Workspace; // Or WorkspaceDto, depending on what backend returns
+};
 
-// Form values can be slightly different, e.g., all strings, and then parsed
+// For the creation form - matches CreateIssuerInput
 export type IssuerFormValues = {
   name: string;
   cnpj: string;
-  cpf: string; // CPF might be optional in DB, but form can start as string
-  ie: string;
-  cnaeCode: string;
+  cpf?: string;
+  ie?: string;
+  cnaeCode?: string;
   cep: string;
   street: string;
   number: string;
@@ -32,9 +33,9 @@ export type IssuerFormValues = {
   city: string;
   state: string;
   taxRegime: string;
-  // workspaceId is usually handled by the hook/mutation logic from context
 };
 
+// For the update mutation - matches UpdateIssuerInput
 export type UpdateIssuerInput = {
   id: string;
   name?: string;

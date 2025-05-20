@@ -8,8 +8,10 @@ import { useNavigate } from 'react-router-dom';
 import { IconButton } from 'twenty-ui/input';
 import { Card, CardFooter } from 'twenty-ui/layout';
 // For navigation
+import { SettingsPath } from '@/types/SettingsPath';
 import { IconPencil, IconPlus } from '@tabler/icons-react'; // Using a generic store icon for issuer
 import { Issuer } from '~/types/Issuer';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 // Prop type for this new component
 type SettingsIntegrationFocusNfeIssuersListCardProps = {
@@ -96,19 +98,15 @@ export const SettingsIntegrationFocusNfeIssuersListCard = ({
   }, [refetchIssuers]);
 
   const handleEditIssuer = (issuerId: string) => {
-    // Define a new SettingsPath for editing an issuer if it doesn't exist
-    // For now, just logging, will need a new route e.g., SettingsPath.IntegrationFocusNfeEditIssuer
-    console.log('Navigate to edit issuer:', issuerId);
-    // const path = getSettingsPath(SettingsPath.IntegrationFocusNfeEditIssuer).replace(':issuerId', issuerId);
+    // const path = getSettingsPath(
+    //   SettingsPath.IntegrationFocusNfeEditIssuer,
+    // ).replace(':issuerId', issuerId);
     // navigate(path);
   };
 
+  // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
   const handleAddNewIssuer = () => {
-    // Define a new SettingsPath for adding an issuer
-    // For now, just logging, will need a new route e.g., SettingsPath.IntegrationFocusNfeAddIssuer
-    console.log('Navigate to add new issuer page');
-    // navigate(getSettingsPath(SettingsPath.IntegrationFocusNfeAddIssuer));
-    navigate('new-issuer'); // Example relative path
+    navigate(getSettingsPath(SettingsPath.IntegrationFocusNfeNewIssuer));
   };
 
   return (
@@ -140,6 +138,7 @@ export const SettingsIntegrationFocusNfeIssuersListCard = ({
           </>
         )}
         <StyledFooter>
+          {/* eslint-disable-next-line @nx/workspace-no-navigate-prefer-link */}
           <StyledButton onClick={handleAddNewIssuer}>
             <IconPlus size={theme.icon.size.md} />
             {'Add Issuer'}

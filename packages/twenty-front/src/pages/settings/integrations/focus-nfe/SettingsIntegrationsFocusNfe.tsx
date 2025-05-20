@@ -7,6 +7,7 @@ import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useEffect } from 'react';
+import { H2Title } from 'twenty-ui/display';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -45,10 +46,14 @@ export const SettingsIntegrationFocusNfeDatabase = () => {
         <SettingsIntegrationPreview
           integrationLogoUrl={integration.from.image}
         />
+        <H2Title
+          title="Focus NFe Database"
+          description="Connect or access your data"
+        />
         <SettingsIntegrationFocusNfeConectionsListCard
           integration={integration}
         />
-        Issuer Registration
+        <H2Title title="Issuer Registration" />
         <SettingsIntegrationFocusNfeIssuersListCard integration={integration} />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

@@ -1,13 +1,22 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
 # File Structure Guidelines
 
 ## Core File Structure Principles
+
 Twenty follows a modular and organized file structure that promotes maintainability and scalability. This document outlines our file organization conventions and best practices.
 
 ## Component Organization
 
 ### One Component Per File
+
 - Each component should have its own file
 - File name should match component name
+
   ```typescript
   // ✅ Correct
   // UserProfile.tsx
@@ -29,6 +38,7 @@ Twenty follows a modular and organized file structure that promotes maintainabil
 ## Directory Structure
 
 ### Feature Modules
+
 - Place features in `modules/` directory
 - Group related components and logic
   ```
@@ -55,6 +65,7 @@ Twenty follows a modular and organized file structure that promotes maintainabil
   ```
 
 ### Hooks Organization
+
 - Place hooks in `hooks/` directory
 - Group by feature or global usage
   ```
@@ -70,6 +81,7 @@ Twenty follows a modular and organized file structure that promotes maintainabil
   ```
 
 ### State Management
+
 - Place state definitions in `states/` directory
 - Organize by feature
   ```
@@ -86,6 +98,7 @@ Twenty follows a modular and organized file structure that promotes maintainabil
   ```
 
 ### Types Organization
+
 - Place types in `types/` directory
 - Group by domain or feature
   ```
@@ -101,6 +114,7 @@ Twenty follows a modular and organized file structure that promotes maintainabil
 ## Naming Conventions
 
 ### Component Files
+
 - Use PascalCase for component files
 - Use descriptive, feature-specific names
   ```
@@ -111,8 +125,10 @@ Twenty follows a modular and organized file structure that promotes maintainabil
   ```
 
 ### Non-Component Files
+
 - Use camelCase for non-component files
 - Use clear, descriptive names
+
   ```
   hooks/
   ├── useClickOutside.ts
@@ -126,6 +142,7 @@ Twenty follows a modular and organized file structure that promotes maintainabil
 ## Module Structure
 
 ### Feature Module Organization
+
 - Consistent structure across features
 - Clear separation of concerns
   ```
@@ -153,8 +170,10 @@ Twenty follows a modular and organized file structure that promotes maintainabil
 ## Best Practices
 
 ### Import Organization
+
 - Group imports by type
 - Maintain consistent order
+
   ```typescript
   // External dependencies
   import { useState } from 'react';
@@ -170,8 +189,10 @@ Twenty follows a modular and organized file structure that promotes maintainabil
   ```
 
 ### Path Aliases
+
 - Use path aliases for better imports
 - Avoid deep relative paths
+
   ```typescript
   // ✅ Correct
   import { Button } from '~/components/Button';
@@ -183,6 +204,7 @@ Twenty follows a modular and organized file structure that promotes maintainabil
   ```
 
 ### Component Co-location
+
 - Keep related files close together
 - Use index files for public APIs
   ```
@@ -196,6 +218,7 @@ Twenty follows a modular and organized file structure that promotes maintainabil
   ```
 
 ### Test File Location
+
 - Place test files next to implementation
 - Use `.test.ts` or `.spec.ts` extension
   ```
@@ -204,4 +227,4 @@ Twenty follows a modular and organized file structure that promotes maintainabil
   ├── UserProfile.test.tsx
   ├── UserProfile.stories.tsx
   └── types.ts
-  ``` 
+  ```

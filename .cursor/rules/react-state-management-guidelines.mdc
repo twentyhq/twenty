@@ -1,13 +1,22 @@
+---
+description: If you are building front-end related features, use this rule.
+globs: 
+alwaysApply: false
+---
+
 # State Management Guidelines
 
 ## Core State Management Principles
+
 Twenty uses a combination of Recoil for global state and Apollo Client for server state management. This document outlines our state management conventions and best practices.
 
 ## Global State Management
 
 ### Recoil Usage
+
 - Use Recoil for global application state
 - Keep atoms small and focused
+
   ```typescript
   // ✅ Correct
   // states/theme.ts
@@ -36,8 +45,10 @@ Twenty uses a combination of Recoil for global state and Apollo Client for serve
   ```
 
 ### Atom Organization
+
 - Place atoms in the `states/` directory
 - Group related atoms in feature-specific files
+
   ```typescript
   // states/workspace/atoms.ts
   export const workspaceIdState = atom<string>({
@@ -54,8 +65,10 @@ Twenty uses a combination of Recoil for global state and Apollo Client for serve
 ## Server State Management
 
 ### Apollo Client Usage
+
 - Use Apollo Client for all GraphQL operations
 - Leverage Apollo's caching capabilities
+
   ```typescript
   // ✅ Correct
   const { data, loading } = useQuery(GET_USER_QUERY, {
@@ -71,8 +84,10 @@ Twenty uses a combination of Recoil for global state and Apollo Client for serve
   ```
 
 ### Query Organization
+
 - Separate operation files
 - Use fragments for shared fields
+
   ```typescript
   // queries/user.ts
   export const UserFragment = gql`
@@ -96,8 +111,10 @@ Twenty uses a combination of Recoil for global state and Apollo Client for serve
 ## State Management Best Practices
 
 ### Multiple Small Atoms
+
 - Prefer multiple small atoms over prop drilling
 - Keep atoms focused on specific features
+
   ```typescript
   // ✅ Correct
   export const selectedViewState = atom<string>({
@@ -123,8 +140,10 @@ Twenty uses a combination of Recoil for global state and Apollo Client for serve
   ```
 
 ### No useRef for State
+
 - Never use useRef for state management
 - Use proper state management tools
+
   ```typescript
   // ✅ Correct
   const [count, setCount] = useState(0);
@@ -136,8 +155,10 @@ Twenty uses a combination of Recoil for global state and Apollo Client for serve
   ```
 
 ### Data Fetching
+
 - Extract data fetching to sibling components
 - Keep components focused on presentation
+
   ```typescript
   // ✅ Correct
   const UserProfileContainer = () => {
@@ -159,8 +180,10 @@ Twenty uses a combination of Recoil for global state and Apollo Client for serve
   ```
 
 ### Hook Usage
+
 - Use appropriate hooks for state access
 - Choose between useRecoilValue and useRecoilState based on needs
+
   ```typescript
   // ✅ Correct - Read-only access
   const theme = useRecoilValue(themeState);
@@ -175,8 +198,10 @@ Twenty uses a combination of Recoil for global state and Apollo Client for serve
 ## Performance Considerations
 
 ### Selector Usage
+
 - Use selectors for derived state
 - Memoize complex calculations
+
   ```typescript
   // ✅ Correct
   const filteredUsersState = selector({
@@ -184,7 +209,7 @@ Twenty uses a combination of Recoil for global state and Apollo Client for serve
     get: ({ get }) => {
       const users = get(usersState);
       const filter = get(userFilterState);
-      return users.filter(user => 
+      return users.filter(user =>
         user.name.toLowerCase().includes(filter.toLowerCase())
       );
     },
@@ -202,6 +227,7 @@ Twenty uses a combination of Recoil for global state and Apollo Client for serve
   ```
 
 ### Cache Management
+
 - Configure appropriate cache policies
 - Handle cache invalidation properly
   ```typescript
@@ -216,4 +242,4 @@ Twenty uses a combination of Recoil for global state and Apollo Client for serve
       });
     },
   });
-  ``` 
+  ```
