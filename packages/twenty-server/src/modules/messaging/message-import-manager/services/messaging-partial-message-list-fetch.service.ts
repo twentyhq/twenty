@@ -64,9 +64,19 @@ export class MessagingPartialMessageListFetchService {
         const {
           messageExternalIds,
           messageExternalIdsToDelete,
+          previousSyncCursor,
           nextSyncCursor,
           folderId,
         } = partialMessageList;
+
+        const isPartialImportFinished = this.isPartialImportFinished(
+          previousSyncCursor,
+          nextSyncCursor,
+        );
+
+        if (isPartialImportFinished) {
+          continue;
+        }
 
         await this.cacheStorage.setAdd(
           `messages-to-import:${workspaceId}:${messageChannel.id}`,
