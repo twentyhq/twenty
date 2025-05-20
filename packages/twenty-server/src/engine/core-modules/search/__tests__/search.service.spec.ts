@@ -325,5 +325,54 @@ describe('SearchService', () => {
         }),
       ).toEqual({ endCursor: expectedEndCursor, hasNextPage: true });
     });
+
+    it('should compute pageInfo properly with one object', () => {
+      const sortedSlicedRecords = [
+        {
+          node: {
+            objectNameSingular: 'company',
+            tsRankCD: 0.9,
+            tsRank: 0.9,
+            recordId: 'companyId1',
+            label: '',
+            imageUrl: '',
+          },
+        },
+        {
+          node: {
+            objectNameSingular: 'company',
+            tsRankCD: 0.89,
+            tsRank: 0.89,
+            recordId: 'companyId2',
+            label: '',
+            imageUrl: '',
+          },
+        },
+        {
+          node: {
+            objectNameSingular: 'company',
+            tsRankCD: 0.1,
+            tsRank: 0.1,
+            recordId: 'companyId3',
+            label: '',
+            imageUrl: '',
+          },
+        },
+      ];
+
+      const expectedEndCursor = encodeCursorData({
+        lastRanks: { tsRankCD: 0.89, tsRank: 0.89 },
+        lastRecordIdsPerObject: {
+          company: 'companyId2',
+        },
+      });
+
+      expect(
+        service.computeEndCursor({
+          sortedRecords: [...sortedSlicedRecords],
+          limit: 2,
+        }),
+      ).toEqual({ endCursor: expectedEndCursor, hasNextPage: true });
+    });
   });
 });

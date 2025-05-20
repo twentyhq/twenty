@@ -25,7 +25,10 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { SearchEdgeDTO } from 'src/engine/core-modules/search/dtos/search-edge.dto';
-import { encodeCursorData } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import {
+  decodeCursor,
+  encodeCursorData,
+} from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import {
   WorkspaceMetadataVersionException,
   WorkspaceMetadataVersionExceptionCode,
@@ -40,8 +43,10 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
 
-type SearchCursor = {
-  lastRanks: { tsRankCD: number; tsRank: number } | null;
+type LastRanks = { tsRankCD: number; tsRank: number } | null;
+
+export type SearchCursor = {
+  lastRanks: LastRanks;
   lastRecordIdsPerObject: Record<string, string | null>;
 };
 
@@ -89,6 +94,7 @@ export class SearchService {
     searchInput,
     limit,
     filter,
+    after,
   }: {
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps[];
   } & SearchArgs) {
@@ -109,9 +115,10 @@ export class SearchService {
     for (const objectMetadataItemChunk of filteredObjectMetadataItemsChunks) {
       const recordsWithObjectMetadataItems = await Promise.all(
         objectMetadataItemChunk.map(async (objectMetadataItem) => {
-          const repository = await this.twentyORMManager.getRepository(
-            objectMetadataItem.nameSingular,
-          );
+          const repository =
+            await this.twentyORMManager.getRepository<ObjectRecord>(
+              objectMetadataItem.nameSingular,
+            );
 
           return {
             objectMetadataItem,
@@ -122,6 +129,7 @@ export class SearchService {
               searchTermsOr: formatSearchTerms(searchInput, 'or'),
               limit: limit as number,
               filter: filter ?? ({} as ObjectRecordFilter),
+              after,
             }),
           };
         }),
@@ -166,6 +174,7 @@ export class SearchService {
     searchTermsOr,
     limit,
     filter,
+    after,
   }: {
     entityManager: WorkspaceRepository<Entity>;
     objectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -173,6 +182,7 @@ export class SearchService {
     searchTermsOr: string;
     limit: number;
     filter: ObjectRecordFilterInput;
+    after?: string;
   }) {
     const queryBuilder = entityManager.createQueryBuilder();
 
@@ -199,51 +209,107 @@ export class SearchService {
       ...(imageIdentifierField ? [imageIdentifierField] : []),
     ].map((field) => `"${field}"`);
 
-    const searchQuery = isNonEmptyString(searchTerms)
-      ? queryBuilder
-          .select(fieldsToSelect)
-          .addSelect(
-            `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`,
-            'tsRankCD',
-          )
-          .addSelect(
-            `ts_rank("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`,
-            'tsRank',
-          )
-          .andWhere(
-            new Brackets((qb) => {
-              qb.where(
-                `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTerms)`,
-                { searchTerms },
-              ).orWhere(
-                `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTermsOr)`,
-                { searchTermsOr },
-              );
-            }),
-          )
-          .orderBy(
-            `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`,
-            'DESC',
-          )
-          .addOrderBy(
-            `ts_rank("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTermsOr))`,
-            'DESC',
-          )
-          .setParameter('searchTerms', searchTerms)
-          .setParameter('searchTermsOr', searchTermsOr)
-      : queryBuilder
-          .select(fieldsToSelect)
-          .addSelect('0', 'tsRankCD')
-          .addSelect('0', 'tsRank')
-          .andWhere(
-            new Brackets((qb) => {
-              qb.where(`"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`);
-            }),
+    const tsRankCDExpr = `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`;
+
+    const tsRankExpr = `ts_rank("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTermsOr))`;
+
+    const cursorWhereCondition = this.computeCursorWhereCondition({
+      after,
+      objectMetadataNameSingular: objectMetadataItem.nameSingular,
+      tsRankExpr,
+      tsRankCDExpr,
+    });
+
+    queryBuilder
+      .select(fieldsToSelect)
+      .addSelect(tsRankCDExpr, 'tsRankCD')
+      .addSelect(tsRankExpr, 'tsRank');
+
+    if (isNonEmptyString(searchTerms)) {
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTerms)`,
+            { searchTerms },
+          ).orWhere(
+            `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTermsOr)`,
+            { searchTermsOr },
           );
+        }),
+      );
+    } else {
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          qb.where(`"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`);
+        }),
+      );
+    }
 
-    searchQuery.take(limit);
+    if (cursorWhereCondition) {
+      queryBuilder.andWhere(cursorWhereCondition);
+    }
 
-    return await searchQuery.getRawMany();
+    return await queryBuilder
+      .orderBy(tsRankCDExpr, 'DESC')
+      .addOrderBy(tsRankExpr, 'DESC')
+      .addOrderBy('id', 'ASC', 'NULLS FIRST')
+      .setParameter('searchTerms', searchTerms)
+      .setParameter('searchTermsOr', searchTermsOr)
+      .take(limit + 1) // We take one more to check if hasNextPage is true
+      .getRawMany();
+  }
+
+  computeCursorWhereCondition({
+    after,
+    objectMetadataNameSingular,
+    tsRankExpr,
+    tsRankCDExpr,
+  }: {
+    after?: string;
+    objectMetadataNameSingular: string;
+    tsRankExpr: string;
+    tsRankCDExpr: string;
+  }) {
+    if (after) {
+      const { lastRanks, lastRecordIdsPerObject } =
+        decodeCursor<SearchCursor>(after);
+      const lastRecordId = lastRecordIdsPerObject[objectMetadataNameSingular];
+      const tsRank = lastRanks?.tsRank;
+      const tsRankCD = lastRanks?.tsRankCD;
+
+      return new Brackets((qb) => {
+        qb.where(
+          new Brackets((inner) => {
+            if (tsRank !== undefined) {
+              inner.andWhere(`${tsRankExpr} < :tsRankLt`, {
+                tsRankLt: tsRank,
+              });
+            }
+            if (tsRankCD !== undefined) {
+              inner.andWhere(`${tsRankCDExpr} < :tsRankCDLt`, {
+                tsRankCDLt: tsRankCD,
+              });
+            }
+          }),
+        ).orWhere(
+          new Brackets((inner) => {
+            if (tsRank !== undefined) {
+              inner.andWhere(`${tsRankExpr} = :tsRankEq`, {
+                tsRankEq: tsRank,
+              });
+            }
+            if (tsRankCD !== undefined) {
+              inner.andWhere(`${tsRankCDExpr} = :tsRankCDEq`, {
+                tsRankCDEq: tsRankCD,
+              });
+            }
+            if (lastRecordId !== null) {
+              inner.andWhere('id > :lastRecordId', { lastRecordId });
+            }
+          }),
+        );
+      });
+    }
   }
 
   getLabelIdentifierColumns(
@@ -356,6 +422,8 @@ export class SearchService {
         objectSeen.add(objectNameSingular);
       } else if (!objectSeen.has(objectNameSingular)) {
         lastRecordIdsPerObject[objectNameSingular] = null;
+        hasNextPage = true;
+      } else {
         hasNextPage = true;
       }
     });
