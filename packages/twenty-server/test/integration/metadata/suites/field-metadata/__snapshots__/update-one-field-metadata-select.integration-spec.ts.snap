@@ -1,0 +1,287 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Field metadata select update tests group It should fail to create a field metada with an undefined option label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create a field metada with an undefined option value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: empty string id  1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: empty string label  1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: empty string value  1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: not a string id  1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: not a string label  1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: not a string value  1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: null id  1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: null label  1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: null value  1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: only white spaces id  1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: only white spaces label  1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: only white spaces value  1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: too long id  1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: too long label  1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: too long value  1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create field metadata with an option label that contains a comma 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create field metadata with an option value that do not follow UPPER_CASE and snake_case 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create field metadata with empty options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create field metadata with null options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create field metadata with options having duplicated values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create field metadata with undefined options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create option with invalid id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create two options with the same id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group It should fail to create two options with the same position 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Field "objectMetadataId" is not defined by type "UpdateFieldInput".",
+  },
+]
+`;

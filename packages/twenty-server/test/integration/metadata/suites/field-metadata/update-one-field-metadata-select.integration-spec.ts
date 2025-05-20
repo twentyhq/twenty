@@ -8,13 +8,15 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/update-create-one-field-metadata-select-tests-cases';
+import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 const { failingTestCases, successfulTestCases } =
   UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES;
 
-describe('Field metadata select creation tests group', () => {
+describe('Field metadata select update tests group', () => {
   let createdObjectMetadataId: string;
+  let createdFieldMetadata: string;
 
   beforeEach(async () => {
     const { data } = await createOneObjectMetadata({
@@ -29,6 +31,30 @@ describe('Field metadata select creation tests group', () => {
     });
 
     createdObjectMetadataId = data.createOneObject.id;
+
+    const {
+      data: { createOneField },
+    } = await createOneFieldMetadata({
+      input: {
+        objectMetadataId: createdObjectMetadataId,
+        type: FieldMetadataType.SELECT,
+        name: 'testField',
+        label: 'Test Field',
+        isLabelSyncedWithName: false,
+        options: [
+          {
+            label: 'Option 1',
+            value: 'OPTION_1',
+            color: 'green',
+            position: 1,
+          },
+        ],
+      },
+      gqlFields: `
+        id
+        `,
+    });
+    createdFieldMetadata = createOneField.id;
   });
 
   afterEach(async () => {
@@ -38,14 +64,12 @@ describe('Field metadata select creation tests group', () => {
   });
 
   test.each(successfulTestCases)('$title', async ({ context: { options } }) => {
-    const { data, errors } = await createOneFieldMetadata({
+    const { data, errors } = await updateOneFieldMetadata({
       input: {
-        objectMetadataId: createdObjectMetadataId,
-        type: FieldMetadataType.SELECT,
-        name: 'testField',
-        label: 'Test Field',
-        isLabelSyncedWithName: false,
-        options,
+        idToUpdate: createdFieldMetadata,
+        updatePayload: {
+          options,
+        },
       },
       gqlFields: `
         id
@@ -53,26 +77,27 @@ describe('Field metadata select creation tests group', () => {
         `,
     });
 
-    expect(data).not.toBeNull();
-    expect(data.createOneField).toBeDefined();
-    const createdOptions: FieldMetadataComplexOption[] =
-      data.createOneField.options;
+    expect(data.updateOneField).toBeDefined();
+    const updatedOptions: FieldMetadataComplexOption[] =
+      data.updateOneField.options;
 
     expect(errors).toBeUndefined();
-    expect(createdOptions.length).toBe(options.length);
-    createdOptions.forEach((option) => expect(option.id).toBeDefined());
-    expect(createdOptions).toMatchObject(options);
+    expect(updatedOptions.length).toBe(options.length);
+    updatedOptions.forEach((option) => expect(option.id).toBeDefined());
+    expect(updatedOptions).toMatchObject(options);
   });
 
   test.each(failingTestCases)('$title', async ({ context: { options } }) => {
-    const { data, errors } = await createOneFieldMetadata({
+    const { data, errors } = await updateOneFieldMetadata({
       input: {
-        objectMetadataId: createdObjectMetadataId,
-        type: FieldMetadataType.SELECT,
-        name: 'testField',
-        label: 'Test Field',
-        isLabelSyncedWithName: false,
-        options,
+        idToUpdate: createdFieldMetadata,
+        updatePayload: {
+          objectMetadataId: createdObjectMetadataId,
+          name: 'testField',
+          label: 'Test Field',
+          isLabelSyncedWithName: false,
+          options,
+        },
       },
       gqlFields: `
         id
@@ -80,7 +105,7 @@ describe('Field metadata select creation tests group', () => {
         `,
     });
 
-    expect(data).toBeNull();
+    expect(data).toBeUndefined();
     expect(errors).toBeDefined();
     expect(errors).toMatchSnapshot();
   });
