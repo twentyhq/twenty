@@ -68,6 +68,7 @@ import { ViewService } from 'src/modules/view/services/view.service';
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
 
+import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 import { generateDefaultValue } from './utils/generate-default-value';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
 
@@ -698,7 +699,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     return fieldMetadataInput.options.map((option) => ({
       id: uuidV4(),
-      ...option,
+      ...trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(option, [
+        'label',
+        'value',
+        'id',
+      ]),
     }));
   }
 

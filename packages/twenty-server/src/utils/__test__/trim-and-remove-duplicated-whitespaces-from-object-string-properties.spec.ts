@@ -1,6 +1,6 @@
 import { EachTestingContext } from 'twenty-shared/testing';
 
-import { sanitizeObjectStringProperties } from 'src/utils/sanitize-object-string-properties';
+import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 
 type SanitizeObjectStringPropertiesTestCase = EachTestingContext<{
   input: Record<string, any>;
@@ -8,7 +8,7 @@ type SanitizeObjectStringPropertiesTestCase = EachTestingContext<{
   expected: Record<string, any>;
 }>;
 
-describe('sanitizeObjectStringProperties', () => {
+describe('trim-and-remove-duplicated-whitespaces-from-object-string-properties', () => {
   const testCases: SanitizeObjectStringPropertiesTestCase[] = [
     {
       title: 'should sanitize single string property',
@@ -86,7 +86,10 @@ describe('sanitizeObjectStringProperties', () => {
   ];
 
   test.each(testCases)('$title', ({ context: { input, keys, expected } }) => {
-    const result = sanitizeObjectStringProperties(input, keys);
+    const result = trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
+      input,
+      keys,
+    );
 
     expect(result).toEqual(expected);
   });

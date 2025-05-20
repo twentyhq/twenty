@@ -18,7 +18,6 @@ import {
   exceedsDatabaseIdentifierMaximumLength,
 } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
-import { sanitizeObjectStringProperties } from 'src/utils/sanitize-object-string-properties';
 
 type Validator<T> = { validator: (str: T) => boolean; message: string };
 
@@ -153,7 +152,7 @@ export class FieldMetadataEnumValidationService {
   }: {
     fieldMetadataInput: CreateFieldInput | UpdateFieldInput;
     fieldMetadataType: FieldMetadataType;
-  }): Promise<void> {
+  }) {
     if (!isEnumFieldMetadataType(fieldMetadataType)) {
       return;
     }
@@ -167,17 +166,13 @@ export class FieldMetadataEnumValidationService {
       );
     }
 
-    const sanitizedOptions = options.map((option) =>
-      sanitizeObjectStringProperties(option, ['label', 'value', 'id']),
-    );
-
-    for (const option of sanitizedOptions) {
+    for (const option of options) {
       this.validateMetadataOptionId(option.id);
       this.validateMetadataOptionValue(option.value);
       this.validateMetadataOptionLabel(option.label);
     }
 
-    this.validateDuplicates(sanitizedOptions);
+    this.validateDuplicates(options);
 
     if (isDefined(fieldMetadataInput.defaultValue)) {
       await this.fieldMetadataValidationService.validateDefaultValueOrThrow({
