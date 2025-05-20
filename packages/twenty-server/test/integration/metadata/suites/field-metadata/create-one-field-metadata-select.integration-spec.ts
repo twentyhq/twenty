@@ -4,24 +4,26 @@ import {
   LISTING_NAME_SINGULAR,
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 import { EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 describe('Field metadata select creation tests group', () => {
   let createdObjectMetadataId: string;
 
   beforeEach(async () => {
-    const { data } = await forceCreateOneObjectMetadata({
-      labelSingular: LISTING_NAME_SINGULAR,
-      labelPlural: LISTING_NAME_PLURAL,
-      nameSingular: LISTING_NAME_SINGULAR,
-      namePlural: LISTING_NAME_PLURAL,
-      icon: 'IconBuildingSkyscraper',
-      isLabelSyncedWithName: false,
+    const { data } = await createOneObjectMetadata({
+      input: {
+        labelSingular: LISTING_NAME_SINGULAR,
+        labelPlural: LISTING_NAME_PLURAL,
+        nameSingular: LISTING_NAME_SINGULAR,
+        namePlural: LISTING_NAME_PLURAL,
+        icon: 'IconBuildingSkyscraper',
+        isLabelSyncedWithName: false,
+      },
     });
 
     createdObjectMetadataId = data.createOneObject.id;
