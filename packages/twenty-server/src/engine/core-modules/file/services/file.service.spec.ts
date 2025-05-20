@@ -43,8 +43,8 @@ describe('FileService', () => {
     expect(service).toBeDefined();
   });
 
-  it('copyFileToNewWorkspace - should copy a file to a new workspace', async () => {
-    const result = await service.copyFileToNewWorkspace(
+  it('copyFileFromWorkspaceToWorkspace - should copy a file to a new workspace', async () => {
+    const result = await service.copyFileFromWorkspaceToWorkspace(
       'workspaceId',
       'path/to/file',
       'newWorkspaceId',

@@ -360,23 +360,23 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       if (!isDefined(userWorkspace?.defaultAvatarUrl)) return;
 
       const [_, subFolder, filename] =
-        await this.fileService.copyFileToNewWorkspace(
+        await this.fileService.copyFileFromWorkspaceToWorkspace(
           userWorkspace.workspaceId,
           userWorkspace.defaultAvatarUrl,
           workspaceId,
         );
 
       return `${subFolder}/${filename}`;
-    } else {
-      if (!isDefined(pictureUrl)) return;
-
-      const { paths } = await this.fileUploadService.uploadImageFromUrl({
-        imageUrl: pictureUrl,
-        fileFolder: FileFolder.ProfilePicture,
-        workspaceId,
-      });
-
-      return paths[0];
     }
+
+    if (!isDefined(pictureUrl)) return;
+
+    const { paths } = await this.fileUploadService.uploadImageFromUrl({
+      imageUrl: pictureUrl,
+      fileFolder: FileFolder.ProfilePicture,
+      workspaceId,
+    });
+
+    return paths[0];
   }
 }

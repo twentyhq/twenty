@@ -126,7 +126,7 @@ describe('UserWorkspaceService', () => {
         {
           provide: FileService,
           useValue: {
-            copyFileToNewWorkspace: jest.fn(),
+            copyFileFromWorkspaceToWorkspace: jest.fn(),
           },
         },
       ],
@@ -177,7 +177,7 @@ describe('UserWorkspaceService', () => {
         defaultAvatarUrl: 'path/to/file',
       } as UserWorkspace);
       jest
-        .spyOn(fileService, 'copyFileToNewWorkspace')
+        .spyOn(fileService, 'copyFileFromWorkspaceToWorkspace')
         .mockResolvedValue(['', 'path/to', 'copy']);
       jest
         .spyOn(workspaceEventEmitter, 'emitCustomBatchEvent')

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { basename, dirname } from 'path';
+import { basename, dirname, extname } from 'path';
 import { Stream } from 'stream';
 
 import { v4 as uuidV4 } from 'uuid';
@@ -78,7 +78,7 @@ export class FileService {
     });
   }
 
-  async copyFileToNewWorkspace(
+  async copyFileFromWorkspaceToWorkspace(
     fromWorkspaceId: string,
     fromPath: string,
     toWorkspaceId: string,
@@ -88,9 +88,7 @@ export class FileService {
     const toWorkspaceFolderPath = `workspace-${toWorkspaceId}`;
     const fromFilename = basename(fromPath);
 
-    const ext = fromFilename.split('.')?.[1];
-    const id = uuidV4();
-    const toFilename = `${id}${ext ? `.${ext}` : ''}`;
+    const toFilename = uuidV4() + extname(fromFilename);
 
     await this.fileStorageService.copy({
       from: {
