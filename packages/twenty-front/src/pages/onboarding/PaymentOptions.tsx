@@ -1,21 +1,24 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Title } from '@/auth/components/Title';
+import { useAuth } from '@/auth/hooks/useAuth';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { MainButton } from 'twenty-ui/input';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useRecoilState } from 'recoil';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { selectedPlanState } from '~/pages/onboarding/Plans';
+import { MainButton } from 'twenty-ui/input';
+import { ClickToActionLink } from 'twenty-ui/navigation';
 import { z } from 'zod';
 import {
-  REACT_APP_STRIPE_PUBLISHABLE_KEY,
   REACT_APP_SERVER_BASE_URL,
+  REACT_APP_STRIPE_PUBLISHABLE_KEY,
 } from '~/config';
+import { Plan, selectedPlanState } from '~/pages/onboarding/Plans';
 
 const paymentOptions = [
   {
@@ -98,6 +101,9 @@ const StyledFooterContainer = styled.div`
 
 export const PaymentOptions = () => {
   const { t } = useLingui();
+  const { signOut } = useAuth();
+  const { openModal } = useModal();
+
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { enqueueSnackBar } = useSnackBar();
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
@@ -113,10 +119,6 @@ export const PaymentOptions = () => {
   // eslint-disable-next-line @nx/workspace-matching-state-variable
   const [selectedPlanId] = useRecoilState(selectedPlanState);
 
-  console.log('plano em payment', selectedPlanId);
-
-  console.log('price', selectedPlanId.price);
-
   const stripePaymentMethod = async () => {
     const response = await fetch(
       `${REACT_APP_SERVER_BASE_URL}/stripe/create-checkout-session`,
@@ -126,7 +128,7 @@ export const PaymentOptions = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: selectedPlanId.price,
+          amount: (selectedPlanId as Plan).price,
           currency: 'brl',
           success_url: `${window.location.origin}/payment-required/payment-success`,
           cancel_url: `${window.location.origin}/plan-required`,
@@ -191,8 +193,16 @@ export const PaymentOptions = () => {
     }
   };
 
+  const PAYMENT_OPTIONS_MODAL_ID = 'payment-options-modal';
+
+  openModal(PAYMENT_OPTIONS_MODAL_ID);
+
   return (
-    <Modal size="large" className="custom-modal">
+    <Modal
+      size="large"
+      className="custom-modal"
+      modalId={PAYMENT_OPTIONS_MODAL_ID}
+    >
       <style>{`
         .custom-modal {
           width: 70% !important;
@@ -245,7 +255,7 @@ export const PaymentOptions = () => {
         </StyledButtonContainer>
 
         <StyledFooterContainer>
-          <p>Log out</p>
+          <ClickToActionLink onClick={signOut}>{t`Log out`}</ClickToActionLink>
           <p>.</p>
           <p>Book a Call</p>
         </StyledFooterContainer>
