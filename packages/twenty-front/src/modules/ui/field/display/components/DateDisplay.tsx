@@ -8,15 +8,14 @@ type DateDisplayProps = {
   value: string | null | undefined;
   dateFieldSettings?: FieldDateMetadataSettings;
 };
-
 export const DateDisplay = ({ value, dateFieldSettings }: DateDisplayProps) => {
-  const { dateFormat, timeZone } = useContext(UserContext);
-
+  const { dateFormat, dateFnsLocale } = useContext(UserContext);
   const formattedDate = formatDateString({
     value,
-    timeZone,
+    timeZone: 'UTC', // Needed because we have db-stored date (yyyy-mm-dd) is converted to UTC dateTime by TypeORM
     dateFormat,
     dateFieldSettings,
+    locale: dateFnsLocale,
   });
 
   return <EllipsisDisplay>{formattedDate}</EllipsisDisplay>;
