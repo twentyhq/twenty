@@ -1,5 +1,6 @@
 import { EachTestingContext } from 'twenty-shared/testing';
-import { isSnakeCaseString } from '../is-snake-case-string';
+
+import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
 
 type IsSnakeCaseStringTestCase = EachTestingContext<{
   input: string;

@@ -61,6 +61,7 @@ describe('Field metadata select creation tests group', () => {
         data.createOneField.options;
 
       const optionsToCompare = expectedOptions ?? options;
+
       expect(errors).toBeUndefined();
       expect(createdOptions.length).toBe(optionsToCompare.length);
       createdOptions.forEach((option) => expect(option.id).toBeDefined());

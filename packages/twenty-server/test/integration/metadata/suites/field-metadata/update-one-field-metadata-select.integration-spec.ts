@@ -5,11 +5,11 @@ import {
   LISTING_NAME_PLURAL,
   LISTING_NAME_SINGULAR,
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 const { failingTestCases, successfulTestCases } =
   UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES;
@@ -19,7 +19,7 @@ describe('Field metadata select update tests group', () => {
   let createdFieldMetadata: string;
 
   beforeEach(async () => {
-    const { data, errors } = await createOneObjectMetadata({
+    const { data } = await createOneObjectMetadata({
       input: {
         labelSingular: LISTING_NAME_SINGULAR,
         labelPlural: LISTING_NAME_PLURAL,
@@ -85,6 +85,7 @@ describe('Field metadata select update tests group', () => {
         data.updateOneField.options;
 
       const optionsToCompare = expectedOptions ?? options;
+
       expect(errors).toBeUndefined();
       expect(updatedOptions.length).toBe(optionsToCompare.length);
       updatedOptions.forEach((option) => expect(option.id).toBeDefined());
