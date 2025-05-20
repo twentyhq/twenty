@@ -64,7 +64,7 @@ const CancelSubscriptionButton = () => {
         <div>
                 <StyledSettingsBillingButton>
                     <IconCancel size={15} />
-                    <span style={{color: #FF0000,}}>Cancel plan</span>
+                    <span>Cancel plan</span>
                 </StyledSettingsBillingButton>
         </div>
     );
