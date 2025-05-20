@@ -5,6 +5,8 @@ import { Key } from 'ts-key-enum';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
@@ -68,7 +70,6 @@ export type DialogProps = React.ComponentPropsWithoutRef<typeof motion.div> & {
   title?: string;
   message?: string;
   buttons?: DialogButtonOptions[];
-  allowDismiss?: boolean;
   children?: React.ReactNode;
   className?: string;
   onClose?: () => void;
@@ -78,7 +79,6 @@ export const Dialog = ({
   title,
   message,
   buttons = [],
-  allowDismiss = true,
   children,
   className,
   onClose,
@@ -120,24 +120,29 @@ export const Dialog = ({
     [],
   );
 
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useListenClickOutside({
+    refs: [dialogRef],
+    callback: () => {
+      onClose?.();
+    },
+    listenerId: DialogHotkeyScope.Dialog,
+  });
+
   return (
     <StyledDialogOverlay
       variants={dialogVariants}
       initial="closed"
       animate="open"
       exit="closed"
-      onClick={(e) => {
-        if (allowDismiss) {
-          e.stopPropagation();
-          onClose?.();
-        }
-      }}
       className={className}
     >
       <StyledDialogContainer
         variants={containerVariants}
         transition={{ damping: 15, stiffness: 100 }}
         id={id}
+        ref={dialogRef}
       >
         {title && <StyledDialogTitle>{title}</StyledDialogTitle>}
         {message && <StyledDialogMessage>{message}</StyledDialogMessage>}
@@ -145,7 +150,6 @@ export const Dialog = ({
         {buttons.map(({ accent, onClick, role, title: key, variant }) => (
           <StyledDialogButton
             onClick={(event) => {
-              event.stopPropagation();
               onClose?.();
               onClick?.(event);
             }}
