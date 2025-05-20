@@ -1,5 +1,6 @@
 import { RefObject, useState } from 'react';
 
+import { isDefined } from 'twenty-shared/utils';
 import {
     AUTO_SCROLL_EDGE_THRESHOLD_PX,
     AUTO_SCROLL_MAX_SPEED_PX,
@@ -57,7 +58,7 @@ export const useDragSelectWithAutoScroll = ({
 
     let animationFrameId: number | null = null;
     const scrollTheLad = () => {
-      if (scrollWrapper === null) {
+      if (!isDefined(scrollWrapper)) {
         animationFrameId = requestAnimationFrame(scrollTheLad);
         return;
       }
@@ -112,7 +113,7 @@ export const useDragSelectWithAutoScroll = ({
             )
           : undefined;
 
-      const shouldScroll = top !== undefined || left !== undefined;
+      const shouldScroll = isDefined(top) || isDefined(left);
 
       if (shouldScroll) {
         scrollWrapper.scrollBy({
@@ -129,7 +130,7 @@ export const useDragSelectWithAutoScroll = ({
 
     const cleanup = () => {
       document.removeEventListener('mousemove', handleMouseMove);
-      if (animationFrameId !== null) {
+      if (isDefined(animationFrameId)) {
         cancelAnimationFrame(animationFrameId);
       }
 
