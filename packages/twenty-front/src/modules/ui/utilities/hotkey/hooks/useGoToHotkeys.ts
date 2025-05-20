@@ -1,7 +1,7 @@
 import { Keys } from 'react-hotkeys-hook/dist/types';
 import { useNavigate } from 'react-router-dom';
 
-import { useSequenceGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useSequenceGlobalHotkeys';
+import { useGlobalHotkeysSequence } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeysSequence';
 import { AppHotkeyScope } from '../types/AppHotkeyScope';
 
 type GoToHotkeysProps = {
@@ -17,7 +17,7 @@ export const useGoToHotkeys = ({
 }: GoToHotkeysProps) => {
   const navigate = useNavigate();
 
-  useSequenceGlobalHotkeys(
+  useGlobalHotkeysSequence(
     'g',
     key,
     () => {

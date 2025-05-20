@@ -7,7 +7,7 @@ import { pendingHotkeyState } from '../states/internal/pendingHotkeysState';
 import { useGlobalHotkeysCallback } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeysCallback';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useSequenceGlobalHotkeys = (
+export const useGlobalHotkeysSequence = (
   firstKey: Keys,
   secondKey: Keys,
   sequenceCallback: () => void,
