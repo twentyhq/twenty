@@ -77,7 +77,12 @@ export class MicrosoftGetMessageListService {
       .headers({
         Prefer: `odata.maxpagesize=${MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT}, IdType="ImmutableId"`,
       })
-      .get();
+      .get()
+      .catch((error) => {
+        this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(
+          error,
+        );
+      });
 
     const callback: PageIteratorCallback = (data) => {
       messageExternalIds.push(data.id);
@@ -195,7 +200,12 @@ export class MicrosoftGetMessageListService {
       .headers({
         Prefer: `odata.maxpagesize=${MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT}, IdType="ImmutableId"`,
       })
-      .get();
+      .get()
+      .catch((error) => {
+        this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(
+          error,
+        );
+      });
 
     const callback: PageIteratorCallback = (data) => {
       if (data['@removed']) {

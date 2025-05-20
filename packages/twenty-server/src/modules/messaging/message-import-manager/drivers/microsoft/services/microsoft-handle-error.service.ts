@@ -31,6 +31,24 @@ export class MicrosoftHandleErrorService {
       );
     }
 
+    if (error.statusCode === 404) {
+      if (
+        error.message.includes(
+          'The mailbox is either inactive, soft-deleted, or is hosted on-premise.',
+        )
+      ) {
+        throw new MessageImportDriverException(
+          `Disabled, deleted, inactive or no licence Microsoft account - code:${error.code}`,
+          MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        );
+      } else {
+        throw new MessageImportDriverException(
+          `Not found - code:${error.code}`,
+          MessageImportDriverExceptionCode.NOT_FOUND,
+        );
+      }
+    }
+
     if (error.statusCode === 429) {
       throw new MessageImportDriverException(
         `Microsoft Graph API ${error.code} ${error.statusCode} error: ${error.message}`,
