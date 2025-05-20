@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { In } from 'typeorm';
 
@@ -20,10 +20,6 @@ import {
 
 @Injectable()
 export class MessagingPartialMessageListFetchService {
-  private readonly logger = new Logger(
-    MessagingPartialMessageListFetchService.name,
-  );
-
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
@@ -68,30 +64,13 @@ export class MessagingPartialMessageListFetchService {
         const {
           messageExternalIds,
           messageExternalIdsToDelete,
-          previousSyncCursor,
           nextSyncCursor,
           folderId,
         } = partialMessageList;
 
-        const isPartialImportFinished = this.isPartialImportFinished(
-          previousSyncCursor,
-          nextSyncCursor,
-        );
-
-        if (isPartialImportFinished) {
-          this.logger.log(
-            `Partial message list import done on message channel ${messageChannel.id} in folder ${folderId} for workspace ${workspaceId} and account ${connectedAccount.id}`,
-          );
-          continue;
-        }
-
         await this.cacheStorage.setAdd(
           `messages-to-import:${workspaceId}:${messageChannel.id}`,
           messageExternalIds,
-        );
-
-        this.logger.log(
-          `Added ${messageExternalIds.length} messages to import for workspace ${workspaceId} and account ${connectedAccount.id}`,
         );
 
         const messageChannelMessageAssociationRepository =
@@ -110,10 +89,6 @@ export class MessagingPartialMessageListFetchService {
           );
         }
 
-        this.logger.log(
-          `Deleted ${messageExternalIdsToDelete.length} messages for workspace ${workspaceId} and account ${connectedAccount.id}`,
-        );
-
         await this.messagingCursorService.updateCursor(
           messageChannel,
           nextSyncCursor,
@@ -130,10 +105,6 @@ export class MessagingPartialMessageListFetchService {
       );
 
       if (isPartialImportFinishedForAllFolders) {
-        this.logger.log(
-          `Partial message list import done on message channel ${messageChannel.id} entirely for workspace ${workspaceId} and account ${connectedAccount.id}`,
-        );
-
         await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
           [messageChannel.id],
         );

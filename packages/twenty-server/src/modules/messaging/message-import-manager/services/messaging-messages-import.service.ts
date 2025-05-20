@@ -68,10 +68,6 @@ export class MessagingMessagesImportService {
         messageChannelId: messageChannel.id,
       });
 
-      this.logger.log(
-        `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} starting...`,
-      );
-
       await this.messageChannelSyncStatusService.markAsMessagesImportOngoing([
         messageChannel.id,
       ]);
@@ -104,7 +100,7 @@ export class MessagingMessagesImportService {
             };
           default:
             this.logger.error(
-              `Error (${error.code} refreshing access token for account ${connectedAccount.id}: ${error.message}`,
+              `Error (${error.code}) refreshing access token for account ${connectedAccount.id}: ${error.message}`,
             );
             throw error;
         }

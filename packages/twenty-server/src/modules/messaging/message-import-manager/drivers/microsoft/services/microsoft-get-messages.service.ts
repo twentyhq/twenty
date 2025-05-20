@@ -28,10 +28,7 @@ export class MicrosoftGetMessagesService {
   async getMessages(
     messageIds: string[],
     connectedAccount: ConnectedAccountType,
-    workspaceId: string,
   ): Promise<MessageWithParticipants[]> {
-    const startTime = Date.now();
-
     try {
       const { batchResponses } =
         await this.microsoftFetchByBatchService.fetchAllByBatches(
@@ -42,14 +39,6 @@ export class MicrosoftGetMessagesService {
       const messages = this.formatBatchResponsesAsMessages(
         batchResponses,
         connectedAccount,
-      );
-
-      const endTime = Date.now();
-
-      this.logger.log(
-        `Messaging import for workspace ${workspaceId} and account ${
-          connectedAccount.id
-        } fetched ${messages.length} messages in ${endTime - startTime}ms`,
       );
 
       return messages;
