@@ -1,7 +1,10 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { IsLowercase } from 'class-validator';
 import {
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -45,8 +48,15 @@ export class User {
   @Column({ default: '' })
   lastName: string;
 
+  @BeforeInsert()
+  @BeforeUpdate()
+  formatEmail?() {
+    this.email = this.email.toLowerCase();
+  }
+
   @Field()
   @Column()
+  @IsLowercase()
   email: string;
 
   @Field({ nullable: true })
