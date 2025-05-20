@@ -51,20 +51,22 @@ export const useModal = () => {
           true,
         );
 
+        const customScopes = {
+          goto: false,
+          commandMenu: false,
+          commandMenuOpen: false,
+          keyboardShortcutMenu: false,
+        };
+
         pushFocusIdentifier({
           focusId: modalId,
           component: {
             type: FocusComponentType.MODAL,
             instanceId: modalId,
           },
+          customScopes,
           hotkeyScope: {
             scope: ModalHotkeyScope.ModalFocus,
-            customScopes: {
-              goto: false,
-              commandMenu: false,
-              commandMenuOpen: false,
-              keyboardShortcutMenu: false,
-            },
           },
           memoizeKey: modalId,
         });
