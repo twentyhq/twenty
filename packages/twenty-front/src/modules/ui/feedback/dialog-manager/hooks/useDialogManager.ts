@@ -22,13 +22,20 @@ export const useDialogManager = (props?: useDialogManagerProps) => {
   const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
   const closeDialog = useRecoilCallback(
-    ({ set }) =>
+    ({ set, snapshot }) =>
       (id: string) => {
+        const prevState = snapshot
+          .getLoadable(dialogInternalScopedState({ scopeId: scopeId }))
+          .getValue();
+
         set(dialogInternalScopedState({ scopeId: scopeId }), (prevState) => ({
           ...prevState,
           queue: prevState.queue.filter((snackBar) => snackBar.id !== id),
         }));
-        goBackToPreviousHotkeyScope(DIALOG_MANAGER_HOTKEY_SCOPE_MEMOIZE_KEY);
+
+        if (prevState.queue.length === 0) {
+          goBackToPreviousHotkeyScope(DIALOG_MANAGER_HOTKEY_SCOPE_MEMOIZE_KEY);
+        }
       },
     [goBackToPreviousHotkeyScope, scopeId],
   );

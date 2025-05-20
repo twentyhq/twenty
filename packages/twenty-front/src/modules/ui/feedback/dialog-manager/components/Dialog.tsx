@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useCallback } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -85,10 +84,6 @@ export const Dialog = ({
   onClose,
   id,
 }: DialogProps) => {
-  const closeSnackbar = useCallback(() => {
-    onClose && onClose();
-  }, [onClose]);
-
   const dialogVariants = {
     open: { opacity: 1 },
     closed: { opacity: 0 },
@@ -108,7 +103,7 @@ export const Dialog = ({
 
       if (isDefined(confirmButton)) {
         confirmButton?.onClick?.(event);
-        closeSnackbar();
+        onClose?.();
       }
     },
     DialogHotkeyScope.Dialog,
@@ -119,7 +114,7 @@ export const Dialog = ({
     Key.Escape,
     (event: KeyboardEvent) => {
       event.preventDefault();
-      closeSnackbar();
+      onClose?.();
     },
     DialogHotkeyScope.Dialog,
     [],
@@ -134,7 +129,7 @@ export const Dialog = ({
       onClick={(e) => {
         if (allowDismiss) {
           e.stopPropagation();
-          closeSnackbar();
+          onClose?.();
         }
       }}
       className={className}
@@ -150,8 +145,9 @@ export const Dialog = ({
         {buttons.map(({ accent, onClick, role, title: key, variant }) => (
           <StyledDialogButton
             onClick={(event) => {
+              event.stopPropagation();
+              onClose?.();
               onClick?.(event);
-              closeSnackbar();
             }}
             fullWidth={true}
             variant={variant ?? 'secondary'}
