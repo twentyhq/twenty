@@ -17,7 +17,7 @@ export const SettingsDataModelOverviewEffect = ({
   setNodes,
 }: SettingsDataModelOverviewEffectProps) => {
   const theme = useTheme();
-  const { activeObjectNonSystemMetadataItems: items } =
+  const { activeNonSystemObjectMetadataItems: items } =
     useFilteredObjectMetadataItems();
 
   useEffect(() => {

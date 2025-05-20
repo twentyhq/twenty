@@ -27,11 +27,11 @@ export const WorkflowFormFieldSettingsRecordPicker = ({
 }: WorkflowFormFieldSettingsRecordPickerProps) => {
   const { getIcon } = useIcons();
 
-  const { activeObjectNonSystemMetadataItems } =
+  const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
 
   const availableMetadata: Array<SelectOption<string>> =
-    activeObjectNonSystemMetadataItems.map((item) => ({
+    activeNonSystemObjectMetadataItems.map((item) => ({
       Icon: getIcon(item.icon),
       label: item.labelPlural,
       value: item.nameSingular,
@@ -51,7 +51,7 @@ export const WorkflowFormFieldSettingsRecordPicker = ({
             onChange({
               ...field,
               placeholder: `Select a ${
-                activeObjectNonSystemMetadataItems.find(
+                activeNonSystemObjectMetadataItems.find(
                   (item) => item.nameSingular === updatedObjectName,
                 )?.labelSingular || 'record'
               }`,

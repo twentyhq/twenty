@@ -63,11 +63,11 @@ export const WorkflowEditActionUpdateRecord = ({
 }: WorkflowEditActionUpdateRecordProps) => {
   const { getIcon } = useIcons();
 
-  const { activeObjectNonSystemMetadataItems } =
+  const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
 
   const availableMetadata: Array<SelectOption<string>> =
-    activeObjectNonSystemMetadataItems.map((item) => ({
+    activeNonSystemObjectMetadataItems.map((item) => ({
       Icon: getIcon(item.icon),
       label: item.labelPlural,
       value: item.nameSingular,
@@ -95,7 +95,7 @@ export const WorkflowEditActionUpdateRecord = ({
     saveAction(newFormData);
   };
 
-  const selectedObjectMetadataItem = activeObjectNonSystemMetadataItems.find(
+    const selectedObjectMetadataItem = activeNonSystemObjectMetadataItems.find(
     (item) => item.nameSingular === formData.objectName,
   );
 

@@ -37,11 +37,11 @@ export const WorkflowEditActionFindRecords = ({
 }: WorkflowEditActionFindRecordsProps) => {
   const { getIcon } = useIcons();
 
-  const { activeObjectNonSystemMetadataItems } =
+  const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
 
   const availableMetadata: Array<SelectOption<string>> =
-    activeObjectNonSystemMetadataItems.map((item) => ({
+    activeNonSystemObjectMetadataItems.map((item) => ({
       Icon: getIcon(item.icon),
       label: item.labelPlural,
       value: item.nameSingular,
@@ -54,7 +54,7 @@ export const WorkflowEditActionFindRecords = ({
   const isFormDisabled = actionOptions.readonly;
 
   const selectedObjectMetadataItemNameSingular =
-    activeObjectNonSystemMetadataItems.find(
+    activeNonSystemObjectMetadataItems.find(
       (item) => item.nameSingular === formData.objectName,
     )?.nameSingular ?? '';
 

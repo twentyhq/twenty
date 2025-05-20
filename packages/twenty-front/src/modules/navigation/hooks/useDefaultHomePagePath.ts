@@ -12,7 +12,7 @@ import { getAppPath } from '~/utils/navigation/getAppPath';
 export const useDefaultHomePagePath = () => {
   const currentUser = useRecoilValue(currentUserState);
   const {
-    activeObjectNonSystemMetadataItems,
+    activeNonSystemObjectMetadataItems,
     alphaSortedActiveNonSystemObjectMetadataItems,
   } = useFilteredObjectMetadataItems();
   const prefetchViews = useRecoilValue(prefetchViewsState);
@@ -22,11 +22,11 @@ export const useDefaultHomePagePath = () => {
 
   const getActiveObjectMetadataItemMatchingId = useCallback(
     (objectMetadataId: string) => {
-      return activeObjectNonSystemMetadataItems.find(
+      return activeNonSystemObjectMetadataItems.find(
         (item) => item.id === objectMetadataId,
       );
     },
-    [activeObjectNonSystemMetadataItems],
+    [activeNonSystemObjectMetadataItems],
   );
 
   const getFirstView = useCallback(

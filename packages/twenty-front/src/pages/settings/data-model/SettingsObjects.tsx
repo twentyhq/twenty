@@ -53,22 +53,22 @@ export const SettingsObjects = () => {
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   const {
-    activeObjectNonSystemMetadataItems,
-    inactiveObjectNonSystemMetadataItems,
+    activeNonSystemObjectMetadataItems,
+    inactiveNonSystemObjectMetadataItems,
   } = useFilteredObjectMetadataItems();
 
   const { totalCountByObjectMetadataItemNamePlural } = useCombinedGetTotalCount(
     {
       objectMetadataItems: [
-        ...activeObjectNonSystemMetadataItems,
-        ...inactiveObjectNonSystemMetadataItems,
+        ...activeNonSystemObjectMetadataItems,
+        ...inactiveNonSystemObjectMetadataItems,
       ],
     },
   );
 
   const activeObjectSettingsArray = useMemo(
     () =>
-      activeObjectNonSystemMetadataItems.map(
+      activeNonSystemObjectMetadataItems.map(
         (objectMetadataItem) =>
           ({
             objectMetadataItem,
@@ -84,14 +84,14 @@ export const SettingsObjects = () => {
           }) satisfies SettingsObjectTableItem,
       ),
     [
-      activeObjectNonSystemMetadataItems,
+      activeNonSystemObjectMetadataItems,
       totalCountByObjectMetadataItemNamePlural,
     ],
   );
 
   const inactiveObjectSettingsArray = useMemo(
     () =>
-      inactiveObjectNonSystemMetadataItems.map(
+      inactiveNonSystemObjectMetadataItems.map(
         (objectMetadataItem) =>
           ({
             objectMetadataItem,
@@ -107,7 +107,7 @@ export const SettingsObjects = () => {
           }) satisfies SettingsObjectTableItem,
       ),
     [
-      inactiveObjectNonSystemMetadataItems,
+      inactiveNonSystemObjectMetadataItems,
       totalCountByObjectMetadataItemNamePlural,
     ],
   );
@@ -219,7 +219,7 @@ export const SettingsObjects = () => {
                   )}
                 </TableSection>
               )}
-              {isNonEmptyArray(inactiveObjectNonSystemMetadataItems) && (
+              {isNonEmptyArray(inactiveNonSystemObjectMetadataItems) && (
                 <TableSection title={t`Inactive`}>
                   {filteredInactiveObjectSettingsItems.map(
                     (objectSettingsItem) => (

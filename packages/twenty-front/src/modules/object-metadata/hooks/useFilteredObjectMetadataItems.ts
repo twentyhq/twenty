@@ -24,7 +24,7 @@ export const useFilteredObjectMetadataItems = () => {
 
   // should naming include that its filtering out workflow related items?
   // but it will be too long
-  const activeObjectNonSystemMetadataItems = useMemo(
+  const activeNonSystemObjectMetadataItems = useMemo(
     () =>
       objectMetadataItems.filter(
         ({ isActive, isSystem, nameSingular }) =>
@@ -43,7 +43,7 @@ export const useFilteredObjectMetadataItems = () => {
   );
 
   const alphaSortedActiveNonSystemObjectMetadataItems =
-    activeObjectNonSystemMetadataItems.sort((a, b) => {
+    activeNonSystemObjectMetadataItems.sort((a, b) => {
       if (a.nameSingular < b.nameSingular) {
         return -1;
       }
@@ -53,12 +53,12 @@ export const useFilteredObjectMetadataItems = () => {
       return 0;
     });
 
-  const inactiveObjectNonSystemMetadataItems = objectMetadataItems.filter(
+  const inactiveNonSystemObjectMetadataItems = objectMetadataItems.filter(
     ({ isActive, isSystem }) => !isActive && !isSystem,
   );
 
   const findActiveObjectMetadataItemByNamePlural = (namePlural: string) =>
-    activeObjectNonSystemMetadataItems.find(
+    activeNonSystemObjectMetadataItems.find(
       (activeObjectMetadataItem) =>
         activeObjectMetadataItem.namePlural === namePlural,
     );
@@ -74,12 +74,12 @@ export const useFilteredObjectMetadataItems = () => {
     );
 
   return {
-    activeObjectNonSystemMetadataItems,
+    activeNonSystemObjectMetadataItems,
     activeObjectMetadataItems,
     findObjectMetadataItemById,
     findObjectMetadataItemByNamePlural,
     findActiveObjectMetadataItemByNamePlural,
-    inactiveObjectNonSystemMetadataItems,
+    inactiveNonSystemObjectMetadataItems,
     objectMetadataItems,
     alphaSortedActiveNonSystemObjectMetadataItems,
   };

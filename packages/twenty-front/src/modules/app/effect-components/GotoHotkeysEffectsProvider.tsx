@@ -8,7 +8,7 @@ import { useLocation } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
 export const GotoHotkeysEffectsProvider = () => {
-  const { activeObjectNonSystemMetadataItems } =
+  const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
 
   const location = useLocation();
@@ -27,7 +27,7 @@ export const GotoHotkeysEffectsProvider = () => {
     ),
   });
 
-  return activeObjectNonSystemMetadataItems.map((objectMetadataItem) => {
+  return activeNonSystemObjectMetadataItems.map((objectMetadataItem) => {
     if (!objectMetadataItem.shortcut) {
       return null;
     }

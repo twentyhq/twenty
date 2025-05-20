@@ -7,10 +7,10 @@ import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 
 export const getManualTriggerDefaultSettings = ({
   availability,
-  activeObjectNonSystemMetadataItems,
+  activeNonSystemObjectMetadataItems,
 }: {
   availability: WorkflowManualTriggerAvailability;
-  activeObjectNonSystemMetadataItems: ObjectMetadataItem[];
+  activeNonSystemObjectMetadataItems: ObjectMetadataItem[];
 }): WorkflowManualTriggerSettings => {
   switch (availability) {
     case 'EVERYWHERE': {
@@ -21,7 +21,7 @@ export const getManualTriggerDefaultSettings = ({
     }
     case 'WHEN_RECORD_SELECTED': {
       return {
-        objectType: activeObjectNonSystemMetadataItems[0].nameSingular,
+        objectType: activeNonSystemObjectMetadataItems[0].nameSingular,
         outputSchema: {},
       };
     }

@@ -10,10 +10,10 @@ import { isDefined } from 'twenty-shared/utils';
 export const RemoteNavigationDrawerSection = () => {
   const currentUser = useRecoilValue(currentUserState);
 
-  const { activeObjectNonSystemMetadataItems } =
+  const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const filteredActiveObjectNonSystemMetadataItems =
-    activeObjectNonSystemMetadataItems.filter((item) => item.isRemote);
+  const filteredActiveNonSystemObjectMetadataItems =
+    activeNonSystemObjectMetadataItems.filter((item) => item.isRemote);
   const loading = useIsPrefetchLoading();
 
   if (loading && isDefined(currentUser)) {
@@ -23,7 +23,7 @@ export const RemoteNavigationDrawerSection = () => {
   return (
     <NavigationDrawerSectionForObjectMetadataItems
       sectionTitle={'Remote'}
-      objectMetadataItems={filteredActiveObjectNonSystemMetadataItems}
+      objectMetadataItems={filteredActiveNonSystemObjectMetadataItems}
       isRemote={true}
     />
   );
