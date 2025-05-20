@@ -14,8 +14,6 @@ const StyledTableWithPointerEvents = styled(StyledTable)<{
   & > * {
     pointer-events: ${({ isDragging }) => (isDragging ? 'none' : 'auto')};
   }
-  min-height: ${({ isDragging }) => (isDragging ? '100%' : 'auto')};
-  height: ${({ isDragging }) => (isDragging ? '100%' : 'auto')};
 `;
 
 export interface RecordTableContentProps {

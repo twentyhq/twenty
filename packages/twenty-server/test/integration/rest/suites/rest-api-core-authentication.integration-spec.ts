@@ -7,7 +7,7 @@ describe('Core REST API Authentication', () => {
       path: `/people`,
       bearer: '',
     })
-      .expect(400)
+      .expect(403)
       .expect((res) => {
         expect(res.body.error).toBe('FORBIDDEN_EXCEPTION');
         expect(res.body.messages[0]).toBe('Missing authentication token');

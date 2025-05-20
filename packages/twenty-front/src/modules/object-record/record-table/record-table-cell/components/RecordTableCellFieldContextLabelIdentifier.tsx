@@ -48,6 +48,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
         isLabelIdentifierCompact,
         displayedMaxRows: 1,
         isReadOnly: isFieldReadOnly,
+        maxWidth: columnDefinition.size,
       }}
     >
       {children}

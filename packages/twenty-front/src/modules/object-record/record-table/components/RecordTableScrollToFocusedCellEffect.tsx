@@ -1,4 +1,5 @@
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useEffect } from 'react';
@@ -7,6 +8,11 @@ import { isDefined } from 'twenty-shared/utils';
 export const RecordTableScrollToFocusedCellEffect = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
+  const isRecordTableCellFocusActive = useRecoilComponentValueV2(
+    isRecordTableCellFocusActiveComponentState,
+    recordTableId,
+  );
+
   const focusPosition = useRecoilComponentValueV2(
     recordTableFocusPositionComponentState,
     recordTableId,
@@ -14,6 +20,10 @@ export const RecordTableScrollToFocusedCellEffect = () => {
 
   // Handle cell focus
   useEffect(() => {
+    if (!isRecordTableCellFocusActive) {
+      return;
+    }
+
     if (!focusPosition) {
       return;
     }
@@ -52,7 +62,7 @@ export const RecordTableScrollToFocusedCellEffect = () => {
         focusElement.style.scrollMarginBottom = '';
       }
     };
-  }, [focusPosition]);
+  }, [focusPosition, isRecordTableCellFocusActive]);
 
   return null;
 };

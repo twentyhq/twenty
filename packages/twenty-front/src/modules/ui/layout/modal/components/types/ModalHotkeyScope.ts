@@ -1,3 +1,3 @@
 export enum ModalHotkeyScope {
-  Default = 'default',
+  ModalFocus = 'modal-focus',
 }
