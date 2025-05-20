@@ -1,8 +1,8 @@
 import { RefObject, useEffect, useState } from 'react';
 
 import {
-    AUTO_SCROLL_EDGE_THRESHOLD_PX,
-    AUTO_SCROLL_MAX_SPEED_PX,
+  AUTO_SCROLL_EDGE_THRESHOLD_PX,
+  AUTO_SCROLL_MAX_SPEED_PX,
 } from '../constants/autoScrollParams';
 import { clamp } from '../utils/clamp';
 import { DOMVector } from '../utils/DOMVector';
