@@ -1,11 +1,6 @@
 export const isMicrosoftClientTemporaryError = (body: string): boolean => {
-  const isTemporaryError =
+  return (
     body.includes('Unexpected token < in JSON at position') ||
-    body.includes(`ApplicationThrottled 429 error`);
-
-  if (isTemporaryError) {
-    return true;
-  }
-
-  return false;
+    body.includes('ApplicationThrottled 429 error')
+  );
 };
