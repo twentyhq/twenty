@@ -1,10 +1,9 @@
 import { Options, useHotkeys } from 'react-hotkeys-hook';
 import { Keys } from 'react-hotkeys-hook/dist/types';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { pendingHotkeyState } from '../states/internal/pendingHotkeysState';
 
-import { currentFocusIdentifierSelector } from '@/ui/utilities/focus/states/currentFocusIdentifierSelector';
 import { isDefined } from 'twenty-shared/utils';
 import { useScopedHotkeyCallback } from './useScopedHotkeyCallback';
 
@@ -24,15 +23,9 @@ export const useSequenceHotkeys = (
 
   const callScopedHotkeyCallback = useScopedHotkeyCallback();
 
-  const currentFocusIdentifier = useRecoilValue(currentFocusIdentifierSelector);
-
   useHotkeys(
     firstKey,
     (keyboardEvent, hotkeysEvent) => {
-      if (isDefined(currentFocusIdentifier)) {
-        return;
-      }
-
       callScopedHotkeyCallback({
         keyboardEvent,
         hotkeysEvent,
@@ -47,16 +40,12 @@ export const useSequenceHotkeys = (
       enableOnContentEditable: options.enableOnContentEditable,
       enableOnFormTags: options.enableOnFormTags,
     },
-    [setPendingHotkey, scope, currentFocusIdentifier],
+    [setPendingHotkey, scope],
   );
 
   useHotkeys(
     secondKey,
     (keyboardEvent, hotkeysEvent) => {
-      if (isDefined(currentFocusIdentifier)) {
-        return;
-      }
-
       callScopedHotkeyCallback({
         keyboardEvent,
         hotkeysEvent,
@@ -83,6 +72,6 @@ export const useSequenceHotkeys = (
       enableOnContentEditable: options.enableOnContentEditable,
       enableOnFormTags: options.enableOnFormTags,
     },
-    [pendingHotkey, setPendingHotkey, scope, currentFocusIdentifier, ...deps],
+    [pendingHotkey, setPendingHotkey, scope, ...deps],
   );
 };

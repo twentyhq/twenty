@@ -1,8 +1,7 @@
 import { useHotkeys } from 'react-hotkeys-hook';
 import { HotkeyCallback, Keys, Options } from 'react-hotkeys-hook/dist/types';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
-import { currentFocusIdentifierSelector } from '@/ui/utilities/focus/states/currentFocusIdentifierSelector';
 import { isDefined } from 'twenty-shared/utils';
 import { pendingHotkeyState } from '../states/internal/pendingHotkeysState';
 import { useScopedHotkeyCallback } from './useScopedHotkeyCallback';
@@ -36,15 +35,9 @@ export const useScopedHotkeys = (
     ? options.ignoreModifiers === true
     : false;
 
-  const currentFocusIdentifier = useRecoilValue(currentFocusIdentifierSelector);
-
   return useHotkeys(
     keys,
     (keyboardEvent, hotkeysEvent) => {
-      if (isDefined(currentFocusIdentifier)) {
-        return;
-      }
-
       callScopedHotkeyCallback({
         keyboardEvent,
         hotkeysEvent,
@@ -64,6 +57,6 @@ export const useScopedHotkeys = (
       enableOnFormTags,
       ignoreModifiers,
     },
-    [currentFocusIdentifier, ...(dependencies ?? [])],
+    [...(dependencies ?? [])],
   );
 };
