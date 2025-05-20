@@ -1,3 +1,4 @@
+import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_CLASS_NAME } from '@/ui/layout/modal/constants/ModalClickOutsideListenerExcludedClassName';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/focus/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -24,6 +25,9 @@ export const ModalHotkeysAndClickOutsideEffect = ({
       onEnter?.();
     },
     modalId,
+    {
+      scope: ModalHotkeyScope.ModalFocus,
+    },
   );
 
   useHotkeysOnFocusedElement(
@@ -34,6 +38,9 @@ export const ModalHotkeysAndClickOutsideEffect = ({
       }
     },
     modalId,
+    {
+      scope: ModalHotkeyScope.ModalFocus,
+    },
   );
 
   useListenClickOutside({

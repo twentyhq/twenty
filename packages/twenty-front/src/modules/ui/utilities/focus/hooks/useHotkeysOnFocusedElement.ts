@@ -1,5 +1,6 @@
-import { useScopedHotkeyCallback } from '@/ui/utilities/hotkey/hooks/useScopedHotkeyCallback';
+import { useHotkeysOnFocusedElementCallback } from '@/ui/utilities/focus/hooks/useHotkeysOnFocusedElementCallback';
 import { pendingHotkeyState } from '@/ui/utilities/hotkey/states/internal/pendingHotkeysState';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { HotkeyCallback, Keys, Options } from 'react-hotkeys-hook/dist/types';
 import { useRecoilState } from 'recoil';
@@ -10,13 +11,16 @@ type UseHotkeysOptionsWithoutBuggyOptions = Omit<Options, 'enabled'>;
 export const useHotkeysOnFocusedElement = (
   keys: Keys,
   callback: HotkeyCallback,
-  focusedId: string,
+  focusId: string,
+  // TODO: Remove this once we've migrated hotkey scopes to the new api
+  hotkeyScope: HotkeyScope,
   dependencies?: unknown[],
   options?: UseHotkeysOptionsWithoutBuggyOptions,
 ) => {
   const [pendingHotkey, setPendingHotkey] = useRecoilState(pendingHotkeyState);
 
-  const callScopedHotkeyCallback = useScopedHotkeyCallback(dependencies);
+  const callScopedHotkeyCallback =
+    useHotkeysOnFocusedElementCallback(dependencies);
 
   const enableOnContentEditable = isDefined(options?.enableOnContentEditable)
     ? options.enableOnContentEditable
@@ -47,7 +51,8 @@ export const useHotkeysOnFocusedElement = (
           }
           setPendingHotkey(null);
         },
-        scope: focusedId,
+        focusId,
+        scope: hotkeyScope.scope,
         preventDefault,
       });
     },
