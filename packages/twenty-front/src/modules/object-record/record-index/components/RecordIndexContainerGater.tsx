@@ -90,7 +90,7 @@ export const RecordIndexContainerGater = () => {
                   />
                   <RecordIndexPageHeader />
                   <PageBody>
-                    <StyledIndexContainer>
+                    <StyledIndexContainer className="record-index-container-gater-for-drag-select">
                       <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
                       <RecordIndexContainer />
                     </StyledIndexContainer>

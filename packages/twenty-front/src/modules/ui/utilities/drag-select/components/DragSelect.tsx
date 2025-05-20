@@ -83,7 +83,12 @@ export const DragSelect = ({
         return false;
       }
 
-      if (!selectableAreaRef.current?.contains(target)) {
+      const selectionBoundaryElement =
+        selectableAreaRef.current?.closest(
+          '.record-index-container-gater-for-drag-select',
+        ) ?? selectableAreaRef.current;
+
+      if (!selectionBoundaryElement?.contains(target)) {
         return false;
       }
 
