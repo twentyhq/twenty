@@ -5,7 +5,7 @@ import {
 } from 'react-hotkeys-hook/dist/types';
 import { useRecoilCallback } from 'recoil';
 import { logDebug } from '~/utils/logDebug';
-import { currentFocusIdentifierSelector } from '../states/currentFocusIdentifierSelector';
+import { currentFocusIdSelector } from '../states/currentFocusIdentifierSelector';
 
 export const DEBUG_HOTKEY_SCOPE = false;
 
@@ -31,8 +31,8 @@ export const useHotkeysOnFocusedElementCallback = (
         scope: string;
         preventDefault?: boolean;
       }) => {
-        const currentFocusIdentifier = snapshot
-          .getLoadable(currentFocusIdentifierSelector)
+        const currentFocusId = snapshot
+          .getLoadable(currentFocusIdSelector)
           .getValue();
 
         // TODO: Remove this once we've migrated hotkey scopes to the new api
@@ -41,7 +41,7 @@ export const useHotkeysOnFocusedElementCallback = (
           .getValue();
 
         if (
-          currentFocusIdentifier?.focusId !== focusId ||
+          currentFocusId !== focusId ||
           !currentHotkeyScopes.includes(scope)
         ) {
           if (DEBUG_HOTKEY_SCOPE) {

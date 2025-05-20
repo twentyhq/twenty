@@ -51,22 +51,25 @@ export const useModal = () => {
           true,
         );
 
-        const customScopes = {
-          goto: false,
-          commandMenu: false,
-          commandMenuOpen: false,
-          keyboardShortcutMenu: false,
-        };
-
         pushFocusIdentifier({
           focusId: modalId,
           component: {
             type: FocusComponentType.MODAL,
             instanceId: modalId,
           },
-          customScopes,
+          globalHotkeysConfig: {
+            enableGlobalHotkeysWithModifiers: false,
+            enableConflictingWithKeyboardGlobalHotkeys: false,
+          },
+          // TODO: Remove this once we've migrated hotkey scopes to the new api
           hotkeyScope: {
             scope: ModalHotkeyScope.ModalFocus,
+            customScopes: {
+              goto: false,
+              commandMenu: false,
+              commandMenuOpen: false,
+              keyboardShortcutMenu: false,
+            },
           },
           memoizeKey: modalId,
         });

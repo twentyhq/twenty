@@ -1,15 +1,10 @@
-import { FocusIdentifier } from '@/ui/utilities/focus/types/FocusIdentifier';
 import { selector } from 'recoil';
 import { focusStackState } from './focusStackState';
 
-export const currentFocusIdentifierSelector = selector<
-  FocusIdentifier | undefined
->({
-  key: 'currentFocusIdentifierSelector',
+export const currentFocusIdSelector = selector<string | undefined>({
+  key: 'currentFocusIdSelector',
   get: ({ get }) => {
     const focusStack = get(focusStackState);
-    return focusStack.length > 0
-      ? focusStack.at(-1)?.focusIdentifier
-      : undefined;
+    return focusStack.at(-1)?.focusId;
   },
 });

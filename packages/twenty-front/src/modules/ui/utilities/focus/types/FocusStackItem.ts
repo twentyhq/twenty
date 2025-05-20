@@ -1,7 +1,8 @@
-import { FocusIdentifier } from '@/ui/utilities/focus/types/FocusIdentifier';
-import { CustomHotkeyScopes } from '@/ui/utilities/hotkey/types/CustomHotkeyScope';
+import { ComponentInstance } from '@/ui/utilities/focus/types/ComponentInstance';
+import { GlobalHotkeysConfig } from '@/ui/utilities/focus/types/HotkeysConfig';
 
 export type FocusStackItem = {
-  focusIdentifier: FocusIdentifier;
-  customScopes?: CustomHotkeyScopes;
+  focusId: string;
+  componentInstance: ComponentInstance;
+  globalHotkeysConfig: GlobalHotkeysConfig;
 };

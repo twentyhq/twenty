@@ -1,5 +1,5 @@
 import { useFocusStack } from '@/ui/utilities/focus/hooks/useFocusStack';
-import { currentFocusIdentifierSelector } from '@/ui/utilities/focus/states/currentFocusIdentifierSelector';
+import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdentifierSelector';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { renderHook } from '@testing-library/react';
@@ -17,9 +17,7 @@ const renderHooks = () => {
       } = useFocusStack();
 
       const focusStack = useRecoilValue(focusStackState);
-      const currentFocusIdentifier = useRecoilValue(
-        currentFocusIdentifierSelector,
-      );
+      const currentFocusId = useRecoilValue(currentFocusIdSelector);
 
       return {
         pushFocusIdentifier,
@@ -27,7 +25,7 @@ const renderHooks = () => {
         resetFocusStack,
         resetFocusStackToFocusIdentifier,
         focusStack,
-        currentFocusIdentifier,
+        currentFocusId,
       };
     },
     {
@@ -63,7 +61,7 @@ describe('useFocusStack', () => {
     });
 
     expect(result.current.focusStack).toEqual([focusIdentifier]);
-    expect(result.current.currentFocusIdentifier).toEqual(focusIdentifier);
+    expect(result.current.currentFocusId).toEqual(focusIdentifier.focusId);
     const anotherFocusIdentifier = {
       focusId: 'another-focus-id',
       componentType: FocusComponentType.MODAL,
@@ -86,8 +84,8 @@ describe('useFocusStack', () => {
       focusIdentifier,
       anotherFocusIdentifier,
     ]);
-    expect(result.current.currentFocusIdentifier).toEqual(
-      anotherFocusIdentifier,
+    expect(result.current.currentFocusId).toEqual(
+      anotherFocusIdentifier.focusId,
     );
   });
 
@@ -134,8 +132,8 @@ describe('useFocusStack', () => {
       firstFocusIdentifier,
       secondFocusIdentifier,
     ]);
-    expect(result.current.currentFocusIdentifier).toEqual(
-      secondFocusIdentifier,
+    expect(result.current.currentFocusId).toEqual(
+      secondFocusIdentifier.focusId,
     );
 
     await act(async () => {
@@ -146,8 +144,8 @@ describe('useFocusStack', () => {
     });
 
     expect(result.current.focusStack).toEqual([secondFocusIdentifier]);
-    expect(result.current.currentFocusIdentifier).toEqual(
-      secondFocusIdentifier,
+    expect(result.current.currentFocusId).toEqual(
+      secondFocusIdentifier.focusId,
     );
   });
 
@@ -173,13 +171,13 @@ describe('useFocusStack', () => {
     });
 
     expect(result.current.focusStack).toEqual([focusIdentifier]);
-    expect(result.current.currentFocusIdentifier).toEqual(focusIdentifier);
+    expect(result.current.currentFocusId).toEqual(focusIdentifier.focusId);
     await act(async () => {
       result.current.resetFocusStack();
     });
 
     expect(result.current.focusStack).toEqual([]);
-    expect(result.current.currentFocusIdentifier).toEqual(undefined);
+    expect(result.current.currentFocusId).toEqual(undefined);
   });
 
   it('should reset the focus stack to a specific focus identifier', async () => {
@@ -225,8 +223,8 @@ describe('useFocusStack', () => {
       firstFocusIdentifier,
       secondFocusIdentifier,
     ]);
-    expect(result.current.currentFocusIdentifier).toEqual(
-      secondFocusIdentifier,
+    expect(result.current.currentFocusId).toEqual(
+      secondFocusIdentifier.focusId,
     );
 
     const newFocusIdentifier = {
@@ -237,13 +235,23 @@ describe('useFocusStack', () => {
 
     await act(async () => {
       result.current.resetFocusStackToFocusIdentifier({
-        focusIdentifier: newFocusIdentifier,
+        focusStackItem: {
+          focusId: newFocusIdentifier.focusId,
+          componentInstance: {
+            componentType: newFocusIdentifier.componentType,
+            componentInstanceId: newFocusIdentifier.componentInstanceId,
+          },
+          globalHotkeysConfig: {
+            enableGlobalHotkeysWithModifiers: true,
+            enableConflictingWithKeyboardGlobalHotkeys: true,
+          },
+        },
         hotkeyScope: { scope: 'test-scope' },
         memoizeKey: 'global',
       });
     });
 
     expect(result.current.focusStack).toEqual([newFocusIdentifier]);
-    expect(result.current.currentFocusIdentifier).toEqual(newFocusIdentifier);
+    expect(result.current.currentFocusId).toEqual(newFocusIdentifier.focusId);
   });
 });
