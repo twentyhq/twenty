@@ -60,6 +60,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         IsFieldMetadataDefaultValue,
         FieldMetadataService,
         FieldMetadataRelatedRecordsService,
+        FieldMetadataEnumValidationService,
         FieldMetadataValidationService,
       ],
       resolvers: [

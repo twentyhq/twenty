@@ -95,15 +95,15 @@ export class FieldMetadataEnumValidationService {
       },
       {
         validator: exceedsDatabaseIdentifierMaximumLength,
-        message: 'exceedsDatabaseIdentifierMaximumLength',
+        message: `Option value "${sanitizedValue}" exceeds 63 characters`,
       },
       {
         validator: beneathDatabaseIdentifierMinimumLength,
-        message: 'beneathDatabaseIdentifierMinimumLength',
+        message: `Option value "${sanitizedValue}" is beneath 1 character`,
       },
       {
         validator: (value) => !isSnakeCaseString(value),
-        message: 'Value must be in UPPER_CASE and follow snake_case',
+        message: `Value must be in UPPER_CASE and follow snake_case "${sanitizedValue}"`,
       },
     ];
 
