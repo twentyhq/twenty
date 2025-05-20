@@ -1,23 +1,24 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { z } from 'zod';
-
-import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/field-metadata-validation.service';
-import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
-import { sanitizeObjectStringProperties } from 'src/utils/sanitize-object-string-properties';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  beneathDatabaseIdentifierMinimumLength,
-  exceedsDatabaseIdentifierMaximumLength,
-} from '../../utils/validate-database-identifier-length.utils';
-import { CreateFieldInput } from '../dtos/create-field.input';
-import { UpdateFieldInput } from '../dtos/update-field.input';
+import { z } from 'zod';
+
+import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
+
+import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/field-metadata-validation.service';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
-} from '../field-metadata.exception';
-import { FieldMetadataOptions } from '../interfaces/field-metadata-options.interface';
-import { isEnumFieldMetadataType } from '../utils/is-enum-field-metadata-type.util';
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import {
+  beneathDatabaseIdentifierMinimumLength,
+  exceedsDatabaseIdentifierMaximumLength,
+} from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
+import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
+import { sanitizeObjectStringProperties } from 'src/utils/sanitize-object-string-properties';
 
 type Validator<T> = { validator: (str: T) => boolean; message: string };
 
@@ -31,6 +32,7 @@ export class FieldMetadataEnumValidationService {
     { message, validator }: Validator<T>,
   ) {
     const shouldThrow = validator(elementToValidate);
+
     if (shouldThrow) {
       throw new FieldMetadataException(
         message,
@@ -157,6 +159,7 @@ export class FieldMetadataEnumValidationService {
     }
 
     const { options } = fieldMetadataInput;
+
     if (!isDefined(options) || options.length === 0) {
       throw new FieldMetadataException(
         'Options are required for enum fields',

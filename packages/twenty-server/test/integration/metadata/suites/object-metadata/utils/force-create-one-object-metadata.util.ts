@@ -24,6 +24,7 @@ export const forceCreateOneObjectMetadata = async ({
       nameSingular,
       namePlural,
       icon,
+      isLabelSyncedWithName,
       ...rest,
     },
   });
@@ -51,13 +52,14 @@ export const forceCreateOneObjectMetadata = async ({
   }
 
   const match = objects.find((object) => object.nameSingular === nameSingular);
+
   if (!isDefined(match)) {
     throw new Error(
       `Could not find an object with nameSingular ${nameSingular}, high chances this is a race condition`,
     );
   }
 
-  const { data, errors: deleteErrors } = await deleteOneObjectMetadata({
+  const { errors: deleteErrors } = await deleteOneObjectMetadata({
     input: { idToDelete: match.id },
   });
 
@@ -72,6 +74,7 @@ export const forceCreateOneObjectMetadata = async ({
       nameSingular,
       namePlural,
       icon,
+      isLabelSyncedWithName,
       ...rest,
     },
   });

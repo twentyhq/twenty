@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 type OnlyStringPropertiesKey<T> = Extract<keyof T, string>;
+
 type StringPropertyKeys<T> = {
   [K in OnlyStringPropertiesKey<T>]: T[K] extends string | undefined
     ? K
@@ -16,6 +17,7 @@ export const sanitizeObjectStringProperties = <T>(
 ) => {
   return keys.reduce((acc, key) => {
     const occurrence = acc[key];
+
     if (occurrence === undefined || typeof occurrence !== 'string') {
       return acc;
     }

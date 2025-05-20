@@ -1,4 +1,3 @@
-import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import {
   LISTING_NAME_PLURAL,
@@ -10,10 +9,13 @@ import { EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
+import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+
 describe('Field metadata select creation tests group', () => {
   let createdObjectMetadataId: string;
+
   beforeEach(async () => {
-    const { data, errors } = await forceCreateOneObjectMetadata({
+    const { data } = await forceCreateOneObjectMetadata({
       labelSingular: LISTING_NAME_SINGULAR,
       labelPlural: LISTING_NAME_PLURAL,
       nameSingular: LISTING_NAME_SINGULAR,
@@ -59,12 +61,14 @@ describe('Field metadata select creation tests group', () => {
             color: 'green',
             position: index,
           };
+
           if (index % 2 === 0) {
             return {
               ...optionWithoutId,
               id: v4(),
             };
           }
+
           return optionWithoutId;
         }),
       },
@@ -83,6 +87,7 @@ describe('Field metadata select creation tests group', () => {
       },
     },
   ];
+
   test.each(successfulTestCases)('$title', async ({ context: { options } }) => {
     const { data, errors } = await createOneFieldMetadata({
       input: {
@@ -205,14 +210,14 @@ describe('Field metadata select creation tests group', () => {
             label: 'Option 1',
             value: 'option1',
             color: 'green',
-            position: 1,
+            position: 2,
             id: 'fd1f11fd-3f05-4a33-bddf-800c3412ce98',
           },
         ],
       },
     },
     {
-      title: 'It should fail to create two options with the same id',
+      title: 'It should fail to create two options with the same position',
       context: {
         options: [
           {
@@ -220,19 +225,18 @@ describe('Field metadata select creation tests group', () => {
             value: 'option1',
             color: 'green',
             position: 1,
-            id: 'fd1f11fd-3f05-4a33-bddf-800c3412ce98',
           },
           {
             label: 'Option 1',
             value: 'option1',
             color: 'green',
             position: 1,
-            id: 'fd1f11fd-3f05-4a33-bddf-800c3412ce98',
           },
         ],
       },
     },
   ];
+
   test.each(failingTestCases)('$title', async ({ context: { options } }) => {
     const { data, errors } = await createOneFieldMetadata({
       input: {
@@ -249,6 +253,7 @@ describe('Field metadata select creation tests group', () => {
         `,
     });
 
+    expect(data).toBeUndefined();
     expect(errors).toBeDefined();
     expect(errors).toMatchSnapshot();
   });
