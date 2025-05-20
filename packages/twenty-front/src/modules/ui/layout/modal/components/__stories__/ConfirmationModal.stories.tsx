@@ -7,6 +7,7 @@ import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
+import { sleep } from '~/utils/sleep';
 import { isModalOpenedComponentState } from '../../states/isModalOpenedComponentState';
 import { ConfirmationModal } from '../ConfirmationModal';
 
@@ -101,6 +102,9 @@ export const CloseOnClickOutside: Story = {
 
     const backdrop = await canvas.findByTestId('modal-backdrop');
 
+    // We need to wait for the outside click listener to be registered
+    await sleep(100);
+
     await userEvent.click(backdrop);
 
     await waitFor(() => {
@@ -130,51 +134,51 @@ export const ConfirmWithEnterKey: Story = {
   },
 };
 
-// export const CancelButtonClick: Story = {
-//   args: {
-//     modalId: 'confirmation-modal',
-//     title: 'Cancel Button Test',
-//     subtitle: 'Clicking the cancel button should close the modal',
-//     confirmButtonText: 'Confirm',
-//     onClose: closeMock,
-//   },
-//   play: async ({ canvasElement }) => {
-//     const canvas = within(canvasElement);
+export const CancelButtonClick: Story = {
+  args: {
+    modalId: 'confirmation-modal',
+    title: 'Cancel Button Test',
+    subtitle: 'Clicking the cancel button should close the modal',
+    confirmButtonText: 'Confirm',
+    onClose: closeMock,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
-//     await canvas.findByText('Cancel Button Test');
+    await canvas.findByText('Cancel Button Test');
 
-//     const cancelButton = await canvas.findByRole('button', {
-//       name: /Cancel/,
-//     });
-//     await userEvent.click(cancelButton);
+    const cancelButton = await canvas.findByRole('button', {
+      name: /Cancel/,
+    });
+    await userEvent.click(cancelButton);
 
-//     await waitFor(() => {
-//       expect(closeMock).toHaveBeenCalledTimes(1);
-//     });
-//   },
-// };
+    await waitFor(() => {
+      expect(closeMock).toHaveBeenCalledTimes(1);
+    });
+  },
+};
 
-// export const ConfirmButtonClick: Story = {
-//   args: {
-//     modalId: 'confirmation-modal',
-//     title: 'Confirm Button Test',
-//     subtitle: 'Clicking the confirm button should trigger the confirm action',
-//     confirmButtonText: 'Confirm',
-//     onConfirmClick: confirmMock,
-//   },
-//   play: async ({ canvasElement }) => {
-//     const canvas = within(canvasElement);
+export const ConfirmButtonClick: Story = {
+  args: {
+    modalId: 'confirmation-modal',
+    title: 'Confirm Button Test',
+    subtitle: 'Clicking the confirm button should trigger the confirm action',
+    confirmButtonText: 'Confirm',
+    onConfirmClick: confirmMock,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
-//     await canvas.findByText('Confirm Button Test');
+    await canvas.findByText('Confirm Button Test');
 
-//     const confirmButton = await canvas.findByRole('button', {
-//       name: /Confirm/,
-//     });
+    const confirmButton = await canvas.findByRole('button', {
+      name: /Confirm/,
+    });
 
-//     await userEvent.click(confirmButton);
+    await userEvent.click(confirmButton);
 
-//     await waitFor(() => {
-//       expect(confirmMock).toHaveBeenCalledTimes(1);
-//     });
-//   },
-// };
+    await waitFor(() => {
+      expect(confirmMock).toHaveBeenCalledTimes(1);
+    });
+  },
+};
