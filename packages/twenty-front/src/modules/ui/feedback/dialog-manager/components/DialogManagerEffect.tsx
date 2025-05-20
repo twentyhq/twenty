@@ -15,7 +15,9 @@ export const DialogManagerEffect = () => {
       return;
     }
 
-    setHotkeyScopeAndMemorizePreviousScope(DialogHotkeyScope.Dialog);
+    setHotkeyScopeAndMemorizePreviousScope({
+      scope: DialogHotkeyScope.Dialog,
+    });
   }, [dialogInternal.queue, setHotkeyScopeAndMemorizePreviousScope]);
 
   return <></>;

@@ -7,23 +7,29 @@ import { previousHotkeyScopeFamilyState } from '@/ui/utilities/hotkey/states/int
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilCallback } from 'recoil';
 
-export const useFocusStack = (memoizeKey = 'global') => {
+export const useFocusStack = () => {
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope(memoizeKey);
+  } = usePreviousHotkeyScope();
 
   const pushFocusIdentifier = useRecoilCallback(
     ({ set }) =>
-      (
-        focusId: string,
+      ({
+        focusId,
+        component,
+        hotkeyScope,
+        memoizeKey = 'global',
+      }: {
+        focusId: string;
         component: {
           type: FocusComponentType;
           instanceId: string;
-        },
+        };
         // TODO: Remove this once we've migrated hotkey scopes to the new api
-        hotkeyScope: HotkeyScope,
-      ) => {
+        hotkeyScope: HotkeyScope;
+        memoizeKey: string;
+      }) => {
         const focusIdentifier: FocusIdentifier = {
           focusId,
           componentType: component.type,
@@ -38,10 +44,11 @@ export const useFocusStack = (memoizeKey = 'global') => {
         ]);
 
         // TODO: Remove this once we've migrated hotkey scopes to the new api
-        setHotkeyScopeAndMemorizePreviousScope(
-          hotkeyScope.scope,
-          hotkeyScope.customScopes,
-        );
+        setHotkeyScopeAndMemorizePreviousScope({
+          scope: hotkeyScope.scope,
+          customScopes: hotkeyScope.customScopes,
+          memoizeKey,
+        });
       },
     [setHotkeyScopeAndMemorizePreviousScope],
   );
@@ -63,26 +70,34 @@ export const useFocusStack = (memoizeKey = 'global') => {
 
   const resetFocusStack = useRecoilCallback(
     ({ reset }) =>
-      () => {
+      (memoizeKey = 'global') => {
         reset(focusStackState);
 
         // TODO: Remove this once we've migrated hotkey scopes to the new api
-        reset(previousHotkeyScopeFamilyState(memoizeKey));
+        reset(previousHotkeyScopeFamilyState(memoizeKey as string));
         reset(currentHotkeyScopeState);
       },
-    [memoizeKey],
+    [],
   );
 
   const resetFocusStackToFocusIdentifier = useRecoilCallback(
     ({ set }) =>
-      (focusIdentifier: FocusIdentifier, hotkeyScope: HotkeyScope) => {
+      ({
+        focusIdentifier,
+        hotkeyScope,
+        memoizeKey,
+      }: {
+        focusIdentifier: FocusIdentifier;
+        hotkeyScope: HotkeyScope;
+        memoizeKey: string;
+      }) => {
         set(focusStackState, [focusIdentifier]);
 
         // TODO: Remove this once we've migrated hotkey scopes to the new api
         set(previousHotkeyScopeFamilyState(memoizeKey), null);
         set(currentHotkeyScopeState, hotkeyScope);
       },
-    [memoizeKey],
+    [],
   );
 
   return {

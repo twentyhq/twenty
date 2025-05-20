@@ -51,9 +51,14 @@ describe('useFocusStack', () => {
     };
 
     await act(async () => {
-      result.current.pushFocusIdentifier(focusIdentifier.focusId, {
-        type: focusIdentifier.componentType,
-        instanceId: focusIdentifier.componentInstanceId,
+      result.current.pushFocusIdentifier({
+        focusId: focusIdentifier.focusId,
+        component: {
+          type: focusIdentifier.componentType,
+          instanceId: focusIdentifier.componentInstanceId,
+        },
+        hotkeyScope: { scope: 'test-scope' },
+        memoizeKey: 'global',
       });
     });
 
@@ -66,9 +71,14 @@ describe('useFocusStack', () => {
     };
 
     await act(async () => {
-      result.current.pushFocusIdentifier(anotherFocusIdentifier.focusId, {
-        type: anotherFocusIdentifier.componentType,
-        instanceId: anotherFocusIdentifier.componentInstanceId,
+      result.current.pushFocusIdentifier({
+        focusId: anotherFocusIdentifier.focusId,
+        component: {
+          type: anotherFocusIdentifier.componentType,
+          instanceId: anotherFocusIdentifier.componentInstanceId,
+        },
+        hotkeyScope: { scope: 'test-scope' },
+        memoizeKey: 'global',
       });
     });
 
@@ -97,16 +107,26 @@ describe('useFocusStack', () => {
     };
 
     await act(async () => {
-      result.current.pushFocusIdentifier(firstFocusIdentifier.focusId, {
-        type: firstFocusIdentifier.componentType,
-        instanceId: firstFocusIdentifier.componentInstanceId,
+      result.current.pushFocusIdentifier({
+        focusId: firstFocusIdentifier.focusId,
+        component: {
+          type: firstFocusIdentifier.componentType,
+          instanceId: firstFocusIdentifier.componentInstanceId,
+        },
+        hotkeyScope: { scope: 'test-scope' },
+        memoizeKey: 'global',
       });
     });
 
     await act(async () => {
-      result.current.pushFocusIdentifier(secondFocusIdentifier.focusId, {
-        type: secondFocusIdentifier.componentType,
-        instanceId: secondFocusIdentifier.componentInstanceId,
+      result.current.pushFocusIdentifier({
+        focusId: secondFocusIdentifier.focusId,
+        component: {
+          type: secondFocusIdentifier.componentType,
+          instanceId: secondFocusIdentifier.componentInstanceId,
+        },
+        hotkeyScope: { scope: 'test-scope' },
+        memoizeKey: 'global',
       });
     });
 
@@ -138,9 +158,14 @@ describe('useFocusStack', () => {
     };
 
     await act(async () => {
-      result.current.pushFocusIdentifier(focusIdentifier.focusId, {
-        type: focusIdentifier.componentType,
-        instanceId: focusIdentifier.componentInstanceId,
+      result.current.pushFocusIdentifier({
+        focusId: focusIdentifier.focusId,
+        component: {
+          type: focusIdentifier.componentType,
+          instanceId: focusIdentifier.componentInstanceId,
+        },
+        hotkeyScope: { scope: 'test-scope' },
+        memoizeKey: 'global',
       });
     });
 
@@ -170,16 +195,26 @@ describe('useFocusStack', () => {
     };
 
     await act(async () => {
-      result.current.pushFocusIdentifier(firstFocusIdentifier.focusId, {
-        type: firstFocusIdentifier.componentType,
-        instanceId: firstFocusIdentifier.componentInstanceId,
+      result.current.pushFocusIdentifier({
+        focusId: firstFocusIdentifier.focusId,
+        component: {
+          type: firstFocusIdentifier.componentType,
+          instanceId: firstFocusIdentifier.componentInstanceId,
+        },
+        hotkeyScope: { scope: 'test-scope' },
+        memoizeKey: 'global',
       });
     });
 
     await act(async () => {
-      result.current.pushFocusIdentifier(secondFocusIdentifier.focusId, {
-        type: secondFocusIdentifier.componentType,
-        instanceId: secondFocusIdentifier.componentInstanceId,
+      result.current.pushFocusIdentifier({
+        focusId: secondFocusIdentifier.focusId,
+        component: {
+          type: secondFocusIdentifier.componentType,
+          instanceId: secondFocusIdentifier.componentInstanceId,
+        },
+        hotkeyScope: { scope: 'test-scope' },
+        memoizeKey: 'global',
       });
     });
 
@@ -198,7 +233,11 @@ describe('useFocusStack', () => {
     };
 
     await act(async () => {
-      result.current.resetFocusStackToFocusIdentifier(newFocusIdentifier);
+      result.current.resetFocusStackToFocusIdentifier({
+        focusIdentifier: newFocusIdentifier,
+        hotkeyScope: { scope: 'test-scope' },
+        memoizeKey: 'global',
+      });
     });
 
     expect(result.current.focusStack).toEqual([newFocusIdentifier]);

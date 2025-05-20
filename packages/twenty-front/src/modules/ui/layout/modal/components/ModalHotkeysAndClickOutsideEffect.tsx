@@ -28,6 +28,7 @@ export const ModalHotkeysAndClickOutsideEffect = ({
     {
       scope: ModalHotkeyScope.ModalFocus,
     },
+    [onEnter],
   );
 
   useHotkeysOnFocusedElement(
@@ -41,6 +42,7 @@ export const ModalHotkeysAndClickOutsideEffect = ({
     {
       scope: ModalHotkeyScope.ModalFocus,
     },
+    [isClosable, onClose],
   );
 
   useListenClickOutside({

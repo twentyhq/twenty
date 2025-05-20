@@ -1,9 +1,8 @@
-import { useRecoilCallback } from 'recoil';
-
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useFocusStack } from '@/ui/utilities/focus/hooks/useFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useRecoilCallback } from 'recoil';
 
 export const useModal = () => {
   const { pushFocusIdentifier, removeFocusId } = useFocusStack();
@@ -49,13 +48,13 @@ export const useModal = () => {
           true,
         );
 
-        pushFocusIdentifier(
-          modalId,
-          {
+        pushFocusIdentifier({
+          focusId: modalId,
+          component: {
             type: FocusComponentType.MODAL,
             instanceId: modalId,
           },
-          {
+          hotkeyScope: {
             scope: ModalHotkeyScope.ModalFocus,
             customScopes: {
               goto: false,
@@ -64,7 +63,8 @@ export const useModal = () => {
               keyboardShortcutMenu: false,
             },
           },
-        );
+          memoizeKey: modalId,
+        });
       },
     [pushFocusIdentifier],
   );

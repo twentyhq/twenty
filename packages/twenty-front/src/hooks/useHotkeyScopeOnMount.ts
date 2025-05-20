@@ -12,7 +12,9 @@ export const useHotkeyScopeOnMount = (hotkeyScope: string) => {
   } = usePreviousHotkeyScope();
 
   useEffect(() => {
-    setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
+    setHotkeyScopeAndMemorizePreviousScope({
+      scope: hotkeyScope,
+    });
     return () => {
       goBackToPreviousHotkeyScope();
     };

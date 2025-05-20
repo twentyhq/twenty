@@ -67,7 +67,7 @@ describe('useModal', () => {
     );
 
     act(() => {
-      result.current.modal.openModal(modalId, customHotkeyScope);
+      result.current.modal.openModal(modalId);
     });
 
     expect(result.current.isModalOpened).toBe(true);
@@ -169,7 +169,7 @@ describe('useModal', () => {
     );
 
     act(() => {
-      result.current.modal.toggleModal(modalId, customHotkeyScope);
+      result.current.modal.toggleModal(modalId);
     });
 
     expect(result.current.isModalOpened).toBe(true);

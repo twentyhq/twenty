@@ -84,9 +84,9 @@ export const useOpenActivityTargetCellEditMode = () => {
           ),
         });
 
-        setHotkeyScopeAndMemorizePreviousScope(
-          MultipleRecordPickerHotkeyScope.MultipleRecordPicker,
-        );
+        setHotkeyScopeAndMemorizePreviousScope({
+          scope: MultipleRecordPickerHotkeyScope.MultipleRecordPicker,
+        });
       },
     [multipleRecordPickerPerformSearch, setHotkeyScopeAndMemorizePreviousScope],
   );
