@@ -10,9 +10,9 @@ import { Task } from '@/activities/types/Task';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContextProvider } from '@/object-record/record-field/components/FieldContextProvider';
-import { useCompleteTask } from '../hooks/useCompleteTask';
-import { Checkbox, CheckboxShape } from 'twenty-ui/input';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { Checkbox, CheckboxShape } from 'twenty-ui/input';
+import { useCompleteTask } from '../hooks/useCompleteTask';
 
 const StyledTaskBody = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -72,6 +72,10 @@ const StyledCheckboxContainer = styled.div`
   display: flex;
 `;
 
+const StyledActivityTargetsInlineCellContainer = styled.div`
+  display: flex;
+`;
+
 export const TaskRow = ({ task }: { task: Task }) => {
   const theme = useTheme();
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
@@ -124,13 +128,19 @@ export const TaskRow = ({ task }: { task: Task }) => {
             fieldMetadataName={'taskTargets'}
             fieldPosition={0}
           >
-            <ActivityTargetsInlineCell
-              activityObjectNameSingular={CoreObjectNameSingular.Task}
-              activityRecordId={task.id}
-              showLabel={false}
-              maxWidth={200}
-              componentInstanceId={`task-row-targets-${task.id}`}
-            />
+            <StyledActivityTargetsInlineCellContainer
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <ActivityTargetsInlineCell
+                activityObjectNameSingular={CoreObjectNameSingular.Task}
+                activityRecordId={task.id}
+                showLabel={false}
+                maxWidth={200}
+                componentInstanceId={`task-row-targets-${task.id}`}
+              />
+            </StyledActivityTargetsInlineCellContainer>
           </FieldContextProvider>
         }
       </StyledRightSideContainer>
