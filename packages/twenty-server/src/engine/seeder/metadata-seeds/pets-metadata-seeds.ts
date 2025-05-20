@@ -30,7 +30,7 @@ export const PETS_METADATA_SEEDS: ObjectMetadataSeed = {
         { label: 'Friendly', value: 'FRIENDLY', position: 1, color: 'red' },
         {
           label: 'Protective',
-          value: 'protective',
+          value: 'PROTECTIVE',
           position: 2,
           color: 'green',
         },
