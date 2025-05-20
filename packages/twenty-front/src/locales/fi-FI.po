@@ -2766,6 +2766,11 @@ msgstr "Italia"
 msgid "Japanese"
 msgstr "Japani"
 
+#. js-lingui-id: VIK/N0
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
+msgid "JSON keys cannot contain spaces"
+msgstr ""
+
 #. js-lingui-id: OGXtL8
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
