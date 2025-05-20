@@ -33,7 +33,12 @@ export const formatDateString = ({
         locale,
       });
     case FieldDateDisplayFormat.USER_SETTINGS:
-      return formatDateISOStringToDate(value, timeZone, dateFormat);
+      return formatDateISOStringToDate({
+        date: value,
+        timeZone,
+        dateFormat,
+        locale,
+      });
     case FieldDateDisplayFormat.CUSTOM:
       return formatDateISOStringToCustomUnicodeFormat(
         value,
@@ -41,6 +46,11 @@ export const formatDateString = ({
         dateFieldSettings.customUnicodeDateFormat,
       );
     default:
-      return formatDateISOStringToDate(value, timeZone, dateFormat);
+      return formatDateISOStringToDate({
+        date: value,
+        timeZone,
+        dateFormat,
+        locale,
+      });
   }
 };
