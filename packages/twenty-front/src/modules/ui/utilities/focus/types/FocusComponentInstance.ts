@@ -1,6 +1,6 @@
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 
-export type ComponentInstance = {
+export type FocusComponentInstance = {
   componentType: FocusComponentType;
   componentInstanceId: string;
 };

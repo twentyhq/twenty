@@ -1,8 +1,8 @@
-import { ComponentInstance } from '@/ui/utilities/focus/types/ComponentInstance';
-import { GlobalHotkeysConfig } from '@/ui/utilities/focus/types/HotkeysConfig';
+import { FocusComponentInstance } from '@/ui/utilities/focus/types/FocusComponentInstance';
+import { FocusGlobalHotkeysConfig } from '@/ui/utilities/focus/types/FocusGlobalHotkeysConfig';
 
 export type FocusStackItem = {
   focusId: string;
-  componentInstance: ComponentInstance;
-  globalHotkeysConfig: GlobalHotkeysConfig;
+  componentInstance: FocusComponentInstance;
+  globalHotkeysConfig: FocusGlobalHotkeysConfig;
 };

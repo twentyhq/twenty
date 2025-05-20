@@ -1,7 +1,7 @@
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { FocusGlobalHotkeysConfig } from '@/ui/utilities/focus/types/FocusGlobalHotkeysConfig';
 import { FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
-import { GlobalHotkeysConfig } from '@/ui/utilities/focus/types/HotkeysConfig';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { previousHotkeyScopeFamilyState } from '@/ui/utilities/hotkey/states/internal/previousHotkeyScopeFamilyState';
@@ -28,7 +28,7 @@ export const useFocusStack = () => {
           type: FocusComponentType;
           instanceId: string;
         };
-        globalHotkeysConfig?: Partial<GlobalHotkeysConfig>;
+        globalHotkeysConfig?: Partial<FocusGlobalHotkeysConfig>;
         // TODO: Remove this once we've migrated hotkey scopes to the new api
         hotkeyScope: HotkeyScope;
         memoizeKey: string;

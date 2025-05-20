@@ -1,9 +1,9 @@
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
-import { GlobalHotkeysConfig } from '@/ui/utilities/focus/types/HotkeysConfig';
+import { FocusGlobalHotkeysConfig } from '@/ui/utilities/focus/types/FocusGlobalHotkeysConfig';
 import { selector } from 'recoil';
 
 export const currentHotkeysConfigSelector = selector<
-  GlobalHotkeysConfig | undefined
+  FocusGlobalHotkeysConfig | undefined
 >({
   key: 'currentHotkeysConfigSelector',
   get: ({ get }) => {
