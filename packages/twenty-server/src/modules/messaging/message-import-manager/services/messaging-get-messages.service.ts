@@ -31,7 +31,6 @@ export class MessagingGetMessagesService {
       | 'handle'
       | 'handleAliases'
     >,
-    workspaceId: string,
   ): Promise<GetMessagesResponse> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
