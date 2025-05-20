@@ -1,0 +1,187 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { z } from 'zod';
+
+import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/field-metadata-validation.service';
+import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
+import { sanitizeObjectStringProperties } from 'src/utils/sanitize-object-string-properties';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  beneathDatabaseIdentifierMinimumLength,
+  exceedsDatabaseIdentifierMaximumLength,
+} from '../../utils/validate-database-identifier-length.utils';
+import { CreateFieldInput } from '../dtos/create-field.input';
+import { UpdateFieldInput } from '../dtos/update-field.input';
+import {
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
+} from '../field-metadata.exception';
+import { FieldMetadataOptions } from '../interfaces/field-metadata-options.interface';
+import { isEnumFieldMetadataType } from '../utils/is-enum-field-metadata-type.util';
+
+type Validator<T> = { validator: (str: T) => boolean; message: string };
+
+export class FieldMetadataEnumValidationService {
+  constructor(
+    private readonly fieldMetadataValidationService: FieldMetadataValidationService,
+  ) {}
+
+  private validatorRunner<T>(
+    elementToValidate: T,
+    { message, validator }: Validator<T>,
+  ) {
+    const shouldThrow = validator(elementToValidate);
+    if (shouldThrow) {
+      throw new FieldMetadataException(
+        message,
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
+    }
+  }
+
+  private validateMetadataOptionId(sanitizedId?: string) {
+    const validators: Validator<string>[] = [
+      {
+        validator: (id) => !isDefined(id),
+        message: 'Option id is required',
+      },
+      {
+        validator: (id) => !z.string().uuid().safeParse(id).success,
+        message: 'Option id is invalid',
+      },
+    ];
+
+    validators.forEach((validator) =>
+      this.validatorRunner(sanitizedId, validator),
+    );
+  }
+
+  private validateMetadataOptionLabel(sanitizedLabel: string) {
+    const validators: Validator<string>[] = [
+      {
+        validator: (label) => !isDefined(label),
+        message: 'Option label is required',
+      },
+      {
+        validator: exceedsDatabaseIdentifierMaximumLength,
+        message: `Option label "${sanitizedLabel}" exceeds 63 characters`,
+      },
+      {
+        validator: beneathDatabaseIdentifierMinimumLength,
+        message: `Option label "${sanitizedLabel}" is beneath 1 character`,
+      },
+      {
+        validator: (label) => label.includes(','),
+        message: 'Label must not contain a comma',
+      },
+      {
+        validator: (label) => !isNonEmptyString(label) || label === ' ',
+        message: 'Label must not be empty',
+      },
+    ];
+
+    validators.forEach((validator) =>
+      this.validatorRunner(sanitizedLabel, validator),
+    );
+  }
+
+  private validateMetadataOptionValue(sanitizedValue: string) {
+    const validators: Validator<string>[] = [
+      {
+        validator: (value) => !isDefined(value),
+        message: 'Option value is required',
+      },
+      {
+        validator: exceedsDatabaseIdentifierMaximumLength,
+        message: 'exceedsDatabaseIdentifierMaximumLength',
+      },
+      {
+        validator: beneathDatabaseIdentifierMinimumLength,
+        message: 'beneathDatabaseIdentifierMinimumLength',
+      },
+      {
+        validator: (value) => !isSnakeCaseString(value),
+        message: 'Value must be in UPPER_CASE and follow snake_case',
+      },
+    ];
+
+    validators.forEach((validator) =>
+      this.validatorRunner(sanitizedValue, validator),
+    );
+  }
+
+  private validateDuplicates(options: FieldMetadataOptions) {
+    const seenOptionIds = new Set<FieldMetadataOptions[number]['id']>();
+    const seenOptionValues = new Set<FieldMetadataOptions[number]['value']>();
+    const seenOptionPositions = new Set<
+      FieldMetadataOptions[number]['position']
+    >();
+
+    for (const option of options) {
+      if (seenOptionIds.has(option.id)) {
+        throw new FieldMetadataException(
+          `Duplicated option id "${option.id}"`,
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+
+      if (seenOptionValues.has(option.value)) {
+        throw new FieldMetadataException(
+          `Duplicated option value "${option.value}"`,
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+
+      if (seenOptionPositions.has(option.position)) {
+        throw new FieldMetadataException(
+          `Duplicated option position "${option.position}"`,
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+
+      seenOptionIds.add(option.id);
+      seenOptionValues.add(option.value);
+      seenOptionPositions.add(option.position);
+    }
+  }
+
+  async validateMetadataOptions({
+    fieldMetadataInput,
+    fieldMetadataType,
+  }: {
+    fieldMetadataInput: CreateFieldInput | UpdateFieldInput;
+    fieldMetadataType: FieldMetadataType;
+  }): Promise<void> {
+    if (!isEnumFieldMetadataType(fieldMetadataType)) {
+      return;
+    }
+
+    const { options } = fieldMetadataInput;
+    if (!isDefined(options) || options.length === 0) {
+      throw new FieldMetadataException(
+        'Options are required for enum fields',
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
+    }
+
+    const sanitizedOptions = options.map((option) =>
+      sanitizeObjectStringProperties(option, ['label', 'value', 'id']),
+    );
+
+    for (const option of sanitizedOptions) {
+      this.validateMetadataOptionId(option.id);
+      this.validateMetadataOptionValue(option.value);
+      this.validateMetadataOptionLabel(option.label);
+    }
+
+    this.validateDuplicates(sanitizedOptions);
+
+    if (isDefined(fieldMetadataInput.defaultValue)) {
+      await this.fieldMetadataValidationService.validateDefaultValueOrThrow({
+        fieldType: fieldMetadataType,
+        options,
+        defaultValue: fieldMetadataInput.defaultValue ?? null,
+      });
+    }
+  }
+}

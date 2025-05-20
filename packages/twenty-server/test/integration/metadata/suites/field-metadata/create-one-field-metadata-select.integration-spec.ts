@@ -211,6 +211,27 @@ describe('Field metadata select creation tests group', () => {
         ],
       },
     },
+    {
+      title: 'It should fail to create two options with the same id',
+      context: {
+        options: [
+          {
+            label: 'Option 1',
+            value: 'option1',
+            color: 'green',
+            position: 1,
+            id: 'fd1f11fd-3f05-4a33-bddf-800c3412ce98',
+          },
+          {
+            label: 'Option 1',
+            value: 'option1',
+            color: 'green',
+            position: 1,
+            id: 'fd1f11fd-3f05-4a33-bddf-800c3412ce98',
+          },
+        ],
+      },
+    },
   ];
   test.each(failingTestCases)('$title', async ({ context: { options } }) => {
     const { data, errors } = await createOneFieldMetadata({
