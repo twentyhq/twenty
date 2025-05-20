@@ -118,7 +118,7 @@ export const ChatbotFlowCondicionalEventForm = ({
   const { updateFlow } = useUpdateChatbotFlow();
 
   const chatbotFlow = useRecoilValue(chatbotFlowState);
-
+  const setChatbotFlow = useSetRecoilState(chatbotFlowState);
   const setChatbotFlowSelectedNode = useSetRecoilState(
     chatbotFlowSelectedNodeState,
   );
@@ -160,16 +160,6 @@ export const ChatbotFlowCondicionalEventForm = ({
     textarea.style.height = `${textarea.scrollHeight}px`;
 
     setText(inputValue);
-
-    const flow = {
-      ...selectedNode,
-      data: {
-        ...selectedNode.data,
-        text: inputValue,
-      },
-    };
-
-    setChatbotFlowSelectedNode(flow);
   };
 
   const persistNode = (updatedLogic?: NewConditionalState) => {
@@ -189,11 +179,17 @@ export const ChatbotFlowCondicionalEventForm = ({
       n.id === selectedNode.id ? updatedNode : n,
     );
 
-    const { id, __typename, ...flowRest } = chatbotFlow;
-    const newFlow = { ...flowRest, nodes: updatedNodes };
+    const { id, __typename, workspace, ...chatbotFlowWithoutId } = chatbotFlow;
+
+    const updatedChatbotFlow = {
+      ...chatbotFlowWithoutId,
+      nodes: updatedNodes,
+      viewport: { x: 0, y: 0, zoom: 0 },
+    };
 
     setChatbotFlowSelectedNode(updatedNode);
-    updateFlow(newFlow);
+    updateFlow(updatedChatbotFlow);
+    setChatbotFlow(updatedChatbotFlow);
   };
 
   const handleTitleBlur = () => persistNode();

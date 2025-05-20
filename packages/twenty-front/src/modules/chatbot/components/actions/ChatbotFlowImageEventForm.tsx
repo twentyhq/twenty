@@ -100,6 +100,7 @@ export const ChatbotFlowImageEventForm = ({
   const { uploadFileToBucket } = useUploadFileToBucket();
 
   const chatbotFlow = useRecoilValue(chatbotFlowState);
+  const setChatbotFlow = useSetRecoilState(chatbotFlowState);
   const setChatbotFlowSelectedNode = useSetRecoilState(
     chatbotFlowSelectedNodeState,
   );
@@ -123,15 +124,17 @@ export const ChatbotFlowImageEventForm = ({
       node.id === selectedNode.id ? updatedNode : node,
     );
 
-    const { id, __typename, ...chatbotFlowWithoutId } = chatbotFlow;
+    const { id, __typename, workspace, ...chatbotFlowWithoutId } = chatbotFlow;
 
     const updatedChatbotFlow = {
       ...chatbotFlowWithoutId,
       nodes: updatedNodes,
+      viewport: { x: 0, y: 0, zoom: 0 },
     };
 
     setChatbotFlowSelectedNode(updatedNode);
     updateFlow(updatedChatbotFlow);
+    setChatbotFlow(updatedChatbotFlow);
   };
 
   const handleSendFile = async (file: File) => {
@@ -157,15 +160,18 @@ export const ChatbotFlowImageEventForm = ({
         node.id === selectedNode.id ? updatedNode : node,
       );
 
-      const { id, __typename, ...chatbotFlowWithoutId } = chatbotFlow;
+      const { id, __typename, workspace, ...chatbotFlowWithoutId } =
+        chatbotFlow;
 
       const updatedChatbotFlow = {
         ...chatbotFlowWithoutId,
         nodes: updatedNodes,
+        viewport: { x: 0, y: 0, zoom: 0 },
       };
 
       setChatbotFlowSelectedNode(updatedNode);
       updateFlow(updatedChatbotFlow);
+      setChatbotFlow(updatedChatbotFlow);
     }
   };
 
@@ -186,15 +192,17 @@ export const ChatbotFlowImageEventForm = ({
       node.id === selectedNode.id ? updatedNode : node,
     );
 
-    const { id, __typename, ...chatbotFlowWithoutId } = chatbotFlow;
+    const { id, __typename, workspace, ...chatbotFlowWithoutId } = chatbotFlow;
 
     const updatedChatbotFlow = {
       ...chatbotFlowWithoutId,
       nodes: updatedNodes,
+      viewport: { x: 0, y: 0, zoom: 0 },
     };
 
     setChatbotFlowSelectedNode(updatedNode);
     updateFlow(updatedChatbotFlow);
+    setChatbotFlow(updatedChatbotFlow);
   };
 
   return (

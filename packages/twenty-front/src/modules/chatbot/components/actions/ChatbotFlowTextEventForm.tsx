@@ -105,14 +105,22 @@ export const ChatbotFlowTextEventForm = ({
   const { updateFlow } = useUpdateChatbotFlow();
 
   const chatbotFlow = useRecoilValue(chatbotFlowState);
+  const setChatbotFlow = useSetRecoilState(chatbotFlowState);
+  const setChatbotFlowSelectedNode = useSetRecoilState(
+    chatbotFlowSelectedNodeState,
+  );
+
+  useEffect(() => {
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+    if (textareaRef.current) {
+      textareaRef.current.style.height = '30px';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [selectedNode.data.text]);
 
   const handleChange = (newTitle: string) => {
     setTitle(newTitle);
   };
-
-  const setChatbotFlowSelectedNode = useSetRecoilState(
-    chatbotFlowSelectedNodeState,
-  );
 
   const handleInputChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = evt.target;
@@ -126,25 +134,7 @@ export const ChatbotFlowTextEventForm = ({
     textarea.style.height = `${textarea.scrollHeight}px`;
 
     setText(inputValue);
-
-    const flow = {
-      ...selectedNode,
-      data: {
-        ...selectedNode.data,
-        text: inputValue,
-      },
-    };
-
-    setChatbotFlowSelectedNode(flow);
   };
-
-  useEffect(() => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-    if (textareaRef.current) {
-      textareaRef.current.style.height = '30px';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }, [selectedNode.data.text]);
 
   const handleFieldBlur = (field: 'title' | 'text', value: string) => {
     if (!selectedNode || !chatbotFlow) return;
@@ -157,19 +147,21 @@ export const ChatbotFlowTextEventForm = ({
       },
     };
 
-    const updatedNodes = chatbotFlow.nodes.map((node) =>
+    const updatedNodes = chatbotFlow.nodes?.map((node) =>
       node.id === selectedNode.id ? updatedNode : node,
     );
 
-    const { id, __typename, ...chatbotFlowWithoutId } = chatbotFlow;
+    const { id, __typename, workspace, ...chatbotFlowWithoutId } = chatbotFlow;
 
     const updatedChatbotFlow = {
       ...chatbotFlowWithoutId,
       nodes: updatedNodes,
+      viewport: { x: 0, y: 0, zoom: 0 },
     };
 
     setChatbotFlowSelectedNode(updatedNode);
     updateFlow(updatedChatbotFlow);
+    setChatbotFlow(updatedChatbotFlow);
   };
 
   return (

@@ -32,15 +32,16 @@ export const CommandMenuChatbotFlowPage = () => {
       return;
     }
 
-    const { id, __typename, ...chatbotFlowWithoutId } = chatbotFlow;
+    const { id, __typename, workspace, ...chatbotFlowWithoutId } = chatbotFlow;
 
     const updatedChatbotFlow = {
       ...chatbotFlowWithoutId,
       nodes: [...chatbotFlow.nodes, newNode],
+      viewport: { x: 0, y: 0, zoom: 0 },
     };
 
-    setChatbotFlow(updatedChatbotFlow);
     updateFlow(updatedChatbotFlow);
+    setChatbotFlow(updatedChatbotFlow);
   };
 
   return (

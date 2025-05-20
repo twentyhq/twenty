@@ -8,7 +8,6 @@ import { useGetChatbotFlowById } from '@/chatbot/hooks/useGetChatbotFlowById';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { useValidateChatbotFlow } from '@/chatbot/hooks/useValidateChatbotFlow';
 import { chatbotFlowIdState } from '@/chatbot/state/chatbotFlowIdState';
-import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { useTheme } from '@emotion/react';
@@ -28,7 +27,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/input';
@@ -104,8 +103,8 @@ export const BotDiagramBase = ({
   tagText,
 }: BotDiagramBaseProps) => {
   const theme = useTheme();
-  const [nodes, setNodes] = useState<Node[]>([]);
-  const [edges, setEdges] = useState<Edge[]>([]);
+  const [nodes, setNodes] = useState<Node[]>(initialNodes);
+  const [edges, setEdges] = useState<Edge[]>(initialEdges);
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance<
     Node,
     Edge
@@ -120,33 +119,26 @@ export const BotDiagramBase = ({
     chatbotFlowId ?? '',
   );
 
-  const setChatbotFlow = useSetRecoilState(chatbotFlowState);
-
   // eslint-disable-next-line @nx/workspace-no-state-useref
   const hasValidatedRef = useRef(false);
 
-  type FlowType = () => [Node[], Edge[]];
+  type FlowType = () => [Node[], Edge[]] | undefined;
 
   const defineFlow: FlowType = () => {
-    if (
-      chatbotFlowData &&
-      Array.isArray(chatbotFlowData.nodes) &&
-      chatbotFlowData.nodes.length > 0 &&
-      Array.isArray(chatbotFlowData.edges) &&
-      chatbotFlowData.edges.length > 0
-    ) {
-      setChatbotFlow(chatbotFlowData);
-      return [chatbotFlowData.nodes, chatbotFlowData.edges];
+    if (!chatbotFlowData) {
+      return undefined;
     }
 
-    setChatbotFlow(chatbotFlowData);
-    return [initialNodes, initialEdges];
+    return [chatbotFlowData.nodes, chatbotFlowData.edges];
   };
 
   useEffect(() => {
-    const [resNode, resEdges] = defineFlow();
-    setNodes(resNode);
-    setEdges(resEdges);
+    const [resNode, resEdges] = defineFlow() ?? [];
+
+    if (resNode && resEdges) {
+      setNodes(resNode);
+      setEdges(resEdges);
+    }
   }, [chatbotFlowData]);
 
   useEffect(() => {
