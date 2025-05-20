@@ -191,17 +191,18 @@ export const BotDiagramBase = ({
 
   const isValidConnection = useCallback(
     (connection: Edge | Connection) => {
-      if (!connection.source || !connection.target) return false;
+      const { source, sourceHandle, target, targetHandle } = connection;
+      if (!source || !target) return false;
 
-      const sourceAlreadyConnected = edges.some(
-        (edge) => edge.source === connection.source,
+      const sameSourceHandleAlreadyUsed = edges.some(
+        (edge) => edge.source === source && edge.sourceHandle === sourceHandle,
       );
 
-      const targetAlreadyConnected = edges.some(
-        (edge) => edge.target === connection.target,
+      const sameTargetHandleAlreadyUsed = edges.some(
+        (edge) => edge.target === target && edge.targetHandle === targetHandle,
       );
 
-      return !sourceAlreadyConnected && !targetAlreadyConnected;
+      return !sameSourceHandleAlreadyUsed && !sameTargetHandleAlreadyUsed;
     },
     [edges],
   );
