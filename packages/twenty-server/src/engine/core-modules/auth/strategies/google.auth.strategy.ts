@@ -19,6 +19,10 @@ export type GoogleRequest = Omit<
     locale?: keyof typeof APP_LOCALES | null;
     workspaceInviteHash?: string;
     workspacePersonalInviteToken?: string;
+    action:
+      | 'create-new-workspace'
+      | 'list-available-workspace'
+      | 'join-workspace';
     workspaceId?: string;
     billingCheckoutSessionState?: string;
   };
@@ -45,6 +49,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         workspaceId: req.params.workspaceId,
         billingCheckoutSessionState: req.query.billingCheckoutSessionState,
         workspacePersonalInviteToken: req.query.workspacePersonalInviteToken,
+        action: req.query.action,
       }),
     };
 
@@ -74,6 +79,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       workspacePersonalInviteToken: state.workspacePersonalInviteToken,
       workspaceId: state.workspaceId,
       billingCheckoutSessionState: state.billingCheckoutSessionState,
+      action: state.action,
       locale: state.locale,
     };
 

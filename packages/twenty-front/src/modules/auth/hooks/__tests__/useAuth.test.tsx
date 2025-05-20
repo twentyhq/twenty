@@ -95,6 +95,7 @@ describe('useAuth', () => {
     await act(async () => {
       await result.current.signInWithGoogle({
         workspaceInviteHash: 'workspaceInviteHash',
+        action: 'join-workspace',
       });
     });
 

@@ -13,7 +13,6 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -228,10 +227,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
         'workspaces',
         'workspaces.workspace',
         'workspaces.workspace.workspaceSSOIdentityProviders',
+        'workspaces.workspace.approvedAccessDomains',
       ],
     });
 
-    const workspaces: Array<Workspace> = user
+    const alreadyMemberWorkspaces: Array<Workspace> = user
       ? user.workspaces.map(({ workspace }) => workspace)
       : [];
 
@@ -240,34 +240,14 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
         getDomainNameByEmail(email),
       );
 
-    approvedAccessDomains.forEach(({ workspace }) => {
-      if (workspaces.some(({ id }) => id === workspace.id)) return;
-      workspaces.push(workspace);
-    });
-
-    return workspaces.map<AvailableWorkspaceOutput>((workspace) => ({
-      id: workspace.id,
-      displayName: workspace.displayName,
-      workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
-      logo: workspace.logo,
-      sso: workspace.workspaceSSOIdentityProviders.reduce(
-        (acc, identityProvider) =>
-          acc.concat(
-            identityProvider.status === 'Inactive'
-              ? []
-              : [
-                  {
-                    id: identityProvider.id,
-                    name: identityProvider.name,
-                    issuer: identityProvider.issuer,
-                    type: identityProvider.type,
-                    status: identityProvider.status,
-                  },
-                ],
-          ),
-        [] as AvailableWorkspaceOutput['sso'],
-      ),
-    }));
+    return [
+      ...alreadyMemberWorkspaces,
+      ...approvedAccessDomains
+        .filter(({ workspace }) =>
+          alreadyMemberWorkspaces.every(({ id }) => id !== workspace.id),
+        )
+        .map(({ workspace }) => workspace),
+    ];
   }
 
   async getUserWorkspaceForUserOrThrow({

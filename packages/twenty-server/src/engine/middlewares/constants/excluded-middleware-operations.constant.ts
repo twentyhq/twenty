@@ -4,6 +4,7 @@ export const EXCLUDED_MIDDLEWARE_OPERATIONS = [
   'Track',
   'TrackAnalytics',
   'AuditTrack',
+  'ListAvailableWorkspaces',
   'CheckUserExists',
   'GetLoginTokenFromCredentials',
   'GetAuthTokensFromLoginToken',

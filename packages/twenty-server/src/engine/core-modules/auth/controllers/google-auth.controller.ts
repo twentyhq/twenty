@@ -21,6 +21,7 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -53,15 +54,29 @@ export class GoogleAuthController {
       workspaceInviteHash,
       workspaceId,
       billingCheckoutSessionState,
+      action,
       locale,
     } = req.user;
 
-    const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
-      workspaceId,
-      workspaceInviteHash,
-      email,
-      authProvider: 'google',
-    });
+    if (
+      !workspaceId &&
+      !workspaceInviteHash &&
+      action === 'list-available-workspace'
+    ) {
+      return res.redirect(
+        this.authService.computeRedirectURIForWorkspaceSelection(email),
+      );
+    }
+
+    const currentWorkspace =
+      action === 'create-new-workspace'
+        ? undefined
+        : await this.authService.findWorkspaceForSignInUp({
+            workspaceId,
+            workspaceInviteHash,
+            email,
+            authProvider: 'google',
+          });
 
     try {
       const invitation =

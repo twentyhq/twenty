@@ -57,6 +57,7 @@ import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/w
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.entity';
+import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -282,6 +283,45 @@ export class AuthService {
     };
   }
 
+  private castWorkspaceToAvailableWorkspacesForCheckUserExistOutput(
+    workspaces: Array<Workspace>,
+  ) {
+    return workspaces.map<AvailableWorkspaceOutput>((workspace) => ({
+      id: workspace.id,
+      displayName: workspace.displayName,
+      workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
+      logo: workspace.logo,
+      sso: workspace.workspaceSSOIdentityProviders.reduce(
+        (acc, identityProvider) =>
+          acc.concat(
+            identityProvider.status === 'Inactive'
+              ? []
+              : [
+                  {
+                    id: identityProvider.id,
+                    name: identityProvider.name,
+                    issuer: identityProvider.issuer,
+                    type: identityProvider.type,
+                    status: identityProvider.status,
+                  },
+                ],
+          ),
+        [] as AvailableWorkspaceOutput['sso'],
+      ),
+    }));
+  }
+
+  async listAvailableWorkspacesForAuthentication(
+    email: string,
+  ): Promise<Array<AvailableWorkspaceOutput>> {
+    const workspaces =
+      await this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
+
+    return this.castWorkspaceToAvailableWorkspacesForCheckUserExistOutput(
+      workspaces,
+    );
+  }
+
   async checkUserExists(email: string): Promise<CheckUserExistOutput> {
     const user = await this.userRepository.findOneBy({
       email,
@@ -292,7 +332,7 @@ export class AuthService {
     return {
       exists: isUserExist,
       availableWorkspaces:
-        await this.userWorkspaceService.findAvailableWorkspacesByEmail(email),
+        await this.listAvailableWorkspacesForAuthentication(email),
       isEmailVerified: isUserExist ? user.isEmailVerified : false,
     };
   }
@@ -470,6 +510,17 @@ export class AuthService {
     }
 
     return workspace;
+  }
+
+  computeRedirectURIForWorkspaceSelection(email: string) {
+    const url = this.domainManagerService.buildBaseUrl({
+      pathname: '/welcome',
+      searchParams: {
+        emailForWorkspacesSelection: email,
+      },
+    });
+
+    return url.toString();
   }
 
   computeRedirectURI({

@@ -15,12 +15,21 @@ export const useSignInWithGoogle = () => {
   } as BillingCheckoutSession;
 
   const { signInWithGoogle } = useAuth();
+
   return {
-    signInWithGoogle: () =>
+    signInWithGoogle: ({
+      action,
+    }: {
+      action:
+        | 'create-new-workspace'
+        | 'list-available-workspace'
+        | 'join-workspace';
+    }) =>
       signInWithGoogle({
         workspaceInviteHash,
         workspacePersonalInviteToken,
         billingCheckoutSession,
+        action,
       }),
   };
 };

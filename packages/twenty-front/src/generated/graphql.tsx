@@ -1554,6 +1554,7 @@ export type Query = {
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   index: Index;
   indexMetadatas: IndexConnection;
+  listAvailableWorkspaces: Array<AvailableWorkspaceOutput>;
   object: Object;
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
@@ -1640,6 +1641,12 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
   personId: Scalars['UUID'];
+};
+
+
+export type QueryListAvailableWorkspacesArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
 };
 
 
@@ -2532,6 +2539,8 @@ export type AuthTokenFragmentFragment = { __typename?: 'AuthToken', token: strin
 
 export type AuthTokensFragmentFragment = { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } };
 
+export type AvailableWorkspaceForAuthFragmentFragment = { __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> };
+
 export type AvailableSsoIdentityProvidersFragmentFragment = { __typename?: 'FindAvailableSSOIDPOutput', id: string, issuer: string, name: string, status: SsoIdentityProviderStatus, workspace: { __typename?: 'WorkspaceNameAndId', id: string, displayName?: string | null } };
 
 export type AuthorizeAppMutationVariables = Exact<{
@@ -2655,6 +2664,14 @@ export type GetPublicWorkspaceDataByDomainQueryVariables = Exact<{ [key: string]
 
 
 export type GetPublicWorkspaceDataByDomainQuery = { __typename?: 'Query', getPublicWorkspaceDataByDomain: { __typename?: 'PublicWorkspaceDataOutput', id: string, logo?: string | null, displayName?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, authProviders: { __typename?: 'AuthProviders', google: boolean, magicLink: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> } } };
+
+export type ListAvailableWorkspacesQueryVariables = Exact<{
+  email: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type ListAvailableWorkspacesQuery = { __typename?: 'Query', listAvailableWorkspaces: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> };
 
 export type ValidatePasswordResetTokenQueryVariables = Exact<{
   token: Scalars['String'];
@@ -3161,6 +3178,24 @@ export const AuthTokensFragmentFragmentDoc = gql`
   }
 }
     ${AuthTokenFragmentFragmentDoc}`;
+export const AvailableWorkspaceForAuthFragmentFragmentDoc = gql`
+    fragment AvailableWorkspaceForAuthFragment on AvailableWorkspaceOutput {
+  id
+  displayName
+  workspaceUrls {
+    subdomainUrl
+    customUrl
+  }
+  logo
+  sso {
+    type
+    id
+    issuer
+    name
+    status
+  }
+}
+    `;
 export const AvailableSsoIdentityProvidersFragmentFragmentDoc = gql`
     fragment AvailableSSOIdentityProvidersFragment on FindAvailableSSOIDPOutput {
   id
@@ -4133,25 +4168,12 @@ export const CheckUserExistsDocument = gql`
   checkUserExists(email: $email, captchaToken: $captchaToken) {
     exists
     availableWorkspaces {
-      id
-      displayName
-      workspaceUrls {
-        subdomainUrl
-        customUrl
-      }
-      logo
-      sso {
-        type
-        id
-        issuer
-        name
-        status
-      }
+      ...AvailableWorkspaceForAuthFragment
     }
     isEmailVerified
   }
 }
-    `;
+    ${AvailableWorkspaceForAuthFragmentFragmentDoc}`;
 
 /**
  * __useCheckUserExistsQuery__
@@ -4234,6 +4256,42 @@ export function useGetPublicWorkspaceDataByDomainLazyQuery(baseOptions?: Apollo.
 export type GetPublicWorkspaceDataByDomainQueryHookResult = ReturnType<typeof useGetPublicWorkspaceDataByDomainQuery>;
 export type GetPublicWorkspaceDataByDomainLazyQueryHookResult = ReturnType<typeof useGetPublicWorkspaceDataByDomainLazyQuery>;
 export type GetPublicWorkspaceDataByDomainQueryResult = Apollo.QueryResult<GetPublicWorkspaceDataByDomainQuery, GetPublicWorkspaceDataByDomainQueryVariables>;
+export const ListAvailableWorkspacesDocument = gql`
+    query ListAvailableWorkspaces($email: String!, $captchaToken: String) {
+  listAvailableWorkspaces(email: $email, captchaToken: $captchaToken) {
+    ...AvailableWorkspaceForAuthFragment
+  }
+}
+    ${AvailableWorkspaceForAuthFragmentFragmentDoc}`;
+
+/**
+ * __useListAvailableWorkspacesQuery__
+ *
+ * To run a query within a React component, call `useListAvailableWorkspacesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListAvailableWorkspacesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useListAvailableWorkspacesQuery({
+ *   variables: {
+ *      email: // value for 'email'
+ *      captchaToken: // value for 'captchaToken'
+ *   },
+ * });
+ */
+export function useListAvailableWorkspacesQuery(baseOptions: Apollo.QueryHookOptions<ListAvailableWorkspacesQuery, ListAvailableWorkspacesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ListAvailableWorkspacesQuery, ListAvailableWorkspacesQueryVariables>(ListAvailableWorkspacesDocument, options);
+      }
+export function useListAvailableWorkspacesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListAvailableWorkspacesQuery, ListAvailableWorkspacesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ListAvailableWorkspacesQuery, ListAvailableWorkspacesQueryVariables>(ListAvailableWorkspacesDocument, options);
+        }
+export type ListAvailableWorkspacesQueryHookResult = ReturnType<typeof useListAvailableWorkspacesQuery>;
+export type ListAvailableWorkspacesLazyQueryHookResult = ReturnType<typeof useListAvailableWorkspacesLazyQuery>;
+export type ListAvailableWorkspacesQueryResult = Apollo.QueryResult<ListAvailableWorkspacesQuery, ListAvailableWorkspacesQueryVariables>;
 export const ValidatePasswordResetTokenDocument = gql`
     query ValidatePasswordResetToken($token: String!) {
   validatePasswordResetToken(passwordResetToken: $token) {

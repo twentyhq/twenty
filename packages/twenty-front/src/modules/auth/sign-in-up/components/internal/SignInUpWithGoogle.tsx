@@ -15,17 +15,23 @@ const GoogleIcon = memo(() => {
   return <IconGoogle size={theme.icon.size.md} />;
 });
 
-export const SignInUpWithGoogle = () => {
+export const SignInUpWithGoogle = ({
+  action,
+}: {
+  action:
+    | 'create-new-workspace'
+    | 'list-available-workspace'
+    | 'join-workspace';
+}) => {
   const { t } = useLingui();
   const signInUpStep = useRecoilValue(signInUpStepState);
   const { signInWithGoogle } = useSignInWithGoogle();
-
   return (
     <>
       <MainButton
         Icon={GoogleIcon}
         title={t`Continue with Google`}
-        onClick={signInWithGoogle}
+        onClick={() => signInWithGoogle({ action })}
         variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
         fullWidth
       />

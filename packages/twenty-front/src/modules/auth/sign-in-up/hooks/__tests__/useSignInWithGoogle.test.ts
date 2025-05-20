@@ -43,7 +43,9 @@ describe('useSignInWithGoogle', () => {
     const { result } = renderHook(() => useSignInWithGoogle(), {
       wrapper: Wrapper,
     });
-    result.current.signInWithGoogle();
+    result.current.signInWithGoogle({
+      action: 'join-workspace',
+    });
 
     expect(signInWithGoogleMock).toHaveBeenCalledWith({
       workspaceInviteHash: 'testHash',
@@ -66,7 +68,9 @@ describe('useSignInWithGoogle', () => {
     const { result } = renderHook(() => useSignInWithGoogle(), {
       wrapper: Wrapper,
     });
-    result.current.signInWithGoogle();
+    result.current.signInWithGoogle({
+      action: 'join-workspace',
+    });
 
     expect(signInWithGoogleMock).toHaveBeenCalledWith({
       workspaceInviteHash: 'testHash',

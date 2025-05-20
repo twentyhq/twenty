@@ -25,6 +25,7 @@ import {
   useGetCurrentUserLazyQuery,
   useGetLoginTokenFromCredentialsMutation,
   useGetLoginTokenFromEmailVerificationTokenMutation,
+  useListAvailableWorkspacesLazyQuery,
   useSignUpMutation,
 } from '~/generated/graphql';
 
@@ -108,6 +109,7 @@ export const useAuth = () => {
     useLastAuthenticatedWorkspaceDomain();
   const [checkUserExistsQuery, { data: checkUserExistsData }] =
     useCheckUserExistsLazyQuery();
+  const [listAvailableWorkspacesQuery] = useListAvailableWorkspacesLazyQuery();
 
   const client = useApolloClient();
 
@@ -455,6 +457,7 @@ export const useAuth = () => {
         workspacePersonalInviteToken?: string;
         workspaceInviteHash?: string;
         billingCheckoutSession?: BillingCheckoutSession;
+        action?: string;
       },
     ) => {
       const url = new URL(`${REACT_APP_SERVER_BASE_URL}${path}`);
@@ -474,6 +477,10 @@ export const useAuth = () => {
         );
       }
 
+      if (isDefined(params.action)) {
+        url.searchParams.set('action', params.action);
+      }
+
       if (isDefined(workspacePublicData)) {
         url.searchParams.set('workspaceId', workspacePublicData.id);
       }
@@ -488,6 +495,7 @@ export const useAuth = () => {
       workspacePersonalInviteToken?: string;
       workspaceInviteHash?: string;
       billingCheckoutSession?: BillingCheckoutSession;
+      action: string;
     }) => {
       redirect(buildRedirectUrl('/auth/google', params));
     },
@@ -520,5 +528,6 @@ export const useAuth = () => {
     signInWithCredentials: handleCredentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
+    listAvailableWorkspacesQuery: listAvailableWorkspacesQuery,
   };
 };

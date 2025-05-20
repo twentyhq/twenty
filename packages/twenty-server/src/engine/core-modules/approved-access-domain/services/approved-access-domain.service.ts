@@ -208,7 +208,11 @@ export class ApprovedAccessDomainService {
     domain: string,
   ) {
     return await this.approvedAccessDomainRepository.find({
-      relations: ['workspace', 'workspace.workspaceSSOIdentityProviders'],
+      relations: [
+        'workspace',
+        'workspace.workspaceSSOIdentityProviders',
+        'workspace.approvedAccessDomains',
+      ],
       where: {
         domain,
         isValidated: true,

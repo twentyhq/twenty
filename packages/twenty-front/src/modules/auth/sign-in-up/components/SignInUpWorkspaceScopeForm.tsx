@@ -36,7 +36,9 @@ export const SignInUpWorkspaceScopeForm = () => {
   return (
     <>
       <StyledContentContainer>
-        {workspaceAuthProviders.google && <SignInUpWithGoogle />}
+        {workspaceAuthProviders.google && (
+          <SignInUpWithGoogle action="join-workspace" />
+        )}
 
         {workspaceAuthProviders.microsoft && <SignInUpWithMicrosoft />}
 

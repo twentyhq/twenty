@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { z } from 'zod';
 
 import {
@@ -12,6 +12,8 @@ import {
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isDefined } from 'twenty-shared/utils';
+import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
+import { useAuth } from '@/auth/hooks/useAuth';
 
 const makeValidationSchema = (signInUpStep: SignInUpStep) =>
   z
@@ -31,7 +33,13 @@ const makeValidationSchema = (signInUpStep: SignInUpStep) =>
 export type Form = z.infer<ReturnType<typeof makeValidationSchema>>;
 export const useSignInUpForm = () => {
   const location = useLocation();
-  const signInUpStep = useRecoilValue(signInUpStepState);
+  const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
+
+  const { listAvailableWorkspacesQuery } = useAuth();
+
+  const [availableWorkspaces, setAvailableWorkspaces] = useRecoilState(
+    availableWorkspacesState,
+  );
 
   const validationSchema = makeValidationSchema(signInUpStep); // Create schema based on the current step
 
@@ -40,6 +48,9 @@ export const useSignInUpForm = () => {
   );
   const [searchParams] = useSearchParams();
   const prefilledEmail = searchParams.get('email');
+  const emailForWorkspacesSelection = searchParams.get(
+    'emailForWorkspacesSelection',
+  );
 
   const form = useForm<Form>({
     mode: 'onSubmit',
@@ -57,6 +68,21 @@ export const useSignInUpForm = () => {
       form.setValue('email', prefilledEmail);
     }
 
+    if (
+      isDefined(emailForWorkspacesSelection) &&
+      availableWorkspaces.length === 0
+    ) {
+      listAvailableWorkspacesQuery({
+        variables: {
+          email: emailForWorkspacesSelection,
+        },
+        onCompleted: (data) => {
+          setAvailableWorkspaces(data.listAvailableWorkspaces);
+        },
+      });
+      setSignInUpStep(SignInUpStep.WorkspaceSelection);
+    }
+
     if (isDeveloperDefaultSignInPrefilled === true) {
       form.setValue('email', prefilledEmail ?? 'tim@apple.dev');
       form.setValue('password', 'tim@apple.dev');
@@ -66,6 +92,11 @@ export const useSignInUpForm = () => {
     isDeveloperDefaultSignInPrefilled,
     prefilledEmail,
     location.search,
+    emailForWorkspacesSelection,
+    availableWorkspaces.length,
+    listAvailableWorkspacesQuery,
+    setSignInUpStep,
+    setAvailableWorkspaces,
   ]);
   return { form: form };
 };

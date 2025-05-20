@@ -17,3 +17,22 @@ export const AUTH_TOKENS = gql`
     }
   }
 `;
+
+export const AVAILABLE_WORKSPACE_FOR_AUTH = gql`
+  fragment AvailableWorkspaceForAuthFragment on AvailableWorkspaceOutput {
+    id
+    displayName
+    workspaceUrls {
+      subdomainUrl
+      customUrl
+    }
+    logo
+    sso {
+      type
+      id
+      issuer
+      name
+      status
+    }
+  }
+`;

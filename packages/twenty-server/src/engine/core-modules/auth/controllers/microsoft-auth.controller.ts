@@ -57,6 +57,12 @@ export class MicrosoftAuthController {
       locale,
     } = req.user;
 
+    if (!workspaceId && !workspaceInviteHash) {
+      return res.redirect(
+        this.authService.computeRedirectURIForWorkspaceSelection(email),
+      );
+    }
+
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
       workspaceId,
       workspaceInviteHash,

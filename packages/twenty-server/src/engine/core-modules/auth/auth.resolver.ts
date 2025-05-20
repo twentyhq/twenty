@@ -53,6 +53,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { GetLoginTokenFromEmailVerificationTokenOutput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.output';
+import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { GetLoginTokenFromCredentialsInput } from './dto/get-login-token-from-credentials.input';
@@ -60,7 +61,7 @@ import { LoginToken } from './dto/login-token.entity';
 import { SignUpInput } from './dto/sign-up.input';
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { CheckUserExistOutput } from './dto/user-exists.entity';
-import { CheckUserExistsInput } from './dto/user-exists.input';
+import { EmailAndCaptchaInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
@@ -90,9 +91,19 @@ export class AuthResolver {
   @UseGuards(CaptchaGuard)
   @Query(() => CheckUserExistOutput)
   async checkUserExists(
-    @Args() checkUserExistsInput: CheckUserExistsInput,
+    @Args() checkUserExistsInput: EmailAndCaptchaInput,
   ): Promise<CheckUserExistOutput> {
     return await this.authService.checkUserExists(checkUserExistsInput.email);
+  }
+
+  @UseGuards(CaptchaGuard)
+  @Query(() => [AvailableWorkspaceOutput])
+  async listAvailableWorkspaces(
+    @Args() listAvailableWorkspacesInput: EmailAndCaptchaInput,
+  ): Promise<Array<AvailableWorkspaceOutput>> {
+    return await this.authService.listAvailableWorkspacesForAuthentication(
+      listAvailableWorkspacesInput.email,
+    );
   }
 
   @Mutation(() => GetAuthorizationUrlForSSOOutput)
