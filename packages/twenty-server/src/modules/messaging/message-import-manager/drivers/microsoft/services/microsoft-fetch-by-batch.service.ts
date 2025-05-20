@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MicrosoftImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception';
@@ -8,6 +8,7 @@ import { isMicrosoftClientTemporaryError } from 'src/modules/messaging/message-i
 
 @Injectable()
 export class MicrosoftFetchByBatchService {
+  private readonly logger = new Logger(MicrosoftFetchByBatchService.name);
   constructor(
     private readonly microsoftClientProvider: MicrosoftClientProvider,
   ) {}
@@ -56,8 +57,18 @@ export class MicrosoftFetchByBatchService {
           typeof error.body === 'string' &&
           isMicrosoftClientTemporaryError(error.body)
         ) {
+          // TODO: remove this log once we catch better the error codes
+          this.logger.error(
+            `Error temporary (${error.code}) fetching messages for account ${connectedAccount.id.slice(0, 8)}`,
+          );
+          this.logger.log(error);
           throw new MicrosoftImportDriverException(error.body, error.code, 429);
         } else {
+          // TODO: remove this log once we catch better the error codes
+          this.logger.error(
+            `Error unknown (${error.code}) fetching messages for account ${connectedAccount.id.slice(0, 8)}`,
+          );
+          this.logger.log(error);
           throw error;
         }
       }

@@ -1,5 +1,4 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDataModelNewFieldBreadcrumbDropDown } from '@/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
@@ -10,15 +9,15 @@ import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 
 export const settingsDataModelFieldTypeFormSchema = z.object({
   type: z.enum(
@@ -64,32 +63,30 @@ export const SettingsObjectNewFieldSelect = () => {
   if (!activeObjectMetadataItem) return null;
 
   return (
-    <RecordFieldValueSelectorContextProvider>
-      <FormProvider // eslint-disable-next-line react/jsx-props-no-spreading
-        {...formMethods}
+    <FormProvider // eslint-disable-next-line react/jsx-props-no-spreading
+      {...formMethods}
+    >
+      <SubMenuTopBarContainer
+        title={t`1. Select a field type`}
+        links={[
+          { children: t`Workspace`, href: '/settings/workspace' },
+          { children: t`Objects`, href: '/settings/objects' },
+          {
+            children: activeObjectMetadataItem.labelPlural,
+            href: getSettingsPath(SettingsPath.ObjectDetail, {
+              objectNamePlural,
+            }),
+          },
+          { children: <SettingsDataModelNewFieldBreadcrumbDropDown /> },
+        ]}
       >
-        <SubMenuTopBarContainer
-          title={t`1. Select a field type`}
-          links={[
-            { children: t`Workspace`, href: '/settings/workspace' },
-            { children: t`Objects`, href: '/settings/objects' },
-            {
-              children: activeObjectMetadataItem.labelPlural,
-              href: getSettingsPath(SettingsPath.ObjectDetail, {
-                objectNamePlural,
-              }),
-            },
-            { children: <SettingsDataModelNewFieldBreadcrumbDropDown /> },
-          ]}
-        >
-          <SettingsPageContainer>
-            <SettingsObjectNewFieldSelector
-              objectNamePlural={objectNamePlural}
-              excludedFieldTypes={excludedFieldTypes}
-            />
-          </SettingsPageContainer>
-        </SubMenuTopBarContainer>
-      </FormProvider>
-    </RecordFieldValueSelectorContextProvider>
+        <SettingsPageContainer>
+          <SettingsObjectNewFieldSelector
+            objectNamePlural={objectNamePlural}
+            excludedFieldTypes={excludedFieldTypes}
+          />
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+    </FormProvider>
   );
 };

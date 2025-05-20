@@ -28,6 +28,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
+import { FixCreatedByDefaultValueCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-created-by-default-value.command';
 
 @Command({
   name: 'upgrade',
@@ -70,6 +71,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 0.54 Commands
     protected readonly fixStandardSelectFieldsPositionCommand: FixStandardSelectFieldsPositionCommand,
+    protected readonly fixCreatedByDefaultValueCommand: FixCreatedByDefaultValueCommand,
   ) {
     super(
       workspaceRepository,
@@ -127,7 +129,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_054: VersionCommands = {
-      beforeSyncMetadata: [this.fixStandardSelectFieldsPositionCommand],
+      beforeSyncMetadata: [
+        this.fixStandardSelectFieldsPositionCommand,
+        this.fixCreatedByDefaultValueCommand,
+      ],
       afterSyncMetadata: [],
     };
 

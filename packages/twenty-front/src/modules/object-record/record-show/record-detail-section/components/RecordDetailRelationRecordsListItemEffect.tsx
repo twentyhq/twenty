@@ -3,6 +3,7 @@ import { useContext, useEffect } from 'react';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
+
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { isDefined } from 'twenty-shared/utils';
 

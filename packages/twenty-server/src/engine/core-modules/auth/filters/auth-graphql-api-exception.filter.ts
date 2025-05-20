@@ -20,18 +20,6 @@ export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
       case AuthExceptionCode.INVALID_INPUT:
         throw new UserInputError(exception.message);
       case AuthExceptionCode.FORBIDDEN_EXCEPTION:
-        throw new ForbiddenError(exception.message);
-      case AuthExceptionCode.EMAIL_NOT_VERIFIED:
-        throw new ForbiddenError(exception.message, {
-          subCode: AuthExceptionCode.EMAIL_NOT_VERIFIED,
-        });
-      case AuthExceptionCode.UNAUTHENTICATED:
-      case AuthExceptionCode.USER_NOT_FOUND:
-      case AuthExceptionCode.WORKSPACE_NOT_FOUND:
-        throw new AuthenticationError(exception.message);
-      case AuthExceptionCode.INVALID_DATA:
-      case AuthExceptionCode.INTERNAL_SERVER_ERROR:
-      case AuthExceptionCode.USER_WORKSPACE_NOT_FOUND:
       case AuthExceptionCode.INSUFFICIENT_SCOPES:
       case AuthExceptionCode.OAUTH_ACCESS_DENIED:
       case AuthExceptionCode.SSO_AUTH_FAILED:
@@ -40,6 +28,18 @@ export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
       case AuthExceptionCode.GOOGLE_API_AUTH_DISABLED:
       case AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED:
       case AuthExceptionCode.MISSING_ENVIRONMENT_VARIABLE:
+        throw new ForbiddenError(exception.message);
+      case AuthExceptionCode.EMAIL_NOT_VERIFIED:
+      case AuthExceptionCode.INVALID_DATA:
+        throw new ForbiddenError(exception.message, {
+          subCode: AuthExceptionCode.EMAIL_NOT_VERIFIED,
+        });
+      case AuthExceptionCode.UNAUTHENTICATED:
+      case AuthExceptionCode.USER_NOT_FOUND:
+      case AuthExceptionCode.WORKSPACE_NOT_FOUND:
+        throw new AuthenticationError(exception.message);
+      case AuthExceptionCode.INTERNAL_SERVER_ERROR:
+      case AuthExceptionCode.USER_WORKSPACE_NOT_FOUND:
         throw exception;
       default: {
         const _exhaustiveCheck: never = exception.code;
