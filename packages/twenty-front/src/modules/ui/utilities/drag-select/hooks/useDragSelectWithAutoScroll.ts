@@ -1,8 +1,8 @@
-import { RefObject, useEffect, useState } from 'react';
+import { RefObject, useState } from 'react';
 
 import {
-  AUTO_SCROLL_EDGE_THRESHOLD_PX,
-  AUTO_SCROLL_MAX_SPEED_PX,
+    AUTO_SCROLL_EDGE_THRESHOLD_PX,
+    AUTO_SCROLL_MAX_SPEED_PX,
 } from '../constants/autoScrollParams';
 import { clamp } from '../utils/clamp';
 import { DOMVector } from '../utils/DOMVector';
@@ -16,21 +16,20 @@ export const useDragSelectWithAutoScroll = ({
 }: UseDragSelectWithAutoScrollProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragVector, setDragVector] = useState<DOMVector | null>(null);
-  const [dragStartPoint, setDragStartPoint] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
 
-  useEffect(() => {
-    if (!isDragging || !selectableAreaRef.current || !dragStartPoint) {
-      return;
-    }
+  const handleDragStart = (event: MouseEvent) => {
+    const initialPoint = { x: event.clientX, y: event.clientY };
 
-    let animationFrameId: number | null = null;
+    setIsDragging(true);
+
+    const startVector = new DOMVector(initialPoint.x, initialPoint.y, 0, 0);
+    setDragVector(startVector);
+
+    let currentVector = startVector;
+
+    let parent = selectableAreaRef.current?.parentElement ?? null;
     let scrollWrapper: HTMLElement | null = null;
-
-    let parent = selectableAreaRef.current.parentElement;
-    while (parent) {
+    while (parent !== null) {
       const style = window.getComputedStyle(parent);
       const hasScroll =
         ['auto', 'scroll'].includes(style.overflowY) ||
@@ -40,29 +39,30 @@ export const useDragSelectWithAutoScroll = ({
         scrollWrapper = parent;
         break;
       }
-
       parent = parent.parentElement;
     }
 
-    const handleMouseMove = (event: MouseEvent) => {
-      const currentPoint = { x: event.clientX, y: event.clientY };
-      const newVector = new DOMVector(
-        dragStartPoint.x,
-        dragStartPoint.y,
-        currentPoint.x - dragStartPoint.x,
-        currentPoint.y - dragStartPoint.y,
+    const handleMouseMove = (e: MouseEvent) => {
+      const currentPoint = { x: e.clientX, y: e.clientY };
+      currentVector = new DOMVector(
+        initialPoint.x,
+        initialPoint.y,
+        currentPoint.x - initialPoint.x,
+        currentPoint.y - initialPoint.y,
       );
-
-      setDragVector(newVector);
+      setDragVector(currentVector);
     };
 
+    document.addEventListener('mousemove', handleMouseMove);
+
+    let animationFrameId: number | null = null;
     const scrollTheLad = () => {
-      if (!scrollWrapper || !dragVector) {
+      if (scrollWrapper === null) {
         animationFrameId = requestAnimationFrame(scrollTheLad);
         return;
       }
 
-      const currentPointer = dragVector.toTerminalPoint();
+      const currentPointer = currentVector.toTerminalPoint();
       const containerRect = scrollWrapper.getBoundingClientRect();
 
       const shouldScrollRight =
@@ -116,8 +116,8 @@ export const useDragSelectWithAutoScroll = ({
 
       if (shouldScroll) {
         scrollWrapper.scrollBy({
-          left: left || 0,
-          top: top || 0,
+          left: left ?? 0,
+          top: top ?? 0,
           behavior: 'auto',
         });
       }
@@ -125,30 +125,24 @@ export const useDragSelectWithAutoScroll = ({
       animationFrameId = requestAnimationFrame(scrollTheLad);
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
     animationFrameId = requestAnimationFrame(scrollTheLad);
 
-    return () => {
+    const cleanup = () => {
       document.removeEventListener('mousemove', handleMouseMove);
-
-      const shouldCancelAnimation = animationFrameId !== null;
-      if (shouldCancelAnimation) {
-        cancelAnimationFrame(animationFrameId as number);
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
       }
-    };
-  }, [isDragging, dragVector, dragStartPoint, selectableAreaRef]);
 
-  const handleDragStart = (event: MouseEvent) => {
-    const initialPoint = { x: event.clientX, y: event.clientY };
-    setDragStartPoint(initialPoint);
-    setIsDragging(true);
-    setDragVector(new DOMVector(initialPoint.x, initialPoint.y, 0, 0));
+      setIsDragging(false);
+      setDragVector(null);
+    };
+
+    document.addEventListener('mouseup', cleanup, { once: true });
   };
 
   const handleDragEnd = () => {
     setIsDragging(false);
     setDragVector(null);
-    setDragStartPoint(null);
   };
 
   return {

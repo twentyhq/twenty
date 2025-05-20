@@ -6,6 +6,7 @@ import {
 import { useTheme } from '@emotion/react';
 import { RefObject, useCallback } from 'react';
 
+import { isDefined } from 'twenty-shared/utils';
 import { RGBA } from 'twenty-ui/theme';
 import { useDragSelect } from '../hooks/useDragSelect';
 import { useDragSelectWithAutoScroll } from '../hooks/useDragSelectWithAutoScroll';
@@ -26,7 +27,6 @@ export const DragSelect = ({
   const theme = useTheme();
   const { isDragSelectionStartEnabled } = useDragSelect();
 
-  // Use the combined hook for drag tracking and auto-scrolling
   const { handleDragStart, handleDragEnd } = useDragSelectWithAutoScroll({
     selectableAreaRef,
   });
@@ -44,7 +44,7 @@ export const DragSelect = ({
           [],
       ).forEach((item) => {
         const id = item.getAttribute('data-selectable-id');
-        if (id === null) {
+        if (!isDefined(id)) {
           return;
         }
         if (boxesIntersect(scrollAwareBox, item.getBoundingClientRect())) {
@@ -60,9 +60,7 @@ export const DragSelect = ({
   const handleSelectionStart = useCallback(
     (event: MouseEvent) => {
       handleDragStart(event);
-      if (onDragSelectionStart !== undefined) {
-        onDragSelectionStart(event);
-      }
+      onDragSelectionStart?.(event);
     },
     [onDragSelectionStart, handleDragStart],
   );
@@ -70,9 +68,7 @@ export const DragSelect = ({
   const handleSelectionEnd = useCallback(
     (event: MouseEvent) => {
       handleDragEnd();
-      if (onDragSelectionEnd !== undefined) {
-        onDragSelectionEnd(event);
-      }
+      onDragSelectionEnd?.(event);
     },
     [onDragSelectionEnd, handleDragEnd],
   );
