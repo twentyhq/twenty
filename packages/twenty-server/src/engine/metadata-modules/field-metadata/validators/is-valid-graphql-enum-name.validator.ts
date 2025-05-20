@@ -1,7 +1,7 @@
 import {
-  registerDecorator,
-  ValidationOptions,
   ValidationArguments,
+  ValidationOptions,
+  registerDecorator,
 } from 'class-validator';
 
 const graphQLEnumNameRegex = /^[_A-Za-z][_0-9A-Za-z]*$/;
@@ -14,8 +14,7 @@ export function IsValidGraphQLEnumName(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        validate(value: any) {
+        validate(value: unknown) {
           return typeof value === 'string' && graphQLEnumNameRegex.test(value);
         },
         defaultMessage(args: ValidationArguments) {
