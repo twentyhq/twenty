@@ -100,8 +100,9 @@ export class MessagingMessagesImportService {
             };
           default:
             this.logger.error(
-              `Error (${error.code}) refreshing access token for account ${connectedAccount.id}: ${error.message}`,
+              `Error (${error.code}) refreshing access token for account ${connectedAccount.id}`,
             );
+            this.logger.log(error);
             throw error;
         }
       }

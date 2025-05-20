@@ -58,13 +58,15 @@ export class MicrosoftFetchByBatchService {
           isMicrosoftClientTemporaryError(error.body)
         ) {
           this.logger.error(
-            `Error temporary (${error.code}) fetching messages for account ${connectedAccount.id.slice(0, 8)}: ${error.message} - ${error.body}`,
+            `Error temporary (${error.code}) fetching messages for account ${connectedAccount.id.slice(0, 8)}`,
           );
+          this.logger.log(error);
           throw new MicrosoftImportDriverException(error.body, error.code, 429);
         } else {
           this.logger.error(
-            `Error unknown (${error.code}) fetching messages for account ${connectedAccount.id.slice(0, 8)}: ${error.message} - ${error.body}`,
+            `Error unknown (${error.code}) fetching messages for account ${connectedAccount.id.slice(0, 8)}`,
           );
+          this.logger.log(error);
           throw error;
         }
       }
