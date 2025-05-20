@@ -44,7 +44,7 @@ export class MicrosoftGetMessagesService {
 
       return messages;
     } catch (error) {
-      this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(error);
+      this.microsoftHandleErrorService.handleMicrosoftGetMessagesError(error);
 
       return [];
     }

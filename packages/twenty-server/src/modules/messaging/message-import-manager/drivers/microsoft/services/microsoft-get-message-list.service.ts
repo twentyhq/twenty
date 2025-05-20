@@ -79,7 +79,7 @@ export class MicrosoftGetMessageListService {
       })
       .get()
       .catch((error) => {
-        this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(
+        this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
           error,
         );
       });
@@ -97,7 +97,9 @@ export class MicrosoftGetMessageListService {
     });
 
     await pageIterator.iterate().catch((error) => {
-      this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(error);
+      this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
+        error,
+      );
     });
 
     return {
@@ -202,7 +204,7 @@ export class MicrosoftGetMessageListService {
       })
       .get()
       .catch((error) => {
-        this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(
+        this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
           error,
         );
       });
@@ -224,7 +226,9 @@ export class MicrosoftGetMessageListService {
     });
 
     await pageIterator.iterate().catch((error) => {
-      this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(error);
+      this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
+        error,
+      );
     });
 
     return {

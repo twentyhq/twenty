@@ -1,14 +1,31 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { MicrosoftImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception';
+import { isMicrosoftClientTemporaryError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-temporary-error.utils';
+import { parseMicrosoftMessagesImportError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/parse-microsoft-messages-import.util';
 
 @Injectable()
 export class MicrosoftHandleErrorService {
+  private readonly logger = new Logger(MicrosoftHandleErrorService.name);
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public handleMicrosoftMessageFetchError(error: any): void {
+  public handleMicrosoftMessageFetchByBatchError(error: any): void {
+    // TODO: remove this log once we catch better the error codes
+    this.logger.error(`Error temporary (${error.code}) fetching messages`);
+    this.logger.log(error);
+
+    const isBodyString = error.body && typeof error.body === 'string';
+    const isTemporaryError =
+      isBodyString && isMicrosoftClientTemporaryError(error.body);
+
+    if (isTemporaryError) {
+      throw new MicrosoftImportDriverException(error.body, error.code, 429);
+    }
+
     if (!error.statusCode) {
       throw new MessageImportDriverException(
         `Microsoft Graph API unknown error: ${error}`,
@@ -16,43 +33,52 @@ export class MicrosoftHandleErrorService {
       );
     }
 
-    if (error.statusCode === 401) {
+    const exception = parseMicrosoftMessagesImportError(error);
+
+    if (exception) {
+      throw exception;
+    }
+
+    throw new MessageImportDriverException(
+      `Microsoft driver error: ${error.message}`,
+      MessageImportDriverExceptionCode.UNKNOWN,
+    );
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public handleMicrosoftGetMessageListError(error: any): void {
+    if (!error.statusCode) {
       throw new MessageImportDriverException(
-        'Unauthorized access to Microsoft Graph API',
-        MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        `Microsoft Graph API unknown error: ${error}`,
+        MessageImportDriverExceptionCode.UNKNOWN,
       );
     }
 
-    if (error.statusCode === 403) {
+    const exception = parseMicrosoftMessagesImportError(error);
+
+    if (exception) {
+      throw exception;
+    }
+
+    throw new MessageImportDriverException(
+      `Microsoft driver error: ${error.message}`,
+      MessageImportDriverExceptionCode.UNKNOWN,
+    );
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public handleMicrosoftGetMessagesError(error: any): void {
+    if (!error.statusCode) {
       throw new MessageImportDriverException(
-        'Forbidden access to Microsoft Graph API',
-        MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        `Microsoft Graph API unknown error: ${error}`,
+        MessageImportDriverExceptionCode.UNKNOWN,
       );
     }
 
-    if (error.statusCode === 404) {
-      if (
-        error.message.includes(
-          'The mailbox is either inactive, soft-deleted, or is hosted on-premise.',
-        )
-      ) {
-        throw new MessageImportDriverException(
-          `Disabled, deleted, inactive or no licence Microsoft account - code:${error.code}`,
-          MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-        );
-      } else {
-        throw new MessageImportDriverException(
-          `Not found - code:${error.code}`,
-          MessageImportDriverExceptionCode.NOT_FOUND,
-        );
-      }
-    }
+    const exception = parseMicrosoftMessagesImportError(error);
 
-    if (error.statusCode === 429) {
-      throw new MessageImportDriverException(
-        `Microsoft Graph API ${error.code} ${error.statusCode} error: ${error.message}`,
-        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-      );
+    if (exception) {
+      throw exception;
     }
 
     throw new MessageImportDriverException(

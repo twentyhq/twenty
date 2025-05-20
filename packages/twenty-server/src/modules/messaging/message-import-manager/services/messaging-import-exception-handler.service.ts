@@ -11,6 +11,7 @@ import { MESSAGING_THROTTLE_MAX_ATTEMPTS } from 'src/modules/messaging/message-i
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
+  MessageNetworkExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import {
   MessageImportException,
@@ -51,6 +52,11 @@ export class MessageImportExceptionHandlerService {
         );
         break;
       case MessageImportDriverExceptionCode.TEMPORARY_ERROR:
+      case MessageNetworkExceptionCode.ECONNABORTED:
+      case MessageNetworkExceptionCode.ENOTFOUND:
+      case MessageNetworkExceptionCode.ECONNRESET:
+      case MessageNetworkExceptionCode.ETIMEDOUT:
+      case MessageNetworkExceptionCode.ERR_NETWORK:
         await this.handleTemporaryException(
           syncStep,
           messageChannel,
