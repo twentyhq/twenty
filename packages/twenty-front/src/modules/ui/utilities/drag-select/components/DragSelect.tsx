@@ -5,8 +5,11 @@ import {
 import { useTheme } from '@emotion/react';
 import { RefObject } from 'react';
 
-import { useDragSelect } from '../hooks/useDragSelect';
+import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
+import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { RGBA } from 'twenty-ui/theme';
+import { useDragSelect } from '../hooks/useDragSelect';
 
 type DragSelectProps = {
   dragSelectable: RefObject<HTMLElement>;
@@ -24,6 +27,11 @@ export const DragSelect = ({
   const theme = useTheme();
 
   const { isDragSelectionStartEnabled } = useDragSelect();
+
+  const { scrollToPosition } = useScrollToPosition();
+  const scrollTop = useRecoilComponentValueV2(
+    scrollWrapperScrollTopComponentState,
+  );
 
   const { DragSelection } = useSelectionContainer({
     shouldStartSelecting: (target) => {
@@ -43,11 +51,21 @@ export const DragSelect = ({
     onSelectionStart: onDragSelectionStart,
     onSelectionEnd: onDragSelectionEnd,
     onSelectionChange: (box) => {
+      const containerTopOnScreen =
+        (dragSelectable.current?.getBoundingClientRect()?.top ?? 0) + scrollTop;
+
+      const mouseY = box.top;
+
+      if (mouseY < containerTopOnScreen) {
+        scrollToPosition(scrollTop - 20);
+      }
+
       const scrollAwareBox = {
         ...box,
         top: box.top + window.scrollY,
         left: box.left + window.scrollX,
       };
+
       Array.from(
         dragSelectable.current?.querySelectorAll('[data-selectable-id]') ?? [],
       ).forEach((item) => {

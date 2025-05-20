@@ -58,6 +58,7 @@ const StyledBoardContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: calc(100% - 48px);
+  position: relative;
 `;
 
 export const RecordBoard = () => {
