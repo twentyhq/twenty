@@ -39,7 +39,7 @@ export const RecordTableContent = ({
   hasRecordGroups,
 }: RecordTableContentProps) => {
   const [isDragging, setIsDragging] = useState(false);
-  const selectionBoundaryRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleDragStart = () => {
     setIsDragging(true);
@@ -52,7 +52,7 @@ export const RecordTableContent = ({
   };
 
   return (
-    <StyledTableContainer ref={selectionBoundaryRef}>
+    <StyledTableContainer ref={containerRef}>
       <StyledTableWithPointerEvents ref={tableBodyRef} isDragging={isDragging}>
         <RecordTableHeader />
         {hasRecordGroups ? (
@@ -64,8 +64,7 @@ export const RecordTableContent = ({
         <RecordTableStickyBottomEffect />
       </StyledTableWithPointerEvents>
       <DragSelect
-        selectableElementsRef={tableBodyRef}
-        selectionBoundaryRef={selectionBoundaryRef}
+        selectableAreaRef={containerRef}
         onDragSelectionStart={handleDragStart}
         onDragSelectionChange={setRowSelected}
         onDragSelectionEnd={handleDragEnd}

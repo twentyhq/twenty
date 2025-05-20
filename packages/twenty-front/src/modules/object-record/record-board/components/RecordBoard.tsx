@@ -67,8 +67,7 @@ const StyledBoardContentContainer = styled.div`
 export const RecordBoard = () => {
   const { updateOneRecord, selectFieldMetadataItem, recordBoardId } =
     useContext(RecordBoardContext);
-  const selectableElementsRef = useRef<HTMLDivElement>(null);
-  const selectionBoundaryRef = useRef<HTMLDivElement>(null);
+  const boardRef = useRef<HTMLDivElement>(null);
 
   const { toggleClickOutside } = useClickOutsideListener(
     RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
@@ -219,10 +218,10 @@ export const RecordBoard = () => {
           <RecordBoardStickyHeaderEffect />
           <RecordBoardScrollToFocusedCardEffect />
           <RecordBoardDeactivateBoardCardEffect />
-          <StyledContainerContainer ref={selectionBoundaryRef}>
+          <StyledContainerContainer ref={boardRef}>
             <RecordBoardHeader />
             <StyledBoardContentContainer>
-              <StyledContainer ref={selectableElementsRef}>
+              <StyledContainer>
                 <DragDropContext onDragEnd={handleDragEnd}>
                   <StyledColumnContainer>
                     {visibleRecordGroupIds.map((recordGroupId, index) => (
@@ -236,8 +235,7 @@ export const RecordBoard = () => {
                 </DragDropContext>
               </StyledContainer>
               <DragSelect
-                selectableElementsRef={selectableElementsRef}
-                selectionBoundaryRef={selectionBoundaryRef}
+                selectableAreaRef={boardRef}
                 onDragSelectionEnd={handleDragSelectionEnd}
                 onDragSelectionChange={setRecordAsSelected}
                 onDragSelectionStart={handleDragSelectionStart}

@@ -1,34 +1,84 @@
 import {
   boxesIntersect,
+  OnSelectionChange,
   useSelectionContainer,
 } from '@air/react-drag-to-select';
 import { useTheme } from '@emotion/react';
-import { RefObject } from 'react';
+import { RefObject, useCallback } from 'react';
 
 import { RGBA } from 'twenty-ui/theme';
 import { useDragSelect } from '../hooks/useDragSelect';
+import { useDragSelectWithAutoScroll } from '../hooks/useDragSelectWithAutoScroll';
 
 type DragSelectProps = {
-  selectableElementsRef: RefObject<HTMLElement>;
-  selectionBoundaryRef?: RefObject<HTMLElement>;
+  selectableAreaRef: RefObject<HTMLElement>;
   onDragSelectionChange: (id: string, selected: boolean) => void;
   onDragSelectionStart?: (event: MouseEvent) => void;
   onDragSelectionEnd?: (event: MouseEvent) => void;
 };
 
 export const DragSelect = ({
-  selectableElementsRef,
-  selectionBoundaryRef,
+  selectableAreaRef,
   onDragSelectionChange,
   onDragSelectionStart,
   onDragSelectionEnd,
 }: DragSelectProps) => {
   const theme = useTheme();
-
   const { isDragSelectionStartEnabled } = useDragSelect();
 
-  const { DragSelection } = useSelectionContainer({
-    shouldStartSelecting: (target: EventTarget | null) => {
+  // Use the combined hook for drag tracking and auto-scrolling
+  const { handleDragStart, handleDragEnd } = useDragSelectWithAutoScroll({
+    selectableAreaRef,
+  });
+
+  const onSelectionChangeHandler: OnSelectionChange = useCallback(
+    (box) => {
+      const scrollAwareBox = {
+        ...box,
+        top: box.top + window.scrollY,
+        left: box.left + window.scrollX,
+      };
+
+      Array.from(
+        selectableAreaRef.current?.querySelectorAll('[data-selectable-id]') ??
+          [],
+      ).forEach((item) => {
+        const id = item.getAttribute('data-selectable-id');
+        if (id === null) {
+          return;
+        }
+        if (boxesIntersect(scrollAwareBox, item.getBoundingClientRect())) {
+          onDragSelectionChange(id, true);
+        } else {
+          onDragSelectionChange(id, false);
+        }
+      });
+    },
+    [selectableAreaRef, onDragSelectionChange],
+  );
+
+  const handleSelectionStart = useCallback(
+    (event: MouseEvent) => {
+      handleDragStart(event);
+      if (onDragSelectionStart !== undefined) {
+        onDragSelectionStart(event);
+      }
+    },
+    [onDragSelectionStart, handleDragStart],
+  );
+
+  const handleSelectionEnd = useCallback(
+    (event: MouseEvent) => {
+      handleDragEnd();
+      if (onDragSelectionEnd !== undefined) {
+        onDragSelectionEnd(event);
+      }
+    },
+    [onDragSelectionEnd, handleDragEnd],
+  );
+
+  const shouldStartSelecting = useCallback(
+    (target: EventTarget | null) => {
       if (!isDragSelectionStartEnabled()) {
         return false;
       }
@@ -37,18 +87,7 @@ export const DragSelect = ({
         return false;
       }
 
-      const hasSelectionBoundary = !!selectionBoundaryRef?.current;
-      if (
-        hasSelectionBoundary &&
-        !selectionBoundaryRef.current.contains(target)
-      ) {
-        return false;
-      }
-
-      if (
-        !hasSelectionBoundary &&
-        !selectableElementsRef.current?.contains(target)
-      ) {
+      if (!selectableAreaRef.current?.contains(target)) {
         return false;
       }
 
@@ -65,30 +104,14 @@ export const DragSelect = ({
 
       return true;
     },
-    onSelectionStart: onDragSelectionStart,
-    onSelectionEnd: onDragSelectionEnd,
-    onSelectionChange: (box) => {
-      const scrollAwareBox = {
-        ...box,
-        top: box.top + window.scrollY,
-        left: box.left + window.scrollX,
-      };
-      Array.from(
-        selectableElementsRef.current?.querySelectorAll(
-          '[data-selectable-id]',
-        ) ?? [],
-      ).forEach((item) => {
-        const id = item.getAttribute('data-selectable-id');
-        if (!id) {
-          return;
-        }
-        if (boxesIntersect(scrollAwareBox, item.getBoundingClientRect())) {
-          onDragSelectionChange(id, true);
-        } else {
-          onDragSelectionChange(id, false);
-        }
-      });
-    },
+    [isDragSelectionStartEnabled, selectableAreaRef],
+  );
+
+  const { DragSelection } = useSelectionContainer({
+    shouldStartSelecting,
+    onSelectionStart: handleSelectionStart,
+    onSelectionEnd: handleSelectionEnd,
+    onSelectionChange: onSelectionChangeHandler,
     selectionProps: {
       style: {
         border: `1px solid ${theme.color.blue10}`,
