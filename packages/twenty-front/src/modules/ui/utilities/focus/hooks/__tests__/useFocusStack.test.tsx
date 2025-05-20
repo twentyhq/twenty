@@ -283,7 +283,7 @@ describe('useFocusStack', () => {
       },
       globalHotkeysConfig: {
         enableGlobalHotkeysWithModifiers: true,
-        enableConflictingWithKeyboardGlobalHotkeys: true,
+        enableGlobalHotkeysConflictingWithKeyboard: true,
       },
     };
 

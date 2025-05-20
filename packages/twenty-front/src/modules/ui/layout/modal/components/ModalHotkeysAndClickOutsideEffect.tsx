@@ -25,9 +25,7 @@ export const ModalHotkeysAndClickOutsideEffect = ({
       onEnter?.();
     },
     modalId,
-    {
-      scope: ModalHotkeyScope.ModalFocus,
-    },
+    ModalHotkeyScope.ModalFocus,
     [onEnter],
   );
 
@@ -39,9 +37,7 @@ export const ModalHotkeysAndClickOutsideEffect = ({
       }
     },
     modalId,
-    {
-      scope: ModalHotkeyScope.ModalFocus,
-    },
+    ModalHotkeyScope.ModalFocus,
     [isClosable, onClose],
   );
 

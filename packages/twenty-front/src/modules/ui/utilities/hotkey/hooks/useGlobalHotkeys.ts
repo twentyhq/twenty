@@ -1,6 +1,5 @@
 import { useGlobalHotkeysCallback } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeysCallback';
 import { pendingHotkeyState } from '@/ui/utilities/hotkey/states/internal/pendingHotkeysState';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { HotkeyCallback, Keys, Options } from 'react-hotkeys-hook/dist/types';
 import { useRecoilState } from 'recoil';
@@ -13,7 +12,7 @@ export const useGlobalHotkeys = (
   callback: HotkeyCallback,
   containsModifier: boolean,
   // TODO: Remove this once we've migrated hotkey scopes to the new api
-  hotkeyScope: HotkeyScope,
+  scope: string,
   dependencies?: unknown[],
   options?: UseHotkeysOptionsWithoutBuggyOptions,
 ) => {
@@ -50,7 +49,7 @@ export const useGlobalHotkeys = (
           }
           setPendingHotkey(null);
         },
-        scope: hotkeyScope.scope,
+        scope,
         preventDefault,
         containsModifier,
       });
