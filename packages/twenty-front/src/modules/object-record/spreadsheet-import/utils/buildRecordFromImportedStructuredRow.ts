@@ -30,8 +30,6 @@ export const buildRecordFromImportedStructuredRow = ({
     ADDRESS: {
       addressCityLabel,
       addressCountryLabel,
-      addressLatLabel,
-      addressLngLabel,
       addressPostcodeLabel,
       addressStateLabel,
       addressStreet1Label,
@@ -88,9 +86,7 @@ export const buildRecordFromImportedStructuredRow = ({
                 `${addressPostcodeLabel} (${field.name})`
               ] ||
               importedStructuredRow[`${addressStateLabel} (${field.name})`] ||
-              importedStructuredRow[`${addressCountryLabel} (${field.name})`] ||
-              importedStructuredRow[`${addressLatLabel} (${field.name})`] ||
-              importedStructuredRow[`${addressLngLabel} (${field.name})`],
+              importedStructuredRow[`${addressCountryLabel} (${field.name})`],
           )
         ) {
           recordToBuild[field.name] = {
@@ -112,13 +108,7 @@ export const buildRecordFromImportedStructuredRow = ({
             addressCountry: castToString(
               importedStructuredRow[`${addressCountryLabel} (${field.name})`],
             ),
-            addressLat: Number(
-              importedStructuredRow[`${addressLatLabel} (${field.name})`],
-            ),
-            addressLng: Number(
-              importedStructuredRow[`${addressLngLabel} (${field.name})`],
-            ),
-          } satisfies FieldAddressValue;
+          } satisfies Partial<FieldAddressValue>;
         }
         break;
       }

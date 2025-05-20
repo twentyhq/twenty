@@ -1,3 +1,4 @@
+import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
 import { SpreadsheetImportFieldValidationDefinition } from '@/spreadsheet-import/types';
 import { absoluteUrlSchema, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -50,9 +51,11 @@ export const getSpreadSheetFieldValidationDefinitions = (
     case FieldMetadataType.LINKS:
       return [
         {
-          rule: 'function',
-          isValid: (value: string) =>
-            absoluteUrlSchema.safeParse(value).success,
+          rule: 'object',
+          isValid: ({
+            primaryLinkUrl,
+          }: Pick<FieldLinksValue, 'primaryLinkUrl' | 'secondaryLinks'>) =>
+            absoluteUrlSchema.safeParse(primaryLinkUrl).success,
           errorMessage: fieldName + ' is not valid',
           level: 'error',
         },
