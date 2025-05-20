@@ -41,6 +41,7 @@ const StyledContainer = styled.div`
   flex: 1;
   flex-direction: row;
   min-height: 100%;
+  position: relative;
 `;
 
 const StyledColumnContainer = styled.div`
@@ -233,13 +234,14 @@ export const RecordBoard = () => {
                     ))}
                   </StyledColumnContainer>
                 </DragDropContext>
+
+                <DragSelect
+                  selectableItemsContainerRef={boardRef}
+                  onDragSelectionEnd={handleDragSelectionEnd}
+                  onDragSelectionChange={setRecordAsSelected}
+                  onDragSelectionStart={handleDragSelectionStart}
+                />
               </StyledContainer>
-              <DragSelect
-                selectableItemsContainerRef={boardRef}
-                onDragSelectionEnd={handleDragSelectionEnd}
-                onDragSelectionChange={setRecordAsSelected}
-                onDragSelectionStart={handleDragSelectionStart}
-              />
             </StyledBoardContentContainer>
           </StyledContainerContainer>
         </ScrollWrapper>
