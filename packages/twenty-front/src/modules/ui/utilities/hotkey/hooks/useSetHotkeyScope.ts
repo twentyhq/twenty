@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { DEBUG_HOTKEY_SCOPE } from '@/ui/utilities/hotkey/hooks/useScopedHotkeyCallback';
+import { DEBUG_HOTKEY_SCOPE } from '../constants/DebugHotkeyScope';
 
 import { isDefined } from 'twenty-shared/utils';
 import { logDebug } from '~/utils/logDebug';

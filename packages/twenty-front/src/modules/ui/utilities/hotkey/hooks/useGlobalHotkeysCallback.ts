@@ -1,5 +1,4 @@
 import { currentGlobalHotkeysConfigSelector } from '@/ui/utilities/focus/states/currentGlobalHotkeysConfigSelector';
-import { DEBUG_HOTKEY_SCOPE } from '@/ui/utilities/hotkey/hooks/useScopedHotkeyCallback';
 import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
 import {
   Hotkey,
@@ -7,6 +6,7 @@ import {
 } from 'react-hotkeys-hook/dist/types';
 import { useRecoilCallback } from 'recoil';
 import { logDebug } from '~/utils/logDebug';
+import { DEBUG_HOTKEY_SCOPE } from '../constants/DebugHotkeyScope';
 
 export const useGlobalHotkeysCallback = (
   dependencies?: OptionsOrDependencyArray,
