@@ -95,7 +95,7 @@ export const WorkflowEditActionUpdateRecord = ({
     saveAction(newFormData);
   };
 
-    const selectedObjectMetadataItem = activeNonSystemObjectMetadataItems.find(
+  const selectedObjectMetadataItem = activeNonSystemObjectMetadataItems.find(
     (item) => item.nameSingular === formData.objectName,
   );
 
